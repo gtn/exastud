@@ -1,0 +1,47 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html>
+<head>
+<link rel="stylesheet" type="text/css" href="styles_print.css">
+</head>
+<body>
+	<div class="printpage" id="printsectionhoch">
+		<div class="clearfix">
+			<div class="printtable">
+
+				<h1 class="printderpass">SCHÜLERBEWERTUNG</h1>
+
+			</div>
+			<div class="printtable printpersonalinfo">
+				<table>
+					<tr>
+						<td class="printpersonalinfo_heading">###FIRSTNAME### ###LASTNAME###</td>
+						<td rowspan="4" class="printpersonalinfo_imgcontainer">###USERPIC###</td>
+					</tr>
+					<tr>
+						<td class="printpersonalinfo_subheading">Name<br></td>
+					</tr>
+					<tr>
+						<td class="printpersonalinfo_heading">###CLASS###</td>
+					</tr>
+					<tr>
+						<td class="printpersonalinfo_subheading">Klasse</td>
+					</tr>
+				</table>
+			</div>
+		</div>
+		<div class="clearfix printtable printblock">
+			<table class="ratingtable">
+				<tr class="ratingheading">
+					<td colspan="2"><h3>Bewertung für die Periode ###PERIOD###:</h3> <span
+						class="ratingsubhead">*(###NUM### Bewertungen abgegeben)</span></td>
+				</tr>
+				###CATEGORIES###
+			</table>
+			<p></p>
+			###COMMENTS###
+		</div>
+		<p></p>
+		###LOGO###
+	</div>
+</body>
+</html>
