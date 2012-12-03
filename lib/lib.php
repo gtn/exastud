@@ -364,9 +364,9 @@ function block_exabis_student_review_insert_default_categories() {
 	global $DB;
 	//if empty import
 	if(!$DB->get_records('block_exastudcate')) {
-		$DB->insert_record('block_exastudcate', array("title"=>"Teamfaehigkeit"));
-		$DB->insert_record('block_exastudcate', array("title"=>"Verantwortlichkeit"));
-		$DB->insert_record('block_exastudcate', array("title"=>"Selbststaendigkeit"));
+		$DB->insert_record('block_exastudcate', array("title"=>get_string('teamplayer', 'block_exastud')));
+		$DB->insert_record('block_exastudcate', array("title"=>get_string('responsibility', 'block_exastud')));
+		$DB->insert_record('block_exastudcate', array("title"=>get_string('selfreliance', 'block_exastud')));
 	}
 }
 
