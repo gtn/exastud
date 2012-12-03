@@ -212,7 +212,7 @@ function block_exabis_student_review_print_student_report($studentid, $periodid,
 	}
 	else {
 		$comments='
-		<table class="ratingtable"><tr class="ratingheading"><td><h3>'.get_string('detailedreview','block_exacomp').'</h3></td></tr></table>';
+		<table class="ratingtable"><tr class="ratingheading"><td><h3>'.get_string('detailedreview','block_exastud').'</h3></td></tr></table>';
 		foreach($studentReport->comments as $comment) {
 			$comments.='<table class="ratingtable">
 			<tr class="ratinguser"><td class="ratingfirst">'.$comment->name.'</td></tr>

@@ -106,3 +106,4 @@ $string['evaluation10'] = '10 - sehr gut';
 $string['explainclassname'] = 'Hier können Sie den Klassennamen editieren';
 $string['showall'] = 'Alle anzeigen';
 $string['logosize'] = 'Der Logo-Banner sollte die Größe 840x100px haben';
+$string['detailedreview'] = 'Ausführliche Beurteilung';
