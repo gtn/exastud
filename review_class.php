@@ -59,10 +59,10 @@ $table = new html_table();
 
 $table->head = array();
 $table->head[] = get_string('name');
+$table->head[] = get_string('action');
 foreach($categories as $category)
 	$table->head[] = $category->title;
 $table->head[] = get_string('evaluation', 'block_exastud');
-$table->head[] = get_string('action');
 
 $table->align = array();
 $table->align[] = 'left';
@@ -88,6 +88,7 @@ foreach($classusers as $classuser) {
 	$report = $DB->get_record('block_exastudreview', array('teacher_id'=>$USER->id, 'periods_id'=>$actPeriod->id, 'student_id'=>$user->id));
 	$data = array();
 	$data[] = $userdesc;
+	$data[] = $icons;
 	if($report) {
 		foreach($categories as $category)
 			$data[] = $DB->get_field('block_exastudreviewpos', 'value', array("categoryid"=>$category->id,"reviewid"=>$report->id,"categorysource"=>$category->source));
@@ -97,7 +98,6 @@ foreach($classusers as $classuser) {
 		for($i=0;$i<=count($categories);$i++)
 			$data[] = '';
 	
-	$data[] = $icons;
 	$table->data[] = $data;
 }
 
