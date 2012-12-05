@@ -105,5 +105,5 @@ $string['evaluation9'] = '9';
 $string['evaluation10'] = '10 - sehr gut';
 $string['explainclassname'] = 'Hier können Sie den Klassennamen editieren';
 $string['showall'] = 'Show all';
-$string['logosize'] = 'For efficient use the logo banner must be 840x100px';
+$string['logosize'] = 'For efficient use the logo banner must be 840x100px. Please avoid using transparency in PNG files, this may cause an error while creating a PDF report.';
 $string['detailedreview'] = 'Detailed review';

@@ -105,5 +105,5 @@ $string['evaluation9'] = '9';
 $string['evaluation10'] = '10 - sehr gut';
 $string['explainclassname'] = 'Hier können Sie den Klassennamen editieren';
 $string['showall'] = 'Alle anzeigen';
-$string['logosize'] = 'Der Logo-Banner sollte die Größe 840x100px haben';
+$string['logosize'] = 'Der Logo-Banner sollte die Größe 840x100px haben. Außerdem ist Transparenz in PNG Bildern zu vermeiden, da es sonst beim Erstellen eines PDF Berichtes zu Fehlern kommen kann.';
 $string['detailedreview'] = 'Ausführliche Beurteilung';
