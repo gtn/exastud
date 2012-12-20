@@ -1,29 +1,4 @@
 <?php
-/***************************************************************
-*  Copyright notice
-*
-*  (c) 2006 exabis internet solutions <info@exabis.at>
-*  All rights reserved
-*
-*  You can redistribute it and/or modify
-*  it under the terms of the GNU General Public License as published by
-*  the Free Software Foundation; either version 2 of the License, or
-*  (at your option) any later version.
-*
-*  This module is based on the Collaborative Moodle Modules from
-*  NCSA Education Division (http://www.ncsa.uiuc.edu)
-*
-*  The GNU General Public License can be found at
-*  http://www.gnu.org/copyleft/gpl.html.
-*
-*  This script is distributed in the hope that it will be useful,
-*  but WITHOUT ANY WARRANTY; without even the implied warranty of
-*  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-*  GNU General Public License for more details.
-*
-*  This copyright notice MUST APPEAR in all copies of the script!
-***************************************************************/
-
 // 
 $string['exastud:use'] = 'Use of Exabis Student Review';
 $string['exastud:head'] = 'Head of a class';
@@ -47,7 +22,7 @@ $string['members'] = 'Members';
 $string['errorinsertingclass'] = 'Error when inserting class';
 $string['redirectingtoclassinput'] = 'No class information found, redirecting to class input.';
 $string['errorupdatingclass'] = 'Error when updating class';
-$string['editclassmemberlist'] = 'Edit class member list';
+$string['editclassmemberlist'] = 'Edit class student list';
 $string['editclassteacherlist'] = 'Edit class teacher list';
 $string['editclassname'] = 'Edit class';
 $string['editclasscategories'] = 'Edit assessment categories';
@@ -93,7 +68,7 @@ $string['printversion'] = 'Print version';
 $string['printall'] = 'Print all';
 $string['periodoverlaps'] = 'Period {$a->period1} overlaps with {$a->period2}';
 $string['periodserror'] = 'Error at the configuration of the periods';
-$string['evaluation1'] = '1 - unzureichend';
+$string['evaluation1'] = '1 - insufficient';
 $string['evaluation2'] = '2';
 $string['evaluation3'] = '3';
 $string['evaluation4'] = '4';
@@ -102,8 +77,14 @@ $string['evaluation6'] = '6';
 $string['evaluation7'] = '7';
 $string['evaluation8'] = '8';
 $string['evaluation9'] = '9';
-$string['evaluation10'] = '10 - sehr gut';
-$string['explainclassname'] = 'Hier können Sie den Klassennamen editieren';
+$string['evaluation10'] = '10 - very wekk';
+$string['explainclassname'] = 'Click here to edit the class name';
 $string['showall'] = 'Show all';
 $string['logosize'] = 'For efficient use the logo banner must be 840x100px. Please avoid using transparency in PNG files, this may cause an error while creating a PDF report.';
 $string['detailedreview'] = 'Detailed review';
+$string['studentreview'] = 'STUDENT REVIEW';
+$string['class'] = 'class';
+$string['name'] = 'name';
+$string['periodreview'] = 'Review for period';
+$string['reviewcount'] = ' review(s) yet';
+$string['print'] = 'print';

@@ -177,6 +177,11 @@ function block_exabis_student_review_print_student_report($studentid, $periodid,
 
 	$student = $DB->get_record('user', array('id'=>$studentid));
 	$studentreport = block_exabis_student_review_read_template_file('student_new.html');
+	$studentreport = str_replace ( '###STUDENTREVIEW###', get_string('studentreview','block_exastud'), $studentreport);
+	$studentreport = str_replace ( '###NAME###', get_string('name','block_exastud'), $studentreport);
+	$studentreport = str_replace ( '###PERIODREVIEW###', get_string('periodreview','block_exastud'), $studentreport);
+	$studentreport = str_replace ( '###REVIEWCOUNT###', get_string('reviewcount','block_exastud'), $studentreport);
+	$studentreport = str_replace ( '###CLASSTRANSLATION###', get_string('class','block_exastud'), $studentreport);
 	$studentreport = str_replace ( '###FIRSTNAME###', $student->firstname, $studentreport);
 	$studentreport = str_replace ( '###LASTNAME###', $student->lastname, $studentreport);
 	if(!$pdf) $studentreport = str_replace ( '###USERPIC###', $OUTPUT->user_picture($DB->get_record('user', array("id"=>$studentid)),array("size"=>100)), $studentreport);
