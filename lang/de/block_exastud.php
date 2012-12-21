@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 // 
 $string['exastud:use'] = 'Student Review benutzen';
 $string['exastud:head'] = 'Klassenvorstand';
@@ -36,7 +36,7 @@ $string['errorremovingstudents'] = 'Fehler beim L&ouml;schen eines Sch&uuml;lers
 $string['errorinsertingteachers'] = 'Fehler beim Hinzuf&uuml;gen eines Lehrers im Kurs';
 $string['errorremovingteachers'] = 'Fehler beim L&öuml;schen eines Lehrers im Kurs';
 $string['errorremovingcategories'] = 'Fehler beim L&ouml;schen von Kategorien aus einem Kurs';
-$string['back'] = 'zur&uuml;ck';
+$string['back'] = 'zurück';
 $string['periodinput'] = 'Periodeneingabe';
 $string['redirectingtoperiodsinput'] = 'Keine Beurteilungsperiode gefunden, Weiterleitung zur Eingabe einer Beurteilungsperiode';
 $string['errorinsertingperiod'] = 'Fehler beim Einf&uuml;gen einer Beurteilungsperiode';
