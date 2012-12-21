@@ -88,3 +88,7 @@ $string['name'] = 'name';
 $string['periodreview'] = 'Review for period';
 $string['reviewcount'] = ' review(s) yet';
 $string['print'] = 'print';
+
+$string['perioddesc'] = 'description of the period: ';
+$string['starttime'] = 'starttime: ';
+$string['endtime'] = 'endtime: ';

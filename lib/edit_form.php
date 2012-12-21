@@ -8,7 +8,7 @@ class class_edit_form extends moodleform {
         global $CFG, $USER;
         $mform = & $this->_form;
 
-        $mform->addElement('text', 'class', 'Klasse:', array('size' => 50));
+        $mform->addElement('text', 'class', get_string('class', 'block_exastud').': ', array('size' => 50));
         $mform->setType('class', PARAM_TEXT);
         $mform->addRule('class', null, 'required', null, 'client');
 
@@ -34,7 +34,7 @@ class period_edit_form extends moodleform {
         global $CFG, $USER;
         $mform = & $this->_form;
 
-        $mform->addElement('text', 'description', 'Beschreibung der Periode:', array('size' => 50));
+        $mform->addElement('text', 'description', get_string('perioddesc', 'block_exastud'), array('size' => 50));
         $mform->setType('description', PARAM_TEXT);
         $mform->addRule('description', null, 'required', null, 'client');
 
@@ -53,11 +53,11 @@ class period_edit_form extends moodleform {
         $mform->addElement('hidden', 'courseid');
         $mform->setType('courseid', PARAM_INT);
         
-        $mform->addElement('date_time_selector', 'starttime', 'Startdatum:', $timeoptions);
+        $mform->addElement('date_time_selector', 'starttime', get_string('starttime', 'block_exastud'), $timeoptions);
         $mform->setType('starttime', PARAM_INT);
         $mform->addRule('starttime', null, 'required', null, 'client');
 
-        $mform->addElement('date_time_selector', 'endtime', 'Enddatum:', $timeoptions);
+        $mform->addElement('date_time_selector', 'endtime', get_string('endtime', 'block_exastud'), $timeoptions);
         $mform->setType('endtime', PARAM_INT);
         $mform->addRule('endtime', null, 'required', null, 'client');
 
