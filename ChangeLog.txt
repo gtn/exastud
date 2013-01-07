@@ -1,3 +1,7 @@
-Version 1.1.0
-* First changelog entry
+Version 1.1.0 Build 2012122100
+* migrated to Moodle 2.x
 * added de_du
+* added communication with exabis competencies as assessment-categories
+* added competency-radar
+* pdf-output
+* interaction with exabis eportfolio
