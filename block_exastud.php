@@ -64,6 +64,7 @@ class block_exastud extends block_list {
 		global $CFG, $COURSE, $USER, $DB;
 
 		$context = get_context_instance(CONTEXT_SYSTEM);
+		$coursecontext = get_context_instance(CONTEXT_COURSE,$COURSE->id);
 
 		if (!has_capability('block/exastud:use', $context)) {
 			$this->content = '';
@@ -84,7 +85,7 @@ class block_exastud extends block_list {
 		$this->content->icons = array();
 		$this->content->footer = '';
 
-		if (has_capability('block/exastud:head', $context)) {
+		if (has_capability('block/exastud:headteacher', $coursecontext)) {
 			$this->content->icons[] = '<img src="' . $CFG->wwwroot . '/blocks/exastud/pix/klassenzuteilung.png" height="16" width="23" alt="" />';
 			$this->content->items[] = '<a title="' . get_string('configuration', 'block_exastud') . '" href="' . $CFG->wwwroot . '/blocks/exastud/configuration.php?courseid=' . $COURSE->id . '">' . get_string('configuration', 'block_exastud') . '</a>';
 
@@ -93,7 +94,6 @@ class block_exastud extends block_list {
 				$this->content->items[] = '<a title="' . get_string('report', 'block_exastud') . '" href="' . $CFG->wwwroot . '/blocks/exastud/report.php?courseid=' . $COURSE->id . '">' . get_string('report', 'block_exastud') . '</a>';
 			}
 		}
-
 
 		if (has_capability('block/exastud:editperiods', $context)) {
 			$this->content->icons[] = '<img src="' . $CFG->wwwroot . '/blocks/exastud/pix/eingabezeitraum.png" height="16" width="23" alt="" />';

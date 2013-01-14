@@ -279,8 +279,8 @@ function block_exabis_student_review_print_header($items, $options = array())
 	$tabs = array();
 	$currenttab=null;
 	$context = get_context_instance(CONTEXT_SYSTEM);
-
-	if (has_capability('block/exastud:head', $context)) {
+	$coursecontext = get_context_instance(CONTEXT_COURSE,$COURSE->id);
+	if (has_capability('block/exastud:headteacher', $coursecontext)) {
 		$tabs[] = new tabobject('configuration', $CFG->wwwroot . '/blocks/exastud/configuration.php?courseid=' . $COURSE->id, get_string("configuration", "block_exastud"), '', true);
 		if(block_exabis_student_review_reviews_available())
 			$tabs[] = new tabobject('report', $CFG->wwwroot . '/blocks/exastud/report.php?courseid=' . $COURSE->id, get_string("report", "block_exastud"), '', true);

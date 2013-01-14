@@ -36,9 +36,9 @@ $periodid = optional_param('periodid', 0, PARAM_INT); // Period ID
 global $DB,$CFG;
 require_login($courseid);
 
-$context = get_context_instance(CONTEXT_SYSTEM);
+$context = get_context_instance(CONTEXT_COURSE,$courseid);
 require_capability('block/exastud:use', $context);
-require_capability('block/exastud:head', $context);
+require_capability('block/exastud:headteacher', $context);
 
 if (!$class = $DB->get_record('block_exastudclass', array('userid'=>$USER->id))) {
 	print_error('noclassfound', 'block_exastud');
