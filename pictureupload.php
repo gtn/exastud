@@ -40,7 +40,7 @@ require_login($courseid);
 
 $context = get_context_instance(CONTEXT_SYSTEM);
 require_capability('block/exastud:use', $context);
-require_capability('block/exastud:head', $context);
+require_capability('block/exastud:uploadpicture', $context);
 
 $url = '/blocks/exastud/configuration.php';
 $PAGE->set_url($url);
