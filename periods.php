@@ -68,7 +68,7 @@ foreach($periods as $period) {
 
 	$link = '<a href="' . $CFG->wwwroot . '/blocks/exastud/configuration_period.php?courseid=' . $courseid . '&amp;periodid=' . $period->id . '&amp;sesskey=' . sesskey() . '&amp;action=edit">';
 
-	$icons = $link.'<img src="' . $CFG->wwwroot . '/blocks/exastud/pix/edit.gif" width="16" height="16" alt="' . get_string('edit'). '" /></a>
+	$icons = $link.'<img src="' . $CFG->wwwroot . '/pix/t/edit.gif" width="16" height="16" alt="' . get_string('edit'). '" /></a>
 			  <a href="' . $CFG->wwwroot . '/blocks/exastud/configuration_period.php?courseid=' . $courseid . '&amp;periodid=' . $period->id . '&amp;sesskey=' . sesskey() . '&amp;action=delete"><img src="' . $CFG->wwwroot . '/pix/t/delete.gif" width="11" height="11" alt="' . get_string('delete'). '" /></a> ';
 
 	$starttime = date('d. M. Y - H:i', $period->starttime);
