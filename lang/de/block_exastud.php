@@ -91,3 +91,4 @@ $string['print'] = 'Drucken';
 $string['perioddesc'] = 'Beschreibung der Periode:';
 $string['starttime'] = 'Startdatum: ';
 $string['endtime'] = 'Enddatum: ';
+$string['noperiods'] = 'Es gibt noch keine Beurteilungsperiode. Bitte wenden Sie sich an den Administrator, der Ihnen freundlicherweise eine anlegen wird.';

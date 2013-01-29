@@ -52,6 +52,11 @@ if (!$class = $DB->get_record('block_exastudclass', array('userid'=>$USER->id)))
 block_exabis_student_review_print_header('configuration');
 echo $OUTPUT->heading($class->class);
 
+//if no periods
+if (!$periods = $DB->get_records('block_exastudperiod')) {
+echo $OUTPUT->box(get_string('noperiods', 'block_exastud'));
+}
+
 echo $OUTPUT->single_button($CFG->wwwroot . '/blocks/exastud/configuration_class.php?courseid='.$courseid.'&sesskey='. sesskey(),
 		get_string('editclassname', 'block_exastud'));
 
