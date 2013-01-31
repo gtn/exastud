@@ -53,7 +53,8 @@ block_exabis_student_review_print_header('configuration');
 echo $OUTPUT->heading($class->class);
 
 //if no periods
-if (!$periods = $DB->get_records('block_exastudperiod')) {
+//if (!$periods = $DB->get_records('block_exastudperiod')) {
+if (block_exabis_student_review_get_active_period(false,false)==false){
 echo $OUTPUT->box(get_string('noperiods', 'block_exastud'));
 }
 
