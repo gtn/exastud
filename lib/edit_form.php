@@ -1,5 +1,4 @@
 <?php
-
 require_once($CFG->dirroot . '/lib/formslib.php');
 
 class class_edit_form extends moodleform {

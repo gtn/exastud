@@ -33,6 +33,7 @@ require("inc.php");
 global $DB, $THEME;
 define("MAX_USERS_PER_PAGE", 5000);
 
+
 $courseid = optional_param('courseid', 1, PARAM_INT); // Course ID
 $showall        = optional_param('showall', 0, PARAM_BOOL);
 $searchtext     = optional_param('searchtext', '', PARAM_TEXT); // search string

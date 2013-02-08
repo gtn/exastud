@@ -72,6 +72,7 @@ if ($periodedit = $periodform->get_data()) {
 	}
 	redirect('periods.php?courseid=' . $courseid);
 }
+
 $period = new stdClass();
 $period->courseid = $courseid;
 if($action == 'edit') {

@@ -9,7 +9,6 @@
 // The system has four possible values for a capability:
 // CAP_ALLOW, CAP_PREVENT, CAP_PROHIBIT, and inherit (not set).
 //
-//
 // CAPABILITY NAMING CONVENTION
 //
 // It is important that capability names are unique. The naming convention

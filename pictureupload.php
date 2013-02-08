@@ -32,6 +32,7 @@
 require("inc.php");
 global $DB;
 
+
 $courseid       = optional_param('courseid', 1, PARAM_INT); // Course ID
 $showall        = optional_param('showall', 0, PARAM_BOOL);
 $searchtext     = optional_param('searchtext', '', PARAM_ALPHANUM); // search string

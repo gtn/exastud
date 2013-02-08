@@ -20,7 +20,6 @@
  * @subpackage blocks
  * @copyright 2013 gtn gmbh
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- 
  *  This script is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the

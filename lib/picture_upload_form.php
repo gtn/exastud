@@ -16,5 +16,4 @@ class block_exastud_picture_upload_form extends moodleform {
 		$this->add_action_buttons(false, get_string('add'));
 
 	}
-
 }

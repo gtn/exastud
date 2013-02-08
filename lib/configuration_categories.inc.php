@@ -1,4 +1,5 @@
 <form id="assignform" action="<?php p($form_target)?>" method="post">
+
 <div>
     <input type="hidden" name="id" value="<?php p($courseid) ?>" />
     <input type="hidden" name="sesskey" value="<?php p(sesskey()) ?>" />

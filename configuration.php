@@ -35,7 +35,6 @@ global $DB;
 $courseid       = optional_param('courseid', 1, PARAM_INT); // Course ID
 $showall        = optional_param('showall', 0, PARAM_BOOL);
 $searchtext     = optional_param('searchtext', '', PARAM_ALPHANUM); // search string
-
 require_login($courseid);
 
 $context = get_context_instance(CONTEXT_COURSE,$courseid);

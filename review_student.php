@@ -63,6 +63,7 @@ $actPeriod = block_exabis_student_review_get_active_period();
 $categories = block_exabis_student_review_get_class_categories($classid);
 
 $formdata = new stdClass();
+
 if (!$reviewdata = $DB->get_record('block_exastudreview', array('teacher_id' => $USER->id, 'periods_id' => $actPeriod->id, 'student_id' => $studentid))) {
 	
     $formdata->courseid = $courseid;
