@@ -5,7 +5,7 @@ body {
 	background-color: #fff;
 	font-family: 'Ubuntu', sans-serif;
 }
-#printsectionhoch {
+.printsectionhoch {
 	width: 595, 3pt;
 	background-color: #fff;
 	height: 842;
