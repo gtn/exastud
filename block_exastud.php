@@ -42,13 +42,14 @@ class block_exastud extends block_list {
 	}
 
 	function has_config() {
-		return true;
+		return false;
 	}
 
 	function instance_allow_config() {
 		return false;
 	}
 
+	/*
 	function config_save($data) {
 		print_r($data);
 		die();
@@ -58,7 +59,7 @@ class block_exastud extends block_list {
 		}
 		return true;
 	}
-
+	*/
 	function get_content() {
 		global $CFG, $COURSE, $USER, $DB;
 
