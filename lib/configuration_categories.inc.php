@@ -1,5 +1,4 @@
 <form id="assignform" action="<?php p($form_target)?>" method="post">
-
 <div>
     <input type="hidden" name="id" value="<?php p($courseid) ?>" />
     <input type="hidden" name="sesskey" value="<?php p(sesskey()) ?>" />
@@ -16,13 +15,7 @@
 	          <?php
 	            $i = 0;
                 foreach ($classcategories as $classcategory) {
-
-                    if ($classuser->hidden) {
-                        $hidden=' ('.get_string('hiddenassign').') ';
-                    } else {
-                        $hidden="";
-                    }
-                    echo "<option value='".$classcategory->id."_".$classcategory->source."'>".$classcategory->title.$hidden."</option>\n";
+                    echo "<option value='".$classcategory->id."_".$classcategory->source."'>".$classcategory->title."</option>\n";
                     $i++;    
                 }
                 if ($i==0) {

@@ -1,6 +1,5 @@
 <form id="assignform" action="<?php p($form_target)?>" method="post">
 <div>
-
     <input type="hidden" name="id" value="<?php p($courseid) ?>" />
     <input type="hidden" name="sesskey" value="<?php p(sesskey()) ?>" />
     <table summary="" style="margin-left:auto;margin-right:auto" border="0" cellpadding="5" cellspacing="0">
@@ -18,12 +17,8 @@
                 foreach ($classusers as $classuser) {
 
                    $fullname = fullname($classuser, true);
-                    if ($classuser->hidden) {
-                        $hidden=' ('.get_string('hiddenassign').') ';
-                    } else {
-                        $hidden="";
-                    }
-                    echo "<option value=\"$classuser->id\">".$fullname.", ".$classuser->email.$hidden."</option>\n";
+                   $hidden = "";
+                    echo "<option value=\"$classuser->id\">".$fullname.", ".$classuser->email."</option>\n";
                     $i++;    
                 }
                 if ($i==0) {
