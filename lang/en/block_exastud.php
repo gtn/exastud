@@ -93,3 +93,4 @@ $string['perioddesc'] = 'description of the period: ';
 $string['starttime'] = 'starttime: ';
 $string['endtime'] = 'endtime: ';
 $string['noperiods'] = 'There is no assessment-period defined yet. Please contact the administrator - he will gladly help you!';
+$string['commentshouldnotbeempty'] = 'You have to enter a comment.';
