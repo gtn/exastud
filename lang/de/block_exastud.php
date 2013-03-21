@@ -4,6 +4,8 @@ $string['exastud:use'] = 'Student Review benutzen';
 $string['exastud:head'] = 'Klassenvorstand';
 $string['exastud:editperiods'] = 'Perioden bearbeiten';
 $string['exastud:uploadpicture'] = 'Logo uploaden';
+$string['exastud:addinstance'] = 'Student Review auf Kursseite anlegen';
+$string['exastud:myaddinstance'] = 'Student Review auf Startseite anlegen';
 //
 $string['pluginname'] = 'Exabis Student Review';
 $string['blocktitle'] = 'Exabis Student Review';
