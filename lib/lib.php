@@ -93,11 +93,16 @@ function block_exabis_student_review_get_active_period($printBoxInsteadOfError =
 }
 function block_exabis_student_review_get_period_categories($periodid) {
 	global $DB;
-	$reviewcategories = $DB->get_records_sql('SELECT rp.categoryid, rp.categorysource FROM {block_exastudreviewpos} rp, {block_exastudreview} r WHERE r.periods_id=? AND rp.reviewid=r.id GROUP BY rp.categoryid, rp.categorysource',array($periodid));
+	
+	// use a dummy id, bc for moodle the first column has to be unique
+	$reviewcategories = $DB->get_records_sql('SELECT CONCAT(rp.categoryid, "-", rp.categorysource) AS id, rp.categoryid, rp.categorysource FROM {block_exastudreviewpos} rp, {block_exastudreview} r WHERE r.periods_id=? AND rp.reviewid=r.id GROUP BY rp.categoryid, rp.categorysource',array($periodid));
+	
 	$categories=array();
 	foreach($reviewcategories as $reviewcategory) {
-		$categories[] = block_exabis_student_review_get_category($reviewcategory->categoryid, $reviewcategory->categorysource);
+		if ($tmp = block_exabis_student_review_get_category($reviewcategory->categoryid, $reviewcategory->categorysource))
+			$categories[] = $tmp;
 	}
+
 	return $categories;
 }
 function block_exabis_student_review_get_report($student_id, $period_id) {
@@ -117,8 +122,8 @@ function block_exabis_student_review_get_report($student_id, $period_id) {
 
 	$reviewcategories = $DB->get_records_sql('SELECT rp.categoryid, rp.categorysource, ROUND(AVG(rp.value), ' . DECIMALPOINTS . ') as avgvalue FROM {block_exastudreview} r, {block_exastudreviewpos} rp where r.student_id = ? AND r.periods_id = ? AND rp.reviewid = r.id GROUP BY rp.categoryid, rp.categorysource',array($student_id,$period_id));
 	foreach($reviewcategories as $rcat) {
-		$category = block_exabis_student_review_get_category($rcat->categoryid, $rcat->categorysource);
-		$report->{$category->title} = is_null($rcat->avgvalue) ? '' : $rcat->avgvalue;
+		if ($category = block_exabis_student_review_get_category($rcat->categoryid, $rcat->categorysource))
+			$report->{$category->title} = is_null($rcat->avgvalue) ? '' : $rcat->avgvalue;
 	}
 
 	$numrecords = $DB->get_record_sql('SELECT COUNT(id) AS count FROM {block_exastudreview} WHERE student_id=' . $student_id . ' AND periods_id=' . $period_id);
@@ -351,19 +356,26 @@ function block_exabis_student_review_get_category($categoryid,$categorysource) {
 	switch ($categorysource) {
 		case 'exastud':
 			$category = $DB->get_record('block_exastudcate',array("id"=>$categoryid));
+			if (!$category)
+				return null;
+			
 			$category->source = 'exastud';
-			break;
+
+			return $category;
 		case 'exacomp':
 			if(block_exabis_student_review_check_competence_block()) {
 				$category = $DB->get_record('block_exacomptopics',array("id"=>$categoryid));
+				if (!$category)
+					return null;
+				
 				$category->source = 'exacomp';
+				
+				return $category;
+			} else {
+				return null;
 			}
-			break;
-		default:
-			$category = null;
-			break;
 	}
-	return $category;
+	return null;
 }
 function block_exabis_student_review_insert_default_categories() {
 	global $DB;
@@ -388,7 +400,8 @@ function block_exabis_student_review_get_class_categories($classid) {
 	$classcategories = $DB->get_records('block_exastudclasscate',array("classid"=>$classid));
 	$categories = array();
 	foreach($classcategories as $category) {
-		$categories[] = block_exabis_student_review_get_category($category->categoryid, $category->categorysource);
+		if ($tmp = block_exabis_student_review_get_category($category->categoryid, $category->categorysource))
+			$categories[] = $tmp;
 	}
 	return $categories;
 }
