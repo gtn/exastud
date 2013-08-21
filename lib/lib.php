@@ -192,16 +192,12 @@ function block_exabis_student_review_print_student_report($studentid, $periodid,
 	if(!$pdf) $studentreport = str_replace ( '###USERPIC###', $OUTPUT->user_picture($DB->get_record('user', array("id"=>$studentid)),array("size"=>100)), $studentreport);
 	else $studentreport = str_replace( '###USERPIC###', '', $studentreport);
 	
-	$latest='';
-	if(is_dir('logo')) {
-		$files = scandir('logo');
-		$latest = null;
-		foreach($files as $file) {
-			if(($latest==null && strpos($file,'logo')===0) || (filemtime('logo/'.$file) > filemtime('logo/'.$latest) && strpos($file,'logo')===0))
-				$latest = $file;
-		}
+	if ($file = block_exastud_get_main_logo()) {
+		// add timemodified to refresh latest logo file
+		$img = '<img id="logo" width="840" height="100" src="logo.php?'.$file->get_timemodified().'"/>';
+	} else {
+		$img = '';
 	}
-	$img = file_exists('logo/'.$latest) ? '<img id="logo" width="840" height="100" src="logo/'.$latest.'"/>' : '';
 	$studentreport = str_replace ( '###TITLE###',$img, $studentreport);
 	$studentreport = str_replace ( '###CLASS###', $class->class, $studentreport);
 	$studentreport = str_replace ( '###NUM###', $studentReport->numberOfEvaluations, $studentreport);
@@ -404,4 +400,11 @@ function block_exabis_student_review_get_class_categories($classid) {
 			$categories[] = $tmp;
 	}
 	return $categories;
+}
+
+function block_exastud_get_main_logo() {
+	$fs = get_file_storage();
+	
+	$areafiles = $fs->get_area_files(get_context_instance(CONTEXT_SYSTEM)->id, 'block_exastud', 'main_logo', 0, 'itemid', false);
+	return empty($areafiles) ? null : reset($areafiles);
 }
