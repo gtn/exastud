@@ -194,7 +194,7 @@ function block_exabis_student_review_print_student_report($studentid, $periodid,
 	
 	if ($file = block_exastud_get_main_logo()) {
 		// add timemodified to refresh latest logo file
-		$img = '<img id="logo" width="840" height="100" src="logo.php?'.$file->get_timemodified().'"/>';
+		$img = '<img id="logo" width="840" height="100" src="'.$CFG->wwwroot.'/blocks/exastud/logo.php?'.$file->get_timemodified().'"/>';
 	} else {
 		$img = '';
 	}
