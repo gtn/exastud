@@ -267,8 +267,8 @@ function block_exabis_student_review_print_student_report($studentid, $periodid,
 
 function block_exabis_student_review_print_header($items, $options = array())
 {
-	global $CFG, $COURSE, $OUTPUT, $DB, $USER;
-
+	global $CFG, $COURSE, $PAGE, $DB, $USER, $OUTPUT;
+	
 	$items = (array)$items;
 	$strheader = get_string('pluginname', 'block_exastud');
 
@@ -326,9 +326,9 @@ function block_exabis_student_review_print_header($items, $options = array())
 	}
 
 	$navigation = build_navigation($navlinks);
-	print_header_simple($strheader.': '.$last_item_name, '', $navigation, "", "", true);
-	print_tabs(array($tabs),$currenttab);
+	print_header_simple($strheader.': '.$last_item_name, $strheader, $navigation, "", "", true,'&nbsp;','',false,'',false);
 	echo '<div id="exabis_student_review">';
+	print_tabs(array($tabs),$currenttab);
 
 	// header
 	if (empty($options['noheading']))

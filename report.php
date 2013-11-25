@@ -82,8 +82,8 @@ foreach($classusers as $classuser) {
 
 	$link = '<a href="' . $CFG->wwwroot . '/blocks/exastud/printstudent.php?courseid=' . $courseid . '&amp;studentid=' . $user->id . '&amp;sesskey=' . sesskey() . '&periodid='.$periodid.'">';
 	$icons = $link.'<img src="' . $CFG->wwwroot . '/blocks/exastud/pix/print.gif" width="16" height="16" alt="' . get_string('printversion', 'block_exastud'). '" /></a>';
-	$link = '<a href="' . $CFG->wwwroot . '/blocks/exastud/printstudent.php?courseid=' . $courseid . '&amp;studentid=' . $user->id . '&amp;sesskey=' . sesskey() . '&periodid='.$periodid.'&pdf=true">';
-	$icons .= $link.'<img src="' . $CFG->wwwroot . '/blocks/exastud/pix/pdf.png" width="23" height="16" alt="' . get_string('printversion', 'block_exastud'). '" /></a>';
+	//$link = '<a href="' . $CFG->wwwroot . '/blocks/exastud/printstudent.php?courseid=' . $courseid . '&amp;studentid=' . $user->id . '&amp;sesskey=' . sesskey() . '&periodid='.$periodid.'&pdf=true">';
+	//$icons .= $link.'<img src="' . $CFG->wwwroot . '/blocks/exastud/pix/pdf.png" width="23" height="16" alt="' . get_string('printversion', 'block_exastud'). '" /></a>';
 	
 	$studentdesc = $OUTPUT->user_picture($user,array("courseid"=>$courseid)) . ' ' . $link.fullname($user, $user->id).'</a>';
 	//$studentdesc = print_user_picture($user->id, $courseid, $user->picture, 0, true, false) . ' ' . $link.fullname($user, $user->id).'</a>';
