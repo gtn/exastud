@@ -93,11 +93,24 @@ function block_exabis_student_review_get_active_period($printBoxInsteadOfError =
 }
 function block_exabis_student_review_get_period_categories($periodid) {
 	global $DB;
+<<<<<<< HEAD
 	$reviewcategories = $DB->get_records_sql('SELECT concat(categoryid,"_",categorysource) as uniqueuid,rp.categoryid, rp.categorysource FROM {block_exastudreviewpos} rp, {block_exastudreview} r WHERE r.periods_id=? AND rp.reviewid=r.id GROUP BY rp.categoryid, rp.categorysource',array($periodid));
 	$categories=array();
 	foreach($reviewcategories as $reviewcategory) {
 		$categories[] = block_exabis_student_review_get_category($reviewcategory->categoryid, $reviewcategory->categorysource);
 	}
+=======
+	
+	// use a dummy id, bc for moodle the first column has to be unique
+	$reviewcategories = $DB->get_records_sql('SELECT CONCAT(rp.categoryid, "-", rp.categorysource) AS id, rp.categoryid, rp.categorysource FROM {block_exastudreviewpos} rp, {block_exastudreview} r WHERE r.periods_id=? AND rp.reviewid=r.id GROUP BY rp.categoryid, rp.categorysource',array($periodid));
+	
+	$categories=array();
+	foreach($reviewcategories as $reviewcategory) {
+		if ($tmp = block_exabis_student_review_get_category($reviewcategory->categoryid, $reviewcategory->categorysource))
+			$categories[] = $tmp;
+	}
+
+>>>>>>> origin/experimental
 	return $categories;
 }
 function block_exabis_student_review_get_report($student_id, $period_id) {
@@ -117,10 +130,15 @@ function block_exabis_student_review_get_report($student_id, $period_id) {
 
 	$reviewcategories = $DB->get_records_sql('SELECT concat(categoryid,"_",categorysource) as uniqueuid,rp.categoryid, rp.categorysource, ROUND(AVG(rp.value), ' . DECIMALPOINTS . ') as avgvalue FROM {block_exastudreview} r, {block_exastudreviewpos} rp where r.student_id = ? AND r.periods_id = ? AND rp.reviewid = r.id GROUP BY rp.categoryid, rp.categorysource',array($student_id,$period_id));
 	foreach($reviewcategories as $rcat) {
+<<<<<<< HEAD
 		$category = block_exabis_student_review_get_category($rcat->categoryid, $rcat->categorysource);
 		if (!empty($category->title)){
 			$report->{$category->title} = is_null($rcat->avgvalue) ? '' : $rcat->avgvalue;
 		}
+=======
+		if ($category = block_exabis_student_review_get_category($rcat->categoryid, $rcat->categorysource))
+			$report->{$category->title} = is_null($rcat->avgvalue) ? '' : $rcat->avgvalue;
+>>>>>>> origin/experimental
 	}
 
 	$numrecords = $DB->get_record_sql('SELECT COUNT(id) AS count FROM {block_exastudreview} WHERE student_id=' . $student_id . ' AND periods_id=' . $period_id);
@@ -189,16 +207,12 @@ function block_exabis_student_review_print_student_report($studentid, $periodid,
 	if(!$pdf) $studentreport = str_replace ( '###USERPIC###', $OUTPUT->user_picture($DB->get_record('user', array("id"=>$studentid)),array("size"=>100)), $studentreport);
 	else $studentreport = str_replace( '###USERPIC###', '', $studentreport);
 	
-	$latest='';
-	if(is_dir('logo')) {
-		$files = scandir('logo');
-		$latest = null;
-		foreach($files as $file) {
-			if(($latest==null && strpos($file,'logo')===0) || (filemtime('logo/'.$file) > filemtime('logo/'.$latest) && strpos($file,'logo')===0))
-				$latest = $file;
-		}
+	if ($file = block_exastud_get_main_logo()) {
+		// add timemodified to refresh latest logo file
+		$img = '<img id="logo" width="840" height="100" src="'.$CFG->wwwroot.'/blocks/exastud/logo.php?'.$file->get_timemodified().'"/>';
+	} else {
+		$img = '';
 	}
-	$img = file_exists('logo/'.$latest) ? '<img id="logo" width="840" height="100" src="logo/'.$latest.'"/>' : '';
 	$studentreport = str_replace ( '###TITLE###',$img, $studentreport);
 	$studentreport = str_replace ( '###CLASS###', $class->class, $studentreport);
 	$studentreport = str_replace ( '###NUM###', $studentReport->numberOfEvaluations, $studentreport);
@@ -268,8 +282,8 @@ function block_exabis_student_review_print_student_report($studentid, $periodid,
 
 function block_exabis_student_review_print_header($items, $options = array())
 {
-	global $CFG, $COURSE, $OUTPUT, $DB, $USER;
-
+	global $CFG, $COURSE, $PAGE, $DB, $USER, $OUTPUT;
+	
 	$items = (array)$items;
 	$strheader = get_string('pluginname', 'block_exastud');
 
@@ -327,9 +341,9 @@ function block_exabis_student_review_print_header($items, $options = array())
 	}
 
 	$navigation = build_navigation($navlinks);
-	print_header_simple($strheader.': '.$last_item_name, '', $navigation, "", "", true);
-	print_tabs(array($tabs),$currenttab);
+	print_header_simple($strheader.': '.$last_item_name, $strheader, $navigation, "", "", true,'&nbsp;','',false,'',false);
 	echo '<div id="exabis_student_review">';
+	print_tabs(array($tabs),$currenttab);
 
 	// header
 	if (empty($options['noheading']))
@@ -353,22 +367,34 @@ function block_exabis_student_review_get_category($categoryid,$categorysource) {
 	switch ($categorysource) {
 		case 'exastud':
 			$category = $DB->get_record('block_exastudcate',array("id"=>$categoryid));
+			if (!$category)
+				return null;
+			
 			$category->source = 'exastud';
-			break;
+
+			return $category;
 		case 'exacomp':
 			if(block_exabis_student_review_check_competence_block()) {
+<<<<<<< HEAD
 				if($category = $DB->get_record('block_exacomptopics',array("id"=>$categoryid))){
 					$category->source = 'exacomp';
 				}else{
 					$category = null;
 				}
+=======
+				$category = $DB->get_record('block_exacomptopics',array("id"=>$categoryid));
+				if (!$category)
+					return null;
+				
+				$category->source = 'exacomp';
+				
+				return $category;
+			} else {
+				return null;
+>>>>>>> origin/experimental
 			}
-			break;
-		default:
-			$category = null;
-			break;
 	}
-	return $category;
+	return null;
 }
 function block_exabis_student_review_insert_default_categories() {
 	global $DB;
@@ -393,7 +419,15 @@ function block_exabis_student_review_get_class_categories($classid) {
 	$classcategories = $DB->get_records('block_exastudclasscate',array("classid"=>$classid));
 	$categories = array();
 	foreach($classcategories as $category) {
-		$categories[] = block_exabis_student_review_get_category($category->categoryid, $category->categorysource);
+		if ($tmp = block_exabis_student_review_get_category($category->categoryid, $category->categorysource))
+			$categories[] = $tmp;
 	}
 	return $categories;
+}
+
+function block_exastud_get_main_logo() {
+	$fs = get_file_storage();
+	
+	$areafiles = $fs->get_area_files(get_context_instance(CONTEXT_SYSTEM)->id, 'block_exastud', 'main_logo', 0, 'itemid', false);
+	return empty($areafiles) ? null : reset($areafiles);
 }

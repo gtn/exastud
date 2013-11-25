@@ -54,12 +54,22 @@ $mform = new block_exastud_picture_upload_form();
 if ($mform->is_cancelled()) {
 	redirect($returnurl);
 } else if ($mform->is_submitted()) {
-	@mkdir('logo');
+	
+	$fs = get_file_storage();
+	
+	// delete old logo
+	$fs->delete_area_files(get_context_instance(CONTEXT_SYSTEM)->id, 'block_exastud', 'main_logo', 0);
 
-	$ext = explode('.',$mform->get_new_filename('file'));
-	file_put_contents('logo/logo.'.$ext[count($ext)-1],$mform->get_file_content('file'));
+	// save new logo
+	$mform->save_stored_file('file', get_context_instance(CONTEXT_SYSTEM)->id, 'block_exastud', 'main_logo', 0);
+							  
 	get_string('upload_success','block_exastud');
 }
+
+if ($file = block_exastud_get_main_logo()) {
+	echo '<img id="logo" width="840" height="100" src="logo.php?'.$file->get_timemodified().'"/>';
+}
+		
 $mform->display();
 
 block_exabis_student_review_print_footer();
