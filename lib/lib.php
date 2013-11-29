@@ -87,16 +87,16 @@ function block_exabis_student_review_get_active_period($printBoxInsteadOfError =
 		}
 		else if($printError){
 			print_error('periodserror', 'block_exastud', $CFG->wwwroot.'/blocks/exastud/configuration_period.php?courseid='.$COURSE->id);
-		} else
-			return false;
+		}
+		return false;
 	}
 }
 function block_exabis_student_review_get_period_categories($periodid) {
 	global $DB;
-	
+
 	// use a dummy id, bc for moodle the first column has to be unique
 	$reviewcategories = $DB->get_records_sql('SELECT CONCAT(rp.categoryid, "-", rp.categorysource) AS id, rp.categoryid, rp.categorysource FROM {block_exastudreviewpos} rp, {block_exastudreview} r WHERE r.periods_id=? AND rp.reviewid=r.id GROUP BY rp.categoryid, rp.categorysource',array($periodid));
-	
+
 	$categories=array();
 	foreach($reviewcategories as $reviewcategory) {
 		if ($tmp = block_exabis_student_review_get_category($reviewcategory->categoryid, $reviewcategory->categorysource))
@@ -120,7 +120,7 @@ function block_exabis_student_review_get_report($student_id, $period_id) {
 	$report->inde = is_null($inde->avginde) ? '': $inde->avginde;
 	*/
 
-	$reviewcategories = $DB->get_records_sql('SELECT rp.categoryid, rp.categorysource, ROUND(AVG(rp.value), ' . DECIMALPOINTS . ') as avgvalue FROM {block_exastudreview} r, {block_exastudreviewpos} rp where r.student_id = ? AND r.periods_id = ? AND rp.reviewid = r.id GROUP BY rp.categoryid, rp.categorysource',array($student_id,$period_id));
+	$reviewcategories = $DB->get_records_sql('SELECT rp.id, rp.categoryid, rp.categorysource, ROUND(AVG(rp.value), ' . DECIMALPOINTS . ') as avgvalue FROM {block_exastudreview} r, {block_exastudreviewpos} rp where r.student_id = ? AND r.periods_id = ? AND rp.reviewid = r.id GROUP BY rp.categoryid, rp.categorysource',array($student_id,$period_id));
 	foreach($reviewcategories as $rcat) {
 		if ($category = block_exabis_student_review_get_category($rcat->categoryid, $rcat->categorysource))
 			$report->{$category->title} = is_null($rcat->avgvalue) ? '' : $rcat->avgvalue;
@@ -172,7 +172,7 @@ function block_exabis_student_review_print_student_report($studentid, $periodid,
 {
 	global $DB,$CFG,$OUTPUT,$USER;
 	$period =$DB->get_record('block_exastudperiod', array('id'=>$periodid));
-	
+
 	$studentreport = '';
 	$studentreportcommentstemplate = '';
 	$studentreportcomments = '';
@@ -191,7 +191,7 @@ function block_exabis_student_review_print_student_report($studentid, $periodid,
 	$studentreport = str_replace ( '###LASTNAME###', $student->lastname, $studentreport);
 	if(!$pdf) $studentreport = str_replace ( '###USERPIC###', $OUTPUT->user_picture($DB->get_record('user', array("id"=>$studentid)),array("size"=>100)), $studentreport);
 	else $studentreport = str_replace( '###USERPIC###', '', $studentreport);
-	
+
 	if ($file = block_exastud_get_main_logo()) {
 		// add timemodified to refresh latest logo file
 		$img = '<img id="logo" width="840" height="100" src="'.$CFG->wwwroot.'/blocks/exastud/logo.php?'.$file->get_timemodified().'"/>';
@@ -203,7 +203,7 @@ function block_exabis_student_review_print_student_report($studentid, $periodid,
 	$studentreport = str_replace ( '###NUM###', $studentReport->numberOfEvaluations, $studentreport);
 	$studentreport = str_replace ( '###PERIOD###', $period->description, $studentreport);
 	$studentreport = str_replace ( '###LOGO###', $img, $studentreport);
-	
+
 	$categories = ($periodid==block_exabis_student_review_get_active_period()->id) ? block_exabis_student_review_get_class_categories($class->id) : block_exabis_student_review_get_period_categories($periodid);
 
 	$html='';
@@ -231,7 +231,7 @@ function block_exabis_student_review_print_student_report($studentid, $periodid,
 
 	if($pdf) {
 		$imgdir = make_upload_directory("exastud/temp/userpic/{$studentid}");
-		
+
 		$fs = get_file_storage();
 		$context = $DB->get_record("context",array("contextlevel"=>30,"instanceid"=>$studentid));
 		$files = $fs->get_area_files($context->id, 'user', 'icon', 0, '', false);
@@ -242,7 +242,7 @@ function block_exabis_student_review_print_student_report($studentid, $periodid,
 			$newfile=$imgdir."/".$file->get_filename();
 			$file->copy_content_to($newfile);
 		}
-		
+
 		require_once($CFG->dirroot.'/lib/tcpdf/tcpdf.php');
 		try
 		{
@@ -252,7 +252,7 @@ function block_exabis_student_review_print_student_report($studentid, $periodid,
 			$pdf->AddPage();
 			if($file) $pdf->Image($newfile,480,185, 75, 75);
 			$pdf->writeHTML($studentreport, true, false, true, false, '');
-		
+
 			$pdf->Output('Student Review.pdf', 'I');
 			unlink($newfile);
 		}
@@ -268,7 +268,7 @@ function block_exabis_student_review_print_student_report($studentid, $periodid,
 function block_exabis_student_review_print_header($items, $options = array())
 {
 	global $CFG, $COURSE, $PAGE, $DB, $USER, $OUTPUT;
-	
+
 	$items = (array)$items;
 	$strheader = get_string('pluginname', 'block_exastud');
 
@@ -354,7 +354,7 @@ function block_exabis_student_review_get_category($categoryid,$categorysource) {
 			$category = $DB->get_record('block_exastudcate',array("id"=>$categoryid));
 			if (!$category)
 				return null;
-			
+				
 			$category->source = 'exastud';
 
 			return $category;
@@ -363,9 +363,9 @@ function block_exabis_student_review_get_category($categoryid,$categorysource) {
 				$category = $DB->get_record('block_exacomptopics',array("id"=>$categoryid));
 				if (!$category)
 					return null;
-				
+
 				$category->source = 'exacomp';
-				
+
 				return $category;
 			} else {
 				return null;
@@ -404,7 +404,7 @@ function block_exabis_student_review_get_class_categories($classid) {
 
 function block_exastud_get_main_logo() {
 	$fs = get_file_storage();
-	
+
 	$areafiles = $fs->get_area_files(get_context_instance(CONTEXT_SYSTEM)->id, 'block_exastud', 'main_logo', 0, 'itemid', false);
 	return empty($areafiles) ? null : reset($areafiles);
 }

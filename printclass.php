@@ -39,11 +39,12 @@ $context = get_context_instance(CONTEXT_COURSE,$courseid);
 require_capability('block/exastud:use', $context);
 require_capability('block/exastud:headteacher', $context);
 
-if (!$class = $DB->get_record('block_exastudclass', array('userid'=>$USER->id))) {
+$actPeriod = ($periodid==0) ? block_exabis_student_review_get_active_period() : $DB->get_record('block_exastudperiod', array('id'=>$periodid));
+
+if (!$class = $DB->get_record('block_exastudclass', array('userid'=>$USER->id,'periodid'=>$actPeriod->id))) {
 	print_error('noclassfound', 'block_exastud');
 }
 
-$actPeriod = ($periodid==0) ? block_exabis_student_review_get_active_period() : $DB->get_record('block_exastudperiod', array('id'=>$periodid));
 
 if(!$mystudents = $DB->get_records_sql('SELECT s.id, s.studentid, r.review FROM {block_exastudclassstudents} s LEFT JOIN {block_exastudreview} r ON s.studentid=r.student_id WHERE s.classid=\'' . $class->id . '\' GROUP BY s.id')) {
 	print_error('studentsnotfound','block_exastud');
