@@ -39,7 +39,9 @@ $action = optional_param('action', '', PARAM_ALPHA);
 
 require_login($courseid);
 
-$context = get_context_instance(CONTEXT_SYSTEM);
+//$context = get_context_instance(CONTEXT_SYSTEM);
+$context = context_system::instance();
+
 require_capability('block/exastud:use', $context);
 require_capability('block/exastud:editperiods', $context);
 

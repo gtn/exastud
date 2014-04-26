@@ -37,7 +37,9 @@ $pdf = optional_param('pdf', false, PARAM_BOOL); // Course ID
 $studentid = required_param('studentid', PARAM_INT); // Course ID
 require_login($courseid);
 
-$context = get_context_instance(CONTEXT_COURSE,$courseid);
+//$context = get_context_instance(CONTEXT_COURSE,$courseid);
+$context = context_system::instance();
+
 require_capability('block/exastud:use', $context);
 require_capability('block/exastud:headteacher', $context);
 $actPeriod = ($periodid==0) ? block_exabis_student_review_get_active_period() : $DB->get_record('block_exastudperiod', array('id'=>$periodid));

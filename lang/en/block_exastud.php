@@ -96,3 +96,6 @@ $string['starttime'] = 'starttime: ';
 $string['endtime'] = 'endtime: ';
 $string['noperiods'] = 'There is no assessment-period defined yet. Please contact the administrator - he will gladly help you!';
 $string['commentshouldnotbeempty'] = 'You have to enter a comment.';
+
+$string['settings_detailed_review'] = 'Detailed review';
+$string['settings_detailed_review_body'] = 'This setting allows you to see all the assessments from teachers in detail';

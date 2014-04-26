@@ -37,7 +37,8 @@ $showall        = optional_param('showall', 0, PARAM_BOOL);
 $searchtext     = optional_param('searchtext', '', PARAM_ALPHANUM); // search string
 require_login($courseid);
 
-$context = get_context_instance(CONTEXT_COURSE,$courseid);
+$context = context_system::instance();
+//$context = get_context_instance(CONTEXT_COURSE,$courseid);
 require_capability('block/exastud:use', $context);
 require_capability('block/exastud:headteacher', $context);
 

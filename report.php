@@ -35,7 +35,8 @@ $periodid = optional_param('periodid', 0, PARAM_INT); // Period ID
 global $DB,$CFG;
 require_login($courseid);
 
-$context = get_context_instance(CONTEXT_COURSE,$courseid);
+//$context = get_context_instance(CONTEXT_COURSE,$courseid);
+$context = context_system::instance();
 require_capability('block/exastud:use', $context);
 require_capability('block/exastud:headteacher', $context);
 

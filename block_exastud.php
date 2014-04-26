@@ -42,7 +42,7 @@ class block_exastud extends block_list {
 	}
 
 	function has_config() {
-		return false;
+		return true;
 	}
 
 	function instance_allow_config() {
@@ -63,9 +63,16 @@ class block_exastud extends block_list {
 	function get_content() {
 		global $CFG, $COURSE, $USER, $DB;
 
+		/*
+		 * deprecated
+		 * 
 		$context = get_context_instance(CONTEXT_SYSTEM);
 		$coursecontext = get_context_instance(CONTEXT_COURSE,$COURSE->id);
+		*/
 
+		$context = context_system::instance();
+		$coursecontext = context_course::instance($COURSE->id);
+		
 		if (!has_capability('block/exastud:use', $context)) {
 			$this->content = '';
 			return $this->content;
