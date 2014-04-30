@@ -98,3 +98,11 @@ $string['noperiods'] = 'There is no assessment-period defined yet. Please contac
 $string['commentshouldnotbeempty'] = 'You have to enter a comment.';
 $string['settings_detailed_review'] = 'Detailed review';
 $string['settings_detailed_review_body'] = 'This setting allows you to see all the assessments from teachers in detail';
+$string['settings_project_based_assessment'] = 'Project-based assessment';
+$string['settings_project_based_assessment_body'] = 'This setting allows you to use project-based assessment instead of class-assessment';
+
+// Strings for project-based assessment
+if($CFG->block_exastud_project_based_assessment) {
+	$string['configuration'] = 'Edit project';
+
+}

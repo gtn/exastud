@@ -97,4 +97,14 @@ $string['commentshouldnotbeempty'] = 'Der Kommentar darf nicht leer sein.';
 
 $string['settings_detailed_review'] = 'Einzelpunktevergabe anzeigen';
 $string['settings_detailed_review_body'] = 'Diese Einstellung erlaubt es die Punktevergabe der Beurteilenden einzeln einzusehen';
+
+$string['settings_project_based_assessment'] = 'Beurteilung auf Projekt-Basis';
+$string['settings_project_based_assessment_body'] = 'Diese Einstellung erlaubt es statt Klassen Projekte zu verwalten und zu beurteilen';
+
+// Strings for project-based assessment
+if($CFG->block_exastud_project_based_assessment) {
+	$string['configuration'] = 'Projekt konfigurieren';
+	
+}
+
 ?>
