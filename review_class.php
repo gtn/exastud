@@ -37,7 +37,9 @@ $classid = required_param('classid', PARAM_INT);
 
 require_login($courseid);
 
-$context = get_context_instance(CONTEXT_SYSTEM);
+//$context = get_context_instance(CONTEXT_SYSTEM);
+$context = context_system::instance();
+
 require_capability('block/exastud:use', $context);
 
 if(!confirm_sesskey()) {

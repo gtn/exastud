@@ -315,8 +315,10 @@ function block_exabis_student_review_print_header($items, $options = array())
 	$last_item_name = '';
 	$tabs = array();
 	$currenttab=null;
-	$context = get_context_instance(CONTEXT_SYSTEM);
-	$coursecontext = get_context_instance(CONTEXT_COURSE,$COURSE->id);
+	//$context = get_context_instance(CONTEXT_SYSTEM);
+	$context = context_system::instance();
+	//$coursecontext = get_context_instance(CONTEXT_COURSE,$COURSE->id);
+	$coursecontext = context_course::instance($COURSE->id);
 	if (has_capability('block/exastud:headteacher', $coursecontext)) {
 		$tabs[] = new tabobject('configuration', $CFG->wwwroot . '/blocks/exastud/configuration.php?courseid=' . $COURSE->id, get_string("configuration", "block_exastud"), '', true);
 		if(block_exabis_student_review_reviews_available())
@@ -358,11 +360,17 @@ function block_exabis_student_review_print_header($items, $options = array())
 			$item['type'] = 'misc';
 
 		$last_item_name = $item['name'];
-		$navlinks[] = $item;
+		$PAGE->navbar->add($item['name'],$item);
+		
 	}
 
-	$navigation = build_navigation($navlinks);
-	print_header_simple($strheader.': '.$last_item_name, $strheader, $navigation, "", "", true,'&nbsp;','',false,'',false);
+	$PAGE->set_title($strheader.': '.$last_item_name);
+	$PAGE->set_heading($strheader);
+	$PAGE->set_cacheable(true);
+	$PAGE->set_button('&nbsp;');
+	
+	echo $OUTPUT->header();
+	
 	echo '<div id="exabis_student_review">';
 	print_tabs(array($tabs),$currenttab);
 

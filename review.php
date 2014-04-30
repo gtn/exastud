@@ -36,7 +36,9 @@ $courseid = optional_param('courseid', 1, PARAM_INT); // Course ID
 
 require_login($courseid);
 
-$context = get_context_instance(CONTEXT_SYSTEM);
+//$context = get_context_instance(CONTEXT_SYSTEM);
+$context = context_system::instance();
+
 require_capability('block/exastud:use', $context);
 
 $url = '/blocks/exastud/review.php';

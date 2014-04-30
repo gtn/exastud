@@ -41,7 +41,8 @@ $remove         = optional_param('remove', 0, PARAM_BOOL);
 
 require_login($courseid);
 
-$context = get_context_instance(CONTEXT_COURSE,$courseid);
+//$context = get_context_instance(CONTEXT_COURSE,$courseid);
+$context = context_course::instance($courseid);
 require_capability('block/exastud:use', $context);
 require_capability('block/exastud:headteacher', $context);
 
