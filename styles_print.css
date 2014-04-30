@@ -170,6 +170,14 @@ table.ratingtable .ratings td, .ratingtable .ratinguser td, .ratingtable .rating
 .ratingtable .rating, .ratinguser td {
 	background-color:#dcdcdc;
 }
+.ratingtable .rating .teacher {
+	font-size: 9pt;
+}
+.ratingtable .teacher {
+	font-size: 9pt;
+	text-align: center;
+	font-style: italic;
+}
 
 .ratinguser td {
 	background-color:#dcdcdc;

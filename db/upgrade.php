@@ -4,7 +4,7 @@ function xmldb_block_exastud_upgrade($oldversion = 0) {
 	$dbman = $DB->get_manager();
 	$result=true;
 
-	if ($oldversion < 2013112901) {
+	if ($oldversion < 2014043000) {
 	
 		// Define field periodid to be added to block_exastudclass
 		$table = new xmldb_table('block_exastudclass');
@@ -16,7 +16,7 @@ function xmldb_block_exastud_upgrade($oldversion = 0) {
 		}
 	
 		// exabis_student_review savepoint reached
-		upgrade_block_savepoint(true, 2013112901, 'exastud');
+		upgrade_block_savepoint(true, 2014043000, 'exastud');
 	}
 	
 	

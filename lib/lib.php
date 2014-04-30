@@ -105,6 +105,28 @@ function block_exabis_student_review_get_period_categories($periodid) {
 
 	return $categories;
 }
+function block_exabis_student_review_get_detailed_report($student_id, $period_id) {
+	global $DB;
+
+	$report = new stdClass();
+	$review = $DB->get_records_sql('SELECT concat(pos.categoryid,"_",pos.categorysource) as uniqueuid, pos.value, u.lastname, u.firstname, pos.categoryid, pos.categorysource FROM 	{block_exastudreview} r
+			JOIN {block_exastudreviewpos} pos ON pos.reviewid = r.id
+			JOIN {user} u ON r.teacher_id = u.id WHERE student_id = ? AND periods_id = ?',array($student_id,$period_id));
+
+	$cats = $DB->get_records_sql('SELECT concat(categoryid,"_",categorysource) as uniqueuid,rp.categoryid, rp.categorysource FROM {block_exastudreview} r, {block_exastudreviewpos} rp where r.student_id = ? AND r.periods_id = ? AND rp.reviewid = r.id GROUP BY rp.categoryid, rp.categorysource',array($student_id,$period_id));
+	foreach($cats as $cat) {
+
+		if ($category = block_exabis_student_review_get_category($rcat->categoryid, $rcat->categorysource)) {
+				
+				
+			$report->{$category->title} = is_null($rcat->avgvalue) ? '' : $rcat->avgvalue;
+				
+		}
+
+	}
+
+	return $report;
+}
 function block_exabis_student_review_get_report($student_id, $period_id) {
 	global $DB;
 
@@ -171,6 +193,9 @@ function block_exabis_student_review_print_student_report_footer() {
 function block_exabis_student_review_print_student_report($studentid, $periodid, $class, $pdf=false)
 {
 	global $DB,$CFG,$OUTPUT,$USER;
+
+	$detailedreview = $CFG->block_exastud_detailed_review;
+
 	$period =$DB->get_record('block_exastudperiod', array('id'=>$periodid));
 
 	$studentreport = '';
@@ -207,11 +232,22 @@ function block_exabis_student_review_print_student_report($studentid, $periodid,
 	$categories = ($periodid==block_exabis_student_review_get_active_period()->id) ? block_exabis_student_review_get_class_categories($class->id) : block_exabis_student_review_get_period_categories($periodid);
 
 	$html='';
+
 	foreach($categories as $category) {
 		$html.='<tr class="ratings"><td class="ratingfirst text">'.$category->title.'</td>
 		<td class="rating legend">'.@$studentReport->{$category->title}.'</td></tr>';
+			
+		if($detailedreview) {
+			$detaildata = $DB->get_records_sql('SELECT pos.value, u.lastname, u.firstname FROM 	{block_exastudreview} r
+					JOIN {block_exastudreviewpos} pos ON pos.reviewid = r.id
+					JOIN {user} u ON r.teacher_id = u.id WHERE student_id = ? AND periods_id = ? AND pos.categoryid = ? AND pos.categorysource = ?',array($studentid,$periodid,$category->id,$category->source));
+			foreach($detaildata as $detailrow)
+			$html.='<tr class="ratings"><td class="teacher">'.$detailrow->lastname.' ' . $detailrow->firstname . '</td>
+			<td class="rating legend teacher">'.$detailrow->value.'</td></tr>';
+		}
 	}
 	$studentreport = str_replace ( '###CATEGORIES###', $html, $studentreport);
+
 
 	if (!$studentReport->comments) {
 		$studentreport = str_replace ( '###COMMENTS###', '', $studentreport);
@@ -405,6 +441,6 @@ function block_exabis_student_review_get_class_categories($classid) {
 function block_exastud_get_main_logo() {
 	$fs = get_file_storage();
 
-	$areafiles = $fs->get_area_files(get_context_instance(CONTEXT_SYSTEM)->id, 'block_exastud', 'main_logo', 0, 'itemid', false);
+	$areafiles = $fs->get_area_files(context_system::instance()->id, 'block_exastud', 'main_logo', 0, 'itemid', false);
 	return empty($areafiles) ? null : reset($areafiles);
 }
