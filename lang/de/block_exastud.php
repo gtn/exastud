@@ -1,5 +1,4 @@
 ﻿<?php
-// 
 $string['exastud:use'] = 'Student Review benutzen';
 $string['exastud:head'] = 'Klassenvorstand';
 $string['exastud:editperiods'] = 'Perioden bearbeiten';
@@ -95,5 +94,7 @@ $string['starttime'] = 'Startdatum: ';
 $string['endtime'] = 'Enddatum: ';
 $string['noperiods'] = 'Es gibt noch keine Beurteilungsperiode. Bitte wenden Sie sich an den Administrator, der Ihnen freundlicherweise eine anlegen wird.';
 $string['commentshouldnotbeempty'] = 'Der Kommentar darf nicht leer sein.';
+
 $string['settings_detailed_review'] = 'Einzelpunktevergabe anzeigen';
 $string['settings_detailed_review_body'] = 'Diese Einstellung erlaubt es die Punktevergabe der Beurteilenden einzeln einzusehen';
+?>

@@ -1,15 +1,16 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="blocks/exabis_student_review/db" VERSION="20120828" COMMENT="XMLDB file for Moodle blocks/exabis_student_review"
+<XMLDB PATH="blocks/exabis_student_review/db" VERSION="20131129" COMMENT="XMLDB file for Moodle blocks/exabis_student_review"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
 >
   <TABLES>
-    <TABLE NAME="block_exastudclass" COMMENT="block_exastudclass " NEXT="block_exastudclassteachers">
+    <TABLE NAME="block_exastudclass" COMMENT="block_exastudclass" NEXT="block_exastudclassteachers">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true" COMMENT="id of the table, please edit me" NEXT="timemodified"/>
         <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="id" NEXT="userid"/>
         <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="User ID of principal" PREVIOUS="timemodified" NEXT="class"/>
-        <FIELD NAME="class" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" COMMENT="Title of class" PREVIOUS="userid"/>
+        <FIELD NAME="class" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" COMMENT="Title of class" PREVIOUS="userid" NEXT="periodid"/>
+        <FIELD NAME="periodid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="class"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="primary key of the table, please edit me"/>

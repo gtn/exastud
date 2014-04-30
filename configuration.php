@@ -45,7 +45,9 @@ require_capability('block/exastud:headteacher', $context);
 $url = '/blocks/exastud/configuration.php';
 $PAGE->set_url($url);
 
-if (!$class = $DB->get_record('block_exastudclass', array('userid'=>$USER->id))) {
+$curPeriod = block_exabis_student_review_get_active_period(true);
+
+if (!$class = $DB->get_record('block_exastudclass', array('userid'=>$USER->id,'periodid' => $curPeriod->id))) {
 	redirect('configuration_class.php?courseid=' . $courseid, get_string('redirectingtoclassinput', 'block_exastud'));
 }
 
@@ -54,10 +56,10 @@ echo $OUTPUT->heading($class->class);
 
 //if no periods
 //if (!$periods = $DB->get_records('block_exastudperiod')) {
-if (block_exabis_student_review_get_active_period(false,false)==false){
+/*if (!$curPeriod){
 echo $OUTPUT->box(get_string('noperiods', 'block_exastud'));
 }
-
+*/
 echo $OUTPUT->single_button($CFG->wwwroot . '/blocks/exastud/configuration_class.php?courseid='.$courseid.'&sesskey='. sesskey(),
 		get_string('editclassname', 'block_exastud'));
 

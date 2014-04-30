@@ -36,11 +36,13 @@ global $DB,$CFG;
 require_login($courseid);
 
 //$context = get_context_instance(CONTEXT_COURSE,$courseid);
-$context = context_system::instance();
+$context = context_course::instance($courseid);
 require_capability('block/exastud:use', $context);
 require_capability('block/exastud:headteacher', $context);
 
-if (!$class = $DB->get_record('block_exastudclass', array('userid'=>$USER->id))) {
+$actPeriod = ($periodid==0 || $periodid==block_exabis_student_review_get_active_period()->id) ? block_exabis_student_review_get_active_period() : $DB->get_record('block_exastudperiod', array('id'=>$periodid));
+
+if (!$class = $DB->get_record('block_exastudclass', array('userid'=>$USER->id,'periodid' => $actPeriod->id))) {
 	print_error('noclassfound', 'block_exastud');
 }
 
@@ -48,7 +50,6 @@ $url = '/blocks/exastud/report.php';
 $PAGE->set_url($url);
 block_exabis_student_review_print_header('report');
 
-$actPeriod = ($periodid==0 || $periodid==block_exabis_student_review_get_active_period()->id) ? block_exabis_student_review_get_active_period() : $DB->get_record('block_exastudperiod', array('id'=>$periodid));
 $categories = ($periodid==0 || $periodid==block_exabis_student_review_get_active_period()->id) ? block_exabis_student_review_get_class_categories($class->id) : block_exabis_student_review_get_period_categories($periodid);
 
 if(!$classusers = $DB->get_records_sql('SELECT s.id, s.studentid FROM {block_exastudclassstudents} s WHERE s.classid=\'' . $class->id . '\' ')) {

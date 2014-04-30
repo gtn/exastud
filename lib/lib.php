@@ -87,13 +87,12 @@ function block_exabis_student_review_get_active_period($printBoxInsteadOfError =
 		}
 		else if($printError){
 			print_error('periodserror', 'block_exastud', $CFG->wwwroot.'/blocks/exastud/configuration_period.php?courseid='.$COURSE->id);
-		} else
-			return false;
+		}
+		return false;
 	}
 }
 function block_exabis_student_review_get_period_categories($periodid) {
 	global $DB;
-
 
 	// use a dummy id, bc for moodle the first column has to be unique
 	$reviewcategories = $DB->get_records_sql('SELECT CONCAT(rp.categoryid, "-", rp.categorysource) AS id, rp.categoryid, rp.categorysource FROM {block_exastudreviewpos} rp, {block_exastudreview} r WHERE r.periods_id=? AND rp.reviewid=r.id GROUP BY rp.categoryid, rp.categorysource',array($periodid));
@@ -104,29 +103,28 @@ function block_exabis_student_review_get_period_categories($periodid) {
 			$categories[] = $tmp;
 	}
 
-
 	return $categories;
 }
 function block_exabis_student_review_get_detailed_report($student_id, $period_id) {
 	global $DB;
-	
+
 	$report = new stdClass();
-	$review = $DB->get_records_sql('SELECT concat(pos.categoryid,"_",pos.categorysource) as uniqueuid, pos.value, u.lastname, u.firstname, pos.categoryid, pos.categorysource FROM 	{block_exastudreview} r 
-JOIN {block_exastudreviewpos} pos ON pos.reviewid = r.id
-JOIN {user} u ON r.teacher_id = u.id WHERE student_id = ? AND periods_id = ?',array($student_id,$period_id));
-	
+	$review = $DB->get_records_sql('SELECT concat(pos.categoryid,"_",pos.categorysource) as uniqueuid, pos.value, u.lastname, u.firstname, pos.categoryid, pos.categorysource FROM 	{block_exastudreview} r
+			JOIN {block_exastudreviewpos} pos ON pos.reviewid = r.id
+			JOIN {user} u ON r.teacher_id = u.id WHERE student_id = ? AND periods_id = ?',array($student_id,$period_id));
+
 	$cats = $DB->get_records_sql('SELECT concat(categoryid,"_",categorysource) as uniqueuid,rp.categoryid, rp.categorysource FROM {block_exastudreview} r, {block_exastudreviewpos} rp where r.student_id = ? AND r.periods_id = ? AND rp.reviewid = r.id GROUP BY rp.categoryid, rp.categorysource',array($student_id,$period_id));
 	foreach($cats as $cat) {
-	
+
 		if ($category = block_exabis_student_review_get_category($rcat->categoryid, $rcat->categorysource)) {
-			
-			
+				
+				
 			$report->{$category->title} = is_null($rcat->avgvalue) ? '' : $rcat->avgvalue;
-			
+				
 		}
-	
+
 	}
-	
+
 	return $report;
 }
 function block_exabis_student_review_get_report($student_id, $period_id) {
@@ -144,12 +142,10 @@ function block_exabis_student_review_get_report($student_id, $period_id) {
 	$report->inde = is_null($inde->avginde) ? '': $inde->avginde;
 	*/
 
-	$reviewcategories = $DB->get_records_sql('SELECT concat(categoryid,"_",categorysource) as uniqueuid,rp.categoryid, rp.categorysource, ROUND(AVG(rp.value), ' . DECIMALPOINTS . ') as avgvalue FROM {block_exastudreview} r, {block_exastudreviewpos} rp where r.student_id = ? AND r.periods_id = ? AND rp.reviewid = r.id GROUP BY rp.categoryid, rp.categorysource',array($student_id,$period_id));
+	$reviewcategories = $DB->get_records_sql('SELECT rp.id, rp.categoryid, rp.categorysource, ROUND(AVG(rp.value), ' . DECIMALPOINTS . ') as avgvalue FROM {block_exastudreview} r, {block_exastudreviewpos} rp where r.student_id = ? AND r.periods_id = ? AND rp.reviewid = r.id GROUP BY rp.categoryid, rp.categorysource',array($student_id,$period_id));
 	foreach($reviewcategories as $rcat) {
-
 		if ($category = block_exabis_student_review_get_category($rcat->categoryid, $rcat->categorysource))
 			$report->{$category->title} = is_null($rcat->avgvalue) ? '' : $rcat->avgvalue;
-
 	}
 
 	$numrecords = $DB->get_record_sql('SELECT COUNT(id) AS count FROM {block_exastudreview} WHERE student_id=' . $student_id . ' AND periods_id=' . $period_id);
@@ -319,12 +315,10 @@ function block_exabis_student_review_print_header($items, $options = array())
 	$last_item_name = '';
 	$tabs = array();
 	$currenttab=null;
+	//$context = get_context_instance(CONTEXT_SYSTEM);
 	$context = context_system::instance();
+	//$coursecontext = get_context_instance(CONTEXT_COURSE,$COURSE->id);
 	$coursecontext = context_course::instance($COURSE->id);
-	/*
-	 $context = get_context_instance(CONTEXT_SYSTEM);
-	$coursecontext = get_context_instance(CONTEXT_COURSE,$COURSE->id);*/
-
 	if (has_capability('block/exastud:headteacher', $coursecontext)) {
 		$tabs[] = new tabobject('configuration', $CFG->wwwroot . '/blocks/exastud/configuration.php?courseid=' . $COURSE->id, get_string("configuration", "block_exastud"), '', true);
 		if(block_exabis_student_review_reviews_available())
@@ -366,11 +360,17 @@ function block_exabis_student_review_print_header($items, $options = array())
 			$item['type'] = 'misc';
 
 		$last_item_name = $item['name'];
-		$navlinks[] = $item;
+		$PAGE->navbar->add($item['name'],$item);
+		
 	}
 
-	$navigation = build_navigation($navlinks);
-	print_header_simple($strheader.': '.$last_item_name, $strheader, $navigation, "", "", true,'&nbsp;','',false,'',false);
+	$PAGE->set_title($strheader.': '.$last_item_name);
+	$PAGE->set_heading($strheader);
+	$PAGE->set_cacheable(true);
+	$PAGE->set_button('&nbsp;');
+	
+	echo $OUTPUT->header();
+	
 	echo '<div id="exabis_student_review">';
 	print_tabs(array($tabs),$currenttab);
 
@@ -398,13 +398,12 @@ function block_exabis_student_review_get_category($categoryid,$categorysource) {
 			$category = $DB->get_record('block_exastudcate',array("id"=>$categoryid));
 			if (!$category)
 				return null;
-
+				
 			$category->source = 'exastud';
 
 			return $category;
 		case 'exacomp':
 			if(block_exabis_student_review_check_competence_block()) {
-
 				$category = $DB->get_record('block_exacomptopics',array("id"=>$categoryid));
 				if (!$category)
 					return null;
@@ -414,7 +413,6 @@ function block_exabis_student_review_get_category($categoryid,$categorysource) {
 				return $category;
 			} else {
 				return null;
-
 			}
 	}
 	return null;

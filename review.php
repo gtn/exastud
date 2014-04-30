@@ -36,7 +36,9 @@ $courseid = optional_param('courseid', 1, PARAM_INT); // Course ID
 
 require_login($courseid);
 
-$context = get_context_instance(CONTEXT_SYSTEM);
+//$context = get_context_instance(CONTEXT_SYSTEM);
+$context = context_system::instance();
+
 require_capability('block/exastud:use', $context);
 
 $url = '/blocks/exastud/review.php';
@@ -44,7 +46,7 @@ $PAGE->set_url($url);
 block_exabis_student_review_print_header('review');
 $actPeriod = block_exabis_student_review_get_active_period();
 
-if(!$myclasses = $DB->get_records_sql('SELECT * FROM {block_exastudclassteachers} t JOIN {block_exastudclass} c ON t.classid=c.id AND t.teacherid=\'' . $USER->id . '\'')) {
+if(!$myclasses = $DB->get_records_sql('SELECT * FROM {block_exastudclassteachers} t JOIN {block_exastudclass} c ON t.classid=c.id AND t.teacherid=\'' . $USER->id . '\' AND c.periodid = '.$actPeriod->id)) {
 	print_error('noclassestoreview','block_exastud');
 }
 

@@ -39,7 +39,8 @@ $searchtext     = optional_param('searchtext', '', PARAM_ALPHANUM); // search st
 
 require_login($courseid);
 
-$context = get_context_instance(CONTEXT_SYSTEM);
+//$context = get_context_instance(CONTEXT_SYSTEM);
+$context = context_system::instance();
 require_capability('block/exastud:use', $context);
 require_capability('block/exastud:uploadpicture', $context);
 
@@ -58,10 +59,10 @@ if ($mform->is_cancelled()) {
 	$fs = get_file_storage();
 	
 	// delete old logo
-	$fs->delete_area_files(get_context_instance(CONTEXT_SYSTEM)->id, 'block_exastud', 'main_logo', 0);
+	$fs->delete_area_files(context_system::instance()->id	, 'block_exastud', 'main_logo', 0);
 
 	// save new logo
-	$mform->save_stored_file('file', get_context_instance(CONTEXT_SYSTEM)->id, 'block_exastud', 'main_logo', 0);
+	$mform->save_stored_file('file', context_system::instance()->id	, 'block_exastud', 'main_logo', 0);
 							  
 	get_string('upload_success','block_exastud');
 }

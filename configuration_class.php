@@ -33,19 +33,19 @@ require("inc.php");
 require_once($CFG->dirroot . '/blocks/exastud/lib/edit_form.php');
 global $DB, $OUTPUT;
 
-
 $courseid       = optional_param('courseid', 1, PARAM_INT); // Course ID
 $showall        = optional_param('showall', 0, PARAM_BOOL);
 $searchtext     = optional_param('searchtext', '', PARAM_ALPHANUM); // search string
 
 require_login($courseid);
 
-$context = context_system::instance();
 //$context = get_context_instance(CONTEXT_COURSE,$courseid);
+$context = context_course::instance($courseid);
 require_capability('block/exastud:use', $context);
 require_capability('block/exastud:headteacher', $context);
 
-if (!$class = $DB->get_record('block_exastudclass', array('userid'=>$USER->id))) {
+$curPeriod = block_exabis_student_review_get_active_period(true);
+if (!$class = $DB->get_record('block_exastudclass', array('userid'=>$USER->id,'periodid' => $curPeriod->id))) {
 	$class = new stdClass();
 	$class->courseid = $courseid;
 	$class->class = '';
@@ -61,8 +61,8 @@ if ($classedit = $classform->get_data()) {
 	$newclass->timemodified = time();
 	$newclass->userid = $USER->id;
 	$newclass->class = $classedit->class;
+	$newclass->periodid = $curPeriod->id;
 	
-	// das ist glaub ich falsch, weil $class noch nicht definiert ist!
 	if(isset($class->id)) {
 		$newclass->id = $class->id;
 		if (!$DB->update_record('block_exastudclass', $newclass)) {
