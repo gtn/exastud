@@ -84,6 +84,11 @@ foreach($classusers as $classuser) {
 
 	$link = '<a href="' . $CFG->wwwroot . '/blocks/exastud/printstudent.php?courseid=' . $courseid . '&amp;studentid=' . $user->id . '&amp;sesskey=' . sesskey() . '&periodid='.$periodid.'">';
 	$icons = $link.'<img src="' . $CFG->wwwroot . '/blocks/exastud/pix/print.gif" width="16" height="16" alt="' . get_string('printversion', 'block_exastud'). '" /></a>';
+	
+	if($CFG->block_exastud_detailed_review) {
+		$link = '<a href="' . $CFG->wwwroot . '/blocks/exastud/printstudent.php?courseid=' . $courseid . '&amp;studentid=' . $user->id . '&amp;sesskey=' . sesskey() . '&periodid='.$periodid.'&detailedreport=true">';
+		$icons .= $link.'<img src="' . $CFG->wwwroot . '/blocks/exastud/pix/print.gif" width="16" height="16" alt="' . get_string('printversion', 'block_exastud'). '" /></a>';
+	}
 	//$link = '<a href="' . $CFG->wwwroot . '/blocks/exastud/printstudent.php?courseid=' . $courseid . '&amp;studentid=' . $user->id . '&amp;sesskey=' . sesskey() . '&periodid='.$periodid.'&pdf=true">';
 	//$icons .= $link.'<img src="' . $CFG->wwwroot . '/blocks/exastud/pix/pdf.png" width="23" height="16" alt="' . get_string('printversion', 'block_exastud'). '" /></a>';
 	
@@ -106,6 +111,8 @@ foreach($classusers as $classuser) {
 echo html_writer::table($table);
 
 echo '<a href="' . $CFG->wwwroot . '/blocks/exastud/printclass.php?courseid=' . $courseid . '&amp;classid=' . $class->id . '&amp;sesskey=' . sesskey() . '&periodid='.$periodid.'"><img src="' . $CFG->wwwroot . '/blocks/exastud/pix/print.gif" width="16" height="16" alt="' . get_string('printall', 'block_exastud'). '" /></a>';
+echo '<a href="' . $CFG->wwwroot . '/blocks/exastud/printclass.php?courseid=' . $courseid . '&amp;classid=' . $class->id . '&amp;sesskey=' . sesskey() . '&periodid='.$periodid.'&detailedreport=true"><img src="' . $CFG->wwwroot . '/blocks/exastud/pix/print.gif" width="16" height="16" alt="' . get_string('printall', 'block_exastud'). '" /></a>';
+
 echo '<form name="periodselect" action="'.$CFG->wwwroot.$url.'?courseid='.$courseid.'" method="POST">
 <select name="periodid" onchange="this.form.submit();">';
 foreach($DB->get_records('block_exastudperiod',null,'endtime desc') as $period) {

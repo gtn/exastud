@@ -190,11 +190,11 @@ function block_exabis_student_review_print_student_report_footer() {
 	echo block_exabis_student_review_read_template_file('footer.html');
 }
 
-function block_exabis_student_review_print_student_report($studentid, $periodid, $class, $pdf=false)
+function block_exabis_student_review_print_student_report($studentid, $periodid, $class, $pdf=false, $detail=false)
 {
 	global $DB,$CFG,$OUTPUT,$USER;
 
-	$detailedreview = $CFG->block_exastud_detailed_review;
+	$detailedreview = $CFG->block_exastud_detailed_review && $detail;
 
 	$period =$DB->get_record('block_exastudperiod', array('id'=>$periodid));
 

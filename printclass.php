@@ -33,6 +33,7 @@ require('inc.php');
 global $DB;
 $courseid = optional_param('courseid', 1, PARAM_INT); // Course ID
 $periodid = optional_param('periodid', 0, PARAM_INT);
+$detail = optional_param('detailedreport', false, PARAM_BOOL);
 require_login($courseid);
 
 //$context = get_context_instance(CONTEXT_COURSE,$courseid);
@@ -53,7 +54,7 @@ if(!$mystudents = $DB->get_records_sql('SELECT s.id, s.studentid, r.review FROM 
 block_exabis_student_review_print_student_report_header();
 echo '<div><a href="javascript:window.print()" title="Drucken">'.get_string('print','block_exastud').'</a></div>';
 foreach($mystudents as $mystudent) {
-	block_exabis_student_review_print_student_report($mystudent->studentid, $actPeriod->id, $class);
+	block_exabis_student_review_print_student_report($mystudent->studentid, $actPeriod->id, $class,false,$detail);
 	echo '<p style=\'page-break-before: always;\'>&nbsp;</p>';
 }
 

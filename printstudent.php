@@ -34,6 +34,7 @@ global $DB;
 $courseid = optional_param('courseid', 1, PARAM_INT); // Course ID
 $periodid = optional_param('periodid', 0, PARAM_INT); // Course ID
 $pdf = optional_param('pdf', false, PARAM_BOOL); // Course ID
+$detail = optional_param('detailedreport', false, PARAM_BOOL); 
 $studentid = required_param('studentid', PARAM_INT); // Course ID
 require_login($courseid);
 
@@ -48,5 +49,5 @@ if (!$class = $DB->get_record('block_exastudclass', array('userid'=>$USER->id,'p
 }
 
 if(!$pdf) block_exabis_student_review_print_student_report_header();
-block_exabis_student_review_print_student_report($studentid, $actPeriod->id, $class, $pdf);
+block_exabis_student_review_print_student_report($studentid, $actPeriod->id, $class, $pdf, $detail);
 if(!$pdf) block_exabis_student_review_print_student_report_footer();
