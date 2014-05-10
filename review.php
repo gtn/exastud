@@ -21,13 +21,13 @@
  * @subpackage blocks
  * @copyright 2013 gtn gmbh
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- 
+
  *  This script is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  This copyright notice MUST APPEAR in all copies of the script!
+*  GNU General Public License for more details.
+*
+*  This copyright notice MUST APPEAR in all copies of the script!
 */
 
 require("inc.php");
@@ -43,6 +43,8 @@ require_capability('block/exastud:use', $context);
 
 $url = '/blocks/exastud/review.php';
 $PAGE->set_url($url);
+$PAGE->requires->css('/blocks/exastud/styles.css');
+$blockrenderer = $PAGE->get_renderer('block_exastud');
 block_exabis_student_review_print_header('review');
 $actPeriod = block_exabis_student_review_get_active_period();
 
@@ -54,21 +56,18 @@ if(!$myclasses = $DB->get_records_sql('SELECT * FROM {block_exastudclassteachers
 $table = new html_table();
 
 $table->head = array(
-	get_string('class', 'block_exastud'),
-	get_string('action')
+		get_string('class', 'block_exastud')
 );
 
-$table->align = array("left", "right");
+$table->align = array("left");
 $table->width = "90%";
 
 foreach($myclasses as $myclass) {
 	$edit_link = '<a href="' . $CFG->wwwroot . '/blocks/exastud/review_class.php?courseid=' . $courseid . '&amp;classid=' . $myclass->classid . '&amp;sesskey=' . sesskey() . '&amp;action=edit">';
 
-	$icons = $edit_link.'<img src="' . $CFG->wwwroot . '/pix/i/edit.gif" width="16" height="16" alt="' . get_string('edit'). '" /></a>';
-
-	$table->data[] = array($edit_link.$myclass->class.'</a>', $icons);
+	$table->data[] = array($edit_link.$myclass->class.'</a>');
 }
 
-echo html_writer::table($table);
+echo $blockrenderer->print_esr_table($table);
 
 block_exabis_student_review_print_footer();

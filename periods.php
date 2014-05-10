@@ -50,8 +50,10 @@ if (!$periods = $DB->get_records('block_exastudperiod')) {
 }
 $url = '/blocks/exastud/periods.php';
 $PAGE->set_url($url);
-block_exabis_student_review_print_header('periods');
+$PAGE->requires->css('/blocks/exastud/styles.css');
 
+block_exabis_student_review_print_header('periods');
+$blockrenderer = $PAGE->get_renderer('block_exastud');
 
 /* Print the periods */
 $table = new html_table();
@@ -70,8 +72,8 @@ foreach($periods as $period) {
 
 	$link = '<a href="' . $CFG->wwwroot . '/blocks/exastud/configuration_period.php?courseid=' . $courseid . '&amp;periodid=' . $period->id . '&amp;sesskey=' . sesskey() . '&amp;action=edit">';
 
-	$icons = $link.'<img src="' . $CFG->wwwroot . '/pix/t/edit.gif" width="16" height="16" alt="' . get_string('edit'). '" /></a>
-			  <a href="' . $CFG->wwwroot . '/blocks/exastud/configuration_period.php?courseid=' . $courseid . '&amp;periodid=' . $period->id . '&amp;sesskey=' . sesskey() . '&amp;action=delete"><img src="' . $CFG->wwwroot . '/pix/t/delete.gif" width="11" height="11" alt="' . get_string('delete'). '" /></a> ';
+	$icons = $link.'<img src="pix/edit.png" alt="' . get_string('edit'). '" /></a>
+			  <a href="' . $CFG->wwwroot . '/blocks/exastud/configuration_period.php?courseid=' . $courseid . '&amp;periodid=' . $period->id . '&amp;sesskey=' . sesskey() . '&amp;action=delete"><img src="pix/del.png" alt="' . get_string('delete'). '" /></a> ';
 
 	$starttime = date('d. M. Y - H:i', $period->starttime);
 	$endtime = date('d. M. Y - H:i', $period->endtime);
@@ -79,7 +81,7 @@ foreach($periods as $period) {
 	$table->data[] = array ($link.$period->description.'</a>', $starttime, $endtime, $icons);
 }
 
-echo html_writer::table($table);
+echo $blockrenderer->print_esr_table($table);
 
 echo $OUTPUT->single_button($CFG->wwwroot . '/blocks/exastud/configuration_period.php?courseid='.$courseid.'&sesskey='.sesskey().'&action=new',
 					get_string('newperiod', 'block_exastud'));

@@ -48,6 +48,9 @@ if (!$class = $DB->get_record('block_exastudclass', array('userid'=>$USER->id,'p
 
 $url = '/blocks/exastud/report.php';
 $PAGE->set_url($url);
+$PAGE->requires->css('/blocks/exastud/styles.css');
+$blockrenderer = $PAGE->get_renderer('block_exastud');
+
 block_exabis_student_review_print_header('report');
 
 $categories = ($periodid==0 || $periodid==block_exabis_student_review_get_active_period()->id) ? block_exabis_student_review_get_class_categories($class->id) : block_exabis_student_review_get_period_categories($periodid);
@@ -60,18 +63,18 @@ if(!$classusers = $DB->get_records_sql('SELECT s.id, s.studentid FROM {block_exa
 $table = new html_table();
 
 $table->head = array();
+$table->head[] = ''; //userpic
 $table->head[] = get_string('name');
 foreach($categories as $category)
 	$table->head[] = $category->title;
-$table->head[] = get_string('action');
+$table->head[] = ''; //action
 
 $table->align = array();
+$table->align[] = 'center';
 $table->align[] = 'left';
-
 for($i=0;$i<count($categories);$i++)
 	$table->align[] = 'center';
-
-$table->align[] = 'right';
+$table->align[] = 'center';
 $table->width = "90%";
 
 foreach($classusers as $classuser) {
@@ -83,21 +86,22 @@ foreach($classusers as $classuser) {
 	$userReport = block_exabis_student_review_get_report($user->id, $actPeriod->id);
 
 	$link = '<a href="' . $CFG->wwwroot . '/blocks/exastud/printstudent.php?courseid=' . $courseid . '&amp;studentid=' . $user->id . '&amp;sesskey=' . sesskey() . '&periodid='.$periodid.'">';
-	$icons = $link.'<img src="' . $CFG->wwwroot . '/blocks/exastud/pix/print.gif" width="16" height="16" alt="' . get_string('printversion', 'block_exastud'). '" /></a>';
+	$icons = $link.'<img src="' . $CFG->wwwroot . '/blocks/exastud/pix/print.png" width="16" height="16" alt="' . get_string('printversion', 'block_exastud'). '" /></a>';
 	
 	if($CFG->block_exastud_detailed_review) {
 		$link = '<a href="' . $CFG->wwwroot . '/blocks/exastud/printstudent.php?courseid=' . $courseid . '&amp;studentid=' . $user->id . '&amp;sesskey=' . sesskey() . '&periodid='.$periodid.'&detailedreport=true">';
-		$icons .= $link.'<img src="' . $CFG->wwwroot . '/blocks/exastud/pix/print.gif" width="16" height="16" alt="' . get_string('printversion', 'block_exastud'). '" /></a>';
+		$icons .= $link.'<img src="' . $CFG->wwwroot . '/blocks/exastud/pix/print.png" width="16" height="16" alt="' . get_string('printversion', 'block_exastud'). '" /></a>';
 	}
 	//$link = '<a href="' . $CFG->wwwroot . '/blocks/exastud/printstudent.php?courseid=' . $courseid . '&amp;studentid=' . $user->id . '&amp;sesskey=' . sesskey() . '&periodid='.$periodid.'&pdf=true">';
 	//$icons .= $link.'<img src="' . $CFG->wwwroot . '/blocks/exastud/pix/pdf.png" width="23" height="16" alt="' . get_string('printversion', 'block_exastud'). '" /></a>';
 	
-	$studentdesc = $OUTPUT->user_picture($user,array("courseid"=>$courseid)) . ' ' . $link.fullname($user, $user->id).'</a>';
+	$studentdesc = $link.fullname($user, $user->id).'</a>';
 	//$studentdesc = print_user_picture($user->id, $courseid, $user->picture, 0, true, false) . ' ' . $link.fullname($user, $user->id).'</a>';
 
 	//$table->data[] = array($studentdesc, $userReport->team, $userReport->resp, $userReport->inde, $icons);
 
 	$data = array();
+	$data[] = $OUTPUT->user_picture($user,array("courseid"=>$courseid));
 	$data[] = $studentdesc;
 
 	foreach($categories as $category) {
@@ -108,10 +112,10 @@ foreach($classusers as $classuser) {
 	$table->data[] = $data;
 }
 
-echo html_writer::table($table);
+echo $blockrenderer->print_esr_table($table);
 
-echo '<a href="' . $CFG->wwwroot . '/blocks/exastud/printclass.php?courseid=' . $courseid . '&amp;classid=' . $class->id . '&amp;sesskey=' . sesskey() . '&periodid='.$periodid.'"><img src="' . $CFG->wwwroot . '/blocks/exastud/pix/print.gif" width="16" height="16" alt="' . get_string('printall', 'block_exastud'). '" /></a>';
-echo '<a href="' . $CFG->wwwroot . '/blocks/exastud/printclass.php?courseid=' . $courseid . '&amp;classid=' . $class->id . '&amp;sesskey=' . sesskey() . '&periodid='.$periodid.'&detailedreport=true"><img src="' . $CFG->wwwroot . '/blocks/exastud/pix/print.gif" width="16" height="16" alt="' . get_string('printall', 'block_exastud'). '" /></a>';
+echo '<a href="' . $CFG->wwwroot . '/blocks/exastud/printclass.php?courseid=' . $courseid . '&amp;classid=' . $class->id . '&amp;sesskey=' . sesskey() . '&periodid='.$periodid.'"><img src="' . $CFG->wwwroot . '/blocks/exastud/pix/print.png" width="16" height="16" alt="' . get_string('printall', 'block_exastud'). '" /></a>';
+echo '<a href="' . $CFG->wwwroot . '/blocks/exastud/printclass.php?courseid=' . $courseid . '&amp;classid=' . $class->id . '&amp;sesskey=' . sesskey() . '&periodid='.$periodid.'&detailedreport=true"><img src="' . $CFG->wwwroot . '/blocks/exastud/pix/print.png" width="16" height="16" alt="' . get_string('printall', 'block_exastud'). '" /></a>';
 
 echo '<form name="periodselect" action="'.$CFG->wwwroot.$url.'?courseid='.$courseid.'" method="POST">
 <select name="periodid" onchange="this.form.submit();">';

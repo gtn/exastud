@@ -37,13 +37,14 @@ $showall        = optional_param('showall', 0, PARAM_BOOL);
 $searchtext     = optional_param('searchtext', '', PARAM_ALPHANUM); // search string
 require_login($courseid);
 
-$context = context_system::instance();
+$context = context_course::instance($courseid);
 //$context = get_context_instance(CONTEXT_COURSE,$courseid);
 require_capability('block/exastud:use', $context);
 require_capability('block/exastud:headteacher', $context);
 
 $url = '/blocks/exastud/configuration.php';
 $PAGE->set_url($url);
+$PAGE->requires->css('/blocks/exastud/styles.css');
 
 $curPeriod = block_exabis_student_review_get_active_period(true);
 
@@ -52,18 +53,12 @@ if (!$class = $DB->get_record('block_exastudclass', array('userid'=>$USER->id,'p
 }
 
 block_exabis_student_review_print_header('configuration');
-echo $OUTPUT->heading($class->class);
+$blockrenderer = $PAGE->get_renderer('block_exastud');
 
-//if no periods
-//if (!$periods = $DB->get_records('block_exastudperiod')) {
-/*if (!$curPeriod){
-echo $OUTPUT->box(get_string('noperiods', 'block_exastud'));
-}
-*/
-echo $OUTPUT->single_button($CFG->wwwroot . '/blocks/exastud/configuration_class.php?courseid='.$courseid.'&sesskey='. sesskey(),
-		get_string('editclassname', 'block_exastud'));
+echo $blockrenderer->print_subtitle($class->class, $CFG->wwwroot . '/blocks/exastud/configuration_class.php?courseid='.$courseid.'&sesskey='. sesskey());
 
 /* Print the Students */
+echo html_writer::tag("h2",get_string('members', 'block_exastud'));
 $table = new html_table();
 
 $table->head = array (get_string('firstname'), get_string('lastname'), get_string('email'));
@@ -77,12 +72,14 @@ foreach($usertoclasses as $usertoclass) {
 	$table->data[] = array ($user->firstname, $user->lastname, $user->email);
 }
 
-echo html_writer::table($table);
+//echo html_writer::table($table);
+echo $blockrenderer->print_esr_table($table);
 
 echo $OUTPUT->single_button($CFG->wwwroot . '/blocks/exastud/configuration_classmembers.php?courseid='.$courseid.'&sesskey='. sesskey(),
 		get_string('editclassmemberlist', 'block_exastud'));
 
 /* Print the Classes */
+echo html_writer::tag("h2",get_string('teachers', 'block_exastud'));
 $table = new html_table();
 
 $table->head = array (get_string('firstname'), get_string('lastname'), get_string('email'));
@@ -96,15 +93,17 @@ foreach($usertoclasses as $usertoclass) {
 	$table->data[] = array ($user->firstname, $user->lastname, $user->email);
 }
 
-echo html_writer::table($table);
+//echo html_writer::table($table);
+echo $blockrenderer->print_esr_table($table);
 
 echo $OUTPUT->single_button($CFG->wwwroot . '/blocks/exastud/configuration_classteachers.php?courseid='.$courseid.'&sesskey='. sesskey(),
 		get_string('editclassteacherlist', 'block_exastud'));
 
 /* Print the categories */
+echo html_writer::tag("h2",get_string('categories', 'block_exastud'));
+
 $table = new html_table();
 
-$table->head = array(get_string('categories','block_exastud'));
 $table->align = array("left");
 $table->width = "90%";
 
@@ -114,7 +113,8 @@ foreach($categories as $category) {
 	$table->data[] = array($category->title);
 }
 
-echo html_writer::table($table);
+echo $blockrenderer->print_esr_table($table);
+
 echo $OUTPUT->single_button($CFG->wwwroot . '/blocks/exastud/configuration_categories.php?courseid='.$courseid.'&sesskey='.sesskey(),
 		get_string('editclasscategories', 'block_exastud'));
 

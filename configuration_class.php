@@ -31,7 +31,7 @@
 
 require("inc.php");
 require_once($CFG->dirroot . '/blocks/exastud/lib/edit_form.php');
-global $DB, $OUTPUT;
+global $DB, $OUTPUT, $PAGE;
 
 $courseid       = optional_param('courseid', 1, PARAM_INT); // Course ID
 $showall        = optional_param('showall', 0, PARAM_BOOL);
@@ -39,6 +39,7 @@ $searchtext     = optional_param('searchtext', '', PARAM_ALPHANUM); // search st
 
 require_login($courseid);
 
+$PAGE->requires->css('/blocks/styles.css');
 //$context = get_context_instance(CONTEXT_COURSE,$courseid);
 $context = context_course::instance($courseid);
 require_capability('block/exastud:use', $context);
@@ -81,12 +82,11 @@ $url = "/blocks/exastud/configuration_class.php";
 $PAGE->set_url($url);
 block_exabis_student_review_print_header(array('configuration', 'editclassname'));
 
-echo '<div class="block_eportfolio_center">';
+echo '<div id="block_student_review">';
 echo "<br />";
-
 echo $OUTPUT->box( text_to_html(get_string("explainclassname","block_exastud")));
 echo '</div>';
-echo '<div class="block_eportfolio_center">';
+echo '<div id="block_student_review">';
 echo $OUTPUT->heading($class->class);
 
 $classform->set_data($class);
