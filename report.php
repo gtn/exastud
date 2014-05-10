@@ -55,14 +55,19 @@ block_exabis_student_review_print_header('report');
 
 $categories = ($periodid==0 || $periodid==block_exabis_student_review_get_active_period()->id) ? block_exabis_student_review_get_class_categories($class->id) : block_exabis_student_review_get_period_categories($periodid);
 
-if(!$classusers = $DB->get_records_sql('SELECT s.id, s.studentid FROM {block_exastudclassstudents} s WHERE s.classid=\'' . $class->id . '\' ')) {
+if(!$classusers = $DB->get_records_sql('
+		SELECT s.id, s.studentid, sum(rp.value) as total FROM {block_exastudclassstudents} s, {block_exastudclass} c, {block_exastudreview} r, {block_exastudreviewpos} rp
+WHERE s.classid=?
+AND r.student_id = s.studentid AND r.periods_id = c.periodid AND rp.reviewid = r.id AND s.classid = c.id GROUP BY s.studentid ORDER BY total DESC',array($class->id))) {
 	print_error('nostudentstoreview','block_exastud');
 }
+
 
 /* Print the Students */
 $table = new html_table();
 
 $table->head = array();
+$table->head[] = '#'; //userpic
 $table->head[] = ''; //userpic
 $table->head[] = get_string('name');
 foreach($categories as $category)
@@ -71,12 +76,14 @@ $table->head[] = ''; //action
 
 $table->align = array();
 $table->align[] = 'center';
+$table->align[] = 'center';
 $table->align[] = 'left';
 for($i=0;$i<count($categories);$i++)
 	$table->align[] = 'center';
 $table->align[] = 'center';
 $table->width = "90%";
 
+$i = 1;
 foreach($classusers as $classuser) {
 	$user = $DB->get_record('user', array('id'=>$classuser->studentid));
 
@@ -101,6 +108,7 @@ foreach($classusers as $classuser) {
 	//$table->data[] = array($studentdesc, $userReport->team, $userReport->resp, $userReport->inde, $icons);
 
 	$data = array();
+	$data[] = $i++;
 	$data[] = $OUTPUT->user_picture($user,array("courseid"=>$courseid));
 	$data[] = $studentdesc;
 

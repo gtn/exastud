@@ -142,6 +142,9 @@ function block_exabis_student_review_get_report($student_id, $period_id) {
 	$report->inde = is_null($inde->avginde) ? '': $inde->avginde;
 	*/
 
+	$totalvalue = $DB->get_record_sql('SELECT sum(rp.value) as total FROM {block_exastudreview} r, {block_exastudreviewpos} rp where r.student_id = ? AND r.periods_id = ? AND rp.reviewid = r.id',array($student_id,$period_id));
+	$report->totalvalue = $totalvalue->total;
+	
 	$reviewcategories = $DB->get_records_sql('SELECT rp.id, rp.categoryid, rp.categorysource, ROUND(AVG(rp.value), ' . DECIMALPOINTS . ') as avgvalue FROM {block_exastudreview} r, {block_exastudreviewpos} rp where r.student_id = ? AND r.periods_id = ? AND rp.reviewid = r.id GROUP BY rp.categoryid, rp.categorysource',array($student_id,$period_id));
 	foreach($reviewcategories as $rcat) {
 		if ($category = block_exabis_student_review_get_category($rcat->categoryid, $rcat->categorysource))
