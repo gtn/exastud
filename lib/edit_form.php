@@ -31,17 +31,18 @@ class period_edit_form extends moodleform {
 
     function definition() {
         global $CFG, $USER;
-        $mform = & $this->_form;
+        $mform = $this->_form;
 
         $mform->addElement('text', 'description', get_string('perioddesc', 'block_exastud'), array('size' => 50));
         $mform->setType('description', PARAM_TEXT);
-        $mform->addRule('description', null, 'required', null, 'client');
+        $mform->addRule('description', get_string('error'), 'required', null, 'server', false, false);
+        
 
         $timeoptions = array(
             'language' => 'en',
             'format' => 'd. M. Y - H:i',
             'minYear' => 2001,
-            'maxYear' => 2010,
+            'maxYear' => 2020,
             'addEmptyOption' => false,
             'emptyOptionValue' => '',
             'emptyOptionText' => '&nbsp;',
@@ -54,11 +55,11 @@ class period_edit_form extends moodleform {
         
         $mform->addElement('date_time_selector', 'starttime', get_string('starttime', 'block_exastud'), $timeoptions);
         $mform->setType('starttime', PARAM_INT);
-        $mform->addRule('starttime', null, 'required', null, 'client');
+        $mform->addRule('starttime', null, 'required', null, 'server');
 
         $mform->addElement('date_time_selector', 'endtime', get_string('endtime', 'block_exastud'), $timeoptions);
         $mform->setType('endtime', PARAM_INT);
-        $mform->addRule('endtime', null, 'required', null, 'client');
+        $mform->addRule('endtime', null, 'required', null, 'server');
 
         $mform->addElement('hidden', 'id');
         $mform->setType('id', PARAM_INT);
@@ -68,7 +69,7 @@ class period_edit_form extends moodleform {
         $mform->setType('action', PARAM_TEXT);
         $mform->setDefault('action', 0);
 
-        $this->add_action_buttons(false);
+        $this->add_action_buttons();
     }
 
 }

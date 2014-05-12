@@ -241,7 +241,7 @@ function block_exabis_student_review_print_student_report($studentid, $periodid,
 		<td class="rating legend">'.@$studentReport->{$category->title}.'</td></tr>';
 			
 		if($detailedreview) {
-			$detaildata = $DB->get_records_sql('SELECT pos.value, u.lastname, u.firstname FROM 	{block_exastudreview} r
+			$detaildata = $DB->get_records_sql('SELECT pos.id, pos.value, u.lastname, u.firstname FROM 	{block_exastudreview} r
 					JOIN {block_exastudreviewpos} pos ON pos.reviewid = r.id
 					JOIN {user} u ON r.teacher_id = u.id WHERE student_id = ? AND periods_id = ? AND pos.categoryid = ? AND pos.categorysource = ?',array($studentid,$periodid,$category->id,$category->source));
 			foreach($detaildata as $detailrow)

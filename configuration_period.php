@@ -45,8 +45,10 @@ require_capability('block/exastud:use', $context);
 require_capability('block/exastud:editperiods', $context);
 
 $periodform = new period_edit_form();
-
-if ($periodedit = $periodform->get_data()) {
+//Form processing and displaying is done here
+if ($periodform->is_cancelled()) {
+	redirect('periods.php?courseid=' . $courseid);
+} else if ($periodedit = $periodform->get_data()) {
 	if(!confirm_sesskey()) {
 		error("badsessionkey","block_exastud");
 	}
@@ -108,11 +110,7 @@ $PAGE->set_url($url);
 block_exabis_student_review_print_header(array('periods', 'periodinput'));
 
 echo "<br/>";
-echo $OUTPUT->box_start();
 $periodform->set_data($period);
 $periodform->display();
 
-echo $OUTPUT->single_button($CFG->wwwroot . '/blocks/exastud/periods.php?courseid='.$courseid,
-					get_string('back', 'block_exastud'));
-echo $OUTPUT->box_end();
 block_exabis_student_review_print_footer();
