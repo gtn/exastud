@@ -84,7 +84,7 @@ block_exabis_student_review_print_header(array('configuration', 'editclassname')
 
 echo '<div id="block_student_review">';
 echo "<br />";
-echo $OUTPUT->box( text_to_html(get_string("explainclassname","block_exastud")));
+echo $OUTPUT->box( text_to_html(block_exabis_student_review_get_string("explainclassname","block_exastud")));
 echo '</div>';
 echo '<div id="block_student_review">';
 echo $OUTPUT->heading($class->class);
@@ -93,6 +93,6 @@ $classform->set_data($class);
 $classform->display();
 
 echo $OUTPUT->single_button($CFG->wwwroot . '/blocks/exastud/configuration.php?courseid='.$courseid,
-					get_string('back', 'block_exastud'));
+					block_exabis_student_review_get_string('back', 'block_exastud'));
 echo '</div>';
 block_exabis_student_review_print_footer();

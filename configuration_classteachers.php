@@ -50,7 +50,7 @@ if (!$class = $DB->get_record('block_exastudclass', array('userid'=>$USER->id,'p
 	print_error('noclassfound', 'block_exastud');
 }
 
-$header = get_string('configteacher', 'block_exastud', $class->class);
+$header = block_exabis_student_review_get_string('configteacher', 'block_exastud', $class->class);
 $url = '/blocks/exastud/configuration_classteachers.php';
 $PAGE->set_url($url);
 block_exabis_student_review_print_header(array('configuration', '='.$header));
@@ -130,6 +130,6 @@ require dirname(__FILE__).'/lib/configuration_userlist.inc.php';
 echo $OUTPUT->box_end();
 
 echo $OUTPUT->single_button($CFG->wwwroot . '/blocks/exastud/configuration.php?courseid='.$courseid,
-					get_string('back', 'block_exastud'));
+					block_exabis_student_review_get_string('back', 'block_exastud'));
 
 block_exabis_student_review_print_footer();

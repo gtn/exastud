@@ -34,7 +34,7 @@ require_once dirname(__FILE__) . '/lib/lib.php';
 class block_exastud extends block_list {
 
 	function init() {
-		$this->title = get_string('pluginname', 'block_exastud');
+		$this->title = block_exabis_student_review_get_string('pluginname', 'block_exastud');
 	}
 
 	function instance_allow_multiple() {
@@ -94,25 +94,25 @@ class block_exastud extends block_list {
 
 		if (has_capability('block/exastud:headteacher', $coursecontext)) {
 			$this->content->icons[] = '<img src="' . $CFG->wwwroot . '/blocks/exastud/pix/klassenzuteilung.png" height="16" width="23" alt="" />';
-			$this->content->items[] = '<a title="' . get_string('configuration', 'block_exastud') . '" href="' . $CFG->wwwroot . '/blocks/exastud/configuration.php?courseid=' . $COURSE->id . '">' . get_string('configuration', 'block_exastud') . '</a>';
+			$this->content->items[] = '<a title="' . block_exabis_student_review_get_string('configuration', 'block_exastud') . '" href="' . $CFG->wwwroot . '/blocks/exastud/configuration.php?courseid=' . $COURSE->id . '">' . block_exabis_student_review_get_string('configuration', 'block_exastud') . '</a>';
 
 			if(block_exabis_student_review_reviews_available()) {
 				$this->content->icons[] = '<img src="' . $CFG->wwwroot . '/blocks/exastud/pix/zeugnisse.png" height="16" width="23" alt="" />';
-				$this->content->items[] = '<a title="' . get_string('report', 'block_exastud') . '" href="' . $CFG->wwwroot . '/blocks/exastud/report.php?courseid=' . $COURSE->id . '">' . get_string('report', 'block_exastud') . '</a>';
+				$this->content->items[] = '<a title="' . block_exabis_student_review_get_string('report', 'block_exastud') . '" href="' . $CFG->wwwroot . '/blocks/exastud/report.php?courseid=' . $COURSE->id . '">' . block_exabis_student_review_get_string('report', 'block_exastud') . '</a>';
 			}
 		}
 
 		if (has_capability('block/exastud:editperiods', $context)) {
 			$this->content->icons[] = '<img src="' . $CFG->wwwroot . '/blocks/exastud/pix/eingabezeitraum.png" height="16" width="23" alt="" />';
-			$this->content->items[] = '<a title="' . get_string('periods', 'block_exastud') . '" href="' . $CFG->wwwroot . '/blocks/exastud/periods.php?courseid=' . $COURSE->id . '">' . get_string('periods', 'block_exastud') . '</a>';
+			$this->content->items[] = '<a title="' . block_exabis_student_review_get_string('periods', 'block_exastud') . '" href="' . $CFG->wwwroot . '/blocks/exastud/periods.php?courseid=' . $COURSE->id . '">' . block_exabis_student_review_get_string('periods', 'block_exastud') . '</a>';
 		}
 		if ($DB->count_records('block_exastudclassteachers', array('teacherid'=>$USER->id)) > 0 && block_exabis_student_review_get_active_period(false,false)) {
 			$this->content->icons[] = '<img src="' . $CFG->wwwroot . '/blocks/exastud/pix/beurteilung.png" height="16" width="23" alt="" />';
-			$this->content->items[] = '<a title="' . get_string('review', 'block_exastud') . '" href="' . $CFG->wwwroot . '/blocks/exastud/review.php?courseid=' . $COURSE->id . '">' . get_string('review', 'block_exastud') . '</a>';
+			$this->content->items[] = '<a title="' . block_exabis_student_review_get_string('review', 'block_exastud') . '" href="' . $CFG->wwwroot . '/blocks/exastud/review.php?courseid=' . $COURSE->id . '">' . block_exabis_student_review_get_string('review', 'block_exastud') . '</a>';
 		}
 		if (has_capability('block/exastud:uploadpicture', $context)) {
 			$this->content->icons[] = '<img src="' . $CFG->wwwroot . '/blocks/exastud/pix/logo.png" height="16" width="23" alt="" />';
-			$this->content->items[] = '<a title="' . get_string('pictureupload', 'block_exastud') . '" href="' . $CFG->wwwroot . '/blocks/exastud/pictureupload.php?courseid=' . $COURSE->id . '">' . get_string('pictureupload', 'block_exastud') . '</a>';
+			$this->content->items[] = '<a title="' . block_exabis_student_review_get_string('pictureupload', 'block_exastud') . '" href="' . $CFG->wwwroot . '/blocks/exastud/pictureupload.php?courseid=' . $COURSE->id . '">' . block_exabis_student_review_get_string('pictureupload', 'block_exastud') . '</a>';
 		}
 
 		return $this->content;

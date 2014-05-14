@@ -24,26 +24,7 @@
 defined('MOODLE_INTERNAL') || die;
 
 class block_exastud_renderer extends plugin_renderer_base {
-	public function print_header(){
-		$content = '<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">';
-		$content .= html_writer::start_tag('html');
-		$content .= html_writer::start_tag('head');
-		$content .= html_writer::start_tag('title');
-		$content .= get_string('studenttabcompetencesagenda', 'block_exacomp');
-		$content .= html_writer::end_tag('title');
-		$content .= html_writer::empty_tag('meta', array('http-equiv'=>'Content Type', 'content'=>'text/html', 'charset'=>'utf-8'));
-		$content .= html_writer::empty_tag('link', array('rel'=>'stylesheet', 'type'=>'text/css', 'href'=>'styles.css'));
-		$content .= html_writer::end_tag('head');
-		$content .= html_writer::start_tag('body');
-
-		return $content;
-	}
-	public function print_footer(){
-		$content = html_writer::end_tag('body');
-		$content .= html_writer::end_tag('html');
-
-		return $content;
-	}
+	
 	public function print_esr_table (html_table $table) {
         // prepare table data and populate missing properties with reasonable defaults
         if (!empty($table->align)) {

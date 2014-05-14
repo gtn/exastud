@@ -2,6 +2,32 @@
 
 define('DECIMALPOINTS', 1);
 
+/**
+ * Returns a localized string.
+ * This method is neccessary because a project based evaluation is available in the current exastud
+ * version, which requires a different naming.
+ */
+function block_exabis_student_review_get_string($identifier, $component = '', $a = null, $lazyload = false) {
+	global $CFG;
+	
+	$projectbasedstringkeys =  array('configuration'=>true,
+		'upload_picture'=>true,
+		'redirectingtoclassinput'=>true,
+		'errorupdatingclass'=>true,
+		'editclassname'=>true,
+		'noclassfound'=>true,
+		'noclassestoreview'=>true,
+		'class'=>true,
+		'reviewclass'=>true,
+		'badclass'=>true,
+		'badstudent'=>true,
+		'explainclassname'=>true);
+	
+	if($component == "block_exastud" && $CFG->block_exastud_project_based_assessment && array_key_exists($identifier, $projectbasedstringkeys))
+		return get_string("project_based_".$identifier,$component,$a,$lazyload);
+	else
+		return get_string($identifier,$component,$a,$lazyload);
+}
 function block_exabis_student_review_check_periods($printBoxInsteadOfError = false) {
 	block_exabis_student_review_has_wrong_periods($printBoxInsteadOfError);
 	block_exabis_student_review_check_if_period_ovelap($printBoxInsteadOfError);
@@ -117,10 +143,10 @@ function block_exabis_student_review_get_detailed_report($student_id, $period_id
 	foreach($cats as $cat) {
 
 		if ($category = block_exabis_student_review_get_category($rcat->categoryid, $rcat->categorysource)) {
-				
-				
+
+
 			$report->{$category->title} = is_null($rcat->avgvalue) ? '' : $rcat->avgvalue;
-				
+
 		}
 
 	}
@@ -144,7 +170,7 @@ function block_exabis_student_review_get_report($student_id, $period_id) {
 
 	$totalvalue = $DB->get_record_sql('SELECT sum(rp.value) as total FROM {block_exastudreview} r, {block_exastudreviewpos} rp where r.student_id = ? AND r.periods_id = ? AND rp.reviewid = r.id',array($student_id,$period_id));
 	$report->totalvalue = $totalvalue->total;
-	
+
 	$reviewcategories = $DB->get_records_sql('SELECT rp.id, rp.categoryid, rp.categorysource, ROUND(AVG(rp.value), ' . DECIMALPOINTS . ') as avgvalue FROM {block_exastudreview} r, {block_exastudreviewpos} rp where r.student_id = ? AND r.periods_id = ? AND rp.reviewid = r.id GROUP BY rp.categoryid, rp.categorysource',array($student_id,$period_id));
 	foreach($reviewcategories as $rcat) {
 		if ($category = block_exabis_student_review_get_category($rcat->categoryid, $rcat->categorysource))
@@ -245,8 +271,8 @@ function block_exabis_student_review_print_student_report($studentid, $periodid,
 					JOIN {block_exastudreviewpos} pos ON pos.reviewid = r.id
 					JOIN {user} u ON r.teacher_id = u.id WHERE student_id = ? AND periods_id = ? AND pos.categoryid = ? AND pos.categorysource = ?',array($studentid,$periodid,$category->id,$category->source));
 			foreach($detaildata as $detailrow)
-			$html.='<tr class="ratings"><td class="teacher">'.$detailrow->lastname.' ' . $detailrow->firstname . '</td>
-			<td class="rating legend teacher">'.$detailrow->value.'</td></tr>';
+				$html.='<tr class="ratings"><td class="teacher">'.$detailrow->lastname.' ' . $detailrow->firstname . '</td>
+				<td class="rating legend teacher">'.$detailrow->value.'</td></tr>';
 		}
 	}
 	$studentreport = str_replace ( '###CATEGORIES###', $html, $studentreport);
@@ -309,7 +335,7 @@ function block_exabis_student_review_print_header($items, $options = array())
 	global $CFG, $COURSE, $PAGE, $DB, $USER, $OUTPUT;
 
 	$items = (array)$items;
-	$strheader = get_string('pluginname', 'block_exastud');
+	$strheader = block_exabis_student_review_get_string('pluginname', 'block_exastud');
 
 	// navigationspfad
 	$navlinks = array();
@@ -323,16 +349,16 @@ function block_exabis_student_review_print_header($items, $options = array())
 	//$coursecontext = get_context_instance(CONTEXT_COURSE,$COURSE->id);
 	$coursecontext = context_course::instance($COURSE->id);
 	if (has_capability('block/exastud:headteacher', $coursecontext)) {
-		$tabs[] = new tabobject('configuration', $CFG->wwwroot . '/blocks/exastud/configuration.php?courseid=' . $COURSE->id, get_string("configuration", "block_exastud"), '', true);
+		$tabs[] = new tabobject('configuration', $CFG->wwwroot . '/blocks/exastud/configuration.php?courseid=' . $COURSE->id, block_exabis_student_review_get_string("configuration", "block_exastud"), '', true);
 		if(block_exabis_student_review_reviews_available())
-			$tabs[] = new tabobject('report', $CFG->wwwroot . '/blocks/exastud/report.php?courseid=' . $COURSE->id, get_string("report", "block_exastud"), '', true);
+			$tabs[] = new tabobject('report', $CFG->wwwroot . '/blocks/exastud/report.php?courseid=' . $COURSE->id, block_exabis_student_review_get_string("report", "block_exastud"), '', true);
 	}
 	if (has_capability('block/exastud:editperiods', $context))
-		$tabs[] = new tabobject('periods', $CFG->wwwroot . '/blocks/exastud/periods.php?courseid=' . $COURSE->id, get_string("periods", "block_exastud"), '', true);
+		$tabs[] = new tabobject('periods', $CFG->wwwroot . '/blocks/exastud/periods.php?courseid=' . $COURSE->id, block_exabis_student_review_get_string("periods", "block_exastud"), '', true);
 	if ($DB->count_records('block_exastudclassteachers', array('teacherid'=>$USER->id)) > 0 && block_exabis_student_review_get_active_period(false,false))
-		$tabs[] = new tabobject('review', $CFG->wwwroot . '/blocks/exastud/review.php?courseid=' . $COURSE->id, get_string("review", "block_exastud"), '', true);
+		$tabs[] = new tabobject('review', $CFG->wwwroot . '/blocks/exastud/review.php?courseid=' . $COURSE->id, block_exabis_student_review_get_string("review", "block_exastud"), '', true);
 	if (has_capability('block/exastud:uploadpicture', $context))
-		$tabs[] = new tabobject('pictureupload', $CFG->wwwroot . '/blocks/exastud/pictureupload.php?courseid=' . $COURSE->id, get_string("pictureupload", "block_exastud"), '', true);
+		$tabs[] = new tabobject('pictureupload', $CFG->wwwroot . '/blocks/exastud/pictureupload.php?courseid=' . $COURSE->id, block_exabis_student_review_get_string("pictureupload", "block_exastud"), '', true);
 
 
 	foreach ($items as $level => $item) {
@@ -354,7 +380,7 @@ function block_exabis_student_review_print_header($items, $options = array())
 			if ($item[0] == '=')
 				$item_name = substr($item, 1);
 			else
-				$item_name = get_string($item, "block_exastud");
+				$item_name = block_exabis_student_review_get_string($item, "block_exastud");
 
 			$item = array('name' => $item_name, 'link' => ($link ? $CFG->wwwroot.'/blocks/exastud/'.$link : null));
 		}
@@ -364,16 +390,16 @@ function block_exabis_student_review_print_header($items, $options = array())
 
 		$last_item_name = $item['name'];
 		$PAGE->navbar->add($item['name'],$item);
-		
+
 	}
 
 	$PAGE->set_title($strheader.': '.$last_item_name);
 	$PAGE->set_heading($strheader);
 	$PAGE->set_cacheable(true);
 	$PAGE->set_button('&nbsp;');
-	
+
 	echo $OUTPUT->header();
-	
+
 	echo '<div id="exabis_student_review">';
 	print_tabs(array($tabs),$currenttab);
 
@@ -401,7 +427,7 @@ function block_exabis_student_review_get_category($categoryid,$categorysource) {
 			$category = $DB->get_record('block_exastudcate',array("id"=>$categoryid));
 			if (!$category)
 				return null;
-				
+
 			$category->source = 'exastud';
 
 			return $category;

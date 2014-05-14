@@ -52,7 +52,7 @@ if(!$mystudents = $DB->get_records_sql('SELECT s.id, s.studentid, r.review FROM 
 	print_error('studentsnotfound','block_exastud');
 }
 block_exabis_student_review_print_student_report_header();
-echo '<div><a href="javascript:window.print()" title="Drucken">'.get_string('print','block_exastud').'</a></div>';
+echo '<div><a href="javascript:window.print()" title="Drucken">'.block_exabis_student_review_get_string('print','block_exastud').'</a></div>';
 foreach($mystudents as $mystudent) {
 	block_exabis_student_review_print_student_report($mystudent->studentid, $actPeriod->id, $class,false,$detail);
 	echo '<p style=\'page-break-before: always;\'>&nbsp;</p>';

@@ -56,7 +56,7 @@ if(!$myclasses = $DB->get_records_sql('SELECT * FROM {block_exastudclassteachers
 $table = new html_table();
 
 $table->head = array(
-		get_string('class', 'block_exastud')
+		block_exabis_student_review_get_string('class', 'block_exastud')
 );
 
 $table->align = array("left");

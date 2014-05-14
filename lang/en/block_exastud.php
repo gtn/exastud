@@ -1,5 +1,5 @@
 <?php
-// 
+//
 $string['exastud:use'] = 'Use of Exabis Student Review';
 $string['exastud:head'] = 'Head of a class';
 $string['exastud:editperiods'] = 'Edit periods';
@@ -12,23 +12,31 @@ $string['blocktitle'] = 'Exabis Student Review';
 $string['modulename'] = 'Exabis Student Review';
 $string['blockname'] = 'Exabis Student Review';
 $string['configuration'] = 'Class Configuration';
+$string['project_based_configuration'] = 'Project Configuration';
+$string['project_based_configuration'] = 'Edit project';
 $string['report'] = 'Report';
 $string['periods'] = 'Periods';
 $string['review'] = 'Review';
 $string['pictureupload'] = 'Logo Upload';
 $string['upload_picture'] = 'You can upload a logo for a school-specific report';
+$string['project_based_upload_picture'] = 'You can upload a logo for a project-specific report';
 $string['upload_success'] = 'The new logo was uploaded successfully!';
 $string['availableusers'] = 'Available Users';
 $string['teachers'] = 'Teachers';
 $string['members'] = 'Members';
 $string['errorinsertingclass'] = 'Error when inserting class';
+$string['project_based_errorinsertingclass'] = 'Error when inserting project';
 $string['redirectingtoclassinput'] = 'No class information found, redirecting to class input.';
+$string['project_based_redirectingtoclassinput'] = 'No project information found, redirecting to project input.';
 $string['errorupdatingclass'] = 'Error when updating class';
-$string['editclassmemberlist'] = 'Edit class student list';
-$string['editclassteacherlist'] = 'Edit class teacher list';
+$string['project_based_errorupdatingclass'] = 'Error when updating project';
+$string['editclassmemberlist'] = 'Edit student list';
+$string['editclassteacherlist'] = 'Edit teacher list';
 $string['editclassname'] = 'Edit class';
+$string['project_based_editclassname'] = 'Edit project';
 $string['editclasscategories'] = 'Edit assessment categories';
 $string['noclassfound'] = 'No class found!';
+$string['project_based_noclassfound'] = 'No project found!';
 $string['configteacher'] = 'Teachers in {$a}';
 $string['configmember'] = 'Students of {$a}';
 $string['configcategories'] = 'Assessment categories in {$a}';
@@ -49,9 +57,13 @@ $string['endtime'] = 'End time';
 $string['newperiod'] = 'New period';
 $string['invalidperiodid'] = 'Invalid period id';
 $string['noclassestoreview'] = 'No classes to review';
+$string['project_based_noclassestoreview'] = 'No projects to review';
 $string['class'] = 'Class';
+$string['project_based_class'] = 'Project';
 $string['reviewclass'] = 'Class review';
+$string['project_based_reviewclass'] = 'Project review';
 $string['badclass'] = 'You cannot edit this class';
+$string['project_based_badclass'] = 'You cannot edit this project';
 $string['nostudentstoreview'] = 'No students to review';
 $string['reviewstudent'] = 'Student review';
 $string['categories'] = 'Assessment categories';
@@ -62,6 +74,7 @@ $string['responsibility'] = 'Responsibility';
 $string['selfreliance'] = 'Self-reliance';
 $string['evaluation'] = 'Evaluation';
 $string['badstudent'] = 'The student is not member of this class';
+$string['project_based_badstudent'] = 'The student is not member of this project';
 $string['errorupdatingstudent'] = 'Error when updating student';
 $string['errorinsertingstudent'] = 'Error when inserting student';
 $string['nostudentstoreport'] = 'No students to report.';
@@ -81,11 +94,13 @@ $string['evaluation8'] = '8';
 $string['evaluation9'] = '9';
 $string['evaluation10'] = '10 - very good';
 $string['explainclassname'] = 'Click here to edit the class name';
+$string['project_based_explainclassname'] = 'Click here to edit the project name';
 $string['showall'] = 'Show all';
-$string['logosize'] = 'For efficient use the logo banner must be 840x100px. Please avoid using transparency in PNG files, this may cause an error while creating a PDF report.';
+$string['logosize'] = 'For efficient use the logo banner must be 840x100px. Please avoid using transparency in PNG files as they may cause an error while creating a PDF report.';
 $string['detailedreview'] = 'Detailed review';
 $string['studentreview'] = 'STUDENT REVIEW';
 $string['class'] = 'class';
+$string['project_based_class'] = 'project';
 $string['name'] = 'name';
 $string['periodreview'] = 'Review for period';
 $string['reviewcount'] = ' review(s) yet';
@@ -100,9 +115,3 @@ $string['settings_detailed_review'] = 'Detailed review';
 $string['settings_detailed_review_body'] = 'This setting allows you to see all the assessments from teachers in detail';
 $string['settings_project_based_assessment'] = 'Project-based assessment';
 $string['settings_project_based_assessment_body'] = 'This setting allows you to use project-based assessment instead of class-assessment';
-
-// Strings for project-based assessment
-if($CFG->block_exastud_project_based_assessment) {
-	$string['configuration'] = 'Edit project';
-
-}

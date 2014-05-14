@@ -69,10 +69,10 @@ $table = new html_table();
 
 $table->head = array();
 $table->head[] = ''; //userpic
-$table->head[] = get_string('name');
+$table->head[] = block_exabis_student_review_get_string('name');
 foreach($categories as $category)
 	$table->head[] = $category->title;
-$table->head[] = get_string('evaluation', 'block_exastud');
+$table->head[] = block_exabis_student_review_get_string('evaluation', 'block_exastud');
 
 $table->align = array();
 $table->align[] = 'center';
@@ -93,7 +93,7 @@ foreach($classusers as $classuser) {
 	
 	$link = '<a href="' . $CFG->wwwroot . '/blocks/exastud/review_student.php?courseid=' . $courseid . '&amp;classid=' . $classid . '&amp;sesskey=' . sesskey() . '&amp;studentid=' . $user->id . '">';
 
-	$icons = $link.'<img src="' . $CFG->wwwroot . '/pix/i/edit.gif" width="16" height="16" alt="' . get_string('edit'). '" /></a>';
+	$icons = $link.'<img src="' . $CFG->wwwroot . '/pix/i/edit.gif" width="16" height="16" alt="' . block_exabis_student_review_get_string('edit'). '" /></a>';
 	$userdesc = $link . fullname($user, $user->id).'</a>' . $blockrenderer->print_edit_link($CFG->wwwroot . '/blocks/exastud/review_student.php?courseid=' . $courseid . '&classid=' . $classid . '&sesskey=' . sesskey() . '&studentid=' . $user->id);
 	
 	$report = $DB->get_record('block_exastudreview', array('teacher_id'=>$USER->id, 'periods_id'=>$actPeriod->id, 'student_id'=>$user->id));
