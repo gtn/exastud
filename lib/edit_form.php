@@ -7,7 +7,7 @@ class class_edit_form extends moodleform {
         global $CFG, $USER;
         $mform = & $this->_form;
 
-        $mform->addElement('text', 'class', get_string('class', 'block_exastud').': ', array('size' => 50));
+        $mform->addElement('text', 'class', block_exabis_student_review_get_string('class', 'block_exastud').': ', array('size' => 50));
         $mform->setType('class', PARAM_TEXT);
         $mform->addRule('class', null, 'required', null, 'client');
 
@@ -18,7 +18,7 @@ class class_edit_form extends moodleform {
         $mform->addElement('hidden', 'courseid');
         $mform->setType('courseid', PARAM_INT);
 
-        $this->add_action_buttons(false);
+        $this->add_action_buttons();
     }
 
     function validation($data, $files) {

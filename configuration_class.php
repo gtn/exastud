@@ -53,7 +53,9 @@ if (!$class = $DB->get_record('block_exastudclass', array('userid'=>$USER->id,'p
 }
 $class->courseid = $courseid;
 $classform = new class_edit_form();
-if ($classedit = $classform->get_data()) {
+if ($classform->is_cancelled()) {
+	redirect('configuration.php?courseid=' . $courseid);
+} else if ($classedit = $classform->get_data()) {
 	if(!confirm_sesskey()) {
 		print_error("badsessionkey","block_exastud");
 	}
@@ -92,7 +94,5 @@ echo $OUTPUT->heading($class->class);
 $classform->set_data($class);
 $classform->display();
 
-echo $OUTPUT->single_button($CFG->wwwroot . '/blocks/exastud/configuration.php?courseid='.$courseid,
-					block_exabis_student_review_get_string('back', 'block_exastud'));
 echo '</div>';
 block_exabis_student_review_print_footer();

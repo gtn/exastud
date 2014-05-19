@@ -44,10 +44,10 @@ require_capability('block/exastud:use', $context);
 require_capability('block/exastud:headteacher', $context);
 $actPeriod = ($periodid==0) ? block_exabis_student_review_get_active_period() : $DB->get_record('block_exastudperiod', array('id'=>$periodid));
 
-if (!$class = $DB->get_record('block_exastudclass', array('userid'=>$USER->id,'periodid'=>$actPeriod->id))) {
+if(!$class = $DB->get_record_sql("SELECT c.* FROM {block_exastudclass} c, {block_exastudclassteachers} ct, {block_exastudclassstudents} cs
+		WHERE ct.teacherid = ? AND ct.classid = cs.classid AND cs.studentid = ? GROUP BY c.id",array($USER->id,$studentid),IGNORE_MULTIPLE))
 	print_error('noclassfound', 'block_exastud');
-}
-
+	
 if(!$pdf) block_exabis_student_review_print_student_report_header();
 block_exabis_student_review_print_student_report($studentid, $actPeriod->id, $class, $pdf, $detail);
 if(!$pdf) block_exabis_student_review_print_student_report_footer();

@@ -9,21 +9,28 @@ define('DECIMALPOINTS', 1);
  */
 function block_exabis_student_review_get_string($identifier, $component = '', $a = null, $lazyload = false) {
 	global $CFG;
-	
+
 	$projectbasedstringkeys =  array('configuration'=>true,
-		'upload_picture'=>true,
-		'redirectingtoclassinput'=>true,
-		'errorupdatingclass'=>true,
-		'editclassname'=>true,
-		'noclassfound'=>true,
-		'noclassestoreview'=>true,
-		'class'=>true,
-		'reviewclass'=>true,
-		'badclass'=>true,
-		'badstudent'=>true,
-		'explainclassname'=>true);
-	
-	if($component == "block_exastud" && $CFG->block_exastud_project_based_assessment && array_key_exists($identifier, $projectbasedstringkeys))
+			'upload_picture'=>true,
+			'redirectingtoclassinput'=>true,
+			'errorupdatingclass'=>true,
+			'editclassname'=>true,
+			'noclassfound'=>true,
+			'noclassestoreview'=>true,
+			'class'=>true,
+			'reviewclass'=>true,
+			'badclass'=>true,
+			'badstudent'=>true,
+			'explainclassname'=>true,
+			'studentreview'=>true,
+			'members'=>true,
+			'teacher'=>true,
+			'editclassmemberlist'=>true,
+			'editclassteacherlist'=>true,
+			'configteacher'=>true,
+			'configmember'=>true);
+
+	if($component == "block_exastud" && isset($CFG->block_exastud_project_based_assessment) && array_key_exists($identifier, $projectbasedstringkeys))
 		return get_string("project_based_".$identifier,$component,$a,$lazyload);
 	else
 		return get_string($identifier,$component,$a,$lazyload);
@@ -38,13 +45,23 @@ function block_exabis_student_review_get_review_periods($studentid) {
 			WHERE student_id = ? GROUP BY periods_id',array($studentid));
 }
 function block_exabis_student_review_reviews_available() {
-	global $DB,$USER;
+	global $DB,$USER, $CFG;
 	$availablereviews = $DB->get_records_sql('SELECT id
 			FROM {block_exastudreview}
 			WHERE teacher_id = '.$USER->id.' AND student_id IN (
 			SELECT studentid
 			FROM {block_exastudclassstudents} s, {block_exastudclass} c
 			WHERE c.userid = '.$USER->id.' AND s.classid=c.id )');
+	
+	if(isset($CFG->block_exastud_project_based_assessment)) {
+		// lehrer classteacher und classstudents in period a review
+		$availablereviews = $DB->get_records_sql('SELECT r.id FROM {block_exastudreview} r
+			WHERE r.student_id IN
+			(
+			SELECT cs.studentid FROM {block_exastudclassteachers} ct, {block_exastudclassstudents} cs
+			WHERE ct.teacherid = ? AND ct.classid = cs.classid
+			)',array($USER->id));
+	}
 	return ($availablereviews) ? true : false;
 }
 function block_exabis_student_review_has_wrong_periods($printBoxInsteadOfError = false) {
@@ -219,11 +236,11 @@ function block_exabis_student_review_print_student_report_footer() {
 	echo block_exabis_student_review_read_template_file('footer.html');
 }
 
-function block_exabis_student_review_print_student_report($studentid, $periodid, $class, $pdf=false, $detail=false)
+function block_exabis_student_review_print_student_report($studentid, $periodid, $class, $pdf=false, $detail=false, $ranking = false)
 {
 	global $DB,$CFG,$OUTPUT,$USER;
 
-	$detailedreview = $CFG->block_exastud_detailed_review && $detail;
+	$detailedreview = isset($CFG->block_exastud_detailed_review) && $detail;
 
 	$period =$DB->get_record('block_exastudperiod', array('id'=>$periodid));
 
@@ -234,15 +251,27 @@ function block_exabis_student_review_print_student_report($studentid, $periodid,
 		print_error('studentnotfound','block_exastud');
 	}
 
+	
 	$student = $DB->get_record('user', array('id'=>$studentid));
 	$studentreport = block_exabis_student_review_read_template_file('student_new.html');
-	$studentreport = str_replace ( '###STUDENTREVIEW###', get_string('studentreview','block_exastud'), $studentreport);
+	$studentreport = str_replace ( '###STUDENTREVIEW###', block_exabis_student_review_get_string('studentreview','block_exastud'), $studentreport);
 	$studentreport = str_replace ( '###NAME###', get_string('name','block_exastud'), $studentreport);
 	$studentreport = str_replace ( '###PERIODREVIEW###', get_string('periodreview','block_exastud'), $studentreport);
 	$studentreport = str_replace ( '###REVIEWCOUNT###', get_string('reviewcount','block_exastud'), $studentreport);
-	$studentreport = str_replace ( '###CLASSTRANSLATION###', get_string('class','block_exastud'), $studentreport);
+	$studentreport = str_replace ( '###CLASSTRANSLATION###', block_exabis_student_review_get_string('class','block_exastud'), $studentreport);
 	$studentreport = str_replace ( '###FIRSTNAME###', $student->firstname, $studentreport);
 	$studentreport = str_replace ( '###LASTNAME###', $student->lastname, $studentreport);
+	if($CFG->block_exastud_project_based_assessment && $ranking) {
+		$studentreport = str_replace ( '###RANKING###', $ranking, $studentreport);
+		$studentreport = str_replace ( '###RANKINGTRANSLATION###', 'Ranking', $studentreport);
+	} else {
+		$studentreport = str_replace ( '<tr>
+						<td class="printpersonalinfo_heading">###RANKING###</td>
+					</tr>
+					<tr>
+						<td class="printpersonalinfo_subheading">###RANKINGTRANSLATION###</td>
+					</tr>', "", $studentreport);
+	}
 	if(!$pdf) $studentreport = str_replace ( '###USERPIC###', $OUTPUT->user_picture($DB->get_record('user', array("id"=>$studentid)),array("size"=>100)), $studentreport);
 	else $studentreport = str_replace( '###USERPIC###', '', $studentreport);
 

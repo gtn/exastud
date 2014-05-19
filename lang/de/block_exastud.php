@@ -21,21 +21,27 @@ $string['upload_picture'] = 'Lade ein eigenes Projekt-Logo f&uuml;r den Bericht 
 $string['upload_success'] = 'Das neue Logo wurde erfolgreich hochgeladen!';
 $string['availableusers'] = 'Verf&uuml;gbare Benutzer';
 $string['teachers'] = 'Lehrer';
+$string['project_based_teachers'] = 'Beurteiler';
 $string['members'] = 'Teilnehmer';
+$string['project_based_members'] = 'Projekte';
 $string['errorinsertingclass'] = 'Fehler bei der Erstellung einer Klasse';
 $string['redirectingtoclassinput'] = 'Keine Klasse definiert, Weiterleitung zur Eingabe';
-$string['project_basedredirectingtoclassinput'] = 'Kein Projekt definiert, Weiterleitung zur Eingabe';
+$string['project_based_redirectingtoclassinput'] = 'Kein Projekt definiert, Weiterleitung zur Eingabe';
 $string['errorupdatingclass'] = 'Fehler bei der Aktualisierung der Klasse';
 $string['project_based_errorupdatingclass'] = 'Fehler bei der Aktualisierung des Projekts';
 $string['editclassmemberlist'] = 'Klassenteilnehmer bearbeiten';
+$string['project_based_editclassmemberlist'] = 'Projekte bearbeiten';
 $string['editclassteacherlist'] = 'Lehrer bearbeiten';
+$string['project_based_editclassteacherlist'] = 'Beurteiler bearbeiten';
 $string['editclassname'] = 'Klassenname';
 $string['project_based_editclassname'] = 'Projektname';
 $string['editclasscategories'] = 'Beurteilungskategorien bearbeiten';
 $string['noclassfound'] = 'Keine Klasse gefunden';
 $string['project_based_noclassfound'] = 'Kein Projekt gefunden';
 $string['configteacher'] = 'Lehrer in {$a}';
+$string['project_based_configteacher'] = 'Beurteiler in {$a}';
 $string['configmember'] = 'Teilnehmer in {$a}';
+$string['project_based_configmember'] = 'Projekte in {$a}';
 $string['configcategories'] = 'Beurteilungskategorien in {$a}';
 $string['errorinsertingstudents'] = 'Fehler beim Hinzuf&uuml;gen eines Sch&uuml;lers im Kurs';
 $string['errorinsertingcategories'] = 'Fehler beim Hinzuf&uuml;gen einer Kategorie im Kurs';
@@ -96,6 +102,7 @@ $string['showall'] = 'Alle anzeigen';
 $string['logosize'] = 'Der Logo-Banner sollte die Größe 840x100px haben. Außerdem ist Transparenz in PNG Bildern zu vermeiden, da es sonst beim Erstellen eines PDF Berichtes zu Fehlern kommen kann.';
 $string['detailedreview'] = 'Ausführliche Beurteilung';
 $string['studentreview'] = 'SCHÜLERBEWERTUNG';
+$string['project_based_studentreview'] = 'PROJEKTBEWERTUNG';
 $string['name'] = 'Name';
 $string['periodreview'] = 'Bewertung für die Periode';
 $string['reviewcount'] = 'Bewertungen abgegeben';
@@ -112,10 +119,5 @@ $string['settings_detailed_review_body'] = 'Diese Einstellung erlaubt es die Pun
 $string['settings_project_based_assessment'] = 'Beurteilung auf Projekt-Basis';
 $string['settings_project_based_assessment_body'] = 'Diese Einstellung erlaubt es statt Klassen Projekte zu verwalten und zu beurteilen';
 
-// Strings for project-based assessment
-if($CFG->block_exastud_project_based_assessment) {
-	$string['configuration'] = 'Projekt konfigurieren';
-	
-}
-
+$string['total'] = 'Gesamtpunkte';
 ?>
