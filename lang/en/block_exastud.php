@@ -23,7 +23,7 @@ $string['project_based_upload_picture'] = 'You can upload a logo for a project-s
 $string['upload_success'] = 'The new logo was uploaded successfully!';
 $string['availableusers'] = 'Available Users';
 $string['teachers'] = 'Teachers';
-$string['project_based_teachers'] = 'Teachers';
+$string['project_based_teachers'] = 'Project-Teachers';
 $string['members'] = 'Members';
 $string['project_based_members'] = 'Projects';
 $string['errorinsertingclass'] = 'Error when inserting class';
@@ -113,6 +113,7 @@ $string['periodreview'] = 'Review for period';
 $string['reviewcount'] = ' review(s) yet';
 $string['print'] = 'print';
 $string['total'] = 'total score';
+$string['project_based_total'] = 'total score';
 
 $string['perioddesc'] = 'description of the period: ';
 $string['starttime'] = 'starttime: ';

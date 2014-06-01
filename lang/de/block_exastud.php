@@ -21,7 +21,7 @@ $string['upload_picture'] = 'Lade ein eigenes Projekt-Logo f&uuml;r den Bericht 
 $string['upload_success'] = 'Das neue Logo wurde erfolgreich hochgeladen!';
 $string['availableusers'] = 'Verf&uuml;gbare Benutzer';
 $string['teachers'] = 'Lehrer';
-$string['project_based_teachers'] = 'Beurteiler';
+$string['project_based_teachers'] = 'Projektbeurteiler';
 $string['members'] = 'Teilnehmer';
 $string['project_based_members'] = 'Projekte';
 $string['errorinsertingclass'] = 'Fehler bei der Erstellung einer Klasse';
@@ -120,4 +120,5 @@ $string['settings_project_based_assessment'] = 'Beurteilung auf Projekt-Basis';
 $string['settings_project_based_assessment_body'] = 'Diese Einstellung erlaubt es statt Klassen Projekte zu verwalten und zu beurteilen';
 
 $string['total'] = 'Gesamtpunkte';
+$string['project_based_total'] = 'Gesamtpunkte';
 ?>

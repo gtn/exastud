@@ -99,7 +99,7 @@ else if($classid == 0){
 	$table->head[] = block_exabis_student_review_get_string('name');
 	foreach($categories as $category)
 		$table->head[] = $category->title;
-	$table->head[] = block_exabis_student_review_get_string('total');
+	$table->head[] = block_exabis_student_review_get_string('total','block_exastud');
 	$table->head[] = ''; //action
 	
 	$table->align = array();

@@ -28,7 +28,8 @@ function block_exabis_student_review_get_string($identifier, $component = '', $a
 			'editclassmemberlist'=>true,
 			'editclassteacherlist'=>true,
 			'configteacher'=>true,
-			'configmember'=>true);
+			'configmember'=>true,
+			'teachers' => true);
 
 	if($component == "block_exastud" && isset($CFG->block_exastud_project_based_assessment) && array_key_exists($identifier, $projectbasedstringkeys))
 		return get_string("project_based_".$identifier,$component,$a,$lazyload);
