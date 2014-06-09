@@ -31,7 +31,7 @@ function block_exabis_student_review_get_string($identifier, $component = '', $a
 			'configmember'=>true,
 			'teachers' => true);
 
-	if($component == "block_exastud" && isset($CFG->block_exastud_project_based_assessment) && array_key_exists($identifier, $projectbasedstringkeys))
+	if($component == "block_exastud" && isset($CFG->block_exastud_project_based_assessment) && $CFG->block_exastud_project_based_assessment==1 && array_key_exists($identifier, $projectbasedstringkeys))
 		return get_string("project_based_".$identifier,$component,$a,$lazyload);
 	else
 		return get_string($identifier,$component,$a,$lazyload);
@@ -54,7 +54,8 @@ function block_exabis_student_review_reviews_available() {
 			FROM {block_exastudclassstudents} s, {block_exastudclass} c
 			WHERE c.userid = '.$USER->id.' AND s.classid=c.id )');
 	
-	if(isset($CFG->block_exastud_project_based_assessment)) {
+	if(isset($CFG->block_exastud_project_based_assessment) 
+			&& $CFG->block_exastud_project_based_assessment==1) {
 		// lehrer classteacher und classstudents in period a review
 		$availablereviews = $DB->get_records_sql('SELECT r.id FROM {block_exastudreview} r
 			WHERE r.student_id IN
@@ -127,7 +128,8 @@ function block_exabis_student_review_get_active_period($printBoxInsteadOfError =
 		return array_shift($periods);
 	} else {
 		if($printBoxInsteadOfError && $printError) {
-			notify(get_string('periodserror', 'block_exastud'));
+		//	notify(get_string('periodserror', 'block_exastud'));
+			redirect($CFG->wwwroot.'/blocks/exastud/configuration_period.php?courseid='.$COURSE->id, get_string('periodserror', 'block_exastud'));
 		}
 		else if($printError){
 			print_error('periodserror', 'block_exastud', $CFG->wwwroot.'/blocks/exastud/configuration_period.php?courseid='.$COURSE->id);
@@ -241,7 +243,7 @@ function block_exabis_student_review_print_student_report($studentid, $periodid,
 {
 	global $DB,$CFG,$OUTPUT,$USER;
 
-	$detailedreview = isset($CFG->block_exastud_detailed_review) && $detail;
+	$detailedreview = isset($CFG->block_exastud_detailed_review) && $CFG->block_exastud_detailed_review && $detail;
 
 	$period =$DB->get_record('block_exastudperiod', array('id'=>$periodid));
 
