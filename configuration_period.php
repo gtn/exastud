@@ -71,7 +71,7 @@ if ($periodform->is_cancelled()) {
 		if (!($DB->insert_record('block_exastudperiod', $newperiod))) {
 			rror('errorinsertingperiod', 'block_exastud');
 		}
-		//add_to_log($courseid, 'exabis_student_review', 'new', 'configuration_period.php?courseid=' . $courseid . '&action=new', '');
+		//add_to_log($courseid, 'block_exastud', 'new', 'configuration_period.php?courseid=' . $courseid . '&action=new', '');
 	}
 	redirect('periods.php?courseid=' . $courseid);
 }

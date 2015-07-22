@@ -1,14 +1,14 @@
-#exabis_student_review table.esr_table {
+#block_exastud table.esr_table {
 	border-collapse: collapse;
 	margin-bottom: 20px;
 }
 
-#exabis_student_review table.esr_table thead th {
+#block_exastud table.esr_table thead th {
 	background-color: #E6E6E6;
 	font-size: 0.9rem;
 }
 
-#exabis_student_review table.esr_table thead th,#exabis_student_review table.esr_table td
+#block_exastud table.esr_table thead th,#block_exastud table.esr_table td
 	{
 	border: 1px solid #CACACA;
 	border-collapse: collapse;
@@ -16,66 +16,66 @@
 	vertical-align: top;
 }
 
-#exabis_student_review .esr_table_clean {
+#block_exastud .esr_table_clean {
 	border: 0;
 	background-color: transparent;
 }
 
-#exabis_student_review .esr_table_clean td {
+#block_exastud .esr_table_clean td {
 	padding: 5px 15px 5px 0;
 }
 
-#exabis_student_review table.esr_table td {
+#block_exastud table.esr_table td {
 	vertical-align: middle;
 }
 
-#exabis_student_review table.esr_table tr:nth-child(2n+2) {
+#block_exastud table.esr_table tr:nth-child(2n+2) {
 	background-color: #F9F9F9;
 }
-#exabis_student_review table.esr_table tr:nth-child(2n+1) {
+#block_exastud table.esr_table tr:nth-child(2n+1) {
 	background-color: #FFFFFF;
 }
 
-#exabis_student_review .est_table_userimg img {
+#block_exastud .est_table_userimg img {
 	width: 60px
 }
 
-#exabis_student_review .est_table_userimg {
+#block_exastud .est_table_userimg {
 	width: 60px;
 }
 
-#exabis_student_review .esr_pushcenter {
+#block_exastud .esr_pushcenter {
 	text-align: center;
 }
 
-#exabis_student_review .esr_pushright {
+#block_exastud .esr_pushright {
 	text-align: right;
 }
 
-#exabis_student_review .esr_tableedit {
+#block_exastud .esr_tableedit {
 	text-align: center;
 	width: 45px
 }
 
-#exabis_student_review h2 {
+#block_exastud h2 {
 	font-size: 1rem;
 	font-weight: bold;
 	margin-bottom: 1.2rem;
 	text-align: left;
 }
 
-#exabis_student_review .esr_subtitle {
+#block_exastud .esr_subtitle {
 	margin-bottom: 1.2rem;
 }
 
-#exabis_student_review .ers_inlineicon {
+#block_exastud .ers_inlineicon {
 	margin-left: 10px;
 }
 
-#exabis_student_review .esr_pflichtfeld {
+#block_exastud .esr_pflichtfeld {
 	color: red;
 }
 
-#exabis_student_review .esr_input {
+#block_exastud .esr_input {
 	min-width: 250px;
 }

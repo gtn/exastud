@@ -112,7 +112,7 @@ $availableusers = $DB->get_records_sql('SELECT id, firstname, lastname, email
 												   '.$selectsql.')
 									 ORDER BY lastname ASC, firstname ASC');
 
-echo '<div id="exabis_student_review">';
+echo '<div id="block_exastud">';
 
 $usertoclasses = $DB->get_records('block_exastudclassteachers', array('classid'=>$class->id), 'teacherid');
 

@@ -434,7 +434,7 @@ function block_exastud_print_header($items, $options = array())
 	
 	echo $OUTPUT->header();
 
-	echo '<div id="exabis_student_review">';
+	echo '<div id="block_exastud">';
 	print_tabs(array($tabs),$currenttab);
 
 	// header
@@ -514,6 +514,7 @@ function block_exastud_insert_default_categories() {
 function block_exastud_get_class_categories($classid) {
 	global $DB;
 	$classcategories = $DB->get_records('block_exastudclasscate',array("classid"=>$classid));
+	
 	if(!$classcategories) {
 		//if empty insert default categories
 		block_exastud_insert_default_categories();

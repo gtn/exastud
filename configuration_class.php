@@ -83,11 +83,12 @@ $url = "/blocks/exastud/configuration_class.php";
 $PAGE->set_url($url);
 block_exastud_print_header(array('configuration', 'editclassname'));
 
-echo '<div id="block_student_review">';
+// TODO: two divs? -- daniel
+echo '<div id="block_exastud">';
 echo "<br />";
 echo $OUTPUT->box( text_to_html(block_exastud_get_string("explainclassname","block_exastud")));
 echo '</div>';
-echo '<div id="block_student_review">';
+echo '<div id="block_exastud">';
 echo $OUTPUT->heading($class->class);
 
 $classform->set_data($class);

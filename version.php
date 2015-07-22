@@ -28,7 +28,6 @@
  *  This copyright notice MUST APPEAR in all copies of the script!
 */
 
-    $plugin->version = 2014091800;  // YYYYMMDDHH (year, month, day, 24-hr time)
-    $plugin->requires = 2010112400; // YYYYMMDDHH (This is the release version for Moodle 2.0)
-    $plugin->release  = "1.1.0";
-?>
+$plugin->version = 2015072200;  // YYYYMMDDHH (year, month, day, 24-hr time)
+$plugin->requires = 2010112400; // YYYYMMDDHH (This is the release version for Moodle 2.0)
+$plugin->release  = "1.1.0";

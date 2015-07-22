@@ -15,10 +15,25 @@ function xmldb_block_exastud_upgrade($oldversion = 0) {
 			$dbman->add_field($table, $field);
 		}
 	
-		// exabis_student_review savepoint reached
+		// block_exastud savepoint reached
 		upgrade_block_savepoint(true, 2014043000, 'exastud');
 	}
 	
 	
-	return $result;
+    if ($oldversion < 2015072200) {
+
+        // Define field sorting to be added to block_exastudcate.
+        $table = new xmldb_table('block_exastudcate');
+        $field = new xmldb_field('sorting', XMLDB_TYPE_INTEGER, '10', null, null, null, null, 'title');
+
+        // Conditionally launch add field sorting.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // block_exastud savepoint reached.
+        upgrade_block_savepoint(true, 2015072200, 'exastud');
+    }
+
+    return $result;
 }
