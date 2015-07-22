@@ -513,16 +513,19 @@ function block_exastud_insert_default_categories() {
 
 function block_exastud_get_class_categories($classid) {
 	global $DB;
-	$classcategories = $DB->get_records('block_exastudclasscate',array("classid"=>$classid));
+	$classcategories = $DB->get_records('block_exastudclasscate', array("classid"=>$classid));
 	
 	if(!$classcategories) {
 		//if empty insert default categories
 		block_exastud_insert_default_categories();
-		$DB->insert_record('block_exastudclasscate', array("classid"=>$classid,"categoryid"=>1,"categorysource"=>"exastud"));
-		$DB->insert_record('block_exastudclasscate', array("classid"=>$classid,"categoryid"=>2,"categorysource"=>"exastud"));
-		$DB->insert_record('block_exastudclasscate', array("classid"=>$classid,"categoryid"=>3,"categorysource"=>"exastud"));
+		
+        foreach ($DB->get_records('block_exastudcate', null, 'sorting, id') as $defaultCategory) {
+            $DB->insert_record('block_exastudclasscate', array("classid"=>$classid,"categoryid"=>$defaultCategory->id,"categorysource"=>"exastud"));
+        }
+
+        $classcategories = $DB->get_records('block_exastudclasscate', array("classid"=>$classid));
 	}
-	$classcategories = $DB->get_records('block_exastudclasscate',array("classid"=>$classid));
+	
 	$categories = array();
 	foreach($classcategories as $category) {
 		if ($tmp = block_exastud_get_category($category->categoryid, $category->categorysource))

@@ -7,9 +7,14 @@
 		
 		var categories = [];
 		$fieldset.find('.fitem_fselect').each(function(){
+			var fullname = $(this).find('.fitemtitle').text();
 			categories.push({
-				text: $(this).find('.fitemtitle').text(),
-				name: $(this).find('select').attr('name'),
+				fullname: fullname,
+				// seperate parent and name with a colon. eg "some group: category name"
+				parent: fullname.replace(/\s*:.*$/, ''),
+				name: fullname.replace(/^[^:]*:\s*/, ''),
+
+				input_name: $(this).find('select').attr('name'),
 				value: $(this).find('select').val()
 			});
 		});
@@ -17,31 +22,35 @@
 		// console.log(options, categories);
 		
 		var html = '';
+		var current_parent = null;
 		
-		html += '<table border="1">';
-		html += '<tr><td>Lernverhalten:</td>';
-		$.each(options, function(tmp, option){
-			html += '<td><b>' + option.text + '</td>';
-		});
-		html += '</tr>';
-		
-		
+		html += '<table id="review-table">';
 		
 		$.each(categories, function(tmp, category){
-			html += '<tr><td>'+category.text+'</td>';
+			if (current_parent !== category.parent) {
+				current_parent = category.parent;
+				html += '<tr><th class="category category-parent">'+current_parent+':</th>';
+				$.each(options, function(tmp, option){
+					html += '<th class="evaluation-header"><b>' + option.text + '</th>';
+				});
+				html += '</tr>';
+			}
+			
+			html += '<tr><td class="category">'+category.name+'</td>';
 
 			// always send at least empty value
-			html += '<input type="hidden" name="'+category.name+'" value="" />';
+			html += '<input type="hidden" name="'+category.input_name+'" value="" />';
 			
 			$.each(options, function(tmp, option){
-				html += '<td>';
-				html += '<input type="radio" name="'+category.name+'" value="'+option.value+'" ' +
+				html += '<td class="evaluation-radio">';
+				html += '<input type="radio" name="'+category.input_name+'" value="'+option.value+'" ' +
 					(category.value == option.value ? 'checked="checked" ' : '') +
 					'/>';
 				html += '</td>';
 			});
 			html += '</tr>';
 		});
+		
 		html += '</table>';
 		
 		$container.html(html);

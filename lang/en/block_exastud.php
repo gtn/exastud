@@ -89,6 +89,8 @@ $string['printversion'] = 'Print version';
 $string['printall'] = 'Print all';
 $string['periodoverlaps'] = 'Period {$a->period1} overlaps with {$a->period2}';
 $string['periodserror'] = 'Error at the configuration of the periods';
+
+// special LIS setting
 $string['evaluation1'] = '1 - insufficient';
 $string['evaluation2'] = '2';
 $string['evaluation3'] = '3';

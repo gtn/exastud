@@ -86,6 +86,8 @@ $string['printversion'] = 'Druckversion';
 $string['printall'] = 'alle drucken';
 $string['periodoverlaps'] = 'Beurteilungsperiod {$a->period1} &uuml;berschneidet sich mit {$a->period2}';
 $string['periodserror'] = 'Fehler bei der Konfiguration der Beurteilungsperioden';
+
+// special LIS setting
 $string['evaluation1'] = 'kaum';
 $string['evaluation2'] = 'ansatzweise';
 $string['evaluation3'] = 'weitgehend';
