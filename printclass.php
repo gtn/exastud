@@ -41,7 +41,7 @@ require_login($courseid);
 $context = context_course::instance($courseid);
 require_capability('block/exastud:use', $context);
 
-$actPeriod = ($periodid==0) ? block_exabis_student_review_get_active_period() : $DB->get_record('block_exastudperiod', array('id'=>$periodid));
+$actPeriod = ($periodid==0) ? block_exastud_get_active_period() : $DB->get_record('block_exastudperiod', array('id'=>$periodid));
 
 $conditions = ($classid == 0) ? array('userid'=>$USER->id,'periodid'=>$actPeriod->id) : array('id'=>$classid);
 if (!$class = $DB->get_record('block_exastudclass', $conditions)) {
@@ -59,12 +59,12 @@ if(!$mystudents = $DB->get_records_sql('
 	print_error('studentsnotfound','block_exastud');
 }
 
-block_exabis_student_review_print_student_report_header();
-echo '<div><a href="javascript:window.print()" title="Drucken">'.block_exabis_student_review_get_string('print','block_exastud').'</a></div>';
+block_exastud_print_student_report_header();
+echo '<div><a href="javascript:window.print()" title="Drucken">'.block_exastud_get_string('print','block_exastud').'</a></div>';
 $ranking = 1;
 foreach($mystudents as $mystudent) {
-	block_exabis_student_review_print_student_report($mystudent->studentid, $actPeriod->id, $class,false,$detail,$ranking++);
+	block_exastud_print_student_report($mystudent->studentid, $actPeriod->id, $class,false,$detail,$ranking++);
 	echo '<p style=\'page-break-before: always;\'>&nbsp;</p>';
 }
 
-block_exabis_student_review_print_student_report_footer();
+block_exastud_print_student_report_footer();

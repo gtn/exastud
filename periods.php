@@ -41,28 +41,27 @@ $context = context_system::instance();
 require_capability('block/exastud:use', $context);
 require_capability('block/exastud:editperiods', $context);
 
-$strperiods = block_exabis_student_review_get_string('periods', 'block_exastud');
+$strperiods = block_exastud_get_string('periods', 'block_exastud');
 
-block_exabis_student_review_check_periods(true);
+block_exastud_check_periods(true);
 
 if (!$periods = $DB->get_records('block_exastudperiod')) {
-	redirect('configuration_period.php?courseid=' . $courseid, block_exabis_student_review_get_string('redirectingtoperiodsinput', 'block_exastud'));
+	redirect('configuration_period.php?courseid=' . $courseid, block_exastud_get_string('redirectingtoperiodsinput', 'block_exastud'));
 }
 $url = '/blocks/exastud/periods.php';
 $PAGE->set_url($url);
-$PAGE->requires->css('/blocks/exastud/styles.css');
 
-block_exabis_student_review_print_header('periods');
+block_exastud_print_header('periods');
 $blockrenderer = $PAGE->get_renderer('block_exastud');
 
 /* Print the periods */
 $table = new html_table();
 
 $table->head = array(
-	block_exabis_student_review_get_string('perioddescription', 'block_exastud'),
-	block_exabis_student_review_get_string('starttime', 'block_exastud'),
-	block_exabis_student_review_get_string('endtime', 'block_exastud'),
-	block_exabis_student_review_get_string('action')
+	block_exastud_get_string('perioddescription', 'block_exastud'),
+	block_exastud_get_string('starttime', 'block_exastud'),
+	block_exastud_get_string('endtime', 'block_exastud'),
+	block_exastud_get_string('action')
 );
 
 $table->align = array("left", "left", "left", "right");
@@ -72,8 +71,8 @@ foreach($periods as $period) {
 
 	$link = '<a href="' . $CFG->wwwroot . '/blocks/exastud/configuration_period.php?courseid=' . $courseid . '&amp;periodid=' . $period->id . '&amp;sesskey=' . sesskey() . '&amp;action=edit">';
 
-	$icons = $link.'<img src="pix/edit.png" alt="' . block_exabis_student_review_get_string('edit'). '" /></a>
-			  <a href="' . $CFG->wwwroot . '/blocks/exastud/configuration_period.php?courseid=' . $courseid . '&amp;periodid=' . $period->id . '&amp;sesskey=' . sesskey() . '&amp;action=delete"><img src="pix/del.png" alt="' . block_exabis_student_review_get_string('delete'). '" /></a> ';
+	$icons = $link.'<img src="pix/edit.png" alt="' . block_exastud_get_string('edit'). '" /></a>
+			  <a href="' . $CFG->wwwroot . '/blocks/exastud/configuration_period.php?courseid=' . $courseid . '&amp;periodid=' . $period->id . '&amp;sesskey=' . sesskey() . '&amp;action=delete"><img src="pix/del.png" alt="' . block_exastud_get_string('delete'). '" /></a> ';
 
 	$starttime = date('d. M. Y - H:i', $period->starttime);
 	$endtime = date('d. M. Y - H:i', $period->endtime);
@@ -84,6 +83,6 @@ foreach($periods as $period) {
 echo $blockrenderer->print_esr_table($table);
 
 echo $OUTPUT->single_button($CFG->wwwroot . '/blocks/exastud/configuration_period.php?courseid='.$courseid.'&sesskey='.sesskey().'&action=new',
-					block_exabis_student_review_get_string('newperiod', 'block_exastud'));
+					block_exastud_get_string('newperiod', 'block_exastud'));
 
-block_exabis_student_review_print_footer();
+block_exastud_print_footer();

@@ -43,20 +43,19 @@ require_capability('block/exastud:use', $context);
 
 $url = '/blocks/exastud/review.php';
 $PAGE->set_url($url);
-$PAGE->requires->css('/blocks/exastud/styles.css');
 $blockrenderer = $PAGE->get_renderer('block_exastud');
-block_exabis_student_review_print_header('review');
-$actPeriod = block_exabis_student_review_get_active_period();
+block_exastud_print_header('review');
+$actPeriod = block_exastud_get_active_period();
 
 if(!$myclasses = $DB->get_records_sql('SELECT * FROM {block_exastudclassteachers} t JOIN {block_exastudclass} c ON t.classid=c.id AND t.teacherid=\'' . $USER->id . '\' AND c.periodid = '.$actPeriod->id)) {
-	echo block_exabis_student_review_get_string('noclassestoreview','block_exastud');
+	echo block_exastud_get_string('noclassestoreview','block_exastud');
 }
 else {
 	/* Print the Students */
 	$table = new html_table();
 
 	$table->head = array(
-			block_exabis_student_review_get_string('class', 'block_exastud')
+			block_exastud_get_string('class', 'block_exastud')
 	);
 
 	$table->align = array("left");
@@ -70,4 +69,4 @@ else {
 
 	echo $blockrenderer->print_esr_table($table);
 }
-block_exabis_student_review_print_footer();
+block_exastud_print_footer();

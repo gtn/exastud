@@ -46,16 +46,16 @@ $context = context_course::instance($courseid);
 require_capability('block/exastud:use', $context);
 require_capability('block/exastud:headteacher', $context);
 
-$curPeriod = block_exabis_student_review_get_active_period(true);
+$curPeriod = block_exastud_get_active_period(true);
 
 if (!$class = $DB->get_record('block_exastudclass', array('userid'=>$USER->id,'periodid' => $curPeriod->id))) {
 	print_error('noclassfound', 'block_exastud');
 }
 
-$header = block_exabis_student_review_get_string('configmember', 'block_exastud', $class->class);
+$header = block_exastud_get_string('configmember', 'block_exastud', $class->class);
 $url = '/blocks/exastud/configuration_classmembers.php';
 $PAGE->set_url($url);
-block_exabis_student_review_print_header(array('configuration', '='.$header));
+block_exastud_print_header(array('configuration', '='.$header));
 
 if ($frm = data_submitted()) {
 	if(!confirm_sesskey()) {
@@ -83,7 +83,7 @@ if ($frm = data_submitted()) {
 			}
 			
 			if (!$DB->delete_records('block_exastudclassstudents', array('studentid'=>$removeuser, 'classid'=>$class->id))) {
-				error('errorremovingstudents', 'block_exabis_student_review');
+				error('errorremovingstudents', 'block_exastud');
 			}
 		}
 	} else if ($showall) {
@@ -130,6 +130,6 @@ require dirname(__FILE__).'/lib/configuration_userlist.inc.php';
 echo $OUTPUT->box_end();
 	
 echo $OUTPUT->single_button($CFG->wwwroot . '/blocks/exastud/configuration.php?courseid='.$courseid,
-					block_exabis_student_review_get_string('back', 'block_exastud'));
+					block_exastud_get_string('back', 'block_exastud'));
 
-block_exabis_student_review_print_footer();
+block_exastud_print_footer();

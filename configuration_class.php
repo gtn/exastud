@@ -39,13 +39,12 @@ $searchtext     = optional_param('searchtext', '', PARAM_ALPHANUM); // search st
 
 require_login($courseid);
 
-$PAGE->requires->css('/blocks/styles.css');
 //$context = get_context_instance(CONTEXT_COURSE,$courseid);
 $context = context_course::instance($courseid);
 require_capability('block/exastud:use', $context);
 require_capability('block/exastud:headteacher', $context);
 
-$curPeriod = block_exabis_student_review_get_active_period(true);
+$curPeriod = block_exastud_get_active_period(true);
 if (!$class = $DB->get_record('block_exastudclass', array('userid'=>$USER->id,'periodid' => $curPeriod->id))) {
 	$class = new stdClass();
 	$class->courseid = $courseid;
@@ -82,11 +81,11 @@ if ($classform->is_cancelled()) {
 
 $url = "/blocks/exastud/configuration_class.php";
 $PAGE->set_url($url);
-block_exabis_student_review_print_header(array('configuration', 'editclassname'));
+block_exastud_print_header(array('configuration', 'editclassname'));
 
 echo '<div id="block_student_review">';
 echo "<br />";
-echo $OUTPUT->box( text_to_html(block_exabis_student_review_get_string("explainclassname","block_exastud")));
+echo $OUTPUT->box( text_to_html(block_exastud_get_string("explainclassname","block_exastud")));
 echo '</div>';
 echo '<div id="block_student_review">';
 echo $OUTPUT->heading($class->class);
@@ -95,4 +94,4 @@ $classform->set_data($class);
 $classform->display();
 
 echo '</div>';
-block_exabis_student_review_print_footer();
+block_exastud_print_footer();

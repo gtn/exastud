@@ -44,7 +44,7 @@ $context = context_course::instance($courseid);
 require_capability('block/exastud:use', $context);
 require_capability('block/exastud:headteacher', $context);
 
-$actPeriod = ($periodid==0 || $periodid==block_exabis_student_review_get_active_period()->id) ? block_exabis_student_review_get_active_period() : $DB->get_record('block_exastudperiod', array('id'=>$periodid));
+$actPeriod = ($periodid==0 || $periodid==block_exastud_get_active_period()->id) ? block_exastud_get_active_period() : $DB->get_record('block_exastudperiod', array('id'=>$periodid));
 
 if (!$class = $DB->get_record('block_exastudclass', array('userid'=>$USER->id,'periodid' => $actPeriod->id))) {
 	print_error('noclassfound', 'block_exastud');
@@ -52,12 +52,11 @@ if (!$class = $DB->get_record('block_exastudclass', array('userid'=>$USER->id,'p
 
 $url = '/blocks/exastud/report.php';
 $PAGE->set_url($url);
-$PAGE->requires->css('/blocks/exastud/styles.css');
 $blockrenderer = $PAGE->get_renderer('block_exastud');
 
-block_exabis_student_review_print_header('report');
+block_exastud_print_header('report');
 
-$categories = ($periodid==0 || $periodid==block_exabis_student_review_get_active_period()->id) ? block_exabis_student_review_get_class_categories($class->id) : block_exabis_student_review_get_period_categories($periodid);
+$categories = ($periodid==0 || $periodid==block_exastud_get_active_period()->id) ? block_exastud_get_class_categories($class->id) : block_exastud_get_period_categories($periodid);
 
 if(!$classusers = $DB->get_records_sql('
 		SELECT s.id, s.studentid, sum(rp.value) as total FROM {block_exastudclassstudents} s, {block_exastudclass} c, {block_exastudreview} r, {block_exastudreviewpos} rp
@@ -73,7 +72,7 @@ $table = new html_table();
 $table->head = array();
 $table->head[] = '#'; //userpic
 $table->head[] = ''; //userpic
-$table->head[] = block_exabis_student_review_get_string('name');
+$table->head[] = block_exastud_get_string('name');
 foreach($categories as $category)
 	$table->head[] = $category->title;
 $table->head[] = ''; //action
@@ -94,17 +93,17 @@ foreach($classusers as $classuser) {
 	if (!$user)
 		continue;
 
-	$userReport = block_exabis_student_review_get_report($user->id, $actPeriod->id);
+	$userReport = block_exastud_get_report($user->id, $actPeriod->id);
 
 	$link = '<a href="' . $CFG->wwwroot . '/blocks/exastud/printstudent.php?courseid=' . $courseid . '&amp;studentid=' . $user->id . '&amp;sesskey=' . sesskey() . '&periodid='.$periodid.'">';
-	$icons = $link.'<img src="' . $CFG->wwwroot . '/blocks/exastud/pix/print.png" width="16" height="16" alt="' . block_exabis_student_review_get_string('printversion', 'block_exastud'). '" /></a>';
+	$icons = $link.'<img src="' . $CFG->wwwroot . '/blocks/exastud/pix/print.png" width="16" height="16" alt="' . block_exastud_get_string('printversion', 'block_exastud'). '" /></a>';
 	
 	if($CFG->block_exastud_detailed_review) {
 		$link = '<a href="' . $CFG->wwwroot . '/blocks/exastud/printstudent.php?courseid=' . $courseid . '&amp;studentid=' . $user->id . '&amp;sesskey=' . sesskey() . '&periodid='.$periodid.'&detailedreport=true">';
-		$icons .= $link.'<img src="' . $CFG->wwwroot . '/blocks/exastud/pix/print_detail.png" width="16" height="16" alt="' . block_exabis_student_review_get_string('printversion', 'block_exastud'). '" /></a>';
+		$icons .= $link.'<img src="' . $CFG->wwwroot . '/blocks/exastud/pix/print_detail.png" width="16" height="16" alt="' . block_exastud_get_string('printversion', 'block_exastud'). '" /></a>';
 	}
 	//$link = '<a href="' . $CFG->wwwroot . '/blocks/exastud/printstudent.php?courseid=' . $courseid . '&amp;studentid=' . $user->id . '&amp;sesskey=' . sesskey() . '&periodid='.$periodid.'&pdf=true">';
-	//$icons .= $link.'<img src="' . $CFG->wwwroot . '/blocks/exastud/pix/pdf.png" width="23" height="16" alt="' . block_exabis_student_review_get_string('printversion', 'block_exastud'). '" /></a>';
+	//$icons .= $link.'<img src="' . $CFG->wwwroot . '/blocks/exastud/pix/pdf.png" width="23" height="16" alt="' . block_exastud_get_string('printversion', 'block_exastud'). '" /></a>';
 	
 	$studentdesc = $link.fullname($user, $user->id).'</a>';
 	//$studentdesc = print_user_picture($user->id, $courseid, $user->picture, 0, true, false) . ' ' . $link.fullname($user, $user->id).'</a>';
@@ -126,8 +125,8 @@ foreach($classusers as $classuser) {
 
 echo $blockrenderer->print_esr_table($table);
 
-echo '<a href="' . $CFG->wwwroot . '/blocks/exastud/printclass.php?courseid=' . $courseid . '&amp;classid=' . $class->id . '&amp;sesskey=' . sesskey() . '&periodid='.$periodid.'"><img src="' . $CFG->wwwroot . '/blocks/exastud/pix/print.png" width="16" height="16" alt="' . block_exabis_student_review_get_string('printall', 'block_exastud'). '" /></a>';
-echo '<a href="' . $CFG->wwwroot . '/blocks/exastud/printclass.php?courseid=' . $courseid . '&amp;classid=' . $class->id . '&amp;sesskey=' . sesskey() . '&periodid='.$periodid.'&detailedreport=true"><img src="' . $CFG->wwwroot . '/blocks/exastud/pix/print_detail.png" width="16" height="16" alt="' . block_exabis_student_review_get_string('printall', 'block_exastud'). '" /></a>';
+echo '<a href="' . $CFG->wwwroot . '/blocks/exastud/printclass.php?courseid=' . $courseid . '&amp;classid=' . $class->id . '&amp;sesskey=' . sesskey() . '&periodid='.$periodid.'"><img src="' . $CFG->wwwroot . '/blocks/exastud/pix/print.png" width="16" height="16" alt="' . block_exastud_get_string('printall', 'block_exastud'). '" /></a>';
+echo '<a href="' . $CFG->wwwroot . '/blocks/exastud/printclass.php?courseid=' . $courseid . '&amp;classid=' . $class->id . '&amp;sesskey=' . sesskey() . '&periodid='.$periodid.'&detailedreport=true"><img src="' . $CFG->wwwroot . '/blocks/exastud/pix/print_detail.png" width="16" height="16" alt="' . block_exastud_get_string('printall', 'block_exastud'). '" /></a>';
 
 echo '<form name="periodselect" action="'.$CFG->wwwroot.$url.'?courseid='.$courseid.'" method="POST">
 <select name="periodid" onchange="this.form.submit();">';
@@ -137,4 +136,4 @@ foreach($DB->get_records('block_exastudperiod',null,'endtime desc') as $period) 
 }
 echo '</select></form>';
 
-block_exabis_student_review_print_footer();
+block_exastud_print_footer();

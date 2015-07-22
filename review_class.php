@@ -52,27 +52,26 @@ if($DB->count_records('block_exastudclassteachers', array('teacherid'=>$USER->id
 
 $url = '/blocks/exastud/review_class.php';
 $PAGE->set_url($url);
-$PAGE->requires->css('/blocks/exastud/styles.css');
 $blockrenderer = $PAGE->get_renderer('block_exastud');
-block_exabis_student_review_print_header(array('review', 'reviewclass'));
+block_exastud_print_header(array('review', 'reviewclass'));
 
-$actPeriod = block_exabis_student_review_get_active_period();
+$actPeriod = block_exastud_get_active_period();
 
 if(!$classusers = $DB->get_records('block_exastudclassstudents', array('classid'=>$classid))) {
 	print_error('nostudentstoreview','block_exastud');
 }
 
-$categories = block_exabis_student_review_get_class_categories($classid);
+$categories = block_exastud_get_class_categories($classid);
 
 /* Print the Students */
 $table = new html_table();
 
 $table->head = array();
 $table->head[] = ''; //userpic
-$table->head[] = block_exabis_student_review_get_string('name');
+$table->head[] = block_exastud_get_string('name');
 foreach($categories as $category)
 	$table->head[] = $category->title;
-$table->head[] = block_exabis_student_review_get_string('evaluation', 'block_exastud');
+$table->head[] = block_exastud_get_string('evaluation', 'block_exastud');
 
 $table->align = array();
 $table->align[] = 'center';
@@ -93,7 +92,7 @@ foreach($classusers as $classuser) {
 	
 	$link = '<a href="' . $CFG->wwwroot . '/blocks/exastud/review_student.php?courseid=' . $courseid . '&amp;classid=' . $classid . '&amp;sesskey=' . sesskey() . '&amp;studentid=' . $user->id . '">';
 
-	$icons = $link.'<img src="' . $CFG->wwwroot . '/pix/i/edit.gif" width="16" height="16" alt="' . block_exabis_student_review_get_string('edit'). '" /></a>';
+	$icons = $link.'<img src="' . $CFG->wwwroot . '/pix/i/edit.gif" width="16" height="16" alt="' . block_exastud_get_string('edit'). '" /></a>';
 	$userdesc = $link . fullname($user, $user->id).'</a>' . $blockrenderer->print_edit_link($CFG->wwwroot . '/blocks/exastud/review_student.php?courseid=' . $courseid . '&classid=' . $classid . '&sesskey=' . sesskey() . '&studentid=' . $user->id);
 	
 	$report = $DB->get_record('block_exastudreview', array('teacher_id'=>$USER->id, 'periods_id'=>$actPeriod->id, 'student_id'=>$user->id));
@@ -114,4 +113,4 @@ foreach($classusers as $classuser) {
 
 echo $blockrenderer->print_esr_table($table);
 
-block_exabis_student_review_print_footer();
+block_exastud_print_footer();

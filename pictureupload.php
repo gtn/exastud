@@ -47,7 +47,7 @@ require_capability('block/exastud:uploadpicture', $context);
 $url = '/blocks/exastud/configuration.php';
 $PAGE->set_url($url);
 
-block_exabis_student_review_print_header('pictureupload');
+block_exastud_print_header('pictureupload');
 
 require_once("{$CFG->dirroot}/blocks/exastud/lib/picture_upload_form.php");
 
@@ -64,7 +64,7 @@ if ($mform->is_cancelled()) {
 	// save new logo
 	$mform->save_stored_file('file', context_system::instance()->id	, 'block_exastud', 'main_logo', 0);
 							  
-	block_exabis_student_review_get_string('upload_success','block_exastud');
+	block_exastud_get_string('upload_success','block_exastud');
 }
 
 if ($file = block_exastud_get_main_logo()) {
@@ -73,4 +73,4 @@ if ($file = block_exastud_get_main_logo()) {
 		
 $mform->display();
 
-block_exabis_student_review_print_footer();
+block_exastud_print_footer();

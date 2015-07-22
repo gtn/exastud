@@ -44,24 +44,23 @@ require_capability('block/exastud:headteacher', $context);
 
 $url = '/blocks/exastud/configuration.php';
 $PAGE->set_url($url);
-$PAGE->requires->css('/blocks/exastud/styles.css');
 
-$curPeriod = block_exabis_student_review_get_active_period(true);
+$curPeriod = block_exastud_get_active_period(true);
 
 if (!$class = $DB->get_record('block_exastudclass', array('userid'=>$USER->id,'periodid' => $curPeriod->id))) {
-	redirect('configuration_class.php?courseid=' . $courseid, block_exabis_student_review_get_string('redirectingtoclassinput', 'block_exastud'));
+	redirect('configuration_class.php?courseid=' . $courseid, block_exastud_get_string('redirectingtoclassinput', 'block_exastud'));
 }
 
-block_exabis_student_review_print_header('configuration');
+block_exastud_print_header('configuration');
 $blockrenderer = $PAGE->get_renderer('block_exastud');
 
 echo $blockrenderer->print_subtitle($class->class, $CFG->wwwroot . '/blocks/exastud/configuration_class.php?courseid='.$courseid.'&sesskey='. sesskey());
 
 /* Print the Students */
-echo html_writer::tag("h2",block_exabis_student_review_get_string('members', 'block_exastud'));
+echo html_writer::tag("h2",block_exastud_get_string('members', 'block_exastud'));
 $table = new html_table();
 
-$table->head = array (block_exabis_student_review_get_string('firstname'), block_exabis_student_review_get_string('lastname'), block_exabis_student_review_get_string('email'));
+$table->head = array (block_exastud_get_string('firstname'), block_exastud_get_string('lastname'), block_exastud_get_string('email'));
 $table->align = array ("left", "left", "left");
 $table->width = "90%";
 
@@ -76,13 +75,13 @@ foreach($usertoclasses as $usertoclass) {
 echo $blockrenderer->print_esr_table($table);
 
 echo $OUTPUT->single_button($CFG->wwwroot . '/blocks/exastud/configuration_classmembers.php?courseid='.$courseid.'&sesskey='. sesskey(),
-		block_exabis_student_review_get_string('editclassmemberlist', 'block_exastud'));
+		block_exastud_get_string('editclassmemberlist', 'block_exastud'));
 
 /* Print the Classes */
-echo html_writer::tag("h2",block_exabis_student_review_get_string('teachers', 'block_exastud'));
+echo html_writer::tag("h2",block_exastud_get_string('teachers', 'block_exastud'));
 $table = new html_table();
 
-$table->head = array (block_exabis_student_review_get_string('firstname'), block_exabis_student_review_get_string('lastname'), block_exabis_student_review_get_string('email'));
+$table->head = array (block_exastud_get_string('firstname'), block_exastud_get_string('lastname'), block_exastud_get_string('email'));
 $table->align = array ("left", "left", "left");
 $table->width = "90%";
 
@@ -97,17 +96,17 @@ foreach($usertoclasses as $usertoclass) {
 echo $blockrenderer->print_esr_table($table);
 
 echo $OUTPUT->single_button($CFG->wwwroot . '/blocks/exastud/configuration_classteachers.php?courseid='.$courseid.'&sesskey='. sesskey(),
-		block_exabis_student_review_get_string('editclassteacherlist', 'block_exastud'));
+		block_exastud_get_string('editclassteacherlist', 'block_exastud'));
 
 /* Print the categories */
-echo html_writer::tag("h2",block_exabis_student_review_get_string('categories', 'block_exastud'));
+echo html_writer::tag("h2",block_exastud_get_string('categories', 'block_exastud'));
 
 $table = new html_table();
 
 $table->align = array("left");
 $table->width = "90%";
 
-$categories = block_exabis_student_review_get_class_categories($class->id);
+$categories = block_exastud_get_class_categories($class->id);
 
 foreach($categories as $category) {
 	$table->data[] = array($category->title);
@@ -116,6 +115,6 @@ foreach($categories as $category) {
 echo $blockrenderer->print_esr_table($table);
 
 echo $OUTPUT->single_button($CFG->wwwroot . '/blocks/exastud/configuration_categories.php?courseid='.$courseid.'&sesskey='.sesskey(),
-		block_exabis_student_review_get_string('editclasscategories', 'block_exastud'));
+		block_exastud_get_string('editclasscategories', 'block_exastud'));
 
-block_exabis_student_review_print_footer();
+block_exastud_print_footer();

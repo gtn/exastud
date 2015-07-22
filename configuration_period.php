@@ -107,10 +107,10 @@ else {
 
 $url = '/blocks/exastud/configuration_period.php';
 $PAGE->set_url($url);
-block_exabis_student_review_print_header(array('periods', 'periodinput'));
+block_exastud_print_header(array('periods', 'periodinput'));
 
 echo "<br/>";
 $periodform->set_data($period);
 $periodform->display();
 
-block_exabis_student_review_print_footer();
+block_exastud_print_footer();
