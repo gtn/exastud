@@ -86,16 +86,18 @@ $string['printversion'] = 'Druckversion';
 $string['printall'] = 'alle drucken';
 $string['periodoverlaps'] = 'Beurteilungsperiod {$a->period1} &uuml;berschneidet sich mit {$a->period2}';
 $string['periodserror'] = 'Fehler bei der Konfiguration der Beurteilungsperioden';
-$string['evaluation1'] = '1 - unzureichend';
-$string['evaluation2'] = '2';
-$string['evaluation3'] = '3';
-$string['evaluation4'] = '4';
-$string['evaluation5'] = '5';
+$string['evaluation1'] = 'kaum';
+$string['evaluation2'] = 'ansatzweise';
+$string['evaluation3'] = 'weitgehend';
+$string['evaluation4'] = 'deutlich';
+$string['evaluation5'] = 'besonders stark';
+/*
 $string['evaluation6'] = '6';
 $string['evaluation7'] = '7';
 $string['evaluation8'] = '8';
 $string['evaluation9'] = '9';
 $string['evaluation10'] = '10 - sehr gut';
+*/
 $string['explainclassname'] = 'Hier k&ouml;nnen Sie den Klassennamen editieren';
 $string['project_based_explainclassname'] = 'Hier k&ouml;nnen Sie den Projektnamen editieren';
 $string['showall'] = 'Alle anzeigen';

@@ -94,11 +94,13 @@ $string['evaluation2'] = '2';
 $string['evaluation3'] = '3';
 $string['evaluation4'] = '4';
 $string['evaluation5'] = '5';
+/*
 $string['evaluation6'] = '6';
 $string['evaluation7'] = '7';
 $string['evaluation8'] = '8';
 $string['evaluation9'] = '9';
 $string['evaluation10'] = '10 - very good';
+*/
 $string['explainclassname'] = 'Click here to edit the class name';
 $string['project_based_explainclassname'] = 'Click here to edit the project name';
 $string['showall'] = 'Show all';

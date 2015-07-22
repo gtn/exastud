@@ -396,7 +396,7 @@ function block_exastud_print_header($items, $options = array())
 	foreach ($items as $level => $item) {
 		if (!is_array($item)) {
 			if (!is_string($item)) {
-				echo 'noch nicht unterstützt';
+				echo 'not supported';
 			}
 			if(!$currenttab)
 				$currenttab = $item;
@@ -430,7 +430,7 @@ function block_exastud_print_header($items, $options = array())
 	$PAGE->set_cacheable(true);
 	$PAGE->set_button('&nbsp;');
 
-	$PAGE->requires->css('/blocks/styles.css');
+	block_exastud_init_js_css();
 	
 	echo $OUTPUT->header();
 
@@ -440,6 +440,27 @@ function block_exastud_print_header($items, $options = array())
 	// header
 	if (empty($options['noheading']))
 		echo $OUTPUT->heading($last_item_name);
+}
+
+function block_exastud_init_js_css(){
+	global $PAGE, $CFG;
+
+	// only allowed to be called once
+	static $js_inited = false;
+	if ($js_inited) return;
+	$js_inited = true;
+
+	// js/css for whole block
+	$PAGE->requires->css('/blocks/exastud/css/styles.css');
+	$PAGE->requires->jquery();
+	$PAGE->requires->js('/blocks/exastud/javascript/exastud.js', true);
+
+	// page specific js/css
+	$scriptName = preg_replace('!\.[^\.]+$!', '', basename($_SERVER['PHP_SELF']));
+	if (file_exists($CFG->dirroot.'/blocks/exastud/css/'.$scriptName.'.css'))
+		$PAGE->requires->css('/blocks/exastud/css/'.$scriptName.'.css');
+	if (file_exists($CFG->dirroot.'/blocks/exastud/javascript/'.$scriptName.'.js'))
+		$PAGE->requires->js('/blocks/exastud/javascript/'.$scriptName.'.js', true);
 }
 
 function block_exastud_print_footer()

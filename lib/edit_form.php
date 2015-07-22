@@ -92,27 +92,24 @@ class student_edit_form extends moodleform {
         $mform->setType('studentid', PARAM_INT);
         $mform->setDefault('studentid', 0);
 
-        $selectoptions = array(
-            1 => get_string('evaluation1', 'block_exastud'),
-            2 => get_string('evaluation2', 'block_exastud'),
-            3 => get_string('evaluation3', 'block_exastud'),
-            4 => get_string('evaluation4', 'block_exastud'),
-            5 => get_string('evaluation5', 'block_exastud'),
-            6 => get_string('evaluation6', 'block_exastud'),
-            7 => get_string('evaluation7', 'block_exastud'),
-            8 => get_string('evaluation8', 'block_exastud'),
-            9 => get_string('evaluation9', 'block_exastud'),
-            10 => get_string('evaluation10', 'block_exastud'),
-        );
+        $selectoptions = array();
+        for ($i=-10; $i<=10; $i++) {
+        	if (get_string_manager()->string_exists('evaluation'.$i, 'block_exastud'))
+        		$selectoptions[$i] = get_string('evaluation'.$i, 'block_exastud');
+        }
 
+        $mform->addElement('header', 'categories', get_string('review', 'block_exastud'));
+        
 		$categories = $this->_customdata['categories'];
 		foreach($categories as $category) {
 			$id = $category->id.'_'.$category->source;
+			
 			$mform->addElement('select', $id, $category->title, $selectoptions);
 			$mform->setType($id, PARAM_INT);
-			$mform->setDefault($id, 1);
+			$mform->setDefault($id, key($selectoptions));
 		}
 
+        $mform->addElement('header', 'review_header', get_string('review', 'block_exastud'));
         $mform->addElement('htmleditor', 'review', get_string('review', 'block_exastud'), array('cols' => 50, 'rows' => 30));
         $mform->setType('review', PARAM_RAW);
 
@@ -120,5 +117,3 @@ class student_edit_form extends moodleform {
     }
 
 }
-
-?>
