@@ -92,7 +92,9 @@ class student_edit_form extends moodleform {
         $mform->setType('studentid', PARAM_INT);
         $mform->setDefault('studentid', 0);
 
-        $selectoptions = array();
+        $selectoptions = array(
+            0 => '' // empty option
+        );
         for ($i=-10; $i<=10; $i++) {
         	if (get_string_manager()->string_exists('evaluation'.$i, 'block_exastud'))
         		$selectoptions[$i] = get_string('evaluation'.$i, 'block_exastud');

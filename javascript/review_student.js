@@ -2,7 +2,8 @@
 (function($) {
 	$(function() {
 		var $fieldset = $('fieldset#id_categories');
-		var options = $fieldset.find('select')[0].options;
+		// ignore empty options (eg. "please choose" option ist empty)
+		var $options = $fieldset.find('select:first option:not(:empty)');
 		var $container = $fieldset.find('.fcontainer');
 		
 		var categories = [];
@@ -19,8 +20,6 @@
 			});
 		});
 		
-		// console.log(options, categories);
-		
 		var html = '';
 		var current_parent = null;
 		
@@ -30,7 +29,7 @@
 			if (current_parent !== category.parent) {
 				current_parent = category.parent;
 				html += '<tr><th class="category category-parent">'+current_parent+':</th>';
-				$.each(options, function(tmp, option){
+				$options.each(function(tmp, option){
 					html += '<th class="evaluation-header"><b>' + option.text + '</th>';
 				});
 				html += '</tr>';
@@ -41,7 +40,7 @@
 			// always send at least empty value
 			html += '<input type="hidden" name="'+category.input_name+'" value="" />';
 			
-			$.each(options, function(tmp, option){
+			$options.each(function(tmp, option){
 				html += '<td class="evaluation-radio">';
 				html += '<input type="radio" name="'+category.input_name+'" value="'+option.value+'" ' +
 					(category.value == option.value ? 'checked="checked" ' : '') +
