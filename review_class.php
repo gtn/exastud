@@ -42,11 +42,7 @@ $context = context_system::instance();
 
 require_capability('block/exastud:use', $context);
 
-if(!confirm_sesskey()) {
-	print_error("badsessionkey","block_exastud");
-}
-
-if($DB->count_records('block_exastudclassteachers', array('teacherid'=>$USER->id, 'classid'=>$classid)) == 0) {
+if(!$DB->count_records('block_exastudclassteachers', array('teacherid'=>$USER->id, 'classid'=>$classid))) {
 	print_error("badclass","block_exastud");
 }
 

@@ -43,7 +43,7 @@ require_login($courseid);
 $context = context_course::instance($courseid);
 require_capability('block/exastud:use', $context);
 require_capability('block/exastud:headteacher', $context);
-$actPeriod = ($periodid==0) ? block_exastud_get_active_period() : $DB->get_record('block_exastudperiod', array('id'=>$periodid));
+$actPeriod = block_exastud_get_period($periodid, true);
 
 if($classid > 0) $class = $DB->get_record("block_exastudclass", array("id"=>$classid),"*",MUST_EXIST);
 else if(!$class = $DB->get_record_sql("SELECT c.* FROM {block_exastudclass} c, {block_exastudclassteachers} ct, {block_exastudclassstudents} cs

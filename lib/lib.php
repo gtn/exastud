@@ -137,6 +137,18 @@ function block_exastud_get_active_period($printBoxInsteadOfError = false, $print
 		return false;
 	}
 }
+
+function block_exastud_get_period($periodid, $alwaysLoadActive = false) {
+    if ($periodid && ($period = $DB->get_record('block_exastudperiod', array('id'=>$periodid)))) {
+        return $period;
+    }
+    if ($alwaysLoadActive) {
+        // if period empty or could not be loaded, load active one 
+        return block_exastud_get_active_period();
+    }
+    return null;
+}
+
 function block_exastud_get_period_categories($periodid) {
 	global $DB;
 
@@ -532,6 +544,19 @@ function block_exastud_get_class_categories($classid) {
 			$categories[] = $tmp;
 	}
 	return $categories;
+}
+
+function block_exastud_get_evaluation_options($also_empty = false) {
+    
+    $options = $also_empty ? array(
+        0 => '' // empty option
+    ) : array();
+    for ($i=-10; $i<=10; $i++) {
+    	if (get_string_manager()->string_exists('evaluation'.$i, 'block_exastud'))
+    		$options[$i] = get_string('evaluation'.$i, 'block_exastud');
+    }
+    
+    return $options;
 }
 
 function block_exastud_get_main_logo() {
