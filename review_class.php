@@ -65,6 +65,8 @@ $table = new html_table();
 $table->head = array();
 $table->head[] = ''; //userpic
 $table->head[] = block_exastud_get_string('name');
+if (is_new_version())
+    $table->head[] = ''; // report button
 foreach($categories as $category)
 	$table->head[] = $category->title;
 $table->head[] = block_exastud_get_string('evaluation', 'block_exastud');
@@ -86,7 +88,7 @@ foreach($classusers as $classuser) {
 	if (!$user)
 		continue;
 	
-	$link = '<a href="' . $CFG->wwwroot . '/blocks/exastud/review_student.php?courseid=' . $courseid . '&amp;classid=' . $classid . '&amp;sesskey=' . sesskey() . '&amp;studentid=' . $user->id . '">';
+	$link = '<a href="' . $CFG->wwwroot . '/blocks/exastud/review_student.php?courseid=' . $courseid . '&classid=' . $classid . '&studentid=' . $user->id . '">';
 
 	$icons = $link.'<img src="' . $CFG->wwwroot . '/pix/i/edit.gif" width="16" height="16" alt="' . block_exastud_get_string('edit'). '" /></a>';
 	$userdesc = $link . fullname($user, $user->id).'</a>' . $blockrenderer->print_edit_link($CFG->wwwroot . '/blocks/exastud/review_student.php?courseid=' . $courseid . '&classid=' . $classid . '&sesskey=' . sesskey() . '&studentid=' . $user->id);
@@ -95,6 +97,11 @@ foreach($classusers as $classuser) {
 	$data = array();
 	$data[] = $OUTPUT->user_picture($user,array("courseid"=>$courseid));
 	$data[] = $userdesc;
+	
+	if (is_new_version()) {
+        $data[] = '<a href="' . $CFG->wwwroot . '/blocks/exastud/report_student.php?courseid=' . $courseid . '&classid=' . $classid . '&studentid=' . $user->id . '">'
+            .'Alle Bewertungen zeigen</a>';
+	}
 	if($report) {
 		foreach($categories as $category)
 			$data[] = $DB->get_field('block_exastudreviewpos', 'value', array("categoryid"=>$category->id,"reviewid"=>$report->id,"categorysource"=>$category->source));

@@ -2,6 +2,10 @@
 
 define('DECIMALPOINTS', 1);
 
+function is_new_version() {
+    return true;
+}
+
 /**
  * Returns a localized string.
  * This method is neccessary because a project based evaluation is available in the current exastud
@@ -119,15 +123,15 @@ function block_exastud_check_if_period_ovelap($printBoxInsteadOfError = false) {
 	}
 }
 
-function block_exastud_get_active_period($printBoxInsteadOfError = false, $printError=true) {
+function block_exastud_get_active_period($redirectInsteadOfError = false, $printError=true) {
 	global $DB,$CFG,$COURSE;
 	$periods = $DB->get_records_sql('SELECT * FROM {block_exastudperiod} WHERE (starttime < ' . time() . ') AND (endtime > ' . time() . ')');
 
 	// genau 1e periode?
 	if(is_array($periods) && (count($periods) == 1)) {
-		return array_shift($periods);
+		return reset($periods);
 	} else {
-		if($printBoxInsteadOfError && $printError) {
+		if($redirectInsteadOfError && $printError) {
 		//	notify(get_string('periodserror', 'block_exastud'));
 			redirect($CFG->wwwroot.'/blocks/exastud/configuration_period.php?courseid='.$COURSE->id, get_string('periodserror', 'block_exastud'));
 		}
@@ -138,15 +142,25 @@ function block_exastud_get_active_period($printBoxInsteadOfError = false, $print
 	}
 }
 
-function block_exastud_get_period($periodid, $alwaysLoadActive = false) {
-    if ($periodid && ($period = $DB->get_record('block_exastudperiod', array('id'=>$periodid)))) {
+function block_exastud_get_period($periodid, $loadActive = true) {
+    if ($periodid) {
+        return $DB->get_record('block_exastudperiod', array('id'=>$periodid));
+    } elseif ($loadActive) {
+        // if period empty, load active one 
+        return block_exastud_get_active_period(false, false);
+    } else {
+        return null;
+    }
+}
+
+function block_exastud_check_period($periodid, $loadActive = true) {
+    $period = block_exastud_get_period($periodid, $loadActive);
+    
+    if ($period) {
         return $period;
+    } else {
+        print_error("invalidperiodid","block_exastud");
     }
-    if ($alwaysLoadActive) {
-        // if period empty or could not be loaded, load active one 
-        return block_exastud_get_active_period();
-    }
-    return null;
 }
 
 function block_exastud_get_period_categories($periodid) {

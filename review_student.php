@@ -44,10 +44,6 @@ $PAGE->set_url($url);
 $context = context_system::instance();
 require_capability('block/exastud:use', $context);
 
-if (!confirm_sesskey()) {
-    print_error('badsessionkey', 'block_exastud');
-}
-
 if ($DB->count_records('block_exastudclassteachers', array('teacherid' => $USER->id, 'classid' => $classid)) == 0) {
     print_error('badclass', 'block_exastud');
 }
@@ -116,12 +112,12 @@ if ($studentedit = $studentform->get_data()) {
         } else
             print_error('errorinsertingstudent', 'block_exastud');
     }
-    redirect($CFG->wwwroot . '/blocks/exastud/review_class.php?courseid=' . $courseid . '&amp;classid=' . $classid . '&amp;sesskey=' . sesskey());
+    redirect($CFG->wwwroot . '/blocks/exastud/review_class.php?courseid=' . $courseid . '&classid=' . $classid);
 }
 
 block_exastud_print_header(array('review',
     array('name' => $strclassreview, 'link' => $CFG->wwwroot . '/blocks/exastud/review_class.php?courseid=' . $courseid .
-        '&amp;classid=' . $classid . '&amp;sesskey=' . sesskey()),
+        '&classid=' . $classid),
     '=' . $strstudentreview
         ), array('noheading' => true));
 
@@ -133,7 +129,7 @@ echo $OUTPUT->heading($studentdesc);
 $studentform->set_data($formdata);
 $studentform->display();
 
-echo $OUTPUT->single_button($CFG->wwwroot . '/blocks/exastud/review_class.php?courseid='.$courseid.'&classid='.$classid.'sesskey='.sesskey(),
+echo $OUTPUT->single_button($CFG->wwwroot . '/blocks/exastud/review_class.php?courseid='.$courseid.'&classid='.$classid,
         block_exastud_get_string('back', 'block_exastud'));
 
 block_exastud_print_footer();
