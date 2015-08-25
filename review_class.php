@@ -103,13 +103,16 @@ foreach($classusers as $classuser) {
             .'Alle Bewertungen zeigen</a>';
 	}
 	if($report) {
-		foreach($categories as $category)
-			$data[] = $DB->get_field('block_exastudreviewpos', 'value', array("categoryid"=>$category->id,"reviewid"=>$report->id,"categorysource"=>$category->source));
+		foreach($categories as $category) {
+			$bewertung = $DB->get_field('block_exastudreviewpos', 'value', array("categoryid"=>$category->id,"reviewid"=>$report->id,"categorysource"=>$category->source));
+			$data[] = $bewertung ? get_string('evaluation'.$bewertung, 'block_exastud') : '';
+		}
 		$data[] = $report->review;
 	}
-	else
+	else {
 		for($i=0;$i<=count($categories);$i++)
 			$data[] = '';
+	}
 	
 	$table->data[] = $data;
 }
