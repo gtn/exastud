@@ -158,6 +158,7 @@ class block_exastud_renderer extends plugin_renderer_base {
             foreach ($table->data as $key => $row) {
                 if (($row === 'hr') && ($countcols)) {
                     $output .= html_writer::tag('td', html_writer::tag('div', '', array('class' => 'tabledivider')), array('colspan' => $countcols));
+                    $oddeven = 1;
                 } else {
                     // Convert array rows to html_table_rows and cell strings to html_table_cell objects
                     if (!($row instanceof html_table_row)) {
@@ -172,12 +173,12 @@ class block_exastud_renderer extends plugin_renderer_base {
                         $row = $newrow;
                     }
 
-                    $oddeven = $oddeven ? 0 : 1;
+                    $oddeven = isset($row->oddeven) ? $row->oddeven : ($oddeven ? 0 : 1);
                     if (isset($table->rowclasses[$key])) {
                         $row->attributes['class'] .= ' ' . $table->rowclasses[$key];
                     }
 
-                    $row->attributes['class'] .= ' r' . $oddeven;
+                    $row->attributes['class'] .= ' r' . (int)$oddeven;
                     if ($key == $lastrowkey) {
                         $row->attributes['class'] .= ' lastrow';
                     }

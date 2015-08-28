@@ -69,7 +69,6 @@ if (is_new_version())
     $table->head[] = ''; // report button
 foreach($categories as $category)
 	$table->head[] = $category->title;
-$table->head[] = block_exastud_get_string('evaluation', 'block_exastud');
 
 $table->align = array();
 $table->align[] = 'center';
@@ -83,6 +82,7 @@ $table->align[] = 'right';
 
 $table->width = "90%";
 
+$oddeven = true;
 foreach($classusers as $classuser) {
 	$user = $DB->get_record('user', array('id'=>$classuser->studentid));
 	if (!$user)
@@ -94,27 +94,51 @@ foreach($classusers as $classuser) {
 	$userdesc = $link . fullname($user, $user->id).'</a>' . $blockrenderer->print_edit_link($CFG->wwwroot . '/blocks/exastud/review_student.php?courseid=' . $courseid . '&classid=' . $classid . '&sesskey=' . sesskey() . '&studentid=' . $user->id);
 	
 	$report = $DB->get_record('block_exastudreview', array('teacher_id'=>$USER->id, 'periods_id'=>$actPeriod->id, 'student_id'=>$user->id));
-	$data = array();
-	$data[] = $OUTPUT->user_picture($user,array("courseid"=>$courseid));
-	$data[] = $userdesc;
+	$row = new html_table_row();
+	$row->cells[] = $OUTPUT->user_picture($user,array("courseid"=>$courseid));
+	$row->cells[] = $userdesc;
 	
 	if (is_new_version()) {
-        $data[] = '<a href="' . $CFG->wwwroot . '/blocks/exastud/report_student.php?courseid=' . $courseid . '&classid=' . $classid . '&studentid=' . $user->id . '">'
+        $row->cells[] = '<a href="' . $CFG->wwwroot . '/blocks/exastud/report_student.php?courseid=' . $courseid . '&classid=' . $classid . '&studentid=' . $user->id . '">'
             .'Alle Bewertungen zeigen</a>';
 	}
 	if($report) {
 		foreach($categories as $category) {
 			$bewertung = $DB->get_field('block_exastudreviewpos', 'value', array("categoryid"=>$category->id,"reviewid"=>$report->id,"categorysource"=>$category->source));
-			$data[] = $bewertung ? get_string('evaluation'.$bewertung, 'block_exastud') : '';
+			$row->cells[] = $bewertung ? get_string('evaluation'.$bewertung, 'block_exastud') : '';
 		}
-		$data[] = $report->review;
 	}
 	else {
 		for($i=0;$i<=count($categories);$i++)
-			$data[] = '';
+			$row->cells[] = '';
 	}
-	
-	$table->data[] = $data;
+    
+    $oddeven = !$oddeven;
+	$row->oddeven = $oddeven;
+	$table->data[] = $row;
+
+    if ($report) {
+        /*
+        $cell = new html_table_cell();
+        $cell->text = block_exastud_get_string('evaluation', 'block_exastud');
+        $cell->colspan = count($categories);
+        $row = new html_table_row(array(
+            'asdf', '', '', $cell
+        ));
+        $row->oddeven = $oddeven;
+        $table->data[] = $row;
+        */
+
+        $cell = new html_table_cell();
+        $cell->text = $report->review;
+        $cell->colspan = count($categories);
+        $cell->style = 'text-align: left;';
+        $row = new html_table_row(array(
+            '', '', '', $cell
+        ));
+        $row->oddeven = $oddeven;
+        $table->data[] = $row;
+    }
 }
 
 echo $blockrenderer->print_esr_table($table);
