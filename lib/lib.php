@@ -479,6 +479,7 @@ function block_exastud_init_js_css(){
 	// js/css for whole block
 	$PAGE->requires->css('/blocks/exastud/css/styles.css');
 	$PAGE->requires->jquery();
+	$PAGE->requires->jquery_plugin('ui');
 	$PAGE->requires->js('/blocks/exastud/javascript/exastud.js', true);
 
 	// page specific js/css
@@ -579,3 +580,86 @@ function block_exastud_get_main_logo() {
 	$areafiles = $fs->get_area_files(context_system::instance()->id, 'block_exastud', 'main_logo', 0, 'itemid', false);
 	return empty($areafiles) ? null : reset($areafiles);
 }
+
+class block_exastud_param {
+    public static function clean_object($values, $definition) {
+        // some value => type
+        $ret = new stdClass;
+        $values = (object)$values;
+    
+        foreach ($definition as $key => $valueType) {
+            $value = isset($values->$key) ? $values->$key : null;
+            if (is_object($valueType)) {
+                $ret->$key = static::clean_object($value, $valueType);
+            } elseif (is_array($valueType)) {
+                $ret->$key = static::clean_array($value, $valueType);
+            } else {
+                $ret->$key = clean_param($value, $valueType);
+            }
+        }
+    
+        return $ret;
+    }
+
+    public static function clean_array($values, $definition) {
+
+        if (count($definition) != 1) {
+            print_error('no array definition');
+        }
+        
+        $keyType = key($definition);
+        $valueType = reset($definition);
+        
+        if ($keyType !== PARAM_INT && $keyType !== PARAM_TEXT) {
+            print_error('wrong key type: '.$keyType);
+        }
+
+        if (is_array($valueType)) {
+            foreach ($values as $key=>$value) {
+                $ret[clean_param($key, $keyType)] = static::clean_array($value, $valueType);
+            }
+        } elseif (is_object($valueType)) {
+            foreach ($values as $key=>$value) {
+                $ret[clean_param($key, $keyType)] = static::clean_object($value, $valueType);
+            }
+        } else {
+            foreach ($values as $key=>$value) {
+                $ret[clean_param($key, $keyType)] = clean_param($value, $valueType);
+            }
+        }
+        
+        return $ret;
+    }
+    
+    protected static function get_param($parname) {
+        // POST has precedence.
+        if (isset($_POST[$parname])) {
+            return $_POST[$parname];
+        } else if (isset($_GET[$parname])) {
+            return $_GET[$parname];
+        } else {
+            return null;
+        }
+    }
+
+    public static function optional_array($parname, array $definition) {
+        $param = static::get_param($parname);
+        
+        if ($param === null) {
+            return array();
+        } else {
+            return static::clean_array($param, $definition);
+        }
+    }
+
+    public static function required_array($parname, array $definition) {
+        $param = static::get_param($parname);
+        
+        if ($param === null) {
+            print_error('param not found: '.$parname);
+        } else {
+            return static::clean_array($param, $definition);
+        }
+    }
+}
+
