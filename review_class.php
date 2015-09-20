@@ -31,9 +31,10 @@
 */
 
 require("inc.php");
-global $DB;
+
 $courseid = optional_param('courseid', 1, PARAM_INT); // Course ID
 $classid = required_param('classid', PARAM_INT);
+$subjectid = required_param('subjectid', PARAM_INT);
 
 require_login($courseid);
 
@@ -42,14 +43,23 @@ $context = context_system::instance();
 
 require_capability('block/exastud:use', $context);
 
-if(!$DB->count_records('block_exastudclassteachers', array('teacherid'=>$USER->id, 'classid'=>$classid))) {
+$classdata = $DB->get_record_sql("
+    SELECT ct.id, c.class, s.title AS subject
+    FROM {block_exastudclassteachers} ct
+    JOIN {block_exastudclass} c ON ct.classid=c.id
+    LEFT JOIN {block_exastudsubjects} s ON ct.subjectid = s.id
+    WHERE ct.teacherid=? AND ct.classid=? AND ct.subjectid=?
+", array($USER->id, $classid, $subjectid));
+
+if(!$classdata) {
 	print_error("badclass","block_exastud");
 }
 
 $url = '/blocks/exastud/review_class.php';
 $PAGE->set_url($url);
 $blockrenderer = $PAGE->get_renderer('block_exastud');
-block_exastud_print_header(array('review', 'reviewclass'));
+$classheader = block_exastud_get_string('reviewclass').': '.$classdata->class.($classdata->subject?' - '.$classdata->subject:'');
+block_exastud_print_header(array('review', '='.$classheader));
 
 $actPeriod = block_exastud_get_active_period();
 
@@ -58,6 +68,7 @@ if(!$classusers = $DB->get_records('block_exastudclassstudents', array('classid'
 }
 
 $categories = block_exastud_get_class_categories($classid);
+$evaluation_options = block_exastud_get_evaluation_options();
 
 /* Print the Students */
 $table = new html_table();
@@ -88,12 +99,12 @@ foreach($classusers as $classuser) {
 	if (!$user)
 		continue;
 	
-	$link = '<a href="' . $CFG->wwwroot . '/blocks/exastud/review_student.php?courseid=' . $courseid . '&classid=' . $classid . '&studentid=' . $user->id . '">';
+	$link = '<a href="' . $CFG->wwwroot . '/blocks/exastud/review_student.php?courseid=' . $courseid . '&classid=' . $classid . '&subjectid=' . $subjectid . '&studentid=' . $user->id . '">';
 
 	$icons = $link.'<img src="' . $CFG->wwwroot . '/pix/i/edit.gif" width="16" height="16" alt="' . block_exastud_get_string('edit'). '" /></a>';
-	$userdesc = $link . fullname($user, $user->id).'</a>' . $blockrenderer->print_edit_link($CFG->wwwroot . '/blocks/exastud/review_student.php?courseid=' . $courseid . '&classid=' . $classid . '&sesskey=' . sesskey() . '&studentid=' . $user->id);
+	$userdesc = $link . fullname($user, $user->id).'</a>' . $blockrenderer->print_edit_link($CFG->wwwroot . '/blocks/exastud/review_student.php?courseid=' . $courseid . '&classid=' . $classid . '&subjectid=' . $subjectid . '&sesskey=' . sesskey() . '&studentid=' . $user->id);
 	
-	$report = $DB->get_record('block_exastudreview', array('teacher_id'=>$USER->id, 'periods_id'=>$actPeriod->id, 'student_id'=>$user->id));
+	$report = $DB->get_record('block_exastudreview', array('teacherid'=>$USER->id, 'subjectid'=>$subjectid, 'periodid'=>$actPeriod->id, 'studentid'=>$user->id));
 	$row = new html_table_row();
 	$row->cells[] = $OUTPUT->user_picture($user,array("courseid"=>$courseid));
 	$row->cells[] = $userdesc;
@@ -105,7 +116,7 @@ foreach($classusers as $classuser) {
 	if($report) {
 		foreach($categories as $category) {
 			$bewertung = $DB->get_field('block_exastudreviewpos', 'value', array("categoryid"=>$category->id,"reviewid"=>$report->id,"categorysource"=>$category->source));
-			$row->cells[] = $bewertung ? get_string('evaluation'.$bewertung, 'block_exastud') : '';
+			$row->cells[] = $bewertung && isset($evaluation_options[$bewertung]) ? $evaluation_options[$bewertung] : '';
 		}
 	}
 	else {

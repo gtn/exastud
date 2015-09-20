@@ -13,49 +13,40 @@ function is_new_version() {
  * This method is neccessary because a project based evaluation is available in the current exastud
  * version, which requires a different naming.
  */
-function block_exastud_get_string($identifier, $component = '', $a = null, $lazyload = false) {
+function block_exastud_get_string($identifier, $component = null, $a = null, $lazyload = false) {
 	global $CFG;
 
-	$projectbasedstringkeys =  array('configuration'=>true,
-			'upload_picture'=>true,
-			'redirectingtoclassinput'=>true,
-			'errorupdatingclass'=>true,
-			'editclassname'=>true,
-			'noclassfound'=>true,
-			'noclassestoreview'=>true,
-			'class'=>true,
-			'reviewclass'=>true,
-			'badclass'=>true,
-			'badstudent'=>true,
-			'explainclassname'=>true,
-			'studentreview'=>true,
-			'members'=>true,
-			'teacher'=>true,
-			'editclassmemberlist'=>true,
-			'editclassteacherlist'=>true,
-			'configteacher'=>true,
-			'configmember'=>true,
-			'teachers' => true);
-
-	if($component == "block_exastud" && isset($CFG->block_exastud_project_based_assessment) && $CFG->block_exastud_project_based_assessment==1 && array_key_exists($identifier, $projectbasedstringkeys))
-		return get_string("project_based_".$identifier,$component,$a,$lazyload);
-	else
-		return get_string($identifier,$component,$a,$lazyload);
+	$manager = get_string_manager();
+	
+	if ($component == null)
+        $component = 'block_exastud';
+	
+	// first try string with project_based_* prefix
+    if (($component == 'block_exastud') && !empty($CFG->block_exastud_project_based_assessment) && $manager->string_exists('project_based_'.$identifier, $component))
+	    return $manager->get_string('project_based_'.$identifier, $component, $a);
+	
+	if ($manager->string_exists($identifier, $component))
+	    return $manager->get_string($identifier, $component, $a);
+	
+	return $manager->get_string($identifier, '', $a);
 }
+
 function block_exastud_check_periods($printBoxInsteadOfError = false) {
 	block_exastud_has_wrong_periods($printBoxInsteadOfError);
 	block_exastud_check_if_period_ovelap($printBoxInsteadOfError);
 }
+/*
 function block_exastud_get_review_periods($studentid) {
 	global $DB;
 	return $DB->get_records_sql('SELECT periods_id FROM {block_exastudreview} r
 			WHERE student_id = ? GROUP BY periods_id',array($studentid));
 }
+*/
 function block_exastud_reviews_available() {
 	global $DB,$USER, $CFG;
 	$availablereviews = $DB->get_records_sql('SELECT id
 			FROM {block_exastudreview}
-			WHERE teacher_id = '.$USER->id.' AND student_id IN (
+			WHERE teacherid = '.$USER->id.' AND studentid IN (
 			SELECT studentid
 			FROM {block_exastudclassstudents} s, {block_exastudclass} c
 			WHERE c.userid = '.$USER->id.' AND s.classid=c.id )');
@@ -64,7 +55,7 @@ function block_exastud_reviews_available() {
 			&& $CFG->block_exastud_project_based_assessment==1) {
 		// lehrer classteacher und classstudents in period a review
 		$availablereviews = $DB->get_records_sql('SELECT r.id FROM {block_exastudreview} r
-			WHERE r.student_id IN
+			WHERE r.studentid IN
 			(
 			SELECT cs.studentid FROM {block_exastudclassteachers} ct, {block_exastudclassstudents} cs
 			WHERE ct.teacherid = ? AND ct.classid = cs.classid
@@ -168,8 +159,7 @@ function block_exastud_check_period($periodid, $loadActive = true) {
 function block_exastud_get_period_categories($periodid) {
 	global $DB;
 
-	// use a dummy id, bc for moodle the first column has to be unique
-	$reviewcategories = $DB->get_records_sql('SELECT CONCAT(rp.categoryid, "-", rp.categorysource) AS id, rp.categoryid, rp.categorysource FROM {block_exastudreviewpos} rp, {block_exastudreview} r WHERE r.periods_id=? AND rp.reviewid=r.id GROUP BY rp.categoryid, rp.categorysource',array($periodid));
+	$reviewcategories = $DB->get_recordset_sql('SELECT rp.categoryid, rp.categorysource FROM {block_exastudreviewpos} rp, {block_exastudreview} r WHERE r.periodid=? AND rp.reviewid=r.id GROUP BY rp.categoryid, rp.categorysource',array($periodid));
 
 	$categories=array();
 	foreach($reviewcategories as $reviewcategory) {
@@ -179,15 +169,16 @@ function block_exastud_get_period_categories($periodid) {
 
 	return $categories;
 }
-function block_exastud_get_detailed_report($student_id, $period_id) {
+/*
+function block_exastud_get_detailed_report($studentid, $periodid) {
 	global $DB;
 
 	$report = new stdClass();
 	$review = $DB->get_records_sql('SELECT concat(pos.categoryid,"_",pos.categorysource) as uniqueuid, pos.value, u.lastname, u.firstname, pos.categoryid, pos.categorysource FROM 	{block_exastudreview} r
 			JOIN {block_exastudreviewpos} pos ON pos.reviewid = r.id
-			JOIN {user} u ON r.teacher_id = u.id WHERE student_id = ? AND periods_id = ?',array($student_id,$period_id));
+			JOIN {user} u ON r.teacher_id = u.id WHERE student_id = ? AND periods_id = ?',array($studentid,$periodid));
 
-	$cats = $DB->get_records_sql('SELECT concat(categoryid,"_",categorysource) as uniqueuid,rp.categoryid, rp.categorysource FROM {block_exastudreview} r, {block_exastudreviewpos} rp where r.student_id = ? AND r.periods_id = ? AND rp.reviewid = r.id GROUP BY rp.categoryid, rp.categorysource',array($student_id,$period_id));
+	$cats = $DB->get_records_sql('SELECT concat(categoryid,"_",categorysource) as uniqueuid,rp.categoryid, rp.categorysource FROM {block_exastudreview} r, {block_exastudreviewpos} rp where r.student_id = ? AND r.periods_id = ? AND rp.reviewid = r.id GROUP BY rp.categoryid, rp.categorysource',array($studentid,$periodid));
 	foreach($cats as $cat) {
 
 		if ($category = block_exastud_get_category($rcat->categoryid, $rcat->categorysource)) {
@@ -201,46 +192,40 @@ function block_exastud_get_detailed_report($student_id, $period_id) {
 
 	return $report;
 }
-function block_exastud_get_report($student_id, $period_id) {
+*/
+function block_exastud_get_report($studentid, $periodid) {
 	global $DB;
 
 	$report = new stdClass();
-	/*
-	 $team = $DB->get_record_sql('SELECT \'1\' AS id, ROUND(AVG(team), ' . DECIMALPOINTS . ') AS avgteam FROM {block_exastudreview} WHERE student_id=' . $student_id . ' AND periods_id=' . $period_id);
-	$report->team = is_null($team->avgteam) ? '': $team->avgteam;
 
-	$resp = $DB->get_record_sql('SELECT \'1\' AS id, ROUND(AVG(resp), ' . DECIMALPOINTS . ') AS avgresp FROM {block_exastudreview} WHERE student_id=' . $student_id . ' AND periods_id=' . $period_id);
-	$report->resp = is_null($resp->avgresp) ? '': $resp->avgresp;
-
-	$inde = $DB->get_record_sql('SELECT \'1\' AS id, ROUND(AVG(inde), ' . DECIMALPOINTS . ') AS avginde FROM {block_exastudreview} WHERE student_id=' . $student_id . ' AND periods_id=' . $period_id);
-	$report->inde = is_null($inde->avginde) ? '': $inde->avginde;
-	*/
-
-	$totalvalue = $DB->get_record_sql('SELECT sum(rp.value) as total FROM {block_exastudreview} r, {block_exastudreviewpos} rp where r.student_id = ? AND r.periods_id = ? AND rp.reviewid = r.id',array($student_id,$period_id));
+	$totalvalue = $DB->get_record_sql('SELECT sum(rp.value) as total FROM {block_exastudreview} r, {block_exastudreviewpos} rp where r.studentid = ? AND r.periodid = ? AND rp.reviewid = r.id',array($studentid,$periodid));
 	$report->totalvalue = $totalvalue->total;
 
-	$reviewcategories = $DB->get_records_sql('SELECT rp.id, rp.categoryid, rp.categorysource, ROUND(AVG(rp.value), ' . DECIMALPOINTS . ') as avgvalue FROM {block_exastudreview} r, {block_exastudreviewpos} rp where r.student_id = ? AND r.periods_id = ? AND rp.reviewid = r.id GROUP BY rp.categoryid, rp.categorysource',array($student_id,$period_id));
+	$reviewcategories = $DB->get_records_sql('SELECT rp.id, rp.categoryid, rp.categorysource, ROUND(AVG(rp.value), ' . DECIMALPOINTS . ') as avgvalue FROM {block_exastudreview} r, {block_exastudreviewpos} rp where r.studentid = ? AND r.periodid = ? AND rp.reviewid = r.id GROUP BY rp.categoryid, rp.categorysource',array($studentid,$periodid));
 	foreach($reviewcategories as $rcat) {
 		if ($category = block_exastud_get_category($rcat->categoryid, $rcat->categorysource))
 			$report->{$category->title} = is_null($rcat->avgvalue) ? '' : $rcat->avgvalue;
 	}
 
-	$numrecords = $DB->get_record_sql('SELECT COUNT(id) AS count FROM {block_exastudreview} WHERE student_id=' . $student_id . ' AND periods_id=' . $period_id);
+	$numrecords = $DB->get_record_sql('SELECT COUNT(id) AS count FROM {block_exastudreview} WHERE studentid=' . $studentid . ' AND periodid=' . $periodid);
 	$report->numberOfEvaluations = $numrecords->count;
 
-	$comments = $DB->get_records_sql('SELECT id, teacher_id, review FROM {block_exastudreview} WHERE student_id = \'' . $student_id . '\' AND periods_id =  \'' . $period_id . '\' AND TRIM(review) !=  \'\'');
+    $comments = $DB->get_recordset_sql("
+                SELECT ".user_picture::fields('u').", r.review, s.title AS subject
+                FROM {block_exastudreview} r
+                JOIN {user} u ON r.teacherid = u.id
+                LEFT JOIN {block_exastudsubjects} s ON r.subjectid = s.id
+                WHERE r.studentid = ? AND r.periodid = ? AND TRIM(r.review) !=  ''
+                ORDER BY s.title, u.lastname, u.firstname",
+                array($studentid, $periodid));
 
 	$report->comments = array();
-	if (is_array($comments)) {
-		foreach($comments as $comment) {
-			$teacher = $DB->get_record('user', array('id'=>$comment->teacher_id));
+	foreach($comments as $comment) {
+		$newcomment = new stdClass();
+		$newcomment->name = ($comment->subject?$comment->subject.' ('.fullname($comment).')':fullname($comment));
+		$newcomment->review = format_text($comment->review);
 
-			$newcomment = new stdClass();
-			$newcomment->name = fullname($teacher, $teacher->id);
-			$newcomment->review = format_text($comment->review);
-
-			$report->comments[] = $newcomment;
-		}
+		$report->comments[] = $newcomment;
 	}
 
 	return $report;
@@ -327,11 +312,14 @@ function block_exastud_print_student_report($studentid, $periodid, $class, $pdf=
 		<td class="rating legend">'.@$studentReport->{$category->title}.'</td></tr>';
 			
 		if($detailedreview) {
-			$detaildata = $DB->get_records_sql('SELECT pos.id, pos.value, u.lastname, u.firstname FROM 	{block_exastudreview} r
+			$detaildata = $DB->get_recordset_sql("SELECT ".user_picture::fields('u').", pos.value, s.title AS subject
+			        FROM 	{block_exastudreview} r
 					JOIN {block_exastudreviewpos} pos ON pos.reviewid = r.id
-					JOIN {user} u ON r.teacher_id = u.id WHERE student_id = ? AND periods_id = ? AND pos.categoryid = ? AND pos.categorysource = ?',array($studentid,$periodid,$category->id,$category->source));
+					JOIN {user} u ON r.teacherid = u.id
+			        LEFT JOIN {block_exastudsubjects} s ON r.subjectid = s.id
+			        WHERE studentid = ? AND periodid = ? AND pos.categoryid = ? AND pos.categorysource = ?",array($studentid,$periodid,$category->id,$category->source));
 			foreach($detaildata as $detailrow)
-				$html.='<tr class="ratings"><td class="teacher">'.$detailrow->lastname.' ' . $detailrow->firstname . '</td>
+				$html.='<tr class="ratings"><td class="teacher">'.($detailrow->subject?$detailrow->subject.' ('.fullname($detailrow).')':fullname($detailrow)) . '</td>
 				<td class="rating legend teacher">'.$detailrow->value.'</td></tr>';
 		}
 	}
@@ -410,16 +398,18 @@ function block_exastud_print_header($items, $options = array())
 	$coursecontext = context_course::instance($COURSE->id);
 	if (has_capability('block/exastud:headteacher', $coursecontext)) {
 		$tabs[] = new tabobject('configuration', $CFG->wwwroot . '/blocks/exastud/configuration.php?courseid=' . $COURSE->id, block_exastud_get_string("configuration", "block_exastud"), '', true);
-		if(block_exastud_reviews_available())
+		if(!is_new_version() && block_exastud_reviews_available())
 			$tabs[] = new tabobject('report', $CFG->wwwroot . '/blocks/exastud/report.php?courseid=' . $COURSE->id, block_exastud_get_string("report", "block_exastud"), '', true);
 	}
 	if (has_capability('block/exastud:editperiods', $context))
 		$tabs[] = new tabobject('periods', $CFG->wwwroot . '/blocks/exastud/periods.php?courseid=' . $COURSE->id, block_exastud_get_string("periods", "block_exastud"), '', true);
 	if ($DB->count_records('block_exastudclassteachers', array('teacherid'=>$USER->id)) > 0 && block_exastud_get_active_period(false,false))
 		$tabs[] = new tabobject('review', $CFG->wwwroot . '/blocks/exastud/review.php?courseid=' . $COURSE->id, block_exastud_get_string("review", "block_exastud"), '', true);
-	if (has_capability('block/exastud:uploadpicture', $context))
+	if (!is_new_version() && has_capability('block/exastud:uploadpicture', $context))
 		$tabs[] = new tabobject('pictureupload', $CFG->wwwroot . '/blocks/exastud/pictureupload.php?courseid=' . $COURSE->id, block_exastud_get_string("pictureupload", "block_exastud"), '', true);
-
+    if (has_capability('block/exastud:admin', context_system::instance())) {
+        $tabs[] = new tabobject('settings', $CFG->wwwroot . '/blocks/exastud/configuration_global.php?courseid=' . $COURSE->id, block_exastud_get_string("settings"), '', true);
+    }
 
 	foreach ($items as $level => $item) {
 		if (!is_array($item)) {
@@ -466,7 +456,7 @@ function block_exastud_print_header($items, $options = array())
 	print_tabs(array($tabs),$currenttab);
 
 	// header
-	if (empty($options['noheading']))
+	if (!in_array('noheading', $options))
 		echo $OUTPUT->heading($last_item_name);
 }
 
@@ -530,13 +520,28 @@ function block_exastud_get_category($categoryid,$categorysource) {
 	}
 	return null;
 }
-function block_exastud_insert_default_categories() {
+function block_exastud_insert_default_entries() {
 	global $DB;
+
 	//if empty import
 	if(!$DB->get_records('block_exastudcate')) {
-		$DB->insert_record('block_exastudcate', array("title"=>get_string('teamplayer', 'block_exastud')));
-		$DB->insert_record('block_exastudcate', array("title"=>get_string('responsibility', 'block_exastud')));
-		$DB->insert_record('block_exastudcate', array("title"=>get_string('selfreliance', 'block_exastud')));
+		$DB->insert_record('block_exastudcate', array("sorting" => 1, "title"=>block_exastud_get_string('teamplayer')));
+		$DB->insert_record('block_exastudcate', array("sorting" => 2, "title"=>block_exastud_get_string('responsibility')));
+		$DB->insert_record('block_exastudcate', array("sorting" => 3, "title"=>block_exastud_get_string('selfreliance', 'block_exastud')));
+	}
+	
+	if(!$DB->get_records('block_exastudsubjects')) {
+		$DB->insert_record('block_exastudsubjects', array("title"=>block_exastud_t('de:Deutsch')));
+		$DB->insert_record('block_exastudsubjects', array("title"=>block_exastud_t('de:Englisch')));
+		$DB->insert_record('block_exastudsubjects', array("title"=>block_exastud_t('de:Mathematik')));
+	}
+	
+	if(!$DB->get_records('block_exastudevalopt')) {
+	    for ($i=1; $i<=10; $i++) {
+        	if (!get_string_manager()->string_exists('evaluation'.$i, 'block_exastud'))
+        	    break;
+    		$DB->insert_record('block_exastudevalopt', array("sorting" => $i, "title"=>get_string('evaluation'.$i, 'block_exastud')));
+        }
 	}
 }
 
@@ -546,14 +551,21 @@ function block_exastud_get_class_categories($classid) {
 	
 	if(!$classcategories) {
 		//if empty insert default categories
-		block_exastud_insert_default_categories();
+		block_exastud_insert_default_entries();
 		
         foreach ($DB->get_records('block_exastudcate', null, 'sorting, id') as $defaultCategory) {
             $DB->insert_record('block_exastudclasscate', array("classid"=>$classid,"categoryid"=>$defaultCategory->id,"categorysource"=>"exastud"));
         }
-
-        $classcategories = $DB->get_records('block_exastudclasscate', array("classid"=>$classid));
 	}
+	
+	$classcategories = $DB->get_records_sql("
+        SELECT classcate.*
+        FROM {block_exastudclasscate} classcate
+        LEFT JOIN {block_exastudcate} cate ON classcate.categorysource='exastud' AND classcate.categoryid=cate.id
+        WHERE classcate.classid = ?
+        ORDER BY cate.id IS NULL, cate.sorting, classcate.id
+    ", array($classid));
+	
 	
 	$categories = array();
 	foreach($classcategories as $category) {
@@ -564,14 +576,13 @@ function block_exastud_get_class_categories($classid) {
 }
 
 function block_exastud_get_evaluation_options($also_empty = false) {
+    global $DB;
     
     $options = $also_empty ? array(
         0 => '' // empty option
     ) : array();
-    for ($i=-10; $i<=10; $i++) {
-    	if (get_string_manager()->string_exists('evaluation'.$i, 'block_exastud'))
-    		$options[$i] = get_string('evaluation'.$i, 'block_exastud');
-    }
+    
+    $options += $DB->get_records_menu('block_exastudevalopt');
     
     return $options;
 }
@@ -582,3 +593,36 @@ function block_exastud_get_main_logo() {
 	$areafiles = $fs->get_area_files(context_system::instance()->id, 'block_exastud', 'main_logo', 0, 'itemid', false);
 	return empty($areafiles) ? null : reset($areafiles);
 }
+
+/**
+ * block_exalib_t
+ * @return string
+ */
+function block_exastud_t() {
+    $args = func_get_args();
+    $languagestrings = array();
+    
+    // extra parameters at the end?
+    $a = null;
+    if (count($args) >= 2) {
+        $last = end($args);
+        if (!is_string($last)) {
+            $a = array_pop($args);
+        }
+    }
+    
+    foreach ($args as $i => $string) {
+        if (!preg_match('!^([^:]+):(.*)$!', $string, $matches)) {
+            print_error('wrong string format: '.$string);
+        }
+        $languagestrings[$matches[1]] = $matches[2];
+    }
+    
+    $lang = current_language();
+    if (isset($languagestrings[$lang])) {
+        return $languagestrings[$lang];
+    } else {
+        return reset($languagestrings);
+    }
+}
+

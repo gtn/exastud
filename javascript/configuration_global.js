@@ -1,37 +1,56 @@
 
 (function($) {
 	$(function(){
-		var $container = $("#exacomp-list");
-		var $items = $container.find("[exacomp=items]");
+		var $container = $("#exa-list");
+		if (!$container[0]) {
+			// no sort container
+			return;
+		}
+		
+		var $items = $container.find("[exa=items]");
 		var $itemTemplate = $items.find('li').remove();
 		
-		$.each(exacomp_list_items, function(){
+		var sorting = ($container.attr('exa-sorting') != 'false');
+			
+		$.each(exa_list_items, function(){
 			var $item = $itemTemplate.clone();
 			$item.find(':text').val(this.title);
 			$item.data('id', this.id);
-			$items.append($item);
+			$item.appendTo($items);
 		});
 
-		$items.sortable();
+		if (sorting) {
+			$items.sortable();
+		}
 		
 		// delete
-		$items.on('click', '[exacomp=delete-button]', function(){
+		$items.on('click', '[exa=delete-button]', function(){
 			$(this).closest('li').remove();
 		});
 		
 		// add
-		$container.find("[exacomp=new-button]").click(function(){
-			var $input = $container.find("[exacomp=new-text]");
+		$container.find("[exa=new-button]").click(function(){
+			var $input = $container.find("[exa=new-text]");
 
 			var $item = $itemTemplate.clone();
 			$item.find(':text').val($input.val());
-			$items.append($item);
+			$item.appendTo($items);
+			$item.effect( "highlight", 1000 );
+
+			// sort list
+			if (!sorting) {
+				$items.find('li').sort(function(a,b){
+					var textA = $(a).find(':text').val();
+					var textB = $(b).find(':text').val();
+					return textA.localeCompare(textB);
+				}).appendTo($items);
+			}
 
 			$input.val('');
 		});
 		
 		// save
-		$container.find("[exacomp=save-button]").click(function(){
+		$container.find("[exa=save-button]").click(function(){
 			
 			// disable button
 			$(this).attr('disabled', true);
@@ -48,7 +67,7 @@
 			
 			$.post(document.location.href, {
 				items: items,
-				action: 'save',
+				action: 'save-'+block_exastud.get_param('action'),
 				sesskey: M.cfg.sesskey
 			}).done(function(ret) {
 				if (ret !== 'ok') {

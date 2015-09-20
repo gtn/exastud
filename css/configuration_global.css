@@ -1,0 +1,26 @@
+#exa-list [exa=items] {
+    margin: 0;
+    padding: 0;
+}
+#exa-list li {
+	display: block;
+    list-style-type: none;
+    background-color: #efefef;
+    margin: 0 0 5px 0;
+    padding: 5px;
+}
+#exa-list:not([exa-sorting=false]) li {
+    cursor: move;
+    padding-left: 40px;
+    background: url(../../../pix/t/sort.png) 13px 12px no-repeat #efefef;
+}
+#exa-list li * {
+    margin: 0;
+}
+#exa-list li [exa=delete-button] {
+    margin-left: 10px;
+    cursor: pointer;
+}
+#exa-list li [exa=delete-button]:hover {
+    text-decoration: underline;
+}

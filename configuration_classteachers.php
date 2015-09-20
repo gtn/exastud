@@ -103,13 +103,14 @@ if ($searchtext !== '') {   // Search for a subset of remaining users
 }
 
 $availableusers = $DB->get_records_sql('SELECT id, firstname, lastname, email
-									 FROM {user}
-									 WHERE '.$select.'
-									 AND id NOT IN (
-											 SELECT teacherid
-											 FROM {block_exastudclassteachers}
-												   WHERE classid = '.$class->id.'
-												   '.$selectsql.')
+									FROM {user}
+									WHERE '.$select.'
+									-- disabled, allow teacher to be assign more than once (eg. 2 different subjects)
+                                    -- AND id NOT IN (
+									--		 SELECT teacherid
+									--		 FROM {block_exastudclassteachers}
+									--			   WHERE classid = '.$class->id.'
+									--			   '.$selectsql.')
 									 ORDER BY lastname ASC, firstname ASC');
 
 echo '<div id="block_exastud">';

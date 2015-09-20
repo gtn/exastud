@@ -55,7 +55,7 @@ if(!$DB->record_exists("block_exastudclassteachers", array("classid"=>$class->id
 if(!$mystudents = $DB->get_records_sql('
 			SELECT s.id, s.studentid, sum(rp.value) as total, r.review FROM {block_exastudclassstudents} s, {block_exastudclass} c, {block_exastudreview} r, {block_exastudreviewpos} rp
 			WHERE s.classid=?
-			AND r.student_id = s.studentid AND r.periods_id = c.periodid AND rp.reviewid = r.id AND s.classid = c.id GROUP BY s.studentid ORDER BY total DESC',array($class->id))) {
+			AND r.studentid = s.studentid AND r.periodid = c.periodid AND rp.reviewid = r.id AND s.classid = c.id GROUP BY s.studentid ORDER BY total DESC',array($class->id))) {
 	print_error('studentsnotfound','block_exastud');
 }
 

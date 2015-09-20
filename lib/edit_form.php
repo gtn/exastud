@@ -88,6 +88,10 @@ class student_edit_form extends moodleform {
         $mform->setType('classid', PARAM_INT);
         $mform->setDefault('classid', 0);
 
+        $mform->addElement('hidden', 'subjectid');
+        $mform->setType('subjectid', PARAM_INT);
+        $mform->setDefault('subjectid', 0);
+
         $mform->addElement('hidden', 'studentid');
         $mform->setType('studentid', PARAM_INT);
         $mform->setDefault('studentid', 0);

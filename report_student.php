@@ -64,7 +64,7 @@ block_exastud_print_header(array('review',
     array('name' => $strclassreview, 'link' => $CFG->wwwroot . '/blocks/exastud/review_class.php?courseid=' . $courseid .
         '&classid=' . $classid),
     '=' . $strstudentreview
-        ), array('noheading' => true));
+        ), array('noheading'));
 
 
 $studentdesc = $OUTPUT->user_picture($student, array("courseid" => $courseid)) . ' ' . fullname($student, $student->id);
@@ -98,13 +98,14 @@ foreach ($categories as $category){
     foreach ($evaluationOtions as $pos_value => $option) {
         echo '<td class="evaluation">';
         
-        $reviewers = $DB->get_records_sql("
-            SELECT u.* -- u.id, u.lastname, u.firstname
+        $reviewers = $DB->get_recordset_sql("
+            SELECT u.*, s.title AS subject
             FROM {block_exastudreview} r
             JOIN {block_exastudreviewpos} pos ON pos.reviewid = r.id
-            JOIN {user} u ON r.teacher_id = u.id
-            JOIN {block_exastudclass} c ON c.periodid = r.periods_id
-            WHERE r.student_id = ? AND c.id = ?
+            JOIN {user} u ON r.teacherid = u.id
+            JOIN {block_exastudclass} c ON c.periodid = r.periodid
+            LEFT JOIN {block_exastudsubjects} s ON r.subjectid = s.id
+            WHERE r.studentid = ? AND c.id = ?
                 AND pos.categoryid = ? AND pos.categorysource = ?
                 AND pos.value = ?
         ", array($studentid, $classid, $category->id, $category->source, $pos_value));
@@ -112,7 +113,7 @@ foreach ($categories as $category){
         foreach ($reviewers as $reviewer) {
             if ($i) echo ', ';
             $i++;
-            echo fullname($reviewer);
+            echo ($reviewer->subject?$reviewer->subject.' ('.fullname($reviewer).')':fullname($reviewer));
         }
         echo '</td>';
     }
@@ -124,11 +125,13 @@ echo '</table>';
 
 
 
-$comments = $DB->get_records_sql("
-                SELECT ".user_picture::fields('u').", r.review
+$comments = $DB->get_recordset_sql("
+                SELECT ".user_picture::fields('u').", r.review, s.title AS subject
                 FROM {block_exastudreview} r
-                JOIN {user} u ON r.teacher_id = u.id
-                WHERE student_id = ? AND periods_id = ? AND TRIM(review) !=  ''",
+                JOIN {user} u ON r.teacherid = u.id
+                LEFT JOIN {block_exastudsubjects} s ON r.subjectid = s.id
+                WHERE r.studentid = ? AND r.periodid = ? AND TRIM(r.review) !=  ''
+                ORDER BY s.title, u.lastname, u.firstname",
                 array($studentid, $class->periodid));
 
 
@@ -136,7 +139,7 @@ echo '<h3>'.get_string('detailedreview','block_exastud').'</h3>';
 
 echo '<table id="ratingtable">';
 foreach($comments as $comment) {
-    echo '<tr><td class="ratinguser">'.fullname($comment).'</td>
+    echo '<tr><td class="ratinguser">'.($comment->subject?$comment->subject.' ('.fullname($comment).')':fullname($comment)).'</td>
         <td class="ratingtext">'.format_text($comment->review).'</td>
         </tr>';
 }

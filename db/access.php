@@ -50,7 +50,14 @@ $capabilities = array(
 						'manager' => CAP_ALLOW
 				)
 		),
-		'block/exastud:editperiods' => array(
+		'block/exastud:admin' => array(
+				'captype' => 'write',
+				'contextlevel' => CONTEXT_SYSTEM,
+				'legacy' => array(
+						'manager' => CAP_ALLOW
+				)
+		),
+        'block/exastud:editperiods' => array(
 
 				'captype' => 'write',
 				'contextlevel' => CONTEXT_SYSTEM,

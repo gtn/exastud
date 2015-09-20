@@ -47,7 +47,16 @@ $blockrenderer = $PAGE->get_renderer('block_exastud');
 block_exastud_print_header('review');
 $actPeriod = block_exastud_get_active_period();
 
-if(!$myclasses = $DB->get_records_sql('SELECT * FROM {block_exastudclassteachers} t JOIN {block_exastudclass} c ON t.classid=c.id AND t.teacherid=\'' . $USER->id . '\' AND c.periodid = '.$actPeriod->id)) {
+$myclasses = $DB->get_records_sql("
+    SELECT ct.id, ct.subjectid, ct.classid, c.class, s.title AS subject
+    FROM {block_exastudclassteachers} ct
+    JOIN {block_exastudclass} c ON ct.classid=c.id
+    LEFT JOIN {block_exastudsubjects} s ON ct.subjectid = s.id
+    WHERE ct.teacherid=? AND c.periodid=?
+    ORDER BY c.class, s.sorting
+", array($USER->id, $actPeriod->id));
+
+if(!$myclasses) {
 	echo block_exastud_get_string('noclassestoreview','block_exastud');
 }
 else {
@@ -62,9 +71,9 @@ else {
 	$table->width = "90%";
 
 	foreach($myclasses as $myclass) {
-		$edit_link = '<a href="' . $CFG->wwwroot . '/blocks/exastud/review_class.php?courseid=' . $courseid . '&amp;classid=' . $myclass->classid . '&amp;sesskey=' . sesskey() . '&amp;action=edit">';
+		$edit_link = '<a href="' . $CFG->wwwroot . '/blocks/exastud/review_class.php?courseid=' . $courseid . '&amp;classid=' . $myclass->classid . '&amp;subjectid=' . $myclass->subjectid . '">';
 
-		$table->data[] = array($edit_link.$myclass->class.'</a>');
+		$table->data[] = array($edit_link.$myclass->class.($myclass->subject?' - '.$myclass->subject:'').'</a>');
 	}
 
 	echo $blockrenderer->print_esr_table($table);

@@ -30,11 +30,9 @@
 */
 
 require("inc.php");
-global $DB;
 
 $courseid       = optional_param('courseid', 1, PARAM_INT); // Course ID
-$showall        = optional_param('showall', 0, PARAM_BOOL);
-$searchtext     = optional_param('searchtext', '', PARAM_ALPHANUM); // search string
+$action = optional_param('action', '', PARAM_TEXT);
 require_login($courseid);
 
 $context = context_course::instance($courseid);
@@ -49,6 +47,23 @@ $curPeriod = block_exastud_get_active_period(true);
 
 if (!$class = $DB->get_record('block_exastudclass', array('userid'=>$USER->id,'periodid' => $curPeriod->id))) {
 	redirect('configuration_class.php?courseid=' . $courseid, block_exastud_get_string('redirectingtoclassinput', 'block_exastud'));
+}
+
+if ($action == 'save-classteacher-subject') {
+    if(!confirm_sesskey()) {
+        die(get_string("badsessionkey","block_exastud"));
+    }
+
+    block_exastud_db::update_record('block_exastudclassteachers', array(
+        'id' => required_param('classteacherid', PARAM_INT),
+        'classid' => $class->id
+    ), array(
+        'subjectid' => required_param('subjectid', PARAM_INT)
+    ));
+
+    echo 'ok';
+
+    exit;
 }
 
 block_exastud_print_header('configuration');
@@ -81,15 +96,25 @@ echo $OUTPUT->single_button($CFG->wwwroot . '/blocks/exastud/configuration_class
 echo html_writer::tag("h2",block_exastud_get_string('teachers', 'block_exastud'));
 $table = new html_table();
 
-$table->head = array (block_exastud_get_string('firstname'), block_exastud_get_string('lastname'), block_exastud_get_string('email'));
-$table->align = array ("left", "left", "left");
+$table->head = array (block_exastud_get_string('firstname'), block_exastud_get_string('lastname'), block_exastud_get_string('email'), block_exastud_t('de:Gegenstand'));
+$table->align = array ("left", "left", "left", "left");
 $table->width = "90%";
 
-$usertoclasses = $DB->get_records('block_exastudclassteachers', array('classid'=>$class->id), 'teacherid');
+$usertoclasses = $DB->get_records('block_exastudclassteachers', array('classid'=>$class->id));
+$subjects = $DB->get_records('block_exastudsubjects');
 
 foreach($usertoclasses as $usertoclass) {
 	$user = $DB->get_record('user', array('id'=>$usertoclass->teacherid));
-	$table->data[] = array ($user->firstname, $user->lastname, $user->email);
+	$select = '<select name="classteacher_subject[]" exa-classteacherid="'.$usertoclass->id.'"><option></option>';
+	foreach ($subjects as $subject) {
+	    $select .= '<option value="'.$subject->id.'"';
+	    if ($subject->id == $usertoclass->subjectid)
+	        $select .= ' selected="selected"';
+	    $select .= '>'.s($subject->title).'</option>';
+	}
+	$select .= '</select>';
+
+	$table->data[] = array ($user->firstname, $user->lastname, $user->email, $select);
 }
 
 //echo html_writer::table($table);
