@@ -120,7 +120,7 @@ foreach($classusers as $classuser) {
 		}
 	}
 	else {
-		for($i=0;$i<=count($categories);$i++)
+		for($i=0;$i<count($categories);$i++)
 			$row->cells[] = '';
 	}
     
