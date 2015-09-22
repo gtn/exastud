@@ -38,26 +38,14 @@ class period_edit_form extends moodleform {
         $mform->addRule('description', get_string('error'), 'required', null, 'server', false, false);
         
 
-        $timeoptions = array(
-            'language' => 'en',
-            'format' => 'd. M. Y - H:i',
-            'minYear' => 2001,
-            'maxYear' => 2020,
-            'addEmptyOption' => false,
-            'emptyOptionValue' => '',
-            'emptyOptionText' => '&nbsp;',
-            'optionIncrement' => array('i' => 1, 's' => 1),
-            'optional' => false,
-        );
-
         $mform->addElement('hidden', 'courseid');
         $mform->setType('courseid', PARAM_INT);
         
-        $mform->addElement('date_time_selector', 'starttime', get_string('starttime', 'block_exastud'), $timeoptions);
+        $mform->addElement('date_time_selector', 'starttime', get_string('starttime', 'block_exastud'));
         $mform->setType('starttime', PARAM_INT);
         $mform->addRule('starttime', null, 'required', null, 'server');
 
-        $mform->addElement('date_time_selector', 'endtime', get_string('endtime', 'block_exastud'), $timeoptions);
+        $mform->addElement('date_time_selector', 'endtime', get_string('endtime', 'block_exastud'));
         $mform->setType('endtime', PARAM_INT);
         $mform->addRule('endtime', null, 'required', null, 'server');
 

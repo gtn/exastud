@@ -44,7 +44,11 @@ $context = context_system::instance();
 require_capability('block/exastud:use', $context);
 require_capability('block/exastud:editperiods', $context);
 
+ob_start();
 $periodform = new period_edit_form();
+// bug in moodle forms lib, date_time_selector outputs utf8 bom characters
+ob_clean();
+
 //Form processing and displaying is done here
 if ($periodform->is_cancelled()) {
 	redirect('periods.php?courseid=' . $courseid);
@@ -52,6 +56,7 @@ if ($periodform->is_cancelled()) {
 	if(!confirm_sesskey()) {
 		error("badsessionkey","block_exastud");
 	}
+	
 	
 	$newperiod = new stdClass();
 	$newperiod->timemodified = time();
@@ -69,10 +74,11 @@ if ($periodform->is_cancelled()) {
 	}
 	else if($periodedit->action == 'new') {
 		if (!($DB->insert_record('block_exastudperiod', $newperiod))) {
-			rror('errorinsertingperiod', 'block_exastud');
+			error('errorinsertingperiod', 'block_exastud');
 		}
 		//add_to_log($courseid, 'block_exastud', 'new', 'configuration_period.php?courseid=' . $courseid . '&action=new', '');
 	}
+
 	redirect('periods.php?courseid=' . $courseid);
 }
 

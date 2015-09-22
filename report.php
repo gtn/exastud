@@ -44,7 +44,7 @@ $context = context_course::instance($courseid);
 require_capability('block/exastud:use', $context);
 require_capability('block/exastud:headteacher', $context);
 
-$actPeriod = ($periodid==0 || $periodid==block_exastud_get_active_period()->id) ? block_exastud_get_active_period() : $DB->get_record('block_exastudperiod', array('id'=>$periodid));
+$actPeriod = ($periodid==0 || $periodid==block_exastud_check_active_period()->id) ? block_exastud_check_active_period() : $DB->get_record('block_exastudperiod', array('id'=>$periodid));
 
 if (!$class = $DB->get_record('block_exastudclass', array('userid'=>$USER->id,'periodid' => $actPeriod->id))) {
 	print_error('noclassfound', 'block_exastud');
@@ -56,7 +56,7 @@ $blockrenderer = $PAGE->get_renderer('block_exastud');
 
 block_exastud_print_header('report');
 
-$categories = ($periodid==0 || $periodid==block_exastud_get_active_period()->id) ? block_exastud_get_class_categories($class->id) : block_exastud_get_period_categories($periodid);
+$categories = ($periodid==0 || $periodid==block_exastud_check_active_period()->id) ? block_exastud_get_class_categories($class->id) : block_exastud_get_period_categories($periodid);
 
 if(!$classusers = $DB->get_records_sql('
         SELECT s.id, s.studentid, sum(rp.value) as total

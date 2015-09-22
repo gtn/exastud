@@ -65,7 +65,7 @@ $strstudentreview = block_exastud_get_string('reviewstudent', 'block_exastud');
 $strclassreview = block_exastud_get_string('reviewclass', 'block_exastud');
 $strreview = block_exastud_get_string('review', 'block_exastud');
 
-$actPeriod = block_exastud_get_active_period();
+$actPeriod = block_exastud_check_active_period();
 $categories = block_exastud_get_class_categories($classid);
 
 $formdata = new stdClass();

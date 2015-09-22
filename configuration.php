@@ -43,7 +43,7 @@ require_capability('block/exastud:headteacher', $context);
 $url = '/blocks/exastud/configuration.php';
 $PAGE->set_url($url);
 
-$curPeriod = block_exastud_get_active_period(true);
+$curPeriod = block_exastud_check_active_period();
 
 if (!$class = $DB->get_record('block_exastudclass', array('userid'=>$USER->id,'periodid' => $curPeriod->id))) {
 	redirect('configuration_class.php?courseid=' . $courseid, block_exastud_get_string('redirectingtoclassinput', 'block_exastud'));

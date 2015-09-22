@@ -149,11 +149,15 @@ if ($action == 'categories') {
     </script>
     <div id="exa-list">
         <ul exa="items">
-        	<li><input type="text" /> <span exa="delete-button">löschen</span></li>
+        	<li><input type="text" /> <span exa="delete-button"><?php echo get_string('delete'); ?></span></li>
         </ul>
-        <input type="text" exa="new-text" />
-        <input type="button" exa="new-button" value="Hinzufügen">
-        <div><input type="button" exa="save-button" value="Speichern"></div>
+        <div exa="new-item">
+        	<input type="text" exa="new-text" />
+        	<input type="button" exa="save-button" value="<?php echo get_string('add'); ?>">
+        </div>
+        <div exa="save">
+        	<input type="button" exa="save-button" value="<?php echo get_string('savechanges'); ?>">
+    	</div>
     </div>
     <?php
     
@@ -170,11 +174,15 @@ if ($action == 'subjects') {
     </script>
     <div id="exa-list" exa-sorting="false">
         <ul exa="items">
-        	<li><input type="text" /> <span exa="delete-button">löschen</span></li>
+        	<li><input type="text" /> <span exa="delete-button"><?php echo get_string('delete'); ?></span></li>
         </ul>
-        <input type="text" exa="new-text" />
-        <input type="button" exa="new-button" value="Hinzufügen">
-        <div><input type="button" exa="save-button" value="Speichern"></div>
+        <div exa="new-item">
+        	<input type="text" exa="new-text" />
+        	<input type="button" exa="save-button" value="<?php echo get_string('add'); ?>">
+        </div>
+        <div exa="save">
+        	<input type="button" exa="save-button" value="<?php echo get_string('savechanges'); ?>">
+    	</div>
     </div>
     <?php
     
@@ -191,11 +199,15 @@ if ($action == 'evalopts') {
     </script>
     <div id="exa-list">
         <ul exa="items">
-        	<li><input type="text" /> <span exa="delete-button">löschen</span></li>
+        	<li><input type="text" /> <span exa="delete-button"><?php echo get_string('delete'); ?></span></li>
         </ul>
-        <input type="text" exa="new-text" />
-        <input type="button" exa="new-button" value="Hinzufügen">
-        <div><input type="button" exa="save-button" value="Speichern"></div>
+        <div exa="new-item">
+        	<input type="text" exa="new-text" />
+        	<input type="button" exa="save-button" value="<?php echo get_string('add'); ?>">
+        </div>
+        <div exa="save">
+        	<input type="button" exa="save-button" value="<?php echo get_string('savechanges'); ?>">
+    	</div>
     </div>
     <?php
     

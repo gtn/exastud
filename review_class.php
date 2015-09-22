@@ -61,7 +61,7 @@ $blockrenderer = $PAGE->get_renderer('block_exastud');
 $classheader = block_exastud_get_string('reviewclass').': '.$classdata->class.($classdata->subject?' - '.$classdata->subject:'');
 block_exastud_print_header(array('review', '='.$classheader));
 
-$actPeriod = block_exastud_get_active_period();
+$actPeriod = block_exastud_check_active_period();
 
 if(!$classusers = $DB->get_records('block_exastudclassstudents', array('classid'=>$classid))) {
 	print_error('nostudentstoreview','block_exastud');

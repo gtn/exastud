@@ -106,11 +106,11 @@ class block_exastud extends block_list {
 			$this->content->icons[] = '<img src="' . $CFG->wwwroot . '/blocks/exastud/pix/eingabezeitraum.png" height="16" width="23" alt="" />';
 			$this->content->items[] = '<a title="' . block_exastud_get_string('periods', 'block_exastud') . '" href="' . $CFG->wwwroot . '/blocks/exastud/periods.php?courseid=' . $COURSE->id . '">' . block_exastud_get_string('periods', 'block_exastud') . '</a>';
 		}
-		if ($DB->count_records('block_exastudclassteachers', array('teacherid'=>$USER->id)) > 0 && block_exastud_get_active_period(false,false)) {
+		if ($DB->count_records('block_exastudclassteachers', array('teacherid'=>$USER->id)) > 0 && block_exastud_get_active_period()) {
 			$this->content->icons[] = '<img src="' . $CFG->wwwroot . '/blocks/exastud/pix/beurteilung.png" height="16" width="23" alt="" />';
 			$this->content->items[] = '<a title="' . block_exastud_get_string('review', 'block_exastud') . '" href="' . $CFG->wwwroot . '/blocks/exastud/review.php?courseid=' . $COURSE->id . '">' . block_exastud_get_string('review', 'block_exastud') . '</a>';
 		}
-		if (has_capability('block/exastud:uploadpicture', $context)) {
+		if (!is_new_version() && has_capability('block/exastud:uploadpicture', $context)) {
 			$this->content->icons[] = '<img src="' . $CFG->wwwroot . '/blocks/exastud/pix/logo.png" height="16" width="23" alt="" />';
 			$this->content->items[] = '<a title="' . block_exastud_get_string('pictureupload', 'block_exastud') . '" href="' . $CFG->wwwroot . '/blocks/exastud/pictureupload.php?courseid=' . $COURSE->id . '">' . block_exastud_get_string('pictureupload', 'block_exastud') . '</a>';
 		}

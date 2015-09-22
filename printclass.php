@@ -41,7 +41,7 @@ require_login($courseid);
 $context = context_course::instance($courseid);
 require_capability('block/exastud:use', $context);
 
-$actPeriod = ($periodid==0) ? block_exastud_get_active_period() : $DB->get_record('block_exastudperiod', array('id'=>$periodid));
+$actPeriod = ($periodid==0) ? block_exastud_check_active_period() : $DB->get_record('block_exastudperiod', array('id'=>$periodid));
 
 $conditions = ($classid == 0) ? array('userid'=>$USER->id,'periodid'=>$actPeriod->id) : array('id'=>$classid);
 if (!$class = $DB->get_record('block_exastudclass', $conditions)) {

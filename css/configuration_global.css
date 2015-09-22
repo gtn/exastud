@@ -14,7 +14,7 @@
     padding-left: 40px;
     background: url(../../../pix/t/sort.png) 13px 12px no-repeat #efefef;
 }
-#exa-list li * {
+#exa-list * {
     margin: 0;
 }
 #exa-list li [exa=delete-button] {
@@ -23,4 +23,24 @@
 }
 #exa-list li [exa=delete-button]:hover {
     text-decoration: underline;
+}
+
+#exa-list [exa=new-item] {
+    background-color: #efefef;
+    margin: 20px 0 5px 0;
+    padding: 5px;
+}
+#exa-list [exa=new-button] {
+    margin-left: 10px;
+}
+#exa-list:not([exa-sorting=false]) [exa=new-item] {
+    padding-left: 40px;
+}
+
+#exa-list [exa=save] {
+	margin: 20px 0 0 0;
+	padding: 5px;
+}
+#exa-list:not([exa-sorting=false]) [exa=save] {
+    padding-left: 40px;
 }

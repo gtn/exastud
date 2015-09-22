@@ -44,7 +44,7 @@ $context = context_course::instance($courseid);
 require_capability('block/exastud:use', $context);
 require_capability('block/exastud:headteacher', $context);
 
-$curPeriod = block_exastud_get_active_period(true);
+$curPeriod = block_exastud_check_active_period();
 if (!$class = $DB->get_record('block_exastudclass', array('userid'=>$USER->id,'periodid' => $curPeriod->id))) {
 	$class = new stdClass();
 	$class->courseid = $courseid;

@@ -45,7 +45,7 @@ $url = '/blocks/exastud/review.php';
 $PAGE->set_url($url);
 $blockrenderer = $PAGE->get_renderer('block_exastud');
 block_exastud_print_header('review');
-$actPeriod = block_exastud_get_active_period();
+$actPeriod = block_exastud_check_active_period();
 
 $myclasses = $DB->get_records_sql("
     SELECT ct.id, ct.subjectid, ct.classid, c.class, s.title AS subject

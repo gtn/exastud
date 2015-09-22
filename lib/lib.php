@@ -116,22 +116,30 @@ function block_exastud_check_if_period_ovelap($printBoxInsteadOfError = false) {
 	}
 }
 
-function block_exastud_get_active_period($redirectInsteadOfError = false, $printError=true) {
-	global $DB,$CFG,$COURSE;
-	$periods = $DB->get_records_sql('SELECT * FROM {block_exastudperiod} WHERE (starttime < ' . time() . ') AND (endtime > ' . time() . ')');
+function block_exastud_check_active_period() {
+    global $DB,$CFG,$COURSE;
+
+    if ($period = block_exastud_get_active_period()) {
+        return $period;
+    }
+    
+    if (has_capability('block/exastud:editperiods', context_system::instance())) {
+        redirect($CFG->wwwroot.'/blocks/exastud/configuration_period.php?courseid='.$COURSE->id, block_exastud_get_string('redirectingtoperiodsinput'));
+    }
+    
+    print_error('periodserror', 'block_exastud', $CFG->wwwroot.'/blocks/exastud/configuration_period.php?courseid='.$COURSE->id);
+}
+
+function block_exastud_get_active_period() {
+	global $DB;
+	
+	$periods = $DB->get_records_sql('SELECT * FROM {block_exastudperiod} WHERE (starttime <= ' . time() . ') AND (endtime >= ' . time() . ')');
 
 	// genau 1e periode?
-	if(is_array($periods) && (count($periods) == 1)) {
+	if (count($periods) == 1) {
 		return reset($periods);
 	} else {
-		if($redirectInsteadOfError && $printError) {
-		//	notify(get_string('periodserror', 'block_exastud'));
-			redirect($CFG->wwwroot.'/blocks/exastud/configuration_period.php?courseid='.$COURSE->id, get_string('periodserror', 'block_exastud'));
-		}
-		else if($printError){
-			print_error('periodserror', 'block_exastud', $CFG->wwwroot.'/blocks/exastud/configuration_period.php?courseid='.$COURSE->id);
-		}
-		return false;
+	    return null;
 	}
 }
 
@@ -140,7 +148,7 @@ function block_exastud_get_period($periodid, $loadActive = true) {
         return $DB->get_record('block_exastudperiod', array('id'=>$periodid));
     } elseif ($loadActive) {
         // if period empty, load active one 
-        return block_exastud_get_active_period(false, false);
+        return block_exastud_get_active_period();
     } else {
         return null;
     }
@@ -303,7 +311,7 @@ function block_exastud_print_student_report($studentid, $periodid, $class, $pdf=
 	$studentreport = str_replace ( '###PERIOD###', $period->description, $studentreport);
 	$studentreport = str_replace ( '###LOGO###', $img, $studentreport);
 
-	$categories = ($periodid==block_exastud_get_active_period()->id) ? block_exastud_get_class_categories($class->id) : block_exastud_get_period_categories($periodid);
+	$categories = ($periodid==block_exastud_check_active_period()->id) ? block_exastud_get_class_categories($class->id) : block_exastud_get_period_categories($periodid);
 
 	$html='';
 
@@ -403,7 +411,7 @@ function block_exastud_print_header($items, $options = array())
 	}
 	if (has_capability('block/exastud:editperiods', $context))
 		$tabs[] = new tabobject('periods', $CFG->wwwroot . '/blocks/exastud/periods.php?courseid=' . $COURSE->id, block_exastud_get_string("periods", "block_exastud"), '', true);
-	if ($DB->count_records('block_exastudclassteachers', array('teacherid'=>$USER->id)) > 0 && block_exastud_get_active_period(false,false))
+	if ($DB->count_records('block_exastudclassteachers', array('teacherid'=>$USER->id)) > 0 && block_exastud_get_active_period())
 		$tabs[] = new tabobject('review', $CFG->wwwroot . '/blocks/exastud/review.php?courseid=' . $COURSE->id, block_exastud_get_string("review", "block_exastud"), '', true);
 	if (!is_new_version() && has_capability('block/exastud:uploadpicture', $context))
 		$tabs[] = new tabobject('pictureupload', $CFG->wwwroot . '/blocks/exastud/pictureupload.php?courseid=' . $COURSE->id, block_exastud_get_string("pictureupload", "block_exastud"), '', true);

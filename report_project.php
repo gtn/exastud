@@ -48,7 +48,10 @@ $PAGE->set_url($url);
 $blockrenderer = $PAGE->get_renderer('block_exastud');
 block_exastud_print_header('report');
 
-$actPeriod = ($periodid==0 || $periodid==block_exastud_get_active_period()->id) ? block_exastud_get_active_period() : $DB->get_record('block_exastudperiod', array('id'=>$periodid));
+$actPeriod = block_exastud_get_period($periodid);
+if (!$actPeriod) {
+    print_error('periodserror', 'block_exastud');
+}
 
 if(!$myclasses = $DB->get_records_sql('SELECT * FROM {block_exastudclassteachers} t JOIN {block_exastudclass} c ON t.classid=c.id AND t.teacherid=\'' . $USER->id . '\' AND c.periodid = '.$actPeriod->id)) {
 	echo block_exastud_get_string('noclassestoreview','block_exastud');
@@ -79,7 +82,7 @@ else if($classid == 0){
 		print_error('noclassfound', 'block_exastud');
 	}
 	
-	$categories = ($periodid==0 || $periodid==block_exastud_get_active_period()->id) ? block_exastud_get_class_categories($class->id) : block_exastud_get_period_categories($periodid);
+	$categories = ($periodid==0 || $periodid==block_exastud_check_active_period()->id) ? block_exastud_get_class_categories($class->id) : block_exastud_get_period_categories($periodid);
 	
 	if(!$classusers = $DB->get_records_sql('
 			SELECT s.id, s.studentid, sum(rp.value) as total FROM {block_exastudclassstudents} s, {block_exastudclass} c, {block_exastudreview} r, {block_exastudreviewpos} rp
