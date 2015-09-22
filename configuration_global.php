@@ -153,7 +153,7 @@ if ($action == 'categories') {
         </ul>
         <div exa="new-item">
         	<input type="text" exa="new-text" />
-        	<input type="button" exa="save-button" value="<?php echo get_string('add'); ?>">
+        	<input type="button" exa="new-button" value="<?php echo get_string('add'); ?>">
         </div>
         <div exa="save">
         	<input type="button" exa="save-button" value="<?php echo get_string('savechanges'); ?>">
@@ -178,7 +178,7 @@ if ($action == 'subjects') {
         </ul>
         <div exa="new-item">
         	<input type="text" exa="new-text" />
-        	<input type="button" exa="save-button" value="<?php echo get_string('add'); ?>">
+        	<input type="button" exa="new-button" value="<?php echo get_string('add'); ?>">
         </div>
         <div exa="save">
         	<input type="button" exa="save-button" value="<?php echo get_string('savechanges'); ?>">
@@ -203,7 +203,7 @@ if ($action == 'evalopts') {
         </ul>
         <div exa="new-item">
         	<input type="text" exa="new-text" />
-        	<input type="button" exa="save-button" value="<?php echo get_string('add'); ?>">
+        	<input type="button" exa="new-button" value="<?php echo get_string('add'); ?>">
         </div>
         <div exa="save">
         	<input type="button" exa="save-button" value="<?php echo get_string('savechanges'); ?>">

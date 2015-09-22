@@ -69,6 +69,7 @@ if ($frm = data_submitted()) {
 			$newuser->teacherid = $adduser;
 			$newuser->classid = $class->id;
 			$newuser->timemodified = time();
+			$newuser->subjectid = optional_param('classteacher_subjectid', 0, PARAM_INT);
 			
 			if (!$DB->insert_record('block_exastudclassteachers ', $newuser)) {
 				print_error('errorinsertingteachers', 'block_exastud');
@@ -80,7 +81,7 @@ if ($frm = data_submitted()) {
 				continue;
 			}
 			
-			if (!$DB->delete_records('block_exastudclassteachers', array('teacherid'=>$removeuser, 'classid'=>$class->id))) {
+			if (!$DB->delete_records('block_exastudclassteachers', array('id'=>$removeuser, 'classid'=>$class->id))) {
 				print_error('errorremovingteachers', 'block_exastud');
 			}
 		}
@@ -115,14 +116,14 @@ $availableusers = $DB->get_records_sql('SELECT id, firstname, lastname, email
 
 echo '<div id="block_exastud">';
 
-$usertoclasses = $DB->get_records('block_exastudclassteachers', array('classid'=>$class->id), 'teacherid');
-
-$classusers = array();
-if ($usertoclasses) {
-	foreach($usertoclasses as $usertoclass) {
-		$classusers[] = $DB->get_record('user', array('id'=>$usertoclass->teacherid));
-	}
-}
+$classusers = $DB->get_recordset_sql("
+    SELECT ct.id, ".user_picture::fields('u', null, 'userid').", s.title AS subject
+    FROM {user} u
+    JOIN {block_exastudclassteachers} ct ON ct.teacherid=u.id
+    LEFT JOIN {block_exastudsubjects} s ON ct.subjectid = s.id
+    WHERE ct.classid=?
+    ORDER BY s.sorting, u.lastname, u.firstname
+", array($class->id));
 
 echo $OUTPUT->box_start();
 $form_target = 'configuration_classteachers.php?courseid='.$courseid;

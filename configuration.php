@@ -77,7 +77,8 @@ $table = new html_table();
 
 $table->head = array (block_exastud_get_string('firstname'), block_exastud_get_string('lastname'), block_exastud_get_string('email'));
 $table->align = array ("left", "left", "left");
-$table->width = "90%";
+$table->width = "67.5%";
+$table->size = ['33%', '33%', '33%'];
 
 $usertoclasses = $DB->get_records('block_exastudclassstudents', array('classid'=>$class->id), 'studentid');
 
@@ -99,22 +100,20 @@ $table = new html_table();
 $table->head = array (block_exastud_get_string('firstname'), block_exastud_get_string('lastname'), block_exastud_get_string('email'), block_exastud_t('de:Gegenstand'));
 $table->align = array ("left", "left", "left", "left");
 $table->width = "90%";
+$table->size = ['25%', '25%', '25%', '25%'];
 
-$usertoclasses = $DB->get_records('block_exastudclassteachers', array('classid'=>$class->id));
-$subjects = $DB->get_records('block_exastudsubjects');
+$classteachers = $DB->get_recordset_sql("
+    SELECT ct.id, ".user_picture::fields('u', null, 'userid').", s.title AS subject
+    FROM {user} u
+    JOIN {block_exastudclassteachers} ct ON ct.teacherid=u.id
+    LEFT JOIN {block_exastudsubjects} s ON ct.subjectid = s.id
+    WHERE ct.classid=?
+    ORDER BY s.sorting, u.lastname, u.firstname
+", array($class->id));
 
-foreach($usertoclasses as $usertoclass) {
-	$user = $DB->get_record('user', array('id'=>$usertoclass->teacherid));
-	$select = '<select name="classteacher_subject[]" exa-classteacherid="'.$usertoclass->id.'"><option></option>';
-	foreach ($subjects as $subject) {
-	    $select .= '<option value="'.$subject->id.'"';
-	    if ($subject->id == $usertoclass->subjectid)
-	        $select .= ' selected="selected"';
-	    $select .= '>'.s($subject->title).'</option>';
-	}
-	$select .= '</select>';
 
-	$table->data[] = array ($user->firstname, $user->lastname, $user->email, $select);
+foreach($classteachers as $classteacher) {
+    $table->data[] = array ($classteacher->firstname, $classteacher->lastname, $classteacher->email, $classteacher->subject);
 }
 
 //echo html_writer::table($table);
@@ -129,7 +128,7 @@ echo html_writer::tag("h2",block_exastud_get_string('categories', 'block_exastud
 $table = new html_table();
 
 $table->align = array("left");
-$table->width = "90%";
+$table->width = "45%";
 
 $categories = block_exastud_get_class_categories($class->id);
 

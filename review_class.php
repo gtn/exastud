@@ -48,7 +48,7 @@ $classdata = $DB->get_record_sql("
     FROM {block_exastudclassteachers} ct
     JOIN {block_exastudclass} c ON ct.classid=c.id
     LEFT JOIN {block_exastudsubjects} s ON ct.subjectid = s.id
-    WHERE ct.teacherid=? AND ct.classid=? AND ct.subjectid=?
+    WHERE ct.teacherid=? AND ct.classid=? AND ".($subjectid?'s.id=?':'s.id IS NULL')."
 ", array($USER->id, $classid, $subjectid));
 
 if(!$classdata) {
@@ -76,6 +76,7 @@ $table = new html_table();
 $table->head = array();
 $table->head[] = ''; //userpic
 $table->head[] = block_exastud_get_string('name');
+$table->head[] = ''; // bewerten button
 if (is_new_version())
     $table->head[] = ''; // report button
 foreach($categories as $category)
@@ -85,7 +86,10 @@ $table->align = array();
 $table->align[] = 'center';
 $table->align[] = 'left';
 
-for($i=0;$i<count($categories);$i++)
+$table->align[] = 'center';
+$table->align[] = 'center';
+
+for($i=0;$i<=count($categories);$i++)
 	$table->align[] = 'center';
 
 $table->align[] = 'left';
@@ -99,19 +103,20 @@ foreach($classusers as $classuser) {
 	if (!$user)
 		continue;
 	
-	$link = '<a href="' . $CFG->wwwroot . '/blocks/exastud/review_student.php?courseid=' . $courseid . '&classid=' . $classid . '&subjectid=' . $subjectid . '&studentid=' . $user->id . '">';
-
-	$icons = $link.'<img src="' . $CFG->wwwroot . '/pix/i/edit.gif" width="16" height="16" alt="' . block_exastud_get_string('edit'). '" /></a>';
-	$userdesc = $link . fullname($user, $user->id).'</a>' . $blockrenderer->print_edit_link($CFG->wwwroot . '/blocks/exastud/review_student.php?courseid=' . $courseid . '&classid=' . $classid . '&subjectid=' . $subjectid . '&sesskey=' . sesskey() . '&studentid=' . $user->id);
+	$icons = '<img src="' . $CFG->wwwroot . '/pix/i/edit.gif" width="16" height="16" alt="' . block_exastud_get_string('edit'). '" />';
+	$userdesc = fullname($user, $user->id);
 	
 	$report = $DB->get_record('block_exastudreview', array('teacherid'=>$USER->id, 'subjectid'=>$subjectid, 'periodid'=>$actPeriod->id, 'studentid'=>$user->id));
 	$row = new html_table_row();
 	$row->cells[] = $OUTPUT->user_picture($user,array("courseid"=>$courseid));
 	$row->cells[] = $userdesc;
 	
+	$row->cells[] = '<a href="' . $CFG->wwwroot . '/blocks/exastud/review_student.php?courseid=' . $courseid . '&classid=' . $classid . '&subjectid=' . $subjectid . '&studentid=' . $user->id . '">'.
+        block_exastud_t('de:Bewerten').'</a>';
+	
 	if (is_new_version()) {
         $row->cells[] = '<a href="' . $CFG->wwwroot . '/blocks/exastud/report_student.php?courseid=' . $courseid . '&classid=' . $classid . '&studentid=' . $user->id . '">'
-            .'Alle Bewertungen zeigen</a>';
+            .block_exastud_t('de:Alle Bewertungen zeigen').'</a>';
 	}
 	if($report) {
 		foreach($categories as $category) {
@@ -145,7 +150,7 @@ foreach($classusers as $classuser) {
         $cell->colspan = count($categories);
         $cell->style = 'text-align: left;';
         $row = new html_table_row(array(
-            '', '', '', $cell
+            '', '', '', '', $cell
         ));
         $row->oddeven = $oddeven;
         $table->data[] = $row;

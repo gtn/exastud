@@ -50,7 +50,7 @@ $classdata = $DB->get_record_sql("
     FROM {block_exastudclassteachers} ct
     JOIN {block_exastudclass} c ON ct.classid=c.id
     LEFT JOIN {block_exastudsubjects} s ON ct.subjectid = s.id
-    WHERE ct.teacherid=? AND ct.classid=? AND ct.subjectid=?
+    WHERE ct.teacherid=? AND ct.classid=? AND ".($subjectid?'s.id=?':'s.id IS NULL')."
 ", array($USER->id, $classid, $subjectid));
 
 if(!$classdata) {

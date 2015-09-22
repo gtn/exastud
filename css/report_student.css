@@ -5,6 +5,7 @@
 
 #review-table td.evaluation {
     text-align: center;
+    min-width: 30px;
 }
 #review-table th.evaluation-header {
     text-align: center;

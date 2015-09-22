@@ -2,11 +2,11 @@
 <div>
     <input type="hidden" name="id" value="<?php p($courseid) ?>" />
     <input type="hidden" name="sesskey" value="<?php p(sesskey()) ?>" />
-    <table summary="" style="margin-left:auto;margin-right:auto" border="0" cellpadding="5" cellspacing="0">
+    <table class="roleassigntable generaltable generalbox boxaligncenter" cellspacing="0">
         <tr>
             <td valign="top">
-                <label for="removeselect"><?php print_string('categories', 'block_exastud'); ?></label>
-	          <br />
+                <p><label for="removeselect"><?php print_string('categories', 'block_exastud'); ?></label></p>
+	          <div class="userselector">
 	          <select name="removeselect[]" size="20" id="removeselect" multiple="multiple"
 	                  onfocus="getElementById('assignform').add.disabled=true;
 	                           getElementById('assignform').remove.disabled=false;
@@ -23,18 +23,19 @@
                 }
               ?>
 	          </select>
+	          </div>
+            </td>
+            <td id="buttonscell">
+              <div id="addcontrols">
+                  <input name="add" id="add" type="submit" value="◄ <?php echo get_string('add'); ?>" title="<?php print_string('add'); ?>" />
+              </div>
+				<div id="removecontrols">
+                  <input name="remove" id="remove" type="submit" value="<?php echo get_string('remove'); ?> ►" title="<?php print_string('remove'); ?>" />
+              	</div>
             </td>
             <td valign="top">
-              <br />
-              <p class="arrow_button">
-                  <input name="add" id="add" type="submit" value="<?php echo get_string('add'); ?>" title="<?php print_string('add'); ?>" />
-                  <br />
-                  <input name="remove" id="remove" type="submit" value="<?php echo get_string('remove'); ?>" title="<?php print_string('remove'); ?>" />
-              </p>
-            </td>
-            <td valign="top">
-                <label for="addselect"><?php print_string('availablecategories', 'block_exastud'); ?></label>
-                <br />
+                <p><label for="addselect"><?php print_string('availablecategories', 'block_exastud'); ?></label></p>
+	          <div class="userselector">
                 <select name="addselect[]" size="20" id="addselect" multiple="multiple"
                         onfocus="getElementById('assignform').add.disabled=false;
                                  getElementById('assignform').remove.disabled=true;
@@ -71,7 +72,7 @@
                     }
                 ?>
                </select>
-               <br />
+               </div>
                <label for="searchtext" class="accesshide"><?php p($strsearch) ?></label>
                <input type="text" name="searchtext" id="searchtext" size="30" value="<?php p($searchtext, true) ?>"
                         onfocus ="getElementById('assignform').add.disabled=true;
