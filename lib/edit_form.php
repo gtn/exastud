@@ -1,4 +1,7 @@
 <?php
+
+defined('MOODLE_INTERNAL') || die();
+
 require_once($CFG->dirroot . '/lib/formslib.php');
 
 class class_edit_form extends moodleform {

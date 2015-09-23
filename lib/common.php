@@ -1,5 +1,7 @@
 <?php
 
+defined('MOODLE_INTERNAL') || die();
+
 class block_exastud_exception extends moodle_exception {
     function __construct($errorcode, $module='', $link='', $a=NULL, $debuginfo=null) {
 

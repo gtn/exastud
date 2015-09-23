@@ -1,4 +1,7 @@
 <?php
+
+defined('MOODLE_INTERNAL') || die();
+
 require_once $CFG->libdir . '/formslib.php';
 
 class block_exastud_picture_upload_form extends moodleform {
