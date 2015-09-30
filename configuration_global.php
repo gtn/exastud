@@ -31,7 +31,7 @@ if ($action == 'save-categories') {
 		die(get_string("badsessionkey","block_exastud"));
 	}
 	
-	$items = block_exastud_param::required_array('items',
+	$items = block_exastud\param::required_array('items',
             array(PARAM_INT => (object)array(
                 'id' => PARAM_INT,
                 'title' => PARAM_TEXT
@@ -69,7 +69,7 @@ if ($action == 'save-subjects') {
 		die(get_string("badsessionkey","block_exastud"));
 	}
 	
-	$items = block_exastud_param::required_array('items',
+	$items = block_exastud\param::required_array('items',
             array(PARAM_INT => (object)array(
                 'id' => PARAM_INT,
                 'title' => PARAM_TEXT
@@ -107,7 +107,7 @@ if ($action == 'save-evalopts') {
 		die(get_string("badsessionkey","block_exastud"));
 	}
 	
-	$items = block_exastud_param::required_array('items',
+	$items = block_exastud\param::required_array('items',
             array(PARAM_INT => (object)array(
                 'id' => PARAM_INT,
                 'title' => PARAM_TEXT
