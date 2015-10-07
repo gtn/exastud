@@ -30,6 +30,6 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version = 2015091907;  // YYYYMMDDHH (year, month, day, 24-hr time)
+$plugin->version = 2015100700;  // YYYYMMDDHH (year, month, day, 24-hr time)
 $plugin->requires = 2010112400; // YYYYMMDDHH (This is the release version for Moodle 2.0)
 $plugin->release  = "1.1.0";
