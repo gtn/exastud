@@ -42,7 +42,13 @@ class block_exastud_api {
         $class = reset($classes);
         
         return (object)[
-            'url' => $CFG->wwwroot."/blocks/exastud/review_student.php?courseid={$COURSE->id}&classid={$class->classid}&subjectid={$class->subjectid}&studentid={$userid}"
+            'url' => new block_exacomp\url('/blocks/exastud/review_student.php', [
+                        'courseid' => $COURSE->id,
+                        'classid' => $class->classid,
+                        'subjectid' => $class->subjectid,
+                        'studentid' => $userid,
+                        // 'returnurl' => $returnurl->as_local_url()
+                    ])
         ];
     }
     

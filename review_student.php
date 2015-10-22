@@ -36,8 +36,13 @@ $courseid = optional_param('courseid', 1, PARAM_INT); // Course ID
 $classid = required_param('classid', PARAM_INT);
 $studentid = required_param('studentid', PARAM_INT);
 $subjectid = required_param('subjectid', PARAM_INT);
+$returnurl = optional_param('returnurl', null, PARAM_LOCALURL);
 
 require_login($courseid);
+
+if (!$returnurl) {
+    $returnurl = new moodle_url('/blocks/exastud/review_class.php?courseid='.$courseid.'&classid='.$classid.'&subjectid='.$subjectid);
+}
 
 $url = '/blocks/exastud/review_student.php';
 $PAGE->set_url($url);
@@ -120,7 +125,7 @@ if ($studentedit = $studentform->get_data()) {
         } else
             print_error('errorinsertingstudent', 'block_exastud');
     }
-    redirect($CFG->wwwroot . '/blocks/exastud/review_class.php?courseid=' . $courseid . '&classid=' . $classid. '&subjectid=' . $subjectid);
+    redirect($returnurl);
 }
 
 $classheader = block_exastud_get_string('reviewclass').': '.$classdata->class.($classdata->subject?' - '.$classdata->subject:'');
@@ -141,7 +146,7 @@ echo $OUTPUT->heading($studentdesc);
 $studentform->set_data($formdata);
 $studentform->display();
 
-echo $OUTPUT->single_button($CFG->wwwroot . '/blocks/exastud/review_class.php?courseid='.$courseid.'&classid='.$classid,
+echo $OUTPUT->single_button($returnurl,
         block_exastud_get_string('back', 'block_exastud'));
 
 block_exastud_print_footer();
