@@ -105,7 +105,8 @@ else {
 	$period->action = 'new';
 	$period->description = '';
 	$period->starttime = time();
-	$period->endtime = time();
+    // make the deafult period one month long
+	$period->endtime = mktime(0,0,0,date('m')+1, date('d'), date('Y'));
 	$period->id = 0;
 }
 
