@@ -55,10 +55,10 @@ if ($action == 'save-classteacher-subject') {
     }
 
     block_exastud\db::update_record('block_exastudclassteachers', array(
+        'subjectid' => required_param('subjectid', PARAM_INT)
+    ), array(
         'id' => required_param('classteacherid', PARAM_INT),
         'classid' => $class->id
-    ), array(
-        'subjectid' => required_param('subjectid', PARAM_INT)
     ));
 
     echo 'ok';
