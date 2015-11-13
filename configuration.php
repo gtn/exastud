@@ -35,7 +35,7 @@ $courseid       = optional_param('courseid', 1, PARAM_INT); // Course ID
 $action = optional_param('action', '', PARAM_TEXT);
 require_login($courseid);
 
-block_exastud_require_course_cap(block_exastud::CAP_HEADTEACHER, $courseid);
+block_exastud_require_global_cap(block_exastud::CAP_HEADTEACHER);
 $curPeriod = block_exastud_check_active_period();
 
 $url = '/blocks/exastud/configuration.php';
@@ -93,7 +93,7 @@ echo $OUTPUT->single_button($CFG->wwwroot . '/blocks/exastud/configuration_class
 echo html_writer::tag("h2",block_exastud_get_string('teachers', 'block_exastud'));
 $table = new html_table();
 
-$table->head = array (block_exastud_get_string('firstname'), block_exastud_get_string('lastname'), block_exastud_get_string('email'), block_exastud::t('de:Gegenstand'));
+$table->head = array (block_exastud::t('de:Gegenstand'), block_exastud_get_string('firstname'), block_exastud_get_string('lastname'), block_exastud_get_string('email'));
 $table->align = array ("left", "left", "left", "left");
 $table->width = "90%";
 $table->size = ['25%', '25%', '25%', '25%'];
@@ -109,7 +109,7 @@ $classteachers = $DB->get_recordset_sql("
 
 
 foreach($classteachers as $classteacher) {
-    $table->data[] = array ($classteacher->firstname, $classteacher->lastname, $classteacher->email, $classteacher->subject);
+    $table->data[] = array ($classteacher->subject ?: block_exastud::t('de:nicht zugeordnet'), $classteacher->firstname, $classteacher->lastname, $classteacher->email);
 }
 
 //echo html_writer::table($table);

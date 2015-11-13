@@ -42,7 +42,7 @@ $remove         = optional_param('remove', 0, PARAM_BOOL);
 
 require_login($courseid);
 
-block_exastud_require_course_cap(block_exastud::CAP_HEADTEACHER, $courseid);
+block_exastud_require_global_cap(block_exastud::CAP_HEADTEACHER);
 $curPeriod = block_exastud_check_active_period();
 
 if (!$class = $DB->get_record('block_exastudclass', array('userid'=>$USER->id,'periodid' => $curPeriod->id))) {

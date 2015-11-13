@@ -39,7 +39,7 @@ $searchtext     = optional_param('searchtext', '', PARAM_ALPHANUM); // search st
 
 require_login($courseid);
 
-block_exastud_require_course_cap(block_exastud::CAP_HEADTEACHER, $courseid);
+block_exastud_require_global_cap(block_exastud::CAP_HEADTEACHER);
 $curPeriod = block_exastud_check_active_period();
 
 if (!$class = $DB->get_record('block_exastudclass', array('userid'=>$USER->id,'periodid' => $curPeriod->id))) {

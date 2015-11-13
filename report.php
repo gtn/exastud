@@ -39,7 +39,7 @@ if($CFG->block_exastud_project_based_assessment)
 
 require_login($courseid);
 
-block_exastud_require_course_cap(block_exastud::CAP_HEADTEACHER, $courseid);
+block_exastud_require_global_cap(block_exastud::CAP_HEADTEACHER);
 
 $actPeriod = ($periodid==0 || $periodid==block_exastud_check_active_period()->id) ? block_exastud_check_active_period() : $DB->get_record('block_exastudperiod', array('id'=>$periodid));
 
