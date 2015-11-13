@@ -29,9 +29,16 @@
  *
  *  This copyright notice MUST APPEAR in all copies of the script!
 */
-require_once dirname(__FILE__) . '/lib/lib.php';
+require_once __DIR__ . '/lib/lib.php';
+require_once __DIR__ . '/../moodleblock.class.php';
 
 class block_exastud extends block_list {
+    
+    const CAP_HEADTEACHER = 'headteacher';
+    const CAP_USE = 'use';
+    const CAP_EDIT_PERIODS = 'editperiods';
+    const CAP_UPLOAD_PICTURE = 'exastud:uploadpicture';
+    const CAP_ADMIN = 'admin';
 
 	function init() {
 		$this->title = block_exastud_get_string('pluginname', 'block_exastud');
@@ -63,17 +70,7 @@ class block_exastud extends block_list {
 	function get_content() {
 		global $CFG, $COURSE, $USER, $DB;
 
-		/*
-		 * deprecated
-		 * 
-		$context = get_context_instance(CONTEXT_SYSTEM);
-		$coursecontext = get_context_instance(CONTEXT_COURSE,$COURSE->id);
-		*/
-
-		$context = context_system::instance();
-		$coursecontext = context_course::instance($COURSE->id);
-		
-		if (!has_capability('block/exastud:use', $context)) {
+		if (!block_exastud_has_global_cap(block_exastud::CAP_USE)) {
 			$this->content = '';
 			return $this->content;
 		}
@@ -92,7 +89,7 @@ class block_exastud extends block_list {
 		$this->content->icons = array();
 		$this->content->footer = '';
 
-		if (has_capability('block/exastud:headteacher', $coursecontext)) {
+		if (block_exastud_has_course_cap(block_exastud::CAP_HEADTEACHER, $COURSE->id)) {
 			$this->content->icons[] = '<img src="' . $CFG->wwwroot . '/blocks/exastud/pix/klassenzuteilung.png" height="16" width="23" alt="" />';
 			$this->content->items[] = '<a title="' . block_exastud_get_string('configuration', 'block_exastud') . '" href="' . $CFG->wwwroot . '/blocks/exastud/configuration.php?courseid=' . $COURSE->id . '">' . block_exastud_get_string('configuration', 'block_exastud') . '</a>';
 
@@ -102,20 +99,29 @@ class block_exastud extends block_list {
 			}
 		}
 
-		if (has_capability('block/exastud:editperiods', $context)) {
-			$this->content->icons[] = '<img src="' . $CFG->wwwroot . '/blocks/exastud/pix/eingabezeitraum.png" height="16" width="23" alt="" />';
-			$this->content->items[] = '<a title="' . block_exastud_get_string('periods', 'block_exastud') . '" href="' . $CFG->wwwroot . '/blocks/exastud/periods.php?courseid=' . $COURSE->id . '">' . block_exastud_get_string('periods', 'block_exastud') . '</a>';
-		}
-		if ($DB->count_records('block_exastudclassteachers', array('teacherid'=>$USER->id)) > 0 && block_exastud_get_active_period()) {
+		if ($DB->count_records('block_exastudclassteachers', array('teacherid'=>$USER->id)) && block_exastud_get_active_period()) {
 			$this->content->icons[] = '<img src="' . $CFG->wwwroot . '/blocks/exastud/pix/beurteilung.png" height="16" width="23" alt="" />';
 			$this->content->items[] = '<a title="' . block_exastud_get_string('review', 'block_exastud') . '" href="' . $CFG->wwwroot . '/blocks/exastud/review.php?courseid=' . $COURSE->id . '">' . block_exastud_get_string('review', 'block_exastud') . '</a>';
 		}
-		if (!is_new_version() && has_capability('block/exastud:uploadpicture', $context)) {
+		if (block_exastud_has_global_cap(block_exastud::CAP_ADMIN)) {
+			$this->content->icons[] = '<img src="' . $CFG->wwwroot . '/blocks/exastud/pix/eingabezeitraum.png" height="16" width="23" alt="" />';
+			$this->content->items[] = '<a title="' . block_exastud_get_string('periods', 'block_exastud') . '" href="' . $CFG->wwwroot . '/blocks/exastud/periods.php?courseid=' . $COURSE->id . '">' . block_exastud_get_string('periods', 'block_exastud') . '</a>';
+		}
+		/*
+		if (block_exastud_has_global_cap(block_exastud::CAP_UPLOAD_PICTURE)) {
 			$this->content->icons[] = '<img src="' . $CFG->wwwroot . '/blocks/exastud/pix/logo.png" height="16" width="23" alt="" />';
 			$this->content->items[] = '<a title="' . block_exastud_get_string('pictureupload', 'block_exastud') . '" href="' . $CFG->wwwroot . '/blocks/exastud/pictureupload.php?courseid=' . $COURSE->id . '">' . block_exastud_get_string('pictureupload', 'block_exastud') . '</a>';
 		}
+		*/
 
 		return $this->content;
 	}
 
+    public static function t() {
+        return call_user_func_array(__CLASS__.'\\'.__FUNCTION__, func_get_args());
+    }
+
+    public static function get_string() {
+        return call_user_func_array(__CLASS__.'\\'.__FUNCTION__, func_get_args());
+    }
 }

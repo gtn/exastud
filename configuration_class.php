@@ -39,12 +39,9 @@ $searchtext     = optional_param('searchtext', '', PARAM_ALPHANUM); // search st
 
 require_login($courseid);
 
-//$context = get_context_instance(CONTEXT_COURSE,$courseid);
-$context = context_course::instance($courseid);
-require_capability('block/exastud:use', $context);
-require_capability('block/exastud:headteacher', $context);
-
+block_exastud_require_course_cap(block_exastud::CAP_HEADTEACHER, $courseid);
 $curPeriod = block_exastud_check_active_period();
+
 if (!$class = $DB->get_record('block_exastudclass', array('userid'=>$USER->id,'periodid' => $curPeriod->id))) {
 	$class = new stdClass();
 	$class->courseid = $courseid;

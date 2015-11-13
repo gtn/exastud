@@ -35,15 +35,11 @@ $courseid       = optional_param('courseid', 1, PARAM_INT); // Course ID
 $action = optional_param('action', '', PARAM_TEXT);
 require_login($courseid);
 
-$context = context_course::instance($courseid);
-//$context = get_context_instance(CONTEXT_COURSE,$courseid);
-require_capability('block/exastud:use', $context);
-require_capability('block/exastud:headteacher', $context);
+block_exastud_require_course_cap(block_exastud::CAP_HEADTEACHER, $courseid);
+$curPeriod = block_exastud_check_active_period();
 
 $url = '/blocks/exastud/configuration.php';
 $PAGE->set_url($url);
-
-$curPeriod = block_exastud_check_active_period();
 
 if (!$class = $DB->get_record('block_exastudclass', array('userid'=>$USER->id,'periodid' => $curPeriod->id))) {
 	redirect('configuration_class.php?courseid=' . $courseid, block_exastud_get_string('redirectingtoclassinput', 'block_exastud'));
@@ -97,7 +93,7 @@ echo $OUTPUT->single_button($CFG->wwwroot . '/blocks/exastud/configuration_class
 echo html_writer::tag("h2",block_exastud_get_string('teachers', 'block_exastud'));
 $table = new html_table();
 
-$table->head = array (block_exastud_get_string('firstname'), block_exastud_get_string('lastname'), block_exastud_get_string('email'), block_exastud_t('de:Gegenstand'));
+$table->head = array (block_exastud_get_string('firstname'), block_exastud_get_string('lastname'), block_exastud_get_string('email'), block_exastud::t('de:Gegenstand'));
 $table->align = array ("left", "left", "left", "left");
 $table->width = "90%";
 $table->size = ['25%', '25%', '25%', '25%'];

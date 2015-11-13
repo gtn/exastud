@@ -38,10 +38,7 @@ $classid = optional_param('classid', 0, PARAM_INT); // Class ID
 
 require_login($courseid);
 
-//$context = get_context_instance(CONTEXT_SYSTEM);
-$context = context_system::instance();
-
-require_capability('block/exastud:use', $context);
+block_exastud_require_global_cap(block_exastud::CAP_USE);
 
 $url = '/blocks/exastud/report_project.php';
 $PAGE->set_url($url);

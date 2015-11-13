@@ -39,10 +39,7 @@ if($CFG->block_exastud_project_based_assessment)
 
 require_login($courseid);
 
-//$context = get_context_instance(CONTEXT_COURSE,$courseid);
-$context = context_course::instance($courseid);
-require_capability('block/exastud:use', $context);
-require_capability('block/exastud:headteacher', $context);
+block_exastud_require_course_cap(block_exastud::CAP_HEADTEACHER, $courseid);
 
 $actPeriod = ($periodid==0 || $periodid==block_exastud_check_active_period()->id) ? block_exastud_check_active_period() : $DB->get_record('block_exastudperiod', array('id'=>$periodid));
 

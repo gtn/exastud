@@ -39,10 +39,7 @@ $searchtext     = optional_param('searchtext', '', PARAM_ALPHANUM); // search st
 
 require_login($courseid);
 
-//$context = get_context_instance(CONTEXT_SYSTEM);
-$context = context_system::instance();
-require_capability('block/exastud:use', $context);
-require_capability('block/exastud:uploadpicture', $context);
+block_exastud_require_global_cap(block_exastud::CAP_UPLOAD_PICTURE)
 
 $url = '/blocks/exastud/configuration.php';
 $PAGE->set_url($url);

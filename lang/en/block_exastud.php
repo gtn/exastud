@@ -1,8 +1,9 @@
 <?php
 //
 $string['exastud:use'] = 'Use of Exabis Student Review';
-$string['exastud:head'] = 'Head of a class';
+$string['exastud:headteacher'] = 'Head of a class';
 $string['exastud:editperiods'] = 'Edit periods';
+$string['exastud:admin'] = 'Administrator';
 $string['exastud:uploadpicture'] = 'Upload logo';
 $string['exastud:addinstance'] = 'add Exabis Student Review to the course';
 $string['exastud:myaddinstance'] = 'add Exabis Student Review on My home';

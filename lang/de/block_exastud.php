@@ -1,7 +1,8 @@
 ﻿<?php
 $string['exastud:use'] = 'Student Review benutzen';
-$string['exastud:head'] = 'Klassenvorstand';
+$string['exastud:headteacher'] = 'Klassenvorstand';
 $string['exastud:editperiods'] = 'Perioden bearbeiten';
+$string['exastud:admin'] = 'Administrator';
 $string['exastud:uploadpicture'] = 'Logo uploaden';
 $string['exastud:addinstance'] = 'Student Review auf Kursseite anlegen';
 $string['exastud:myaddinstance'] = 'Student Review auf Startseite anlegen';
@@ -10,7 +11,7 @@ $string['pluginname'] = 'Exabis Student Review';
 $string['blocktitle'] = 'Exabis Student Review';
 $string['modulename'] = 'Exabis Student Review';
 $string['blockname'] = 'Exabis Student Review';
-$string['configuration'] = 'Klasse konfigurieren';
+$string['configuration'] = 'Meine Klasse konfigurieren';
 $string['project_based_configuration'] = 'Projekt konfigurieren';
 $string['report'] = 'Bericht';
 $string['periods'] = 'Perioden';

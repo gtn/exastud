@@ -33,7 +33,6 @@
 $capabilities = array(
 
 		'block/exastud:use' => array(
-
 				'captype' => 'write',
 				'contextlevel' => CONTEXT_SYSTEM,
 				'legacy' => array(
@@ -57,8 +56,8 @@ $capabilities = array(
 						'manager' => CAP_ALLOW
 				)
 		),
+        /*
         'block/exastud:editperiods' => array(
-
 				'captype' => 'write',
 				'contextlevel' => CONTEXT_SYSTEM,
 				'legacy' => array(
@@ -67,30 +66,28 @@ $capabilities = array(
 		),
 
 		'block/exastud:uploadpicture' => array(
-
 				'captype' => 'write',
 				'contextlevel' => CONTEXT_SYSTEM,
 				'legacy' => array(
 						'manager' => CAP_ALLOW
 				)
 		),
+		*/
 		'block/exastud:myaddinstance' => array(
-        'captype' => 'write',
-        'contextlevel' => CONTEXT_SYSTEM,
-        'archetypes' => array(
-        'user' => CAP_ALLOW
+            'captype' => 'write',
+            'contextlevel' => CONTEXT_SYSTEM,
+            'archetypes' => array(
+                'user' => CAP_ALLOW
+            ),
+            'clonepermissionsfrom' => 'moodle/my:manageblocks'
         ),
-        'clonepermissionsfrom' => 'moodle/my:manageblocks'
-    ),
-    'block/exastud:addinstance' => array(
-        'captype' => 'write',
-        'contextlevel' => CONTEXT_BLOCK,
-        'archetypes' => array(
-            'editingteacher' => CAP_ALLOW,
-            'manager' => CAP_ALLOW
+        'block/exastud:addinstance' => array(
+            'captype' => 'write',
+            'contextlevel' => CONTEXT_BLOCK,
+            'archetypes' => array(
+                'editingteacher' => CAP_ALLOW,
+                'manager' => CAP_ALLOW
+            ),
+            'clonepermissionsfrom' => 'moodle/site:manageblocks'
         ),
-        'clonepermissionsfrom' => 'moodle/site:manageblocks'
-    ),
 );
-
-?>

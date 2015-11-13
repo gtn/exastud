@@ -37,9 +37,7 @@ $classid = optional_param('classid',0,PARAM_INT);
 $detail = optional_param('detailedreport', false, PARAM_BOOL);
 require_login($courseid);
 
-//$context = get_context_instance(CONTEXT_COURSE,$courseid);
-$context = context_course::instance($courseid);
-require_capability('block/exastud:use', $context);
+block_exastud_require_global_cap(block_exastud::CAP_USE);
 
 $actPeriod = ($periodid==0) ? block_exastud_check_active_period() : $DB->get_record('block_exastudperiod', array('id'=>$periodid));
 

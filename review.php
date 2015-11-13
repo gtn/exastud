@@ -36,10 +36,7 @@ $courseid = optional_param('courseid', 1, PARAM_INT); // Course ID
 
 require_login($courseid);
 
-//$context = get_context_instance(CONTEXT_SYSTEM);
-$context = context_system::instance();
-
-require_capability('block/exastud:use', $context);
+block_exastud_require_global_cap(block_exastud::CAP_USE);
 
 $url = '/blocks/exastud/review.php';
 $PAGE->set_url($url);

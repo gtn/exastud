@@ -38,10 +38,7 @@ $subjectid = required_param('subjectid', PARAM_INT);
 
 require_login($courseid);
 
-//$context = get_context_instance(CONTEXT_SYSTEM);
-$context = context_system::instance();
-
-require_capability('block/exastud:use', $context);
+block_exastud_require_global_cap(block_exastud::CAP_USE);
 
 $classdata = $DB->get_record_sql("
     SELECT ct.id, c.class, s.title AS subject
@@ -112,11 +109,11 @@ foreach($classusers as $classuser) {
 	$row->cells[] = $userdesc;
 	
 	$row->cells[] = '<a href="' . $CFG->wwwroot . '/blocks/exastud/review_student.php?courseid=' . $courseid . '&classid=' . $classid . '&subjectid=' . $subjectid . '&studentid=' . $user->id . '">'.
-        block_exastud_t('de:Bewerten').'</a>';
+        block_exastud::t('de:Bewerten').'</a>';
 	
 	if (is_new_version()) {
         $row->cells[] = '<a href="' . $CFG->wwwroot . '/blocks/exastud/report_student.php?courseid=' . $courseid . '&classid=' . $classid . '&studentid=' . $user->id . '">'
-            .block_exastud_t('de:Alle Bewertungen zeigen').'</a>';
+            .block_exastud::t('de:Alle Bewertungen zeigen').'</a>';
 	}
 	if($report) {
 		foreach($categories as $category) {

@@ -1,13 +1,54 @@
 <?php
 
+use core_availability\capability_checker;
 defined('MOODLE_INTERNAL') || die();
 
+require_once __DIR__.'/../block_exastud.php';
 require_once __DIR__.'/common.php';
 
 define('DECIMALPOINTS', 1);
 
 function is_new_version() {
     return true;
+}
+
+function block_exastud_has_global_cap($cap) {
+    if (in_array($cap, [block_exastud::CAP_EDIT_PERIODS, block_exastud::CAP_UPLOAD_PICTURE])) {
+        // they are now just admin
+        $cap = block_exastud::CAP_ADMIN;
+    } elseif (!in_array($cap, [block_exastud::CAP_ADMIN, block_exastud::CAP_USE])) {
+        throw new exception("capability $cap not found");
+    }
+    
+    // all capabilities require use
+    if (!has_capability('block/exastud:use', context_system::instance())) {
+        return false;
+    }
+    
+    return has_capability('block/exastud:'.$cap, context_system::instance());
+}
+function block_exastud_require_global_cap($cap) {
+    if (!block_exastud_has_global_cap($cap)) {
+        throw new required_capability_exception(context_system::instance(), 'block/exastud:'.$cap, '', '');
+    }
+}
+function block_exastud_has_course_cap($cap, $context_or_courseid) {
+    if ($cap != block_exastud::CAP_HEADTEACHER) {
+        throw new exception("capability $cap not found");
+    }
+    
+    if (is_string($context_or_courseid) || is_int($context_or_courseid)) {
+        $context = context_course::instance($context_or_courseid);
+    } if ($context_or_courseid instanceof context) {
+        $context = $context_or_courseid;
+    }
+    
+    return has_capability('block/exastud:'.$cap, $context);
+}
+function block_exastud_require_course_cap($cap, $context_or_courseid) {
+    if (!block_exastud_has_course_cap($cap, $context_or_courseid)) {
+        throw new required_capability_exception(context_system::instance(), 'block/exastud:'.$cap, '', '');
+    }
 }
 
 /**
@@ -45,7 +86,13 @@ function block_exastud_get_review_periods($studentid) {
 }
 */
 function block_exastud_reviews_available() {
-	global $DB,$USER, $CFG;
+	global $DB, $USER, $CFG;
+	
+	if (is_new_version()) {
+	    // new version doesn't allow reviews for now
+	    return false;
+	}
+	
 	$availablereviews = $DB->get_records_sql('SELECT id
 			FROM {block_exastudreview}
 			WHERE teacherid = '.$USER->id.' AND studentid IN (
@@ -63,7 +110,7 @@ function block_exastud_reviews_available() {
 			WHERE ct.teacherid = ? AND ct.classid = cs.classid
 			)',array($USER->id));
 	}
-	return ($availablereviews) ? true : false;
+	return (bool)$availablereviews;
 }
 function block_exastud_has_wrong_periods($printBoxInsteadOfError = false) {
 	global $DB;
@@ -125,11 +172,11 @@ function block_exastud_check_active_period() {
         return $period;
     }
     
-    if (has_capability('block/exastud:editperiods', context_system::instance())) {
-        redirect($CFG->wwwroot.'/blocks/exastud/configuration_period.php?courseid='.$COURSE->id, block_exastud_get_string('redirectingtoperiodsinput'));
+    if (block_exastud_has_global_cap(block_exastud::CAP_EDIT_PERIODS)) {
+        redirect($CFG->wwwroot.'/blocks/exastud/configuration_periods.php?courseid='.$COURSE->id, block_exastud_get_string('redirectingtoperiodsinput'));
     }
     
-    print_error('periodserror', 'block_exastud', $CFG->wwwroot.'/blocks/exastud/configuration_period.php?courseid='.$COURSE->id);
+    print_error('periodserror', 'block_exastud', $CFG->wwwroot.'/blocks/exastud/configuration_periods.php?courseid='.$COURSE->id);
 }
 
 function block_exastud_get_active_period() {
@@ -388,7 +435,7 @@ function block_exastud_print_student_report($studentid, $periodid, $class, $pdf=
 		echo $studentreport;
 }
 
-function block_exastud_print_header($items, $options = array())
+function block_exastud_print_header($items, array $options = array())
 {
 	global $CFG, $COURSE, $PAGE, $DB, $USER, $OUTPUT;
 
@@ -401,24 +448,21 @@ function block_exastud_print_header($items, $options = array())
 
 	$last_item_name = '';
 	$tabs = array();
+	$tabs_sub = array();
 	$currenttab=null;
-	//$context = get_context_instance(CONTEXT_SYSTEM);
-	$context = context_system::instance();
-	//$coursecontext = get_context_instance(CONTEXT_COURSE,$COURSE->id);
-	$coursecontext = context_course::instance($COURSE->id);
-	if (has_capability('block/exastud:headteacher', $coursecontext)) {
+	$activetabsubs = [];
+
+	if (block_exastud_has_course_cap(block_exastud::CAP_HEADTEACHER, $COURSE->id)) {
 		$tabs[] = new tabobject('configuration', $CFG->wwwroot . '/blocks/exastud/configuration.php?courseid=' . $COURSE->id, block_exastud_get_string("configuration", "block_exastud"), '', true);
-		if(!is_new_version() && block_exastud_reviews_available())
+		if(block_exastud_reviews_available())
 			$tabs[] = new tabobject('report', $CFG->wwwroot . '/blocks/exastud/report.php?courseid=' . $COURSE->id, block_exastud_get_string("report", "block_exastud"), '', true);
 	}
-	if (has_capability('block/exastud:editperiods', $context))
-		$tabs[] = new tabobject('periods', $CFG->wwwroot . '/blocks/exastud/periods.php?courseid=' . $COURSE->id, block_exastud_get_string("periods", "block_exastud"), '', true);
-	if ($DB->count_records('block_exastudclassteachers', array('teacherid'=>$USER->id)) > 0 && block_exastud_get_active_period())
+	if ($DB->count_records('block_exastudclassteachers', array('teacherid'=>$USER->id)) && block_exastud_get_active_period())
 		$tabs[] = new tabobject('review', $CFG->wwwroot . '/blocks/exastud/review.php?courseid=' . $COURSE->id, block_exastud_get_string("review", "block_exastud"), '', true);
-	if (!is_new_version() && has_capability('block/exastud:uploadpicture', $context))
+	if (!is_new_version() && block_exastud_has_global_cap(block_exastud::CAP_UPLOAD_PICTURE))
 		$tabs[] = new tabobject('pictureupload', $CFG->wwwroot . '/blocks/exastud/pictureupload.php?courseid=' . $COURSE->id, block_exastud_get_string("pictureupload", "block_exastud"), '', true);
-    if (has_capability('block/exastud:admin', context_system::instance())) {
-        $tabs[] = new tabobject('settings', $CFG->wwwroot . '/blocks/exastud/configuration_global.php?courseid=' . $COURSE->id, block_exastud_get_string("settings"), '', true);
+    if (block_exastud_has_global_cap(block_exastud::CAP_ADMIN)) {
+        $tabs[] = new tabobject('settings', $CFG->wwwroot . '/blocks/exastud/periods.php?courseid=' . $COURSE->id, block_exastud_get_string("settings"), '', true);
     }
 
 	foreach ($items as $level => $item) {
@@ -426,8 +470,6 @@ function block_exastud_print_header($items, $options = array())
 			if (!is_string($item)) {
 				echo 'not supported';
 			}
-			if(!$currenttab)
-				$currenttab = $item;
 			if ($item == 'periods')
 				$link = 'periods.php?courseid='.$COURSE->id;
 			elseif ($item == 'configuration')
@@ -442,9 +484,12 @@ function block_exastud_print_header($items, $options = array())
 			else
 				$item_name = block_exastud_get_string($item, "block_exastud");
 
-			$item = array('name' => $item_name, 'link' => ($link ? $CFG->wwwroot.'/blocks/exastud/'.$link : null));
+			$item = array('name' => $item_name, 'id'=>$item, 'link' => ($link ? $CFG->wwwroot.'/blocks/exastud/'.$link : null));
 		}
 
+		$currenttab = $item['id'];
+		$activetabsubs[] = $item['id'];
+		
 		if (!isset($item['type']))
 			$item['type'] = 'misc';
 
@@ -453,6 +498,13 @@ function block_exastud_print_header($items, $options = array())
 
 	}
 
+	if (in_array('settings', $activetabsubs)) {
+	    $tabs_sub[] = new tabobject('periods',    $CFG->wwwroot . '/blocks/exastud/periods.php?courseid=' . $COURSE->id, block_exastud_get_string("periods"), '', true);
+	    $tabs_sub[] = new tabobject('categories', $CFG->wwwroot . '/blocks/exastud/configuration_global.php?courseid=' . $COURSE->id.'&action=categories', block_exastud::t("de:Kategorien"), '', true);
+	    $tabs_sub[] = new tabobject('subjects',   $CFG->wwwroot . '/blocks/exastud/configuration_global.php?courseid=' . $COURSE->id.'&action=subjects', block_exastud::t("de:Gegenstände"), '', true);
+	    $tabs_sub[] = new tabobject('evalopts',   $CFG->wwwroot . '/blocks/exastud/configuration_global.php?courseid=' . $COURSE->id.'&action=evalopts', block_exastud::t("de:Bewertungen"), '', true);
+	}
+	
 	$PAGE->set_title($strheader.': '.$last_item_name);
 	$PAGE->set_heading($strheader);
 	$PAGE->set_cacheable(true);
@@ -463,7 +515,7 @@ function block_exastud_print_header($items, $options = array())
 	echo $OUTPUT->header();
 
 	echo '<div id="block_exastud">';
-	print_tabs(array($tabs),$currenttab);
+	print_tabs(array($tabs, $tabs_sub), $currenttab, [], $activetabsubs);
 
 	// header
 	if (!in_array('noheading', $options))
@@ -541,9 +593,9 @@ function block_exastud_insert_default_entries() {
 	}
 	
 	if(!$DB->get_records('block_exastudsubjects')) {
-		$DB->insert_record('block_exastudsubjects', array("title"=>block_exastud_t('de:Deutsch')));
-		$DB->insert_record('block_exastudsubjects', array("title"=>block_exastud_t('de:Englisch')));
-		$DB->insert_record('block_exastudsubjects', array("title"=>block_exastud_t('de:Mathematik')));
+		$DB->insert_record('block_exastudsubjects', array("title"=>block_exastud::t('de:Deutsch')));
+		$DB->insert_record('block_exastudsubjects', array("title"=>block_exastud::t('de:Englisch')));
+		$DB->insert_record('block_exastudsubjects', array("title"=>block_exastud::t('de:Mathematik')));
 	}
 	
 	if(!$DB->get_records('block_exastudevalopt')) {
@@ -602,37 +654,5 @@ function block_exastud_get_main_logo() {
 
 	$areafiles = $fs->get_area_files(context_system::instance()->id, 'block_exastud', 'main_logo', 0, 'itemid', false);
 	return empty($areafiles) ? null : reset($areafiles);
-}
-
-/**
- * block_exalib_t
- * @return string
- */
-function block_exastud_t() {
-    $args = func_get_args();
-    $languagestrings = array();
-    
-    // extra parameters at the end?
-    $a = null;
-    if (count($args) >= 2) {
-        $last = end($args);
-        if (!is_string($last)) {
-            $a = array_pop($args);
-        }
-    }
-    
-    foreach ($args as $i => $string) {
-        if (!preg_match('!^([^:]+):(.*)$!', $string, $matches)) {
-            print_error('wrong string format: '.$string);
-        }
-        $languagestrings[$matches[1]] = $matches[2];
-    }
-    
-    $lang = current_language();
-    if (isset($languagestrings[$lang])) {
-        return $languagestrings[$lang];
-    } else {
-        return reset($languagestrings);
-    }
 }
 

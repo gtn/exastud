@@ -46,9 +46,8 @@ if (!$returnurl) {
 
 $url = '/blocks/exastud/review_student.php';
 $PAGE->set_url($url);
-//$context = get_context_instance(CONTEXT_SYSTEM);
-$context = context_system::instance();
-require_capability('block/exastud:use', $context);
+
+block_exastud_require_global_cap(block_exastud::CAP_USE);
 
 $classdata = $DB->get_record_sql("
     SELECT ct.id, c.class, s.title AS subject

@@ -39,10 +39,8 @@ $studentid = required_param('studentid', PARAM_INT); // Course ID
 $classid = optional_param('classid',0,PARAM_INT);
 require_login($courseid);
 
-//$context = get_context_instance(CONTEXT_COURSE,$courseid);
-$context = context_course::instance($courseid);
-require_capability('block/exastud:use', $context);
-require_capability('block/exastud:headteacher', $context);
+block_exastud_require_course_cap(block_exastud::CAP_HEADTEACHER, $courseid);
+
 $actPeriod = block_exastud_get_period($periodid, true);
 
 if($classid > 0) $class = $DB->get_record("block_exastudclass", array("id"=>$classid),"*",MUST_EXIST);

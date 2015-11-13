@@ -6,7 +6,7 @@ $courseid = optional_param('courseid', 1, PARAM_INT); // Course ID
 $action = optional_param('action', '', PARAM_TEXT);
 require_login($courseid);
 
-require_capability('block/exastud:admin', context_system::instance());
+block_exastud_require_global_cap(block_exastud::CAP_ADMIN);
 
 $header = block_exastud_get_string('settings');
 $url = new moodle_url('/blocks/exastud/configuration_global.php', array('courseid'=>$courseid));
@@ -141,8 +141,8 @@ if ($action == 'save-evalopts') {
 }
 
 if ($action == 'categories') {
-    block_exastud_print_header(array('settings', '='.$header.': '.block_exastud_t('de:Kategorien')));
-
+    block_exastud_print_header(['settings', ['id'=>'categories', 'name'=>block_exastud::t("de:Kategorien")]]);
+    
     ?>
     <script>
     	var exa_list_items = <?php echo json_encode(array_values($availablecategories) /* use array_values, because else the array gets sorted by key and not by sorting */); ?>
@@ -166,8 +166,8 @@ if ($action == 'categories') {
 }
 
 if ($action == 'subjects') {
-    block_exastud_print_header(array('settings', '='.$header.': '.block_exastud_t('de:Gegenstände')));
-
+    block_exastud_print_header(['settings', ['id'=>'subjects', 'name'=>block_exastud::t("de:Gegenstände")]]);
+    
     ?>
     <script>
     	var exa_list_items = <?php echo json_encode(array_values($availablesubjects) /* use array_values, because else the array gets sorted by key and not by sorting */); ?>
@@ -191,8 +191,8 @@ if ($action == 'subjects') {
 }
 
 if ($action == 'evalopts') {
-    block_exastud_print_header(array('settings', '='.$header.': '.block_exastud_t('de:Bewertungen')));
-
+    block_exastud_print_header(['settings', ['id'=>'evalopts', 'name'=>block_exastud::t("de:Bewertungen")]]);
+    
     ?>
     <script>
     	var exa_list_items = <?php echo json_encode(array_values($availableevalopts) /* use array_values, because else the array gets sorted by key and not by sorting */); ?>
@@ -209,19 +209,6 @@ if ($action == 'evalopts') {
         	<input type="button" exa="save-button" value="<?php echo get_string('savechanges'); ?>">
     	</div>
     </div>
-    <?php
-    
-    block_exastud_print_footer();
-    exit;
-}
-
-if ($action == '') {
-    block_exastud_print_header(array('settings'));
-    
-    ?>
-    <a href="<?php echo $url->out(true, array('action'=>'categories')); ?>">Kategorien</a></br />
-    <a href="<?php echo $url->out(true, array('action'=>'subjects')); ?>">Gegenstände</a></br />
-    <a href="<?php echo $url->out(true, array('action'=>'evalopts')); ?>">Bewertungen</a></br />
     <?php
     
     block_exastud_print_footer();

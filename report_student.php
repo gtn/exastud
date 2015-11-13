@@ -36,8 +36,7 @@ $studentid = required_param('studentid', PARAM_INT);
 
 require_login($courseid);
 
-$context = context_course::instance($courseid);
-require_capability('block/exastud:use', $context);
+block_exastud_require_global_cap(block_exastud::CAP_USE);
 
 if (!is_new_version()) die('not allowed');
 

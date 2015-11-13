@@ -39,10 +39,7 @@ $action = optional_param('action', '', PARAM_ALPHA);
 
 require_login($courseid);
 
-$context = context_system::instance();
-//$context = get_context_instance(CONTEXT_COURSE,$courseid);
-require_capability('block/exastud:use', $context);
-require_capability('block/exastud:editperiods', $context);
+block_exastud_require_global_cap(block_exastud::CAP_EDIT_PERIODS);
 
 ob_start();
 $periodform = new period_edit_form();
@@ -76,7 +73,7 @@ if ($periodform->is_cancelled()) {
 		if (!($DB->insert_record('block_exastudperiod', $newperiod))) {
 			error('errorinsertingperiod', 'block_exastud');
 		}
-		//add_to_log($courseid, 'block_exastud', 'new', 'configuration_period.php?courseid=' . $courseid . '&action=new', '');
+		//add_to_log($courseid, 'block_exastud', 'new', 'configuration_periods.php?courseid=' . $courseid . '&action=new', '');
 	}
 
 	redirect('periods.php?courseid=' . $courseid);
@@ -112,9 +109,9 @@ else {
 
 
 
-$url = '/blocks/exastud/configuration_period.php';
+$url = '/blocks/exastud/configuration_periods.php';
 $PAGE->set_url($url);
-block_exastud_print_header(array('periods', 'periodinput'));
+block_exastud_print_header(array('settings', 'periods'));
 
 echo "<br/>";
 $periodform->set_data($period);
