@@ -3,7 +3,7 @@
 	$(function() {
 		var $fieldset = $('fieldset#id_categories');
 		// ignore empty options (eg. "please choose" option ist empty)
-		var $options = $fieldset.find('select:first option:not(:empty)');
+		var $options = $fieldset.find('select:first option');
 		var $container = $fieldset.find('.fcontainer');
 		
 		var categories = [];

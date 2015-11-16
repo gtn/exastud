@@ -49,13 +49,7 @@ $PAGE->set_url($url);
 
 block_exastud_require_global_cap(block_exastud::CAP_USE);
 
-$classdata = $DB->get_record_sql("
-    SELECT ct.id, c.class, s.title AS subject
-    FROM {block_exastudclassteachers} ct
-    JOIN {block_exastudclass} c ON ct.classid=c.id
-    LEFT JOIN {block_exastudsubjects} s ON ct.subjectid = s.id
-    WHERE ct.teacherid=? AND ct.classid=? AND ".($subjectid?'s.id=?':'s.id IS NULL')."
-", array($USER->id, $classid, $subjectid));
+$classdata = block_exastud\get_review_class($classid, $subjectid);
 
 if(!$classdata) {
     print_error('badclass', 'block_exastud');
@@ -87,7 +81,7 @@ if (!$reviewdata = $DB->get_record('block_exastudreview', array('teacherid' => $
     }
     $formdata->review = $reviewdata->review;
 }
-$studentform = new student_edit_form(null,array("categories"=>$categories));
+$studentform = new student_edit_form(null,array('categories'=>$categories, 'subjectid'=>$subjectid));
 
 if ($studentedit = $studentform->get_data()) {
     $newreview = new stdClass();
@@ -101,29 +95,19 @@ if ($studentedit = $studentform->get_data()) {
 
     if (isset($reviewdata->id)) {
         $newreview->id = $reviewdata->id;
-        if ($DB->update_record('block_exastudreview', $newreview)) {
-        	foreach($categories as $category) {
-        		if($DB->record_exists('block_exastudreviewpos', array("categoryid"=>$category->id,"reviewid"=>$reviewdata->id,"categorysource"=>$category->source)))
-        			$DB->set_field('block_exastudreviewpos', 'value', $studentedit->{$category->id.'_'.$category->source},array("categoryid"=>$category->id,"reviewid"=>$reviewdata->id,"categorysource"=>$category->source));
-        		else
-        			$DB->insert_record('block_exastudreviewpos', array("reviewid"=>$reviewdata->id,"categoryid"=>$category->id,"categorysource"=>$category->source,"value"=>$studentedit->{$category->id.'_'.$category->source}));
-        	}
-        }
-        else
-            print_error('errorupdatingstudent', 'block_exastud');
+        $DB->update_record('block_exastudreview', $newreview);
     } else {
-        if (($newreview->id = $DB->insert_record('block_exastudreview', $newreview))) {
-        	foreach($categories as $category) {
-        		$data = new stdClass();
-        		$data->reviewid = $newreview->id;
-        		$data->categoryid = $category->id;
-        		$data->categorysource = $category->source;
-        		$data->value = $studentedit->{$category->id.'_'.$category->source};
-        		$DB->insert_record('block_exastudreviewpos', $data);
-        	}
-        } else
-            print_error('errorinsertingstudent', 'block_exastud');
+        $newreview->id = $DB->insert_record('block_exastudreview', $newreview);
     }
+    
+    foreach ($categories as $category) {
+        if (!isset($studentedit->{$category->id.'_'.$category->source})) continue;
+        
+        block_exastud\db::insert_or_update_record('block_exastudreviewpos',
+            ["value"=>$studentedit->{$category->id.'_'.$category->source}],
+            ["reviewid"=>$reviewdata->id,"categoryid"=>$category->id,"categorysource"=>$category->source]);
+    }
+
     redirect($returnurl);
 }
 

@@ -53,6 +53,10 @@ $myclasses = $DB->get_records_sql("
     ORDER BY c.class, s.sorting
 ", array($USER->id, $actPeriod->id));
 
+if ($class = block_exastud\get_headteacher_SUBJECT_ID_LERN_UND_SOZIALVERHALTEN_class()) {
+    $myclasses = [$class] + $myclasses;
+}
+
 if(!$myclasses) {
 	echo block_exastud_get_string('noclassestoreview','block_exastud');
 }

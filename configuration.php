@@ -36,12 +36,11 @@ $action = optional_param('action', '', PARAM_TEXT);
 require_login($courseid);
 
 block_exastud_require_global_cap(block_exastud::CAP_HEADTEACHER);
-$curPeriod = block_exastud_check_active_period();
 
 $url = '/blocks/exastud/configuration.php';
 $PAGE->set_url($url);
 
-if (!$class = $DB->get_record('block_exastudclass', array('userid'=>$USER->id,'periodid' => $curPeriod->id))) {
+if (!$class = block_exastud\get_headteacher_class()) {
 	redirect('configuration_class.php?courseid=' . $courseid, block_exastud_get_string('redirectingtoclassinput', 'block_exastud'));
 }
 

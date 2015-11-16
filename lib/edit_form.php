@@ -87,18 +87,22 @@ class student_edit_form extends moodleform {
         $mform->setType('studentid', PARAM_INT);
         $mform->setDefault('studentid', 0);
 
-        $selectoptions = block_exastud_get_evaluation_options(true);
-
-        $mform->addElement('header', 'categories', get_string('review', 'block_exastud'));
-        
-		$categories = $this->_customdata['categories'];
-		foreach($categories as $category) {
-			$id = $category->id.'_'.$category->source;
-			
-			$mform->addElement('select', $id, $category->title, $selectoptions);
-			$mform->setType($id, PARAM_INT);
-			$mform->setDefault($id, key($selectoptions));
-		}
+        if ($this->_customdata['subjectid'] == block_exastud::SUBJECT_ID_LERN_UND_SOZIALVERHALTEN) {
+            // für headteacher review ignorieren
+        } else {
+            $selectoptions = block_exastud_get_evaluation_options(true);
+    
+            $mform->addElement('header', 'categories', get_string('review', 'block_exastud'));
+            
+    		$categories = $this->_customdata['categories'];
+    		foreach($categories as $category) {
+    			$id = $category->id.'_'.$category->source;
+    			
+    			$mform->addElement('select', $id, $category->title, $selectoptions);
+    			$mform->setType($id, PARAM_INT);
+    			$mform->setDefault($id, key($selectoptions));
+    		}
+        }
 
         $mform->addElement('header', 'review_header', get_string('review', 'block_exastud'));
         $mform->addElement('htmleditor', 'review', get_string('review', 'block_exastud'), array('cols' => 50, 'rows' => 30));

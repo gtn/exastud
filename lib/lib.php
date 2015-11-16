@@ -1,5 +1,6 @@
 <?php
 
+namespace {
 defined('MOODLE_INTERNAL') || die();
 
 require_once $CFG->dirroot.'/cohort/lib.php';
@@ -27,7 +28,7 @@ function block_exastud_has_global_cap($cap) {
     
     if ($cap == block_exastud::CAP_HEADTEACHER) {
         // for headteacher, check cohort
-        return block_exastud_is_headteacher();
+        return block_exastud\is_headteacher();
     }
     
     return has_capability('block/exastud:'.$cap, context_system::instance());
@@ -36,31 +37,6 @@ function block_exastud_require_global_cap($cap) {
     if (!block_exastud_has_global_cap($cap)) {
         throw new required_capability_exception(context_system::instance(), 'block/exastud:'.$cap, '', '');
     }
-}
-function block_exastud_is_headteacher() {
-    global $USER;
-    
-    $cohort = block_exastud_get_headteacher_cohort();
-    return cohort_is_member($cohort->id, $USER->id);
-}
-function block_exastud_get_headteacher_cohort() {
-    global $DB;
-    
-    // get or create cohort if not exists
-    $cohort = $DB->get_record('cohort', ['contextid' => context_system::instance()->id, 'idnumber' => 'block_exastud_headteachers']);
-    if (!$cohort) {
-        $cohort = (object)[
-                        'contextid' => context_system::instance()->id,
-                        'idnumber' => 'block_exastud_headteachers',
-                        'name' => block_exastud::t('de:Klassenlehrer'),
-                        'description' => block_exastud::t('de:Können Klassen anlegen, Lehrer und Schüler zubuchen'),
-                        'visible' => 1,
-                        'component' => '', // should be block_exastud, but then the admin can't change the group members anymore
-        ];
-        $cohort->id = cohort_add_cohort($cohort);
-    }
-    
-    return $cohort;
 }
 
 /**
@@ -499,8 +475,10 @@ function block_exastud_print_header($items, array $options = array())
 			$item = array('name' => $item_name, 'id'=>$item, 'link' => ($link ? $CFG->wwwroot.'/blocks/exastud/'.$link : null));
 		}
 
-		$currenttab = $item['id'];
-		$activetabsubs[] = $item['id'];
+		if (!empty($item['id'])) {
+		    $currenttab = $item['id'];
+		    $activetabsubs[] = $item['id'];
+		}
 		
 		if (!isset($item['type']))
 			$item['type'] = 'misc';
@@ -515,7 +493,7 @@ function block_exastud_print_header($items, array $options = array())
 	    $tabs_sub[] = new tabobject('categories', $CFG->wwwroot . '/blocks/exastud/configuration_global.php?courseid=' . $COURSE->id.'&action=categories', block_exastud::t("de:Kategorien"), '', true);
 	    $tabs_sub[] = new tabobject('subjects',   $CFG->wwwroot . '/blocks/exastud/configuration_global.php?courseid=' . $COURSE->id.'&action=subjects', block_exastud::t("de:Gegenstände"), '', true);
 	    $tabs_sub[] = new tabobject('evalopts',   $CFG->wwwroot . '/blocks/exastud/configuration_global.php?courseid=' . $COURSE->id.'&action=evalopts', block_exastud::t("de:Bewertungen"), '', true);
-	    $tabs_sub[] = new tabobject('headteachers', $CFG->wwwroot . '/cohort/assign.php?id=' . block_exastud_get_headteacher_cohort()->id, block_exastud::t('headteachers', 'de:Klassenlehrer'), '', true);
+	    $tabs_sub[] = new tabobject('headteachers', $CFG->wwwroot . '/cohort/assign.php?id=' . block_exastud\get_headteacher_cohort()->id, block_exastud::t('headteachers', 'de:Klassenlehrer'), '', true);
 	}
 	
 	$PAGE->set_title($strheader.': '.$last_item_name);
@@ -654,7 +632,7 @@ function block_exastud_get_evaluation_options($also_empty = false) {
     global $DB;
     
     $options = $also_empty ? array(
-        0 => '' // empty option
+        0 => block_exastud::t('nicht gewählt') // empty option
     ) : array();
     
     $options += $DB->get_records_menu('block_exastudevalopt');
@@ -669,3 +647,76 @@ function block_exastud_get_main_logo() {
 	return empty($areafiles) ? null : reset($areafiles);
 }
 
+}
+
+namespace block_exastud {
+    use block_exastud;
+
+    function is_headteacher() {
+        global $USER;
+        
+        $cohort = get_headteacher_cohort();
+        return cohort_is_member($cohort->id, $USER->id);
+    }
+    
+    function get_headteacher_cohort() {
+        global $DB;
+        
+        // get or create cohort if not exists
+        $cohort = $DB->get_record('cohort', ['contextid' => \context_system::instance()->id, 'idnumber' => 'block_exastud_headteachers']);
+        if (!$cohort) {
+            $cohort = (object)[
+                            'contextid' => context_system::instance()->id,
+                            'idnumber' => 'block_exastud_headteachers',
+                            'name' => block_exastud::t('de:Klassenlehrer'),
+                            'description' => block_exastud::t('de:Können Klassen anlegen, Lehrer und Schüler zubuchen'),
+                            'visible' => 1,
+                            'component' => '', // should be block_exastud, but then the admin can't change the group members anymore
+            ];
+            $cohort->id = cohort_add_cohort($cohort);
+        }
+        
+        return $cohort;
+    }
+    
+    function get_headteacher_class() {
+        global $DB, $USER;
+        
+        if (!is_headteacher()) {
+            return null;
+        }
+        
+        $curPeriod = block_exastud_check_active_period();
+        return $DB->get_record('block_exastudclass', array('userid'=>$USER->id,'periodid' => $curPeriod->id));
+    }
+    
+    function get_headteacher_SUBJECT_ID_LERN_UND_SOZIALVERHALTEN_class() {
+        if (!$myClass = get_headteacher_class()) {
+            return null;
+        }
+        
+        return (object)[
+            'classid' => $myClass->id,
+            'subjectid' => block_exastud::SUBJECT_ID_LERN_UND_SOZIALVERHALTEN,
+            'class' => $myClass->class,
+            'subject' => block_exastud::t('Lern- und Sozialverhalten')
+        ];
+    }
+    
+    function get_review_class($classid, $subjectid) {
+        global $DB, $USER;
+        
+        if ($subjectid == block_exastud::SUBJECT_ID_LERN_UND_SOZIALVERHALTEN) {
+            return block_exastud\get_headteacher_SUBJECT_ID_LERN_UND_SOZIALVERHALTEN_class();
+        } else {
+            return $DB->get_record_sql("
+            SELECT ct.id, c.class, s.title AS subject
+            FROM {block_exastudclassteachers} ct
+            JOIN {block_exastudclass} c ON ct.classid=c.id
+            LEFT JOIN {block_exastudsubjects} s ON ct.subjectid = s.id
+            WHERE ct.teacherid=? AND ct.classid=? AND ".($subjectid?'s.id=?':'s.id IS NULL')."
+        ", array($USER->id, $classid, $subjectid));
+        }
+    }
+    
+}

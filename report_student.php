@@ -53,6 +53,114 @@ if (!$student = $DB->get_record('user', array('id' => $studentid))) {
     print_error('badstudent', 'block_exastud');
 }
 
+
+
+$textReviews = iterator_to_array($DB->get_recordset_sql("
+    SELECT ".user_picture::fields('u').", r.review, s.title AS subject, r.subjectid AS subjectid
+    FROM {block_exastudreview} r
+    JOIN {user} u ON r.teacherid = u.id
+    LEFT JOIN {block_exastudsubjects} s ON r.subjectid = s.id
+    WHERE r.studentid = ? AND r.periodid = ? AND TRIM(r.review) !=  ''
+    ORDER BY NOT(r.subjectid<0), s.title, u.lastname, u.firstname -- TODO: anpassen",
+array($studentid, $class->periodid)), false);
+
+foreach ($textReviews as $textReview) {
+    if ($textReview->subjectid == block_exastud::SUBJECT_ID_LERN_UND_SOZIALVERHALTEN)
+        $textReview->title = block_exastud::t('Lern- und Sozialverhalten');
+    elseif ($textReview->subject)
+        $textReview->title = $textReview->subject.' ('.fullname($textReview).')';
+    else
+        $textReview->title = fullname($textReview);
+}
+
+$evaluationOtions = block_exastud_get_evaluation_options();
+$categories = block_exastud_get_class_categories($classid);
+$current_parent = null;
+foreach ($categories as $category){
+
+    $category->fulltitle = $category->title;
+    if (preg_match('!^([^:]*):\s*([^\s].*)$!', $category->fulltitle, $matches)) {
+        $category->parent = $matches[1];
+        $category->title = $matches[2];
+    } else {
+        $category->parent = '';
+        $category->title = $category->fulltitle;
+    }
+
+    $category->evaluationOtions = [];
+    foreach ($evaluationOtions as $pos_value => $option) {
+        $category->evaluationOtions[$pos_value] = (object)[
+            'value' => $pos_value,
+            'title' => $option,
+            'reviewers' => iterator_to_array($DB->get_recordset_sql("
+                            SELECT u.*, s.title AS subject
+                            FROM {block_exastudreview} r
+                            JOIN {block_exastudreviewpos} pos ON pos.reviewid = r.id
+                            JOIN {user} u ON r.teacherid = u.id
+                            JOIN {block_exastudclass} c ON c.periodid = r.periodid
+                            LEFT JOIN {block_exastudsubjects} s ON r.subjectid = s.id
+                            WHERE r.studentid = ? AND c.id = ?
+                                AND pos.categoryid = ? AND pos.categorysource = ?
+                                AND pos.value = ?
+                            ", array($studentid, $classid, $category->id, $category->source, $pos_value)), true)
+        ];
+    }
+}
+
+if (optional_param('print', false, PARAM_BOOL)) {
+    require_once __DIR__.'/classes/PhpWord/Autoloader.php';
+    \PhpOffice\PhpWord\Autoloader::register();
+    
+    $phpWord = new \PhpOffice\PhpWord\PhpWord();
+    $section = $phpWord->addSection();
+    
+    $pageWidthTwips = 9200;
+
+    $section->addText('Lernentwicklungsbericht',
+        ['size' => 26, 'bold' => true], ['align'=>'center', 'spaceBefore'=>1400, 'spaceAfter'=>200]);
+    $section->addText('Information über die Lernentwicklung im Wählen Sie ein Element aus. Schulhalbjahr 20XX/20XX',
+        ['size' => 14], ['align'=>'center', 'lineHeight'=>1, 'spaceAfter'=>100]);
+    $section->addText('für',
+        ['size' => 14], ['align'=>'center', 'lineHeight'=>1, 'spaceAfter'=>300]);
+    
+    $table = $section->addTable(array('borderSize' => 6, 'borderColor' => 'black', 'cellMargin' => 80));
+    $table->addRow();
+    $table->addCell(2500)->addText('Vorname, Name');
+    $table->addCell($pageWidthTwips-2500)->addText($student->firstname.', '.$student->lastname);
+    $table->addRow();
+    $table->addCell()->addText('Geburtsdatum');
+    $table->addCell();
+    $table->addRow();
+    $table->addCell()->addText('Lerngruppe');
+    $table->addCell();
+    
+    $section->addPageBreak();
+    $section->addText(' ');
+
+    for ($i = 0; $i < 30; $i++) foreach($textReviews as $textReview) {
+        
+        $table = $section->addTable(['borderSize'=>0, 'borderColor' => 'FFFFFF', 'cellMargin'=>0]);
+        $table->addRow(null, ['cantSplit'=>true]);
+        $cell = $table->addCell($pageWidthTwips);
+        $table = $cell->addTable(['borderSize' => 6, 'borderColor' => 'black', 'cellMargin' => 80]);
+        $table->addRow();
+        $table->addCell($pageWidthTwips, ['bgColor' => 'F2F2F2'])->addText($textReview->title."\nasdf\nadf\nasdf\nasdf\nasdf\nasdf\nasdf\nasdf\nasdf\nasdf\nasdf\nasdf");
+        $table->addRow();
+        \PhpOffice\PhpWord\Shared\Html::addHtml($table->addCell($pageWidthTwips), $textReview->review);
+    }
+    
+    echo \PhpOffice\PhpWord\IOFactory::createWriter($phpWord, 'HTML')->getContent();
+
+    $objWriter = \PhpOffice\PhpWord\IOFactory::createWriter($phpWord, 'Word2007');
+    $objWriter->save('helloWorld.docx');
+    
+    exit;
+}
+
+
+
+
+
 $url = '/blocks/exastud/report_student.php';
 $PAGE->set_url($url);
 $blockrenderer = $PAGE->get_renderer('block_exastud');
@@ -70,50 +178,29 @@ $studentdesc = $OUTPUT->user_picture($student, array("courseid" => $courseid)) .
 
 echo $OUTPUT->heading($studentdesc);
 
-
-
-$evaluationOtions = block_exastud_get_evaluation_options();
-$categories = block_exastud_get_class_categories($classid);
-
 echo '<table id="review-table">';
 
 $current_parent = null;
 foreach ($categories as $category){
     
-    $category_parent = preg_replace('/\s*:.*$/', '', $category->title);
-    $category_name = preg_replace('/^[^:]*:\s*/', '', $category->title);
-    
-    if ($current_parent !== $category_parent) {
-        $current_parent = $category_parent;
-        echo '<tr><th class="category category-parent">'.$current_parent.':</th>';
-        foreach ($evaluationOtions as $option) {
-            echo '<th class="evaluation-header"><b>' . $option . '</th>';
+    if ($current_parent !== $category->parent) {
+        $current_parent = $category->parent;
+        echo '<tr><th class="category category-parent">'.($category->parent?$category->parent.':':'').'</th>';
+        foreach ($category->evaluationOtions as $option) {
+            echo '<th class="evaluation-header"><b>' . $option->title . '</th>';
         }
         echo '</tr>';
     }
     
-    echo '<tr><td class="category">'.$category_name.'</td>';
+    echo '<tr><td class="category">'.$category->title.'</td>';
 
-    foreach ($evaluationOtions as $pos_value => $option) {
+    foreach ($category->evaluationOtions as $pos_value => $option) {
         echo '<td class="evaluation">';
-        
-        $reviewers = $DB->get_recordset_sql("
-            SELECT u.*, s.title AS subject
-            FROM {block_exastudreview} r
-            JOIN {block_exastudreviewpos} pos ON pos.reviewid = r.id
-            JOIN {user} u ON r.teacherid = u.id
-            JOIN {block_exastudclass} c ON c.periodid = r.periodid
-            LEFT JOIN {block_exastudsubjects} s ON r.subjectid = s.id
-            WHERE r.studentid = ? AND c.id = ?
-                AND pos.categoryid = ? AND pos.categorysource = ?
-                AND pos.value = ?
-        ", array($studentid, $classid, $category->id, $category->source, $pos_value));
-        $i = 0;
-        foreach ($reviewers as $reviewer) {
-            if ($i) echo ', ';
-            $i++;
-            echo ($reviewer->subject?$reviewer->subject.' ('.fullname($reviewer).')':fullname($reviewer));
-        }
+
+        echo join(', ', array_map(function($reviewer){
+            return $reviewer->subject?$reviewer->subject.' ('.fullname($reviewer).')':fullname($reviewer);
+        }, $option->reviewers));
+
         echo '</td>';
     }
     echo '</tr>';
@@ -124,22 +211,12 @@ echo '</table>';
 
 
 
-$comments = $DB->get_recordset_sql("
-                SELECT ".user_picture::fields('u').", r.review, s.title AS subject
-                FROM {block_exastudreview} r
-                JOIN {user} u ON r.teacherid = u.id
-                LEFT JOIN {block_exastudsubjects} s ON r.subjectid = s.id
-                WHERE r.studentid = ? AND r.periodid = ? AND TRIM(r.review) !=  ''
-                ORDER BY s.title, u.lastname, u.firstname",
-                array($studentid, $class->periodid));
-
-
 echo '<h3>'.get_string('detailedreview','block_exastud').'</h3>';
 
 echo '<table id="ratingtable">';
-foreach($comments as $comment) {
-    echo '<tr><td class="ratinguser">'.($comment->subject?$comment->subject.' ('.fullname($comment).')':fullname($comment)).'</td>
-        <td class="ratingtext">'.format_text($comment->review).'</td>
+foreach($textReviews as $textReview) {
+    echo '<tr><td class="ratinguser">'.$textReview->title.'</td>
+        <td class="ratingtext">'.format_text($textReview->review).'</td>
         </tr>';
 }
 echo '</table>';

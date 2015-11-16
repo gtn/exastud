@@ -39,6 +39,7 @@ class block_exastud extends block_list {
     const CAP_EDIT_PERIODS = 'editperiods';
     const CAP_UPLOAD_PICTURE = 'exastud:uploadpicture';
     const CAP_ADMIN = 'admin';
+    const SUBJECT_ID_LERN_UND_SOZIALVERHALTEN = -1;
 
 	function init() {
 		$this->title = block_exastud_get_string('pluginname', 'block_exastud');
@@ -107,7 +108,7 @@ class block_exastud extends block_list {
 			$this->content->icons[] = '<img src="' . $CFG->wwwroot . '/blocks/exastud/pix/eingabezeitraum.png" height="16" width="23" alt="" />';
 			$this->content->items[] = '<a title="' . block_exastud_get_string('periods') . '" href="' . $CFG->wwwroot . '/blocks/exastud/periods.php?courseid=' . $COURSE->id . '">' . block_exastud_get_string('periods', 'block_exastud') . '</a>';
 			$this->content->icons[] = '<img src="' . $CFG->wwwroot . '/blocks/exastud/pix/headteachers.png" height="16" width="23" alt="" />';
-			$this->content->items[] = '<a title="' . block_exastud_get_string('periods') . '" href="' . $CFG->wwwroot . '/cohort/assign.php?id=' . block_exastud_get_headteacher_cohort()->id . '">' . block_exastud::t('headteachers', 'de:Klassenlehrer') . '</a>';
+			$this->content->items[] = '<a title="' . block_exastud_get_string('periods') . '" href="' . $CFG->wwwroot . '/cohort/assign.php?id=' . block_exastud\get_headteacher_cohort()->id . '">' . block_exastud::t('headteachers', 'de:Klassenlehrer') . '</a>';
 		}
 		/*
 		if (block_exastud_has_global_cap(block_exastud::CAP_UPLOAD_PICTURE)) {

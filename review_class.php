@@ -40,13 +40,7 @@ require_login($courseid);
 
 block_exastud_require_global_cap(block_exastud::CAP_USE);
 
-$classdata = $DB->get_record_sql("
-    SELECT ct.id, c.class, s.title AS subject
-    FROM {block_exastudclassteachers} ct
-    JOIN {block_exastudclass} c ON ct.classid=c.id
-    LEFT JOIN {block_exastudsubjects} s ON ct.subjectid = s.id
-    WHERE ct.teacherid=? AND ct.classid=? AND ".($subjectid?'s.id=?':'s.id IS NULL')."
-", array($USER->id, $classid, $subjectid));
+$classdata = block_exastud\get_review_class($classid, $subjectid);
 
 if(!$classdata) {
 	print_error("badclass","block_exastud");
@@ -64,7 +58,11 @@ if(!$classusers = $DB->get_records('block_exastudclassstudents', array('classid'
 	print_error('nostudentstoreview','block_exastud');
 }
 
-$categories = block_exastud_get_class_categories($classid);
+if ($subjectid == block_exastud::SUBJECT_ID_LERN_UND_SOZIALVERHALTEN) {
+    $categories = [(object)[ 'title' => block_exastud::t('Lern- und Sozialverhalten'), 'id'=>0, 'source'=>'']];
+} else {
+    $categories = block_exastud_get_class_categories($classid);
+}
 $evaluation_options = block_exastud_get_evaluation_options();
 
 /* Print the Students */
