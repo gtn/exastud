@@ -111,7 +111,9 @@ foreach($classusers as $classuser) {
 	
 	if (is_new_version()) {
         $row->cells[] = '<a href="' . $CFG->wwwroot . '/blocks/exastud/report_student.php?courseid=' . $courseid . '&classid=' . $classid . '&studentid=' . $user->id . '">'
-            .block_exastud::t('de:Alle Bewertungen zeigen').'</a>';
+            .block_exastud::t('de:Alle Bewertungen zeigen').'</a>'.
+            '<br /><a href="' . $CFG->wwwroot . '/blocks/exastud/report_student.php?courseid=' . $courseid . '&classid=' . $classid . '&studentid=' . $user->id . '&output=docx">'
+            .block_exastud::t('de:Als MS-Word exportieren').'</a>';
 	}
 	if($report) {
 		foreach($categories as $category) {

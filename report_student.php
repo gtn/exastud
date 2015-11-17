@@ -215,23 +215,21 @@ if (optional_param('output', '', PARAM_TEXT) == 'docx') {
         \PhpOffice\PhpWord\Shared\Html::addHtml($table->addCell($pageWidthTwips), $textReview->review);
     }
     
-    echo \PhpOffice\PhpWord\IOFactory::createWriter($phpWord, 'HTML')->getContent();
+    // echo \PhpOffice\PhpWord\IOFactory::createWriter($phpWord, 'HTML')->getContent();
 
     $objWriter = \PhpOffice\PhpWord\IOFactory::createWriter($phpWord, 'Word2007');
 
-    /*
     // // save as a random file in temp file
     $temp_file = tempnam(sys_get_temp_dir(), 'PHPWord');
-    $document->save($temp_file);
+    $objWriter->save($temp_file);
     
     // Your browser will name the file "myFile.docx"
     // regardless of what it's named on the server
     header("Content-Disposition: attachment; filename='myFile.docx'");
     readfile($temp_file); // or echo file_get_contents($temp_file);
     unlink($temp_file);  // remove temp file
-    */
     
-    $objWriter->save('helloWorld.docx');
+    // $objWriter->save('helloWorld.docx');
     
     exit;
 }
