@@ -429,71 +429,58 @@ function block_exastud_print_header($items, array $options = array())
 
 	$items = (array)$items;
 	$strheader = block_exastud_get_string('pluginname', 'block_exastud');
-
-	// navigationspfad
-	$navlinks = array();
-	$navlinks[] = array('name' => $strheader, 'link' => null, 'type' => 'title');
-
+	
 	$last_item_name = '';
 	$tabs = array();
-	$tabs_sub = array();
-	$currenttab=null;
-	$activetabsubs = [];
 
 	if (block_exastud_has_global_cap(block_exastud::CAP_HEADTEACHER)) {
-		$tabs[] = new tabobject('configuration', $CFG->wwwroot . '/blocks/exastud/configuration.php?courseid=' . $COURSE->id, block_exastud_get_string("configuration", "block_exastud"), '', true);
+		$tabs['configuration'] = new tabobject('configuration', $CFG->wwwroot . '/blocks/exastud/configuration.php?courseid=' . $COURSE->id, block_exastud_get_string("configuration", "block_exastud"), '', true);
 		if(block_exastud_reviews_available())
-			$tabs[] = new tabobject('report', $CFG->wwwroot . '/blocks/exastud/report.php?courseid=' . $COURSE->id, block_exastud_get_string("report", "block_exastud"), '', true);
+			$tabs['report'] = new tabobject('report', $CFG->wwwroot . '/blocks/exastud/report.php?courseid=' . $COURSE->id, block_exastud_get_string("report", "block_exastud"), '', true);
 	}
 	if ($DB->count_records('block_exastudclassteachers', array('teacherid'=>$USER->id)) && block_exastud_get_active_period())
-		$tabs[] = new tabobject('review', $CFG->wwwroot . '/blocks/exastud/review.php?courseid=' . $COURSE->id, block_exastud_get_string("review", "block_exastud"), '', true);
+		$tabs['review'] = new tabobject('review', $CFG->wwwroot . '/blocks/exastud/review.php?courseid=' . $COURSE->id, block_exastud_get_string("review", "block_exastud"), '', true);
 	if (!is_new_version() && block_exastud_has_global_cap(block_exastud::CAP_UPLOAD_PICTURE))
-		$tabs[] = new tabobject('pictureupload', $CFG->wwwroot . '/blocks/exastud/pictureupload.php?courseid=' . $COURSE->id, block_exastud_get_string("pictureupload", "block_exastud"), '', true);
+		$tabs['pictureupload'] = new tabobject('pictureupload', $CFG->wwwroot . '/blocks/exastud/pictureupload.php?courseid=' . $COURSE->id, block_exastud_get_string("pictureupload", "block_exastud"), '', true);
     if (block_exastud_has_global_cap(block_exastud::CAP_ADMIN)) {
-        $tabs[] = new tabobject('settings', $CFG->wwwroot . '/blocks/exastud/periods.php?courseid=' . $COURSE->id, block_exastud_get_string("settings"), '', true);
+        $tabs['settings'] = new tabobject('settings', $CFG->wwwroot . '/blocks/exastud/periods.php?courseid=' . $COURSE->id, block_exastud_get_string("settings"), '', true);
+
+        $tabs['settings']->subtree = [
+            new tabobject('periods',    $CFG->wwwroot . '/blocks/exastud/periods.php?courseid=' . $COURSE->id, block_exastud_get_string("periods"), '', true),
+            new tabobject('categories', $CFG->wwwroot . '/blocks/exastud/configuration_global.php?courseid=' . $COURSE->id.'&action=categories', block_exastud::t("de:Kompetenzen"), '', true),
+            new tabobject('subjects',   $CFG->wwwroot . '/blocks/exastud/configuration_global.php?courseid=' . $COURSE->id.'&action=subjects', block_exastud::t("de:Fachbezeichnungen"), '', true),
+            new tabobject('evalopts',   $CFG->wwwroot . '/blocks/exastud/configuration_global.php?courseid=' . $COURSE->id.'&action=evalopts', block_exastud::t("de:Bewertungsskala"), '', true),
+            new tabobject('headteachers', $CFG->wwwroot . '/cohort/assign.php?id=' . block_exastud\get_headteacher_cohort()->id, block_exastud::t('headteachers', 'de:Klassenlehrer'), '', true),
+        ];
     }
+    
+    $tabtree = new tabtree($tabs);
 
 	foreach ($items as $level => $item) {
 		if (!is_array($item)) {
 			if (!is_string($item)) {
-				echo 'not supported';
+				trigger_error('not supported');
 			}
-			if ($item == 'periods')
-				$link = 'periods.php?courseid='.$COURSE->id;
-			elseif ($item == 'configuration')
-			$link = 'configuration.php?courseid='.$COURSE->id;
-			elseif ($item == 'review')
-			$link = 'review.php?courseid='.$COURSE->id;
-			else
-				$link = null;
-
+			
 			if ($item[0] == '=')
 				$item_name = substr($item, 1);
 			else
 				$item_name = block_exastud_get_string($item, "block_exastud");
 
-			$item = array('name' => $item_name, 'id'=>$item, 'link' => ($link ? $CFG->wwwroot.'/blocks/exastud/'.$link : null));
+			$item = array('name' => $item_name, 'id'=>$item);
 		}
 
-		if (!empty($item['id'])) {
-		    $currenttab = $item['id'];
-		    $activetabsubs[] = $item['id'];
+		if (!empty($item['id']) && $tabobj = $tabtree->find($item['id'])) {
+		    // overwrite active and selected
+		    $tabobj->active = true;
+		    $tabobj->selected = true;
+		    if (empty($item['link']) && $tabobj->link) {
+		        $item['link'] = $tabobj->link;
+		    }
 		}
-		
-		if (!isset($item['type']))
-			$item['type'] = 'misc';
 
 		$last_item_name = $item['name'];
-		$PAGE->navbar->add($item['name'],$item);
-
-	}
-
-	if (in_array('settings', $activetabsubs)) {
-	    $tabs_sub[] = new tabobject('periods',    $CFG->wwwroot . '/blocks/exastud/periods.php?courseid=' . $COURSE->id, block_exastud_get_string("periods"), '', true);
-	    $tabs_sub[] = new tabobject('categories', $CFG->wwwroot . '/blocks/exastud/configuration_global.php?courseid=' . $COURSE->id.'&action=categories', block_exastud::t("de:Kategorien"), '', true);
-	    $tabs_sub[] = new tabobject('subjects',   $CFG->wwwroot . '/blocks/exastud/configuration_global.php?courseid=' . $COURSE->id.'&action=subjects', block_exastud::t("de:Gegenstände"), '', true);
-	    $tabs_sub[] = new tabobject('evalopts',   $CFG->wwwroot . '/blocks/exastud/configuration_global.php?courseid=' . $COURSE->id.'&action=evalopts', block_exastud::t("de:Bewertungen"), '', true);
-	    $tabs_sub[] = new tabobject('headteachers', $CFG->wwwroot . '/cohort/assign.php?id=' . block_exastud\get_headteacher_cohort()->id, block_exastud::t('headteachers', 'de:Klassenlehrer'), '', true);
+		$PAGE->navbar->add($item['name'], !empty($item['link'])? $item['link'] : null);
 	}
 	
 	$PAGE->set_title($strheader.': '.$last_item_name);
@@ -506,7 +493,8 @@ function block_exastud_print_header($items, array $options = array())
 	echo $OUTPUT->header();
 
 	echo '<div id="block_exastud">';
-	print_tabs(array($tabs, $tabs_sub), $currenttab, [], $activetabsubs);
+	
+	echo $OUTPUT->render($tabtree);
 
 	// header
 	if (!in_array('noheading', $options))

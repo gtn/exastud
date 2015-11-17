@@ -111,13 +111,11 @@ if ($studentedit = $studentform->get_data()) {
     redirect($returnurl);
 }
 
-$classheader = block_exastud_get_string('reviewclass').': '.$classdata->class.($classdata->subject?' - '.$classdata->subject:'');
+$classheader = $classdata->class.($classdata->subject?' - '.$classdata->subject:'');
 
 block_exastud_print_header(array('review',
-    array('name' => $strclassreview, 'link' => $CFG->wwwroot . '/blocks/exastud/review_class.php?courseid=' . $courseid .
-        '&classid=' . $classid),
-        '='.$classheader,
-    '=' . $strstudentreview
+    array('name' => $classheader, 'link' => $CFG->wwwroot . '/blocks/exastud/review_class.php?courseid=' . $courseid .
+        '&classid=' . $classid.'&subjectid=' . $subjectid),
         ), array('noheading'));
 
 $student = $DB->get_record('user', array('id' => $studentid));

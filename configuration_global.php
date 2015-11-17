@@ -141,7 +141,7 @@ if ($action == 'save-evalopts') {
 }
 
 if ($action == 'categories') {
-    block_exastud_print_header(['settings', ['id'=>'categories', 'name'=>block_exastud::t("de:Kategorien")]]);
+    block_exastud_print_header(['settings', ['id'=>'categories', 'name'=>block_exastud::t("de:Kompetenzen")]]);
     
     ?>
     <script>
@@ -166,7 +166,7 @@ if ($action == 'categories') {
 }
 
 if ($action == 'subjects') {
-    block_exastud_print_header(['settings', ['id'=>'subjects', 'name'=>block_exastud::t("de:Gegenstände")]]);
+    block_exastud_print_header(['settings', ['id'=>'subjects', 'name'=>block_exastud::t(['de:Fachbezeichnungen', 'de_at:Gegenstände'])]]);
     
     ?>
     <script>
@@ -191,7 +191,7 @@ if ($action == 'subjects') {
 }
 
 if ($action == 'evalopts') {
-    block_exastud_print_header(['settings', ['id'=>'evalopts', 'name'=>block_exastud::t("de:Bewertungen")]]);
+    block_exastud_print_header(['settings', ['id'=>'evalopts', 'name'=>block_exastud::t("de:Bewertungsskala")]]);
     
     ?>
     <script>

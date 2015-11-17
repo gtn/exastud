@@ -92,7 +92,7 @@ echo $OUTPUT->single_button($CFG->wwwroot . '/blocks/exastud/configuration_class
 echo html_writer::tag("h2",block_exastud_get_string('teachers', 'block_exastud'));
 $table = new html_table();
 
-$table->head = array (block_exastud::t('de:Gegenstand'), block_exastud_get_string('firstname'), block_exastud_get_string('lastname'), block_exastud_get_string('email'));
+$table->head = array (block_exastud::t('de:Fachbezeichnung'), block_exastud_get_string('firstname'), block_exastud_get_string('lastname'), block_exastud_get_string('email'));
 $table->align = array ("left", "left", "left", "left");
 $table->width = "90%";
 $table->size = ['25%', '25%', '25%', '25%'];

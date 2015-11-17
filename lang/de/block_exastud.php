@@ -1,6 +1,12 @@
 ﻿<?php
-$string['exastud:use'] = 'Student Review benutzen';
+
+// austria overwrites
+/*
 $string['exastud:headteacher'] = 'Klassenvorstand';
+*/
+
+$string['exastud:use'] = 'Student Review benutzen';
+$string['exastud:headteacher'] = 'Klassenlehrer';
 $string['exastud:editperiods'] = 'Perioden bearbeiten';
 $string['exastud:admin'] = 'Administrator';
 $string['exastud:uploadpicture'] = 'Logo uploaden';
@@ -108,9 +114,9 @@ $string['name'] = 'Name';
 $string['periodreview'] = 'Bewertung für die Periode';
 $string['reviewcount'] = 'Bewertungen abgegeben';
 $string['print'] = 'Drucken';
-$string['perioddesc'] = 'Beschreibung der Periode:';
-$string['starttime'] = 'Startdatum: ';
-$string['endtime'] = 'Enddatum: ';
+$string['perioddesc'] = 'Beschreibung der Periode';
+$string['starttime'] = 'Startdatum';
+$string['endtime'] = 'Enddatum';
 $string['noperiods'] = 'Es gibt noch keine Beurteilungsperiode. Bitte wenden Sie sich an den Administrator, der Ihnen freundlicherweise eine anlegen wird.';
 $string['commentshouldnotbeempty'] = 'Der Kommentar darf nicht leer sein.';
 

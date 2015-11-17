@@ -49,7 +49,7 @@ if(!$classdata) {
 $url = '/blocks/exastud/review_class.php';
 $PAGE->set_url($url);
 $blockrenderer = $PAGE->get_renderer('block_exastud');
-$classheader = block_exastud_get_string('reviewclass').': '.$classdata->class.($classdata->subject?' - '.$classdata->subject:'');
+$classheader = $classdata->class.($classdata->subject?' - '.$classdata->subject:'');
 block_exastud_print_header(array('review', '='.$classheader));
 
 $actPeriod = block_exastud_check_active_period();
