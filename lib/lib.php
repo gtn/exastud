@@ -666,10 +666,10 @@ namespace block_exastud {
         $cohort = $DB->get_record('cohort', ['contextid' => \context_system::instance()->id, 'idnumber' => 'block_exastud_headteachers']);
         if (!$cohort) {
             $cohort = (object)[
-                            'contextid' => context_system::instance()->id,
+                            'contextid' => \context_system::instance()->id,
                             'idnumber' => 'block_exastud_headteachers',
-                            'name' => block_exastud::t('de:Klassenlehrer'),
-                            'description' => block_exastud::t('de:Können Klassen anlegen, Lehrer und Schüler zubuchen'),
+                            'name' => \block_exastud::t('de:Klassenlehrer'),
+                            'description' => \block_exastud::t('de:Können Klassen anlegen, Lehrer und Schüler zubuchen'),
                             'visible' => 1,
                             'component' => '', // should be block_exastud, but then the admin can't change the group members anymore
             ];
