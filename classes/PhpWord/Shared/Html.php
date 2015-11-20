@@ -59,7 +59,8 @@ class Html
         $dom = new \DOMDocument();
         $dom->preserveWhiteSpace = true;
         // change by gtn/exabis: use loadHTML instead
-        @$dom->loadHTML($html);
+        // also tell loadHTML that the html is utf-8
+        @$dom->loadHTML('<?xml encoding="utf-8" ?>'.$html);
         $node = $dom->getElementsByTagName('body');
 
         self::parseNode($node->item(0), $element);

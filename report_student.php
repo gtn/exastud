@@ -229,8 +229,7 @@ if (optional_param('output', '', PARAM_TEXT) == 'docx') {
     
     // Your browser will name the file "myFile.docx"
     // regardless of what it's named on the server
-    header("Content-Disposition: attachment; filename='myFile.docx'");
-    readfile($temp_file); // or echo file_get_contents($temp_file);
+    send_temp_file($temp_file, "Lernstandsbericht ".fullname($student).".docx");
     unlink($temp_file);  // remove temp file
     
     // $objWriter->save('helloWorld.docx');
