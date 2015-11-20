@@ -58,7 +58,8 @@ class Html
         // Load DOM
         $dom = new \DOMDocument();
         $dom->preserveWhiteSpace = true;
-        $dom->loadXML($html);
+        // change by gtn/exabis: use loadHTML instead
+        @$dom->loadHTML($html);
         $node = $dom->getElementsByTagName('body');
 
         self::parseNode($node->item(0), $element);

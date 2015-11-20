@@ -174,6 +174,8 @@ if (optional_param('output', '', PARAM_TEXT) == 'docx') {
     require_once __DIR__.'/classes/PhpWord/Autoloader.php';
     \PhpOffice\PhpWord\Autoloader::register();
     
+    \PhpOffice\PhpWord\Settings::setTempDir($CFG->tempdir);
+    
     $phpWord = new \PhpOffice\PhpWord\PhpWord();
     $section = $phpWord->addSection();
     
@@ -200,19 +202,21 @@ if (optional_param('output', '', PARAM_TEXT) == 'docx') {
     $section->addPageBreak();
     $section->addText(' ');
 
-    for ($i = 0; $i < 30; $i++) foreach($textReviews as $textReview) {
-        
-        // äußere tabelle, um cantSplit zu setzen (dadurch wird innere tabelle auf einer seite gehalten)
-        $table = $section->addTable(['borderSize'=>0, 'borderColor' => 'FFFFFF', 'cellMargin'=>0]);
-        $table->addRow(null, ['cantSplit'=>true]);
-        $cell = $table->addCell($pageWidthTwips);
-        
-        // innere tabelle
-        $table = $cell->addTable(['borderSize' => 6, 'borderColor' => 'black', 'cellMargin' => 80]);
-        $table->addRow();
-        $table->addCell($pageWidthTwips, ['bgColor' => 'F2F2F2'])->addText($textReview->title."\nasdf\nadf\nasdf\nasdf\nasdf\nasdf\nasdf\nasdf\nasdf\nasdf\nasdf\nasdf");
-        $table->addRow();
-        \PhpOffice\PhpWord\Shared\Html::addHtml($table->addCell($pageWidthTwips), $textReview->review);
+    for ($i = 0; $i < 5; $i++) {
+        if ($i > 0) $section->addText('Zum testen, werden die Reviews wiederholt ausgegeben');
+        foreach($textReviews as $textReview) {
+            // äußere tabelle, um cantSplit zu setzen (dadurch wird innere tabelle auf einer seite gehalten)
+            $table = $section->addTable(['borderSize'=>0, 'borderColor' => 'FFFFFF', 'cellMargin'=>0]);
+            $table->addRow(null, ['cantSplit'=>true]);
+            $cell = $table->addCell($pageWidthTwips);
+            
+            // innere tabelle
+            $table = $cell->addTable(['borderSize' => 6, 'borderColor' => 'black', 'cellMargin' => 80]);
+            $table->addRow();
+            $table->addCell($pageWidthTwips, ['bgColor' => 'F2F2F2'])->addText($textReview->title);
+            $table->addRow();
+            \PhpOffice\PhpWord\Shared\Html::addHtml($table->addCell($pageWidthTwips), $textReview->review);
+        }
     }
     
     // echo \PhpOffice\PhpWord\IOFactory::createWriter($phpWord, 'HTML')->getContent();
@@ -220,7 +224,7 @@ if (optional_param('output', '', PARAM_TEXT) == 'docx') {
     $objWriter = \PhpOffice\PhpWord\IOFactory::createWriter($phpWord, 'Word2007');
 
     // // save as a random file in temp file
-    $temp_file = tempnam(sys_get_temp_dir(), 'PHPWord');
+    $temp_file = tempnam($CFG->tempdir, 'PHPWord');
     $objWriter->save($temp_file);
     
     // Your browser will name the file "myFile.docx"
