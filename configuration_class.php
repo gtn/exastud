@@ -83,7 +83,7 @@ block_exastud_print_header(array('configuration', 'editclassname'));
 // TODO: two divs? -- daniel
 echo '<div id="block_exastud">';
 echo "<br />";
-echo $OUTPUT->box( text_to_html(block_exastud_get_string("explainclassname","block_exastud")));
+echo $OUTPUT->box( text_to_html(\block_exastud\get_string("explainclassname","block_exastud")));
 echo '</div>';
 echo '<div id="block_exastud">';
 echo $OUTPUT->heading($class->class);

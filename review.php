@@ -53,19 +53,19 @@ $myclasses = $DB->get_records_sql("
     ORDER BY c.class, s.sorting
 ", array($USER->id, $actPeriod->id));
 
-if ($class = block_exastud\get_headteacher_SUBJECT_ID_LERN_UND_SOZIALVERHALTEN_class()) {
+if ($class = \block_exastud\get_headteacher_lern_und_sozialverhalten_class()) {
     $myclasses = [$class] + $myclasses;
 }
 
 if(!$myclasses) {
-	echo block_exastud_get_string('noclassestoreview','block_exastud');
+	echo \block_exastud\get_string('noclassestoreview','block_exastud');
 }
 else {
 	/* Print the Students */
 	$table = new html_table();
 
 	$table->head = array(
-			block_exastud_get_string('class', 'block_exastud')
+			\block_exastud\get_string('class', 'block_exastud')
 	);
 
 	$table->align = array("left");

@@ -59,9 +59,9 @@ if ($DB->count_records('block_exastudclassstudents', array('studentid' => $stude
     print_error('badstudent', 'block_exastud');
 }
 
-$strstudentreview = block_exastud_get_string('reviewstudent', 'block_exastud');
-$strclassreview = block_exastud_get_string('reviewclass', 'block_exastud');
-$strreview = block_exastud_get_string('review', 'block_exastud');
+$strstudentreview = \block_exastud\get_string('reviewstudent', 'block_exastud');
+$strclassreview = \block_exastud\get_string('reviewclass', 'block_exastud');
+$strreview = \block_exastud\get_string('review', 'block_exastud');
 
 $actPeriod = block_exastud_check_active_period();
 $categories = block_exastud_get_class_categories($classid);
@@ -128,6 +128,6 @@ $studentform->set_data($formdata);
 $studentform->display();
 
 echo $OUTPUT->single_button($returnurl,
-        block_exastud_get_string('back', 'block_exastud'));
+        \block_exastud\get_string('back', 'block_exastud'));
 
 block_exastud_print_footer();

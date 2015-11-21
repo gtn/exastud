@@ -48,7 +48,7 @@ if (!$class = $DB->get_record('block_exastudclass', array('userid'=>$USER->id,'p
 	print_error('noclassfound', 'block_exastud');
 }
 
-$header = block_exastud_get_string('configmember', 'block_exastud', $class->class);
+$header = \block_exastud\get_string('configmember', 'block_exastud', $class->class);
 $url = '/blocks/exastud/configuration_classmembers.php';
 $PAGE->set_url($url);
 block_exastud_print_header(array('configuration', '='.$header));
@@ -126,6 +126,6 @@ require dirname(__FILE__).'/lib/configuration_userlist.inc.php';
 echo $OUTPUT->box_end();
 	
 echo $OUTPUT->single_button($CFG->wwwroot . '/blocks/exastud/configuration.php?courseid='.$courseid,
-					block_exastud_get_string('back', 'block_exastud'));
+					\block_exastud\get_string('back', 'block_exastud'));
 
 block_exastud_print_footer();

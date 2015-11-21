@@ -49,7 +49,7 @@ if (!$class = $DB->get_record('block_exastudclass', array('userid'=>$USER->id,'p
 	print_error('noclassfound', 'block_exastud');
 }
 
-$header = block_exastud_get_string('configcategories', 'block_exastud', $class->class);
+$header = \block_exastud\get_string('configcategories', 'block_exastud', $class->class);
 $url = '/blocks/exastud/configuration_categories.php';
 $PAGE->set_url($url);
 block_exastud_print_header(array('configuration', '='.$header));
@@ -103,7 +103,7 @@ $availablecategories = $DB->get_records_sql('SELECT id, title
 		'.$selectsql.')');
 foreach($availablecategories as $availablecategory) {
 	$availablecategory->source = 'exastud';
-	$availablecategory->subject = block_exastud_get_string('basiccategories','block_exastud');
+	$availablecategory->subject = \block_exastud\get_string('basiccategories','block_exastud');
 }
 
 if(block_exastud_check_competence_block()) {
@@ -133,6 +133,6 @@ require dirname(__FILE__).'/lib/configuration_categories.inc.php';
 echo $OUTPUT->box_end();
 
 echo $OUTPUT->single_button($CFG->wwwroot . '/blocks/exastud/configuration.php?courseid='.$courseid,
-		block_exastud_get_string('back', 'block_exastud'));
+		\block_exastud\get_string('back', 'block_exastud'));
 
 block_exastud_print_footer();

@@ -66,7 +66,7 @@ array($studentid, $class->periodid)), false);
 
 foreach ($textReviews as $textReview) {
     if ($textReview->subjectid == block_exastud::SUBJECT_ID_LERN_UND_SOZIALVERHALTEN)
-        $textReview->title = block_exastud::t('Lern- und Sozialverhalten');
+        $textReview->title = \block_exastud\trans('Lern- und Sozialverhalten');
     elseif ($textReview->subject)
         $textReview->title = $textReview->subject.' ('.fullname($textReview).')';
     else
@@ -208,7 +208,7 @@ if (optional_param('output', '', PARAM_TEXT) == 'docx') {
             // äußere tabelle, um cantSplit zu setzen (dadurch wird innere tabelle auf einer seite gehalten)
             $table = $section->addTable(['borderSize'=>0, 'borderColor' => 'FFFFFF', 'cellMargin'=>0]);
             $table->addRow(null, ['cantSplit'=>true]);
-            $cell = $table->addCell($pageWidthTwips);
+            $cell = $table->addCell($pageWidthTwips + 100);
             
             // innere tabelle
             $table = $cell->addTable(['borderSize' => 6, 'borderColor' => 'black', 'cellMargin' => 80]);
@@ -245,8 +245,8 @@ $url = '/blocks/exastud/report_student.php';
 $PAGE->set_url($url);
 $blockrenderer = $PAGE->get_renderer('block_exastud');
 
-$strstudentreview = block_exastud_get_string('reviewstudent', 'block_exastud');
-$strclassreview = block_exastud_get_string('reviewclass', 'block_exastud');
+$strstudentreview = \block_exastud\get_string('reviewstudent', 'block_exastud');
+$strclassreview = \block_exastud\get_string('reviewclass', 'block_exastud');
 block_exastud_print_header(array('review',
     array('name' => $strclassreview, 'link' => $CFG->wwwroot . '/blocks/exastud/review_class.php?courseid=' . $courseid .
         '&classid=' . $classid),

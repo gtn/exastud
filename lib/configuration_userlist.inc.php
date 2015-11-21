@@ -39,7 +39,7 @@ defined('MOODLE_INTERNAL') || die();
                   <?php
                     if ($userlistType == 'teachers') {
                         $subjects = $DB->get_records('block_exastudsubjects');
-                        echo '<p><label for="classteacher_subjectid">'.block_exastud::t('de:Fachbezeichnung').'</label><br>';
+                        echo '<p><label for="classteacher_subjectid">'.\block_exastud\trans('de:Fachbezeichnung').'</label><br>';
                         echo '<select id="classteacher_subjectid" name="classteacher_subjectid"><option></option>';
                         foreach ($subjects as $subject) {
                             echo '<option value="'.$subject->id.'"';

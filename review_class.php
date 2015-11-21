@@ -59,7 +59,7 @@ if(!$classusers = $DB->get_records('block_exastudclassstudents', array('classid'
 }
 
 if ($subjectid == block_exastud::SUBJECT_ID_LERN_UND_SOZIALVERHALTEN) {
-    $categories = [(object)[ 'title' => block_exastud::t('Lern- und Sozialverhalten'), 'id'=>0, 'source'=>'']];
+    $categories = [(object)[ 'title' => \block_exastud\trans('Lern- und Sozialverhalten'), 'id'=>0, 'source'=>'']];
 } else {
     $categories = block_exastud_get_class_categories($classid);
 }
@@ -70,7 +70,7 @@ $table = new html_table();
 
 $table->head = array();
 $table->head[] = ''; //userpic
-$table->head[] = block_exastud_get_string('name');
+$table->head[] = \block_exastud\get_string('name');
 $table->head[] = ''; // bewerten button
 if (is_new_version())
     $table->head[] = ''; // report button
@@ -98,7 +98,7 @@ foreach($classusers as $classuser) {
 	if (!$user)
 		continue;
 	
-	$icons = '<img src="' . $CFG->wwwroot . '/pix/i/edit.gif" width="16" height="16" alt="' . block_exastud_get_string('edit'). '" />';
+	$icons = '<img src="' . $CFG->wwwroot . '/pix/i/edit.gif" width="16" height="16" alt="' . \block_exastud\get_string('edit'). '" />';
 	$userdesc = fullname($user, $user->id);
 	
 	$report = $DB->get_record('block_exastudreview', array('teacherid'=>$USER->id, 'subjectid'=>$subjectid, 'periodid'=>$actPeriod->id, 'studentid'=>$user->id));
@@ -107,13 +107,13 @@ foreach($classusers as $classuser) {
 	$row->cells[] = $userdesc;
 	
 	$row->cells[] = '<a href="' . $CFG->wwwroot . '/blocks/exastud/review_student.php?courseid=' . $courseid . '&classid=' . $classid . '&subjectid=' . $subjectid . '&studentid=' . $user->id . '">'.
-        block_exastud::t('de:Bewerten').'</a>';
+        \block_exastud\trans('de:Bewerten').'</a>';
 	
 	if (is_new_version()) {
         $row->cells[] = '<a href="' . $CFG->wwwroot . '/blocks/exastud/report_student.php?courseid=' . $courseid . '&classid=' . $classid . '&studentid=' . $user->id . '">'
-            .block_exastud::t('de:Alle Bewertungen zeigen').'</a>'.
+            .\block_exastud\trans('de:Alle Bewertungen zeigen').'</a>'.
             '<br /><a href="' . $CFG->wwwroot . '/blocks/exastud/report_student.php?courseid=' . $courseid . '&classid=' . $classid . '&studentid=' . $user->id . '&output=docx">'
-            .block_exastud::t('de:Als MS-Word exportieren').'</a>';
+            .\block_exastud\trans('de:Als MS-Word exportieren').'</a>';
 	}
 	if($report) {
 		foreach($categories as $category) {
@@ -133,7 +133,7 @@ foreach($classusers as $classuser) {
     if ($report) {
         /*
         $cell = new html_table_cell();
-        $cell->text = block_exastud_get_string('evaluation', 'block_exastud');
+        $cell->text = \block_exastud\get_string('evaluation', 'block_exastud');
         $cell->colspan = count($categories);
         $row = new html_table_row(array(
             'asdf', '', '', $cell

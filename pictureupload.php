@@ -61,7 +61,7 @@ if ($mform->is_cancelled()) {
 	// save new logo
 	$mform->save_stored_file('file', context_system::instance()->id	, 'block_exastud', 'main_logo', 0);
 							  
-	block_exastud_get_string('upload_success','block_exastud');
+	\block_exastud\get_string('upload_success','block_exastud');
 }
 
 if ($file = block_exastud_get_main_logo()) {

@@ -10,7 +10,7 @@ class class_edit_form extends moodleform {
         global $CFG, $USER;
         $mform = & $this->_form;
 
-        $mform->addElement('text', 'class', block_exastud_get_string('class', 'block_exastud').': ', array('size' => 50));
+        $mform->addElement('text', 'class', \block_exastud\get_string('class', 'block_exastud').': ', array('size' => 50));
         $mform->setType('class', PARAM_TEXT);
         $mform->addRule('class', null, 'required', null, 'client');
 

@@ -1,12 +1,46 @@
 <?php
 
 namespace {
+
 defined('MOODLE_INTERNAL') || die();
+
+}
+
+/*
+ * overwrite common functions
+ */
+namespace block_exastud {
+	/**
+	 * Returns a localized string.
+	 * This method is neccessary because a project based evaluation is available in the current exastud
+	 * version, which requires a different naming.
+	 */
+	function get_string($identifier, $component = null, $a = null, $lazyload = false) {
+		global $CFG;
+
+		$manager = get_string_manager();
+
+		if ($component == null)
+			$component = 'block_exastud';
+
+			// first try string with project_based_* prefix
+			if (($component == 'block_exastud') && !empty($CFG->block_exastud_project_based_assessment) && $manager->string_exists('project_based_'.$identifier, $component))
+				return $manager->get_string('project_based_'.$identifier, $component, $a);
+
+				if ($manager->string_exists($identifier, $component))
+	    return $manager->get_string($identifier, $component, $a);
+
+	    return $manager->get_string($identifier, '', $a);
+	}
+
+}
+
+namespace {
 
 require_once $CFG->dirroot.'/cohort/lib.php';
 require_once __DIR__.'/../block_exastud.php';
 require_once __DIR__.'/common.php';
-
+	
 define('DECIMALPOINTS', 1);
 
 function is_new_version() {
@@ -37,29 +71,6 @@ function block_exastud_require_global_cap($cap) {
     if (!block_exastud_has_global_cap($cap)) {
         throw new required_capability_exception(context_system::instance(), 'block/exastud:'.$cap, '', '');
     }
-}
-
-/**
- * Returns a localized string.
- * This method is neccessary because a project based evaluation is available in the current exastud
- * version, which requires a different naming.
- */
-function block_exastud_get_string($identifier, $component = null, $a = null, $lazyload = false) {
-	global $CFG;
-
-	$manager = get_string_manager();
-	
-	if ($component == null)
-        $component = 'block_exastud';
-	
-	// first try string with project_based_* prefix
-    if (($component == 'block_exastud') && !empty($CFG->block_exastud_project_based_assessment) && $manager->string_exists('project_based_'.$identifier, $component))
-	    return $manager->get_string('project_based_'.$identifier, $component, $a);
-	
-	if ($manager->string_exists($identifier, $component))
-	    return $manager->get_string($identifier, $component, $a);
-	
-	return $manager->get_string($identifier, '', $a);
 }
 
 function block_exastud_check_periods($printBoxInsteadOfError = false) {
@@ -161,7 +172,7 @@ function block_exastud_check_active_period() {
     }
     
     if (block_exastud_has_global_cap(block_exastud::CAP_EDIT_PERIODS)) {
-        redirect($CFG->wwwroot.'/blocks/exastud/configuration_periods.php?courseid='.$COURSE->id, block_exastud_get_string('redirectingtoperiodsinput'));
+        redirect($CFG->wwwroot.'/blocks/exastud/configuration_periods.php?courseid='.$COURSE->id, \block_exastud\get_string('redirectingtoperiodsinput'));
     }
     
     print_error('periodserror', 'block_exastud', $CFG->wwwroot.'/blocks/exastud/configuration_periods.php?courseid='.$COURSE->id);
@@ -315,11 +326,11 @@ function block_exastud_print_student_report($studentid, $periodid, $class, $pdf=
 	
 	$student = $DB->get_record('user', array('id'=>$studentid));
 	$studentreport = block_exastud_read_template_file('student_new.html');
-	$studentreport = str_replace ( '###STUDENTREVIEW###', block_exastud_get_string('studentreview','block_exastud'), $studentreport);
+	$studentreport = str_replace ( '###STUDENTREVIEW###', \block_exastud\get_string('studentreview','block_exastud'), $studentreport);
 	$studentreport = str_replace ( '###NAME###', get_string('name','block_exastud'), $studentreport);
 	$studentreport = str_replace ( '###PERIODREVIEW###', get_string('periodreview','block_exastud'), $studentreport);
 	$studentreport = str_replace ( '###REVIEWCOUNT###', get_string('reviewcount','block_exastud'), $studentreport);
-	$studentreport = str_replace ( '###CLASSTRANSLATION###', block_exastud_get_string('class','block_exastud'), $studentreport);
+	$studentreport = str_replace ( '###CLASSTRANSLATION###', \block_exastud\get_string('class','block_exastud'), $studentreport);
 	$studentreport = str_replace ( '###FIRSTNAME###', $student->firstname, $studentreport);
 	$studentreport = str_replace ( '###LASTNAME###', $student->lastname, $studentreport);
 	if($CFG->block_exastud_project_based_assessment && $ranking) {
@@ -428,29 +439,29 @@ function block_exastud_print_header($items, array $options = array())
 	global $CFG, $COURSE, $PAGE, $DB, $USER, $OUTPUT;
 
 	$items = (array)$items;
-	$strheader = block_exastud_get_string('pluginname', 'block_exastud');
+	$strheader = \block_exastud\get_string('pluginname', 'block_exastud');
 	
 	$last_item_name = '';
 	$tabs = array();
 
 	if (block_exastud_has_global_cap(block_exastud::CAP_HEADTEACHER)) {
-		$tabs['configuration'] = new tabobject('configuration', $CFG->wwwroot . '/blocks/exastud/configuration.php?courseid=' . $COURSE->id, block_exastud_get_string("configuration", "block_exastud"), '', true);
+		$tabs['configuration'] = new tabobject('configuration', $CFG->wwwroot . '/blocks/exastud/configuration.php?courseid=' . $COURSE->id, \block_exastud\get_string("configuration", "block_exastud"), '', true);
 		if(block_exastud_reviews_available())
-			$tabs['report'] = new tabobject('report', $CFG->wwwroot . '/blocks/exastud/report.php?courseid=' . $COURSE->id, block_exastud_get_string("report", "block_exastud"), '', true);
+			$tabs['report'] = new tabobject('report', $CFG->wwwroot . '/blocks/exastud/report.php?courseid=' . $COURSE->id, \block_exastud\get_string("report", "block_exastud"), '', true);
 	}
 	if ($DB->count_records('block_exastudclassteachers', array('teacherid'=>$USER->id)) && block_exastud_get_active_period())
-		$tabs['review'] = new tabobject('review', $CFG->wwwroot . '/blocks/exastud/review.php?courseid=' . $COURSE->id, block_exastud_get_string("review", "block_exastud"), '', true);
+		$tabs['review'] = new tabobject('review', $CFG->wwwroot . '/blocks/exastud/review.php?courseid=' . $COURSE->id, \block_exastud\get_string("review", "block_exastud"), '', true);
 	if (!is_new_version() && block_exastud_has_global_cap(block_exastud::CAP_UPLOAD_PICTURE))
-		$tabs['pictureupload'] = new tabobject('pictureupload', $CFG->wwwroot . '/blocks/exastud/pictureupload.php?courseid=' . $COURSE->id, block_exastud_get_string("pictureupload", "block_exastud"), '', true);
+		$tabs['pictureupload'] = new tabobject('pictureupload', $CFG->wwwroot . '/blocks/exastud/pictureupload.php?courseid=' . $COURSE->id, \block_exastud\get_string("pictureupload", "block_exastud"), '', true);
     if (block_exastud_has_global_cap(block_exastud::CAP_ADMIN)) {
-        $tabs['settings'] = new tabobject('settings', $CFG->wwwroot . '/blocks/exastud/periods.php?courseid=' . $COURSE->id, block_exastud_get_string("settings"), '', true);
+        $tabs['settings'] = new tabobject('settings', $CFG->wwwroot . '/blocks/exastud/periods.php?courseid=' . $COURSE->id, \block_exastud\get_string("settings"), '', true);
 
         $tabs['settings']->subtree = [
-            new tabobject('periods',    $CFG->wwwroot . '/blocks/exastud/periods.php?courseid=' . $COURSE->id, block_exastud_get_string("periods"), '', true),
-            new tabobject('categories', $CFG->wwwroot . '/blocks/exastud/configuration_global.php?courseid=' . $COURSE->id.'&action=categories', block_exastud::t("de:Kompetenzen"), '', true),
-            new tabobject('subjects',   $CFG->wwwroot . '/blocks/exastud/configuration_global.php?courseid=' . $COURSE->id.'&action=subjects', block_exastud::t("de:Fachbezeichnungen"), '', true),
-            new tabobject('evalopts',   $CFG->wwwroot . '/blocks/exastud/configuration_global.php?courseid=' . $COURSE->id.'&action=evalopts', block_exastud::t("de:Bewertungsskala"), '', true),
-            new tabobject('headteachers', $CFG->wwwroot . '/cohort/assign.php?id=' . block_exastud\get_headteacher_cohort()->id, block_exastud::t('headteachers', 'de:Klassenlehrer'), '', true),
+            new tabobject('periods',    $CFG->wwwroot . '/blocks/exastud/periods.php?courseid=' . $COURSE->id, \block_exastud\get_string("periods"), '', true),
+            new tabobject('categories', $CFG->wwwroot . '/blocks/exastud/configuration_global.php?courseid=' . $COURSE->id.'&action=categories', \block_exastud\trans("de:Kompetenzen"), '', true),
+            new tabobject('subjects',   $CFG->wwwroot . '/blocks/exastud/configuration_global.php?courseid=' . $COURSE->id.'&action=subjects', \block_exastud\trans("de:Fachbezeichnungen"), '', true),
+            new tabobject('evalopts',   $CFG->wwwroot . '/blocks/exastud/configuration_global.php?courseid=' . $COURSE->id.'&action=evalopts', \block_exastud\trans("de:Bewertungsskala"), '', true),
+            new tabobject('headteachers', $CFG->wwwroot . '/cohort/assign.php?id=' . block_exastud\get_headteacher_cohort()->id, \block_exastud\trans('headteachers', 'de:Klassenlehrer'), '', true),
         ];
     }
     
@@ -465,7 +476,7 @@ function block_exastud_print_header($items, array $options = array())
 			if ($item[0] == '=')
 				$item_name = substr($item, 1);
 			else
-				$item_name = block_exastud_get_string($item, "block_exastud");
+				$item_name = \block_exastud\get_string($item, "block_exastud");
 
 			$item = array('name' => $item_name, 'id'=>$item);
 		}
@@ -566,15 +577,15 @@ function block_exastud_insert_default_entries() {
 
 	//if empty import
 	if(!$DB->get_records('block_exastudcate')) {
-		$DB->insert_record('block_exastudcate', array("sorting" => 1, "title"=>block_exastud_get_string('teamplayer')));
-		$DB->insert_record('block_exastudcate', array("sorting" => 2, "title"=>block_exastud_get_string('responsibility')));
-		$DB->insert_record('block_exastudcate', array("sorting" => 3, "title"=>block_exastud_get_string('selfreliance', 'block_exastud')));
+		$DB->insert_record('block_exastudcate', array("sorting" => 1, "title"=>\block_exastud\get_string('teamplayer')));
+		$DB->insert_record('block_exastudcate', array("sorting" => 2, "title"=>\block_exastud\get_string('responsibility')));
+		$DB->insert_record('block_exastudcate', array("sorting" => 3, "title"=>\block_exastud\get_string('selfreliance', 'block_exastud')));
 	}
 	
 	if(!$DB->get_records('block_exastudsubjects')) {
-		$DB->insert_record('block_exastudsubjects', array("title"=>block_exastud::t('de:Deutsch')));
-		$DB->insert_record('block_exastudsubjects', array("title"=>block_exastud::t('de:Englisch')));
-		$DB->insert_record('block_exastudsubjects', array("title"=>block_exastud::t('de:Mathematik')));
+		$DB->insert_record('block_exastudsubjects', array("title"=>\block_exastud\trans('de:Deutsch')));
+		$DB->insert_record('block_exastudsubjects', array("title"=>\block_exastud\trans('de:Englisch')));
+		$DB->insert_record('block_exastudsubjects', array("title"=>\block_exastud\trans('de:Mathematik')));
 	}
 	
 	if(!$DB->get_records('block_exastudevalopt')) {
@@ -620,7 +631,7 @@ function block_exastud_get_evaluation_options($also_empty = false) {
     global $DB;
     
     $options = $also_empty ? array(
-        0 => block_exastud::t('nicht gewählt') // empty option
+        0 => \block_exastud\trans('nicht gewählt') // empty option
     ) : array();
     
     $options += $DB->get_records_menu('block_exastudevalopt');
@@ -656,8 +667,8 @@ namespace block_exastud {
             $cohort = (object)[
                             'contextid' => \context_system::instance()->id,
                             'idnumber' => 'block_exastud_headteachers',
-                            'name' => \block_exastud::t('de:Klassenlehrer'),
-                            'description' => \block_exastud::t('de:Können Klassen anlegen, Lehrer und Schüler zubuchen'),
+                            'name' => trans('de:Klassenlehrer'),
+                            'description' => trans('de:Können Klassen anlegen, Lehrer und Schüler zubuchen'),
                             'visible' => 1,
                             'component' => '', // should be block_exastud, but then the admin can't change the group members anymore
             ];
@@ -678,7 +689,7 @@ namespace block_exastud {
         return $DB->get_record('block_exastudclass', array('userid'=>$USER->id,'periodid' => $curPeriod->id));
     }
     
-    function get_headteacher_SUBJECT_ID_LERN_UND_SOZIALVERHALTEN_class() {
+    function get_headteacher_lern_und_sozialverhalten_class() {
         if (!$myClass = get_headteacher_class()) {
             return null;
         }
@@ -687,7 +698,7 @@ namespace block_exastud {
             'classid' => $myClass->id,
             'subjectid' => block_exastud::SUBJECT_ID_LERN_UND_SOZIALVERHALTEN,
             'class' => $myClass->class,
-            'subject' => block_exastud::t('Lern- und Sozialverhalten')
+            'subject' => trans('Lern- und Sozialverhalten')
         ];
     }
     
@@ -695,7 +706,7 @@ namespace block_exastud {
         global $DB, $USER;
         
         if ($subjectid == block_exastud::SUBJECT_ID_LERN_UND_SOZIALVERHALTEN) {
-            return block_exastud\get_headteacher_SUBJECT_ID_LERN_UND_SOZIALVERHALTEN_class();
+            return get_headteacher_lern_und_sozialverhalten_class();
         } else {
             return $DB->get_record_sql("
             SELECT ct.id, c.class, s.title AS subject

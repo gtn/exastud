@@ -41,7 +41,7 @@ $url = '/blocks/exastud/configuration.php';
 $PAGE->set_url($url);
 
 if (!$class = block_exastud\get_headteacher_class()) {
-	redirect('configuration_class.php?courseid=' . $courseid, block_exastud_get_string('redirectingtoclassinput', 'block_exastud'));
+	redirect('configuration_class.php?courseid=' . $courseid, \block_exastud\get_string('redirectingtoclassinput', 'block_exastud'));
 }
 
 if ($action == 'save-classteacher-subject') {
@@ -67,10 +67,10 @@ $blockrenderer = $PAGE->get_renderer('block_exastud');
 echo $blockrenderer->print_subtitle($class->class, $CFG->wwwroot . '/blocks/exastud/configuration_class.php?courseid='.$courseid.'&sesskey='. sesskey());
 
 /* Print the Students */
-echo html_writer::tag("h2",block_exastud_get_string('members', 'block_exastud'));
+echo html_writer::tag("h2",\block_exastud\get_string('members', 'block_exastud'));
 $table = new html_table();
 
-$table->head = array (block_exastud_get_string('firstname'), block_exastud_get_string('lastname'), block_exastud_get_string('email'));
+$table->head = array (\block_exastud\get_string('firstname'), \block_exastud\get_string('lastname'), \block_exastud\get_string('email'));
 $table->align = array ("left", "left", "left");
 $table->width = "67.5%";
 $table->size = ['33%', '33%', '33%'];
@@ -86,13 +86,13 @@ foreach($usertoclasses as $usertoclass) {
 echo $blockrenderer->print_esr_table($table);
 
 echo $OUTPUT->single_button($CFG->wwwroot . '/blocks/exastud/configuration_classmembers.php?courseid='.$courseid.'&sesskey='. sesskey(),
-		block_exastud_get_string('editclassmemberlist', 'block_exastud'));
+		\block_exastud\get_string('editclassmemberlist', 'block_exastud'));
 
 /* Print the Classes */
-echo html_writer::tag("h2",block_exastud_get_string('teachers', 'block_exastud'));
+echo html_writer::tag("h2",\block_exastud\get_string('teachers', 'block_exastud'));
 $table = new html_table();
 
-$table->head = array (block_exastud::t('de:Fachbezeichnung'), block_exastud_get_string('firstname'), block_exastud_get_string('lastname'), block_exastud_get_string('email'));
+$table->head = array (\block_exastud\trans('de:Fachbezeichnung'), \block_exastud\get_string('firstname'), \block_exastud\get_string('lastname'), \block_exastud\get_string('email'));
 $table->align = array ("left", "left", "left", "left");
 $table->width = "90%";
 $table->size = ['25%', '25%', '25%', '25%'];
@@ -108,17 +108,17 @@ $classteachers = $DB->get_recordset_sql("
 
 
 foreach($classteachers as $classteacher) {
-    $table->data[] = array ($classteacher->subject ?: block_exastud::t('de:nicht zugeordnet'), $classteacher->firstname, $classteacher->lastname, $classteacher->email);
+    $table->data[] = array ($classteacher->subject ?: \block_exastud\trans('de:nicht zugeordnet'), $classteacher->firstname, $classteacher->lastname, $classteacher->email);
 }
 
 //echo html_writer::table($table);
 echo $blockrenderer->print_esr_table($table);
 
 echo $OUTPUT->single_button($CFG->wwwroot . '/blocks/exastud/configuration_classteachers.php?courseid='.$courseid.'&sesskey='. sesskey(),
-		block_exastud_get_string('editclassteacherlist', 'block_exastud'));
+		\block_exastud\get_string('editclassteacherlist', 'block_exastud'));
 
 /* Print the categories */
-echo html_writer::tag("h2",block_exastud_get_string('categories', 'block_exastud'));
+echo html_writer::tag("h2",\block_exastud\get_string('categories', 'block_exastud'));
 
 $table = new html_table();
 
@@ -134,6 +134,6 @@ foreach($categories as $category) {
 echo $blockrenderer->print_esr_table($table);
 
 echo $OUTPUT->single_button($CFG->wwwroot . '/blocks/exastud/configuration_categories.php?courseid='.$courseid.'&sesskey='.sesskey(),
-		block_exastud_get_string('editclasscategories', 'block_exastud'));
+		\block_exastud\get_string('editclasscategories', 'block_exastud'));
 
 block_exastud_print_footer();
