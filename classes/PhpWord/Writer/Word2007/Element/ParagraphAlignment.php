@@ -10,9 +10,9 @@
  * file that was distributed with this source code. For the full list of
  * contributors, visit https://github.com/PHPOffice/PHPWord/contributors.
  *
- * @link        https://github.com/PHPOffice/PHPWord
+ * @link		https://github.com/PHPOffice/PHPWord
  * @copyright   2010-2014 PHPWord contributors
- * @license     http://www.gnu.org/licenses/lgpl.txt LGPL version 3
+ * @license	 http://www.gnu.org/licenses/lgpl.txt LGPL version 3
  */
 
 namespace PhpOffice\PhpWord\Writer\Word2007\Element;
@@ -22,39 +22,39 @@ namespace PhpOffice\PhpWord\Writer\Word2007\Element;
  */
 class ParagraphAlignment
 {
-    private $name = 'w:jc';
+	private $name = 'w:jc';
 
-    private $attributes = array();
+	private $attributes = array();
 
-    /**
-     * @since 0.13.0
-     *
-     * @param string $value Any value provided by Jc simple type.
-     *
-     * @see \PhpOffice\PhpWord\SimpleType\Jc For the allowed values of $value parameter.
-     */
-    final public function __construct($value)
-    {
-        $this->attributes['w:val'] = $value;
-    }
+	/**
+	 * @since 0.13.0
+	 *
+	 * @param string $value Any value provided by Jc simple type.
+	 *
+	 * @see \PhpOffice\PhpWord\SimpleType\Jc For the allowed values of $value parameter.
+	 */
+	final public function __construct($value)
+	{
+		$this->attributes['w:val'] = $value;
+	}
 
-    /**
-     * @since 0.13.0
-     *
-     * @return string
-     */
-    final public function getName()
-    {
-        return $this->name;
-    }
+	/**
+	 * @since 0.13.0
+	 *
+	 * @return string
+	 */
+	final public function getName()
+	{
+		return $this->name;
+	}
 
-    /**
-     * @since 0.13.0
-     *
-     * @return string[]
-     */
-    final public function getAttributes()
-    {
-        return $this->attributes;
-    }
+	/**
+	 * @since 0.13.0
+	 *
+	 * @return string[]
+	 */
+	final public function getAttributes()
+	{
+		return $this->attributes;
+	}
 }

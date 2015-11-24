@@ -10,9 +10,9 @@
  * file that was distributed with this source code. For the full list of
  * contributors, visit https://github.com/PHPOffice/PHPWord/contributors.
  *
- * @link        https://github.com/PHPOffice/PHPWord
+ * @link		https://github.com/PHPOffice/PHPWord
  * @copyright   2010-2014 PHPWord contributors
- * @license     http://www.gnu.org/licenses/lgpl.txt LGPL version 3
+ * @license	 http://www.gnu.org/licenses/lgpl.txt LGPL version 3
  */
 
 namespace PhpOffice\PhpWord\Writer\HTML\Element;
@@ -24,21 +24,21 @@ namespace PhpOffice\PhpWord\Writer\HTML\Element;
  */
 class PageBreak extends TextBreak
 {
-    /**
-     * Write page break
-     *
-     * @since 0.12.0
-     *
-     * @return string
-     */
-    public function write()
-    {
-        /** @var \PhpOffice\PhpWord\Writer\HTML $parentWriter Type hint */
-        $parentWriter = $this->parentWriter;
-        if ($parentWriter->isPdf()) {
-            return '<pagebreak style="page-break-before: always;" pagebreak="true"></pagebreak>';
-        }
+	/**
+	 * Write page break
+	 *
+	 * @since 0.12.0
+	 *
+	 * @return string
+	 */
+	public function write()
+	{
+		/** @var \PhpOffice\PhpWord\Writer\HTML $parentWriter Type hint */
+		$parentWriter = $this->parentWriter;
+		if ($parentWriter->isPdf()) {
+			return '<pagebreak style="page-break-before: always;" pagebreak="true"></pagebreak>';
+		}
 
-        return "";
-    }
+		return "";
+	}
 }

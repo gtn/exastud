@@ -4,22 +4,22 @@
 }
 
 #review-table td.evaluation {
-    text-align: center;
-    min-width: 30px;
+	text-align: center;
+	min-width: 30px;
 }
 #review-table th.evaluation-header {
-    text-align: center;
+	text-align: center;
 }
 
 #ratingtable {
-    width: 100%;
+	width: 100%;
 }
 #ratingtable td {
-    border: 1px solid #999;
-    padding: 5px;
-    vertical-align: top;
+	border: 1px solid #999;
+	padding: 5px;
+	vertical-align: top;
 }
 
 #ratingtable .ratinguser {
-    width: 20%;
+	width: 20%;
 }

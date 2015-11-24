@@ -33,9 +33,9 @@ require("inc.php");
 require_once($CFG->dirroot . '/blocks/exastud/lib/edit_form.php');
 global $DB, $OUTPUT, $PAGE;
 
-$courseid       = optional_param('courseid', 1, PARAM_INT); // Course ID
-$showall        = optional_param('showall', 0, PARAM_BOOL);
-$searchtext     = optional_param('searchtext', '', PARAM_ALPHANUM); // search string
+$courseid	   = optional_param('courseid', 1, PARAM_INT); // Course ID
+$showall		= optional_param('showall', 0, PARAM_BOOL);
+$searchtext	 = optional_param('searchtext', '', PARAM_ALPHANUM); // search string
 
 require_login($courseid);
 

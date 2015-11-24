@@ -10,9 +10,9 @@
  * file that was distributed with this source code. For the full list of
  * contributors, visit https://github.com/PHPOffice/PHPWord/contributors.
  *
- * @link        https://github.com/PHPOffice/PHPWord
+ * @link		https://github.com/PHPOffice/PHPWord
  * @copyright   2010-2014 PHPWord contributors
- * @license     http://www.gnu.org/licenses/lgpl.txt LGPL version 3
+ * @license	 http://www.gnu.org/licenses/lgpl.txt LGPL version 3
  */
 
 namespace PhpOffice\PhpWord\Element;
@@ -26,48 +26,48 @@ use PhpOffice\PhpWord\Shared\String;
  */
 class CheckBox extends Text
 {
-    /**
-     * Name content
-     *
-     * @var string
-     */
-    private $name;
+	/**
+	 * Name content
+	 *
+	 * @var string
+	 */
+	private $name;
 
-    /**
-     * Create new instance
-     *
-     * @param string $name
-     * @param string $text
-     * @param mixed $fontStyle
-     * @param mixed $paragraphStyle
-     * @return self
-     */
-    public function __construct($name = null, $text = null, $fontStyle = null, $paragraphStyle = null)
-    {
-        $this->setName($name);
-        parent::__construct($text, $fontStyle, $paragraphStyle);
-    }
+	/**
+	 * Create new instance
+	 *
+	 * @param string $name
+	 * @param string $text
+	 * @param mixed $fontStyle
+	 * @param mixed $paragraphStyle
+	 * @return self
+	 */
+	public function __construct($name = null, $text = null, $fontStyle = null, $paragraphStyle = null)
+	{
+		$this->setName($name);
+		parent::__construct($text, $fontStyle, $paragraphStyle);
+	}
 
-    /**
-     * Set name content
-     *
-     * @param string $name
-     * @return self
-     */
-    public function setName($name)
-    {
-        $this->name = String::toUTF8($name);
+	/**
+	 * Set name content
+	 *
+	 * @param string $name
+	 * @return self
+	 */
+	public function setName($name)
+	{
+		$this->name = String::toUTF8($name);
 
-        return $this;
-    }
+		return $this;
+	}
 
-    /**
-     * Get name content
-     *
-     * @return string
-     */
-    public function getName()
-    {
-        return $this->name;
-    }
+	/**
+	 * Get name content
+	 *
+	 * @return string
+	 */
+	public function getName()
+	{
+		return $this->name;
+	}
 }

@@ -10,9 +10,9 @@
  * file that was distributed with this source code. For the full list of
  * contributors, visit https://github.com/PHPOffice/PHPWord/contributors.
  *
- * @link        https://github.com/PHPOffice/PHPWord
+ * @link		https://github.com/PHPOffice/PHPWord
  * @copyright   2010-2014 PHPWord contributors
- * @license     http://www.gnu.org/licenses/lgpl.txt LGPL version 3
+ * @license	 http://www.gnu.org/licenses/lgpl.txt LGPL version 3
  */
 
 namespace PhpOffice\PhpWord\Writer\HTML\Style;
@@ -24,20 +24,20 @@ namespace PhpOffice\PhpWord\Writer\HTML\Style;
  */
 class Generic extends AbstractStyle
 {
-    /**
-     * Write style
-     *
-     * @return string
-     */
-    public function write()
-    {
-        $style = $this->getStyle();
-        $css = array();
+	/**
+	 * Write style
+	 *
+	 * @return string
+	 */
+	public function write()
+	{
+		$style = $this->getStyle();
+		$css = array();
 
-        if (is_array($style) && !empty($style)) {
-            $css = $style;
-        }
+		if (is_array($style) && !empty($style)) {
+			$css = $style;
+		}
 
-        return $this->assembleCss($css);
-    }
+		return $this->assembleCss($css);
+	}
 }

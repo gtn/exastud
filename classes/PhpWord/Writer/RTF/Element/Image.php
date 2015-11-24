@@ -10,9 +10,9 @@
  * file that was distributed with this source code. For the full list of
  * contributors, visit https://github.com/PHPOffice/PHPWord/contributors.
  *
- * @link        https://github.com/PHPOffice/PHPWord
+ * @link		https://github.com/PHPOffice/PHPWord
  * @copyright   2010-2014 PHPWord contributors
- * @license     http://www.gnu.org/licenses/lgpl.txt LGPL version 3
+ * @license	 http://www.gnu.org/licenses/lgpl.txt LGPL version 3
  */
 
 namespace PhpOffice\PhpWord\Writer\RTF\Element;
@@ -27,31 +27,31 @@ use PhpOffice\PhpWord\Shared\Converter;
  */
 class Image extends AbstractElement
 {
-    /**
-     * Write element
-     *
-     * @return string
-     */
-    public function write()
-    {
-        if (!$this->element instanceof ImageElement) {
-            return '';
-        }
+	/**
+	 * Write element
+	 *
+	 * @return string
+	 */
+	public function write()
+	{
+		if (!$this->element instanceof ImageElement) {
+			return '';
+		}
 
-        $this->getStyles();
-        $style = $this->element->getStyle();
+		$this->getStyles();
+		$style = $this->element->getStyle();
 
-        $content = '';
-        $content .= $this->writeOpening();
-        $content .= '{\*\shppict {\pict';
-        $content .= '\pngblip\picscalex100\picscaley100';
-        $content .= '\picwgoal' . round(Converter::pixelToTwip($style->getWidth()));
-        $content .= '\pichgoal' . round(Converter::pixelToTwip($style->getHeight()));
-        $content .= PHP_EOL;
-        $content .= $this->element->getImageStringData();
-        $content .= '}}';
-        $content .= $this->writeClosing();
+		$content = '';
+		$content .= $this->writeOpening();
+		$content .= '{\*\shppict {\pict';
+		$content .= '\pngblip\picscalex100\picscaley100';
+		$content .= '\picwgoal' . round(Converter::pixelToTwip($style->getWidth()));
+		$content .= '\pichgoal' . round(Converter::pixelToTwip($style->getHeight()));
+		$content .= PHP_EOL;
+		$content .= $this->element->getImageStringData();
+		$content .= '}}';
+		$content .= $this->writeClosing();
 
-        return $content;
-    }
+		return $content;
+	}
 }

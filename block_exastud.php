@@ -33,13 +33,13 @@ require_once __DIR__ . '/lib/lib.php';
 require_once __DIR__ . '/../moodleblock.class.php';
 
 class block_exastud extends block_list {
-    
-    const CAP_HEADTEACHER = 'headteacher';
-    const CAP_USE = 'use';
-    const CAP_EDIT_PERIODS = 'editperiods';
-    const CAP_UPLOAD_PICTURE = 'exastud:uploadpicture';
-    const CAP_ADMIN = 'admin';
-    const SUBJECT_ID_LERN_UND_SOZIALVERHALTEN = -1;
+	
+	const CAP_HEADTEACHER = 'headteacher';
+	const CAP_USE = 'use';
+	const CAP_EDIT_PERIODS = 'editperiods';
+	const CAP_UPLOAD_PICTURE = 'exastud:uploadpicture';
+	const CAP_ADMIN = 'admin';
+	const SUBJECT_ID_LERN_UND_SOZIALVERHALTEN = -1;
 
 	function init() {
 		$this->title = \block_exastud\get_string('pluginname', 'block_exastud');

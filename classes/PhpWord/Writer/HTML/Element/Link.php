@@ -10,9 +10,9 @@
  * file that was distributed with this source code. For the full list of
  * contributors, visit https://github.com/PHPOffice/PHPWord/contributors.
  *
- * @link        https://github.com/PHPOffice/PHPWord
+ * @link		https://github.com/PHPOffice/PHPWord
  * @copyright   2010-2014 PHPWord contributors
- * @license     http://www.gnu.org/licenses/lgpl.txt LGPL version 3
+ * @license	 http://www.gnu.org/licenses/lgpl.txt LGPL version 3
  */
 
 namespace PhpOffice\PhpWord\Writer\HTML\Element;
@@ -24,22 +24,22 @@ namespace PhpOffice\PhpWord\Writer\HTML\Element;
  */
 class Link extends Text
 {
-    /**
-     * Write link
-     *
-     * @return string
-     */
-    public function write()
-    {
-        if (!$this->element instanceof \PhpOffice\PhpWord\Element\Link) {
-            return '';
-        }
+	/**
+	 * Write link
+	 *
+	 * @return string
+	 */
+	public function write()
+	{
+		if (!$this->element instanceof \PhpOffice\PhpWord\Element\Link) {
+			return '';
+		}
 
-        $content = '';
-        $content .= $this->writeOpening();
-        $content .= "<a href=\"{$this->element->getSource()}\">{$this->element->getText()}</a>";
-        $content .= $this->writeClosing();
+		$content = '';
+		$content .= $this->writeOpening();
+		$content .= "<a href=\"{$this->element->getSource()}\">{$this->element->getText()}</a>";
+		$content .= $this->writeClosing();
 
-        return $content;
-    }
+		return $content;
+	}
 }

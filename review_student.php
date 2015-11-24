@@ -41,7 +41,7 @@ $returnurl = optional_param('returnurl', null, PARAM_LOCALURL);
 require_login($courseid);
 
 if (!$returnurl) {
-    $returnurl = new moodle_url('/blocks/exastud/review_class.php?courseid='.$courseid.'&classid='.$classid.'&subjectid='.$subjectid);
+	$returnurl = new moodle_url('/blocks/exastud/review_class.php?courseid='.$courseid.'&classid='.$classid.'&subjectid='.$subjectid);
 }
 
 $url = '/blocks/exastud/review_student.php';
@@ -52,11 +52,11 @@ block_exastud_require_global_cap(block_exastud::CAP_USE);
 $classdata = block_exastud\get_review_class($classid, $subjectid);
 
 if(!$classdata) {
-    print_error('badclass', 'block_exastud');
+	print_error('badclass', 'block_exastud');
 }
 
 if ($DB->count_records('block_exastudclassstudents', array('studentid' => $studentid, 'classid' => $classid)) == 0) {
-    print_error('badstudent', 'block_exastud');
+	print_error('badstudent', 'block_exastud');
 }
 
 $strstudentreview = \block_exastud\get_string('reviewstudent', 'block_exastud');
@@ -74,49 +74,49 @@ $formdata->classid = $classid;
 $formdata->subjectid = $subjectid;
 
 if (!$reviewdata = $DB->get_record('block_exastudreview', array('teacherid' => $USER->id, 'subjectid'=>$subjectid, 'periodid' => $actPeriod->id, 'studentid' => $studentid))) {
-    $formdata->review = '';
+	$formdata->review = '';
 } else {
-    foreach($categories as $category) {
-    	$formdata->{$category->id.'_'.$category->source} = $DB->get_field('block_exastudreviewpos', 'value', array("categoryid"=>$category->id,"reviewid"=>$reviewdata->id,"categorysource"=>$category->source));
-    }
-    $formdata->review = $reviewdata->review;
+	foreach($categories as $category) {
+		$formdata->{$category->id.'_'.$category->source} = $DB->get_field('block_exastudreviewpos', 'value', array("categoryid"=>$category->id,"reviewid"=>$reviewdata->id,"categorysource"=>$category->source));
+	}
+	$formdata->review = $reviewdata->review;
 }
 $studentform = new student_edit_form(null,array('categories'=>$categories, 'subjectid'=>$subjectid));
 
 if ($studentedit = $studentform->get_data()) {
-    $newreview = new stdClass();
-    $newreview->timemodified = time();
-    $newreview->studentid = $studentid;
-    $newreview->subjectid = $subjectid;
-    $newreview->periodid = $actPeriod->id;
-    $newreview->teacherid = $USER->id;
-    
-    $newreview->review = $studentedit->review;
+	$newreview = new stdClass();
+	$newreview->timemodified = time();
+	$newreview->studentid = $studentid;
+	$newreview->subjectid = $subjectid;
+	$newreview->periodid = $actPeriod->id;
+	$newreview->teacherid = $USER->id;
+	
+	$newreview->review = $studentedit->review;
 
-    if (isset($reviewdata->id)) {
-        $newreview->id = $reviewdata->id;
-        $DB->update_record('block_exastudreview', $newreview);
-    } else {
-        $newreview->id = $DB->insert_record('block_exastudreview', $newreview);
-    }
-    
-    foreach ($categories as $category) {
-        if (!isset($studentedit->{$category->id.'_'.$category->source})) continue;
-        
-        block_exastud\db::insert_or_update_record('block_exastudreviewpos',
-            ["value"=>$studentedit->{$category->id.'_'.$category->source}],
-            ["reviewid"=>$reviewdata->id,"categoryid"=>$category->id,"categorysource"=>$category->source]);
-    }
+	if (isset($reviewdata->id)) {
+		$newreview->id = $reviewdata->id;
+		$DB->update_record('block_exastudreview', $newreview);
+	} else {
+		$newreview->id = $DB->insert_record('block_exastudreview', $newreview);
+	}
+	
+	foreach ($categories as $category) {
+		if (!isset($studentedit->{$category->id.'_'.$category->source})) continue;
+		
+		block_exastud\db::insert_or_update_record('block_exastudreviewpos',
+			["value"=>$studentedit->{$category->id.'_'.$category->source}],
+			["reviewid"=>$reviewdata->id,"categoryid"=>$category->id,"categorysource"=>$category->source]);
+	}
 
-    redirect($returnurl);
+	redirect($returnurl);
 }
 
 $classheader = $classdata->class.($classdata->subject?' - '.$classdata->subject:'');
 
 block_exastud_print_header(array('review',
-    array('name' => $classheader, 'link' => $CFG->wwwroot . '/blocks/exastud/review_class.php?courseid=' . $courseid .
-        '&classid=' . $classid.'&subjectid=' . $subjectid),
-        ), array('noheading'));
+	array('name' => $classheader, 'link' => $CFG->wwwroot . '/blocks/exastud/review_class.php?courseid=' . $courseid .
+		'&classid=' . $classid.'&subjectid=' . $subjectid),
+		), array('noheading'));
 
 $student = $DB->get_record('user', array('id' => $studentid));
 $studentdesc = $OUTPUT->user_picture($student, array("courseid" => $courseid)) . ' ' . fullname($student, $student->id);
@@ -128,6 +128,6 @@ $studentform->set_data($formdata);
 $studentform->display();
 
 echo $OUTPUT->single_button($returnurl,
-        \block_exastud\get_string('back', 'block_exastud'));
+		\block_exastud\get_string('back', 'block_exastud'));
 
 block_exastud_print_footer();

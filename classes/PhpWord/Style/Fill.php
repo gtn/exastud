@@ -10,9 +10,9 @@
  * file that was distributed with this source code. For the full list of
  * contributors, visit https://github.com/PHPOffice/PHPWord/contributors.
  *
- * @link        https://github.com/PHPOffice/PHPWord
+ * @link		https://github.com/PHPOffice/PHPWord
  * @copyright   2010-2014 PHPWord contributors
- * @license     http://www.gnu.org/licenses/lgpl.txt LGPL version 3
+ * @license	 http://www.gnu.org/licenses/lgpl.txt LGPL version 3
  */
 
 namespace PhpOffice\PhpWord\Style;
@@ -27,43 +27,43 @@ namespace PhpOffice\PhpWord\Style;
  */
 class Fill extends AbstractStyle
 {
-    /**
-     * Color
-     *
-     * @var string
-     */
-    private $color;
+	/**
+	 * Color
+	 *
+	 * @var string
+	 */
+	private $color;
 
-    /**
-     * Create a new instance
-     *
-     * @param array $style
-     */
-    public function __construct($style = array())
-    {
-        $this->setStyleByArray($style);
-    }
+	/**
+	 * Create a new instance
+	 *
+	 * @param array $style
+	 */
+	public function __construct($style = array())
+	{
+		$this->setStyleByArray($style);
+	}
 
-    /**
-     * Get color
-     *
-     * @return string
-     */
-    public function getColor()
-    {
-        return $this->color;
-    }
+	/**
+	 * Get color
+	 *
+	 * @return string
+	 */
+	public function getColor()
+	{
+		return $this->color;
+	}
 
-    /**
-     * Set color
-     *
-     * @param string $value
-     * @return self
-     */
-    public function setColor($value = null)
-    {
-        $this->color = $value;
+	/**
+	 * Set color
+	 *
+	 * @param string $value
+	 * @return self
+	 */
+	public function setColor($value = null)
+	{
+		$this->color = $value;
 
-        return $this;
-    }
+		return $this;
+	}
 }

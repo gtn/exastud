@@ -10,9 +10,9 @@
  * file that was distributed with this source code. For the full list of
  * contributors, visit https://github.com/PHPOffice/PHPWord/contributors.
  *
- * @link        https://github.com/PHPOffice/PHPWord
+ * @link		https://github.com/PHPOffice/PHPWord
  * @copyright   2010-2014 PHPWord contributors
- * @license     http://www.gnu.org/licenses/lgpl.txt LGPL version 3
+ * @license	 http://www.gnu.org/licenses/lgpl.txt LGPL version 3
  */
 
 namespace PhpOffice\PhpWord\Writer\Word2007\Part;
@@ -24,36 +24,36 @@ namespace PhpOffice\PhpWord\Writer\Word2007\Part;
  */
 class RelsPart extends Rels
 {
-    /**
-     * Media relationships
-     *
-     * @var array
-     */
-    private $media = array();
+	/**
+	 * Media relationships
+	 *
+	 * @var array
+	 */
+	private $media = array();
 
-    /**
-     * Write part
-     *
-     * @return string
-     */
-    public function write()
-    {
-        $xmlWriter = $this->getXmlWriter();
-        $this->writeRels($xmlWriter, array(), $this->media);
+	/**
+	 * Write part
+	 *
+	 * @return string
+	 */
+	public function write()
+	{
+		$xmlWriter = $this->getXmlWriter();
+		$this->writeRels($xmlWriter, array(), $this->media);
 
-        return $xmlWriter->getData();
-    }
+		return $xmlWriter->getData();
+	}
 
-    /**
-     * Set media
-     *
-     * @param array $media
-     * @return self
-     */
-    public function setMedia($media)
-    {
-        $this->media = $media;
+	/**
+	 * Set media
+	 *
+	 * @param array $media
+	 * @return self
+	 */
+	public function setMedia($media)
+	{
+		$this->media = $media;
 
-        return $this;
-    }
+		return $this;
+	}
 }

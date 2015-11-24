@@ -10,9 +10,9 @@
  * file that was distributed with this source code. For the full list of
  * contributors, visit https://github.com/PHPOffice/PHPWord/contributors.
  *
- * @link        https://github.com/PHPOffice/PHPWord
+ * @link		https://github.com/PHPOffice/PHPWord
  * @copyright   2010-2014 PHPWord contributors
- * @license     http://www.gnu.org/licenses/lgpl.txt LGPL version 3
+ * @license	 http://www.gnu.org/licenses/lgpl.txt LGPL version 3
  */
 
 namespace PhpOffice\PhpWord\Element;
@@ -24,35 +24,35 @@ use PhpOffice\PhpWord\Style\Paragraph;
  */
 class TextRun extends AbstractContainer
 {
-    /**
-     * @var string Container type
-     */
-    protected $container = 'TextRun';
+	/**
+	 * @var string Container type
+	 */
+	protected $container = 'TextRun';
 
-    /**
-     * Paragraph style
-     *
-     * @var string|\PhpOffice\PhpWord\Style\Paragraph
-     */
-    protected $paragraphStyle;
+	/**
+	 * Paragraph style
+	 *
+	 * @var string|\PhpOffice\PhpWord\Style\Paragraph
+	 */
+	protected $paragraphStyle;
 
-    /**
-     * Create new instance
-     *
-     * @param string|array|\PhpOffice\PhpWord\Style\Paragraph $paragraphStyle
-     */
-    public function __construct($paragraphStyle = null)
-    {
-        $this->paragraphStyle = $this->setNewStyle(new Paragraph(), $paragraphStyle);
-    }
+	/**
+	 * Create new instance
+	 *
+	 * @param string|array|\PhpOffice\PhpWord\Style\Paragraph $paragraphStyle
+	 */
+	public function __construct($paragraphStyle = null)
+	{
+		$this->paragraphStyle = $this->setNewStyle(new Paragraph(), $paragraphStyle);
+	}
 
-    /**
-     * Get Paragraph style
-     *
-     * @return string|\PhpOffice\PhpWord\Style\Paragraph
-     */
-    public function getParagraphStyle()
-    {
-        return $this->paragraphStyle;
-    }
+	/**
+	 * Get Paragraph style
+	 *
+	 * @return string|\PhpOffice\PhpWord\Style\Paragraph
+	 */
+	public function getParagraphStyle()
+	{
+		return $this->paragraphStyle;
+	}
 }

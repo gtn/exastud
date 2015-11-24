@@ -47,7 +47,7 @@ block_exastud_print_header('report');
 
 $actPeriod = block_exastud_get_period($periodid);
 if (!$actPeriod) {
-    print_error('periodserror', 'block_exastud');
+	print_error('periodserror', 'block_exastud');
 }
 
 if(!$myclasses = $DB->get_records_sql('SELECT * FROM {block_exastudclassteachers} t JOIN {block_exastudclass} c ON t.classid=c.id AND t.teacherid=\'' . $USER->id . '\' AND c.periodid = '.$actPeriod->id)) {

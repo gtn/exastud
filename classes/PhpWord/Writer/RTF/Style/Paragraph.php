@@ -10,9 +10,9 @@
  * file that was distributed with this source code. For the full list of
  * contributors, visit https://github.com/PHPOffice/PHPWord/contributors.
  *
- * @link        https://github.com/PHPOffice/PHPWord
+ * @link		https://github.com/PHPOffice/PHPWord
  * @copyright   2010-2014 PHPWord contributors
- * @license     http://www.gnu.org/licenses/lgpl.txt LGPL version 3
+ * @license	 http://www.gnu.org/licenses/lgpl.txt LGPL version 3
  */
 
 namespace PhpOffice\PhpWord\Writer\RTF\Style;
@@ -26,58 +26,58 @@ use PhpOffice\PhpWord\SimpleType\Jc;
  */
 class Paragraph extends AbstractStyle
 {
-    /**
-     * Depth of table container nested level; Primarily used for RTF writer/reader
-     *
-     * 0 = Not in a table; 1 = in a table; 2 = in a table inside another table, etc.
-     *
-     * @var int
-     */
-    private $nestedLevel = 0;
+	/**
+	 * Depth of table container nested level; Primarily used for RTF writer/reader
+	 *
+	 * 0 = Not in a table; 1 = in a table; 2 = in a table inside another table, etc.
+	 *
+	 * @var int
+	 */
+	private $nestedLevel = 0;
 
-    /**
-     * Write style
-     *
-     * @return string
-     */
-    public function write()
-    {
-        $style = $this->getStyle();
-        if (!$style instanceof \PhpOffice\PhpWord\Style\Paragraph) {
-            return '';
-        }
+	/**
+	 * Write style
+	 *
+	 * @return string
+	 */
+	public function write()
+	{
+		$style = $this->getStyle();
+		if (!$style instanceof \PhpOffice\PhpWord\Style\Paragraph) {
+			return '';
+		}
 
-        $alignments = array(
-            Jc::START  => '\ql',
-            Jc::END    => '\qr',
-            Jc::CENTER => '\qc',
-            Jc::BOTH   => '\qj',
-        );
+		$alignments = array(
+			Jc::START  => '\ql',
+			Jc::END	=> '\qr',
+			Jc::CENTER => '\qc',
+			Jc::BOTH   => '\qj',
+		);
 
-        $spaceAfter = $style->getSpaceAfter();
-        $spaceBefore = $style->getSpaceBefore();
+		$spaceAfter = $style->getSpaceAfter();
+		$spaceBefore = $style->getSpaceBefore();
 
-        $content = '';
-        if ($this->nestedLevel == 0) {
-            $content .= '\pard\nowidctlpar ';
-        }
-        if (isset($alignments[$style->getAlignment()])) {
-            $content .= $alignments[$style->getAlignment()];
-        }
-        $content .= $this->getValueIf($spaceBefore !== null, '\sb' . $spaceBefore);
-        $content .= $this->getValueIf($spaceAfter !== null, '\sa' . $spaceAfter);
+		$content = '';
+		if ($this->nestedLevel == 0) {
+			$content .= '\pard\nowidctlpar ';
+		}
+		if (isset($alignments[$style->getAlignment()])) {
+			$content .= $alignments[$style->getAlignment()];
+		}
+		$content .= $this->getValueIf($spaceBefore !== null, '\sb' . $spaceBefore);
+		$content .= $this->getValueIf($spaceAfter !== null, '\sa' . $spaceAfter);
 
-        return $content;
-    }
+		return $content;
+	}
 
-    /**
-     * Set nested level.
-     *
-     * @param int $value
-     * @return void
-     */
-    public function setNestedLevel($value)
-    {
-        $this->nestedLevel = $value;
-    }
+	/**
+	 * Set nested level.
+	 *
+	 * @param int $value
+	 * @return void
+	 */
+	public function setNestedLevel($value)
+	{
+		$this->nestedLevel = $value;
+	}
 }

@@ -10,9 +10,9 @@
  * file that was distributed with this source code. For the full list of
  * contributors, visit https://github.com/PHPOffice/PHPWord/contributors.
  *
- * @link        https://github.com/PHPOffice/PHPWord
+ * @link		https://github.com/PHPOffice/PHPWord
  * @copyright   2010-2014 PHPWord contributors
- * @license     http://www.gnu.org/licenses/lgpl.txt LGPL version 3
+ * @license	 http://www.gnu.org/licenses/lgpl.txt LGPL version 3
  */
 
 namespace PhpOffice\PhpWord\Writer\HTML\Element;
@@ -24,21 +24,21 @@ namespace PhpOffice\PhpWord\Writer\HTML\Element;
  */
 class Title extends AbstractElement
 {
-    /**
-     * Write heading
-     *
-     * @return string
-     */
-    public function write()
-    {
-        if (!$this->element instanceof \PhpOffice\PhpWord\Element\Title) {
-            return '';
-        }
+	/**
+	 * Write heading
+	 *
+	 * @return string
+	 */
+	public function write()
+	{
+		if (!$this->element instanceof \PhpOffice\PhpWord\Element\Title) {
+			return '';
+		}
 
-        $tag = 'h' . $this->element->getDepth();
-        $text = $this->element->getText();
-        $content = "<{$tag}>{$text}</{$tag}>" . PHP_EOL;
+		$tag = 'h' . $this->element->getDepth();
+		$text = $this->element->getText();
+		$content = "<{$tag}>{$text}</{$tag}>" . PHP_EOL;
 
-        return $content;
-    }
+		return $content;
+	}
 }

@@ -45,16 +45,16 @@ block_exastud_print_header('review');
 $actPeriod = block_exastud_check_active_period();
 
 $myclasses = $DB->get_records_sql("
-    SELECT ct.id, ct.subjectid, ct.classid, c.class, s.title AS subject
-    FROM {block_exastudclassteachers} ct
-    JOIN {block_exastudclass} c ON ct.classid=c.id
-    LEFT JOIN {block_exastudsubjects} s ON ct.subjectid = s.id
-    WHERE ct.teacherid=? AND c.periodid=?
-    ORDER BY c.class, s.sorting
+	SELECT ct.id, ct.subjectid, ct.classid, c.class, s.title AS subject
+	FROM {block_exastudclassteachers} ct
+	JOIN {block_exastudclass} c ON ct.classid=c.id
+	LEFT JOIN {block_exastudsubjects} s ON ct.subjectid = s.id
+	WHERE ct.teacherid=? AND c.periodid=?
+	ORDER BY c.class, s.sorting
 ", array($USER->id, $actPeriod->id));
 
 if ($class = \block_exastud\get_headteacher_lern_und_sozialverhalten_class()) {
-    $myclasses = [$class] + $myclasses;
+	$myclasses = [$class] + $myclasses;
 }
 
 if(!$myclasses) {

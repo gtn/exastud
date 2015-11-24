@@ -10,9 +10,9 @@
  * file that was distributed with this source code. For the full list of
  * contributors, visit https://github.com/PHPOffice/PHPWord/contributors.
  *
- * @link        https://github.com/PHPOffice/PHPWord
+ * @link		https://github.com/PHPOffice/PHPWord
  * @copyright   2010-2014 PHPWord contributors
- * @license     http://www.gnu.org/licenses/lgpl.txt LGPL version 3
+ * @license	 http://www.gnu.org/licenses/lgpl.txt LGPL version 3
  */
 
 namespace PhpOffice\PhpWord\Writer\Word2007\Part;
@@ -24,27 +24,27 @@ namespace PhpOffice\PhpWord\Writer\Word2007\Part;
  */
 class RelsDocument extends Rels
 {
-    /**
-     * Write part
-     *
-     * @return string
-     */
-    public function write()
-    {
-        $xmlRels = array(
-            'styles.xml'       => 'officeDocument/2006/relationships/styles',
-            'numbering.xml'    => 'officeDocument/2006/relationships/numbering',
-            'settings.xml'     => 'officeDocument/2006/relationships/settings',
-            'theme/theme1.xml' => 'officeDocument/2006/relationships/theme',
-            'webSettings.xml'  => 'officeDocument/2006/relationships/webSettings',
-            'fontTable.xml'    => 'officeDocument/2006/relationships/fontTable',
-        );
-        $xmlWriter = $this->getXmlWriter();
+	/**
+	 * Write part
+	 *
+	 * @return string
+	 */
+	public function write()
+	{
+		$xmlRels = array(
+			'styles.xml'	   => 'officeDocument/2006/relationships/styles',
+			'numbering.xml'	=> 'officeDocument/2006/relationships/numbering',
+			'settings.xml'	 => 'officeDocument/2006/relationships/settings',
+			'theme/theme1.xml' => 'officeDocument/2006/relationships/theme',
+			'webSettings.xml'  => 'officeDocument/2006/relationships/webSettings',
+			'fontTable.xml'	=> 'officeDocument/2006/relationships/fontTable',
+		);
+		$xmlWriter = $this->getXmlWriter();
 
-        /** @var \PhpOffice\PhpWord\Writer\Word2007 $parentWriter Type hint */
-        $parentWriter = $this->getParentWriter();
-        $this->writeRels($xmlWriter, $xmlRels, $parentWriter->getRelationships());
+		/** @var \PhpOffice\PhpWord\Writer\Word2007 $parentWriter Type hint */
+		$parentWriter = $this->getParentWriter();
+		$this->writeRels($xmlWriter, $xmlRels, $parentWriter->getRelationships());
 
-        return $xmlWriter->getData();
-    }
+		return $xmlWriter->getData();
+	}
 }

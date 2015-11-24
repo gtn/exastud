@@ -10,9 +10,9 @@
  * file that was distributed with this source code. For the full list of
  * contributors, visit https://github.com/PHPOffice/PHPWord/contributors.
  *
- * @link        https://github.com/PHPOffice/PHPWord
+ * @link		https://github.com/PHPOffice/PHPWord
  * @copyright   2010-2014 PHPWord contributors
- * @license     http://www.gnu.org/licenses/lgpl.txt LGPL version 3
+ * @license	 http://www.gnu.org/licenses/lgpl.txt LGPL version 3
  */
 
 namespace PhpOffice\PhpWord\Writer\HTML\Element;
@@ -24,19 +24,19 @@ namespace PhpOffice\PhpWord\Writer\HTML\Element;
  */
 class TextBreak extends AbstractElement
 {
-    /**
-     * Write text break
-     *
-     * @return string
-     */
-    public function write()
-    {
-        if ($this->withoutP) {
-            $content = '<br />' . PHP_EOL;
-        } else {
-            $content = '<p>&nbsp;</p>' . PHP_EOL;
-        }
+	/**
+	 * Write text break
+	 *
+	 * @return string
+	 */
+	public function write()
+	{
+		if ($this->withoutP) {
+			$content = '<br />' . PHP_EOL;
+		} else {
+			$content = '<p>&nbsp;</p>' . PHP_EOL;
+		}
 
-        return $content;
-    }
+		return $content;
+	}
 }

@@ -10,9 +10,9 @@
  * file that was distributed with this source code. For the full list of
  * contributors, visit https://github.com/PHPOffice/PHPWord/contributors.
  *
- * @link        https://github.com/PHPOffice/PHPWord
+ * @link		https://github.com/PHPOffice/PHPWord
  * @copyright   2010-2014 PHPWord contributors
- * @license     http://www.gnu.org/licenses/lgpl.txt LGPL version 3
+ * @license	 http://www.gnu.org/licenses/lgpl.txt LGPL version 3
  */
 
 namespace PhpOffice\PhpWord\Metadata;
@@ -26,44 +26,44 @@ namespace PhpOffice\PhpWord\Metadata;
  */
 class Protection
 {
-    /**
-     * Editing restriction readOnly|comments|trackedChanges|forms
-     *
-     * @var string
-     * @link http://www.datypic.com/sc/ooxml/a-w_edit-1.html
-     */
-    private $editing;
+	/**
+	 * Editing restriction readOnly|comments|trackedChanges|forms
+	 *
+	 * @var string
+	 * @link http://www.datypic.com/sc/ooxml/a-w_edit-1.html
+	 */
+	private $editing;
 
-    /**
-     * Create a new instance
-     *
-     * @param string $editing
-     */
-    public function __construct($editing = null)
-    {
-        $this->setEditing($editing);
-    }
+	/**
+	 * Create a new instance
+	 *
+	 * @param string $editing
+	 */
+	public function __construct($editing = null)
+	{
+		$this->setEditing($editing);
+	}
 
-    /**
-     * Get editing protection
-     *
-     * @return string
-     */
-    public function getEditing()
-    {
-        return $this->editing;
-    }
+	/**
+	 * Get editing protection
+	 *
+	 * @return string
+	 */
+	public function getEditing()
+	{
+		return $this->editing;
+	}
 
-    /**
-     * Set editing protection
-     *
-     * @param string $editing
-     * @return self
-     */
-    public function setEditing($editing = null)
-    {
-        $this->editing = $editing;
+	/**
+	 * Set editing protection
+	 *
+	 * @param string $editing
+	 * @return self
+	 */
+	public function setEditing($editing = null)
+	{
+		$this->editing = $editing;
 
-        return $this;
-    }
+		return $this;
+	}
 }

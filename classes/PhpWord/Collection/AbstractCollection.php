@@ -10,9 +10,9 @@
  * file that was distributed with this source code. For the full list of
  * contributors, visit https://github.com/PHPOffice/PHPWord/contributors.
  *
- * @link        https://github.com/PHPOffice/PHPWord
+ * @link		https://github.com/PHPOffice/PHPWord
  * @copyright   2010-2014 PHPWord contributors
- * @license     http://www.gnu.org/licenses/old-licenses/lgpl-2.1.txt LGPL
+ * @license	 http://www.gnu.org/licenses/old-licenses/lgpl-2.1.txt LGPL
  */
 
 namespace PhpOffice\PhpWord\Collection;
@@ -24,73 +24,73 @@ namespace PhpOffice\PhpWord\Collection;
  */
 abstract class AbstractCollection
 {
-    /**
-     * Items
-     *
-     * @var array
-     */
-    private $items = array();
+	/**
+	 * Items
+	 *
+	 * @var array
+	 */
+	private $items = array();
 
-    /**
-     * Get items
-     *
-     * @return array
-     */
-    public function getItems()
-    {
-        return $this->items;
-    }
+	/**
+	 * Get items
+	 *
+	 * @return array
+	 */
+	public function getItems()
+	{
+		return $this->items;
+	}
 
-    /**
-     * Get item by index
-     *
-     * @param int $index
-     * @return mixed
-     */
-    public function getItem($index)
-    {
-        if (array_key_exists($index, $this->items)) {
-            return $this->items[$index];
-        } else {
-            return null;
-        }
-    }
+	/**
+	 * Get item by index
+	 *
+	 * @param int $index
+	 * @return mixed
+	 */
+	public function getItem($index)
+	{
+		if (array_key_exists($index, $this->items)) {
+			return $this->items[$index];
+		} else {
+			return null;
+		}
+	}
 
-    /**
-     * Set item.
-     *
-     * @param int $index
-     * @param mixed $item
-     * @return void
-     */
-    public function setItem($index, $item)
-    {
-        if (array_key_exists($index, $this->items)) {
-            $this->items[$index] = $item;
-        }
-    }
+	/**
+	 * Set item.
+	 *
+	 * @param int $index
+	 * @param mixed $item
+	 * @return void
+	 */
+	public function setItem($index, $item)
+	{
+		if (array_key_exists($index, $this->items)) {
+			$this->items[$index] = $item;
+		}
+	}
 
-    /**
-     * Add new item
-     *
-     * @param mixed $item
-     * @return int
-     */
-    public function addItem($item)
-    {
-        $index = $this->countItems() + 1;
-        $this->items[$index] = $item;
+	/**
+	 * Add new item
+	 *
+	 * @param mixed $item
+	 * @return int
+	 */
+	public function addItem($item)
+	{
+		$index = $this->countItems() + 1;
+		$this->items[$index] = $item;
 
-        return $index;
-    }
+		return $index;
+	}
 
-    /**
-     * Get item count
-     *
-     * @return int
-     */
-    public function countItems()
-    {
-        return count($this->items);
-    }
+	/**
+	 * Get item count
+	 *
+	 * @return int
+	 */
+	public function countItems()
+	{
+		return count($this->items);
+	}
 }

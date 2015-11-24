@@ -34,10 +34,10 @@ global $DB, $THEME;
 define("MAX_USERS_PER_PAGE", 5000);
 
 $courseid = optional_param('courseid', 1, PARAM_INT); // Course ID
-$showall        = optional_param('showall', 0, PARAM_BOOL);
-$searchtext     = optional_param('searchtext', '', PARAM_TEXT); // search string
-$add            = optional_param('add', 0, PARAM_BOOL);
-$remove         = optional_param('remove', 0, PARAM_BOOL);
+$showall		= optional_param('showall', 0, PARAM_BOOL);
+$searchtext	 = optional_param('searchtext', '', PARAM_TEXT); // search string
+$add			= optional_param('add', 0, PARAM_BOOL);
+$remove		 = optional_param('remove', 0, PARAM_BOOL);
 
 require_login($courseid);
 
@@ -90,8 +90,8 @@ if ($frm = data_submitted()) {
 $select  = "username <> 'guest' AND deleted = 0 AND confirmed = 1";
 	
 if ($searchtext !== '') {   // Search for a subset of remaining users
-	//$LIKE      = $DB->sql_ilike();
-        $LIKE      = "LIKE";
+	//$LIKE	  = $DB->sql_ilike();
+		$LIKE	  = "LIKE";
 	$FULLNAME  = $DB->sql_fullname();
 
 	$selectsql = " AND ($FULLNAME $LIKE '%$searchtext%' OR email $LIKE '%$searchtext%') ";

@@ -10,9 +10,9 @@
  * file that was distributed with this source code. For the full list of
  * contributors, visit https://github.com/PHPOffice/PHPWord/contributors.
  *
- * @link        https://github.com/PHPOffice/PHPWord
+ * @link		https://github.com/PHPOffice/PHPWord
  * @copyright   2010-2014 PHPWord contributors
- * @license     http://www.gnu.org/licenses/lgpl.txt LGPL version 3
+ * @license	 http://www.gnu.org/licenses/lgpl.txt LGPL version 3
  */
 
 namespace PhpOffice\PhpWord\Writer\ODText\Element;
@@ -24,19 +24,19 @@ namespace PhpOffice\PhpWord\Writer\ODText\Element;
  */
 class TextRun extends AbstractElement
 {
-    /**
-     * Write element
-     */
-    public function write()
-    {
-        $xmlWriter = $this->getXmlWriter();
-        $element = $this->getElement();
+	/**
+	 * Write element
+	 */
+	public function write()
+	{
+		$xmlWriter = $this->getXmlWriter();
+		$element = $this->getElement();
 
-        $xmlWriter->startElement('text:p');
+		$xmlWriter->startElement('text:p');
 
-        $containerWriter = new Container($xmlWriter, $element);
-        $containerWriter->write();
+		$containerWriter = new Container($xmlWriter, $element);
+		$containerWriter->write();
 
-        $xmlWriter->endElement();
-    }
+		$xmlWriter->endElement();
+	}
 }

@@ -10,9 +10,9 @@
  * file that was distributed with this source code. For the full list of
  * contributors, visit https://github.com/PHPOffice/PHPWord/contributors.
  *
- * @link        https://github.com/PHPOffice/PHPWord
+ * @link		https://github.com/PHPOffice/PHPWord
  * @copyright   2010-2014 PHPWord contributors
- * @license     http://www.gnu.org/licenses/lgpl.txt LGPL version 3
+ * @license	 http://www.gnu.org/licenses/lgpl.txt LGPL version 3
  */
 
 namespace PhpOffice\PhpWord\Reader\Word2007;
@@ -24,17 +24,17 @@ namespace PhpOffice\PhpWord\Reader\Word2007;
  */
 class Endnotes extends Footnotes
 {
-    /**
-     * Collection name
-     *
-     * @var string
-     */
-    protected $collection = 'endnotes';
+	/**
+	 * Collection name
+	 *
+	 * @var string
+	 */
+	protected $collection = 'endnotes';
 
-    /**
-     * Element name
-     *
-     * @var string
-     */
-    protected $element = 'endnote';
+	/**
+	 * Element name
+	 *
+	 * @var string
+	 */
+	protected $element = 'endnote';
 }

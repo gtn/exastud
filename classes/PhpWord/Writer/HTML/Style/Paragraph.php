@@ -10,9 +10,9 @@
  * file that was distributed with this source code. For the full list of
  * contributors, visit https://github.com/PHPOffice/PHPWord/contributors.
  *
- * @link        https://github.com/PHPOffice/PHPWord
+ * @link		https://github.com/PHPOffice/PHPWord
  * @copyright   2010-2014 PHPWord contributors
- * @license     http://www.gnu.org/licenses/lgpl.txt LGPL version 3
+ * @license	 http://www.gnu.org/licenses/lgpl.txt LGPL version 3
  */
 
 namespace PhpOffice\PhpWord\Writer\HTML\Style;
@@ -24,33 +24,33 @@ namespace PhpOffice\PhpWord\Writer\HTML\Style;
  */
 class Paragraph extends AbstractStyle
 {
-    /**
-     * Write style
-     *
-     * @return string
-     */
-    public function write()
-    {
-        $style = $this->getStyle();
-        if (!$style instanceof \PhpOffice\PhpWord\Style\Paragraph) {
-            return '';
-        }
-        $css = array();
+	/**
+	 * Write style
+	 *
+	 * @return string
+	 */
+	public function write()
+	{
+		$style = $this->getStyle();
+		if (!$style instanceof \PhpOffice\PhpWord\Style\Paragraph) {
+			return '';
+		}
+		$css = array();
 
-        // Alignment
-        if ('' !== $style->getAlignment()) {
-            $css['text-align'] = $style->getAlignment(); // todo: convert OpenXml to Html values
-        }
+		// Alignment
+		if ('' !== $style->getAlignment()) {
+			$css['text-align'] = $style->getAlignment(); // todo: convert OpenXml to Html values
+		}
 
-        // Spacing
-        $spacing = $style->getSpace();
-        if (!is_null($spacing)) {
-            $before = $spacing->getBefore();
-            $after = $spacing->getAfter();
-            $css['margin-top'] = $this->getValueIf(!is_null($before), ($before / 20) . 'pt');
-            $css['margin-bottom'] = $this->getValueIf(!is_null($after), ($after / 20) . 'pt');
-        }
+		// Spacing
+		$spacing = $style->getSpace();
+		if (!is_null($spacing)) {
+			$before = $spacing->getBefore();
+			$after = $spacing->getAfter();
+			$css['margin-top'] = $this->getValueIf(!is_null($before), ($before / 20) . 'pt');
+			$css['margin-bottom'] = $this->getValueIf(!is_null($after), ($after / 20) . 'pt');
+		}
 
-        return $this->assembleCss($css);
-    }
+		return $this->assembleCss($css);
+	}
 }

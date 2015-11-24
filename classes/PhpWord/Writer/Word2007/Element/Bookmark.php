@@ -10,9 +10,9 @@
  * file that was distributed with this source code. For the full list of
  * contributors, visit https://github.com/PHPOffice/PHPWord/contributors.
  *
- * @link        https://github.com/PHPOffice/PHPWord
+ * @link		https://github.com/PHPOffice/PHPWord
  * @copyright   2010-2014 PHPWord contributors
- * @license     http://www.gnu.org/licenses/lgpl.txt LGPL version 3
+ * @license	 http://www.gnu.org/licenses/lgpl.txt LGPL version 3
  */
 
 namespace PhpOffice\PhpWord\Writer\Word2007\Element;
@@ -24,26 +24,26 @@ namespace PhpOffice\PhpWord\Writer\Word2007\Element;
  */
 class Bookmark extends AbstractElement
 {
-    /**
-     * Write bookmark element
-     */
-    public function write()
-    {
-        $xmlWriter = $this->getXmlWriter();
-        $element = $this->getElement();
-        if (!$element instanceof \PhpOffice\PhpWord\Element\Bookmark) {
-            return;
-        }
+	/**
+	 * Write bookmark element
+	 */
+	public function write()
+	{
+		$xmlWriter = $this->getXmlWriter();
+		$element = $this->getElement();
+		if (!$element instanceof \PhpOffice\PhpWord\Element\Bookmark) {
+			return;
+		}
 
-        $rId = $element->getRelationId();
+		$rId = $element->getRelationId();
 
-        $xmlWriter->startElement('w:bookmarkStart');
-        $xmlWriter->writeAttribute('w:id', $rId);
-        $xmlWriter->writeAttribute('w:name', $element->getName());
-        $xmlWriter->endElement();
-        
-        $xmlWriter->startElement('w:bookmarkEnd');
-        $xmlWriter->writeAttribute('w:id', $rId);
-        $xmlWriter->endElement();
-    }
+		$xmlWriter->startElement('w:bookmarkStart');
+		$xmlWriter->writeAttribute('w:id', $rId);
+		$xmlWriter->writeAttribute('w:name', $element->getName());
+		$xmlWriter->endElement();
+		
+		$xmlWriter->startElement('w:bookmarkEnd');
+		$xmlWriter->writeAttribute('w:id', $rId);
+		$xmlWriter->endElement();
+	}
 }

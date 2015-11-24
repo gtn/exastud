@@ -31,7 +31,7 @@
 
 require("inc.php");
 
-$courseid       = optional_param('courseid', 1, PARAM_INT); // Course ID
+$courseid	   = optional_param('courseid', 1, PARAM_INT); // Course ID
 $action = optional_param('action', '', PARAM_TEXT);
 require_login($courseid);
 
@@ -45,20 +45,20 @@ if (!$class = block_exastud\get_headteacher_class()) {
 }
 
 if ($action == 'save-classteacher-subject') {
-    if(!confirm_sesskey()) {
-        die(get_string("badsessionkey","block_exastud"));
-    }
+	if(!confirm_sesskey()) {
+		die(get_string("badsessionkey","block_exastud"));
+	}
 
-    block_exastud\db::update_record('block_exastudclassteachers', array(
-        'subjectid' => required_param('subjectid', PARAM_INT)
-    ), array(
-        'id' => required_param('classteacherid', PARAM_INT),
-        'classid' => $class->id
-    ));
+	block_exastud\db::update_record('block_exastudclassteachers', array(
+		'subjectid' => required_param('subjectid', PARAM_INT)
+	), array(
+		'id' => required_param('classteacherid', PARAM_INT),
+		'classid' => $class->id
+	));
 
-    echo 'ok';
+	echo 'ok';
 
-    exit;
+	exit;
 }
 
 block_exastud_print_header('configuration');
@@ -98,17 +98,17 @@ $table->width = "90%";
 $table->size = ['25%', '25%', '25%', '25%'];
 
 $classteachers = $DB->get_recordset_sql("
-    SELECT ct.id, ".user_picture::fields('u', null, 'userid').", s.title AS subject
-    FROM {user} u
-    JOIN {block_exastudclassteachers} ct ON ct.teacherid=u.id
-    LEFT JOIN {block_exastudsubjects} s ON ct.subjectid = s.id
-    WHERE ct.classid=?
-    ORDER BY s.sorting, u.lastname, u.firstname
+	SELECT ct.id, ".user_picture::fields('u', null, 'userid').", s.title AS subject
+	FROM {user} u
+	JOIN {block_exastudclassteachers} ct ON ct.teacherid=u.id
+	LEFT JOIN {block_exastudsubjects} s ON ct.subjectid = s.id
+	WHERE ct.classid=?
+	ORDER BY s.sorting, u.lastname, u.firstname
 ", array($class->id));
 
 
 foreach($classteachers as $classteacher) {
-    $table->data[] = array ($classteacher->subject ?: \block_exastud\trans('de:nicht zugeordnet'), $classteacher->firstname, $classteacher->lastname, $classteacher->email);
+	$table->data[] = array ($classteacher->subject ?: \block_exastud\trans('de:nicht zugeordnet'), $classteacher->firstname, $classteacher->lastname, $classteacher->email);
 }
 
 //echo html_writer::table($table);

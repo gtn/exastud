@@ -4,13 +4,13 @@
 }
 
 #review-table td.evaluation-radio {
-    text-align: center;
-    min-width: 30px;
+	text-align: center;
+	min-width: 30px;
 }
 #review-table td.evaluation-radio input[type="radio"] {
 	margin: 0;
 }
 #review-table th.evaluation-header {
-    text-align: center;
+	text-align: center;
 }
 

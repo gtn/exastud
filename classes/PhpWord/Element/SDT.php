@@ -10,9 +10,9 @@
  * file that was distributed with this source code. For the full list of
  * contributors, visit https://github.com/PHPOffice/PHPWord/contributors.
  *
- * @link        https://github.com/PHPOffice/PHPWord
+ * @link		https://github.com/PHPOffice/PHPWord
  * @copyright   2010-2014 PHPWord contributors
- * @license     http://www.gnu.org/licenses/lgpl.txt LGPL version 3
+ * @license	 http://www.gnu.org/licenses/lgpl.txt LGPL version 3
  */
 
 namespace PhpOffice\PhpWord\Element;
@@ -24,107 +24,107 @@ namespace PhpOffice\PhpWord\Element;
  */
 class SDT extends Text
 {
-    /**
-     * Form field type: comboBox|dropDownList|date
-     *
-     * @var string
-     */
-    private $type;
+	/**
+	 * Form field type: comboBox|dropDownList|date
+	 *
+	 * @var string
+	 */
+	private $type;
 
-    /**
-     * Value
-     *
-     * @var string|bool|int
-     */
-    private $value;
+	/**
+	 * Value
+	 *
+	 * @var string|bool|int
+	 */
+	private $value;
 
-    /**
-     * CheckBox/DropDown list entries
-     *
-     * @var array
-     */
-    private $listItems = array();
+	/**
+	 * CheckBox/DropDown list entries
+	 *
+	 * @var array
+	 */
+	private $listItems = array();
 
-    /**
-     * Create new instance
-     *
-     * @param string $type
-     * @param mixed $fontStyle
-     * @param mixed $paragraphStyle
-     * @return self
-     */
-    public function __construct($type, $fontStyle = null, $paragraphStyle = null)
-    {
-        $this->setType($type);
-    }
+	/**
+	 * Create new instance
+	 *
+	 * @param string $type
+	 * @param mixed $fontStyle
+	 * @param mixed $paragraphStyle
+	 * @return self
+	 */
+	public function __construct($type, $fontStyle = null, $paragraphStyle = null)
+	{
+		$this->setType($type);
+	}
 
-    /**
-     * Get type
-     *
-     * @return string
-     */
-    public function getType()
-    {
-        return $this->type;
-    }
+	/**
+	 * Get type
+	 *
+	 * @return string
+	 */
+	public function getType()
+	{
+		return $this->type;
+	}
 
-    /**
-     * Set type
-     *
-     * @param string $value
-     * @return self
-     */
-    public function setType($value)
-    {
-        $enum = array('comboBox', 'dropDownList', 'date');
-        $this->type = $this->setEnumVal($value, $enum, 'comboBox');
+	/**
+	 * Set type
+	 *
+	 * @param string $value
+	 * @return self
+	 */
+	public function setType($value)
+	{
+		$enum = array('comboBox', 'dropDownList', 'date');
+		$this->type = $this->setEnumVal($value, $enum, 'comboBox');
 
-        return $this;
-    }
+		return $this;
+	}
 
-    /**
-     * Get value
-     *
-     * @return string|bool|int
-     */
-    public function getValue()
-    {
-        return $this->value;
-    }
+	/**
+	 * Get value
+	 *
+	 * @return string|bool|int
+	 */
+	public function getValue()
+	{
+		return $this->value;
+	}
 
-    /**
-     * Set value
-     *
-     * @param string|bool|int $value
-     * @return self
-     */
-    public function setValue($value)
-    {
-        $this->value = $value;
+	/**
+	 * Set value
+	 *
+	 * @param string|bool|int $value
+	 * @return self
+	 */
+	public function setValue($value)
+	{
+		$this->value = $value;
 
-        return $this;
-    }
+		return $this;
+	}
 
-    /**
-     * Get listItems
-     *
-     * @return array
-     */
-    public function getListItems()
-    {
-        return $this->listItems;
-    }
+	/**
+	 * Get listItems
+	 *
+	 * @return array
+	 */
+	public function getListItems()
+	{
+		return $this->listItems;
+	}
 
-    /**
-     * Set listItems
-     *
-     * @param array $value
-     * @return self
-     */
-    public function setListItems($value)
-    {
-        $this->listItems = $value;
+	/**
+	 * Set listItems
+	 *
+	 * @param array $value
+	 * @return self
+	 */
+	public function setListItems($value)
+	{
+		$this->listItems = $value;
 
-        return $this;
-    }
+		return $this;
+	}
 }

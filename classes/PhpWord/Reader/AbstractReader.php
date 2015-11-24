@@ -10,9 +10,9 @@
  * file that was distributed with this source code. For the full list of
  * contributors, visit https://github.com/PHPOffice/PHPWord/contributors.
  *
- * @link        https://github.com/PHPOffice/PHPWord
+ * @link		https://github.com/PHPOffice/PHPWord
  * @copyright   2010-2014 PHPWord contributors
- * @license     http://www.gnu.org/licenses/lgpl.txt LGPL version 3
+ * @license	 http://www.gnu.org/licenses/lgpl.txt LGPL version 3
  */
 
 namespace PhpOffice\PhpWord\Reader;
@@ -27,96 +27,96 @@ use PhpOffice\PhpWord\Exception\Exception;
  */
 abstract class AbstractReader implements ReaderInterface
 {
-    /**
-     * Read data only?
-     *
-     * @var bool
-     */
-    protected $readDataOnly = true;
+	/**
+	 * Read data only?
+	 *
+	 * @var bool
+	 */
+	protected $readDataOnly = true;
 
-    /**
-     * File pointer
-     *
-     * @var bool|resource
-     */
-    protected $fileHandle;
+	/**
+	 * File pointer
+	 *
+	 * @var bool|resource
+	 */
+	protected $fileHandle;
 
-    /**
-     * Read data only?
-     *
-     * @return bool
-     */
-    public function isReadDataOnly()
-    {
-        // return $this->readDataOnly;
-        return true;
-    }
+	/**
+	 * Read data only?
+	 *
+	 * @return bool
+	 */
+	public function isReadDataOnly()
+	{
+		// return $this->readDataOnly;
+		return true;
+	}
 
-    /**
-     * Set read data only
-     *
-     * @param bool $value
-     * @return self
-     */
-    public function setReadDataOnly($value = true)
-    {
-        $this->readDataOnly = $value;
-        return $this;
-    }
+	/**
+	 * Set read data only
+	 *
+	 * @param bool $value
+	 * @return self
+	 */
+	public function setReadDataOnly($value = true)
+	{
+		$this->readDataOnly = $value;
+		return $this;
+	}
 
-    /**
-     * Open file for reading
-     *
-     * @param string $filename
-     *
-     * @return resource
-     *
-     * @throws \PhpOffice\PhpWord\Exception\Exception
-     */
-    protected function openFile($filename)
-    {
-        // Check if file exists
-        if (!file_exists($filename) || !is_readable($filename)) {
-            throw new Exception("Could not open " . $filename . " for reading! File does not exist.");
-        }
+	/**
+	 * Open file for reading
+	 *
+	 * @param string $filename
+	 *
+	 * @return resource
+	 *
+	 * @throws \PhpOffice\PhpWord\Exception\Exception
+	 */
+	protected function openFile($filename)
+	{
+		// Check if file exists
+		if (!file_exists($filename) || !is_readable($filename)) {
+			throw new Exception("Could not open " . $filename . " for reading! File does not exist.");
+		}
 
-        // Open file
-        $this->fileHandle = fopen($filename, 'r');
-        if ($this->fileHandle === false) {
-            throw new Exception("Could not open file " . $filename . " for reading.");
-        }
-    }
+		// Open file
+		$this->fileHandle = fopen($filename, 'r');
+		if ($this->fileHandle === false) {
+			throw new Exception("Could not open file " . $filename . " for reading.");
+		}
+	}
 
-    /**
-     * Can the current ReaderInterface read the file?
-     *
-     * @param string $filename
-     * @return bool
-     */
-    public function canRead($filename)
-    {
-        // Check if file exists
-        try {
-            $this->openFile($filename);
-        } catch (Exception $e) {
-            return false;
-        }
-        if (is_resource($this->fileHandle)) {
-            fclose($this->fileHandle);
-        }
+	/**
+	 * Can the current ReaderInterface read the file?
+	 *
+	 * @param string $filename
+	 * @return bool
+	 */
+	public function canRead($filename)
+	{
+		// Check if file exists
+		try {
+			$this->openFile($filename);
+		} catch (Exception $e) {
+			return false;
+		}
+		if (is_resource($this->fileHandle)) {
+			fclose($this->fileHandle);
+		}
 
-        return true;
-    }
+		return true;
+	}
 
-    /**
-     * Read data only?
-     *
-     * @deprecated 0.10.0
-     *
-     * @codeCoverageIgnore
-     */
-    public function getReadDataOnly()
-    {
-        return $this->isReadDataOnly();
-    }
+	/**
+	 * Read data only?
+	 *
+	 * @deprecated 0.10.0
+	 *
+	 * @codeCoverageIgnore
+	 */
+	public function getReadDataOnly()
+	{
+		return $this->isReadDataOnly();
+	}
 }

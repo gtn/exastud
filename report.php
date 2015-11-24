@@ -56,14 +56,14 @@ block_exastud_print_header('report');
 $categories = ($periodid==0 || $periodid==block_exastud_check_active_period()->id) ? block_exastud_get_class_categories($class->id) : block_exastud_get_period_categories($periodid);
 
 if(!$classusers = $DB->get_records_sql('
-        SELECT s.id, s.studentid, sum(rp.value) as total
-        FROM {block_exastudclassstudents} s
-        JOIN {block_exastudclass} c ON s.classid = c.id
-        JOIN {block_exastudreview} r ON r.periodid = c.periodid AND r.studentid = s.studentid
-        JOIN {block_exastudreviewpos} rp ON rp.reviewid = r.id
-        WHERE s.classid=?
-        GROUP BY s.studentid
-        ORDER BY total DESC', array($class->id))) {
+		SELECT s.id, s.studentid, sum(rp.value) as total
+		FROM {block_exastudclassstudents} s
+		JOIN {block_exastudclass} c ON s.classid = c.id
+		JOIN {block_exastudreview} r ON r.periodid = c.periodid AND r.studentid = s.studentid
+		JOIN {block_exastudreviewpos} rp ON rp.reviewid = r.id
+		WHERE s.classid=?
+		GROUP BY s.studentid
+		ORDER BY total DESC', array($class->id))) {
 	print_error('nostudentstoreview','block_exastud');
 }
 

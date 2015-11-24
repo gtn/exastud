@@ -10,9 +10,9 @@
  * file that was distributed with this source code. For the full list of
  * contributors, visit https://github.com/PHPOffice/PHPWord/contributors.
  *
- * @link        https://github.com/PHPOffice/PHPWord
+ * @link		https://github.com/PHPOffice/PHPWord
  * @copyright   2010-2014 PHPWord contributors
- * @license     http://www.gnu.org/licenses/lgpl.txt LGPL version 3
+ * @license	 http://www.gnu.org/licenses/lgpl.txt LGPL version 3
  */
 
 namespace PhpOffice\PhpWord\Writer\HTML\Element;
@@ -27,54 +27,54 @@ use PhpOffice\PhpWord\Writer\AbstractWriter;
  */
 abstract class AbstractElement
 {
-    /**
-     * Parent writer
-     *
-     * @var \PhpOffice\PhpWord\Writer\AbstractWriter
-     */
-    protected $parentWriter;
+	/**
+	 * Parent writer
+	 *
+	 * @var \PhpOffice\PhpWord\Writer\AbstractWriter
+	 */
+	protected $parentWriter;
 
-    /**
-     * Element
-     *
-     * @var \PhpOffice\PhpWord\Element\AbstractElement
-     */
-    protected $element;
+	/**
+	 * Element
+	 *
+	 * @var \PhpOffice\PhpWord\Element\AbstractElement
+	 */
+	protected $element;
 
-    /**
-     * Without paragraph
-     *
-     * @var bool
-     */
-    protected $withoutP = false;
+	/**
+	 * Without paragraph
+	 *
+	 * @var bool
+	 */
+	protected $withoutP = false;
 
-    /**
-     * Write element
-     */
-    abstract public function write();
+	/**
+	 * Write element
+	 */
+	abstract public function write();
 
-    /**
-     * Create new instance
-     *
-     * @param \PhpOffice\PhpWord\Writer\AbstractWriter $parentWriter
-     * @param \PhpOffice\PhpWord\Element\AbstractElement $element
-     * @param bool $withoutP
-     */
-    public function __construct(AbstractWriter $parentWriter, Element $element, $withoutP = false)
-    {
-        $this->parentWriter = $parentWriter;
-        $this->element = $element;
-        $this->withoutP = $withoutP;
-    }
+	/**
+	 * Create new instance
+	 *
+	 * @param \PhpOffice\PhpWord\Writer\AbstractWriter $parentWriter
+	 * @param \PhpOffice\PhpWord\Element\AbstractElement $element
+	 * @param bool $withoutP
+	 */
+	public function __construct(AbstractWriter $parentWriter, Element $element, $withoutP = false)
+	{
+		$this->parentWriter = $parentWriter;
+		$this->element = $element;
+		$this->withoutP = $withoutP;
+	}
 
-    /**
-     * Set without paragraph.
-     *
-     * @param bool $value
-     * @return void
-     */
-    public function setWithoutP($value)
-    {
-        $this->withoutP = $value;
-    }
+	/**
+	 * Set without paragraph.
+	 *
+	 * @param bool $value
+	 * @return void
+	 */
+	public function setWithoutP($value)
+	{
+		$this->withoutP = $value;
+	}
 }

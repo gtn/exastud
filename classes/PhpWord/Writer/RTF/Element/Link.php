@@ -10,9 +10,9 @@
  * file that was distributed with this source code. For the full list of
  * contributors, visit https://github.com/PHPOffice/PHPWord/contributors.
  *
- * @link        https://github.com/PHPOffice/PHPWord
+ * @link		https://github.com/PHPOffice/PHPWord
  * @copyright   2010-2014 PHPWord contributors
- * @license     http://www.gnu.org/licenses/lgpl.txt LGPL version 3
+ * @license	 http://www.gnu.org/licenses/lgpl.txt LGPL version 3
  */
 
 namespace PhpOffice\PhpWord\Writer\RTF\Element;
@@ -24,27 +24,27 @@ namespace PhpOffice\PhpWord\Writer\RTF\Element;
  */
 class Link extends AbstractElement
 {
-    /**
-     * Write element
-     *
-     * @return string
-     */
-    public function write()
-    {
-        if (!$this->element instanceof \PhpOffice\PhpWord\Element\Link) {
-            return '';
-        }
+	/**
+	 * Write element
+	 *
+	 * @return string
+	 */
+	public function write()
+	{
+		if (!$this->element instanceof \PhpOffice\PhpWord\Element\Link) {
+			return '';
+		}
 
-        $this->getStyles();
+		$this->getStyles();
 
-        $content = '';
-        $content .= $this->writeOpening();
-        $content .= '{\field {\*\fldinst {HYPERLINK "' . $this->element->getSource() . '"}}{\\fldrslt {';
-        $content .= $this->writeFontStyle();
-        $content .= $this->writeText($this->element->getText());
-        $content .= '}}}';
-        $content .= $this->writeClosing();
+		$content = '';
+		$content .= $this->writeOpening();
+		$content .= '{\field {\*\fldinst {HYPERLINK "' . $this->element->getSource() . '"}}{\\fldrslt {';
+		$content .= $this->writeFontStyle();
+		$content .= $this->writeText($this->element->getText());
+		$content .= '}}}';
+		$content .= $this->writeClosing();
 
-        return $content;
-    }
+		return $content;
+	}
 }

@@ -10,9 +10,9 @@
  * file that was distributed with this source code. For the full list of
  * contributors, visit https://github.com/PHPOffice/PHPWord/contributors.
  *
- * @link        https://github.com/PHPOffice/PHPWord
+ * @link		https://github.com/PHPOffice/PHPWord
  * @copyright   2010-2014 PHPWord contributors
- * @license     http://www.gnu.org/licenses/lgpl.txt LGPL version 3
+ * @license	 http://www.gnu.org/licenses/lgpl.txt LGPL version 3
  */
 
 namespace PhpOffice\PhpWord\Writer\ODText\Element;
@@ -26,10 +26,10 @@ use PhpOffice\PhpWord\Writer\Word2007\Element\Container as Word2007Container;
  */
 class Container extends Word2007Container
 {
-    /**
-     * Namespace; Can't use __NAMESPACE__ in inherited class (ODText)
-     *
-     * @var string
-     */
-    protected $namespace = 'PhpOffice\\PhpWord\\Writer\\ODText\\Element';
+	/**
+	 * Namespace; Can't use __NAMESPACE__ in inherited class (ODText)
+	 *
+	 * @var string
+	 */
+	protected $namespace = 'PhpOffice\\PhpWord\\Writer\\ODText\\Element';
 }

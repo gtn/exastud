@@ -33,10 +33,10 @@ global $DB, $OUTPUT;
 define("MAX_USERS_PER_PAGE", 5000);
 
 $courseid = optional_param('courseid', 1, PARAM_INT); // Course ID
-$showall        = optional_param('showall', 0, PARAM_BOOL);
-$searchtext     = optional_param('searchtext', '', PARAM_TEXT); // search string
-$add            = optional_param('add', 0, PARAM_BOOL);
-$remove         = optional_param('remove', 0, PARAM_BOOL);
+$showall		= optional_param('showall', 0, PARAM_BOOL);
+$searchtext	 = optional_param('searchtext', '', PARAM_TEXT); // search string
+$add			= optional_param('add', 0, PARAM_BOOL);
+$remove		 = optional_param('remove', 0, PARAM_BOOL);
 
 require_login($courseid);
 
@@ -90,8 +90,8 @@ if ($frm = data_submitted()) {
 $select  = "username <> 'guest' AND deleted = 0 AND confirmed = 1";
 	
 if ($searchtext !== '') {   // Search for a subset of remaining users
-	//$LIKE      = $DB->sql_ilike();
-        $LIKE      = "LIKE";
+	//$LIKE	  = $DB->sql_ilike();
+		$LIKE	  = "LIKE";
 	$FULLNAME  = $DB->sql_fullname();
 
 	$selectsql = " AND ($FULLNAME $LIKE '%$searchtext%' OR email $LIKE '%$searchtext%') ";
@@ -104,7 +104,7 @@ $availableusers = $DB->get_records_sql('SELECT id, firstname, lastname, email
 									FROM {user}
 									WHERE '.$select.'
 									-- disabled, allow teacher to be assign more than once (eg. 2 different subjects)
-                                    -- AND id NOT IN (
+									-- AND id NOT IN (
 									--		 SELECT teacherid
 									--		 FROM {block_exastudclassteachers}
 									--			   WHERE classid = '.$class->id.'
@@ -114,12 +114,12 @@ $availableusers = $DB->get_records_sql('SELECT id, firstname, lastname, email
 echo '<div id="block_exastud">';
 
 $classusers = $DB->get_recordset_sql("
-    SELECT ct.id, ".user_picture::fields('u', null, 'userid').", s.title AS subject
-    FROM {user} u
-    JOIN {block_exastudclassteachers} ct ON ct.teacherid=u.id
-    LEFT JOIN {block_exastudsubjects} s ON ct.subjectid = s.id
-    WHERE ct.classid=?
-    ORDER BY s.sorting, u.lastname, u.firstname
+	SELECT ct.id, ".user_picture::fields('u', null, 'userid').", s.title AS subject
+	FROM {user} u
+	JOIN {block_exastudclassteachers} ct ON ct.teacherid=u.id
+	LEFT JOIN {block_exastudsubjects} s ON ct.subjectid = s.id
+	WHERE ct.classid=?
+	ORDER BY s.sorting, u.lastname, u.firstname
 ", array($class->id));
 
 echo $OUTPUT->box_start();

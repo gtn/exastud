@@ -10,9 +10,9 @@
  * file that was distributed with this source code. For the full list of
  * contributors, visit https://github.com/PHPOffice/PHPWord/contributors.
  *
- * @link        https://github.com/PHPOffice/PHPWord
+ * @link		https://github.com/PHPOffice/PHPWord
  * @copyright   2010-2014 PHPWord contributors
- * @license     http://www.gnu.org/licenses/lgpl.txt LGPL version 3
+ * @license	 http://www.gnu.org/licenses/lgpl.txt LGPL version 3
  */
 
 namespace PhpOffice\PhpWord\Metadata;
@@ -22,557 +22,557 @@ namespace PhpOffice\PhpWord\Metadata;
  */
 class DocInfo
 {
-    /** @const string Property type constants */
-    const PROPERTY_TYPE_BOOLEAN = 'b';
-    const PROPERTY_TYPE_INTEGER = 'i';
-    const PROPERTY_TYPE_FLOAT = 'f';
-    const PROPERTY_TYPE_DATE = 'd';
-    const PROPERTY_TYPE_STRING = 's';
-    const PROPERTY_TYPE_UNKNOWN = 'u';
+	/** @const string Property type constants */
+	const PROPERTY_TYPE_BOOLEAN = 'b';
+	const PROPERTY_TYPE_INTEGER = 'i';
+	const PROPERTY_TYPE_FLOAT = 'f';
+	const PROPERTY_TYPE_DATE = 'd';
+	const PROPERTY_TYPE_STRING = 's';
+	const PROPERTY_TYPE_UNKNOWN = 'u';
 
-    /**
-     * Creator
-     *
-     * @var string
-     */
-    private $creator;
+	/**
+	 * Creator
+	 *
+	 * @var string
+	 */
+	private $creator;
 
-    /**
-     * LastModifiedBy
-     *
-     * @var string
-     */
-    private $lastModifiedBy;
+	/**
+	 * LastModifiedBy
+	 *
+	 * @var string
+	 */
+	private $lastModifiedBy;
 
-    /**
-     * Created
-     *
-     * @var int
-     */
-    private $created;
+	/**
+	 * Created
+	 *
+	 * @var int
+	 */
+	private $created;
 
-    /**
-     * Modified
-     *
-     * @var int
-     */
-    private $modified;
+	/**
+	 * Modified
+	 *
+	 * @var int
+	 */
+	private $modified;
 
-    /**
-     * Title
-     *
-     * @var string
-     */
-    private $title;
+	/**
+	 * Title
+	 *
+	 * @var string
+	 */
+	private $title;
 
-    /**
-     * Description
-     *
-     * @var string
-     */
-    private $description;
+	/**
+	 * Description
+	 *
+	 * @var string
+	 */
+	private $description;
 
-    /**
-     * Subject
-     *
-     * @var string
-     */
-    private $subject;
+	/**
+	 * Subject
+	 *
+	 * @var string
+	 */
+	private $subject;
 
-    /**
-     * Keywords
-     *
-     * @var string
-     */
-    private $keywords;
+	/**
+	 * Keywords
+	 *
+	 * @var string
+	 */
+	private $keywords;
 
-    /**
-     * Category
-     *
-     * @var string
-     */
-    private $category;
+	/**
+	 * Category
+	 *
+	 * @var string
+	 */
+	private $category;
 
-    /**
-     * Company
-     *
-     * @var string
-     */
-    private $company;
+	/**
+	 * Company
+	 *
+	 * @var string
+	 */
+	private $company;
 
-    /**
-     * Manager
-     *
-     * @var string
-     */
-    private $manager;
+	/**
+	 * Manager
+	 *
+	 * @var string
+	 */
+	private $manager;
 
-    /**
-     * Custom Properties
-     *
-     * @var array
-     */
-    private $customProperties = array();
+	/**
+	 * Custom Properties
+	 *
+	 * @var array
+	 */
+	private $customProperties = array();
 
-    /**
-     * Create new instance
-     */
-    public function __construct()
-    {
-        $this->creator        = '';
-        $this->lastModifiedBy = $this->creator;
-        $this->created        = time();
-        $this->modified       = time();
-        $this->title          = '';
-        $this->subject        = '';
-        $this->description    = '';
-        $this->keywords       = '';
-        $this->category       = '';
-        $this->company        = '';
-        $this->manager        = '';
-    }
+	/**
+	 * Create new instance
+	 */
+	public function __construct()
+	{
+		$this->creator		= '';
+		$this->lastModifiedBy = $this->creator;
+		$this->created		= time();
+		$this->modified	   = time();
+		$this->title		  = '';
+		$this->subject		= '';
+		$this->description	= '';
+		$this->keywords	   = '';
+		$this->category	   = '';
+		$this->company		= '';
+		$this->manager		= '';
+	}
 
-    /**
-     * Get Creator
-     *
-     * @return string
-     */
-    public function getCreator()
-    {
-        return $this->creator;
-    }
+	/**
+	 * Get Creator
+	 *
+	 * @return string
+	 */
+	public function getCreator()
+	{
+		return $this->creator;
+	}
 
-    /**
-     * Set Creator
-     *
-     * @param  string $value
-     * @return self
-     */
-    public function setCreator($value = '')
-    {
-        $this->creator = $this->setValue($value, '');
+	/**
+	 * Set Creator
+	 *
+	 * @param  string $value
+	 * @return self
+	 */
+	public function setCreator($value = '')
+	{
+		$this->creator = $this->setValue($value, '');
 
-        return $this;
-    }
+		return $this;
+	}
 
-    /**
-     * Get Last Modified By
-     *
-     * @return string
-     */
-    public function getLastModifiedBy()
-    {
-        return $this->lastModifiedBy;
-    }
+	/**
+	 * Get Last Modified By
+	 *
+	 * @return string
+	 */
+	public function getLastModifiedBy()
+	{
+		return $this->lastModifiedBy;
+	}
 
-    /**
-     * Set Last Modified By
-     *
-     * @param  string $value
-     * @return self
-     */
-    public function setLastModifiedBy($value = '')
-    {
-        $this->lastModifiedBy = $this->setValue($value, $this->creator);
+	/**
+	 * Set Last Modified By
+	 *
+	 * @param  string $value
+	 * @return self
+	 */
+	public function setLastModifiedBy($value = '')
+	{
+		$this->lastModifiedBy = $this->setValue($value, $this->creator);
 
-        return $this;
-    }
+		return $this;
+	}
 
-    /**
-     * Get Created
-     *
-     * @return int
-     */
-    public function getCreated()
-    {
-        return $this->created;
-    }
+	/**
+	 * Get Created
+	 *
+	 * @return int
+	 */
+	public function getCreated()
+	{
+		return $this->created;
+	}
 
-    /**
-     * Set Created
-     *
-     * @param  int $value
-     * @return self
-     */
-    public function setCreated($value = null)
-    {
-        $this->created = $this->setValue($value, time());
+	/**
+	 * Set Created
+	 *
+	 * @param  int $value
+	 * @return self
+	 */
+	public function setCreated($value = null)
+	{
+		$this->created = $this->setValue($value, time());
 
-        return $this;
-    }
+		return $this;
+	}
 
-    /**
-     * Get Modified
-     *
-     * @return int
-     */
-    public function getModified()
-    {
-        return $this->modified;
-    }
+	/**
+	 * Get Modified
+	 *
+	 * @return int
+	 */
+	public function getModified()
+	{
+		return $this->modified;
+	}
 
-    /**
-     * Set Modified
-     *
-     * @param  int $value
-     * @return self
-     */
-    public function setModified($value = null)
-    {
-        $this->modified = $this->setValue($value, time());
+	/**
+	 * Set Modified
+	 *
+	 * @param  int $value
+	 * @return self
+	 */
+	public function setModified($value = null)
+	{
+		$this->modified = $this->setValue($value, time());
 
-        return $this;
-    }
+		return $this;
+	}
 
-    /**
-     * Get Title
-     *
-     * @return string
-     */
-    public function getTitle()
-    {
-        return $this->title;
-    }
+	/**
+	 * Get Title
+	 *
+	 * @return string
+	 */
+	public function getTitle()
+	{
+		return $this->title;
+	}
 
-    /**
-     * Set Title
-     *
-     * @param  string $value
-     * @return self
-     */
-    public function setTitle($value = '')
-    {
-        $this->title = $this->setValue($value, '');
+	/**
+	 * Set Title
+	 *
+	 * @param  string $value
+	 * @return self
+	 */
+	public function setTitle($value = '')
+	{
+		$this->title = $this->setValue($value, '');
 
-        return $this;
-    }
+		return $this;
+	}
 
-    /**
-     * Get Description
-     *
-     * @return string
-     */
-    public function getDescription()
-    {
-        return $this->description;
-    }
+	/**
+	 * Get Description
+	 *
+	 * @return string
+	 */
+	public function getDescription()
+	{
+		return $this->description;
+	}
 
-    /**
-     * Set Description
-     *
-     * @param  string $value
-     * @return self
-     */
-    public function setDescription($value = '')
-    {
-        $this->description = $this->setValue($value, '');
+	/**
+	 * Set Description
+	 *
+	 * @param  string $value
+	 * @return self
+	 */
+	public function setDescription($value = '')
+	{
+		$this->description = $this->setValue($value, '');
 
-        return $this;
-    }
+		return $this;
+	}
 
-    /**
-     * Get Subject
-     *
-     * @return string
-     */
-    public function getSubject()
-    {
-        return $this->subject;
-    }
+	/**
+	 * Get Subject
+	 *
+	 * @return string
+	 */
+	public function getSubject()
+	{
+		return $this->subject;
+	}
 
-    /**
-     * Set Subject
-     *
-     * @param  string $value
-     * @return self
-     */
-    public function setSubject($value = '')
-    {
-        $this->subject = $this->setValue($value, '');
+	/**
+	 * Set Subject
+	 *
+	 * @param  string $value
+	 * @return self
+	 */
+	public function setSubject($value = '')
+	{
+		$this->subject = $this->setValue($value, '');
 
-        return $this;
-    }
+		return $this;
+	}
 
-    /**
-     * Get Keywords
-     *
-     * @return string
-     */
-    public function getKeywords()
-    {
-        return $this->keywords;
-    }
+	/**
+	 * Get Keywords
+	 *
+	 * @return string
+	 */
+	public function getKeywords()
+	{
+		return $this->keywords;
+	}
 
-    /**
-     * Set Keywords
-     *
-     * @param string $value
-     * @return self
-     */
-    public function setKeywords($value = '')
-    {
-        $this->keywords = $this->setValue($value, '');
+	/**
+	 * Set Keywords
+	 *
+	 * @param string $value
+	 * @return self
+	 */
+	public function setKeywords($value = '')
+	{
+		$this->keywords = $this->setValue($value, '');
 
-        return $this;
-    }
+		return $this;
+	}
 
-    /**
-     * Get Category
-     *
-     * @return string
-     */
-    public function getCategory()
-    {
-        return $this->category;
-    }
+	/**
+	 * Get Category
+	 *
+	 * @return string
+	 */
+	public function getCategory()
+	{
+		return $this->category;
+	}
 
-    /**
-     * Set Category
-     *
-     * @param string $value
-     * @return self
-     */
-    public function setCategory($value = '')
-    {
-        $this->category = $this->setValue($value, '');
+	/**
+	 * Set Category
+	 *
+	 * @param string $value
+	 * @return self
+	 */
+	public function setCategory($value = '')
+	{
+		$this->category = $this->setValue($value, '');
 
-        return $this;
-    }
+		return $this;
+	}
 
-    /**
-     * Get Company
-     *
-     * @return string
-     */
-    public function getCompany()
-    {
-        return $this->company;
-    }
+	/**
+	 * Get Company
+	 *
+	 * @return string
+	 */
+	public function getCompany()
+	{
+		return $this->company;
+	}
 
-    /**
-     * Set Company
-     *
-     * @param string $value
-     * @return self
-     */
-    public function setCompany($value = '')
-    {
-        $this->company = $this->setValue($value, '');
+	/**
+	 * Set Company
+	 *
+	 * @param string $value
+	 * @return self
+	 */
+	public function setCompany($value = '')
+	{
+		$this->company = $this->setValue($value, '');
 
-        return $this;
-    }
+		return $this;
+	}
 
-    /**
-     * Get Manager
-     *
-     * @return string
-     */
-    public function getManager()
-    {
-        return $this->manager;
-    }
+	/**
+	 * Get Manager
+	 *
+	 * @return string
+	 */
+	public function getManager()
+	{
+		return $this->manager;
+	}
 
-    /**
-     * Set Manager
-     *
-     * @param string $value
-     * @return self
-     */
-    public function setManager($value = '')
-    {
-        $this->manager = $this->setValue($value, '');
+	/**
+	 * Set Manager
+	 *
+	 * @param string $value
+	 * @return self
+	 */
+	public function setManager($value = '')
+	{
+		$this->manager = $this->setValue($value, '');
 
-        return $this;
-    }
+		return $this;
+	}
 
-    /**
-     * Get a List of Custom Property Names
-     *
-     * @return array of string
-     */
-    public function getCustomProperties()
-    {
-        return array_keys($this->customProperties);
-    }
+	/**
+	 * Get a List of Custom Property Names
+	 *
+	 * @return array of string
+	 */
+	public function getCustomProperties()
+	{
+		return array_keys($this->customProperties);
+	}
 
-    /**
-     * Check if a Custom Property is defined
-     *
-     * @param string $propertyName
-     * @return boolean
-     */
-    public function isCustomPropertySet($propertyName)
-    {
-        return isset($this->customProperties[$propertyName]);
-    }
+	/**
+	 * Check if a Custom Property is defined
+	 *
+	 * @param string $propertyName
+	 * @return boolean
+	 */
+	public function isCustomPropertySet($propertyName)
+	{
+		return isset($this->customProperties[$propertyName]);
+	}
 
-    /**
-     * Get a Custom Property Value
-     *
-     * @param string $propertyName
-     * @return string
-     */
-    public function getCustomPropertyValue($propertyName)
-    {
-        if ($this->isCustomPropertySet($propertyName)) {
-            return $this->customProperties[$propertyName]['value'];
-        } else {
-            return null;
-        }
-    }
+	/**
+	 * Get a Custom Property Value
+	 *
+	 * @param string $propertyName
+	 * @return string
+	 */
+	public function getCustomPropertyValue($propertyName)
+	{
+		if ($this->isCustomPropertySet($propertyName)) {
+			return $this->customProperties[$propertyName]['value'];
+		} else {
+			return null;
+		}
+	}
 
-    /**
-     * Get a Custom Property Type
-     *
-     * @param string $propertyName
-     * @return string
-     */
-    public function getCustomPropertyType($propertyName)
-    {
-        if ($this->isCustomPropertySet($propertyName)) {
-            return $this->customProperties[$propertyName]['type'];
-        } else {
-            return null;
-        }
-    }
+	/**
+	 * Get a Custom Property Type
+	 *
+	 * @param string $propertyName
+	 * @return string
+	 */
+	public function getCustomPropertyType($propertyName)
+	{
+		if ($this->isCustomPropertySet($propertyName)) {
+			return $this->customProperties[$propertyName]['type'];
+		} else {
+			return null;
+		}
+	}
 
-    /**
-     * Set a Custom Property
-     *
-     * @param string $propertyName
-     * @param mixed $propertyValue
-     * @param string $propertyType
-     *   'i': Integer
-     *   'f': Floating Point
-     *   's': String
-     *   'd': Date/Time
-     *   'b': Boolean
-     * @return self
-     */
-    public function setCustomProperty($propertyName, $propertyValue = '', $propertyType = null)
-    {
-        $propertyTypes = array(
-            self::PROPERTY_TYPE_INTEGER,
-            self::PROPERTY_TYPE_FLOAT,
-            self::PROPERTY_TYPE_STRING,
-            self::PROPERTY_TYPE_DATE,
-            self::PROPERTY_TYPE_BOOLEAN
-        );
-        if (($propertyType === null) || (!in_array($propertyType, $propertyTypes))) {
-            if ($propertyValue === null) {
-                $propertyType = self::PROPERTY_TYPE_STRING;
-            } elseif (is_float($propertyValue)) {
-                $propertyType = self::PROPERTY_TYPE_FLOAT;
-            } elseif (is_int($propertyValue)) {
-                $propertyType = self::PROPERTY_TYPE_INTEGER;
-            } elseif (is_bool($propertyValue)) {
-                $propertyType = self::PROPERTY_TYPE_BOOLEAN;
-            } else {
-                $propertyType = self::PROPERTY_TYPE_STRING;
-            }
-        }
+	/**
+	 * Set a Custom Property
+	 *
+	 * @param string $propertyName
+	 * @param mixed $propertyValue
+	 * @param string $propertyType
+	 *   'i': Integer
+	 *   'f': Floating Point
+	 *   's': String
+	 *   'd': Date/Time
+	 *   'b': Boolean
+	 * @return self
+	 */
+	public function setCustomProperty($propertyName, $propertyValue = '', $propertyType = null)
+	{
+		$propertyTypes = array(
+			self::PROPERTY_TYPE_INTEGER,
+			self::PROPERTY_TYPE_FLOAT,
+			self::PROPERTY_TYPE_STRING,
+			self::PROPERTY_TYPE_DATE,
+			self::PROPERTY_TYPE_BOOLEAN
+		);
+		if (($propertyType === null) || (!in_array($propertyType, $propertyTypes))) {
+			if ($propertyValue === null) {
+				$propertyType = self::PROPERTY_TYPE_STRING;
+			} elseif (is_float($propertyValue)) {
+				$propertyType = self::PROPERTY_TYPE_FLOAT;
+			} elseif (is_int($propertyValue)) {
+				$propertyType = self::PROPERTY_TYPE_INTEGER;
+			} elseif (is_bool($propertyValue)) {
+				$propertyType = self::PROPERTY_TYPE_BOOLEAN;
+			} else {
+				$propertyType = self::PROPERTY_TYPE_STRING;
+			}
+		}
 
-        $this->customProperties[$propertyName] = array(
-            'value' => $propertyValue,
-            'type' => $propertyType
-        );
-        return $this;
-    }
+		$this->customProperties[$propertyName] = array(
+			'value' => $propertyValue,
+			'type' => $propertyType
+		);
+		return $this;
+	}
 
-    /**
-     * Convert document property based on type
-     *
-     * @param string $propertyValue
-     * @param string $propertyType
-     * @return mixed
-     */
-    public static function convertProperty($propertyValue, $propertyType)
-    {
-        $conversion = self::getConversion($propertyType);
+	/**
+	 * Convert document property based on type
+	 *
+	 * @param string $propertyValue
+	 * @param string $propertyType
+	 * @return mixed
+	 */
+	public static function convertProperty($propertyValue, $propertyType)
+	{
+		$conversion = self::getConversion($propertyType);
 
-        switch ($conversion) {
-            case 'empty': // Empty
-                return '';
-            case 'null': // Null
-                return null;
-            case 'int': // Signed integer
-                return (int) $propertyValue;
-            case 'uint': // Unsigned integer
-                return abs((int) $propertyValue);
-            case 'float': // Float
-                return (float) $propertyValue;
-            case 'date': // Date
-                return strtotime($propertyValue);
-            case 'bool': // Boolean
-                return ($propertyValue == 'true') ? true : false;
-        }
+		switch ($conversion) {
+			case 'empty': // Empty
+				return '';
+			case 'null': // Null
+				return null;
+			case 'int': // Signed integer
+				return (int) $propertyValue;
+			case 'uint': // Unsigned integer
+				return abs((int) $propertyValue);
+			case 'float': // Float
+				return (float) $propertyValue;
+			case 'date': // Date
+				return strtotime($propertyValue);
+			case 'bool': // Boolean
+				return ($propertyValue == 'true') ? true : false;
+		}
 
-        return $propertyValue;
-    }
+		return $propertyValue;
+	}
 
-    /**
-     * Convert document property type
-     *
-     * @param string $propertyType
-     * @return string
-     */
-    public static function convertPropertyType($propertyType)
-    {
-        $typeGroups = array(
-            self::PROPERTY_TYPE_INTEGER => array('i1', 'i2', 'i4', 'i8', 'int', 'ui1', 'ui2', 'ui4', 'ui8', 'uint'),
-            self::PROPERTY_TYPE_FLOAT   => array('r4', 'r8', 'decimal'),
-            self::PROPERTY_TYPE_STRING  => array('empty', 'null', 'lpstr', 'lpwstr', 'bstr'),
-            self::PROPERTY_TYPE_DATE    => array('date', 'filetime'),
-            self::PROPERTY_TYPE_BOOLEAN => array('bool'),
-        );
-        foreach ($typeGroups as $groupId => $groupMembers) {
-            if (in_array($propertyType, $groupMembers)) {
-                return $groupId;
-            }
-        }
+	/**
+	 * Convert document property type
+	 *
+	 * @param string $propertyType
+	 * @return string
+	 */
+	public static function convertPropertyType($propertyType)
+	{
+		$typeGroups = array(
+			self::PROPERTY_TYPE_INTEGER => array('i1', 'i2', 'i4', 'i8', 'int', 'ui1', 'ui2', 'ui4', 'ui8', 'uint'),
+			self::PROPERTY_TYPE_FLOAT   => array('r4', 'r8', 'decimal'),
+			self::PROPERTY_TYPE_STRING  => array('empty', 'null', 'lpstr', 'lpwstr', 'bstr'),
+			self::PROPERTY_TYPE_DATE	=> array('date', 'filetime'),
+			self::PROPERTY_TYPE_BOOLEAN => array('bool'),
+		);
+		foreach ($typeGroups as $groupId => $groupMembers) {
+			if (in_array($propertyType, $groupMembers)) {
+				return $groupId;
+			}
+		}
 
-        return self::PROPERTY_TYPE_UNKNOWN;
-    }
+		return self::PROPERTY_TYPE_UNKNOWN;
+	}
 
-    /**
-     * Set default for null and empty value
-     *
-     * @param mixed $value
-     * @param mixed $default
-     * @return mixed
-     */
-    private function setValue($value, $default)
-    {
-        if ($value === null || $value == '') {
-            $value = $default;
-        }
+	/**
+	 * Set default for null and empty value
+	 *
+	 * @param mixed $value
+	 * @param mixed $default
+	 * @return mixed
+	 */
+	private function setValue($value, $default)
+	{
+		if ($value === null || $value == '') {
+			$value = $default;
+		}
 
-        return $value;
-    }
+		return $value;
+	}
 
-    /**
-     * Get conversion model depending on property type
-     *
-     * @param string $propertyType
-     * @return string
-     */
-    private static function getConversion($propertyType)
-    {
-        $conversions = array(
-            'empty' => array('empty'),
-            'null'  => array('null'),
-            'int'   => array('i1', 'i2', 'i4', 'i8', 'int'),
-            'uint'  => array('ui1', 'ui2', 'ui4', 'ui8', 'uint'),
-            'float' => array('r4', 'r8', 'decimal'),
-            'bool'  => array('bool'),
-            'date'  => array('date', 'filetime'),
-        );
-        foreach ($conversions as $conversion => $types) {
-            if (in_array($propertyType, $types)) {
-                return $conversion;
-            }
-        }
+	/**
+	 * Get conversion model depending on property type
+	 *
+	 * @param string $propertyType
+	 * @return string
+	 */
+	private static function getConversion($propertyType)
+	{
+		$conversions = array(
+			'empty' => array('empty'),
+			'null'  => array('null'),
+			'int'   => array('i1', 'i2', 'i4', 'i8', 'int'),
+			'uint'  => array('ui1', 'ui2', 'ui4', 'ui8', 'uint'),
+			'float' => array('r4', 'r8', 'decimal'),
+			'bool'  => array('bool'),
+			'date'  => array('date', 'filetime'),
+		);
+		foreach ($conversions as $conversion => $types) {
+			if (in_array($propertyType, $types)) {
+				return $conversion;
+			}
+		}
 
-        return 'string';
-    }
+		return 'string';
+	}
 }
