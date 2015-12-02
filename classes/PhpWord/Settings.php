@@ -370,7 +370,7 @@ class Settings
 	{
 		// Get config file
 		$configFile = null;
-		$configPath = __DIR__ . '/../../';
+		$configPath = __DIR__.'/../../';
 		if ($filename !== null) {
 			$files = array($filename);
 		} else {

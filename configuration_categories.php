@@ -129,7 +129,7 @@ $classcategories = block_exastud_get_class_categories($class->id);
 echo $OUTPUT->box_start();
 $form_target = 'configuration_categories.php?courseid='.$courseid;
 $userlistType = 'configurations';
-require dirname(__FILE__).'/lib/configuration_categories.inc.php';
+require __DIR__.'/lib/configuration_categories.inc.php';
 echo $OUTPUT->box_end();
 
 echo $OUTPUT->single_button($CFG->wwwroot . '/blocks/exastud/configuration.php?courseid='.$courseid,

@@ -29,8 +29,8 @@
  *
  *  This copyright notice MUST APPEAR in all copies of the script!
 */
-require_once __DIR__ . '/lib/lib.php';
-require_once __DIR__ . '/../moodleblock.class.php';
+require_once __DIR__.'/lib/lib.php';
+require_once __DIR__.'/../moodleblock.class.php';
 
 class block_exastud extends block_list {
 	

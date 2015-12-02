@@ -122,7 +122,7 @@ if ($usertoclasses) {
 echo $OUTPUT->box_start();
 $form_target = 'configuration_classmembers.php?courseid='.$courseid;
 $userlistType = 'members';
-require dirname(__FILE__).'/lib/configuration_userlist.inc.php';
+require __DIR__.'/lib/configuration_userlist.inc.php';
 echo $OUTPUT->box_end();
 	
 echo $OUTPUT->single_button($CFG->wwwroot . '/blocks/exastud/configuration.php?courseid='.$courseid,

@@ -1,5 +1,5 @@
 <?php
-require_once dirname(__FILE__).'/inc.php';
+require_once __DIR__.'/inc.php';
 
 $file = block_exastud_get_main_logo();
 
