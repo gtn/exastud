@@ -235,6 +235,8 @@ if (optional_param('output', '', PARAM_TEXT) == 'docx') {
 	$temp_file = tempnam($CFG->tempdir, 'PHPWord');
 	$objWriter->save($temp_file);
 	
+	require_once $CFG->dirroot.'/lib/filelib.php';
+	
 	// Your browser will name the file "myFile.docx"
 	// regardless of what it's named on the server
 	send_temp_file($temp_file, "Lernstandsbericht ".fullname($student).".docx");
