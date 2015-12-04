@@ -171,6 +171,13 @@ if (optional_param('output', '', PARAM_TEXT) == 'template_test') {
 }
 
 if (optional_param('output', '', PARAM_TEXT) == 'docx') {
+	$birthday = $DB->get_field_sql("SELECT uid.data
+		FROM {user_info_data} uid
+		JOIN {user_info_field} uif ON uif.id=uid.fieldid AND uif.shortname='dateofbirth'
+		WHERE uid.userid=?
+		", [$student->id]);
+	
+	
 	require_once __DIR__.'/classes/PhpWord/Autoloader.php';
 	\PhpOffice\PhpWord\Autoloader::register();
 	
@@ -194,7 +201,7 @@ if (optional_param('output', '', PARAM_TEXT) == 'docx') {
 	$table->addCell($pageWidthTwips-2500)->addText($student->firstname.', '.$student->lastname);
 	$table->addRow();
 	$table->addCell()->addText('Geburtsdatum');
-	$table->addCell();
+	$table->addCell()->addText(!empty($birthday)?strftime('%d. %B %Y', $birthday):'');
 	$table->addRow();
 	$table->addCell()->addText('Lerngruppe');
 	$table->addCell();
@@ -219,7 +226,8 @@ if (optional_param('output', '', PARAM_TEXT) == 'docx') {
 		}
 	}
 	
-	// echo \PhpOffice\PhpWord\IOFactory::createWriter($phpWord, 'HTML')->getContent();
+	// testing:
+	//echo \PhpOffice\PhpWord\IOFactory::createWriter($phpWord, 'HTML')->getContent(); exit;
 
 	$objWriter = \PhpOffice\PhpWord\IOFactory::createWriter($phpWord, 'Word2007');
 
