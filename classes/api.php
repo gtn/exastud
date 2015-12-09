@@ -1,10 +1,12 @@
 <?php
 
+namespace block_exastud;
+
 defined('MOODLE_INTERNAL') || die();
 
 require_once __DIR__.'/../lib/lib.php';
 
-class block_exastud_api {
+class api {
 	static function active() {
 		global $DB;
 		
@@ -42,7 +44,7 @@ class block_exastud_api {
 		$class = reset($classes);
 		
 		return (object)[
-			'url' => new block_exacomp\url('/blocks/exastud/review_student.php', [
+			'url' => new url('/blocks/exastud/review_student.php', [
 						'courseid' => $COURSE->id,
 						'classid' => $class->classid,
 						'subjectid' => $class->subjectid,
