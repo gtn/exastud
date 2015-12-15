@@ -207,25 +207,91 @@ if (optional_param('output', '', PARAM_TEXT) == 'docx') {
 	$table->addCell();
 	
 	$section->addPageBreak();
-	$section->addText(' ');
+	$section->addText(''); // page break needs an empty line
 
-	for ($i = 0; $i < 5; $i++) {
-		if ($i > 0) $section->addText('Zum testen, werden die Reviews wiederholt ausgegeben');
+	$header_body_table = function($header, $body) use ($section, $pageWidthTwips) {
+		// äußere tabelle, um cantSplit zu setzen (dadurch wird innere tabelle auf einer seite gehalten)
+		$table = $section->addTable(['borderSize'=>0, 'borderColor' => 'FFFFFF', 'cellMargin'=>0]);
+		$table->addRow(null, ['cantSplit'=>true]);
+		$cell = $table->addCell($pageWidthTwips + 100);
+
+		// innere tabelle
+		$table = $cell->addTable(['borderSize' => 6, 'borderColor' => 'black', 'cellMargin' => 80]);
+		$table->addRow();
+		$table->addCell($pageWidthTwips, ['bgColor' => 'F2F2F2'])->addText($header);
+		$table->addRow();
+		\PhpOffice\PhpWord\Shared\Html::addHtml($table->addCell($pageWidthTwips), $body);
+
+		return $table;
+	};
+
+	//for ($i = 0; $i < 5; $i++) {
+		//if ($i > 0) $section->addText('Zum testen, werden die Reviews wiederholt ausgegeben');
 		foreach($textReviews as $textReview) {
-			// äußere tabelle, um cantSplit zu setzen (dadurch wird innere tabelle auf einer seite gehalten)
-			$table = $section->addTable(['borderSize'=>0, 'borderColor' => 'FFFFFF', 'cellMargin'=>0]);
-			$table->addRow(null, ['cantSplit'=>true]);
-			$cell = $table->addCell($pageWidthTwips + 100);
-			
-			// innere tabelle
-			$table = $cell->addTable(['borderSize' => 6, 'borderColor' => 'black', 'cellMargin' => 80]);
-			$table->addRow();
-			$table->addCell($pageWidthTwips, ['bgColor' => 'F2F2F2'])->addText($textReview->title);
-			$table->addRow();
-			\PhpOffice\PhpWord\Shared\Html::addHtml($table->addCell($pageWidthTwips), $textReview->review);
+			$header_body_table($textReview->title, $textReview->review);
 		}
-	}
-	
+	//}
+
+	$section->addPageBreak();
+	$section->addText(''); // page break needs an empty line
+
+	$table = $header_body_table('Ateliers', "");
+	$table->getRows()[1]->getCells()[0]->addText('');
+	$table->getRows()[1]->getCells()[0]->addText('');
+	$table->getRows()[1]->getCells()[0]->addText('');
+	$table = $header_body_table('Arbeitsgemeinschaften', "");
+	$table->getRows()[1]->getCells()[0]->addText('');
+	$table->getRows()[1]->getCells()[0]->addText('');
+	$table->getRows()[1]->getCells()[0]->addText('');
+	$table = $header_body_table('Besondere Stärken', "");
+	$table->getRows()[1]->getCells()[0]->addText('');
+	$table->getRows()[1]->getCells()[0]->addText('');
+	$table->getRows()[1]->getCells()[0]->addText('');
+	$table = $header_body_table('Anlagen', "Kompetenzprofil<br />Zielvereinbarungen");
+
+	$section->addText('');
+	$section->addText('');
+	$section->addText("Lernentwicklungsgespräch(-e) Datum: _________________");
+	$section->addText('');
+	$section->addText("[Ort], den ______________");
+	$section->addText('');
+	$section->addText('');
+	$section->addText('');
+	$section->addText("Unterschrift", ['bold' => true]);
+	$section->addText('');
+
+	$table = $section->addTable(['borderSize' => 6, 'borderColor' => 'black', 'cellMargin' => 80]);
+	$table->addRow();
+	$cell = $table->addCell($pageWidthTwips/4);
+	$cell->addText('');
+	$cell->addText('');
+	$cell->addText('');
+	$cell = $table->addCell($pageWidthTwips/4);
+	$cell->addText('');
+	$cell->addText('');
+	$cell->addText('');
+	$cell = $table->addCell($pageWidthTwips/4);
+	$cell->addText('');
+	$cell->addText('');
+	$cell->addText('');
+	$cell = $table->addCell($pageWidthTwips/4);
+	$cell->addText('');
+	$cell->addText('');
+	$cell->addText('');
+	$table->addRow();
+	$cell = $table->addCell($pageWidthTwips/4);
+	$cell->addText('Schüler /', null, ['align'=>'center']);
+	$cell->addText('Schülerin', null, ['align'=>'center']);
+	$cell = $table->addCell($pageWidthTwips/4);
+	$cell->addText('Erziehungsberechtiger /', null, ['align'=>'center']);
+	$cell->addText('Erziehungsberechtige', null, ['align'=>'center']);
+	$cell = $table->addCell($pageWidthTwips/4);
+	$cell->addText('Lernbegleiter /', null, ['align'=>'center']);
+	$cell->addText('Lernbegleiterin', null, ['align'=>'center']);
+	$cell = $table->addCell($pageWidthTwips/4);
+	$cell->addText('Schulleiter /', null, ['align'=>'center']);
+	$cell->addText('Schulleiterin', null, ['align'=>'center']);
+
 	// testing:
 	//echo \PhpOffice\PhpWord\IOFactory::createWriter($phpWord, 'HTML')->getContent(); exit;
 
