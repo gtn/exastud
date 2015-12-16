@@ -105,7 +105,7 @@ if ($studentedit = $studentform->get_data()) {
 		
 		block_exastud\db::insert_or_update_record('block_exastudreviewpos',
 			["value"=>$studentedit->{$category->id.'_'.$category->source}],
-			["reviewid"=>$reviewdata->id,"categoryid"=>$category->id,"categorysource"=>$category->source]);
+			["reviewid"=>$newreview->id,"categoryid"=>$category->id,"categorysource"=>$category->source]);
 	}
 
 	redirect($returnurl);
