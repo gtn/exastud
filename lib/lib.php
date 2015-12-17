@@ -646,6 +646,19 @@ function block_exastud_get_main_logo() {
 	return empty($areafiles) ? null : reset($areafiles);
 }
 
+function block_exastud_delete_user_data($userid){
+	global $DB;
+	
+	$result = $DB->delete_records('block_exastudclass', array('userid'=>$userid));
+	$result = $DB->delete_records('block_exastudperiod', array('userid'=>$userid));
+	
+	$result = $DB->delete_records('block_exastudclassteachers', array('teacherid'=>$userid));
+	$result = $DB->delete_records('block_exastudreview', array('teacherid'=>$userid));
+	
+	$result = $DB->delete_records('block_exastudclassstudents', array('studentid'=>$userid));
+	$result = $DB->delete_records('block_exastudreview', array('studentid'=>$userid));
+}
+
 }
 
 namespace block_exastud {
