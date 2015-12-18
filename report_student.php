@@ -170,7 +170,8 @@ if (optional_param('output', '', PARAM_TEXT) == 'template_test') {
 	exit;
 }
 
-if (optional_param('output', '', PARAM_TEXT) == 'docx') {
+$outputType = optional_param('output', '', PARAM_TEXT);
+if (in_array($outputType, ['docx', 'docx_test'])) {
 	$birthday = $DB->get_field_sql("SELECT uid.data
 		FROM {user_info_data} uid
 		JOIN {user_info_field} uif ON uif.id=uid.fieldid AND uif.shortname='dateofbirth'
@@ -187,9 +188,19 @@ if (optional_param('output', '', PARAM_TEXT) == 'docx') {
 	$section = $phpWord->addSection();
 	
 	$pageWidthTwips = 9200;
+	$tmpLogoFile = null;
+
+	// note: image can't have spacing, so add some spacing text
+	$section->addText(' ',
+		null, ['align'=>'center', 'spaceBefore'=>1400]);
+
+	if ($logo = block_exastud_get_main_logo()) {
+		$tmpLogoFile = $logo->copy_content_to_temp();
+		$section->addImage($tmpLogoFile, [/* 'width' => '500', */ 'align' => 'center']);
+	}
 
 	$section->addText('Lernentwicklungsbericht',
-		['size' => 26, 'bold' => true], ['align'=>'center', 'spaceBefore'=>1400, 'spaceAfter'=>200]);
+		['size' => 26, 'bold' => true], ['align'=>'center', 'spaceBefore'=>250, 'spaceAfter'=>200]);
 	$section->addText('Information über die Lernentwicklung im Wählen Sie ein Element aus. Schulhalbjahr 20XX/20XX',
 		['size' => 14], ['align'=>'center', 'lineHeight'=>1, 'spaceAfter'=>100]);
 	$section->addText('für',
@@ -292,14 +303,19 @@ if (optional_param('output', '', PARAM_TEXT) == 'docx') {
 	$cell->addText('Schulleiter /', null, ['align'=>'center']);
 	$cell->addText('Schulleiterin', null, ['align'=>'center']);
 
-	// testing:
-	//echo \PhpOffice\PhpWord\IOFactory::createWriter($phpWord, 'HTML')->getContent(); exit;
+	if ($outputType == 'docx_test') {
+		// testing:
+		echo \PhpOffice\PhpWord\IOFactory::createWriter($phpWord, 'HTML')->getContent();
+		exit;
+	}
 
 	$objWriter = \PhpOffice\PhpWord\IOFactory::createWriter($phpWord, 'Word2007');
 
 	// // save as a random file in temp file
 	$temp_file = tempnam($CFG->tempdir, 'PHPWord');
 	$objWriter->save($temp_file);
+
+	if ($tmpLogoFile) unlink($tmpLogoFile);
 	
 	require_once $CFG->dirroot.'/lib/filelib.php';
 	

@@ -347,9 +347,8 @@ function block_exastud_print_student_report($studentid, $periodid, $class, $pdf=
 	if(!$pdf) $studentreport = str_replace ( '###USERPIC###', $OUTPUT->user_picture($DB->get_record('user', array("id"=>$studentid)),array("size"=>100)), $studentreport);
 	else $studentreport = str_replace( '###USERPIC###', '', $studentreport);
 
-	if ($file = block_exastud_get_main_logo()) {
-		// add timemodified to refresh latest logo file
-		$img = '<img id="logo" width="840" height="100" src="'.$CFG->wwwroot.'/blocks/exastud/logo.php?'.$file->get_timemodified().'"/>';
+	if ($logo = block_exastud_get_main_logo_url()) {
+		$img = '<img id="logo" width="840" height="100" src="'.$logo.'"/>';
 	} else {
 		$img = '';
 	}
@@ -451,8 +450,6 @@ function block_exastud_print_header($items, array $options = array())
 	}
 	if ($DB->count_records('block_exastudclassteachers', array('teacherid'=>$USER->id)) && block_exastud_get_active_period())
 		$tabs['review'] = new tabobject('review', $CFG->wwwroot . '/blocks/exastud/review.php?courseid=' . $COURSE->id, \block_exastud\get_string("review", "block_exastud"), '', true);
-	if (!is_new_version() && block_exastud_has_global_cap(block_exastud::CAP_UPLOAD_PICTURE))
-		$tabs['pictureupload'] = new tabobject('pictureupload', $CFG->wwwroot . '/blocks/exastud/pictureupload.php?courseid=' . $COURSE->id, \block_exastud\get_string("pictureupload", "block_exastud"), '', true);
 	if (block_exastud_has_global_cap(block_exastud::CAP_ADMIN)) {
 		$tabs['settings'] = new tabobject('settings', $CFG->wwwroot . '/blocks/exastud/periods.php?courseid=' . $COURSE->id, \block_exastud\get_string("settings"), '', true);
 
@@ -463,6 +460,9 @@ function block_exastud_print_header($items, array $options = array())
 			new tabobject('evalopts',   $CFG->wwwroot . '/blocks/exastud/configuration_global.php?courseid=' . $COURSE->id.'&action=evalopts', \block_exastud\trans("de:Bewertungsskala"), '', true),
 			new tabobject('headteachers', $CFG->wwwroot . '/cohort/assign.php?id=' . block_exastud\get_headteacher_cohort()->id, \block_exastud\trans('headteachers', 'de:Klassenlehrer'), '', true),
 		];
+
+		if (block_exastud_has_global_cap(block_exastud::CAP_UPLOAD_PICTURE))
+			$tabs['settings']->subtree[] = new tabobject('pictureupload', $CFG->wwwroot . '/blocks/exastud/pictureupload.php?courseid=' . $COURSE->id, \block_exastud\get_string("pictureupload", "block_exastud"), '', true);
 	}
 	
 	$tabtree = new tabtree($tabs);
@@ -639,12 +639,23 @@ function block_exastud_get_evaluation_options($also_empty = false) {
 	return $options;
 }
 
+/**
+ * @return stored_file
+ */
 function block_exastud_get_main_logo() {
 	$fs = get_file_storage();
 
 	$areafiles = $fs->get_area_files(context_system::instance()->id, 'block_exastud', 'main_logo', 0, 'itemid', false);
 	return empty($areafiles) ? null : reset($areafiles);
 }
+function block_exastud_get_main_logo_url() {
+	if (!$file = block_exastud_get_main_logo()) {
+		return null;
+	}
+
+	return moodle_url::make_pluginfile_url($file->get_contextid(), $file->get_component(), $file->get_filearea(), null, null, null);
+}
+
 }
 
 namespace block_exastud {

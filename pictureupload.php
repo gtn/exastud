@@ -30,23 +30,18 @@
 */
 
 require("inc.php");
-global $DB;
+require_once __DIR__.'/lib/picture_upload_form.php';
 
-
-$courseid	   = optional_param('courseid', 1, PARAM_INT); // Course ID
-$showall		= optional_param('showall', 0, PARAM_BOOL);
-$searchtext	 = optional_param('searchtext', '', PARAM_ALPHANUM); // search string
+$courseid = optional_param('courseid', 1, PARAM_INT); // Course ID
 
 require_login($courseid);
 
-block_exastud_require_global_cap(block_exastud::CAP_UPLOAD_PICTURE)
+block_exastud_require_global_cap(block_exastud::CAP_UPLOAD_PICTURE);
 
-$url = '/blocks/exastud/configuration.php';
-$PAGE->set_url($url);
+$url = '/blocks/exastud/pictureupload.php';
+$PAGE->set_url($url, [ 'courseid' => $courseid ]);
 
-block_exastud_print_header('pictureupload');
-
-require_once("{$CFG->dirroot}/blocks/exastud/lib/picture_upload_form.php");
+block_exastud_print_header(['settings', 'pictureupload']);
 
 $mform = new block_exastud_picture_upload_form();
 if ($mform->is_cancelled()) {
@@ -56,7 +51,7 @@ if ($mform->is_cancelled()) {
 	$fs = get_file_storage();
 	
 	// delete old logo
-	$fs->delete_area_files(context_system::instance()->id	, 'block_exastud', 'main_logo', 0);
+	$fs->delete_area_files(context_system::instance()->id, 'block_exastud', 'main_logo', 0);
 
 	// save new logo
 	$mform->save_stored_file('file', context_system::instance()->id	, 'block_exastud', 'main_logo', 0);
@@ -64,8 +59,8 @@ if ($mform->is_cancelled()) {
 	\block_exastud\get_string('upload_success','block_exastud');
 }
 
-if ($file = block_exastud_get_main_logo()) {
-	echo '<img id="logo" width="840" height="100" src="logo.php?'.$file->get_timemodified().'"/>';
+if ($logo = block_exastud_get_main_logo_url()) {
+	echo '<img style="max-width: 840px" src="'.$logo.'" />';
 }
 		
 $mform->display();
