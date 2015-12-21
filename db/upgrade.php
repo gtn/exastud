@@ -119,5 +119,28 @@ function xmldb_block_exastud_upgrade($oldversion = 0) {
 		upgrade_block_savepoint(true, 2015091907, 'exastud');
 	}
 	
+	// always check for profile fields after database upgrade
+	$categoryid = $DB->get_field_sql("SELECT id FROM {user_info_category} ORDER BY sortorder LIMIT 1");
+	if (!$categoryid) {
+		$defaultcategory = new stdClass();
+    	$defaultcategory->name = get_string('profiledefaultcategory', 'admin');
+    	$defaultcategory->sortorder = 1;
+		$categoryid = $DB->insert_record('user_info_category', $defaultcategory);
+	}
+
+	if (!$DB->get_field('user_info_field', 'id', ['shortname'=>'dateofbirth'])) {
+	    $DB->insert_record('user_info_field', [
+			'shortname' => 'dateofbirth',
+			'name' => \block_exastud\trans('de:Geburtsdatum'),
+			'datatype' => 'datetime',
+			'categoryid' => $categoryid,
+			'sortorder' => $DB->get_field_sql('SELECT MAX(sortorder) FROM {user_info_field} WHERE categoryid=?', [$categoryid]) + 1,
+			'required' => 0,
+			'visible' => 0,
+			'param1' => 1904,
+			'param2' => 2015,
+		]);
+	}
+
 	return $result;
 }

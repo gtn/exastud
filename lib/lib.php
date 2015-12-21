@@ -37,13 +37,15 @@ namespace block_exastud {
 
 namespace {
 
+use \block_exastud\globals as g;
+
 require_once $CFG->dirroot.'/cohort/lib.php';
 require_once __DIR__.'/../block_exastud.php';
 require_once __DIR__.'/common.php';
-	
+
 define('DECIMALPOINTS', 1);
 
-function is_new_version() {
+function block_exastud_is_new_version() {
 	return true;
 }
 
@@ -87,7 +89,7 @@ function block_exastud_get_review_periods($studentid) {
 function block_exastud_reviews_available() {
 	global $DB, $USER, $CFG;
 	
-	if (is_new_version()) {
+	if (block_exastud_is_new_version()) {
 		// new version doesn't allow reviews for now
 		return false;
 	}
@@ -193,7 +195,7 @@ function block_exastud_get_active_period() {
 
 function block_exastud_get_period($periodid, $loadActive = true) {
 	if ($periodid) {
-		return $DB->get_record('block_exastudperiod', array('id'=>$periodid));
+		return g::$DB->get_record('block_exastudperiod', array('id'=>$periodid));
 	} elseif ($loadActive) {
 		// if period empty, load active one 
 		return block_exastud_get_active_period();
@@ -202,6 +204,7 @@ function block_exastud_get_period($periodid, $loadActive = true) {
 	}
 }
 
+/*
 function block_exastud_check_period($periodid, $loadActive = true) {
 	$period = block_exastud_get_period($periodid, $loadActive);
 	
@@ -211,6 +214,7 @@ function block_exastud_check_period($periodid, $loadActive = true) {
 		print_error("invalidperiodid","block_exastud");
 	}
 }
+*/
 
 function block_exastud_get_period_categories($periodid) {
 	global $DB;
@@ -310,15 +314,12 @@ function block_exastud_print_student_report_footer() {
 
 function block_exastud_print_student_report($studentid, $periodid, $class, $pdf=false, $detail=false, $ranking = false)
 {
-	global $DB,$CFG,$OUTPUT,$USER;
+	global $DB,$CFG,$OUTPUT;
 
-	$detailedreview = isset($CFG->block_exastud_detailed_review) && $CFG->block_exastud_detailed_review && $detail;
+	$detailedreview = !empty($CFG->block_exastud_detailed_review) && $detail;
 
 	$period =$DB->get_record('block_exastudperiod', array('id'=>$periodid));
 
-	$studentreport = '';
-	$studentreportcommentstemplate = '';
-	$studentreportcomments = '';
 	if(!$studentReport = block_exastud_get_report($studentid, $periodid)) {
 		print_error('studentnotfound','block_exastud');
 	}

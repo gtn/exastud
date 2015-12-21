@@ -1,34 +1,9 @@
 <?php
-// This file is part of Moodle - http://moodle.org/
-//
-// Moodle is free software: you can redistribute it and/or modify
-// it under the terms of the GNU General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
-//
-// Moodle is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-// GNU General Public License for more details.
-//
-// You should have received a copy of the GNU General Public License
-// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-// All rights reserved
-/**
- * @package moodlecore
- * @subpackage blocks
- * @copyright 2013 gtn gmbh
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- *  This script is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  This copyright notice MUST APPEAR in all copies of the script!
-*/
+namespace block_exastud;
+use block_exastud;
 
-require("inc.php");
+require __DIR__.'/inc.php';
 
 $courseid = optional_param('courseid', 1, PARAM_INT); // Course ID
 $classid = required_param('classid', PARAM_INT);
@@ -38,7 +13,7 @@ require_login($courseid);
 
 block_exastud_require_global_cap(block_exastud::CAP_USE);
 
-if (!is_new_version()) die('not allowed');
+if (!block_exastud_is_new_version()) die('not allowed');
 
 if (!$class = $DB->get_record('block_exastudclass', array('id' => $classid))) {
 	print_error('badclass', 'block_exastud');
@@ -56,7 +31,7 @@ if (!$student = $DB->get_record('user', array('id' => $studentid))) {
 
 
 $textReviews = iterator_to_array($DB->get_recordset_sql("
-	SELECT ".user_picture::fields('u').", r.review, s.title AS subject, r.subjectid AS subjectid
+	SELECT ".\user_picture::fields('u').", r.review, s.title AS subject, r.subjectid AS subjectid
 	FROM {block_exastudreview} r
 	JOIN {user} u ON r.teacherid = u.id
 	LEFT JOIN {block_exastudsubjects} s ON r.subjectid = s.id
@@ -66,7 +41,7 @@ array($studentid, $class->periodid)), false);
 
 foreach ($textReviews as $textReview) {
 	if ($textReview->subjectid == block_exastud::SUBJECT_ID_LERN_UND_SOZIALVERHALTEN)
-		$textReview->title = \block_exastud\trans('Lern- und Sozialverhalten');
+		$textReview->title = trans('Lern- und Sozialverhalten');
 	elseif ($textReview->subject)
 		$textReview->title = $textReview->subject.' ('.fullname($textReview).')';
 	else
@@ -196,7 +171,12 @@ if (in_array($outputType, ['docx', 'docx_test'])) {
 
 	if ($logo = block_exastud_get_main_logo()) {
 		$tmpLogoFile = $logo->copy_content_to_temp();
-		$section->addImage($tmpLogoFile, [/* 'width' => '500', */ 'align' => 'center']);
+		try {
+			$section->addImage($tmpLogoFile, [/* 'width' => '500', */
+				'align' => 'center']);
+		} catch (\PhpOffice\PhpWord\Exception\InvalidImageException $e) {
+			print_error(trans('en:The configured header image has a not supported format, please contat your administrator'));
+		}
 	}
 
 	$section->addText('Lernentwicklungsbericht',
@@ -321,10 +301,8 @@ if (in_array($outputType, ['docx', 'docx_test'])) {
 	
 	// Your browser will name the file "myFile.docx"
 	// regardless of what it's named on the server
-	send_temp_file($temp_file, "Lernstandsbericht ".fullname($student).".docx");
+	send_temp_file($temp_file, "Lernentwicklungsbericht ".fullname($student).".docx");
 	unlink($temp_file);  // remove temp file
-	
-	// $objWriter->save('helloWorld.docx');
 	
 	exit;
 }
@@ -335,10 +313,9 @@ if (in_array($outputType, ['docx', 'docx_test'])) {
 
 $url = '/blocks/exastud/report_student.php';
 $PAGE->set_url($url);
-$blockrenderer = $PAGE->get_renderer('block_exastud');
 
-$strstudentreview = \block_exastud\get_string('reviewstudent', 'block_exastud');
-$strclassreview = \block_exastud\get_string('reviewclass', 'block_exastud');
+$strstudentreview = get_string('reviewstudent');
+$strclassreview = get_string('reviewclass');
 block_exastud_print_header(array('review',
 	array('name' => $strclassreview, 'link' => $CFG->wwwroot . '/blocks/exastud/review_class.php?courseid=' . $courseid .
 		'&classid=' . $classid),
@@ -383,7 +360,7 @@ echo '</table>';
 
 
 
-echo '<h3>'.get_string('detailedreview','block_exastud').'</h3>';
+echo '<h3>'.get_string('detailedreview').'</h3>';
 
 echo '<table id="ratingtable">';
 foreach($textReviews as $textReview) {

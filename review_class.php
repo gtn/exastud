@@ -72,7 +72,7 @@ $table->head = array();
 $table->head[] = ''; //userpic
 $table->head[] = \block_exastud\get_string('name');
 $table->head[] = ''; // bewerten button
-if (is_new_version())
+if (block_exastud_is_new_version())
 	$table->head[] = ''; // report button
 foreach($categories as $category)
 	$table->head[] = $category->title;
@@ -109,7 +109,7 @@ foreach($classusers as $classuser) {
 	$row->cells[] = '<a href="' . $CFG->wwwroot . '/blocks/exastud/review_student.php?courseid=' . $courseid . '&classid=' . $classid . '&subjectid=' . $subjectid . '&studentid=' . $user->id . '">'.
 		\block_exastud\trans('de:Bewerten').'</a>';
 	
-	if (is_new_version()) {
+	if (block_exastud_is_new_version()) {
 		$row->cells[] = '<a href="' . $CFG->wwwroot . '/blocks/exastud/report_student.php?courseid=' . $courseid . '&classid=' . $classid . '&studentid=' . $user->id . '">'
 			.\block_exastud\trans('de:Alle Bewertungen zeigen').'</a>'.
 			'<br /><a href="' . $CFG->wwwroot . '/blocks/exastud/report_student.php?courseid=' . $courseid . '&classid=' . $classid . '&studentid=' . $user->id . '&output=docx">'

@@ -41,7 +41,7 @@ require_login($courseid);
 
 block_exastud_require_global_cap(block_exastud::CAP_HEADTEACHER);
 
-$actPeriod = block_exastud_get_period($periodid, true);
+$actPeriod = block_exastud_get_period($periodid);
 
 if($classid > 0) $class = $DB->get_record("block_exastudclass", array("id"=>$classid),"*",MUST_EXIST);
 else if(!$class = $DB->get_record_sql("SELECT c.* FROM {block_exastudclass} c, {block_exastudclassteachers} ct, {block_exastudclassstudents} cs
