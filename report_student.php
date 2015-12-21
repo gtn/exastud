@@ -28,59 +28,8 @@ if (!$student = $DB->get_record('user', array('id' => $studentid))) {
 	print_error('badstudent', 'block_exastud');
 }
 
-
-
-$textReviews = iterator_to_array($DB->get_recordset_sql("
-	SELECT ".\user_picture::fields('u').", r.review, s.title AS subject, r.subjectid AS subjectid
-	FROM {block_exastudreview} r
-	JOIN {user} u ON r.teacherid = u.id
-	LEFT JOIN {block_exastudsubjects} s ON r.subjectid = s.id
-	WHERE r.studentid = ? AND r.periodid = ? AND TRIM(r.review) !=  ''
-	ORDER BY NOT(r.subjectid<0), s.title, u.lastname, u.firstname -- TODO: anpassen",
-array($studentid, $class->periodid)), false);
-
-foreach ($textReviews as $textReview) {
-	if ($textReview->subjectid == block_exastud::SUBJECT_ID_LERN_UND_SOZIALVERHALTEN)
-		$textReview->title = trans('Lern- und Sozialverhalten');
-	elseif ($textReview->subject)
-		$textReview->title = $textReview->subject.' ('.fullname($textReview).')';
-	else
-		$textReview->title = fullname($textReview);
-}
-
-$evaluationOtions = block_exastud_get_evaluation_options();
-$categories = block_exastud_get_class_categories($classid);
-$current_parent = null;
-foreach ($categories as $category){
-
-	$category->fulltitle = $category->title;
-	if (preg_match('!^([^:]*):\s*([^\s].*)$!', $category->fulltitle, $matches)) {
-		$category->parent = $matches[1];
-		$category->title = $matches[2];
-	} else {
-		$category->parent = '';
-		$category->title = $category->fulltitle;
-	}
-
-	$category->evaluationOtions = [];
-	foreach ($evaluationOtions as $pos_value => $option) {
-		$category->evaluationOtions[$pos_value] = (object)[
-			'value' => $pos_value,
-			'title' => $option,
-			'reviewers' => iterator_to_array($DB->get_recordset_sql("
-							SELECT u.*, s.title AS subject
-							FROM {block_exastudreview} r
-							JOIN {block_exastudreviewpos} pos ON pos.reviewid = r.id
-							JOIN {user} u ON r.teacherid = u.id
-							JOIN {block_exastudclass} c ON c.periodid = r.periodid
-							LEFT JOIN {block_exastudsubjects} s ON r.subjectid = s.id
-							WHERE r.studentid = ? AND c.id = ?
-								AND pos.categoryid = ? AND pos.categorysource = ?
-								AND pos.value = ?
-							", array($studentid, $classid, $category->id, $category->source, $pos_value)), true)
-		];
-	}
-}
+$textReviews = get_text_reviews($studentid, $class->periodid);
+$categories = get_class_categories_for_report($studentid, $class->id);
 
 if (optional_param('output', '', PARAM_TEXT) == 'template_test') {
 	require_once __DIR__.'/classes/PhpWord/Autoloader.php';
@@ -327,47 +276,6 @@ $studentdesc = $OUTPUT->user_picture($student, array("courseid" => $courseid)) .
 
 echo $OUTPUT->heading($studentdesc);
 
-echo '<table id="review-table">';
-
-$current_parent = null;
-foreach ($categories as $category){
-	
-	if ($current_parent !== $category->parent) {
-		$current_parent = $category->parent;
-		echo '<tr><th class="category category-parent">'.($category->parent?$category->parent.':':'').'</th>';
-		foreach ($category->evaluationOtions as $option) {
-			echo '<th class="evaluation-header"><b>' . $option->title . '</th>';
-		}
-		echo '</tr>';
-	}
-	
-	echo '<tr><td class="category">'.$category->title.'</td>';
-
-	foreach ($category->evaluationOtions as $pos_value => $option) {
-		echo '<td class="evaluation">';
-
-		echo join(', ', array_map(function($reviewer){
-			return $reviewer->subject?$reviewer->subject.' ('.fullname($reviewer).')':fullname($reviewer);
-		}, $option->reviewers));
-
-		echo '</td>';
-	}
-	echo '</tr>';
-}
-
-echo '</table>';
-
-
-
-
-echo '<h3>'.get_string('detailedreview').'</h3>';
-
-echo '<table id="ratingtable">';
-foreach($textReviews as $textReview) {
-	echo '<tr><td class="ratinguser">'.$textReview->title.'</td>
-		<td class="ratingtext">'.format_text($textReview->review).'</td>
-		</tr>';
-}
-echo '</table>';
+echo get_renderer()->print_student_report($categories, $textReviews);
 
 block_exastud_print_footer();

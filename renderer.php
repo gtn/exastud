@@ -1,26 +1,5 @@
 <?php
-// This file is part of Moodle - http://moodle.org/
-//
-// Moodle is free software: you can redistribute it and/or modify
-// it under the terms of the GNU General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
-//
-// Moodle is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-// GNU General Public License for more details.
-//
-// You should have received a copy of the GNU General Public License
-// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * exacomp block rendrer
- *
- * @package	block_exastud
- * @copyright  2014 gtn gmbh
- * @license	http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
 defined('MOODLE_INTERNAL') || die;
 
 class block_exastud_renderer extends plugin_renderer_base {
@@ -248,5 +227,52 @@ class block_exastud_renderer extends plugin_renderer_base {
 	
 	function print_edit_link($link) {
 		return html_writer::tag("a", html_writer::tag("img", '',array('src'=>'pix/edit.png')),array('href'=>$link,'class'=>'ers_inlineicon'));
+	}
+
+	function print_student_report($categories, $textReviews) {
+		$output = '<table id="review-table">';
+
+		$current_parent = null;
+		foreach ($categories as $category){
+
+			if ($current_parent !== $category->parent) {
+				$current_parent = $category->parent;
+				$output .= '<tr><th class="category category-parent">'.($category->parent?$category->parent.':':'').'</th>';
+				foreach ($category->evaluationOtions as $option) {
+					$output .= '<th class="evaluation-header"><b>' . $option->title . '</th>';
+				}
+				$output .= '</tr>';
+			}
+
+			$output .= '<tr><td class="category">'.$category->title.'</td>';
+
+			foreach ($category->evaluationOtions as $pos_value => $option) {
+				$output .= '<td class="evaluation">';
+
+				$output .= join(', ', array_map(function($reviewer){
+					return $reviewer->subject?$reviewer->subject.' ('.fullname($reviewer).')':fullname($reviewer);
+				}, $option->reviewers));
+
+				$output .= '</td>';
+			}
+			$output .= '</tr>';
+		}
+
+		$output .= '</table>';
+
+
+
+
+		$output .= '<h3>'.\block_exastud\get_string('detailedreview').'</h3>';
+
+		$output .= '<table id="ratingtable">';
+		foreach($textReviews as $textReview) {
+			$output .= '<tr><td class="ratinguser">'.$textReview->title.'</td>
+				<td class="ratingtext">'.format_text($textReview->review).'</td>
+				</tr>';
+		}
+		$output .= '</table>';
+
+		return $output;
 	}
 }

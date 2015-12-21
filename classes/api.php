@@ -69,31 +69,34 @@ class api {
 		return g::$DB->get_records_sql($sql,array("studentid"=>$userid));
 	}
 
-	static function get_student_reviews($userid) {
-		global $DB;
+	static function print_student_report($studentid, $periodid) {
+		// get first class
+		// TODO: what if student is in more than one class per period?
+		$class = g::$DB->get_record_sql("
+			SELECT c.*
+			FROM {block_exastudclass} c
+			JOIN {block_exastudclassstudents} cs ON cs.classid=c.id
+			WHERE cs.studentid=? AND c.periodid=?
+			ORDER BY c.class LIMIT 1
+		", array($studentid, $periodid));
 
-		// TODO
-		die('todo');
-		$sql = "
-			SELECT DISTINCT p.id, p.description
-			FROM {block_exastudreview} r
-			JOIN {block_exastudperiod} p ON r.periodid = p.id
-			WHERE r.studentid = ?
-		";
-		return $DB->get_records_sql($sql,array("studentid"=>$userid));
+		$textReviews = get_text_reviews($studentid, $periodid);
+		$categories = get_class_categories_for_report($studentid, $class->id);
+
+		return get_renderer()->print_student_report($categories, $textReviews);
 	}
 
 	static function delete_user_data($userid){
 		global $DB;
 
-		$result = $DB->delete_records('block_exastudclass', array('userid'=>$userid));
-		$result = $DB->delete_records('block_exastudperiod', array('userid'=>$userid));
+		$DB->delete_records('block_exastudclass', array('userid'=>$userid));
+		$DB->delete_records('block_exastudperiod', array('userid'=>$userid));
 
-		$result = $DB->delete_records('block_exastudclassteachers', array('teacherid'=>$userid));
-		$result = $DB->delete_records('block_exastudreview', array('teacherid'=>$userid));
+		$DB->delete_records('block_exastudclassteachers', array('teacherid'=>$userid));
+		$DB->delete_records('block_exastudreview', array('teacherid'=>$userid));
 
-		$result = $DB->delete_records('block_exastudclassstudents', array('studentid'=>$userid));
-		$result = $DB->delete_records('block_exastudreview', array('studentid'=>$userid));
+		$DB->delete_records('block_exastudclassstudents', array('studentid'=>$userid));
+		$DB->delete_records('block_exastudreview', array('studentid'=>$userid));
 	}
 	
 }
