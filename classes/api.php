@@ -97,6 +97,7 @@ class api {
 
 		$DB->delete_records('block_exastudclassstudents', array('studentid'=>$userid));
 		$DB->delete_records('block_exastudreview', array('studentid'=>$userid));
+
+		return true;
 	}
-	
 }
