@@ -49,7 +49,7 @@ if ($action == 'save-classteacher-subject') {
 		die(get_string("badsessionkey","block_exastud"));
 	}
 
-	block_exastud\db::update_record('block_exastudclassteachers', array(
+	block_exastud\globals::$DB->update_record('block_exastudclassteachers', array(
 		'subjectid' => required_param('subjectid', PARAM_INT)
 	), array(
 		'id' => required_param('classteacherid', PARAM_INT),

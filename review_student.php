@@ -103,7 +103,7 @@ if ($studentedit = $studentform->get_data()) {
 	foreach ($categories as $category) {
 		if (!isset($studentedit->{$category->id.'_'.$category->source})) continue;
 		
-		block_exastud\db::insert_or_update_record('block_exastudreviewpos',
+		block_exastud\globals::$DB->insert_or_update_record('block_exastudreviewpos',
 			["value"=>$studentedit->{$category->id.'_'.$category->source}],
 			["reviewid"=>$newreview->id,"categoryid"=>$category->id,"categorysource"=>$category->source]);
 	}
