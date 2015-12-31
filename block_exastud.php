@@ -42,7 +42,7 @@ class block_exastud extends block_list {
 	const SUBJECT_ID_LERN_UND_SOZIALVERHALTEN = -1;
 
 	function init() {
-		$this->title = \block_exastud\get_string('pluginname', 'block_exastud');
+		$this->title = \block_exastud\get_string('pluginname');
 	}
 
 	function instance_allow_multiple() {
@@ -92,28 +92,28 @@ class block_exastud extends block_list {
 
 		if (block_exastud_has_global_cap(block_exastud::CAP_HEADTEACHER)) {
 			$this->content->icons[] = '<img src="' . $CFG->wwwroot . '/blocks/exastud/pix/klassenzuteilung.png" height="16" width="23" alt="" />';
-			$this->content->items[] = '<a title="' . \block_exastud\get_string('configuration', 'block_exastud') . '" href="' . $CFG->wwwroot . '/blocks/exastud/configuration.php?courseid=' . $COURSE->id . '">' . \block_exastud\get_string('configuration', 'block_exastud') . '</a>';
+			$this->content->items[] = '<a title="' . \block_exastud\get_string('configuration') . '" href="' . $CFG->wwwroot . '/blocks/exastud/configuration.php?courseid=' . $COURSE->id . '">' . \block_exastud\get_string('configuration') . '</a>';
 
 			if(block_exastud_reviews_available()) {
 				$this->content->icons[] = '<img src="' . $CFG->wwwroot . '/blocks/exastud/pix/zeugnisse.png" height="16" width="23" alt="" />';
-				$this->content->items[] = '<a title="' . \block_exastud\get_string('report', 'block_exastud') . '" href="' . $CFG->wwwroot . '/blocks/exastud/report.php?courseid=' . $COURSE->id . '">' . \block_exastud\get_string('report', 'block_exastud') . '</a>';
+				$this->content->items[] = '<a title="' . \block_exastud\get_string('report') . '" href="' . $CFG->wwwroot . '/blocks/exastud/report.php?courseid=' . $COURSE->id . '">' . \block_exastud\get_string('report') . '</a>';
 			}
 		}
 
 		if ($DB->count_records('block_exastudclassteachers', array('teacherid'=>$USER->id)) && block_exastud_get_active_period()) {
 			$this->content->icons[] = '<img src="' . $CFG->wwwroot . '/blocks/exastud/pix/beurteilung.png" height="16" width="23" alt="" />';
-			$this->content->items[] = '<a title="' . \block_exastud\get_string('review', 'block_exastud') . '" href="' . $CFG->wwwroot . '/blocks/exastud/review.php?courseid=' . $COURSE->id . '">' . \block_exastud\get_string('review', 'block_exastud') . '</a>';
+			$this->content->items[] = '<a title="' . \block_exastud\get_string('review') . '" href="' . $CFG->wwwroot . '/blocks/exastud/review.php?courseid=' . $COURSE->id . '">' . \block_exastud\get_string('review') . '</a>';
 		}
 		if (block_exastud_has_global_cap(block_exastud::CAP_ADMIN)) {
 			$this->content->icons[] = '<img src="' . $CFG->wwwroot . '/blocks/exastud/pix/eingabezeitraum.png" height="16" width="23" alt="" />';
-			$this->content->items[] = '<a title="' . \block_exastud\get_string('periods') . '" href="' . $CFG->wwwroot . '/blocks/exastud/periods.php?courseid=' . $COURSE->id . '">' . \block_exastud\get_string('periods', 'block_exastud') . '</a>';
+			$this->content->items[] = '<a title="' . \block_exastud\get_string('periods') . '" href="' . $CFG->wwwroot . '/blocks/exastud/periods.php?courseid=' . $COURSE->id . '">' . \block_exastud\get_string('periods') . '</a>';
 			$this->content->icons[] = '<img src="' . $CFG->wwwroot . '/blocks/exastud/pix/headteachers.png" height="16" width="23" alt="" />';
-			$this->content->items[] = '<a title="' . \block_exastud\get_string('periods') . '" href="' . $CFG->wwwroot . '/cohort/assign.php?id=' . block_exastud\get_headteacher_cohort()->id . '">' . \block_exastud\trans('headteachers', 'de:Klassenlehrer') . '</a>';
+			$this->content->items[] = '<a title="' . \block_exastud\trans('headteachers', 'de:Klassenlehrer') . '" href="' . $CFG->wwwroot . '/cohort/assign.php?id=' . block_exastud\get_headteacher_cohort()->id . '">' . \block_exastud\trans('headteachers', 'de:Klassenlehrer') . '</a>';
 		}
 		/*
 		if (block_exastud_has_global_cap(block_exastud::CAP_UPLOAD_PICTURE)) {
 			$this->content->icons[] = '<img src="' . $CFG->wwwroot . '/blocks/exastud/pix/logo.png" height="16" width="23" alt="" />';
-			$this->content->items[] = '<a title="' . \block_exastud\get_string('pictureupload', 'block_exastud') . '" href="' . $CFG->wwwroot . '/blocks/exastud/pictureupload.php?courseid=' . $COURSE->id . '">' . \block_exastud\get_string('pictureupload', 'block_exastud') . '</a>';
+			$this->content->items[] = '<a title="' . \block_exastud\get_string('pictureupload') . '" href="' . $CFG->wwwroot . '/blocks/exastud/pictureupload.php?courseid=' . $COURSE->id . '">' . \block_exastud\get_string('pictureupload') . '</a>';
 		}
 		*/
 
