@@ -128,9 +128,13 @@ if (in_array($outputType, ['docx', 'docx_test'])) {
 		}
 	}
 
+	$section->addText(get_config('exastud', 'school_location'),
+		['size' => 26, 'bold' => false], ['align'=>'center', 'spaceBefore'=>250, 'spaceAfter'=>10]);
+	$section->addText('Gemeinschaftsschule',
+		['size' => 26, 'bold' => false], ['align'=>'center', 'spaceBefore'=>10, 'spaceAfter'=>10]);
 	$section->addText('Lernentwicklungsbericht',
-		['size' => 26, 'bold' => true], ['align'=>'center', 'spaceBefore'=>250, 'spaceAfter'=>200]);
-	$section->addText('Information über die Lernentwicklung im Wählen Sie ein Element aus. Schulhalbjahr 20XX/20XX',
+		['size' => 26, 'bold' => true], ['align'=>'center', 'spaceBefore'=>10, 'spaceAfter'=>200]);
+	$section->addText('Information über die Lernentwicklung im '.block_exastud_get_active_period()->description,
 		['size' => 14], ['align'=>'center', 'lineHeight'=>1, 'spaceAfter'=>100]);
 	$section->addText('für',
 		['size' => 14], ['align'=>'center', 'lineHeight'=>1, 'spaceAfter'=>300]);
@@ -193,11 +197,11 @@ if (in_array($outputType, ['docx', 'docx_test'])) {
 	$section->addText('');
 	$section->addText("Lernentwicklungsgespräch(-e) Datum: _________________");
 	$section->addText('');
-	$section->addText("[Ort], den ______________");
+	$section->addText(get_config('exastud', 'school_location').", den ______________");
 	$section->addText('');
 	$section->addText('');
 	$section->addText('');
-	$section->addText("Unterschrift", ['bold' => true]);
+	$section->addText("Unterschriften", ['bold' => true]);
 	$section->addText('');
 
 	$table = $section->addTable(['borderSize' => 6, 'borderColor' => 'black', 'cellMargin' => 80]);

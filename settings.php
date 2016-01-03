@@ -11,5 +11,6 @@ if ($ADMIN->fulltree) {
 		$settings->add(new admin_setting_configcheckbox('block_exastud_project_based_assessment', get_string('settings_project_based_assessment', 'block_exastud'),
 				get_string('settings_project_based_assessment_body', 'block_exastud'), 0, 1, 0));
 	}
-	$settings->add(new admin_setting_configtext('exastud/school_name', \block_exastud\trans('de:Schulname'), '', '', PARAM_TEXT));
+	$settings->add(new admin_setting_configtext('exastud/school_name', \block_exastud\trans('de:Lernentwicklungsbericht: Schulname'), '', '', PARAM_TEXT));
+	$settings->add(new admin_setting_configtext('exastud/school_location', \block_exastud\trans('de:Lernentwicklungsbericht: Ort'), '', '', PARAM_TEXT));
 }
