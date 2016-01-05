@@ -23,8 +23,9 @@ class api {
 	static function get_student_review_link_info_for_teacher($userid) {
 		global $COURSE, $DB, $USER;
 		
-		$actPeriod = block_exastud_check_active_period();
-		
+		$actPeriod = block_exastud_get_active_period();
+		if (!$actPeriod) return;
+
 		$classes = $DB->get_records_sql("
 			SELECT ct.id, ct.subjectid, ct.classid, c.class, s.title AS subject
 			FROM {block_exastudclassteachers} ct
@@ -37,7 +38,7 @@ class api {
 		
 		if (!$classes) {
 			// keine bewertung für schüler
-			return null;
+			return;
 		}
 		
 		// theoretisch mehrere klassen moeglich

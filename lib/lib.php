@@ -307,7 +307,7 @@ function block_exastud_check_if_period_ovelap($printBoxInsteadOfError = false) {
 }
 
 function block_exastud_check_active_period() {
-	global $DB,$CFG,$COURSE;
+	global $CFG,$COURSE;
 
 	if ($period = block_exastud_get_active_period()) {
 		return $period;
