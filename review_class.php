@@ -109,11 +109,13 @@ foreach($classusers as $classuser) {
 	$row->cells[] = '<a href="' . $CFG->wwwroot . '/blocks/exastud/review_student.php?courseid=' . $courseid . '&classid=' . $classid . '&subjectid=' . $subjectid . '&studentid=' . $user->id . '">'.
 		\block_exastud\trans('de:Bewerten').'</a>';
 	
-	if (block_exastud_is_new_version()) {
+	if (block_exastud_is_new_version() && $classdata->userid == $USER->id) {
 		$row->cells[] = '<a href="' . $CFG->wwwroot . '/blocks/exastud/report_student.php?courseid=' . $courseid . '&classid=' . $classid . '&studentid=' . $user->id . '">'
 			.\block_exastud\trans('de:Alle Bewertungen zeigen').'</a>'.
 			'<br /><a href="' . $CFG->wwwroot . '/blocks/exastud/report_student.php?courseid=' . $courseid . '&classid=' . $classid . '&studentid=' . $user->id . '&output=docx">'
 			.\block_exastud\trans('de:Als MS-Word exportieren').'</a>';
+	} else {
+		$row->cells[] = '';
 	}
 	if($report) {
 		foreach($categories as $category) {

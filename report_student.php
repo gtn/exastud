@@ -15,12 +15,15 @@ block_exastud_require_global_cap(block_exastud::CAP_USE);
 
 if (!block_exastud_is_new_version()) die('not allowed');
 
-if (!$class = $DB->get_record('block_exastudclass', array('id' => $classid))) {
+// is my class?
+if (!$class = $DB->get_record('block_exastudclass', array('id' => $classid, 'userid' => $USER->id))) {
 	print_error('badclass', 'block_exastud');
 }
+/*
 if (!$DB->count_records('block_exastudclassteachers', array('teacherid' => $USER->id, 'classid' => $classid))) {
 	print_error('badclass', 'block_exastud');
 }
+*/
 if (!$DB->count_records('block_exastudclassstudents', array('studentid' => $studentid, 'classid' => $classid))) {
 	print_error('badstudent', 'block_exastud');
 }

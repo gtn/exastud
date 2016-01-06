@@ -86,6 +86,7 @@ namespace block_exastud {
 		return (object)[
 			'classid' => $myClass->id,
 			'subjectid' => block_exastud::SUBJECT_ID_LERN_UND_SOZIALVERHALTEN,
+			'userid' => $myClass->userid, // should be same as $USER->id,
 			'class' => $myClass->class,
 			'subject' => trans('Lern- und Sozialverhalten')
 		];
@@ -98,7 +99,7 @@ namespace block_exastud {
 			return get_headteacher_lern_und_sozialverhalten_class();
 		} else {
 			return $DB->get_record_sql("
-			SELECT ct.id, c.class, s.title AS subject
+			SELECT ct.id, c.class, s.title AS subject, c.userid
 			FROM {block_exastudclassteachers} ct
 			JOIN {block_exastudclass} c ON ct.classid=c.id
 			LEFT JOIN {block_exastudsubjects} s ON ct.subjectid = s.id
