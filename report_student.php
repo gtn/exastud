@@ -131,7 +131,7 @@ if (in_array($outputType, ['docx', 'docx_test'])) {
 		}
 	}
 
-	$section->addText(get_config('exastud', 'school_location'),
+	$section->addText(get_config('exastud', 'school_name'),
 		['size' => 26, 'bold' => false], ['align'=>'center', 'spaceBefore'=>250, 'spaceAfter'=>10]);
 	$section->addText('Gemeinschaftsschule',
 		['size' => 26, 'bold' => false], ['align'=>'center', 'spaceBefore'=>10, 'spaceAfter'=>10]);
@@ -154,47 +154,54 @@ if (in_array($outputType, ['docx', 'docx_test'])) {
 	$table->addCell();
 	
 	$section->addPageBreak();
-	$section->addText(''); // page break needs an empty line
 
-	$header_body_table = function($header, $body) use ($section, $pageWidthTwips) {
-		// äußere tabelle, um cantSplit zu setzen (dadurch wird innere tabelle auf einer seite gehalten)
-		$table = $section->addTable(['borderSize'=>0, 'borderColor' => 'FFFFFF', 'cellMargin'=>0]);
+	$header_body_cell = function($header, $body=null) use (&$table, $pageWidthTwips) {
 		$table->addRow(null, ['cantSplit'=>true]);
-		$cell = $table->addCell($pageWidthTwips + 100);
+		$cell = $table->addCell($pageWidthTwips);
+		$cell->addText($header, ['bold' => true], ['spaceAfter'=>200]);
 
-		// innere tabelle
-		$table = $cell->addTable(['borderSize' => 6, 'borderColor' => 'black', 'cellMargin' => 80]);
-		$table->addRow();
-		$table->addCell($pageWidthTwips, ['bgColor' => 'F2F2F2'])->addText($header);
-		$table->addRow();
-		\PhpOffice\PhpWord\Shared\Html::addHtml($table->addCell($pageWidthTwips), $body);
+		if ($body) {
+			\PhpOffice\PhpWord\Shared\Html::addHtml($cell, $body);
+		}
 
-		return $table;
+		return $cell;
 	};
 
-	//for ($i = 0; $i < 5; $i++) {
-		//if ($i > 0) $section->addText('Zum testen, werden die Reviews wiederholt ausgegeben');
-		foreach($textReviews as $textReview) {
-			$header_body_table($textReview->title, $textReview->review);
-		}
-	//}
+	$table = $section->addTable(['borderSize' => 6, 'borderColor' => 'black', 'cellMargin' => 80]);
+
+	if ($textReviews && $textReviews[0]->subjectid == block_exastud::SUBJECT_ID_LERN_UND_SOZIALVERHALTEN) {
+		$cell = $header_body_cell($textReviews[0]->title, $textReviews[0]->review);
+		$cell->getStyle()->setGridSpan(2);
+		unset ($textReviews[0]);
+	}
+
+	foreach($textReviews as $textReview) {
+		$table->addRow(null, ['cantSplit'=>true]);
+		$cell = $table->addCell($pageWidthTwips/4);
+		$cell->addText($textReview->title, ['bold' => true]);
+
+		\PhpOffice\PhpWord\Shared\Html::addHtml($table->addCell($pageWidthTwips/4*3), $textReview->review);
+	}
 
 	$section->addPageBreak();
-	$section->addText(''); // page break needs an empty line
 
-	$table = $header_body_table('Ateliers', "");
-	$table->getRows()[1]->getCells()[0]->addText('');
-	$table->getRows()[1]->getCells()[0]->addText('');
-	$table->getRows()[1]->getCells()[0]->addText('');
-	$table = $header_body_table('Arbeitsgemeinschaften', "");
-	$table->getRows()[1]->getCells()[0]->addText('');
-	$table->getRows()[1]->getCells()[0]->addText('');
-	$table->getRows()[1]->getCells()[0]->addText('');
-	$table = $header_body_table('Besondere Stärken', "");
-	$table->getRows()[1]->getCells()[0]->addText('');
-	$table->getRows()[1]->getCells()[0]->addText('');
-	$table->getRows()[1]->getCells()[0]->addText('');
-	$table = $header_body_table('Anlagen', "Kompetenzprofil<br />Zielvereinbarungen");
+	$table = $section->addTable(['borderSize' => 6, 'borderColor' => 'black', 'cellMargin' => 80]);
+
+	$cell = $header_body_cell('Ateliers');
+	$cell->addText('');
+
+	$cell = $header_body_cell('Arbeitsgemeinschaften');
+	$cell->addText('');
+
+	$cell = $header_body_cell('Besondere Stärken');
+	$cell->addText('');
+	$cell->addText('');
+	$cell->addText('');
+	$cell->addText('');
+
+	$cell = $header_body_cell('Anlagen');
+	$cell->addText('Kompetenzprofile');
+	$cell->addText('Zielvereinbarungen');
 
 	$section->addText('');
 	$section->addText('');
@@ -227,17 +234,17 @@ if (in_array($outputType, ['docx', 'docx_test'])) {
 	$cell->addText('');
 	$table->addRow();
 	$cell = $table->addCell($pageWidthTwips/4);
-	$cell->addText('Schüler /', null, ['align'=>'center']);
-	$cell->addText('Schülerin', null, ['align'=>'center']);
+	$cell->addText('Schüler /', null, ['align'=>'center', 'spaceBefore'=>0, 'spaceAfter'=>0]);
+	$cell->addText('Schülerin', null, ['align'=>'center', 'spaceBefore'=>0, 'spaceAfter'=>0]);
 	$cell = $table->addCell($pageWidthTwips/4);
-	$cell->addText('Erziehungsberechtiger /', null, ['align'=>'center']);
-	$cell->addText('Erziehungsberechtige', null, ['align'=>'center']);
+	$cell->addText('Erziehungsberechtiger /', null, ['align'=>'center', 'spaceBefore'=>0, 'spaceAfter'=>0]);
+	$cell->addText('Erziehungsberechtige', null, ['align'=>'center', 'spaceBefore'=>0, 'spaceAfter'=>0]);
 	$cell = $table->addCell($pageWidthTwips/4);
-	$cell->addText('Lernbegleiter /', null, ['align'=>'center']);
-	$cell->addText('Lernbegleiterin', null, ['align'=>'center']);
+	$cell->addText('Lernbegleiter /', null, ['align'=>'center', 'spaceBefore'=>0, 'spaceAfter'=>0]);
+	$cell->addText('Lernbegleiterin', null, ['align'=>'center', 'spaceBefore'=>0, 'spaceAfter'=>0]);
 	$cell = $table->addCell($pageWidthTwips/4);
-	$cell->addText('Schulleiter /', null, ['align'=>'center']);
-	$cell->addText('Schulleiterin', null, ['align'=>'center']);
+	$cell->addText('Schulleiter /', null, ['align'=>'center', 'spaceBefore'=>0, 'spaceAfter'=>0]);
+	$cell->addText('Schulleiterin', null, ['align'=>'center', 'spaceBefore'=>0, 'spaceAfter'=>0]);
 
 	if ($outputType == 'docx_test') {
 		// testing:

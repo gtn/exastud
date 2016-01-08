@@ -132,7 +132,7 @@ namespace block_exastud {
 			if ($textReview->subjectid == block_exastud::SUBJECT_ID_LERN_UND_SOZIALVERHALTEN)
 				$textReview->title = trans('Lern- und Sozialverhalten');
 			elseif ($textReview->subject)
-				$textReview->title = $textReview->subject.' ('.fullname($textReview).')';
+				$textReview->title = $textReview->subject; // .' ('.fullname($textReview).')';
 			else
 				$textReview->title = fullname($textReview);
 		}
