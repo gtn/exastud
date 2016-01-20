@@ -27,15 +27,18 @@ namespace block_exastud {
 
 		$manager = get_string_manager();
 
-		if ($component == null)
+		if ($component == null) {
 			$component = 'block_exastud';
+		}
 
-			// first try string with project_based_* prefix
-			if (($component == 'block_exastud') && !empty($CFG->block_exastud_project_based_assessment) && $manager->string_exists('project_based_'.$identifier, $component))
-				return $manager->get_string('project_based_'.$identifier, $component, $a);
+		// first try string with project_based_* prefix
+		if (($component == 'block_exastud') && !empty($CFG->block_exastud_project_based_assessment) && $manager->string_exists('project_based_'.$identifier, $component)) {
+			return $manager->get_string('project_based_'.$identifier, $component, $a);
+		}
 
-				if ($manager->string_exists($identifier, $component))
-		return $manager->get_string($identifier, $component, $a);
+		if ($manager->string_exists($identifier, $component)) {
+			return $manager->get_string($identifier, $component, $a);
+		}
 
 		return $manager->get_string($identifier, '', $a);
 	}
