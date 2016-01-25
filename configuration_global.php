@@ -6,7 +6,7 @@ $courseid = optional_param('courseid', 1, PARAM_INT); // Course ID
 $action = optional_param('action', '', PARAM_TEXT);
 require_login($courseid);
 
-block_exastud_require_global_cap(block_exastud::CAP_ADMIN);
+block_exastud_require_global_cap(block_exastud\CAP_ADMIN);
 
 $header = \block_exastud\get_string('settings');
 $url = new moodle_url('/blocks/exastud/configuration_global.php', array('courseid'=>$courseid));

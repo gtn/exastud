@@ -142,5 +142,18 @@ function xmldb_block_exastud_upgrade($oldversion = 0) {
 		]);
 	}
 
+    if ($oldversion < 2016012500) {
+
+        // Rename field title on table block_exastudclass to NEWNAMEGOESHERE.
+        $table = new xmldb_table('block_exastudclass');
+        $field = new xmldb_field('class', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null, 'userid');
+
+        // Launch rename field title.
+        $dbman->rename_field($table, $field, 'title');
+
+        // Exastud savepoint reached.
+        upgrade_block_savepoint(true, 2016012500, 'exastud');
+    }
+
 	return $result;
 }

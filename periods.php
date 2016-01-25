@@ -36,7 +36,7 @@ $courseid = optional_param('courseid', 1, PARAM_INT); // Course ID
 
 require_login($courseid);
 
-block_exastud_require_global_cap(block_exastud::CAP_EDIT_PERIODS);
+block_exastud_require_global_cap(block_exastud\CAP_EDIT_PERIODS);
 
 $strperiods = \block_exastud\get_string('periods', 'block_exastud');
 

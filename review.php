@@ -36,7 +36,7 @@ $courseid = optional_param('courseid', 1, PARAM_INT); // Course ID
 
 require_login($courseid);
 
-block_exastud_require_global_cap(block_exastud::CAP_USE);
+block_exastud_require_global_cap(block_exastud\CAP_REVIEW);
 
 $url = '/blocks/exastud/review.php';
 $PAGE->set_url($url);
@@ -45,38 +45,54 @@ block_exastud_print_header('review');
 $actPeriod = block_exastud_check_active_period();
 
 $myclasses = $DB->get_records_sql("
-	SELECT ct.id, ct.subjectid, ct.classid, c.class, s.title AS subject
+	SELECT ct.id, ct.subjectid, ct.classid, c.title, s.title AS subject
 	FROM {block_exastudclassteachers} ct
 	JOIN {block_exastudclass} c ON ct.classid=c.id
 	LEFT JOIN {block_exastudsubjects} s ON ct.subjectid = s.id
-	WHERE ct.teacherid=? AND c.periodid=?
-	ORDER BY c.class, s.sorting
+	WHERE ct.teacherid=? AND c.periodid=? AND ct.subjectid >= 0
+	ORDER BY c.title, s.sorting
 ", array($USER->id, $actPeriod->id));
 
-if ($class = \block_exastud\get_headteacher_lern_und_sozialverhalten_class()) {
-	$myclasses = [$class] + $myclasses;
-}
+$lern_und_sozialverhalten_classes = \block_exastud\get_head_teacher_lern_und_sozialverhalten_classes();
 
-if(!$myclasses) {
+if(!$lern_und_sozialverhalten_classes && !$myclasses) {
 	echo \block_exastud\get_string('noclassestoreview','block_exastud');
 }
 else {
-	/* Print the Students */
-	$table = new html_table();
+	if ($lern_und_sozialverhalten_classes) {
+		/* Print the Students */
+		$table = new html_table();
 
-	$table->head = array(
-			\block_exastud\get_string('class', 'block_exastud')
-	);
+		$table->head = array(\block_exastud\trans('Lern- und Sozialverhalten'));
 
-	$table->align = array("left");
-	$table->width = "90%";
+		$table->align = array("left");
+		$table->width = "90%";
 
-	foreach($myclasses as $myclass) {
-		$edit_link = '<a href="' . $CFG->wwwroot . '/blocks/exastud/review_class.php?courseid=' . $courseid . '&amp;classid=' . $myclass->classid . '&amp;subjectid=' . $myclass->subjectid . '">';
+		foreach ($lern_und_sozialverhalten_classes as $myclass) {
+			$edit_link = '<a href="' . $CFG->wwwroot . '/blocks/exastud/review_class.php?courseid=' . $courseid . '&amp;classid=' . $myclass->classid . '&amp;subjectid=' . $myclass->subjectid . '">';
 
-		$table->data[] = array($edit_link.$myclass->class.($myclass->subject?' - '.$myclass->subject:'').'</a>');
+			$table->data[] = array($edit_link.$myclass->title.($myclass->subject?' - '.$myclass->subject:'').'</a>');
+		}
+
+		echo $blockrenderer->print_esr_table($table);
 	}
 
-	echo $blockrenderer->print_esr_table($table);
+	if ($myclasses) {
+		/* Print the Students */
+		$table = new html_table();
+
+		$table->head = array(block_exastud\get_string('review'));
+
+		$table->align = array("left");
+		$table->width = "90%";
+
+		foreach ($myclasses as $myclass) {
+			$edit_link = '<a href="' . $CFG->wwwroot . '/blocks/exastud/review_class.php?courseid=' . $courseid . '&amp;classid=' . $myclass->classid . '&amp;subjectid=' . $myclass->subjectid . '">';
+
+			$table->data[] = array($edit_link.$myclass->title.($myclass->subject?' - '.$myclass->subject:'').'</a>');
+		}
+
+		echo $blockrenderer->print_esr_table($table);
+	}
 }
 block_exastud_print_footer();

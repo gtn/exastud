@@ -1,7 +1,7 @@
 <?php
 //
 $string['exastud:use'] = 'Use of Exabis Student Review';
-$string['exastud:headteacher'] = 'Head of a class';
+$string['exastud:head_teacher'] = 'Head of a class';
 $string['exastud:editperiods'] = 'Edit periods';
 $string['exastud:admin'] = 'Administrator';
 $string['exastud:uploadpicture'] = 'Upload logo';
@@ -16,6 +16,7 @@ $string['configuration'] = 'Class Configuration';
 $string['project_based_configuration'] = 'Project Configuration';
 $string['project_based_configuration'] = 'Edit project';
 $string['report'] = 'Report';
+$string['reports'] = 'Reports';
 $string['periods'] = 'Periods';
 $string['review'] = 'Review';
 $string['pictureupload'] = 'Logo Upload';

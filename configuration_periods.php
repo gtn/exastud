@@ -39,7 +39,7 @@ $action = optional_param('action', '', PARAM_ALPHA);
 
 require_login($courseid);
 
-block_exastud_require_global_cap(block_exastud::CAP_EDIT_PERIODS);
+block_exastud_require_global_cap(block_exastud\CAP_EDIT_PERIODS);
 
 ob_start();
 $periodform = new period_edit_form();

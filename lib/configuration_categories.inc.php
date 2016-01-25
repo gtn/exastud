@@ -2,9 +2,8 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-?><form id="assignform" action="<?php p($form_target)?>" method="post">
+?><form id="assignform" action="<?php p($_SERVER['REQUEST_URI'])?>" method="post">
 <div>
-	<input type="hidden" name="id" value="<?php p($courseid) ?>" />
 	<input type="hidden" name="sesskey" value="<?php p(sesskey()) ?>" />
 	<table class="roleassigntable generaltable generalbox boxaligncenter" cellspacing="0">
 		<tr>

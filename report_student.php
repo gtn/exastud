@@ -11,14 +11,13 @@ $studentid = required_param('studentid', PARAM_INT);
 
 require_login($courseid);
 
-block_exastud_require_global_cap(block_exastud::CAP_USE);
+block_exastud_require_global_cap(block_exastud\CAP_VIEW_REPORT);
 
 if (!block_exastud_is_new_version()) die('not allowed');
 
 // is my class?
-if (!$class = $DB->get_record('block_exastudclass', array('id' => $classid, 'userid' => $USER->id))) {
-	print_error('badclass', 'block_exastud');
-}
+$class = block_exastud\get_teacher_class($classid);
+
 /*
 if (!$DB->count_records('block_exastudclassteachers', array('teacherid' => $USER->id, 'classid' => $classid))) {
 	print_error('badclass', 'block_exastud');
@@ -31,7 +30,7 @@ if (!$student = $DB->get_record('user', array('id' => $studentid))) {
 	print_error('badstudent', 'block_exastud');
 }
 
-$textReviews = get_text_reviews($studentid, $class->periodid);
+$textReviews = get_text_reviews($class, $studentid);
 $categories = get_class_categories_for_report($studentid, $class->id);
 
 if (optional_param('output', '', PARAM_TEXT) == 'template_test') {
@@ -131,7 +130,7 @@ if (in_array($outputType, ['docx', 'docx_test'])) {
 		}
 	}
 
-	$section->addText(get_config('exastud', 'school_name'),
+	if (get_config('exastud', 'school_name')) $section->addText(get_config('exastud', 'school_name'),
 		['size' => 26, 'bold' => false], ['align'=>'center', 'spaceBefore'=>250, 'spaceAfter'=>10]);
 	$section->addText('Gemeinschaftsschule',
 		['size' => 26, 'bold' => false], ['align'=>'center', 'spaceBefore'=>10, 'spaceAfter'=>10]);
@@ -169,7 +168,7 @@ if (in_array($outputType, ['docx', 'docx_test'])) {
 
 	$table = $section->addTable(['borderSize' => 6, 'borderColor' => 'black', 'cellMargin' => 80]);
 
-	if ($textReviews && $textReviews[0]->subjectid == block_exastud::SUBJECT_ID_LERN_UND_SOZIALVERHALTEN) {
+	if ($textReviews && $textReviews[0]->subjectid == block_exastud\SUBJECT_ID_LERN_UND_SOZIALVERHALTEN) {
 		$cell = $header_body_cell($textReviews[0]->title, $textReviews[0]->review);
 		$cell->getStyle()->setGridSpan(2);
 		unset ($textReviews[0]);
@@ -207,7 +206,8 @@ if (in_array($outputType, ['docx', 'docx_test'])) {
 	$section->addText('');
 	$section->addText("Lernentwicklungsgespräch(-e) Datum: _________________");
 	$section->addText('');
-	$section->addText(get_config('exastud', 'school_location').", den ______________");
+	$location = get_config('exastud', 'school_location');
+	$section->addText(($location ? $location : "[Ort]").", den ______________");
 	$section->addText('');
 	$section->addText('');
 	$section->addText('');

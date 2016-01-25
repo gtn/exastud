@@ -2,9 +2,8 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-?><form id="assignform" action="<?php p($form_target)?>" method="post">
+?><form id="assignform" action="<?php p($_SERVER['REQUEST_URI'])?>" method="post">
 <div>
-	<input type="hidden" name="id" value="<?php p($courseid) ?>" />
 	<input type="hidden" name="sesskey" value="<?php p(sesskey()) ?>" />
 	<table class="roleassigntable generaltable generalbox boxaligncenter" cellspacing="0">
 		<tr>
@@ -38,12 +37,20 @@ defined('MOODLE_INTERNAL') || die();
 				  <div class="enroloptions">
 				  <?php
 					if ($userlistType == 'teachers') {
-						$subjects = $DB->get_records('block_exastudsubjects');
-						echo '<p><label for="classteacher_subjectid">'.\block_exastud\trans('de:Fachbezeichnung').'</label><br>';
-						echo '<select id="classteacher_subjectid" name="classteacher_subjectid"><option></option>';
+						$subjects = $DB->get_records('block_exastudsubjects', null, 'title');
+						echo '<p><label for="classteacher_subjectid">'.\block_exastud\trans('de:Fachbezeichnung / Rolle').'</label><br>';
+						echo '<select id="classteacher_subjectid" name="classteacher_subjectid">';
+						echo '<option></option>';
+
+						var_dump($subjects);
+						$subjects = array_merge([
+								(object)['id' => block_exastud\SUBJECT_ID_ADDITIONAL_CLASS_TEACHER, 'title' => block_exastud\trans('de:Klassenlehrer')],
+								(object)['id' => 0, 'title' => '-----------------'],
+							], $subjects)	;
+						var_dump($subjects);
 						foreach ($subjects as $subject) {
 							echo '<option value="'.$subject->id.'"';
-							if ($subject->id == optional_param('classteacher_subjectid', 0, PARAM_INT))
+							if ($subject->id && $subject->id == optional_param('classteacher_subjectid', 0, PARAM_INT))
 								echo ' selected="selected"';
 							echo '>'.s($subject->title).'</option>';
 						}

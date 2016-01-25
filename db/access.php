@@ -40,7 +40,7 @@ $capabilities = array(
 				)
 		),
 		/*
-		'block/exastud:headteacher' => array(
+		'block/exastud:head_teacher' => array(
 				'captype' => 'write',
 				'contextlevel' => CONTEXT_COURSE,
 				'legacy' => array(

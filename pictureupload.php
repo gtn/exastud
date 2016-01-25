@@ -36,7 +36,7 @@ $courseid = optional_param('courseid', 1, PARAM_INT); // Course ID
 
 require_login($courseid);
 
-block_exastud_require_global_cap(block_exastud::CAP_UPLOAD_PICTURE);
+block_exastud_require_global_cap(block_exastud\CAP_UPLOAD_PICTURE);
 
 $url = '/blocks/exastud/pictureupload.php';
 $PAGE->set_url($url, [ 'courseid' => $courseid ]);

@@ -2,11 +2,11 @@
 
 // austria overwrites
 /*
-$string['exastud:headteacher'] = 'Klassenvorstand';
+$string['exastud:head_teacher'] = 'Klassenvorstand';
 */
 
 $string['exastud:use'] = 'Student Review benutzen';
-$string['exastud:headteacher'] = 'Klassenlehrer';
+$string['exastud:head_teacher'] = 'Klassenlehrer';
 $string['exastud:editperiods'] = 'Einstellungen bearbeiten';
 $string['exastud:admin'] = 'Administrator';
 $string['exastud:uploadpicture'] = 'Logo uploaden';
@@ -17,9 +17,10 @@ $string['pluginname'] = 'Exabis Student Review';
 $string['blocktitle'] = 'Exabis Student Review';
 $string['modulename'] = 'Exabis Student Review';
 $string['blockname'] = 'Exabis Student Review';
-$string['configuration'] = 'Meine Klasse konfigurieren';
+$string['configuration'] = 'Meine Klassen konfigurieren';
 $string['project_based_configuration'] = 'Projekt konfigurieren';
 $string['report'] = 'Bericht';
+$string['reports'] = 'Berichte';
 $string['periods'] = 'Bewertungszeiträume';
 $string['review'] = 'Bewertung';
 $string['pictureupload'] = 'Logo Upload';

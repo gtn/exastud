@@ -38,7 +38,7 @@ $classid = optional_param('classid', 0, PARAM_INT); // Class ID
 
 require_login($courseid);
 
-block_exastud_require_global_cap(block_exastud::CAP_USE);
+block_exastud_require_global_cap(block_exastud\CAP_VIEW_REPORT);
 
 $url = '/blocks/exastud/report_project.php';
 $PAGE->set_url($url);
@@ -67,7 +67,7 @@ else if($classid == 0){
 	foreach($myclasses as $myclass) {
 		$edit_link = '<a href="' . $CFG->wwwroot . '/blocks/exastud/report_project.php?courseid=' . $courseid . '&amp;classid=' . $myclass->classid .'">';
 
-		$table->data[] = array($edit_link.$myclass->class.'</a>');
+		$table->data[] = array($edit_link.$myclass->title.'</a>');
 	}
 
 	echo $blockrenderer->print_esr_table($table);

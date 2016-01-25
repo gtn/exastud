@@ -47,11 +47,11 @@ if (!$returnurl) {
 $url = '/blocks/exastud/review_student.php';
 $PAGE->set_url($url);
 
-block_exastud_require_global_cap(block_exastud::CAP_USE);
+block_exastud_require_global_cap(block_exastud\CAP_REVIEW);
 
-$classdata = block_exastud\get_review_class($classid, $subjectid);
+$class = block_exastud\get_review_class($classid, $subjectid);
 
-if(!$classdata) {
+if(!$class) {
 	print_error('badclass', 'block_exastud');
 }
 
@@ -73,7 +73,14 @@ $formdata->studentid = $studentid;
 $formdata->classid = $classid;
 $formdata->subjectid = $subjectid;
 
-if (!$reviewdata = $DB->get_record('block_exastudreview', array('teacherid' => $USER->id, 'subjectid'=>$subjectid, 'periodid' => $actPeriod->id, 'studentid' => $studentid))) {
+if ($subjectid == block_exastud\SUBJECT_ID_LERN_UND_SOZIALVERHALTEN && $class->type == 'shared') {
+	// for shared classes load common review data
+	$teacherid = $class->userid;
+} else {
+	$teacherid = $USER->id;
+}
+
+if (!$reviewdata = $DB->get_record('block_exastudreview', array('teacherid' => $teacherid, 'subjectid'=>$subjectid, 'periodid' => $actPeriod->id, 'studentid' => $studentid))) {
 	$formdata->review = '';
 } else {
 	foreach($categories as $category) {
@@ -86,17 +93,16 @@ $studentform = new student_edit_form(null,array('categories'=>$categories, 'subj
 if ($studentedit = $studentform->get_data()) {
 	$newreview = new stdClass();
 	$newreview->timemodified = time();
-	$newreview->studentid = $studentid;
-	$newreview->subjectid = $subjectid;
-	$newreview->periodid = $actPeriod->id;
-	$newreview->teacherid = $USER->id;
-	
 	$newreview->review = $studentedit->review;
 
 	if (isset($reviewdata->id)) {
 		$newreview->id = $reviewdata->id;
 		$DB->update_record('block_exastudreview', $newreview);
 	} else {
+		$newreview->studentid = $studentid;
+		$newreview->subjectid = $subjectid;
+		$newreview->periodid = $actPeriod->id;
+		$newreview->teacherid = $teacherid;
 		$newreview->id = $DB->insert_record('block_exastudreview', $newreview);
 	}
 	
@@ -111,7 +117,7 @@ if ($studentedit = $studentform->get_data()) {
 	redirect($returnurl);
 }
 
-$classheader = $classdata->class.($classdata->subject?' - '.$classdata->subject:'');
+$classheader = $class->title.($class->subject?' - '.$class->subject:'');
 
 block_exastud_print_header(array('review',
 	array('name' => $classheader, 'link' => $CFG->wwwroot . '/blocks/exastud/review_class.php?courseid=' . $courseid .

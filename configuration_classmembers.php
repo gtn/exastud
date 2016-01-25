@@ -30,10 +30,11 @@
 */
 
 require("inc.php");
-global $DB, $THEME;
+
 define("MAX_USERS_PER_PAGE", 5000);
 
 $courseid = optional_param('courseid', 1, PARAM_INT); // Course ID
+$classid = required_param('classid', PARAM_INT);
 $showall		= optional_param('showall', 0, PARAM_BOOL);
 $searchtext	 = optional_param('searchtext', '', PARAM_TEXT); // search string
 $add			= optional_param('add', 0, PARAM_BOOL);
@@ -41,14 +42,12 @@ $remove		 = optional_param('remove', 0, PARAM_BOOL);
 
 require_login($courseid);
 
-block_exastud_require_global_cap(block_exastud::CAP_HEADTEACHER);
+block_exastud_require_global_cap(block_exastud\CAP_MANAGE_CLASSES);
 $curPeriod = block_exastud_check_active_period();
 
-if (!$class = $DB->get_record('block_exastudclass', array('userid'=>$USER->id,'periodid' => $curPeriod->id))) {
-	print_error('noclassfound', 'block_exastud');
-}
+$class = block_exastud\get_teacher_class($classid);
 
-$header = \block_exastud\get_string('configmember', 'block_exastud', $class->class);
+$header = \block_exastud\get_string('configmember', 'block_exastud', $class->title);
 $url = '/blocks/exastud/configuration_classmembers.php';
 $PAGE->set_url($url);
 block_exastud_print_header(array('configuration', '='.$header));
@@ -120,12 +119,11 @@ if ($usertoclasses) {
 }
 
 echo $OUTPUT->box_start();
-$form_target = 'configuration_classmembers.php?courseid='.$courseid;
 $userlistType = 'members';
 require __DIR__.'/lib/configuration_userlist.inc.php';
 echo $OUTPUT->box_end();
 	
-echo $OUTPUT->single_button($CFG->wwwroot . '/blocks/exastud/configuration.php?courseid='.$courseid,
+echo $OUTPUT->single_button($CFG->wwwroot . '/blocks/exastud/configuration_class.php?courseid='.$courseid.'&classid='.$class->id,
 					\block_exastud\get_string('back', 'block_exastud'));
 
 block_exastud_print_footer();

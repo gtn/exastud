@@ -7,16 +7,15 @@ require_once($CFG->dirroot . '/lib/formslib.php');
 class class_edit_form extends moodleform {
 
 	function definition() {
-		global $CFG, $USER;
 		$mform = & $this->_form;
 
-		$mform->addElement('text', 'class', \block_exastud\get_string('class', 'block_exastud').': ', array('size' => 50));
-		$mform->setType('class', PARAM_TEXT);
-		$mform->addRule('class', null, 'required', null, 'client');
+		$mform->addElement('text', 'title', \block_exastud\get_string('class', 'block_exastud').': ', array('size' => 50));
+		$mform->setType('title', PARAM_TEXT);
+		$mform->addRule('title', null, 'required', null, 'client');
 
-		$mform->addElement('hidden', 'id');
-		$mform->setType('id', PARAM_INT);
-		$mform->setDefault('id', 0);
+		$mform->addElement('hidden', 'classid');
+		$mform->setType('classid', PARAM_INT);
+		$mform->setDefault('classid', 0);
 		
 		$mform->addElement('hidden', 'courseid');
 		$mform->setType('courseid', PARAM_INT);
@@ -87,8 +86,8 @@ class student_edit_form extends moodleform {
 		$mform->setType('studentid', PARAM_INT);
 		$mform->setDefault('studentid', 0);
 
-		if ($this->_customdata['subjectid'] == block_exastud::SUBJECT_ID_LERN_UND_SOZIALVERHALTEN) {
-			// für headteacher review ignorieren
+		if ($this->_customdata['subjectid'] == block_exastud\SUBJECT_ID_LERN_UND_SOZIALVERHALTEN) {
+			// für head_teacher review ignorieren
 		} else {
 			$selectoptions = block_exastud_get_evaluation_options(true);
 	

@@ -27,13 +27,13 @@ class api {
 		if (!$actPeriod) return;
 
 		$classes = $DB->get_records_sql("
-			SELECT ct.id, ct.subjectid, ct.classid, c.class, s.title AS subject
+			SELECT ct.id, ct.subjectid, ct.classid, c.title, s.title AS subject
 			FROM {block_exastudclassteachers} ct
 			JOIN {block_exastudclass} c ON ct.classid=c.id
 			LEFT JOIN {block_exastudsubjects} s ON ct.subjectid = s.id
 			JOIN {block_exastudclassstudents} cs ON cs.classid=c.id
 			WHERE ct.teacherid=? AND c.periodid=? AND cs.studentid=?
-			ORDER BY c.class, s.sorting
+			ORDER BY c.title, s.sorting
 		", array($USER->id, $actPeriod->id, $userid));
 		
 		if (!$classes) {
@@ -78,10 +78,10 @@ class api {
 			FROM {block_exastudclass} c
 			JOIN {block_exastudclassstudents} cs ON cs.classid=c.id
 			WHERE cs.studentid=? AND c.periodid=?
-			ORDER BY c.class LIMIT 1
+			ORDER BY c.title LIMIT 1
 		", array($studentid, $periodid));
 
-		$textReviews = get_text_reviews($studentid, $periodid);
+		$textReviews = get_text_reviews($class, $studentid);
 		$categories = get_class_categories_for_report($studentid, $class->id);
 
 		return get_renderer()->print_student_report($categories, $textReviews);
