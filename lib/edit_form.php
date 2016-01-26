@@ -7,18 +7,27 @@ require_once($CFG->dirroot . '/lib/formslib.php');
 class class_edit_form extends moodleform {
 
 	function definition() {
+		global $DB;
 		$mform = & $this->_form;
+
+		$mform->addElement('hidden', 'classid');
+		$mform->setType('classid', PARAM_INT);
+		$mform->setDefault('classid', 0);
+
+		$mform->addElement('hidden', 'courseid');
+		$mform->setType('courseid', PARAM_INT);
 
 		$mform->addElement('text', 'title', \block_exastud\get_string('class', 'block_exastud').': ', array('size' => 50));
 		$mform->setType('title', PARAM_TEXT);
 		$mform->addRule('title', null, 'required', null, 'client');
 
-		$mform->addElement('hidden', 'classid');
-		$mform->setType('classid', PARAM_INT);
-		$mform->setDefault('classid', 0);
-		
-		$mform->addElement('hidden', 'courseid');
-		$mform->setType('courseid', PARAM_INT);
+		$subjects = $DB->get_records_menu('block_exastudsubjects', null, 'title', 'id, title');
+		$select = $mform->addElement('select', 'mysubjectids', block_exastud\trans('de:Fächer'), $subjects);
+		$select->setMultiple(true);
+
+		if (\block_exastud\is_subject_teacher()) {
+			$mform->addRule('mysubjectids', null, 'required', null, 'client');
+		}
 
 		$this->add_action_buttons();
 	}
@@ -32,7 +41,6 @@ class class_edit_form extends moodleform {
 class period_edit_form extends moodleform {
 
 	function definition() {
-		global $CFG, $USER;
 		$mform = $this->_form;
 
 		$mform->addElement('text', 'description', get_string('perioddesc', 'block_exastud'), array('size' => 50));

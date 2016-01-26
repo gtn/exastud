@@ -32,7 +32,7 @@ class api {
 			JOIN {block_exastudclass} c ON ct.classid=c.id
 			LEFT JOIN {block_exastudsubjects} s ON ct.subjectid = s.id
 			JOIN {block_exastudclassstudents} cs ON cs.classid=c.id
-			WHERE ct.teacherid=? AND c.periodid=? AND cs.studentid=?
+			WHERE ct.teacherid=? AND c.periodid=? AND ct.subjectid >= 0 AND cs.studentid=?
 			ORDER BY c.title, s.sorting
 		", array($USER->id, $actPeriod->id, $userid));
 		

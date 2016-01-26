@@ -58,7 +58,7 @@ if(!$mystudents = $DB->get_records_sql('
 }
 
 block_exastud_print_student_report_header();
-echo '<div><a href="javascript:window.print()" title="Drucken">'.\block_exastud\get_string('print','block_exastud').'</a></div>';
+echo '<div><a href="javascript:window.print()" title="'.block_exastud\get_string('print').'">'.block_exastud\get_string('print').'</a></div>';
 $ranking = 1;
 foreach($mystudents as $mystudent) {
 	block_exastud_print_student_report($mystudent->studentid, $actPeriod->id, $class,false,$detail,$ranking++);

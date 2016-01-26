@@ -17,7 +17,7 @@ namespace block_exastud {
 	use block_exastud\globals as g;
 
 	const CAP_HEAD_TEACHER = 'head_teacher';
-	const CAP_REPORT_TEACHER = 'report_teacher';
+	const CAP_SUBJECT_TEACHER = 'subject_teacher';
 
 	const CAP_USE = 'use';
 	const CAP_EDIT_PERIODS = 'editperiods';
@@ -56,14 +56,14 @@ namespace block_exastud {
 		return $manager->get_string($identifier, '', $a);
 	}
 
-	function is_head_teacher() {
+	function is_head_teacher($userid = null) {
 		$cohort = get_head_teacher_cohort();
-		return cohort_is_member($cohort->id, g::$USER->id);
+		return cohort_is_member($cohort->id, $userid ? $userid : g::$USER->id);
 	}
 
-	function is_report_teacher() {
-		$cohort = get_report_teacher_cohort();
-		return cohort_is_member($cohort->id, g::$USER->id);
+	function is_subject_teacher($userid = null) {
+		$cohort = get_subject_teacher_cohort();
+		return cohort_is_member($cohort->id, $userid ? $userid : g::$USER->id);
 	}
 
 	function get_head_teacher_cohort() {
@@ -76,7 +76,7 @@ namespace block_exastud {
 							'contextid' => \context_system::instance()->id,
 							'idnumber' => 'block_exastud_head_teachers',
 							'name' => trans('de:Klassenlehrer'),
-							'description' => trans('de:Können Klassen anlegen, Lehrer und Schüler zubuchen'),
+							'description' => trans('de:Können Klassen anlegen, Lehrer und Schüler zubuchen und den Lernstandsbericht abrufen'),
 							'visible' => 1,
 							'component' => '', // should be block_exastud, but then the admin can't change the group members anymore
 			];
@@ -86,16 +86,16 @@ namespace block_exastud {
 		return $cohort;
 	}
 
-	function get_report_teacher_cohort() {
+	function get_subject_teacher_cohort() {
 		global $DB;
 
 		// get or create cohort if not exists
-		$cohort = $DB->get_record('cohort', ['contextid' => \context_system::instance()->id, 'idnumber' => 'block_exastud_report_teachers']);
+		$cohort = $DB->get_record('cohort', ['contextid' => \context_system::instance()->id, 'idnumber' => 'block_exastud_subject_teachers']);
 		if (!$cohort) {
 			$cohort = (object)[
 							'contextid' => \context_system::instance()->id,
-							'idnumber' => 'block_exastud_report_teachers',
-							'name' => trans('de:Lernentwicklungslehrer'),
+							'idnumber' => 'block_exastud_subject_teachers',
+							'name' => trans('de:Fachlehrer'),
 							'description' => trans('de:Sie können die Schülerlernentwicklung beurteilen'),
 							'visible' => 1,
 							'component' => '', // should be block_exastud, but then the admin can't change the group members anymore
@@ -184,10 +184,14 @@ namespace block_exastud {
 
 		$ret = [];
 		foreach ($classes as $class) {
+			if (!block_exastud_has_global_cap(CAP_HEAD_TEACHER, $class->userid)) {
+				continue;
+			}
+
 			$ret[$class->id] = (object)[
 				'classid' => $class->id,
 				'subjectid' => SUBJECT_ID_LERN_UND_SOZIALVERHALTEN,
-				'userid' => $class->userid, // should be same as $USER->id,
+				'userid' => $class->userid,
 				'title' => $class->title,
 				'subject' => trans('de:Lern- und Sozialverhalten'),
 				'type' => $class->type,
@@ -315,28 +319,28 @@ function block_exastud_is_new_version() {
 	return true;
 }
 
-function block_exastud_has_global_cap($cap) {
+function block_exastud_has_global_cap($cap, $user = null) {
 	// all capabilities require use
-	if (!has_capability('block/exastud:use', context_system::instance())) {
+	if (!has_capability('block/exastud:use', context_system::instance(), $user)) {
 		return false;
 	}
 
 	switch ($cap) {
 		case block_exastud\CAP_EDIT_PERIODS:
 		case block_exastud\CAP_UPLOAD_PICTURE:
-			return has_capability('block/exastud:admin', context_system::instance());
+			return has_capability('block/exastud:admin', context_system::instance(), $user);
 
-		case block_exastud\CAP_HEAD_TEACHER:
 		case block_exastud\CAP_MANAGE_CLASSES:
 		case block_exastud\CAP_REVIEW:
 			// for head_teacher, check cohort
-			return block_exastud\is_head_teacher() || block_exastud\is_report_teacher();
+			return block_exastud\is_head_teacher($user) || block_exastud\is_subject_teacher($user);
 
-	case block_exastud\CAP_VIEW_REPORT:
-			return block_exastud\is_report_teacher();
+		case block_exastud\CAP_HEAD_TEACHER:
+		case block_exastud\CAP_VIEW_REPORT:
+			return block_exastud\is_head_teacher($user);
 	}
 
-	return has_capability('block/exastud:'.$cap, context_system::instance());
+	return has_capability('block/exastud:'.$cap, context_system::instance(), $user);
 }
 function block_exastud_require_global_cap($cap) {
 	if (!block_exastud_has_global_cap($cap)) {
@@ -733,7 +737,7 @@ function block_exastud_print_header($items, array $options = array())
 			new tabobject('subjects',   $CFG->wwwroot . '/blocks/exastud/configuration_global.php?courseid=' . $COURSE->id.'&action=subjects', \block_exastud\trans("de:Fachbezeichnungen"), '', true),
 			new tabobject('evalopts',   $CFG->wwwroot . '/blocks/exastud/configuration_global.php?courseid=' . $COURSE->id.'&action=evalopts', \block_exastud\trans("de:Bewertungsskala"), '', true),
 			new tabobject('head_teachers', $CFG->wwwroot . '/cohort/assign.php?id=' . block_exastud\get_head_teacher_cohort()->id, \block_exastud\trans('head_teachers', 'de:Klassenlehrer'), '', true),
-			new tabobject('report_teachers', $CFG->wwwroot . '/cohort/assign.php?id=' . block_exastud\get_report_teacher_cohort()->id, \block_exastud\trans('report_teachers', 'de:Lernentwicklungslehrer'), '', true),
+			new tabobject('subject_teachers', $CFG->wwwroot . '/cohort/assign.php?id=' . block_exastud\get_subject_teacher_cohort()->id, \block_exastud\trans('subject_teachers', 'de:Fachlehrer'), '', true),
 		];
 
 		if (block_exastud_has_global_cap(block_exastud\CAP_UPLOAD_PICTURE))

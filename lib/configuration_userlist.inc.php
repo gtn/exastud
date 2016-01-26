@@ -42,12 +42,11 @@ defined('MOODLE_INTERNAL') || die();
 						echo '<select id="classteacher_subjectid" name="classteacher_subjectid">';
 						echo '<option></option>';
 
-						var_dump($subjects);
 						$subjects = array_merge([
 								(object)['id' => block_exastud\SUBJECT_ID_ADDITIONAL_CLASS_TEACHER, 'title' => block_exastud\trans('de:Klassenlehrer')],
 								(object)['id' => 0, 'title' => '-----------------'],
 							], $subjects)	;
-						var_dump($subjects);
+
 						foreach ($subjects as $subject) {
 							echo '<option value="'.$subject->id.'"';
 							if ($subject->id && $subject->id == optional_param('classteacher_subjectid', 0, PARAM_INT))
