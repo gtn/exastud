@@ -85,7 +85,7 @@ if ($classid = optional_param('classid', 0, PARAM_INT)) {
 		$data[] = $studentdesc;
 
 		foreach($categories as $category) {
-			$data[] = @$userReport->{$category->title};
+			$data[] = @$userReport->category_averages[$category->source.'-'.$category->id];
 		}
 
 		$data[] = '<a href="' . $CFG->wwwroot . '/blocks/exastud/report_student.php?courseid=' . $courseid . '&classid=' . $classid . '&studentid=' . $user->id . '">'

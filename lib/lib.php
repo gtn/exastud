@@ -157,14 +157,14 @@ namespace block_exastud {
 	}
 
 	function get_class_teachers($classid) {
-		$classteachers = iterator_to_array(g::$DB->get_recordset_sql("
+		$classteachers = g::$DB->get_records_sql("
 			SELECT ct.id, ".\user_picture::fields('u', null, 'userid').", ct.subjectid, s.title AS subject
 			FROM {user} u
 			JOIN {block_exastudclassteachers} ct ON ct.teacherid=u.id
 			LEFT JOIN {block_exastudsubjects} s ON ct.subjectid = s.id
 			WHERE ct.classid=?
 			ORDER BY s.sorting, u.lastname, u.firstname, s.id
-		", array($classid)));
+		", array($classid));
 
 		foreach ($classteachers as $classteacher) {
 			if ($classteacher->subjectid == SUBJECT_ID_ADDITIONAL_CLASS_TEACHER) {
@@ -269,6 +269,22 @@ namespace block_exastud {
 		return $textReviews;
 	}
 
+	function get_reviewers_by_category_and_pos($periodid, $studentid, $categoryid, $categorysource, $pos_value) {
+		return iterator_to_array(g::$DB->get_recordset_sql("
+			SELECT u.*, s.title AS subject, pos.value
+			FROM {block_exastudreview} r
+			JOIN {block_exastudreviewpos} pos ON pos.reviewid = r.id
+			JOIN {user} u ON r.teacherid = u.id
+			JOIN {block_exastudclass} c ON c.periodid = r.periodid
+			JOIN {block_exastudclassteachers} ct ON ct.classid=c.id AND ct.teacherid=r.teacherid AND ct.subjectid=r.subjectid
+			LEFT JOIN {block_exastudsubjects} s ON r.subjectid = s.id
+			WHERE c.periodid = ? AND r.studentid = ?
+				AND pos.categoryid = ? AND pos.categorysource = ?
+			".($pos_value !== null ? "AND pos.value = ?" : "AND pos.value > 0")."
+			GROUP BY r.teacherid, s.id, pos.value
+		", [$periodid, $studentid, $categoryid, $categorysource, $pos_value]), false);
+	}
+
 	function get_class_categories_for_report($studentid, $classid) {
 		$evaluationOtions = block_exastud_get_evaluation_options();
 		$categories = block_exastud_get_class_categories($classid);
@@ -290,17 +306,7 @@ namespace block_exastud {
 				$category->evaluationOtions[$pos_value] = (object)[
 					'value' => $pos_value,
 					'title' => $option,
-					'reviewers' => iterator_to_array(g::$DB->get_recordset_sql("
-									SELECT u.*, s.title AS subject
-									FROM {block_exastudreview} r
-									JOIN {block_exastudreviewpos} pos ON pos.reviewid = r.id
-									JOIN {user} u ON r.teacherid = u.id
-									JOIN {block_exastudclass} c ON c.periodid = r.periodid
-									LEFT JOIN {block_exastudsubjects} s ON r.subjectid = s.id
-									WHERE r.studentid = ? AND c.id = ?
-										AND pos.categoryid = ? AND pos.categorysource = ?
-										AND pos.value = ?
-									", array($studentid, $classid, $category->id, $category->source, $pos_value)), true)
+					'reviewers' => get_reviewers_by_category_and_pos(block_exastud_get_active_period()->id, $studentid, $category->id, $category->source, $pos_value)
 				];
 			}
 		}
@@ -534,10 +540,32 @@ function block_exastud_get_report($studentid, $periodid) {
 	$totalvalue = $DB->get_record_sql('SELECT sum(rp.value) as total FROM {block_exastudreview} r, {block_exastudreviewpos} rp where r.studentid = ? AND r.periodid = ? AND rp.reviewid = r.id',array($studentid,$periodid));
 	$report->totalvalue = $totalvalue->total;
 
-	$reviewcategories = $DB->get_records_sql('SELECT rp.id, rp.categoryid, rp.categorysource, ROUND(AVG(rp.value), ' . DECIMALPOINTS . ') as avgvalue FROM {block_exastudreview} r, {block_exastudreviewpos} rp where r.studentid = ? AND r.periodid = ? AND rp.reviewid = r.id GROUP BY rp.categoryid, rp.categorysource',array($studentid,$periodid));
-	foreach($reviewcategories as $rcat) {
-		if ($category = block_exastud_get_category($rcat->categoryid, $rcat->categorysource))
-			$report->{$category->title} = is_null($rcat->avgvalue) ? '' : $rcat->avgvalue;
+
+	$reviewcategories = $DB->get_records_sql("
+		SELECT DISTINCT rp.categoryid, rp.categorysource
+		FROM {block_exastudreview} r
+		JOIN {block_exastudreviewpos} rp ON rp.reviewid = r.id
+		WHERE r.studentid = ? AND r.periodid = ?",
+		array($studentid, $periodid));
+
+	$report->category_averages = [];
+
+	foreach ($reviewcategories as $rcat) {
+		if ($category = block_exastud_get_category($rcat->categoryid, $rcat->categorysource)) {
+			$catid = $rcat->categorysource.'-'.$rcat->categoryid;
+
+			$reviewers = block_exastud\get_reviewers_by_category_and_pos($periodid, $studentid, $rcat->categoryid, $rcat->categorysource, null);
+			$category_total = 0;
+			$category_cnt = 0;
+
+			foreach ($reviewers as $reviewer) {
+				$category_total += $reviewer->value;
+				$category_cnt++;
+			}
+			$average = round($category_total/$category_cnt, 2);
+			$report->category_averages[$category->title] = $average; // wird das noch benötigt?
+			$report->category_averages[$catid] = $average;
+		}
 	}
 
 	$numrecords = $DB->get_record_sql('SELECT COUNT(id) AS count FROM {block_exastudreview} WHERE studentid=' . $studentid . ' AND periodid=' . $periodid);
