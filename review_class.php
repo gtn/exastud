@@ -1,36 +1,7 @@
 <?php
-// This file is part of Moodle - http://moodle.org/
-//
-// Moodle is free software: you can redistribute it and/or modify
-// it under the terms of the GNU General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
-//
-// Moodle is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-// GNU General Public License for more details.
-//
-// You should have received a copy of the GNU General Public License
-// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-// All rights reserved
-/**
- * @package moodlecore
- * @subpackage blocks
- * @copyright 2013 gtn gmbh
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- 
- 
- *  This script is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  This copyright notice MUST APPEAR in all copies of the script!
-*/
-
-require("inc.php");
+require "inc.php"
+;
 
 $courseid = optional_param('courseid', 1, PARAM_INT); // Course ID
 $classid = required_param('classid', PARAM_INT);
@@ -53,16 +24,20 @@ if ($subjectid == block_exastud\SUBJECT_ID_LERN_UND_SOZIALVERHALTEN && $class->t
 	$teacherid = $USER->id;
 }
 
+$output = \block_exastud\get_renderer();
+
 $url = '/blocks/exastud/review_class.php';
 $PAGE->set_url($url);
-$blockrenderer = $PAGE->get_renderer('block_exastud');
 $classheader = $class->title.($class->subject?' - '.$class->subject:'');
 block_exastud_print_header(array('review', '='.$classheader));
 
 $actPeriod = block_exastud_check_active_period();
 
 if(!$classusers = $DB->get_records('block_exastudclassstudents', array('classid'=>$classid))) {
-	print_error('nostudentstoreview','block_exastud');
+	echo $output->heading(\block_exastud\get_string('nostudentstoreview'));
+	echo $output->back_button(new moodle_url('review.php', ['courseid' => $courseid]));
+	block_exastud_print_footer();
+	exit;
 }
 
 if ($subjectid == block_exastud\SUBJECT_ID_LERN_UND_SOZIALVERHALTEN) {
@@ -142,6 +117,7 @@ foreach($classusers as $classuser) {
 	}
 }
 
-echo $blockrenderer->print_esr_table($table);
+echo $output->print_esr_table($table);
+echo $output->back_button(new moodle_url('review.php', ['courseid' => $courseid]));
 
 block_exastud_print_footer();

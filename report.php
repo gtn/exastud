@@ -5,12 +5,14 @@ require "inc.php";
 $courseid = optional_param('courseid', 1, PARAM_INT); // Course ID
 $periodid = optional_param('periodid', 0, PARAM_INT); // Period ID
 
-if($CFG->block_exastud_project_based_assessment)
+if(!empty($CFG->block_exastud_project_based_assessment))
 	redirect('report_project.php?courseid=' . $courseid);
 
 require_login($courseid);
 
 block_exastud_require_global_cap(block_exastud\CAP_VIEW_REPORT);
+
+$output = \block_exastud\get_renderer();
 
 $url = '/blocks/exastud/report.php';
 $PAGE->set_url($url);
@@ -32,7 +34,12 @@ if ($classid = optional_param('classid', 0, PARAM_INT)) {
 			WHERE s.classid=?
 			GROUP BY s.studentid
 			ORDER BY total DESC', array($class->id))) {
-		print_error('nostudentstoreview','block_exastud');
+
+		block_exastud_print_header('report');
+		echo $output->heading(\block_exastud\trans(['de:Keine Schüler gefunden', 'en:No students found']));
+		echo $output->back_button(new moodle_url('report.php', ['courseid' => $courseid]));
+		block_exastud_print_footer();
+		exit;
 	}
 
 	/* Print the Students */

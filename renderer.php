@@ -3,7 +3,7 @@
 defined('MOODLE_INTERNAL') || die;
 
 class block_exastud_renderer extends plugin_renderer_base {
-	
+
 	public function print_esr_table (html_table $table) {
 		// prepare table data and populate missing properties with reasonable defaults
 		if (!empty($table->align)) {
@@ -274,5 +274,13 @@ class block_exastud_renderer extends plugin_renderer_base {
 		$output .= '</table>';
 
 		return $output;
+	}
+
+	function back_button($url) {
+		return html_writer::empty_tag('input', [
+			'type' => 'button',
+			'value' => \block_exastud\get_string('back'),
+			'onclick' => 'document.location.href = '.json_encode(block_exastud\url::create($url)->out(false))
+		]);
 	}
 }

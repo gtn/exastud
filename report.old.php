@@ -34,7 +34,7 @@ $courseid = optional_param('courseid', 1, PARAM_INT); // Course ID
 $periodid = optional_param('periodid', 0, PARAM_INT); // Period ID
 global $DB,$CFG;
 
-if($CFG->block_exastud_project_based_assessment)
+if(!empty($CFG->block_exastud_project_based_assessment))
 	redirect('report_project.php?courseid=' . $courseid);
 
 require_login($courseid);

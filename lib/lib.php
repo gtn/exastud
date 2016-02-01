@@ -220,7 +220,7 @@ namespace block_exastud {
 
 	/**
 	 * wrote own function, so eclipse knows which type the output renderer is
-	 * @return block_exastud_renderer
+	 * @return \block_exastud_renderer
 	 */
 	function get_renderer() {
 		return g::$PAGE->get_renderer('block_exastud');
@@ -380,8 +380,7 @@ function block_exastud_reviews_available() {
 			FROM {block_exastudclassstudents} s, {block_exastudclass} c
 			WHERE c.userid = '.$USER->id.' AND s.classid=c.id )');
 	
-	if(isset($CFG->block_exastud_project_based_assessment) 
-			&& $CFG->block_exastud_project_based_assessment==1) {
+	if(!empty($CFG->block_exastud_project_based_assessment)) {
 		// lehrer classteacher und classstudents in period a review
 		$availablereviews = $DB->get_records_sql('SELECT r.id FROM {block_exastudreview} r
 			WHERE r.studentid IN
@@ -635,7 +634,7 @@ function block_exastud_print_student_report($studentid, $periodid, $class, $pdf=
 	$studentreport = str_replace ( '###CLASSTRANSLATION###', \block_exastud\get_string('class','block_exastud'), $studentreport);
 	$studentreport = str_replace ( '###FIRSTNAME###', $student->firstname, $studentreport);
 	$studentreport = str_replace ( '###LASTNAME###', $student->lastname, $studentreport);
-	if($CFG->block_exastud_project_based_assessment && $ranking) {
+	if (!empty($CFG->block_exastud_project_based_assessment) && $ranking) {
 		$studentreport = str_replace ( '###RANKING###', $ranking, $studentreport);
 		$studentreport = str_replace ( '###RANKINGTRANSLATION###', 'Ranking', $studentreport);
 	} else {
