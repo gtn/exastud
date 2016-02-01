@@ -22,7 +22,7 @@ class class_edit_form extends moodleform {
 		$mform->addRule('title', null, 'required', null, 'client');
 
 		$subjects = $DB->get_records_menu('block_exastudsubjects', null, 'title', 'id, title');
-		$select = $mform->addElement('select', 'mysubjectids', block_exastud\trans('de:Fächer'), $subjects);
+		$select = $mform->addElement('select', 'mysubjectids', block_exastud\trans('de:Von mir in dieser Klasse unterrichtete Fächer'), $subjects);
 		$select->setMultiple(true);
 
 		if (\block_exastud\is_subject_teacher()) {
