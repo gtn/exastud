@@ -561,7 +561,7 @@ function block_exastud_get_report($studentid, $periodid) {
 				$category_total += $reviewer->value;
 				$category_cnt++;
 			}
-			$average = round($category_total/$category_cnt, 2);
+			$average = $category_cnt > 0 ? round($category_total/$category_cnt, 2) : 0;
 			$report->category_averages[$category->title] = $average; // wird das noch benötigt?
 			$report->category_averages[$catid] = $average;
 		}

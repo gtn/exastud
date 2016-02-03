@@ -74,7 +74,7 @@ if ($classid = optional_param('classid', 0, PARAM_INT)) {
 		// $link = '<a href="' . $CFG->wwwroot . '/blocks/exastud/report_student.php?courseid=' . $courseid . '&amp;studentid=' . $user->id . '&periodid='.$periodid.'&classid='.$class->id.'">';
 		// $icons = $link.'<img src="' . $CFG->wwwroot . '/blocks/exastud/pix/print.png" width="16" height="16" alt="' . \block_exastud\get_string('printversion', 'block_exastud'). '" /></a>';
 
-		if($CFG->block_exastud_detailed_review) {
+		if(!empty($CFG->block_exastud_detailed_review)) {
 			$link = '<a href="' . $CFG->wwwroot . '/blocks/exastud/report_student.php?courseid=' . $courseid . '&amp;studentid=' . $user->id . '&periodid='.$periodid.'&classid='.$class->id.'">';
 			$icons .= $link.'<img src="' . $CFG->wwwroot . '/blocks/exastud/pix/print_detail.png" width="16" height="16" alt="' . \block_exastud\get_string('printversion', 'block_exastud'). '" /></a>';
 		}
