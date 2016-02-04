@@ -27,7 +27,7 @@ if ($subjectid == block_exastud\SUBJECT_ID_LERN_UND_SOZIALVERHALTEN && $class->t
 $output = \block_exastud\get_renderer();
 
 $url = '/blocks/exastud/review_class.php';
-$PAGE->set_url($url);
+$PAGE->set_url($url, [ 'courseid'=>$courseid, 'classid'=>$classid, 'subjectid'=>$subjectid ]);
 $classheader = $class->title.($class->subject?' - '.$class->subject:'');
 block_exastud_print_header(array('review', '='.$classheader));
 
@@ -85,8 +85,13 @@ foreach($classusers as $classuser) {
 	$row = new html_table_row();
 	$row->cells[] = $OUTPUT->user_picture($user,array("courseid"=>$courseid));
 	$row->cells[] = $userdesc;
-	
-	$row->cells[] = '<a href="' . $CFG->wwwroot . '/blocks/exastud/review_student.php?courseid=' . $courseid . '&classid=' . $classid . '&subjectid=' . $subjectid . '&studentid=' . $user->id . '">'.
+
+	$show_hide_url = block_exastud\url::create($PAGE->url, [ 'action'=>'hide', 'classuser' => $classuser->id]);
+	$show_hide_icon = $OUTPUT->pix_icon('i/hide', block_exastud\get_string('hide'));
+
+	$row->cells[] =
+		'<a style="padding-right: 15px;" href="'.$show_hide_url.'">'.$show_hide_icon.'</a>'.
+		'<a href="' . $CFG->wwwroot . '/blocks/exastud/review_student.php?courseid=' . $courseid . '&classid=' . $classid . '&subjectid=' . $subjectid . '&studentid=' . $user->id . '">'.
 		\block_exastud\trans('de:Bewerten').'</a>';
 	
 	if($report) {

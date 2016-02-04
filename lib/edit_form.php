@@ -25,9 +25,11 @@ class class_edit_form extends moodleform {
 		$select = $mform->addElement('select', 'mysubjectids', block_exastud\trans('de:Von mir in dieser Klasse unterrichtete Fächer'), $subjects);
 		$select->setMultiple(true);
 
+		/*
 		if (\block_exastud\is_subject_teacher()) {
 			$mform->addRule('mysubjectids', null, 'required', null, 'client');
 		}
+		*/
 
 		$this->add_action_buttons();
 	}
