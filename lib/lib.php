@@ -225,7 +225,7 @@ namespace block_exastud {
 			return isset($classes[$classid]) ? $classes[$classid] : null;
 		} else {
 			return $DB->get_record_sql("
-			SELECT ct.id, c.title, s.title AS subject, c.userid
+			SELECT ct.id, ct.id AS classteacherid, c.title, s.title AS subject, c.userid
 			FROM {block_exastudclassteachers} ct
 			JOIN {block_exastudclass} c ON ct.classid=c.id
 			LEFT JOIN {block_exastudsubjects} s ON ct.subjectid = s.id

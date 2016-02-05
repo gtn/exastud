@@ -155,5 +155,28 @@ function xmldb_block_exastud_upgrade($oldversion = 0) {
         upgrade_block_savepoint(true, 2016012500, 'exastud');
     }
 
+    if ($oldversion < 2016020500) {
+
+        // Define table block_exastudclassteastudvis to be created.
+        $table = new xmldb_table('block_exastudclassteastudvis');
+
+        // Adding fields to table block_exastudclassteastudvis.
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('classteacherid', XMLDB_TYPE_INTEGER, '11', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('studentid', XMLDB_TYPE_INTEGER, '11', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('visible', XMLDB_TYPE_INTEGER, '2', null, null, null, '1');
+
+        // Adding keys to table block_exastudclassteastudvis.
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+
+        // Conditionally launch create table for block_exastudclassteastudvis.
+        if (!$dbman->table_exists($table)) {
+            $dbman->create_table($table);
+        }
+
+        // Exastud savepoint reached.
+        upgrade_block_savepoint(true, 2016020500, 'exastud');
+    }
+
 	return $result;
 }
