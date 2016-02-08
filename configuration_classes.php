@@ -17,7 +17,7 @@ if (!$classes && block_exastud_has_global_cap(block_exastud\CAP_HEAD_TEACHER)) {
 	redirect('configuration_class_info.php?courseid=' . $courseid .'&action=add', \block_exastud\get_string('redirectingtoclassinput', 'block_exastud'));
 }
 
-block_exastud_print_header('configuration');
+block_exastud_print_header('configuration_classes');
 $blockrenderer = $PAGE->get_renderer('block_exastud');
 
 /* Print the Students */

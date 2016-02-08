@@ -78,7 +78,7 @@ namespace block_exastud {
 							'contextid' => \context_system::instance()->id,
 							'idnumber' => 'block_exastud_head_teachers',
 							'name' => trans('de:Klassenlehrer'),
-							'description' => trans('de:Können Klassen anlegen, Lehrer und Schüler zubuchen und den Lernstandsbericht abrufen'),
+							'description' => trans('de:Können Klassen anlegen, Lehrer und Schüler zubuchen und den Lernentwicklungsbericht abrufen'),
 							'visible' => 1,
 							'component' => '', // should be block_exastud, but then the admin can't change the group members anymore
 			];
@@ -767,7 +767,7 @@ function block_exastud_print_header($items, array $options = array())
 
 	if (block_exastud_get_active_period()) {
 		if (block_exastud_has_global_cap(block_exastud\CAP_MANAGE_CLASSES)) {
-			$tabs['configuration'] = new tabobject('configuration', $CFG->wwwroot . '/blocks/exastud/configuration_classes.php?courseid=' . $COURSE->id, \block_exastud\get_string("configuration", "block_exastud"), '', true);
+			$tabs['configuration_classes'] = new tabobject('configuration_classes', $CFG->wwwroot . '/blocks/exastud/configuration_classes.php?courseid=' . $COURSE->id, \block_exastud\get_string("configuration_classes", "block_exastud"), '', true);
 		}
 		if (block_exastud_has_global_cap(block_exastud\CAP_REVIEW)) {
 			$tabs['review'] = new tabobject('review', $CFG->wwwroot . '/blocks/exastud/review.php?courseid=' . $COURSE->id, \block_exastud\get_string("review", "block_exastud"), '', true);

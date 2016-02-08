@@ -98,7 +98,7 @@ if ($classid = optional_param('classid', 0, PARAM_INT)) {
 		$data[] = '<a href="' . $CFG->wwwroot . '/blocks/exastud/report_student.php?courseid=' . $courseid . '&classid=' . $classid . '&studentid=' . $user->id . '">'
 		.\block_exastud\trans('de:Alle Bewertungen zeigen').'</a>'.
 		'<br /><a href="' . $CFG->wwwroot . '/blocks/exastud/report_student.php?courseid=' . $courseid . '&classid=' . $classid . '&studentid=' . $user->id . '&output=docx">'
-		.\block_exastud\trans('de:Lernstandsbericht').'</a>';
+		.\block_exastud\trans('de:Lernentwicklungsbericht').'</a>';
 		$table->data[] = $data;
 	}
 

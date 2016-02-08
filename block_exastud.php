@@ -86,7 +86,7 @@ class block_exastud extends block_list {
 		if (block_exastud_get_active_period()) {
 			if (block_exastud_has_global_cap(block_exastud\CAP_MANAGE_CLASSES)) {
 				$this->content->icons[] = '<img src="' . $CFG->wwwroot . '/blocks/exastud/pix/klassenzuteilung.png" height="16" width="23" alt="" />';
-				$this->content->items[] = '<a title="' . \block_exastud\get_string('configuration') . '" href="' . $CFG->wwwroot . '/blocks/exastud/configuration_classes.php?courseid=' . $COURSE->id . '">' . \block_exastud\get_string('configuration') . '</a>';
+				$this->content->items[] = '<a title="' . \block_exastud\get_string('configuration_classes') . '" href="' . $CFG->wwwroot . '/blocks/exastud/configuration_classes.php?courseid=' . $COURSE->id . '">' . \block_exastud\get_string('configuration_classes') . '</a>';
 			}
 			if (block_exastud_has_global_cap(block_exastud\CAP_REVIEW)) {
 				$this->content->icons[] = '<img src="' . $CFG->wwwroot . '/blocks/exastud/pix/beurteilung.png" height="16" width="23" alt="" />';
@@ -100,7 +100,7 @@ class block_exastud extends block_list {
 
 		if (block_exastud_has_global_cap(block_exastud\CAP_ADMIN)) {
 			$this->content->icons[] = '<img src="' . $CFG->wwwroot . '/blocks/exastud/pix/eingabezeitraum.png" height="16" width="23" alt="" />';
-			$this->content->items[] = '<a title="' . \block_exastud\get_string('periods') . '" href="' . $CFG->wwwroot . '/blocks/exastud/periods.php?courseid=' . $COURSE->id . '">' . \block_exastud\get_string('periods') . '</a>';
+			$this->content->items[] = '<a title="' . \block_exastud\get_string('settings') . '" href="' . $CFG->wwwroot . '/blocks/exastud/periods.php?courseid=' . $COURSE->id . '">' . \block_exastud\get_string('settings') . '</a>';
 			$this->content->icons[] = '<img src="' . $CFG->wwwroot . '/blocks/exastud/pix/head_teachers.png" height="16" width="23" alt="" />';
 			$this->content->items[] = '<a title="' . \block_exastud\trans('head_teachers', 'de:Klassenlehrer') . '" href="' . $CFG->wwwroot . '/cohort/assign.php?id=' . block_exastud\get_head_teacher_cohort()->id . '">' . \block_exastud\trans('head_teachers', 'de:Klassenlehrer') . '</a>';
 		}

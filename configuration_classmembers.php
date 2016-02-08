@@ -50,7 +50,7 @@ $class = block_exastud\get_teacher_class($classid);
 $header = \block_exastud\get_string('configmember', 'block_exastud', $class->title);
 $url = '/blocks/exastud/configuration_classmembers.php';
 $PAGE->set_url($url);
-block_exastud_print_header(array('configuration', '='.$header));
+block_exastud_print_header(array('configuration_classes', '='.$header));
 
 if ($frm = data_submitted()) {
 	if(!confirm_sesskey()) {

@@ -24,7 +24,7 @@ if ($action == 'delete') {
 	redirect(new moodle_url('/blocks/exastud/configuration_classes.php?courseid='.$courseid));
 }
 
-block_exastud_print_header('configuration');
+block_exastud_print_header('configuration_classes');
 $blockrenderer = $PAGE->get_renderer('block_exastud');
 
 echo $blockrenderer->print_subtitle($class->title, $CFG->wwwroot . '/blocks/exastud/configuration_class_info.php?courseid='.$courseid.'&classid='.$class->id);
