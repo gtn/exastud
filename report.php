@@ -12,11 +12,10 @@ require_login($courseid);
 
 block_exastud_require_global_cap(block_exastud\CAP_VIEW_REPORT);
 
-$output = \block_exastud\get_renderer();
+$output = block_exastud\get_renderer();
 
 $url = '/blocks/exastud/report.php';
 $PAGE->set_url($url);
-$blockrenderer = $PAGE->get_renderer('block_exastud');
 
 
 if ($classid = optional_param('classid', 0, PARAM_INT)) {
@@ -104,7 +103,7 @@ if ($classid = optional_param('classid', 0, PARAM_INT)) {
 
 	block_exastud_print_header('report');
 
-	echo $blockrenderer->print_esr_table($table);
+	echo $output->print_esr_table($table);
 
 	if (!block_exastud_is_new_version()) {
 		echo '<a href="' . $CFG->wwwroot . '/blocks/exastud/printclass.php?courseid=' . $courseid . '&amp;classid=' . $class->id . '&periodid='.$periodid.'"><img src="' . $CFG->wwwroot . '/blocks/exastud/pix/print.png" width="16" height="16" alt="' . \block_exastud\get_string('printall', 'block_exastud'). '" /></a>';
@@ -139,7 +138,7 @@ if ($classid = optional_param('classid', 0, PARAM_INT)) {
 			];
 		}
 
-		echo $blockrenderer->print_esr_table($table);
+		echo $output->print_esr_table($table);
 	}
 
 	block_exastud_print_footer();

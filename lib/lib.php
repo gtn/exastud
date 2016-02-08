@@ -329,6 +329,14 @@ namespace block_exastud {
 
 		return $categories;
 	}
+
+	function get_custom_profile_field_value($userid, $fieldname) {
+		return g::$DB->get_field_sql("SELECT uid.data
+			FROM {user_info_data} uid
+			JOIN {user_info_field} uif ON uif.id=uid.fieldid
+			WHERE uif.shortname=? AND uid.userid=?
+			", [$fieldname, $userid]);
+	}
 }
 
 namespace {
@@ -835,8 +843,10 @@ function block_exastud_print_header($items, array $options = array())
 	echo $OUTPUT->render($tabtree);
 
 	// header
+	/*
 	if (!in_array('noheading', $options))
 		echo $OUTPUT->heading($last_item_name);
+	*/
 }
 
 function block_exastud_init_js_css(){

@@ -77,7 +77,6 @@ class period_edit_form extends moodleform {
 class student_edit_form extends moodleform {
 
 	function definition() {
-		global $CFG, $USER;
 		$mform = & $this->_form;
 
 		$mform->addElement('hidden', 'courseid');
@@ -101,7 +100,7 @@ class student_edit_form extends moodleform {
 		} else {
 			$selectoptions = block_exastud_get_evaluation_options(true);
 	
-			$mform->addElement('header', 'categories', get_string('review', 'block_exastud'));
+			$mform->addElement('header', 'categories', \block_exastud\trans("de:Fachübergreifende Kompetenzen"));
 			
 			$categories = $this->_customdata['categories'];
 			foreach($categories as $category) {
@@ -113,7 +112,10 @@ class student_edit_form extends moodleform {
 			}
 		}
 
-		$mform->addElement('header', 'review_header', get_string('review', 'block_exastud'));
+		$mform->addElement('header', 'review_header',
+			$this->_customdata['subjectid'] == block_exastud\SUBJECT_ID_LERN_UND_SOZIALVERHALTEN
+				? \block_exastud\trans('de:Lern- und Sozialverhalten')
+				: \block_exastud\trans("de:Fachkompetenzen"));
 		$mform->addElement('htmleditor', 'review', get_string('review', 'block_exastud'), array('cols' => 50, 'rows' => 30));
 		$mform->setType('review', PARAM_RAW);
 

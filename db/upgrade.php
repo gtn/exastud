@@ -1,4 +1,9 @@
 <?php
+
+require_once __DIR__.'/../lib/lib.php';
+
+use block_exastud\globals as g;
+
 function xmldb_block_exastud_upgrade($oldversion = 0) {
 	global $DB;
 	$dbman = $DB->get_manager();
@@ -128,20 +133,6 @@ function xmldb_block_exastud_upgrade($oldversion = 0) {
 		$categoryid = $DB->insert_record('user_info_category', $defaultcategory);
 	}
 
-	if (!$DB->get_field('user_info_field', 'id', ['shortname'=>'dateofbirth'])) {
-	    $DB->insert_record('user_info_field', [
-			'shortname' => 'dateofbirth',
-			'name' => \block_exastud\trans('de:Geburtsdatum'),
-			'datatype' => 'datetime',
-			'categoryid' => $categoryid,
-			'sortorder' => $DB->get_field_sql('SELECT MAX(sortorder) FROM {user_info_field} WHERE categoryid=?', [$categoryid]) + 1,
-			'required' => 0,
-			'visible' => 0,
-			'param1' => 1904,
-			'param2' => 2015,
-		]);
-	}
-
     if ($oldversion < 2016012500) {
 
         // Rename field title on table block_exastudclass to NEWNAMEGOESHERE.
@@ -177,6 +168,23 @@ function xmldb_block_exastud_upgrade($oldversion = 0) {
         // Exastud savepoint reached.
         upgrade_block_savepoint(true, 2016020500, 'exastud');
     }
+
+	if ($oldversion < 2016020501) {
+		g::$DB->insert_or_update_record('user_info_field', [
+			'name' => \block_exastud\trans('de:Geburtsdatum'),
+			'datatype' => 'text',
+			'categoryid' => $categoryid,
+			'sortorder' => $DB->get_field_sql('SELECT MAX(sortorder) FROM {user_info_field} WHERE categoryid=?', [$categoryid]) + 1,
+			'locked' => 1,
+			'required' => 0,
+			'visible' => 0,
+			'param1' => 30,
+			'param2' => 2048,
+			'param3' => 0,
+		], [
+			'shortname' => 'dateofbirth',
+		]);
+	}
 
 	return $result;
 }

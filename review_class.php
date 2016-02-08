@@ -46,6 +46,7 @@ $url = '/blocks/exastud/review_class.php';
 $PAGE->set_url($url, [ 'courseid'=>$courseid, 'classid'=>$classid, 'subjectid'=>$subjectid ]);
 $classheader = $class->title.($class->subject?' - '.$class->subject:'');
 block_exastud_print_header(array('review', '='.$classheader));
+echo $output->heading($classheader);
 
 $actPeriod = block_exastud_check_active_period();
 
@@ -90,6 +91,7 @@ $table->align[] = 'right';
 
 $table->width = "90%";
 
+$hiddenclassusers = [];
 $oddeven = true;
 foreach($classusers as $classuser) {
 	$user = $DB->get_record('user', array('id'=>$classuser->studentid));
@@ -109,14 +111,12 @@ foreach($classusers as $classuser) {
 		}
 	}
 
-	/*
 	if ($visible !== false && !$visible) {
 		// hidden
 		$classuser->user = $user;
 		$hiddenclassusers[] = $classuser;
 		continue;
 	}
-	*/
 
 	$icons = '<img src="' . $CFG->wwwroot . '/pix/i/edit.gif" width="16" height="16" alt="' . \block_exastud\get_string('edit'). '" />';
 	$userdesc = fullname($user, $user->id);
@@ -142,12 +142,13 @@ foreach($classusers as $classuser) {
 	$row->cells[] = ($visible ? '<a href="' . $CFG->wwwroot . '/blocks/exastud/review_student.php?courseid=' . $courseid . '&classid=' . $classid . '&subjectid=' . $subjectid . '&studentid=' . $user->id . '">'.
 		\block_exastud\trans('de:Bewerten').'</a>' : '');
 
-	if (!$visible) {
+	/* if (!$visible) {
 		$cell = new html_table_cell();
 		$cell->text = '';
 		$cell->colspan = count($categories);
 		$row->cells[] = $cell;
-	} elseif($report) {
+	} else */
+	if($report) {
 		foreach($categories as $category) {
 			$bewertung = $DB->get_field('block_exastudreviewpos', 'value', array("categoryid"=>$category->id,"reviewid"=>$report->id,"categorysource"=>$category->source));
 			$row->cells[] = $bewertung && isset($evaluation_options[$bewertung]) ? $evaluation_options[$bewertung] : '';
@@ -176,7 +177,6 @@ foreach($classusers as $classuser) {
 
 echo $output->print_esr_table($table);
 
-/*
 if ($hiddenclassusers) {
 	echo $output->heading(block_exastud\trans('de:Ausgeblendete Schüler'));
 
@@ -216,7 +216,6 @@ if ($hiddenclassusers) {
 
 	echo $output->print_esr_table($table);
 }
-*/
 
 echo $output->back_button(new moodle_url('review.php', ['courseid' => $courseid]));
 

@@ -1,35 +1,6 @@
 <?php
-// This file is part of Moodle - http://moodle.org/
-//
-// Moodle is free software: you can redistribute it and/or modify
-// it under the terms of the GNU General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
-//
-// Moodle is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-// GNU General Public License for more details.
-//
-// You should have received a copy of the GNU General Public License
-// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-// All rights reserved
-/**
- * @package moodlecore
- * @subpackage blocks
- * @copyright 2013 gtn gmbh
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- 
- *  This script is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  This copyright notice MUST APPEAR in all copies of the script!
-*/
-
-require("inc.php");
+require "inc.php";
 require_once($CFG->dirroot . '/blocks/exastud/lib/edit_form.php');
 
 $courseid = optional_param('courseid', 1, PARAM_INT); // Course ID
@@ -43,6 +14,8 @@ require_login($courseid);
 if (!$returnurl) {
 	$returnurl = new moodle_url('/blocks/exastud/review_class.php?courseid='.$courseid.'&classid='.$classid.'&subjectid='.$subjectid);
 }
+
+$output = block_exastud\get_renderer();
 
 $url = '/blocks/exastud/review_student.php';
 $PAGE->set_url($url);
@@ -125,10 +98,45 @@ block_exastud_print_header(array('review',
 		), array('noheading'));
 
 $student = $DB->get_record('user', array('id' => $studentid));
-$studentdesc = $OUTPUT->user_picture($student, array("courseid" => $courseid)) . ' ' . fullname($student, $student->id);
 
 echo $OUTPUT->heading($classheader);
-echo $OUTPUT->heading($studentdesc);
+
+if ($subjectid == \block_exastud\SUBJECT_ID_LERN_UND_SOZIALVERHALTEN) {
+	$user = $student;
+	$userReport = block_exastud_get_report($user->id, $actPeriod->id);
+
+	$table = new html_table();
+
+	$table->head = array();
+	$table->head[] = '';
+	$table->head[] = \block_exastud\get_string('name');
+	$table->head[] = \block_exastud\trans('de:Geburtsdatum');
+	foreach($categories as $category)
+		$table->head[] = $category->title;
+
+	$table->align = array();
+	$table->align[] = 'center';
+	$table->align[] = 'left';
+	$table->align[] = 'left';
+	for($i=0;$i<count($categories);$i++)
+		$table->align[] = 'center';
+
+	$data = array();
+	$data[] = $OUTPUT->user_picture($user,array("courseid"=>$courseid));
+	$data[] = fullname($user, $user->id);
+	$data[] = block_exastud\get_custom_profile_field_value($student->id, 'dateofbirth');
+
+	foreach($categories as $category) {
+		$data[] = @$userReport->category_averages[$category->source.'-'.$category->id];
+	}
+
+	$table->data[] = $data;
+
+	echo $output->print_esr_table($table);
+} else {
+	$studentdesc = $OUTPUT->user_picture($student, array("courseid" => $courseid)) . ' ' . fullname($student, $student->id);
+	echo $OUTPUT->heading($studentdesc);
+}
 
 $studentform->set_data($formdata);
 $studentform->display();

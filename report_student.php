@@ -98,12 +98,7 @@ if (optional_param('output', '', PARAM_TEXT) == 'template_test') {
 
 $outputType = optional_param('output', '', PARAM_TEXT);
 if (in_array($outputType, ['docx', 'docx_test'])) {
-	$birthday = $DB->get_field_sql("SELECT uid.data
-		FROM {user_info_data} uid
-		JOIN {user_info_field} uif ON uif.id=uid.fieldid AND uif.shortname='dateofbirth'
-		WHERE uid.userid=?
-		", [$student->id]);
-	
+	$dateofbirth = block_exastud\get_custom_profile_field_value($student->id, 'dateofbirth');
 	
 	require_once __DIR__.'/classes/PhpWord/Autoloader.php';
 	\PhpOffice\PhpWord\Autoloader::register();
@@ -146,8 +141,8 @@ if (in_array($outputType, ['docx', 'docx_test'])) {
 	$table->addCell(2500)->addText('Vorname, Name');
 	$table->addCell($pageWidthTwips-2500)->addText($student->firstname.', '.$student->lastname);
 	$table->addRow();
-	$table->addCell()->addText('Geburtsdatum');
-	$table->addCell()->addText(!empty($birthday)?strftime('%d. %B %Y', $birthday):'');
+	$table->addCell()->addText(\block_exastud\trans('de:Geburtsdatum'));
+	$table->addCell()->addText($dateofbirth);
 	$table->addRow();
 	$table->addCell()->addText('Lerngruppe');
 	$table->addCell();

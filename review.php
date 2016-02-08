@@ -12,6 +12,7 @@ $url = '/blocks/exastud/review.php';
 $PAGE->set_url($url);
 $blockrenderer = $PAGE->get_renderer('block_exastud');
 block_exastud_print_header('review');
+
 $actPeriod = block_exastud_check_active_period();
 
 $reviewclasses = \block_exastud\get_review_classes();
@@ -26,7 +27,7 @@ else {
 		/* Print the Students */
 		$table = new html_table();
 
-		$table->head = array(\block_exastud\trans('Lern- und Sozialverhalten'));
+		$table->head = array(\block_exastud\trans('de:Lern- und Sozialverhalten'));
 
 		$table->align = array("left");
 		$table->width = "90%";
@@ -44,7 +45,7 @@ else {
 		/* Print the Students */
 		$table = new html_table();
 
-		$table->head = array(block_exastud\get_string('review'));
+		$table->head = array(\block_exastud\trans("de:Kompetenzen"));
 
 		$table->align = array("left");
 		$table->width = "90%";
