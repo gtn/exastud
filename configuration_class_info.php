@@ -73,13 +73,15 @@ if ($classform->is_cancelled()) {
 	}
 
 	$DB->delete_records('block_exastudclassteachers', ['teacherid' => $USER->id, 'classid' => $class->id]);
-	foreach ($classedit->mysubjectids as $subjectid) {
-		$DB->insert_record('block_exastudclassteachers ', [
-			'teacherid' => $USER->id,
-			'classid' => $class->id,
-			'timemodified' => time(),
-			'subjectid' => $subjectid,
-		]);
+	if (!empty($classedit->mysubjectids)) {
+		foreach ($classedit->mysubjectids as $subjectid) {
+			$DB->insert_record('block_exastudclassteachers ', [
+				'teacherid' => $USER->id,
+				'classid' => $class->id,
+				'timemodified' => time(),
+				'subjectid' => $subjectid,
+			]);
+		}
 	}
 
 	redirect('configuration_class.php?courseid=' . $courseid.'&classid='.$class->id);
