@@ -55,7 +55,7 @@ block_exastud_print_header('report');
 
 $categories = ($periodid==0 || $periodid==block_exastud_check_active_period()->id) ? block_exastud_get_class_categories($class->id) : block_exastud_get_period_categories($periodid);
 
-if(!$classusers = $DB->get_records_sql('
+if(!$classstudents = $DB->get_records_sql('
 		SELECT s.id, s.studentid, sum(rp.value) as total
 		FROM {block_exastudclassstudents} s
 		JOIN {block_exastudclass} c ON s.classid = c.id
@@ -89,8 +89,8 @@ $table->align[] = 'center';
 $table->width = "90%";
 
 $i = 1;
-foreach($classusers as $classuser) {
-	$user = $DB->get_record('user', array('id'=>$classuser->studentid));
+foreach($classstudents as $classstudent) {
+	$user = $DB->get_record('user', array('id'=>$classstudent->studentid));
 
 	if (!$user)
 		continue;
@@ -107,7 +107,7 @@ foreach($classusers as $classuser) {
 	//$link = '<a href="' . $CFG->wwwroot . '/blocks/exastud/printstudent.php?courseid=' . $courseid . '&amp;studentid=' . $user->id . '&amp;sesskey=' . sesskey() . '&periodid='.$periodid.'&pdf=true">';
 	//$icons .= $link.'<img src="' . $CFG->wwwroot . '/blocks/exastud/pix/pdf.png" width="23" height="16" alt="' . \block_exastud\get_string('printversion', 'block_exastud'). '" /></a>';
 	
-	$studentdesc = $link.fullname($user, $user->id).'</a>';
+	$studentdesc = $link.fullname($user).'</a>';
 	//$studentdesc = print_user_picture($user->id, $courseid, $user->picture, 0, true, false) . ' ' . $link.fullname($user, $user->id).'</a>';
 
 	//$table->data[] = array($studentdesc, $userReport->team, $userReport->resp, $userReport->inde, $icons);

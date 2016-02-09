@@ -38,11 +38,10 @@ $table->align = array ("left", "left", "left");
 $table->width = "67.5%";
 $table->size = ['33%', '33%', '33%'];
 
-$usertoclasses = $DB->get_records('block_exastudclassstudents', array('classid'=>$class->id), 'studentid');
+$classstudents = \block_exastud\get_class_students($class->id);
 
-foreach($usertoclasses as $usertoclass) {
-	$user = $DB->get_record('user', array('id'=>$usertoclass->studentid));
-	$table->data[] = array ($user->firstname, $user->lastname, $user->email);
+foreach($classstudents as $classstudent) {
+	$table->data[] = array ($classstudent->firstname, $classstudent->lastname, $classstudent->email);
 }
 
 //echo html_writer::table($table);

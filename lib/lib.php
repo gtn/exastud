@@ -164,15 +164,25 @@ namespace block_exastud {
 		return $classes[$classid];
 	}
 
+	function get_class_students($classid) {
+		return g::$DB->get_records_sql("
+			SELECT u.id, cs.id AS record_id, ".\user_picture::fields('u', null, 'userid')."
+			FROM {user} u
+			JOIN {block_exastudclassstudents} cs ON u.id=cs.studentid
+			WHERE cs.classid=?
+			ORDER BY u.lastname, u.firstname
+		", [$classid]);
+	}
+
 	function get_class_teachers($classid) {
-		$classteachers = g::$DB->get_records_sql("
-			SELECT ct.id, ".\user_picture::fields('u', null, 'userid').", ct.subjectid, s.title AS subject
+		$classteachers = iterator_to_array(g::$DB->get_recordset_sql("
+			SELECT u.id, ct.id AS record_id, ".\user_picture::fields('u', null, 'userid').", ct.subjectid, s.title AS subject
 			FROM {user} u
 			JOIN {block_exastudclassteachers} ct ON ct.teacherid=u.id
 			LEFT JOIN {block_exastudsubjects} s ON ct.subjectid = s.id
 			WHERE ct.classid=?
 			ORDER BY s.sorting, u.lastname, u.firstname, s.id
-		", array($classid));
+		", [$classid]));
 
 		foreach ($classteachers as $classteacher) {
 			if ($classteacher->subjectid == SUBJECT_ID_ADDITIONAL_CLASS_TEACHER) {
@@ -336,6 +346,14 @@ namespace block_exastud {
 			JOIN {user_info_field} uif ON uif.id=uid.fieldid
 			WHERE uif.shortname=? AND uid.userid=?
 			", [$fieldname, $userid]);
+	}
+
+	function is_altversion() {
+		return (is_exacomp_installed() && \block_exacomp\api::is_altversion());
+	}
+
+	function is_exacomp_installed() {
+		return class_exists('\block_exacomp\api') && \block_exacomp\api::active();
 	}
 }
 
@@ -879,10 +897,6 @@ function block_exastud_print_footer()
 
 	echo $OUTPUT->footer($COURSE);
 }
-function block_exastud_check_competence_block() {
-	global $DB;
-	return $DB->get_record('block',array('name'=>'exacomp'));
-}
 function block_exastud_get_category($categoryid,$categorysource) {
 	global $DB;
 	switch ($categorysource) {
@@ -895,7 +909,7 @@ function block_exastud_get_category($categoryid,$categorysource) {
 
 			return $category;
 		case 'exacomp':
-			if(block_exastud_check_competence_block()) {
+			if(\block_exastud\is_exacomp_installed()) {
 				$category = $DB->get_record('block_exacomptopics',array("id"=>$categoryid));
 				if (!$category)
 					return null;

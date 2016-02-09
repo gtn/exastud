@@ -111,10 +111,10 @@ $availableusers = $DB->get_records_sql('SELECT id, firstname, lastname, email
 
 $usertoclasses = $DB->get_records('block_exastudclassstudents', array('classid'=>$class->id), 'studentid');
 
-$classusers = array();
+$classstudents = array();
 if ($usertoclasses) {
 	foreach($usertoclasses as $usertoclass) {
-		$classusers[] = $DB->get_record('user', array('id'=>$usertoclass->studentid));
+		$classstudents[] = $DB->get_record('user', array('id'=>$usertoclass->studentid));
 	}
 }
 

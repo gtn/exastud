@@ -123,7 +123,7 @@ if ($subjectid == \block_exastud\SUBJECT_ID_LERN_UND_SOZIALVERHALTEN) {
 
 	$data = array();
 	$data[] = $OUTPUT->user_picture($user,array("courseid"=>$courseid));
-	$data[] = fullname($user, $user->id);
+	$data[] = fullname($user);
 	$data[] = block_exastud\get_custom_profile_field_value($student->id, 'dateofbirth');
 
 	foreach($categories as $category) {
@@ -134,7 +134,7 @@ if ($subjectid == \block_exastud\SUBJECT_ID_LERN_UND_SOZIALVERHALTEN) {
 
 	echo $output->print_esr_table($table);
 } else {
-	$studentdesc = $OUTPUT->user_picture($student, array("courseid" => $courseid)) . ' ' . fullname($student, $student->id);
+	$studentdesc = $OUTPUT->user_picture($student, array("courseid" => $courseid)) . ' ' . fullname($student);
 	echo $OUTPUT->heading($studentdesc);
 }
 

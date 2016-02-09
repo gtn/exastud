@@ -24,16 +24,7 @@ if ($classid = optional_param('classid', 0, PARAM_INT)) {
 	$class = block_exastud\get_teacher_class($classid);
 	$categories = ($periodid==0 || $periodid==block_exastud_check_active_period()->id) ? block_exastud_get_class_categories($class->id) : block_exastud_get_period_categories($periodid);
 
-	if (!$classusers = $DB->get_records_sql('
-			SELECT s.id, s.studentid, sum(rp.value) as total
-			FROM {block_exastudclassstudents} s
-			JOIN {block_exastudclass} c ON s.classid = c.id
-			JOIN {block_exastudreview} r ON r.periodid = c.periodid AND r.studentid = s.studentid
-			JOIN {block_exastudreviewpos} rp ON rp.reviewid = r.id
-			WHERE s.classid=?
-			GROUP BY s.studentid
-			ORDER BY total DESC', array($class->id))) {
-
+	if (!$classstudents = block_exastud\get_class_students($class->id)) {
 		block_exastud_print_header('report');
 		echo $output->heading(\block_exastud\trans(['de:Keine Schüler gefunden', 'en:No students found']));
 		echo $output->back_button(new moodle_url('report.php', ['courseid' => $courseid]));
@@ -62,41 +53,36 @@ if ($classid = optional_param('classid', 0, PARAM_INT)) {
 	$table->width = "90%";
 
 	$i = 1;
-	foreach($classusers as $classuser) {
-		$user = $DB->get_record('user', array('id'=>$classuser->studentid));
+	foreach($classstudents as $classstudent) {
+		$userReport = block_exastud_get_report($classstudent->id, $actPeriod->id);
 
-		if (!$user)
-			continue;
-
-		$userReport = block_exastud_get_report($user->id, $actPeriod->id);
-
-		// $link = '<a href="' . $CFG->wwwroot . '/blocks/exastud/report_student.php?courseid=' . $courseid . '&amp;studentid=' . $user->id . '&periodid='.$periodid.'&classid='.$class->id.'">';
+		// $link = '<a href="' . $CFG->wwwroot . '/blocks/exastud/report_student.php?courseid=' . $courseid . '&amp;studentid=' . $classstudent->id . '&periodid='.$periodid.'&classid='.$class->id.'">';
 		// $icons = $link.'<img src="' . $CFG->wwwroot . '/blocks/exastud/pix/print.png" width="16" height="16" alt="' . \block_exastud\get_string('printversion', 'block_exastud'). '" /></a>';
 
 		if(!empty($CFG->block_exastud_detailed_review)) {
-			$link = '<a href="' . $CFG->wwwroot . '/blocks/exastud/report_student.php?courseid=' . $courseid . '&amp;studentid=' . $user->id . '&periodid='.$periodid.'&classid='.$class->id.'">';
+			$link = '<a href="' . $CFG->wwwroot . '/blocks/exastud/report_student.php?courseid=' . $courseid . '&amp;studentid=' . $classstudent->id . '&periodid='.$periodid.'&classid='.$class->id.'">';
 			$icons .= $link.'<img src="' . $CFG->wwwroot . '/blocks/exastud/pix/print_detail.png" width="16" height="16" alt="' . \block_exastud\get_string('printversion', 'block_exastud'). '" /></a>';
 		}
-		//$link = '<a href="' . $CFG->wwwroot . '/blocks/exastud/printstudent.php?courseid=' . $courseid . '&amp;studentid=' . $user->id . '&amp;sesskey=' . sesskey() . '&periodid='.$periodid.'&pdf=true">';
+		//$link = '<a href="' . $CFG->wwwroot . '/blocks/exastud/printstudent.php?courseid=' . $courseid . '&amp;studentid=' . $classstudent->id . '&amp;sesskey=' . sesskey() . '&periodid='.$periodid.'&pdf=true">';
 		//$icons .= $link.'<img src="' . $CFG->wwwroot . '/blocks/exastud/pix/pdf.png" width="23" height="16" alt="' . \block_exastud\get_string('printversion', 'block_exastud'). '" /></a>';
 
-		$studentdesc = fullname($user, $user->id);
-		//$studentdesc = print_user_picture($user->id, $courseid, $user->picture, 0, true, false) . ' ' . $link.fullname($user, $user->id).'</a>';
+		$studentdesc = fullname($classstudent);
+		//$studentdesc = print_user_picture($classstudent->id, $courseid, $classstudent->picture, 0, true, false) . ' ' . $link.fullname($classstudent, $classstudent->id).'</a>';
 
 		//$table->data[] = array($studentdesc, $userReport->team, $userReport->resp, $userReport->inde, $icons);
 
 		$data = array();
 		$data[] = $i++;
-		$data[] = $OUTPUT->user_picture($user,array("courseid"=>$courseid));
+		$data[] = $OUTPUT->user_picture($classstudent,array("courseid"=>$courseid));
 		$data[] = $studentdesc;
 
 		foreach($categories as $category) {
 			$data[] = @$userReport->category_averages[$category->source.'-'.$category->id];
 		}
 
-		$data[] = '<a href="' . $CFG->wwwroot . '/blocks/exastud/report_student.php?courseid=' . $courseid . '&classid=' . $classid . '&studentid=' . $user->id . '">'
+		$data[] = '<a href="' . $CFG->wwwroot . '/blocks/exastud/report_student.php?courseid=' . $courseid . '&classid=' . $classid . '&studentid=' . $classstudent->id . '">'
 		.\block_exastud\trans('de:Alle Bewertungen zeigen').'</a>'.
-		'<br /><a href="' . $CFG->wwwroot . '/blocks/exastud/report_student.php?courseid=' . $courseid . '&classid=' . $classid . '&studentid=' . $user->id . '&output=docx">'
+		'<br /><a href="' . $CFG->wwwroot . '/blocks/exastud/report_student.php?courseid=' . $courseid . '&classid=' . $classid . '&studentid=' . $classstudent->id . '&output=docx">'
 		.\block_exastud\trans('de:Lernentwicklungsbericht').'</a>';
 		$table->data[] = $data;
 	}

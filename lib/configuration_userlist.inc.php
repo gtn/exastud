@@ -17,11 +17,11 @@ defined('MOODLE_INTERNAL') || die();
 	
 			  <?php
 				$i = 0;
-				foreach ($classusers as $classuser) {
+				foreach ($classstudents as $classstudent) {
 
-				   $fullname = fullname($classuser, true);
+				   $fullname = fullname($classstudent);
 				   $hidden = "";
-					echo "<option value=\"$classuser->id\">".(!empty($classuser->subject) ? $classuser->subject.' ('.$fullname.", ".$classuser->email.')' : $fullname.", ".$classuser->email)."</option>\n";
+					echo "<option value=\"$classstudent->id\">".(!empty($classstudent->subject) ? $classstudent->subject.' ('.$fullname.", ".$classstudent->email.')' : $fullname.", ".$classstudent->email)."</option>\n";
 					$i++;	
 				}
 				if ($i==0) {
@@ -74,7 +74,7 @@ defined('MOODLE_INTERNAL') || die();
 				  	if (!empty($searchtext)) {
 						echo '<optgroup label="' . get_string('searchresults') . ' (' . count($availableusers) . ')">\n';
 				  		foreach ($availableusers as $user) {
-							$fullname = fullname($user, true);
+							$fullname = fullname($user);
 						  	echo '<option value="' . $user->id . '">' . $fullname . ', ' . $user->email . '</option>\n';
 							$i++;
 						}
@@ -85,7 +85,7 @@ defined('MOODLE_INTERNAL') || die();
 								  .'<optgroup label="'.get_string('trysearching').'"><option></option></optgroup>'."\n";
 						} else {
 							foreach ($availableusers as $user) {
-								$fullname = fullname($user, true);
+								$fullname = fullname($user);
 								echo '<option value="' . $user->id . '">' . $fullname . ', ' . $user->email . '</option>\n';
 								$i++;
 							}

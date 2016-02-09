@@ -284,7 +284,7 @@ block_exastud_print_header(array('review',
 		), array('noheading'));
 
 
-$studentdesc = $OUTPUT->user_picture($student, array("courseid" => $courseid)) . ' ' . fullname($student, $student->id);
+$studentdesc = $OUTPUT->user_picture($student, array("courseid" => $courseid)) . ' ' . fullname($student);
 
 echo $OUTPUT->heading($studentdesc);
 

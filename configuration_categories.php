@@ -105,7 +105,7 @@ foreach($availablecategories as $availablecategory) {
 	$availablecategory->subject = \block_exastud\get_string('basiccategories','block_exastud');
 }
 
-if(block_exastud_check_competence_block()) {
+if(\block_exastud\is_exacomp_installed()) {
 	$availablesubjects = $DB->get_records('block_exacompsubjects');
 	foreach($availablesubjects as $subject) {
 		$availabletopics = $DB->get_records_sql('SELECT id, title

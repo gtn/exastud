@@ -50,7 +50,8 @@ echo $output->heading($classheader);
 
 $actPeriod = block_exastud_check_active_period();
 
-if(!$classusers = $DB->get_records('block_exastudclassstudents', array('classid'=>$classid))) {
+
+if (!$classstudents = \block_exastud\get_class_students($classid)) {
 	echo $output->heading(\block_exastud\get_string('nostudentstoreview'));
 	echo $output->back_button(new moodle_url('review.php', ['courseid' => $courseid]));
 	block_exastud_print_footer();
@@ -91,20 +92,16 @@ $table->align[] = 'right';
 
 $table->width = "90%";
 
-$hiddenclassusers = [];
+$hiddenclassstudents = [];
 $oddeven = true;
-foreach($classusers as $classuser) {
-	$user = $DB->get_record('user', array('id'=>$classuser->studentid));
-	if (!$user)
-		continue;
-
+foreach($classstudents as $classstudent) {
 	$can_toggle_visibility = ($subjectid != \block_exastud\SUBJECT_ID_LERN_UND_SOZIALVERHALTEN);
 	if (!$can_toggle_visibility) {
 		$visible = true;
 	} else {
 		$visible = $DB->get_field('block_exastudclassteastudvis', 'visible', [
 			'classteacherid' => $class->classteacherid,
-			'studentid' => $classuser->studentid,
+			'studentid' => $classstudent->id,
 		]);
 		if ($visible === false) {
 			$visible = true;
@@ -113,25 +110,24 @@ foreach($classusers as $classuser) {
 
 	if ($visible !== false && !$visible) {
 		// hidden
-		$classuser->user = $user;
-		$hiddenclassusers[] = $classuser;
+		$hiddenclassstudents[] = $classstudent;
 		continue;
 	}
 
 	$icons = '<img src="' . $CFG->wwwroot . '/pix/i/edit.gif" width="16" height="16" alt="' . \block_exastud\get_string('edit'). '" />';
-	$userdesc = fullname($user, $user->id);
+	$userdesc = fullname($classstudent);
 
-	$report = $DB->get_record('block_exastudreview', array('teacherid'=>$teacherid, 'subjectid'=>$subjectid, 'periodid'=>$actPeriod->id, 'studentid'=>$user->id));
+	$report = $DB->get_record('block_exastudreview', array('teacherid'=>$teacherid, 'subjectid'=>$subjectid, 'periodid'=>$actPeriod->id, 'studentid'=>$classstudent->id));
 	$row = new html_table_row();
-	$row->cells[] = $OUTPUT->user_picture($user,array("courseid"=>$courseid));
+	$row->cells[] = $OUTPUT->user_picture($classstudent,array("courseid"=>$courseid));
 	$row->cells[] = $userdesc;
 
 	if ($can_toggle_visibility) {
 		if ($visible) {
-			$show_hide_url = block_exastud\url::create($PAGE->url, [ 'action'=>'hide_student', 'studentid' => $classuser->studentid]);
+			$show_hide_url = block_exastud\url::create($PAGE->url, [ 'action'=>'hide_student', 'studentid' => $classstudent->id]);
 			$show_hide_icon = $OUTPUT->pix_icon('i/hide', block_exastud\get_string('hide'));
 		} else {
-			$show_hide_url = block_exastud\url::create($PAGE->url, [ 'action'=>'show_student', 'studentid' => $classuser->studentid]);
+			$show_hide_url = block_exastud\url::create($PAGE->url, [ 'action'=>'show_student', 'studentid' => $classstudent->id]);
 			$show_hide_icon = $OUTPUT->pix_icon('i/show', block_exastud\get_string('show'));
 		}
 		$row->cells[] = '<a style="padding-right: 15px;" href="'.$show_hide_url.'">'.$show_hide_icon.'</a>';
@@ -139,7 +135,7 @@ foreach($classusers as $classuser) {
 		$row->cells[] = '';
 	}
 
-	$row->cells[] = ($visible ? '<a href="' . $CFG->wwwroot . '/blocks/exastud/review_student.php?courseid=' . $courseid . '&classid=' . $classid . '&subjectid=' . $subjectid . '&studentid=' . $user->id . '">'.
+	$row->cells[] = ($visible ? '<a href="' . $CFG->wwwroot . '/blocks/exastud/review_student.php?courseid=' . $courseid . '&classid=' . $classid . '&subjectid=' . $subjectid . '&studentid=' . $classstudent->id . '">'.
 		\block_exastud\trans('de:Bewerten').'</a>' : '');
 
 	/* if (!$visible) {
@@ -177,7 +173,7 @@ foreach($classusers as $classuser) {
 
 echo $output->print_esr_table($table);
 
-if ($hiddenclassusers) {
+if ($hiddenclassstudents) {
 	echo $output->heading(block_exastud\trans('de:Ausgeblendete Schüler'));
 
 	$table = new html_table();
@@ -193,17 +189,16 @@ if ($hiddenclassusers) {
 
 	$oddeven = true;
 
-	foreach ($hiddenclassusers as $classuser) {
-		$user = $classuser->user;
+	foreach ($hiddenclassstudents as $classstudent) {
 		$icons = '<img src="' . $CFG->wwwroot . '/pix/i/edit.gif" width="16" height="16" alt="' . \block_exastud\get_string('edit'). '" />';
-		$userdesc = fullname($user, $user->id);
+		$userdesc = fullname($classstudent);
 
 		$row = new html_table_row();
 
-		$row->cells[] = $OUTPUT->user_picture($user,array("courseid"=>$courseid));
+		$row->cells[] = $OUTPUT->user_picture($classstudent,array("courseid"=>$courseid));
 		$row->cells[] = $userdesc;
 
-		$show_hide_url = block_exastud\url::create($PAGE->url, [ 'action'=>'show_student', 'studentid' => $classuser->studentid]);
+		$show_hide_url = block_exastud\url::create($PAGE->url, [ 'action'=>'show_student', 'studentid' => $classstudent->id]);
 		$show_hide_icon = $OUTPUT->pix_icon('i/show', block_exastud\get_string('show'));
 
 		$row->cells[] =

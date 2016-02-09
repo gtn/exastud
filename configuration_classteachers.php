@@ -81,7 +81,7 @@ $availableusers = $DB->get_records_sql('SELECT id, firstname, lastname, email
 
 echo '<div id="block_exastud">';
 
-$classusers = block_exastud\get_class_teachers($class->id);
+$classstudents = block_exastud\get_class_teachers($class->id);
 
 echo $OUTPUT->box_start();
 $userlistType = 'teachers';

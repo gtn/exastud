@@ -81,7 +81,7 @@ else if($classid == 0){
 	
 	$categories = ($periodid==0 || $periodid==block_exastud_check_active_period()->id) ? block_exastud_get_class_categories($class->id) : block_exastud_get_period_categories($periodid);
 	
-	if(!$classusers = $DB->get_records_sql('
+	if(!$classstudents = $DB->get_records_sql('
 			SELECT s.id, s.studentid, sum(rp.value) as total FROM {block_exastudclassstudents} s, {block_exastudclass} c, {block_exastudreview} r, {block_exastudreviewpos} rp
 			WHERE s.classid=?
 			AND r.studentid = s.studentid AND r.periodid = c.periodid AND rp.reviewid = r.id AND s.classid = c.id GROUP BY s.studentid ORDER BY total DESC',array($class->id))) {
@@ -111,8 +111,8 @@ else if($classid == 0){
 	$table->width = "90%";
 	
 	$i = 1;
-	foreach($classusers as $classuser) {
-		$user = $DB->get_record('user', array('id'=>$classuser->studentid));
+	foreach($classstudents as $classstudent) {
+		$user = $DB->get_record('user', array('id'=>$classstudent->studentid));
 	
 		if (!$user)
 			continue;
@@ -129,7 +129,7 @@ else if($classid == 0){
 		//$link = '<a href="' . $CFG->wwwroot . '/blocks/exastud/printstudent.php?courseid=' . $courseid . '&amp;studentid=' . $user->id . '&amp;sesskey=' . sesskey() . '&periodid='.$periodid.'&pdf=true">';
 		//$icons .= $link.'<img src="' . $CFG->wwwroot . '/blocks/exastud/pix/pdf.png" width="23" height="16" alt="' . \block_exastud\get_string('printversion', 'block_exastud'). '" /></a>';
 	
-		$studentdesc = $link.fullname($user, $user->id).'</a>';
+		$studentdesc = $link.fullname($user).'</a>';
 		//$studentdesc = print_user_picture($user->id, $courseid, $user->picture, 0, true, false) . ' ' . $link.fullname($user, $user->id).'</a>';
 	
 		//$table->data[] = array($studentdesc, $userReport->team, $userReport->resp, $userReport->inde, $icons);
@@ -142,7 +142,7 @@ else if($classid == 0){
 		foreach($categories as $category) {
 			$data[] = @$userReport->{$category->title};
 		}
-		$data[] = $classuser->total;
+		$data[] = $classstudent->total;
 		$data[] = $icons;
 		$table->data[] = $data;
 	}
