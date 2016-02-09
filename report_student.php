@@ -118,8 +118,11 @@ if (in_array($outputType, ['docx', 'docx_test'])) {
 	if ($logo = block_exastud_get_main_logo()) {
 		$tmpLogoFile = $logo->copy_content_to_temp();
 		try {
-			$section->addImage($tmpLogoFile, [/* 'width' => '500', */
-				'align' => 'center']);
+			$section->addImage($tmpLogoFile, [
+				'width' => round(\PhpOffice\PhpWord\Shared\Converter::cmToPixel(3.8)), // width: 3.8cm
+				// 'width' => round(35 * 3.8), // width: 3.8cm
+				'align' => 'center'
+			]);
 		} catch (\PhpOffice\PhpWord\Exception\InvalidImageException $e) {
 			print_error(trans('en:The configured header image has a not supported format, please contat your administrator'));
 		}
