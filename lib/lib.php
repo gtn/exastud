@@ -348,10 +348,6 @@ namespace block_exastud {
 			", [$fieldname, $userid]);
 	}
 
-	function is_altversion() {
-		return (is_exacomp_installed() && \block_exacomp\api::is_altversion());
-	}
-
 	function is_exacomp_installed() {
 		return class_exists('\block_exacomp\api') && \block_exacomp\api::active();
 	}
