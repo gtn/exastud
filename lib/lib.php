@@ -792,9 +792,12 @@ function block_exastud_print_header($items, array $options = array())
 	$tabs = array();
 
 	if (block_exastud_get_active_period()) {
+		// BW Version
+		/*
 		if (block_exastud_has_global_cap(block_exastud\CAP_MANAGE_CLASSES)) {
 			$tabs['configuration_classes'] = new tabobject('configuration_classes', $CFG->wwwroot . '/blocks/exastud/configuration_classes.php?courseid=' . $COURSE->id, \block_exastud\get_string("configuration_classes", "block_exastud"), '', true);
 		}
+		*/
 		if (block_exastud_has_global_cap(block_exastud\CAP_REVIEW)) {
 			$tabs['review'] = new tabobject('review', $CFG->wwwroot . '/blocks/exastud/review.php?courseid=' . $COURSE->id, \block_exastud\get_string("review", "block_exastud"), '', true);
 		}
