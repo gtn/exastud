@@ -56,17 +56,16 @@ namespace block_exastud {
 		return $manager->get_string($identifier, '', $a);
 	}
 
+	class permission_exception extends moodle_exception {
+		function __construct($errorcode = 'Not allowed', $module='', $link='', $a=NULL, $debuginfo=null) {
+			return parent::__construct($errorcode, $module, $link, $a, $debuginfo);
+		}
+	}
+
 	function is_head_teacher($userid = null) {
 		$cohort = get_head_teacher_cohort();
 		return cohort_is_member($cohort->id, $userid ? $userid : g::$USER->id);
 	}
-
-	/*
-	function is_subject_teacher($userid = null) {
-		$cohort = get_subject_teacher_cohort();
-		return cohort_is_member($cohort->id, $userid ? $userid : g::$USER->id);
-	}
-	*/
 
 	function get_head_teacher_cohort() {
 		global $DB;
@@ -87,28 +86,6 @@ namespace block_exastud {
 
 		return $cohort;
 	}
-
-	/*
-	function get_subject_teacher_cohort() {
-		global $DB;
-
-		// get or create cohort if not exists
-		$cohort = $DB->get_record('cohort', ['contextid' => \context_system::instance()->id, 'idnumber' => 'block_exastud_subject_teachers']);
-		if (!$cohort) {
-			$cohort = (object)[
-							'contextid' => \context_system::instance()->id,
-							'idnumber' => 'block_exastud_subject_teachers',
-							'name' => trans('de:Fachlehrer'),
-							'description' => trans('de:Sie können die Schülerlernentwicklung beurteilen'),
-							'visible' => 1,
-							'component' => '', // should be block_exastud, but then the admin can't change the group members anymore
-			];
-			$cohort->id = cohort_add_cohort($cohort);
-		}
-
-		return $cohort;
-	}
-	*/
 
 	function get_teacher_classes_owner() {
 		if (!block_exastud_has_global_cap(CAP_MANAGE_CLASSES)) {
@@ -364,37 +341,42 @@ function block_exastud_is_new_version() {
 }
 
 function block_exastud_has_global_cap($cap, $user = null) {
-	// all capabilities require use
-	if (!has_capability('block/exastud:use', context_system::instance(), $user)) {
+	try {
+		block_exastud_require_global_cap($cap, $user);
+		return true;
+	} catch (block_exastud\permission_exception $e) {
+		return false;
+	} catch (\required_capability_exception $e) {
 		return false;
 	}
+}
+
+function block_exastud_require_global_cap($cap, $user) {
+	// all capabilities require use
+	require_capability('block/exastud:use', context_system::instance(), $user);
 
 	switch ($cap) {
 		case \block_exastud\CAP_EDIT_PERIODS:
 		case \block_exastud\CAP_UPLOAD_PICTURE:
-			return has_capability('block/exastud:admin', context_system::instance(), $user);
-
-		/*
-		case block_exastud\CAP_MANAGE_CLASSES:
-		case block_exastud\CAP_REVIEW:
-			// for head_teacher, check cohort
-			return block_exastud\is_head_teacher($user) || block_exastud\is_subject_teacher($user);
-		*/
+			return require_capability('block/exastud:admin', context_system::instance(), $user);
 
 		case \block_exastud\CAP_MANAGE_CLASSES:
 		case \block_exastud\CAP_HEAD_TEACHER:
 		case \block_exastud\CAP_VIEW_REPORT:
-			return \block_exastud\is_head_teacher($user);
+			if (!\block_exastud\is_head_teacher($user)) {
+				throw new block_exastud\permission_exception('no headteacher');
+			} else {
+				return;
+			}
 		case \block_exastud\CAP_REVIEW:
-			return !!\block_exastud\get_review_classes();
+			if (!\block_exastud\get_review_classes()) {
+				throw new block_exastud\permission_exception('no classes');
+			} else {
+				return;
+			}
 	}
 
-	return has_capability('block/exastud:'.$cap, context_system::instance(), $user);
-}
-function block_exastud_require_global_cap($cap) {
-	if (!block_exastud_has_global_cap($cap)) {
-		throw new required_capability_exception(context_system::instance(), 'block/exastud:'.$cap, 'needs capability block/exastud:'.$cap, '');
-	}
+	require_capability('block/exastud:'.$cap, context_system::instance(), $user);
 }
 
 function block_exastud_check_periods($printBoxInsteadOfError = false) {
@@ -788,12 +770,9 @@ function block_exastud_print_header($items, array $options = array())
 	$tabs = array();
 
 	if (block_exastud_get_active_period()) {
-		// BW Version
-		/*
 		if (block_exastud_has_global_cap(block_exastud\CAP_MANAGE_CLASSES)) {
 			$tabs['configuration_classes'] = new tabobject('configuration_classes', $CFG->wwwroot . '/blocks/exastud/configuration_classes.php?courseid=' . $COURSE->id, \block_exastud\get_string("configuration_classes", "block_exastud"), '', true);
 		}
-		*/
 		if (block_exastud_has_global_cap(block_exastud\CAP_REVIEW)) {
 			$tabs['review'] = new tabobject('review', $CFG->wwwroot . '/blocks/exastud/review.php?courseid=' . $COURSE->id, \block_exastud\get_string("review", "block_exastud"), '', true);
 		}
