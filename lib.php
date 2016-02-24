@@ -1,6 +1,7 @@
 <?php
 
-require __DIR__.'/inc.php';
+defined('MOODLE_INTERNAL') || die;
+require_once __DIR__.'/inc.php';
 
 function block_exastud_pluginfile($course, $cm, $context, $filearea, $args, $forcedownload, array $options=array()) {
 	// Make sure the user is logged in and has access to the module (plugins that are not course modules should leave out the 'cm' part).

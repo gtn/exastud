@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 $string['pluginname'] = 'Exabis Student Review';
 

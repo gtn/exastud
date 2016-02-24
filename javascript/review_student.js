@@ -5,7 +5,7 @@
 		// ignore empty options (eg. "please choose" option ist empty)
 		var $options = $fieldset.find('select:first option');
 		var $container = $fieldset.find('.fcontainer');
-		
+
 		var categories = [];
 		$fieldset.find('.fitem_fselect').each(function(){
 			var fullname = $(this).find('.fitemtitle').text();
@@ -73,7 +73,8 @@
 		});
 		
 		html += '</table>';
-		
-		$container.html(html);
+
+		$fieldset.find('.fitem_fselect').remove();
+		$container.prepend(html);
 	});
 })(block_exastud.jquery);

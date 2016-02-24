@@ -30,7 +30,7 @@
 *  This copyright notice MUST APPEAR in all copies of the script!
 */
 
-require("inc.php");
+require __DIR__.'/inc.php';
 global $DB;
 $courseid = optional_param('courseid', 1, PARAM_INT); // Course ID
 $periodid = optional_param('periodid', 0, PARAM_INT); // Period ID
@@ -42,8 +42,8 @@ block_exastud_require_global_cap(block_exastud\CAP_VIEW_REPORT);
 
 $url = '/blocks/exastud/report_project.php';
 $PAGE->set_url($url);
-$blockrenderer = $PAGE->get_renderer('block_exastud');
-block_exastud_print_header('report');
+$output = block_exastud\get_renderer();
+$output->header('report');
 
 $actPeriod = block_exastud_get_period($periodid);
 if (!$actPeriod) {
@@ -62,7 +62,6 @@ else if($classid == 0){
 	);
 
 	$table->align = array("left");
-	$table->width = "90%";
 
 	foreach($myclasses as $myclass) {
 		$edit_link = '<a href="' . $CFG->wwwroot . '/blocks/exastud/report_project.php?courseid=' . $courseid . '&amp;classid=' . $myclass->classid .'">';
@@ -70,7 +69,7 @@ else if($classid == 0){
 		$table->data[] = array($edit_link.$myclass->title.'</a>');
 	}
 
-	echo $blockrenderer->print_esr_table($table);
+	echo $output->table($table);
 } else if($DB->record_exists("block_exastudclassteachers", array("classid"=>$classid,"teacherid"=>$USER->id))) {
 
 	$conditions = ($classid == 0) ? array('userid'=>$USER->id,'periodid'=>$actPeriod->id) : array('id'=>$classid);
@@ -108,8 +107,7 @@ else if($classid == 0){
 	for($i=0;$i<count($categories);$i++)
 		$table->align[] = 'center';
 	$table->align[] = 'center';
-	$table->width = "90%";
-	
+
 	$i = 1;
 	foreach($classstudents as $classstudent) {
 		$user = $DB->get_record('user', array('id'=>$classstudent->studentid));
@@ -147,7 +145,7 @@ else if($classid == 0){
 		$table->data[] = $data;
 	}
 	
-	echo $blockrenderer->print_esr_table($table);
+	echo $output->table($table);
 	
 	echo '<a href="' . $CFG->wwwroot . '/blocks/exastud/printclass.php?courseid=' . $courseid . '&amp;classid=' . $class->id . '&periodid='.$periodid.'"><img src="' . $CFG->wwwroot . '/blocks/exastud/pix/print.png" width="16" height="16" alt="' . \block_exastud\get_string('printall', 'block_exastud'). '" /></a>';
 	echo '<a href="' . $CFG->wwwroot . '/blocks/exastud/printclass.php?courseid=' . $courseid . '&amp;classid=' . $class->id . '&periodid='.$periodid.'&detailedreport=true"><img src="' . $CFG->wwwroot . '/blocks/exastud/pix/print_detail.png" width="16" height="16" alt="' . \block_exastud\get_string('printall', 'block_exastud'). '" /></a>';
@@ -160,4 +158,4 @@ else if($classid == 0){
 	}
 	echo '</select></form>';
 }
-block_exastud_print_footer();
+$output->footer();

@@ -1,35 +1,6 @@
 ﻿<?php
-// This file is part of Moodle - http://moodle.org/
-//
-// Moodle is free software: you can redistribute it and/or modify
-// it under the terms of the GNU General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
-//
-// Moodle is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-// GNU General Public License for more details.
-//
-// You should have received a copy of the GNU General Public License
-// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-// All rights reserved
-/**
- * @package moodlecore
- * @subpackage blocks
- * @copyright 2013 gtn gmbh
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- 
- *  This script is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  This copyright notice MUST APPEAR in all copies of the script!
-*/
-
-require("inc.php");
+require __DIR__.'/inc.php';
 
 define("MAX_USERS_PER_PAGE", 5000);
 
@@ -50,12 +21,12 @@ $class = block_exastud\get_teacher_class($classid);
 $header = \block_exastud\get_string('configmember', 'block_exastud', $class->title);
 $url = '/blocks/exastud/configuration_classmembers.php';
 $PAGE->set_url($url);
-block_exastud_print_header(array('configuration_classes', '='.$header));
+$output = \block_exastud\get_renderer();
+$output->header(array('configuration_classes', '='.$header));
 
 if ($frm = data_submitted()) {
-	if(!confirm_sesskey()) {
-		print_error("badsessionkey","block_exastud");
-	}
+	require_sesskey();
+
 	if ($add and !empty($frm->addselect)) {
 		foreach ($frm->addselect as $adduser) {
 			if (!$adduser = clean_param($adduser, PARAM_INT)) {
@@ -67,19 +38,15 @@ if ($frm = data_submitted()) {
 			$newuser->classid = $class->id;
 			$newuser->timemodified = time();
 			
-			if (!$DB->insert_record('block_exastudclassstudents', $newuser)) {
-				error('errorinsertingstudents', 'block_exastud');
-			}
+			$DB->insert_record('block_exastudclassstudents', $newuser);
 		}
 	} else if ($remove and !empty($frm->removeselect)) {
-		foreach ($frm->removeselect as $removeuser) {
-			if (!$removeuser = clean_param($removeuser, PARAM_INT)) {
+		foreach ($frm->removeselect as $record_id) {
+			if (!$record_id = clean_param($record_id, PARAM_INT)) {
 				continue;
 			}
 			
-			if (!$DB->delete_records('block_exastudclassstudents', array('studentid'=>$removeuser, 'classid'=>$class->id))) {
-				error('errorremovingstudents', 'block_exastud');
-			}
+			$DB->delete_records('block_exastudclassstudents', array('id'=>$record_id, 'classid'=>$class->id));
 		}
 	} else if ($showall) {
 		$searchtext = '';
@@ -109,21 +76,13 @@ $availableusers = $DB->get_records_sql('SELECT id, firstname, lastname, email
 												   '.$selectsql.')
 									 ORDER BY lastname ASC, firstname ASC');
 
-$usertoclasses = $DB->get_records('block_exastudclassstudents', array('classid'=>$class->id), 'studentid');
-
-$classstudents = array();
-if ($usertoclasses) {
-	foreach($usertoclasses as $usertoclass) {
-		$classstudents[] = $DB->get_record('user', array('id'=>$usertoclass->studentid));
-	}
-}
+$classstudents = \block_exastud\get_class_students($class->id);
 
 echo $OUTPUT->box_start();
 $userlistType = 'members';
 require __DIR__.'/lib/configuration_userlist.inc.php';
 echo $OUTPUT->box_end();
 	
-echo $OUTPUT->single_button($CFG->wwwroot . '/blocks/exastud/configuration_class.php?courseid='.$courseid.'&classid='.$class->id,
-					\block_exastud\get_string('back', 'block_exastud'));
+$output->back_button($CFG->wwwroot . '/blocks/exastud/configuration_class.php?courseid='.$courseid.'&classid='.$class->id);
 
-block_exastud_print_footer();
+$output->footer();

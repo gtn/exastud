@@ -29,7 +29,7 @@
  *  This copyright notice MUST APPEAR in all copies of the script!
 */
 
-require("inc.php");
+require __DIR__.'/inc.php';
 require_once __DIR__.'/lib/picture_upload_form.php';
 
 $courseid = optional_param('courseid', 1, PARAM_INT); // Course ID
@@ -40,8 +40,9 @@ block_exastud_require_global_cap(block_exastud\CAP_UPLOAD_PICTURE);
 
 $url = '/blocks/exastud/pictureupload.php';
 $PAGE->set_url($url, [ 'courseid' => $courseid ]);
+$output = block_exastud\get_renderer();
 
-block_exastud_print_header(['settings', 'pictureupload']);
+$output->header(['settings', 'pictureupload']);
 
 $mform = new block_exastud_picture_upload_form();
 if ($mform->is_cancelled()) {
@@ -65,4 +66,4 @@ if ($logo = block_exastud_get_main_logo_url()) {
 		
 $mform->display();
 
-block_exastud_print_footer();
+$output->footer();

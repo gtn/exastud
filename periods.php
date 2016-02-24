@@ -30,7 +30,7 @@
  *  This copyright notice MUST APPEAR in all copies of the script!
 */
 
-require("inc.php");
+require __DIR__.'/inc.php';
 global $DB;
 $courseid = optional_param('courseid', 1, PARAM_INT); // Course ID
 
@@ -47,9 +47,8 @@ if (!$periods = $DB->get_records('block_exastudperiod')) {
 }
 $url = '/blocks/exastud/periods.php';
 $PAGE->set_url($url);
-
-block_exastud_print_header(['settings', 'periods']);
-$blockrenderer = $PAGE->get_renderer('block_exastud');
+$output = block_exastud\get_renderer();
+$output->header(['settings', 'periods']);
 
 /* Print the periods */
 $table = new html_table();
@@ -62,7 +61,6 @@ $table->head = array(
 );
 
 $table->align = array("left", "left", "left", "right");
-$table->width = "90%";
 
 foreach($periods as $period) {
 
@@ -77,9 +75,9 @@ foreach($periods as $period) {
 	$table->data[] = array ($link.$period->description.'</a>', $starttime, $endtime, $icons);
 }
 
-echo $blockrenderer->print_esr_table($table);
+echo $output->table($table);
 
 echo $OUTPUT->single_button($CFG->wwwroot . '/blocks/exastud/configuration_periods.php?courseid='.$courseid.'&sesskey='.sesskey().'&action=new',
-					\block_exastud\get_string('newperiod', 'block_exastud'));
+					\block_exastud\get_string('newperiod', 'block_exastud'), 'get');
 
-block_exastud_print_footer();
+$output->footer();

@@ -21,7 +21,7 @@ defined('MOODLE_INTERNAL') || die();
 
 				   $fullname = fullname($classstudent);
 				   $hidden = "";
-					echo "<option value=\"$classstudent->id\">".(!empty($classstudent->subject) ? $classstudent->subject.' ('.$fullname.", ".$classstudent->email.')' : $fullname.", ".$classstudent->email)."</option>\n";
+					echo "<option value=\"$classstudent->record_id\">".(!empty($classstudent->subject_title) ? $classstudent->subject_title.' ('.$fullname.", ".$classstudent->email.')' : $fullname.", ".$classstudent->email)."</option>\n";
 					$i++;	
 				}
 				if ($i==0) {

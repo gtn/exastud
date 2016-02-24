@@ -29,7 +29,7 @@
  *  This copyright notice MUST APPEAR in all copies of the script!
 */
 
-require("inc.php");
+require __DIR__.'/inc.php';
 require_once($CFG->dirroot . '/blocks/exastud/lib/edit_form.php');
 global $DB, $OUTPUT, $PAGE;
 
@@ -89,7 +89,8 @@ if ($classform->is_cancelled()) {
 
 $url = "/blocks/exastud/configuration_class_info.php";
 $PAGE->set_url($url);
-block_exastud_print_header(array('configuration_classes', 'editclassname'));
+$output = block_exastud\get_renderer();
+$output->header(array('configuration_classes', 'editclassname'));
 
 // TODO: two divs? -- daniel
 echo '<div id="block_exastud">';
@@ -101,4 +102,4 @@ $classform->set_data($class);
 $classform->display();
 
 echo '</div>';
-block_exastud_print_footer();
+$output->footer();

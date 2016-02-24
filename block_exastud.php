@@ -50,17 +50,6 @@ class block_exastud extends block_list {
 		return false;
 	}
 
-	/*
-	function config_save($data) {
-		print_r($data);
-		die();
-		// Default behavior: save all variables as $CFG properties
-		foreach ($data as $name => $value) {
-			set_config($name, $value);
-		}
-		return true;
-	}
-	*/
 	function get_content() {
 		global $CFG, $COURSE, $USER, $DB;
 

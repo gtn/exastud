@@ -27,7 +27,10 @@ namespace block_exastud {
 	const CAP_VIEW_REPORT = 'viewreport';
 	const CAP_REVIEW = 'review';
 
+	const DATA_ID_LERN_UND_SOZIALVERHALTEN = 'learning_and_social_behavior';
 	const SUBJECT_ID_LERN_UND_SOZIALVERHALTEN = -1;
+	const SUBJECT_ID_LERN_UND_SOZIALVERHALTEN_VORSCHLAG = -3;
+	const SUBJECT_ID_OTHER_DATA = -1;
 	const SUBJECT_ID_ADDITIONAL_CLASS_TEACHER = -2;
 
 	/**
@@ -98,7 +101,7 @@ namespace block_exastud {
 		return $cohort;
 	}
 
-	function get_teacher_classes_owner() {
+	function get_head_teacher_classes_owner() {
 		if (!block_exastud_has_global_cap(CAP_MANAGE_CLASSES)) {
 			return [];
 		}
@@ -112,7 +115,7 @@ namespace block_exastud {
 			ORDER BY c.title", [g::$USER->id, $curPeriod->id]);
 	}
 
-	function get_teacher_classes_shared() {
+	function get_head_teacher_classes_shared() {
 		if (!block_exastud_has_global_cap(CAP_MANAGE_CLASSES)) {
 			return [];
 		}
@@ -137,15 +140,14 @@ namespace block_exastud {
 		return $classes;
 	}
 
-	function get_teacher_classes_all() {
-		return get_teacher_classes_owner() + get_teacher_classes_shared();
+	function get_head_teacher_classes_all() {
+		return get_head_teacher_classes_owner() + get_head_teacher_classes_shared();
 	}
 
 	function get_teacher_class($classid) {
-		$classes = get_teacher_classes_all();
+		$classes = get_head_teacher_classes_all();
 
 		if (!isset($classes[$classid])) {
-			print_error('noclassfound', 'block_exastud');
 			throw new moodle_exception('class not found');
 		}
 
@@ -164,17 +166,17 @@ namespace block_exastud {
 
 	function get_class_teachers($classid) {
 		$classteachers = iterator_to_array(g::$DB->get_recordset_sql("
-			SELECT u.id, ct.id AS record_id, ".\user_picture::fields('u', null, 'userid').", ct.subjectid, s.title AS subject
+			SELECT u.id, ct.id AS record_id, ".\user_picture::fields('u', null, 'userid').", ct.subjectid, s.title AS subject_title
 			FROM {user} u
 			JOIN {block_exastudclassteachers} ct ON ct.teacherid=u.id
 			LEFT JOIN {block_exastudsubjects} s ON ct.subjectid = s.id
 			WHERE ct.classid=?
 			ORDER BY s.sorting, u.lastname, u.firstname, s.id
-		", [$classid]));
+		", [$classid]), false);
 
 		foreach ($classteachers as $classteacher) {
 			if ($classteacher->subjectid == SUBJECT_ID_ADDITIONAL_CLASS_TEACHER) {
-				$classteacher->subject = get_string('head_teacher');
+				$classteacher->subject_title = get_string('head_teacher');
 			}
 		}
 
@@ -182,7 +184,7 @@ namespace block_exastud {
 	}
 
 	function get_head_teacher_lern_und_sozialverhalten_classes() {
-		$classes = get_teacher_classes_all();
+		$classes = get_head_teacher_classes_all();
 
 		$ret = [];
 		foreach ($classes as $class) {
@@ -203,10 +205,14 @@ namespace block_exastud {
 		return $ret;
 	}
 
+	/**
+	 * this returns all review classes, can have multiple class entries if teacher has more than 1 subject
+	 * @return array
+	 */
 	function get_review_classes() {
 		$actPeriod = block_exastud_get_active_period();
 		return g::$DB->get_records_sql("
-			SELECT ct.id, ct.subjectid, ct.classid, c.title, s.title AS subject
+			SELECT ct.id, ct.subjectid, ct.classid, c.title, s.title AS subject_title
 			FROM {block_exastudclassteachers} ct
 			JOIN {block_exastudclass} c ON ct.classid=c.id
 			LEFT JOIN {block_exastudsubjects} s ON ct.subjectid = s.id
@@ -223,7 +229,7 @@ namespace block_exastud {
 			return isset($classes[$classid]) ? $classes[$classid] : null;
 		} else {
 			return $DB->get_record_sql("
-			SELECT ct.id, ct.id AS classteacherid, c.title, s.title AS subject, c.userid
+			SELECT ct.id, ct.id AS classteacherid, c.title, s.title AS subject_title, c.userid
 			FROM {block_exastudclassteachers} ct
 			JOIN {block_exastudclass} c ON ct.classid=c.id
 			LEFT JOIN {block_exastudsubjects} s ON ct.subjectid = s.id
@@ -256,7 +262,7 @@ namespace block_exastud {
 
 	function get_text_reviews($class, $studentid) {
 		$textReviews = iterator_to_array(g::$DB->get_recordset_sql("
-			SELECT DISTINCT ".\user_picture::fields('u').", r.review, s.title AS subject, r.subjectid AS subjectid
+			SELECT DISTINCT ".\user_picture::fields('u').", r.review, s.title AS subject_title, r.subjectid AS subjectid
 			FROM {block_exastudreview} r
 			JOIN {user} u ON r.teacherid = u.id
 			JOIN {block_exastudsubjects} s ON r.subjectid = s.id
@@ -268,15 +274,15 @@ namespace block_exastud {
 		array($studentid, $class->periodid)), false);
 
 		foreach ($textReviews as $textReview) {
-			if ($textReview->subject)
-				$textReview->title = $textReview->subject; // .' ('.fullname($textReview).')';
+			if ($textReview->subject_title)
+				$textReview->title = $textReview->subject_title; // .' ('.fullname($textReview).')';
 			else
 				$textReview->title = fullname($textReview);
 		}
 
 		$lern_und_sozialverhalten = g::$DB->get_record('block_exastudreview', array('teacherid' => $class->userid, 'subjectid'=>SUBJECT_ID_LERN_UND_SOZIALVERHALTEN, 'periodid' => $class->periodid, 'studentid' => $studentid));
 		if ($lern_und_sozialverhalten) {
-			$lern_und_sozialverhalten->title = trans('Lern- und Sozialverhalten');
+			$lern_und_sozialverhalten->title = trans('de:Lern- und Sozialverhalten');
 			array_unshift($textReviews, $lern_und_sozialverhalten);
 		}
 
@@ -285,7 +291,7 @@ namespace block_exastud {
 
 	function get_reviewers_by_category_and_pos($periodid, $studentid, $categoryid, $categorysource, $pos_value) {
 		return iterator_to_array(g::$DB->get_recordset_sql("
-			SELECT u.*, s.title AS subject, pos.value
+			SELECT u.*, s.title AS subject_title, pos.value
 			FROM {block_exastudreview} r
 			JOIN {block_exastudreviewpos} pos ON pos.reviewid = r.id
 			JOIN {user} u ON r.teacherid = u.id
@@ -339,6 +345,23 @@ namespace block_exastud {
 	function is_exacomp_installed() {
 		return class_exists('\block_exacomp\api') && \block_exacomp\api::active();
 	}
+
+	function get_class_student_data($classid, $userid) {
+		return g::$DB->get_records_menu('block_exastuddata', [
+			'classid' => $classid,
+			'studentid' => $userid
+		], 'name', 'name, value');
+	}
+
+	function set_class_student_data($classid, $userid, $name, $value) {
+		g::$DB->insert_or_update_record('block_exastuddata', [
+			'value' => $value,
+		], [
+			'classid' => $classid,
+			'studentid' => $userid,
+			'name' => $name,
+		]);
+	}
 }
 
 namespace {
@@ -369,7 +392,8 @@ function block_exastud_require_global_cap($cap, $user = null) {
 	switch ($cap) {
 		case \block_exastud\CAP_EDIT_PERIODS:
 		case \block_exastud\CAP_UPLOAD_PICTURE:
-			return require_capability('block/exastud:admin', context_system::instance(), $user);
+			require_capability('block/exastud:admin', context_system::instance(), $user);
+			return;
 
 		case \block_exastud\CAP_MANAGE_CLASSES:
 		case \block_exastud\CAP_HEAD_TEACHER:
@@ -430,7 +454,6 @@ function block_exastud_reviews_available() {
 function block_exastud_has_wrong_periods($printBoxInsteadOfError = false) {
 	global $DB;
 	// check if any entry has a starttime after the endtime:
-	$content = '';
 	$wrongs = $DB->get_records_sql('SELECT p.description, p.starttime, p.endtime FROM {block_exastudperiod} p WHERE starttime > endtime');
 
 	if ($wrongs) {
@@ -491,7 +514,7 @@ function block_exastud_check_active_period() {
 		redirect($CFG->wwwroot.'/blocks/exastud/configuration_periods.php?courseid='.$COURSE->id, \block_exastud\get_string('redirectingtoperiodsinput'));
 	}
 	
-	print_error('periodserror', 'block_exastud', $CFG->wwwroot.'/blocks/exastud/configuration_periods.php?courseid='.$COURSE->id);
+	throw new \moodle_exception('periodserror', 'block_exastud', $CFG->wwwroot.'/blocks/exastud/configuration_periods.php?courseid='.$COURSE->id);
 }
 
 function block_exastud_get_active_period() {
@@ -607,7 +630,7 @@ function block_exastud_get_report($studentid, $periodid) {
 	$report->numberOfEvaluations = $numrecords->count;
 
 	$comments = $DB->get_recordset_sql("
-				SELECT ".user_picture::fields('u').", r.review, s.title AS subject
+				SELECT ".user_picture::fields('u').", r.review, s.title AS subject_title
 				FROM {block_exastudreview} r
 				JOIN {user} u ON r.teacherid = u.id
 				LEFT JOIN {block_exastudsubjects} s ON r.subjectid = s.id
@@ -618,7 +641,7 @@ function block_exastud_get_report($studentid, $periodid) {
 	$report->comments = array();
 	foreach($comments as $comment) {
 		$newcomment = new stdClass();
-		$newcomment->name = ($comment->subject?$comment->subject.' ('.fullname($comment).')':fullname($comment));
+		$newcomment->name = ($comment->subject_title?$comment->subject_title.' ('.fullname($comment).')':fullname($comment));
 		$newcomment->review = format_text($comment->review);
 
 		$report->comments[] = $newcomment;
@@ -628,7 +651,7 @@ function block_exastud_get_report($studentid, $periodid) {
 }
 
 function block_exastud_read_template_file($filename) {
-	global $CFG,$DB;
+	global $CFG;
 	$filecontent = '';
 
 	if(is_file($CFG->dirroot . '/blocks/exastud/template/' . $filename)) {
@@ -704,14 +727,14 @@ function block_exastud_print_student_report($studentid, $periodid, $class, $pdf=
 		<td class="rating legend">'.@$studentReport->{$category->title}.'</td></tr>';
 			
 		if($detailedreview) {
-			$detaildata = $DB->get_recordset_sql("SELECT ".user_picture::fields('u').", pos.value, s.title AS subject
+			$detaildata = $DB->get_recordset_sql("SELECT ".user_picture::fields('u').", pos.value, s.title AS subject_title
 					FROM 	{block_exastudreview} r
 					JOIN {block_exastudreviewpos} pos ON pos.reviewid = r.id
 					JOIN {user} u ON r.teacherid = u.id
 					LEFT JOIN {block_exastudsubjects} s ON r.subjectid = s.id
 					WHERE studentid = ? AND periodid = ? AND pos.categoryid = ? AND pos.categorysource = ?",array($studentid,$periodid,$category->id,$category->source));
 			foreach($detaildata as $detailrow)
-				$html.='<tr class="ratings"><td class="teacher">'.($detailrow->subject?$detailrow->subject.' ('.fullname($detailrow).')':fullname($detailrow)) . '</td>
+				$html.='<tr class="ratings"><td class="teacher">'.($detailrow->subject_title?$detailrow->subject_title.' ('.fullname($detailrow).')':fullname($detailrow)) . '</td>
 				<td class="rating legend teacher">'.$detailrow->value.'</td></tr>';
 		}
 	}
@@ -770,91 +793,6 @@ function block_exastud_print_student_report($studentid, $periodid, $class, $pdf=
 		echo $studentreport;
 }
 
-function block_exastud_print_header($items, array $options = array())
-{
-	global $CFG, $COURSE, $PAGE, $OUTPUT;
-
-	$items = (array)$items;
-	$strheader = \block_exastud\get_string('pluginname', 'block_exastud');
-	
-	$last_item_name = '';
-	$tabs = array();
-
-	if (block_exastud_get_active_period()) {
-		if (block_exastud_has_global_cap(block_exastud\CAP_MANAGE_CLASSES)) {
-			$tabs['configuration_classes'] = new tabobject('configuration_classes', $CFG->wwwroot . '/blocks/exastud/configuration_classes.php?courseid=' . $COURSE->id, \block_exastud\get_string("configuration_classes", "block_exastud"), '', true);
-		}
-		if (block_exastud_has_global_cap(block_exastud\CAP_REVIEW)) {
-			$tabs['review'] = new tabobject('review', $CFG->wwwroot . '/blocks/exastud/review.php?courseid=' . $COURSE->id, \block_exastud\get_string("review", "block_exastud"), '', true);
-		}
-		if (block_exastud_has_global_cap(block_exastud\CAP_VIEW_REPORT)) {
-			$tabs['report'] = new tabobject('report', $CFG->wwwroot . '/blocks/exastud/report.php?courseid=' . $COURSE->id, \block_exastud\get_string("reports", "block_exastud"), '', true);
-		}
-	}
-	if (block_exastud_has_global_cap(block_exastud\CAP_ADMIN)) {
-		$tabs['settings'] = new tabobject('settings', $CFG->wwwroot . '/blocks/exastud/periods.php?courseid=' . $COURSE->id, \block_exastud\get_string("settings"), '', true);
-
-		$tabs['settings']->subtree = [
-			new tabobject('periods',	$CFG->wwwroot . '/blocks/exastud/periods.php?courseid=' . $COURSE->id, \block_exastud\get_string("periods"), '', true),
-			new tabobject('categories', $CFG->wwwroot . '/blocks/exastud/configuration_global.php?courseid=' . $COURSE->id.'&action=categories', \block_exastud\trans("de:Kompetenzen"), '', true),
-			new tabobject('subjects',   $CFG->wwwroot . '/blocks/exastud/configuration_global.php?courseid=' . $COURSE->id.'&action=subjects', \block_exastud\trans("de:Fachbezeichnungen"), '', true),
-			new tabobject('evalopts',   $CFG->wwwroot . '/blocks/exastud/configuration_global.php?courseid=' . $COURSE->id.'&action=evalopts', \block_exastud\trans("de:Bewertungsskala"), '', true),
-			new tabobject('head_teachers', $CFG->wwwroot . '/cohort/assign.php?id=' . block_exastud\get_head_teacher_cohort()->id, \block_exastud\get_string('head_teachers'), '', true),
-		];
-
-		if (block_exastud_has_global_cap(block_exastud\CAP_UPLOAD_PICTURE))
-			$tabs['settings']->subtree[] = new tabobject('pictureupload', $CFG->wwwroot . '/blocks/exastud/pictureupload.php?courseid=' . $COURSE->id, \block_exastud\get_string("pictureupload", "block_exastud"), '', true);
-	}
-	
-	$tabtree = new tabtree($tabs);
-
-	foreach ($items as $level => $item) {
-		if (!is_array($item)) {
-			if (!is_string($item)) {
-				trigger_error('not supported');
-			}
-			
-			if ($item[0] == '=')
-				$item_name = substr($item, 1);
-			else
-				$item_name = \block_exastud\get_string($item, "block_exastud");
-
-			$item = array('name' => $item_name, 'id'=>$item);
-		}
-
-		if (!empty($item['id']) && $tabobj = $tabtree->find($item['id'])) {
-			// overwrite active and selected
-			$tabobj->active = true;
-			$tabobj->selected = true;
-			if (empty($item['link']) && $tabobj->link) {
-				$item['link'] = $tabobj->link;
-			}
-		}
-
-		$last_item_name = $item['name'];
-		$PAGE->navbar->add($item['name'], !empty($item['link'])? $item['link'] : null);
-	}
-	
-	$PAGE->set_title($strheader.': '.$last_item_name);
-	$PAGE->set_heading($strheader);
-	$PAGE->set_cacheable(true);
-	$PAGE->set_button('&nbsp;');
-
-	block_exastud_init_js_css();
-	
-	echo $OUTPUT->header();
-
-	echo '<div id="block_exastud">';
-	
-	echo $OUTPUT->render($tabtree);
-
-	// header
-	/*
-	if (!in_array('noheading', $options))
-		echo $OUTPUT->heading($last_item_name);
-	*/
-}
-
 function block_exastud_init_js_css(){
 	global $PAGE, $CFG;
 
@@ -877,14 +815,6 @@ function block_exastud_init_js_css(){
 		$PAGE->requires->js('/blocks/exastud/javascript/'.$scriptName.'.js', true);
 }
 
-function block_exastud_print_footer()
-{
-	global $COURSE, $OUTPUT;
-
-	echo '</div>';
-
-	echo $OUTPUT->footer($COURSE);
-}
 function block_exastud_get_category($categoryid,$categorysource) {
 	global $DB;
 	switch ($categorysource) {

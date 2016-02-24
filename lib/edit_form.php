@@ -95,29 +95,45 @@ class student_edit_form extends moodleform {
 		$mform->setType('studentid', PARAM_INT);
 		$mform->setDefault('studentid', 0);
 
-		if ($this->_customdata['subjectid'] == block_exastud\SUBJECT_ID_LERN_UND_SOZIALVERHALTEN) {
-			// für head_teacher review ignorieren
-		} else {
-			$selectoptions = block_exastud_get_evaluation_options(true);
-	
-			$mform->addElement('header', 'categories', \block_exastud\trans("de:Fachübergreifende Kompetenzen"));
-			
-			$categories = $this->_customdata['categories'];
-			foreach($categories as $category) {
-				$id = $category->id.'_'.$category->source;
-				
-				$mform->addElement('select', $id, $category->title, $selectoptions);
-				$mform->setType($id, PARAM_INT);
-				$mform->setDefault($id, key($selectoptions));
-			}
+		$selectoptions = block_exastud_get_evaluation_options(true);
+
+		$mform->addElement('header', 'categories', \block_exastud\trans("de:Fachübergreifende Kompetenzen"));
+
+		$categories = $this->_customdata['categories'];
+		foreach($categories as $category) {
+			$id = $category->id.'_'.$category->source;
+
+			$mform->addElement('select', $id, $category->title, $selectoptions);
+			$mform->setType($id, PARAM_INT);
+			$mform->setDefault($id, key($selectoptions));
 		}
 
-		$mform->addElement('header', 'review_header',
-			$this->_customdata['subjectid'] == block_exastud\SUBJECT_ID_LERN_UND_SOZIALVERHALTEN
-				? \block_exastud\trans('de:Lern- und Sozialverhalten')
-				: \block_exastud\trans("de:Fachkompetenzen"));
-		$mform->addElement('htmleditor', 'review', get_string('review', 'block_exastud'), array('cols' => 50, 'rows' => 30));
+		$mform->addElement('header', 'vorschlag_header', \block_exastud\trans("de:Lern- und Sozialverhalten: Formulierungsvorschlag für Klassenlehrkraft"));
+		$mform->addElement('htmleditor', 'vorschlag', '', array('cols' => 50, 'rows' => 5));
+		$mform->setType('vorschlag', PARAM_RAW);
+		$mform->setExpanded('vorschlag_header');
+
+		$mform->addElement('header', 'review_header', \block_exastud\trans("de:Fachkompetenzen"));
+		$mform->addElement('htmleditor', 'review', get_string('review', 'block_exastud'), array('cols' => 50, 'rows' => 20));
 		$mform->setType('review', PARAM_RAW);
+		$mform->setExpanded('review_header');
+
+		$this->add_action_buttons(false);
+	}
+
+}
+
+class student_other_data_form extends moodleform {
+
+	function definition() {
+		$mform = & $this->_form;
+
+		foreach ($this->_customdata['categories'] as $dataid => $name) {
+			$mform->addElement('header', 'header_'.$dataid, $name);
+			$mform->addElement('htmleditor', $dataid, $name, array('cols' => 50, 'rows' => 10));
+			$mform->setType($dataid, PARAM_RAW);
+			$mform->setExpanded('header_'.$dataid);
+		}
 
 		$this->add_action_buttons(false);
 	}

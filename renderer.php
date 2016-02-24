@@ -1,226 +1,110 @@
 <?php
 
 defined('MOODLE_INTERNAL') || die;
+require_once __DIR__.'/inc.php';
+
+use block_exastud\globals as g;
 
 class block_exastud_renderer extends plugin_renderer_base {
 
-	public function print_esr_table (html_table $table) {
-		// prepare table data and populate missing properties with reasonable defaults
-		if (!empty($table->align)) {
-			foreach ($table->align as $key => $aa) {
-				if ($aa) {
-					$table->align[$key] = 'text-align:'. fix_align_rtl($aa) .';';  // Fix for RTL languages
-				} else {
-					$table->align[$key] = null;
-				}
+	public function header($items) {
+		$items = (array)$items;
+		$strheader = \block_exastud\get_string('pluginname', 'block_exastud');
+
+		$last_item_name = '';
+		$tabs = array();
+
+		if (block_exastud_get_active_period()) {
+			if (block_exastud_has_global_cap(block_exastud\CAP_MANAGE_CLASSES)) {
+				$tabs['configuration_classes'] = new tabobject('configuration_classes', new moodle_url('/blocks/exastud/configuration_classes.php', [ 'courseid' => g::$COURSE->id ]), \block_exastud\get_string("configuration_classes", "block_exastud"), '', true);
+			}
+			if (block_exastud_has_global_cap(block_exastud\CAP_REVIEW)) {
+				$tabs['review'] = new tabobject('review', new moodle_url('/blocks/exastud/review.php', [ 'courseid' => g::$COURSE->id ]), \block_exastud\get_string("review", "block_exastud"), '', true);
+			}
+			if (block_exastud_has_global_cap(block_exastud\CAP_VIEW_REPORT)) {
+				$tabs['report'] = new tabobject('report', new moodle_url('/blocks/exastud/report.php', [ 'courseid' => g::$COURSE->id ]), \block_exastud\get_string("reports", "block_exastud"), '', true);
 			}
 		}
-		if (!empty($table->size)) {
-			foreach ($table->size as $key => $ss) {
-				if ($ss) {
-					$table->size[$key] = 'width:'. $ss .';';
-				} else {
-					$table->size[$key] = null;
+		if (block_exastud_has_global_cap(block_exastud\CAP_ADMIN)) {
+			$tabs['settings'] = new tabobject('settings', new moodle_url('/blocks/exastud/periods.php', [ 'courseid' => g::$COURSE->id ]), \block_exastud\get_string("settings"), '', true);
+
+			$tabs['settings']->subtree[] = new tabobject('periods',	new moodle_url('/blocks/exastud/periods.php', [ 'courseid' => g::$COURSE->id ]), \block_exastud\get_string("periods"), '', true);
+			if (is_siteadmin()) {
+				$tabs['settings']->subtree[] = new tabobject('blockconfig',	'javascript:window.open(\''.(new moodle_url('/admin/settings.php?section=blocksettingexastud'))->out(false).'\')', \block_exastud\get_string("blocksettings", 'block'), '', true);
+			}
+			$tabs['settings']->subtree[] = new tabobject('categories', new moodle_url('/blocks/exastud/configuration_global.php', [ 'courseid' => g::$COURSE->id ]).'&action=categories', \block_exastud\trans("de:Kompetenzen"), '', true);
+			$tabs['settings']->subtree[] = new tabobject('subjects',   new moodle_url('/blocks/exastud/configuration_global.php', [ 'courseid' => g::$COURSE->id ]).'&action=subjects', \block_exastud\trans("de:Fachbezeichnungen"), '', true);
+			$tabs['settings']->subtree[] = new tabobject('evalopts',   new moodle_url('/blocks/exastud/configuration_global.php', [ 'courseid' => g::$COURSE->id ]).'&action=evalopts', \block_exastud\trans("de:Bewertungsskala"), '', true);
+			$tabs['settings']->subtree[] = new tabobject('head_teachers', 'javascript:window.open(\''.(new moodle_url('/cohort/assign.php', [ 'id' => block_exastud\get_head_teacher_cohort()->id ]))->out(false).'\')', \block_exastud\get_string('head_teachers'), '', true);
+
+			if (block_exastud_has_global_cap(block_exastud\CAP_UPLOAD_PICTURE))
+				$tabs['settings']->subtree[] = new tabobject('pictureupload', new moodle_url('/blocks/exastud/pictureupload.php', [ 'courseid' => g::$COURSE->id ]), \block_exastud\get_string("pictureupload", "block_exastud"), '', true);
+		}
+
+		$tabtree = new tabtree($tabs);
+
+		foreach ($items as $level => $item) {
+			if (!is_array($item)) {
+				if (!is_string($item)) {
+					trigger_error('not supported');
+				}
+
+				if ($item[0] == '=')
+					$item_name = substr($item, 1);
+				else
+					$item_name = \block_exastud\get_string($item, "block_exastud");
+
+				$item = array('name' => $item_name, 'id'=>$item);
+			}
+
+			if (!empty($item['id']) && $tabobj = $tabtree->find($item['id'])) {
+				// overwrite active and selected
+				$tabobj->active = true;
+				$tabobj->selected = true;
+				if (empty($item['link']) && $tabobj->link) {
+					$item['link'] = $tabobj->link;
 				}
 			}
-		}
-		if (!empty($table->wrap)) {
-			foreach ($table->wrap as $key => $ww) {
-				if ($ww) {
-					$table->wrap[$key] = 'white-space:nowrap;';
-				} else {
-					$table->wrap[$key] = '';
-				}
-			}
-		}
-		if (!empty($table->head)) {
-			foreach ($table->head as $key => $val) {
-				if (!isset($table->align[$key])) {
-					$table->align[$key] = null;
-				}
-				if (!isset($table->size[$key])) {
-					$table->size[$key] = null;
-				}
-				if (!isset($table->wrap[$key])) {
-					$table->wrap[$key] = null;
-				}
 
-			}
-		}
-		if (empty($table->attributes['class'])) {
-			$table->attributes['class'] = 'esr_table';
-		}
-		if (!empty($table->tablealign)) {
-			$table->attributes['class'] .= ' boxalign' . $table->tablealign;
+			$last_item_name = $item['name'];
+			g::$PAGE->navbar->add($item['name'], !empty($item['link'])? $item['link'] : null);
 		}
 
-		// explicitly assigned properties override those defined via $table->attributes
-		$table->attributes['class'] = trim($table->attributes['class']);
-		$attributes = array_merge($table->attributes, array(
-				'id'			=> $table->id,
-				'width'		 => $table->width,
-				'summary'	   => $table->summary,
-				'cellpadding'   => $table->cellpadding,
-				'cellspacing'   => $table->cellspacing,
-			));
-		$output = html_writer::start_tag('table', $attributes) . "\n";
+		g::$PAGE->set_title($strheader.': '.$last_item_name);
+		g::$PAGE->set_heading($strheader);
+		g::$PAGE->set_cacheable(true);
+		g::$PAGE->set_button('&nbsp;');
 
-		$countcols = 0;
+		block_exastud_init_js_css();
 
-		if (!empty($table->head)) {
-			$countcols = count($table->head);
+		echo parent::header();
 
-			$output .= html_writer::start_tag('thead', array()) . "\n";
-			$output .= html_writer::start_tag('tr', array()) . "\n";
-			$keys = array_keys($table->head);
-			$lastkey = end($keys);
+		echo '<div id="block_exastud">';
 
-			foreach ($table->head as $key => $heading) {
-				// Convert plain string headings into html_table_cell objects
-				if (!($heading instanceof html_table_cell)) {
-					$headingtext = $heading;
-					$heading = new html_table_cell();
-					$heading->text = $headingtext;
-					$heading->header = true;
-				}
+		echo $this->render($tabtree);
 
-				if ($heading->header !== false) {
-					$heading->header = true;
-				}
-
-				if ($heading->header && empty($heading->scope)) {
-					$heading->scope = 'col';
-				}
-
-				if (isset($table->headspan[$key]) && $table->headspan[$key] > 1) {
-					$heading->colspan = $table->headspan[$key];
-					$countcols += $table->headspan[$key] - 1;
-				}
-
-				if ($key == $lastkey) {
-					$heading->attributes['class'] .= ' lastcol';
-				}
-				if (isset($table->colclasses[$key])) {
-					$heading->attributes['class'] .= ' ' . $table->colclasses[$key];
-				}
-				$heading->attributes['class'] = trim($heading->attributes['class']);
-				$attributes = array_merge($heading->attributes, array(
-						'style'	 => $table->align[$key] . $table->size[$key] . $heading->style,
-						'scope'	 => $heading->scope,
-						'colspan'   => $heading->colspan,
-					));
-
-				$tagtype = 'td';
-				if ($heading->header === true) {
-					$tagtype = 'th';
-				}
-				$output .= html_writer::tag($tagtype, $heading->text, $attributes) . "\n";
-			}
-			$output .= html_writer::end_tag('tr') . "\n";
-			$output .= html_writer::end_tag('thead') . "\n";
-
-			if (empty($table->data)) {
-				// For valid XHTML strict every table must contain either a valid tr
-				// or a valid tbody... both of which must contain a valid td
-				$output .= html_writer::start_tag('tbody', array('class' => 'empty'));
-				$output .= html_writer::tag('tr', html_writer::tag('td', '', array('colspan'=>count($table->head))));
-				$output .= html_writer::end_tag('tbody');
-			}
-		}
-
-		if (!empty($table->data)) {
-			$oddeven	= 1;
-			$keys	   = array_keys($table->data);
-			$lastrowkey = end($keys);
-			$output .= html_writer::start_tag('tbody', array());
-
-			foreach ($table->data as $key => $row) {
-				if (($row === 'hr') && ($countcols)) {
-					$output .= html_writer::tag('td', html_writer::tag('div', '', array('class' => 'tabledivider')), array('colspan' => $countcols));
-					$oddeven = 1;
-				} else {
-					// Convert array rows to html_table_rows and cell strings to html_table_cell objects
-					if (!($row instanceof html_table_row)) {
-						$newrow = new html_table_row();
-
-						foreach ($row as $cell) {
-							if (!($cell instanceof html_table_cell)) {
-								$cell = new html_table_cell($cell);
-							}
-							$newrow->cells[] = $cell;
-						}
-						$row = $newrow;
-					}
-
-					$oddeven = isset($row->oddeven) ? $row->oddeven : ($oddeven ? 0 : 1);
-					if (isset($table->rowclasses[$key])) {
-						$row->attributes['class'] .= ' ' . $table->rowclasses[$key];
-					}
-
-					$row->attributes['class'] .= ' r' . (int)$oddeven;
-					if ($key == $lastrowkey) {
-						$row->attributes['class'] .= ' lastrow';
-					}
-
-					$output .= html_writer::start_tag('tr', array('class' => trim($row->attributes['class']), 'style' => $row->style, 'id' => $row->id)) . "\n";
-					$keys2 = array_keys($row->cells);
-					$lastkey = end($keys2);
-
-					$gotlastkey = false; //flag for sanity checking
-					foreach ($row->cells as $key => $cell) {
-						if ($gotlastkey) {
-							//This should never happen. Why do we have a cell after the last cell?
-							mtrace("A cell with key ($key) was found after the last key ($lastkey)");
-						}
-
-						if (!($cell instanceof html_table_cell)) {
-							$mycell = new html_table_cell();
-							$mycell->text = $cell;
-							$cell = $mycell;
-						}
-
-						if (($cell->header === true) && empty($cell->scope)) {
-							$cell->scope = 'row';
-						}
-
-						if (isset($table->colclasses[$key])) {
-							$cell->attributes['class'] .= ' ' . $table->colclasses[$key];
-						}
-
-						$cell->attributes['class'] .= ' cell c' . $key;
-						if ($key == $lastkey) {
-							$cell->attributes['class'] .= ' lastcol';
-							$gotlastkey = true;
-						}
-						$tdstyle = '';
-						$tdstyle .= isset($table->align[$key]) ? $table->align[$key] : '';
-						$tdstyle .= isset($table->size[$key]) ? $table->size[$key] : '';
-						$tdstyle .= isset($table->wrap[$key]) ? $table->wrap[$key] : '';
-						$cell->attributes['class'] = trim($cell->attributes['class']);
-						$tdattributes = array_merge($cell->attributes, array(
-								'style' => $tdstyle . $cell->style,
-								'colspan' => $cell->colspan,
-								'rowspan' => $cell->rowspan,
-								'id' => $cell->id,
-								'abbr' => $cell->abbr,
-								'scope' => $cell->scope,
-							));
-						$tagtype = 'td';
-						if ($cell->header === true) {
-							$tagtype = 'th';
-						}
-						$output .= html_writer::tag($tagtype, $cell->text, $tdattributes) . "\n";
-					}
-				}
-				$output .= html_writer::end_tag('tr') . "\n";
-			}
-			$output .= html_writer::end_tag('tbody') . "\n";
-		}
-		$output .= html_writer::end_tag('table') . "\n";
-
-		return $output;
+		// header
+		/*
+		if (!in_array('noheading', $options))
+			echo $OUTPUT->heading($last_item_name);
+		*/
 	}
-	
+
+	public function footer() {
+		echo '</div>';
+
+		echo parent::footer();
+	}
+
+	public function table(html_table $table) {
+
+		if (empty($table->attributes['class'])) {
+			$table->attributes['class'] = 'exa_table';
+		}
+
+		return html_writer::table($table);
+	}
+
 	function print_subtitle($subtitle,$editlink = null) {
 		return html_writer::tag("p", $subtitle .  (($editlink == null) ? "" : " " . html_writer::tag("a", html_writer::tag("img", '',array('src'=>'pix/edit.png')),array('href'=>$editlink,'class'=>'ers_inlineicon'))), array('class'=>'esr_subtitle'));
 	}
@@ -250,7 +134,7 @@ class block_exastud_renderer extends plugin_renderer_base {
 				$output .= '<td class="evaluation">';
 
 				$output .= join(', ', array_map(function($reviewer){
-					return $reviewer->subject?$reviewer->subject.' ('.fullname($reviewer).')':fullname($reviewer);
+					return $reviewer->subject_title?:fullname($reviewer);
 				}, $option->reviewers));
 
 				$output .= '</td>';

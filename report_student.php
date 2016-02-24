@@ -1,7 +1,6 @@
 <?php
 
 namespace block_exastud;
-use block_exastud;
 
 require __DIR__.'/inc.php';
 
@@ -11,12 +10,12 @@ $studentid = required_param('studentid', PARAM_INT);
 
 require_login($courseid);
 
-block_exastud_require_global_cap(block_exastud\CAP_VIEW_REPORT);
+block_exastud_require_global_cap(CAP_VIEW_REPORT);
 
 if (!block_exastud_is_new_version()) die('not allowed');
 
 // is my class?
-$class = block_exastud\get_teacher_class($classid);
+$class = get_teacher_class($classid);
 
 /*
 if (!$DB->count_records('block_exastudclassteachers', array('teacherid' => $USER->id, 'classid' => $classid))) {
@@ -98,7 +97,7 @@ if (optional_param('output', '', PARAM_TEXT) == 'template_test') {
 
 $outputType = optional_param('output', '', PARAM_TEXT);
 if (in_array($outputType, ['docx', 'docx_test'])) {
-	$dateofbirth = block_exastud\get_custom_profile_field_value($student->id, 'dateofbirth');
+	$dateofbirth = get_custom_profile_field_value($student->id, 'dateofbirth');
 	
 	require_once __DIR__.'/classes/PhpWord/Autoloader.php';
 	\PhpOffice\PhpWord\Autoloader::register();
@@ -144,11 +143,11 @@ if (in_array($outputType, ['docx', 'docx_test'])) {
 	$table->addCell(2500)->addText('Vorname, Name');
 	$table->addCell($pageWidthTwips-2500)->addText($student->firstname.', '.$student->lastname);
 	$table->addRow();
-	$table->addCell()->addText(\block_exastud\trans('de:Geburtsdatum'));
+	$table->addCell()->addText(trans('de:Geburtsdatum'));
 	$table->addCell()->addText($dateofbirth);
 	$table->addRow();
 	$table->addCell()->addText('Lerngruppe');
-	$table->addCell();
+	$table->addCell()->addText($class->title);
 	
 	$section->addPageBreak();
 
@@ -166,10 +165,11 @@ if (in_array($outputType, ['docx', 'docx_test'])) {
 
 	$table = $section->addTable(['borderSize' => 6, 'borderColor' => 'black', 'cellMargin' => 80]);
 
-	if ($textReviews && $textReviews[0]->subjectid == block_exastud\SUBJECT_ID_LERN_UND_SOZIALVERHALTEN) {
-		$cell = $header_body_cell($textReviews[0]->title, $textReviews[0]->review);
+	$studentdata = get_class_student_data($classid, $studentid);
+
+	if (!empty($studentdata[DATA_ID_LERN_UND_SOZIALVERHALTEN])) {
+		$cell = $header_body_cell(trans('de:Lern- und Sozialverhalten'), $studentdata[DATA_ID_LERN_UND_SOZIALVERHALTEN]);
 		$cell->getStyle()->setGridSpan(2);
-		unset ($textReviews[0]);
 	}
 
 	foreach($textReviews as $textReview) {
@@ -185,16 +185,28 @@ if (in_array($outputType, ['docx', 'docx_test'])) {
 	$table = $section->addTable(['borderSize' => 6, 'borderColor' => 'black', 'cellMargin' => 80]);
 
 	$cell = $header_body_cell('Ateliers');
-	$cell->addText('');
+	if (empty($studentdata['ateliers'])) {
+		$cell->addText('');
+	} else {
+		\PhpOffice\PhpWord\Shared\Html::addHtml($cell, $studentdata['ateliers']);
+	}
 
 	$cell = $header_body_cell('Arbeitsgemeinschaften');
-	$cell->addText('');
+	if (empty($studentdata['arbeitsgemeinschaften'])) {
+		$cell->addText('');
+	} else {
+		\PhpOffice\PhpWord\Shared\Html::addHtml($cell, $studentdata['arbeitsgemeinschaften']);
+	}
 
 	$cell = $header_body_cell('Besondere Stärken');
-	$cell->addText('');
-	$cell->addText('');
-	$cell->addText('');
-	$cell->addText('');
+	if (empty($studentdata['besondere_staerken'])) {
+		$cell->addText('');
+		$cell->addText('');
+		$cell->addText('');
+		$cell->addText('');
+	} else {
+		\PhpOffice\PhpWord\Shared\Html::addHtml($cell, $studentdata['besondere_staerken']);
+	}
 
 	$cell = $header_body_cell('Anlagen');
 	$cell->addText('Kompetenzprofile');
@@ -205,7 +217,8 @@ if (in_array($outputType, ['docx', 'docx_test'])) {
 	$section->addText("Lernentwicklungsgespräch(-e) Datum: _________________");
 	$section->addText('');
 	$location = get_config('exastud', 'school_location');
-	$section->addText(($location ? $location : "[Ort]").", den ______________");
+	$certificate_issue_date = get_config('exastud', 'certificate_issue_date');
+	$section->addText(($location ?: "[Ort]").", den ".($certificate_issue_date?:"______________"));
 	$section->addText('');
 	$section->addText('');
 	$section->addText('');
@@ -257,14 +270,13 @@ if (in_array($outputType, ['docx', 'docx_test'])) {
 	$objWriter->save($temp_file);
 
 	if ($tmpLogoFile) unlink($tmpLogoFile);
-	
+
 	require_once $CFG->dirroot.'/lib/filelib.php';
 	
 	// Your browser will name the file "myFile.docx"
 	// regardless of what it's named on the server
 	send_temp_file($temp_file, "Lernentwicklungsbericht ".fullname($student).".docx");
-	unlink($temp_file);  // remove temp file
-	
+
 	exit;
 }
 
@@ -277,7 +289,7 @@ $PAGE->set_url($url);
 
 $strstudentreview = get_string('reviewstudent');
 $strclassreview = get_string('reviewclass');
-block_exastud_print_header(array('review',
+$output->header(array('review',
 	array('name' => $strclassreview, 'link' => $CFG->wwwroot . '/blocks/exastud/review_class.php?courseid=' . $courseid .
 		'&classid=' . $classid),
 	'=' . $strstudentreview
@@ -290,4 +302,4 @@ echo $OUTPUT->heading($studentdesc);
 
 echo get_renderer()->print_student_report($categories, $textReviews);
 
-block_exastud_print_footer();
+$output->footer();

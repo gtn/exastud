@@ -27,7 +27,7 @@ class api {
 		if (!$actPeriod) return;
 
 		$classes = $DB->get_records_sql("
-			SELECT ct.id, ct.subjectid, ct.classid, c.title, s.title AS subject
+			SELECT ct.id, ct.subjectid, ct.classid, c.title, s.title AS subject_title
 			FROM {block_exastudclassteachers} ct
 			JOIN {block_exastudclass} c ON ct.classid=c.id
 			LEFT JOIN {block_exastudsubjects} s ON ct.subjectid = s.id

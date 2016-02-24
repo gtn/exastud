@@ -1,6 +1,6 @@
 <?php
 
-require "inc.php";
+require __DIR__.'/inc.php';
 
 $courseid = optional_param('courseid', 1, PARAM_INT); // Course ID
 $periodid = optional_param('periodid', 0, PARAM_INT); // Period ID
@@ -25,10 +25,10 @@ if ($classid = optional_param('classid', 0, PARAM_INT)) {
 	$categories = ($periodid==0 || $periodid==block_exastud_check_active_period()->id) ? block_exastud_get_class_categories($class->id) : block_exastud_get_period_categories($periodid);
 
 	if (!$classstudents = block_exastud\get_class_students($class->id)) {
-		block_exastud_print_header('report');
+		$output->header('report');
 		echo $output->heading(\block_exastud\trans(['de:Keine Schüler gefunden', 'en:No students found']));
 		echo $output->back_button(new moodle_url('report.php', ['courseid' => $courseid]));
-		block_exastud_print_footer();
+		$output->footer();
 		exit;
 	}
 
@@ -50,7 +50,6 @@ if ($classid = optional_param('classid', 0, PARAM_INT)) {
 	for($i=0;$i<count($categories);$i++)
 		$table->align[] = 'center';
 	$table->align[] = 'center';
-	$table->width = "90%";
 
 	$i = 1;
 	foreach($classstudents as $classstudent) {
@@ -87,9 +86,9 @@ if ($classid = optional_param('classid', 0, PARAM_INT)) {
 		$table->data[] = $data;
 	}
 
-	block_exastud_print_header('report');
+	$output->header('report');
 
-	echo $output->print_esr_table($table);
+	echo $output->table($table);
 
 	if (!block_exastud_is_new_version()) {
 		echo '<a href="' . $CFG->wwwroot . '/blocks/exastud/printclass.php?courseid=' . $courseid . '&amp;classid=' . $class->id . '&periodid='.$periodid.'"><img src="' . $CFG->wwwroot . '/blocks/exastud/pix/print.png" width="16" height="16" alt="' . \block_exastud\get_string('printall', 'block_exastud'). '" /></a>';
@@ -104,11 +103,11 @@ if ($classid = optional_param('classid', 0, PARAM_INT)) {
 		echo '</select></form>';
 	}
 
-	block_exastud_print_footer();
+	$output->footer();
 } else {
-	block_exastud_print_header('report');
+	$output->header('report');
 
-	$classes = block_exastud\get_teacher_classes_all();
+	$classes = block_exastud\get_head_teacher_classes_all();
 
 	if (!$classes) {
 		echo block_exastud\trans('de:Keine Klassen gefunden');
@@ -124,8 +123,8 @@ if ($classid = optional_param('classid', 0, PARAM_INT)) {
 			];
 		}
 
-		echo $output->print_esr_table($table);
+		echo $output->table($table);
 	}
 
-	block_exastud_print_footer();
+	$output->footer();
 }

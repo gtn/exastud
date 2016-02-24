@@ -1,10 +1,10 @@
 <?php
 
-require "inc.php";
-
-use block_exastud\globals as g;
+require __DIR__.'/inc.php';
 
 define("MAX_USERS_PER_PAGE", 5000);
+
+use block_exastud\globals as g;
 
 $courseid = optional_param('courseid', 1, PARAM_INT); // Course ID
 $classid = required_param('classid', PARAM_INT);
@@ -23,7 +23,8 @@ $class = block_exastud\get_teacher_class($classid);
 $header = \block_exastud\get_string('configteacher', 'block_exastud', $class->title);
 $url = '/blocks/exastud/configuration_classteachers.php';
 $PAGE->set_url($url);
-block_exastud_print_header(array('configuration_classes', '='.$header));
+$output = \block_exastud\get_renderer();
+$output->header(array('configuration_classes', '='.$header));
 
 if ($frm = data_submitted()) {
 	require_sesskey();
@@ -33,7 +34,7 @@ if ($frm = data_submitted()) {
 			if (!$adduser = clean_param($adduser, PARAM_INT)) {
 				continue;
 			}
-			
+
 			g::$DB->insert_or_update_record('block_exastudclassteachers',
 				[ 'timemodified' => time() ],
 				[
@@ -43,12 +44,12 @@ if ($frm = data_submitted()) {
 				]);
 		}
 	} else if ($remove and !empty($frm->removeselect)) {
-		foreach ($frm->removeselect as $removeuser) {
-			if (!$removeuser = clean_param($removeuser, PARAM_INT)) {
+		foreach ($frm->removeselect as $record_id) {
+			if (!$record_id = clean_param($record_id, PARAM_INT)) {
 				continue;
 			}
 			
-			$DB->delete_records('block_exastudclassteachers', array('id'=>$removeuser, 'classid'=>$class->id));
+			$DB->delete_records('block_exastudclassteachers', array('id'=>$record_id, 'classid'=>$class->id));
 		}
 	} else if ($showall) {
 		$searchtext = '';
@@ -79,8 +80,6 @@ $availableusers = $DB->get_records_sql('SELECT id, firstname, lastname, email
 									--			   '.$selectsql.')
 									 ORDER BY lastname ASC, firstname ASC');
 
-echo '<div id="block_exastud">';
-
 $classstudents = block_exastud\get_class_teachers($class->id);
 
 echo $OUTPUT->box_start();
@@ -88,7 +87,6 @@ $userlistType = 'teachers';
 require __DIR__.'/lib/configuration_userlist.inc.php';
 echo $OUTPUT->box_end();
 
-echo $OUTPUT->single_button($CFG->wwwroot . '/blocks/exastud/configuration_class.php?courseid='.$courseid.'&classid='.$class->id,
-					\block_exastud\get_string('back', 'block_exastud'));
+$output->back_button($CFG->wwwroot . '/blocks/exastud/configuration_class.php?courseid='.$courseid.'&classid='.$class->id);
 
-block_exastud_print_footer();
+$output->footer();

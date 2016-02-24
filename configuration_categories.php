@@ -29,8 +29,8 @@
  *  This copyright notice MUST APPEAR in all copies of the script!
 */
 
-require("inc.php");
-global $DB, $THEME;
+require __DIR__.'/inc.php';
+
 define("MAX_USERS_PER_PAGE", 5000);
 
 
@@ -51,7 +51,8 @@ $class = block_exastud\get_teacher_class($classid);
 $header = \block_exastud\get_string('configcategories', 'block_exastud', $class->title);
 $url = '/blocks/exastud/configuration_categories.php';
 $PAGE->set_url($url);
-block_exastud_print_header(array('configuration_classes', '='.$header));
+$output = \block_exastud\get_renderer();
+$output->header(array('configuration_classes', '='.$header));
 
 if ($frm = data_submitted()) {
 	if(!confirm_sesskey()) {
@@ -102,7 +103,7 @@ $availablecategories = $DB->get_records_sql('SELECT id, title
 		'.$selectsql.')');
 foreach($availablecategories as $availablecategory) {
 	$availablecategory->source = 'exastud';
-	$availablecategory->subject = \block_exastud\get_string('basiccategories','block_exastud');
+	$availablecategory->subject_title = \block_exastud\get_string('basiccategories','block_exastud');
 }
 
 if(\block_exastud\is_exacomp_installed()) {
@@ -117,7 +118,7 @@ if(\block_exastud\is_exacomp_installed()) {
 				'.$selectsql.') AND subjid = '.$subject->id.' AND source='.$subject->source);
 		foreach($availabletopics as $topic) {
 			$topic->source = 'exacomp';
-			$topic->subject = $subject->title;
+			$topic->subject_title = $subject->title;
 			$availablecategories[] = $topic;
 		}
 	}
@@ -130,7 +131,6 @@ $userlistType = 'configurations';
 require __DIR__.'/lib/configuration_categories.inc.php';
 echo $OUTPUT->box_end();
 
-echo $OUTPUT->single_button($CFG->wwwroot . '/blocks/exastud/configuration_class.php?courseid='.$courseid.'&classid='.$class->id,
-					\block_exastud\get_string('back', 'block_exastud'));
+echo $output->back_button($CFG->wwwroot . '/blocks/exastud/configuration_class.php?courseid='.$courseid.'&classid='.$class->id);
 
-block_exastud_print_footer();
+$output->footer();

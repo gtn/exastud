@@ -1,7 +1,9 @@
 <?php
 
-require "inc.php";
+require __DIR__.'/inc.php';
 require_once($CFG->dirroot . '/blocks/exastud/lib/edit_form.php');
+
+use block_exastud\globals as g;
 
 $courseid = optional_param('courseid', 1, PARAM_INT); // Course ID
 $classid = required_param('classid', PARAM_INT);
@@ -46,12 +48,7 @@ $formdata->studentid = $studentid;
 $formdata->classid = $classid;
 $formdata->subjectid = $subjectid;
 
-if ($subjectid == block_exastud\SUBJECT_ID_LERN_UND_SOZIALVERHALTEN && $class->type == 'shared') {
-	// for shared classes load common review data
-	$teacherid = $class->userid;
-} else {
-	$teacherid = $USER->id;
-}
+$teacherid = $USER->id;
 
 if (!$reviewdata = $DB->get_record('block_exastudreview', array('teacherid' => $teacherid, 'subjectid'=>$subjectid, 'periodid' => $actPeriod->id, 'studentid' => $studentid))) {
 	$formdata->review = '';
@@ -78,11 +75,21 @@ if ($studentedit = $studentform->get_data()) {
 		$newreview->teacherid = $teacherid;
 		$newreview->id = $DB->insert_record('block_exastudreview', $newreview);
 	}
-	
+
+	g::$DB->insert_or_update_record('block_exastudreview', [
+		'timemodified' => time(),
+		'review' => $studentedit->vorschlag,
+	], [
+		'studentid' => $studentid,
+		'subjectid' => \block_exastud\SUBJECT_ID_LERN_UND_SOZIALVERHALTEN_VORSCHLAG,
+		'periodid' => $actPeriod->id,
+		'teacherid' => $teacherid,
+	]);
+
 	foreach ($categories as $category) {
 		if (!isset($studentedit->{$category->id.'_'.$category->source})) continue;
-		
-		block_exastud\globals::$DB->insert_or_update_record('block_exastudreviewpos',
+
+		g::$DB->insert_or_update_record('block_exastudreviewpos',
 			["value"=>$studentedit->{$category->id.'_'.$category->source}],
 			["reviewid"=>$newreview->id,"categoryid"=>$category->id,"categorysource"=>$category->source]);
 	}
@@ -90,9 +97,9 @@ if ($studentedit = $studentform->get_data()) {
 	redirect($returnurl);
 }
 
-$classheader = $class->title.($class->subject?' - '.$class->subject:'');
+$classheader = $class->title.($class->subject_title?' - '.$class->subject_title:'');
 
-block_exastud_print_header(array('review',
+$output->header(array('review',
 	array('name' => $classheader, 'link' => $CFG->wwwroot . '/blocks/exastud/review_class.php?courseid=' . $courseid .
 		'&classid=' . $classid.'&subjectid=' . $subjectid),
 		), array('noheading'));
@@ -101,47 +108,20 @@ $student = $DB->get_record('user', array('id' => $studentid));
 
 echo $OUTPUT->heading($classheader);
 
-if ($subjectid == \block_exastud\SUBJECT_ID_LERN_UND_SOZIALVERHALTEN) {
-	$user = $student;
-	$userReport = block_exastud_get_report($user->id, $actPeriod->id);
+$studentdesc = $OUTPUT->user_picture($student, array("courseid" => $courseid)) . ' ' . fullname($student);
+echo $OUTPUT->heading($studentdesc);
 
-	$table = new html_table();
-
-	$table->head = array();
-	$table->head[] = '';
-	$table->head[] = \block_exastud\get_string('name');
-	$table->head[] = \block_exastud\trans('de:Geburtsdatum');
-	foreach($categories as $category)
-		$table->head[] = $category->title;
-
-	$table->align = array();
-	$table->align[] = 'center';
-	$table->align[] = 'left';
-	$table->align[] = 'left';
-	for($i=0;$i<count($categories);$i++)
-		$table->align[] = 'center';
-
-	$data = array();
-	$data[] = $OUTPUT->user_picture($user,array("courseid"=>$courseid));
-	$data[] = fullname($user);
-	$data[] = block_exastud\get_custom_profile_field_value($student->id, 'dateofbirth');
-
-	foreach($categories as $category) {
-		$data[] = @$userReport->category_averages[$category->source.'-'.$category->id];
-	}
-
-	$table->data[] = $data;
-
-	echo $output->print_esr_table($table);
-} else {
-	$studentdesc = $OUTPUT->user_picture($student, array("courseid" => $courseid)) . ' ' . fullname($student);
-	echo $OUTPUT->heading($studentdesc);
-}
+// load lern&soz vorschlag
+$formdata->vorschlag = $DB->get_field('block_exastudreview', 'review', [
+	'studentid' => $studentid,
+	'subjectid' => \block_exastud\SUBJECT_ID_LERN_UND_SOZIALVERHALTEN_VORSCHLAG,
+	'periodid' => $actPeriod->id,
+	'teacherid' => $teacherid,
+]);
 
 $studentform->set_data($formdata);
 $studentform->display();
 
-echo $OUTPUT->single_button($returnurl,
-		\block_exastud\get_string('back', 'block_exastud'));
+echo $output->back_button($returnurl);
 
-block_exastud_print_footer();
+$output->footer();

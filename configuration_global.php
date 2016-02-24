@@ -1,6 +1,6 @@
 <?php
 
-require "inc.php";
+require __DIR__.'/inc.php';
 
 $courseid = optional_param('courseid', 1, PARAM_INT); // Course ID
 $action = optional_param('action', '', PARAM_TEXT);
@@ -11,6 +11,7 @@ block_exastud_require_global_cap(block_exastud\CAP_ADMIN);
 $header = \block_exastud\get_string('settings');
 $url = new moodle_url('/blocks/exastud/configuration_global.php', array('courseid'=>$courseid));
 $PAGE->set_url($url);
+$output = block_exastud\get_renderer();
 
 block_exastud_insert_default_entries();
 
@@ -141,7 +142,7 @@ if ($action == 'save-evalopts') {
 }
 
 if ($action == 'categories') {
-	block_exastud_print_header(['settings', ['id'=>'categories', 'name'=>\block_exastud\trans("de:Kompetenzen")]]);
+	$output->header(['settings', ['id'=>'categories', 'name'=>\block_exastud\trans("de:Kompetenzen")]]);
 	
 	?>
 	<script>
@@ -161,12 +162,12 @@ if ($action == 'categories') {
 	</div>
 	<?php
 	
-	block_exastud_print_footer();
+	$output->footer();
 	exit;
 }
 
 if ($action == 'subjects') {
-	block_exastud_print_header(['settings', ['id'=>'subjects', 'name'=>\block_exastud\trans(['de:Fachbezeichnungen', 'de_at:Gegenstände'])]]);
+	$output->header(['settings', ['id'=>'subjects', 'name'=>\block_exastud\trans(['de:Fachbezeichnungen', 'de_at:Gegenstände'])]]);
 	
 	?>
 	<script>
@@ -186,12 +187,12 @@ if ($action == 'subjects') {
 	</div>
 	<?php
 	
-	block_exastud_print_footer();
+	$output->footer();
 	exit;
 }
 
 if ($action == 'evalopts') {
-	block_exastud_print_header(['settings', ['id'=>'evalopts', 'name'=>\block_exastud\trans("de:Bewertungsskala")]]);
+	$output->header(['settings', ['id'=>'evalopts', 'name'=>\block_exastud\trans("de:Bewertungsskala")]]);
 	
 	?>
 	<script>
@@ -211,7 +212,7 @@ if ($action == 'evalopts') {
 	</div>
 	<?php
 	
-	block_exastud_print_footer();
+	$output->footer();
 	exit;
 }
 

@@ -59,8 +59,8 @@ defined('MOODLE_INTERNAL') || die();
 						} else {
 							$subject="";
 							foreach ($availablecategories as $category) {
-								if($subject !== $category->subject) {
-									$subject = $category->subject;
+								if($subject !== $category->subject_title) {
+									$subject = $category->subject_title;
 									echo '<optgroup label="'.$subject.'"></optgroup>';
 								}
 									

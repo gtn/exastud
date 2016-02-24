@@ -1,6 +1,6 @@
 <?php
 
-require "inc.php";
+require __DIR__.'/inc.php';
 require_once($CFG->dirroot . '/blocks/exastud/lib/edit_form.php');
 
 $courseid = optional_param('courseid', 1, PARAM_INT); // Course ID
@@ -81,10 +81,11 @@ else {
 
 $url = '/blocks/exastud/configuration_periods.php';
 $PAGE->set_url($url);
-block_exastud_print_header(array('settings', 'periods'));
+$output = block_exastud\get_renderer();
+$output->header(array('settings', 'periods'));
 
 echo "<br/>";
 $periodform->set_data($period);
 $periodform->display();
 
-block_exastud_print_footer();
+$output->footer();
