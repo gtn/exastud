@@ -1,17 +1,18 @@
 <?php
+
+$string['pluginname'] = 'Exabis Student Review';
+
 //
 $string['exastud:use'] = 'Use of Exabis Student Review';
-$string['exastud:head_teacher'] = 'Head of a class';
 $string['exastud:editperiods'] = 'Edit periods';
 $string['exastud:admin'] = 'Administrator';
 $string['exastud:uploadpicture'] = 'Upload logo';
 $string['exastud:addinstance'] = 'add Exabis Student Review to the course';
 $string['exastud:myaddinstance'] = 'add Exabis Student Review on My home';
+
 //
-$string['pluginname'] = 'Exabis Student Review';
-$string['blocktitle'] = 'Exabis Student Review';
-$string['modulename'] = 'Exabis Student Review';
-$string['blockname'] = 'Exabis Student Review';
+$string['head_teacher'] = 'Head of a class';
+$string['head_teachers'] = 'Heads of a class';
 $string['configuration_classes'] = 'Class Configuration';
 $string['project_based_configuration'] = 'Project Configuration';
 $string['project_based_configuration'] = 'Edit project';

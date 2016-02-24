@@ -1,28 +1,24 @@
 ﻿<?php
 
-// austria overwrites
-/*
-$string['exastud:head_teacher'] = 'Klassenvorstand';
-*/
+$string['pluginname'] = 'Exabis Student Review';
 
+//
 $string['exastud:use'] = 'Student Review benutzen';
-$string['exastud:head_teacher'] = 'Klassenlehrer';
 $string['exastud:editperiods'] = 'Einstellungen bearbeiten';
 $string['exastud:admin'] = 'Administrator';
 $string['exastud:uploadpicture'] = 'Logo uploaden';
 $string['exastud:addinstance'] = 'Student Review auf Kursseite anlegen';
 $string['exastud:myaddinstance'] = 'Student Review auf Startseite anlegen';
+
 //
-$string['pluginname'] = 'Exabis Student Review';
-$string['blocktitle'] = 'Exabis Student Review';
-$string['modulename'] = 'Exabis Student Review';
-$string['blockname'] = 'Exabis Student Review';
+$string['head_teacher'] = 'Klassenvorstand';
+$string['head_teachers'] = 'Klassenvorstände';
 $string['configuration_classes'] = 'Meine Klassen konfigurieren';
 $string['project_based_configuration'] = 'Projekt konfigurieren';
 $string['report'] = 'Bericht';
-$string['reports'] = 'Berichte';
+$string['reports'] = 'Berichte exportieren';
 $string['periods'] = 'Bewertungszeiträume';
-$string['review'] = 'Bewertung';
+$string['review'] = 'Berichte befüllen';
 $string['pictureupload'] = 'Logo Upload';
 $string['upload_picture'] = 'Lade ein eigenes Logo für den Lernentwicklungsbericht hoch';
 $string['upload_success'] = 'Das neue Logo wurde erfolgreich hochgeladen!';
@@ -36,16 +32,16 @@ $string['redirectingtoclassinput'] = 'Keine Klasse definiert, Weiterleitung zur 
 $string['project_based_redirectingtoclassinput'] = 'Kein Projekt definiert, Weiterleitung zur Eingabe';
 $string['errorupdatingclass'] = 'Fehler bei der Aktualisierung der Klasse';
 $string['project_based_errorupdatingclass'] = 'Fehler bei der Aktualisierung des Projekts';
-$string['editclassmemberlist'] = 'Klassenteilnehmer bearbeiten';
+$string['editclassmemberlist'] = 'Klassenteilnehmer/innen bearbeiten';
 $string['project_based_editclassmemberlist'] = 'Projekte bearbeiten';
-$string['editclassteacherlist'] = 'Lehrer bearbeiten';
+$string['editclassteacherlist'] = 'Lehrkräfte bearbeiten';
 $string['project_based_editclassteacherlist'] = 'Beurteiler bearbeiten';
 $string['editclassname'] = 'Klassenname';
 $string['project_based_editclassname'] = 'Projektname';
 $string['editclasscategories'] = 'Beurteilungskategorien bearbeiten';
 $string['noclassfound'] = 'Keine Klasse gefunden';
 $string['project_based_noclassfound'] = 'Kein Projekt gefunden';
-$string['configteacher'] = 'Lehrer in {$a}';
+$string['configteacher'] = 'Lehrkräfte in {$a}';
 $string['project_based_configteacher'] = 'Beurteiler in {$a}';
 $string['configmember'] = 'Teilnehmer in {$a}';
 $string['project_based_configmember'] = 'Projekte in {$a}';
@@ -126,3 +122,8 @@ $string['settings_project_based_assessment_body'] = 'Diese Einstellung erlaubt e
 
 $string['total'] = 'Gesamtpunkte';
 $string['project_based_total'] = 'Gesamtpunkte';
+
+// load local langstrings
+if (file_exists(__DIR__.'/../../local.config/lang.php')){
+	require __DIR__.'/../../local.config/lang.php';
+}

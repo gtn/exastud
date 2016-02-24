@@ -15,48 +15,28 @@ block_exastud_print_header('review');
 
 $actPeriod = block_exastud_check_active_period();
 
-$reviewclasses = \block_exastud\get_review_classes();
+$head_teacher_classes = \block_exastud\get_teacher_classes_all();
+$reviewclasses = \block_exastud\get_review_classes_tree();
 
-$lern_und_sozialverhalten_classes = \block_exastud\get_head_teacher_lern_und_sozialverhalten_classes();
+// $lern_und_sozialverhalten_classes = \block_exastud\get_head_teacher_lern_und_sozialverhalten_classes();
 
-if(!$lern_und_sozialverhalten_classes && !$reviewclasses) {
+if(!$reviewclasses) {
 	echo \block_exastud\get_string('noclassestoreview','block_exastud');
 }
 else {
-	if ($lern_und_sozialverhalten_classes) {
-		/* Print the Students */
+	foreach ($reviewclasses as $myclass) {
 		$table = new html_table();
 
-		$table->head = array(\block_exastud\trans('de:Lern- und Sozialverhalten'));
+		$table->head = array($myclass->title);
 
 		$table->align = array("left");
 		$table->width = "90%";
 
-		foreach ($lern_und_sozialverhalten_classes as $myclass) {
-			$edit_link = '<a href="' . $CFG->wwwroot . '/blocks/exastud/review_class.php?courseid=' . $courseid . '&amp;classid=' . $myclass->classid . '&amp;subjectid=' . $myclass->subjectid . '">';
+		$edit_link = '<a href="' . $CFG->wwwroot . '/blocks/exastud/review_class.php?courseid=' . $courseid . '&amp;classid=' . $myclass->classid . '&amp;subjectid=' . $myclass->subjectid . '">';
 
-			$table->data[] = array($edit_link.$myclass->title.($myclass->subject?' - '.$myclass->subject:'').'</a>');
-		}
-
+		$table->data[] = array($edit_link.$myclass->title.($myclass->subject?' - '.$myclass->subject:'').'</a>');
 		echo $blockrenderer->print_esr_table($table);
 	}
 
-	if ($reviewclasses) {
-		/* Print the Students */
-		$table = new html_table();
-
-		$table->head = array(\block_exastud\trans("de:Kompetenzen"));
-
-		$table->align = array("left");
-		$table->width = "90%";
-
-		foreach ($reviewclasses as $myclass) {
-			$edit_link = '<a href="' . $CFG->wwwroot . '/blocks/exastud/review_class.php?courseid=' . $courseid . '&amp;classid=' . $myclass->classid . '&amp;subjectid=' . $myclass->subjectid . '">';
-
-			$table->data[] = array($edit_link.$myclass->title.($myclass->subject?' - '.$myclass->subject:'').'</a>');
-		}
-
-		echo $blockrenderer->print_esr_table($table);
-	}
 }
 block_exastud_print_footer();

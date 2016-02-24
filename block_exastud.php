@@ -102,7 +102,7 @@ class block_exastud extends block_list {
 			$this->content->icons[] = '<img src="' . $CFG->wwwroot . '/blocks/exastud/pix/eingabezeitraum.png" height="16" width="23" alt="" />';
 			$this->content->items[] = '<a title="' . \block_exastud\get_string('settings') . '" href="' . $CFG->wwwroot . '/blocks/exastud/periods.php?courseid=' . $COURSE->id . '">' . \block_exastud\get_string('settings') . '</a>';
 			$this->content->icons[] = '<img src="' . $CFG->wwwroot . '/blocks/exastud/pix/head_teachers.png" height="16" width="23" alt="" />';
-			$this->content->items[] = '<a title="' . \block_exastud\trans('head_teachers', 'de:Klassenlehrer') . '" href="' . $CFG->wwwroot . '/cohort/assign.php?id=' . block_exastud\get_head_teacher_cohort()->id . '">' . \block_exastud\trans('head_teachers', 'de:Klassenlehrer') . '</a>';
+			$this->content->items[] = '<a title="' . \block_exastud\get_string('head_teachers') . '" href="' . $CFG->wwwroot . '/cohort/assign.php?id=' . block_exastud\get_head_teacher_cohort()->id . '">' . \block_exastud\get_string('head_teachers') . '</a>';
 		}
 
 		return $this->content;

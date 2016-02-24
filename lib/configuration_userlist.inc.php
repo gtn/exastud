@@ -43,7 +43,7 @@ defined('MOODLE_INTERNAL') || die();
 						echo '<option></option>';
 
 						$subjects = array_merge([
-								(object)['id' => block_exastud\SUBJECT_ID_ADDITIONAL_CLASS_TEACHER, 'title' => block_exastud\trans('de:Klassenlehrer')],
+								(object)['id' => block_exastud\SUBJECT_ID_ADDITIONAL_CLASS_TEACHER, 'title' => \block_exastud\get_string('head_teacher')],
 								(object)['id' => 0, 'title' => '-----------------'],
 							], $subjects)	;
 

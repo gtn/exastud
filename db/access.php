@@ -39,17 +39,6 @@ $capabilities = array(
 						'user' => CAP_ALLOW
 				)
 		),
-		/*
-		'block/exastud:head_teacher' => array(
-				'captype' => 'write',
-				'contextlevel' => CONTEXT_COURSE,
-				'legacy' => array(
-						'coursecreator' => CAP_ALLOW,
-						'editingteacher' => CAP_ALLOW,
-						'manager' => CAP_ALLOW
-				)
-		),
-		*/
 		'block/exastud:admin' => array(
 				'captype' => 'write',
 				'contextlevel' => CONTEXT_SYSTEM,

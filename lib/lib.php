@@ -68,20 +68,31 @@ namespace block_exastud {
 	}
 
 	function get_head_teacher_cohort() {
-		global $DB;
-
 		// get or create cohort if not exists
-		$cohort = $DB->get_record('cohort', ['contextid' => \context_system::instance()->id, 'idnumber' => 'block_exastud_head_teachers']);
+		$cohort = g::$DB->get_record('cohort', ['contextid' => \context_system::instance()->id, 'idnumber' => 'block_exastud_head_teachers']);
+
+		$name = get_string('head_teachers');
+		$description = trans('de:Können Klassen anlegen, Lehrkräfte und Schüler/innen zubuchen und den Lernentwicklungsbericht abrufen');
+
 		if (!$cohort) {
 			$cohort = (object)[
-							'contextid' => \context_system::instance()->id,
-							'idnumber' => 'block_exastud_head_teachers',
-							'name' => trans('de:Klassenlehrer'),
-							'description' => trans('de:Können Klassen anlegen, Lehrer und Schüler zubuchen und den Lernentwicklungsbericht abrufen'),
-							'visible' => 1,
-							'component' => '', // should be block_exastud, but then the admin can't change the group members anymore
+				'contextid' => \context_system::instance()->id,
+				'idnumber' => 'block_exastud_head_teachers',
+				'name' => $name,
+				'description' => $description,
+				'visible' => 1,
+				'component' => '', // should be block_exastud, but then the admin can't change the group members anymore
 			];
 			$cohort->id = cohort_add_cohort($cohort);
+		} else {
+			// keep name or description up to date
+			if ($name != $cohort->name || $description != $cohort->description) {
+				g::$DB->update_record('cohort', [
+					'id' => $cohort->id,
+					'name' => $name,
+					'description' => $description,
+				]);
+			}
 		}
 
 		return $cohort;
@@ -163,7 +174,7 @@ namespace block_exastud {
 
 		foreach ($classteachers as $classteacher) {
 			if ($classteacher->subjectid == SUBJECT_ID_ADDITIONAL_CLASS_TEACHER) {
-				$classteacher->subject = trans('de:Klassenlehrer');
+				$classteacher->subject = get_string('head_teacher');
 			}
 		}
 
@@ -351,7 +362,7 @@ function block_exastud_has_global_cap($cap, $user = null) {
 	}
 }
 
-function block_exastud_require_global_cap($cap, $user) {
+function block_exastud_require_global_cap($cap, $user = null) {
 	// all capabilities require use
 	require_capability('block/exastud:use', context_system::instance(), $user);
 
@@ -788,8 +799,7 @@ function block_exastud_print_header($items, array $options = array())
 			new tabobject('categories', $CFG->wwwroot . '/blocks/exastud/configuration_global.php?courseid=' . $COURSE->id.'&action=categories', \block_exastud\trans("de:Kompetenzen"), '', true),
 			new tabobject('subjects',   $CFG->wwwroot . '/blocks/exastud/configuration_global.php?courseid=' . $COURSE->id.'&action=subjects', \block_exastud\trans("de:Fachbezeichnungen"), '', true),
 			new tabobject('evalopts',   $CFG->wwwroot . '/blocks/exastud/configuration_global.php?courseid=' . $COURSE->id.'&action=evalopts', \block_exastud\trans("de:Bewertungsskala"), '', true),
-			new tabobject('head_teachers', $CFG->wwwroot . '/cohort/assign.php?id=' . block_exastud\get_head_teacher_cohort()->id, \block_exastud\trans('head_teachers', 'de:Klassenlehrer'), '', true),
-			// new tabobject('subject_teachers', $CFG->wwwroot . '/cohort/assign.php?id=' . block_exastud\get_subject_teacher_cohort()->id, \block_exastud\trans('subject_teachers', 'de:Fachlehrer'), '', true),
+			new tabobject('head_teachers', $CFG->wwwroot . '/cohort/assign.php?id=' . block_exastud\get_head_teacher_cohort()->id, \block_exastud\get_string('head_teachers'), '', true),
 		];
 
 		if (block_exastud_has_global_cap(block_exastud\CAP_UPLOAD_PICTURE))
