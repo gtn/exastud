@@ -43,7 +43,7 @@ block_exastud_require_global_cap(block_exastud\CAP_VIEW_REPORT);
 $url = '/blocks/exastud/report_project.php';
 $PAGE->set_url($url);
 $output = block_exastud\get_renderer();
-$output->header('report');
+echo $output->header('report');
 
 $actPeriod = block_exastud_get_period($periodid);
 if (!$actPeriod) {
@@ -158,4 +158,4 @@ else if($classid == 0){
 	}
 	echo '</select></form>';
 }
-$output->footer();
+echo $output->footer();

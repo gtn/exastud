@@ -40,16 +40,17 @@ defined('MOODLE_INTERNAL') || die();
 						$subjects = $DB->get_records('block_exastudsubjects', null, 'title');
 						echo '<p><label for="classteacher_subjectid">'.\block_exastud\trans('de:Fachbezeichnung / Rolle').'</label><br>';
 						echo '<select id="classteacher_subjectid" name="classteacher_subjectid">';
-						echo '<option></option>';
+						// no empty option
+						// echo '<option></option>';
 
-						$subjects = array_merge([
+						$subjects = array_merge($subjects, [
+								(object)['id' => block_exastud\SUBJECT_ID_ADDITIONAL_CLASS_TEACHER, 'title' => '-----------------'],
 								(object)['id' => block_exastud\SUBJECT_ID_ADDITIONAL_CLASS_TEACHER, 'title' => \block_exastud\get_string('head_teacher')],
-								(object)['id' => 0, 'title' => '-----------------'],
-							], $subjects)	;
+							]);
 
 						foreach ($subjects as $subject) {
 							echo '<option value="'.$subject->id.'"';
-							if ($subject->id && $subject->id == optional_param('classteacher_subjectid', 0, PARAM_INT))
+							if ($subject->id == optional_param('classteacher_subjectid', 0, PARAM_INT))
 								echo ' selected="selected"';
 							echo '>'.s($subject->title).'</option>';
 						}

@@ -82,10 +82,10 @@ else {
 $url = '/blocks/exastud/configuration_periods.php';
 $PAGE->set_url($url);
 $output = block_exastud\get_renderer();
-$output->header(array('settings', 'periods'));
+echo $output->header(array('settings', 'periods'));
 
 echo "<br/>";
 $periodform->set_data($period);
 $periodform->display();
 
-$output->footer();
+echo $output->footer();

@@ -22,7 +22,7 @@ $header = \block_exastud\get_string('configmember', 'block_exastud', $class->tit
 $url = '/blocks/exastud/configuration_classmembers.php';
 $PAGE->set_url($url);
 $output = \block_exastud\get_renderer();
-$output->header(array('configuration_classes', '='.$header));
+echo $output->header(array('configuration_classes', '='.$header));
 
 if ($frm = data_submitted()) {
 	require_sesskey();
@@ -85,4 +85,4 @@ echo $OUTPUT->box_end();
 	
 $output->back_button($CFG->wwwroot . '/blocks/exastud/configuration_class.php?courseid='.$courseid.'&classid='.$class->id);
 
-$output->footer();
+echo $output->footer();

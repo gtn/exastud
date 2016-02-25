@@ -77,23 +77,20 @@ class block_exastud_renderer extends plugin_renderer_base {
 
 		block_exastud_init_js_css();
 
-		echo parent::header();
+		$content  = '';
+		$content .= parent::header();
+		$content .= '<div id="block_exastud">';
+		$content .= $this->render($tabtree);
 
-		echo '<div id="block_exastud">';
-
-		echo $this->render($tabtree);
-
-		// header
-		/*
-		if (!in_array('noheading', $options))
-			echo $OUTPUT->heading($last_item_name);
-		*/
+		return $content;
 	}
 
 	public function footer() {
-		echo '</div>';
+		$content  = '';
+		$content .= '</div>';
+		$content .= parent::footer();
 
-		echo parent::footer();
+		return $content;
 	}
 
 	public function table(html_table $table) {

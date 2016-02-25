@@ -50,7 +50,7 @@ if (!$class = $DB->get_record('block_exastudclass', array('userid'=>$USER->id,'p
 $url = '/blocks/exastud/report.php';
 $PAGE->set_url($url);
 $output = block_exastud\get_renderer();
-$output->header('report');
+echo $output->header('report');
 
 $categories = ($periodid==0 || $periodid==block_exastud_check_active_period()->id) ? block_exastud_get_class_categories($class->id) : block_exastud_get_period_categories($periodid);
 
@@ -136,4 +136,4 @@ foreach($DB->get_records('block_exastudperiod',null,'endtime desc') as $period) 
 }
 echo '</select></form>';
 
-$output->footer();
+echo $output->footer();

@@ -142,7 +142,7 @@ if ($action == 'save-evalopts') {
 }
 
 if ($action == 'categories') {
-	$output->header(['settings', ['id'=>'categories', 'name'=>\block_exastud\trans("de:Kompetenzen")]]);
+	echo $output->header(['settings', ['id'=>'categories', 'name'=>\block_exastud\trans("de:Kompetenzen")]]);
 	
 	?>
 	<script>
@@ -162,12 +162,12 @@ if ($action == 'categories') {
 	</div>
 	<?php
 	
-	$output->footer();
+	echo $output->footer();
 	exit;
 }
 
 if ($action == 'subjects') {
-	$output->header(['settings', ['id'=>'subjects', 'name'=>\block_exastud\trans(['de:Fachbezeichnungen', 'de_at:Gegenstände'])]]);
+	echo $output->header(['settings', ['id'=>'subjects', 'name'=>\block_exastud\trans(['de:Fachbezeichnungen', 'de_at:Gegenstände'])]]);
 	
 	?>
 	<script>
@@ -187,12 +187,12 @@ if ($action == 'subjects') {
 	</div>
 	<?php
 	
-	$output->footer();
+	echo $output->footer();
 	exit;
 }
 
 if ($action == 'evalopts') {
-	$output->header(['settings', ['id'=>'evalopts', 'name'=>\block_exastud\trans("de:Bewertungsskala")]]);
+	echo $output->header(['settings', ['id'=>'evalopts', 'name'=>\block_exastud\trans("de:Bewertungsskala")]]);
 	
 	?>
 	<script>
@@ -212,7 +212,7 @@ if ($action == 'evalopts') {
 	</div>
 	<?php
 	
-	$output->footer();
+	echo $output->footer();
 	exit;
 }
 

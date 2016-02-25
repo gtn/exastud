@@ -25,10 +25,10 @@ if ($classid = optional_param('classid', 0, PARAM_INT)) {
 	$categories = ($periodid==0 || $periodid==block_exastud_check_active_period()->id) ? block_exastud_get_class_categories($class->id) : block_exastud_get_period_categories($periodid);
 
 	if (!$classstudents = block_exastud\get_class_students($class->id)) {
-		$output->header('report');
+		echo $output->header('report');
 		echo $output->heading(\block_exastud\trans(['de:Keine Schüler gefunden', 'en:No students found']));
 		echo $output->back_button(new moodle_url('report.php', ['courseid' => $courseid]));
-		$output->footer();
+		echo $output->footer();
 		exit;
 	}
 
@@ -86,7 +86,7 @@ if ($classid = optional_param('classid', 0, PARAM_INT)) {
 		$table->data[] = $data;
 	}
 
-	$output->header('report');
+	echo $output->header('report');
 
 	echo $output->table($table);
 
@@ -103,9 +103,9 @@ if ($classid = optional_param('classid', 0, PARAM_INT)) {
 		echo '</select></form>';
 	}
 
-	$output->footer();
+	echo $output->footer();
 } else {
-	$output->header('report');
+	echo $output->header('report');
 
 	$classes = block_exastud\get_head_teacher_classes_all();
 
@@ -126,5 +126,5 @@ if ($classid = optional_param('classid', 0, PARAM_INT)) {
 		echo $output->table($table);
 	}
 
-	$output->footer();
+	echo $output->footer();
 }

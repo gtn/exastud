@@ -11,7 +11,7 @@ block_exastud_require_global_cap(block_exastud\CAP_REVIEW);
 $url = '/blocks/exastud/review.php';
 $PAGE->set_url($url);
 $output = block_exastud\get_renderer();
-$output->header('review');
+echo $output->header('review');
 
 $actPeriod = block_exastud_check_active_period();
 
@@ -93,4 +93,4 @@ else {
 	}
 
 }
-$output->footer();
+echo $output->footer();

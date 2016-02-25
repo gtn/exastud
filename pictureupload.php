@@ -42,7 +42,7 @@ $url = '/blocks/exastud/pictureupload.php';
 $PAGE->set_url($url, [ 'courseid' => $courseid ]);
 $output = block_exastud\get_renderer();
 
-$output->header(['settings', 'pictureupload']);
+echo $output->header(['settings', 'pictureupload']);
 
 $mform = new block_exastud_picture_upload_form();
 if ($mform->is_cancelled()) {
@@ -66,4 +66,4 @@ if ($logo = block_exastud_get_main_logo_url()) {
 		
 $mform->display();
 
-$output->footer();
+echo $output->footer();

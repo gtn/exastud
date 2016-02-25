@@ -52,7 +52,7 @@ $header = \block_exastud\get_string('configcategories', 'block_exastud', $class-
 $url = '/blocks/exastud/configuration_categories.php';
 $PAGE->set_url($url);
 $output = \block_exastud\get_renderer();
-$output->header(array('configuration_classes', '='.$header));
+echo $output->header(array('configuration_classes', '='.$header));
 
 if ($frm = data_submitted()) {
 	if(!confirm_sesskey()) {
@@ -133,4 +133,4 @@ echo $OUTPUT->box_end();
 
 echo $output->back_button($CFG->wwwroot . '/blocks/exastud/configuration_class.php?courseid='.$courseid.'&classid='.$class->id);
 
-$output->footer();
+echo $output->footer();

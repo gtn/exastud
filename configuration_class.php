@@ -25,7 +25,7 @@ if ($action == 'delete') {
 }
 
 $output = block_exastud\get_renderer();
-$output->header('configuration_classes');
+echo $output->header('configuration_classes');
 
 echo $output->print_subtitle($class->title, $CFG->wwwroot . '/blocks/exastud/configuration_class_info.php?courseid='.$courseid.'&classid='.$class->id);
 
@@ -89,4 +89,4 @@ echo $output->table($table);
 echo $OUTPUT->single_button($CFG->wwwroot . '/blocks/exastud/configuration_categories.php?courseid='.$courseid.'&classid='.$class->id,
 		\block_exastud\get_string('editclasscategories', 'block_exastud'), 'get');
 
-$output->footer();
+echo $output->footer();

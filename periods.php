@@ -48,7 +48,7 @@ if (!$periods = $DB->get_records('block_exastudperiod')) {
 $url = '/blocks/exastud/periods.php';
 $PAGE->set_url($url);
 $output = block_exastud\get_renderer();
-$output->header(['settings', 'periods']);
+echo $output->header(['settings', 'periods']);
 
 /* Print the periods */
 $table = new html_table();
@@ -80,4 +80,4 @@ echo $output->table($table);
 echo $OUTPUT->single_button($CFG->wwwroot . '/blocks/exastud/configuration_periods.php?courseid='.$courseid.'&sesskey='.sesskey().'&action=new',
 					\block_exastud\get_string('newperiod', 'block_exastud'), 'get');
 
-$output->footer();
+echo $output->footer();

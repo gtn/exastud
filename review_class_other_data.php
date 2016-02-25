@@ -34,7 +34,7 @@ $output = \block_exastud\get_renderer();
 
 $url = '/blocks/exastud/review_class.php';
 $PAGE->set_url($url, [ 'courseid'=>$courseid, 'classid'=>$classid, 'type'=>$type ]);
-$output->header(array('review', '='.$classheader));
+echo $output->header(array('review', '='.$classheader));
 echo $output->heading($classheader);
 
 $actPeriod = block_exastud_check_active_period();
@@ -81,4 +81,4 @@ echo $output->table($table);
 
 echo $output->back_button(new moodle_url('review.php', ['courseid' => $courseid]));
 
-$output->footer();
+echo $output->footer();

@@ -18,7 +18,7 @@ if (!$classes && block_exastud_has_global_cap(block_exastud\CAP_HEAD_TEACHER)) {
 }
 
 $output = block_exastud\get_renderer();
-$output->header('configuration_classes');
+echo $output->header('configuration_classes');
 
 /* Print the Students */
 echo html_writer::tag("h2", \block_exastud\trans('de:Meine Klassen'));
@@ -63,4 +63,4 @@ if ($classes = block_exastud\get_head_teacher_classes_shared()) {
 
 
 
-$output->footer();
+echo $output->footer();

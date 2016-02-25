@@ -99,7 +99,7 @@ if ($studentedit = $studentform->get_data()) {
 
 $classheader = $class->title.($class->subject_title?' - '.$class->subject_title:'');
 
-$output->header(array('review',
+echo $output->header(array('review',
 	array('name' => $classheader, 'link' => $CFG->wwwroot . '/blocks/exastud/review_class.php?courseid=' . $courseid .
 		'&classid=' . $classid.'&subjectid=' . $subjectid),
 		), array('noheading'));
@@ -124,4 +124,4 @@ $studentform->display();
 
 echo $output->back_button($returnurl);
 
-$output->footer();
+echo $output->footer();

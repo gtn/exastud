@@ -90,7 +90,7 @@ if ($classform->is_cancelled()) {
 $url = "/blocks/exastud/configuration_class_info.php";
 $PAGE->set_url($url);
 $output = block_exastud\get_renderer();
-$output->header(array('configuration_classes', 'editclassname'));
+echo $output->header(array('configuration_classes', 'editclassname'));
 
 // TODO: two divs? -- daniel
 echo '<div id="block_exastud">';
@@ -102,4 +102,4 @@ $classform->set_data($class);
 $classform->display();
 
 echo '</div>';
-$output->footer();
+echo $output->footer();

@@ -69,7 +69,7 @@ if ($fromform = $studentform->get_data()) {
 	redirect($returnurl);
 }
 
-$output->header(array('review',
+echo $output->header(array('review',
 	array('name' => $classheader, 'link' => $parenturl),
 		), array('noheading'));
 
@@ -160,4 +160,4 @@ $studentform->display();
 
 echo $output->back_button($returnurl);
 
-$output->footer();
+echo $output->footer();

@@ -289,7 +289,7 @@ $PAGE->set_url($url);
 
 $strstudentreview = get_string('reviewstudent');
 $strclassreview = get_string('reviewclass');
-$output->header(array('review',
+echo $output->header(array('review',
 	array('name' => $strclassreview, 'link' => $CFG->wwwroot . '/blocks/exastud/review_class.php?courseid=' . $courseid .
 		'&classid=' . $classid),
 	'=' . $strstudentreview
@@ -302,4 +302,4 @@ echo $OUTPUT->heading($studentdesc);
 
 echo get_renderer()->print_student_report($categories, $textReviews);
 
-$output->footer();
+echo $output->footer();

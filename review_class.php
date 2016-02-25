@@ -40,7 +40,7 @@ $PAGE->set_url($url, [ 'courseid'=>$courseid, 'classid'=>$classid, 'subjectid'=>
 $classheader = $class->title.($class->subject_title?' - '.$class->subject_title:'');
 
 $output = \block_exastud\get_renderer();
-$output->header(array('review', '='.$classheader));
+echo $output->header(array('review', '='.$classheader));
 echo $output->heading($classheader);
 
 $actPeriod = block_exastud_check_active_period();
@@ -49,7 +49,7 @@ $actPeriod = block_exastud_check_active_period();
 if (!$classstudents = \block_exastud\get_class_students($classid)) {
 	echo $output->heading(\block_exastud\get_string('nostudentstoreview'));
 	echo $output->back_button(new moodle_url('review.php', ['courseid' => $courseid]));
-	$output->footer();
+	echo $output->footer();
 	exit;
 }
 
@@ -188,4 +188,4 @@ if ($hiddenclassstudents) {
 
 echo $output->back_button(new moodle_url('review.php', ['courseid' => $courseid]));
 
-$output->footer();
+echo $output->footer();
