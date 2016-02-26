@@ -2,7 +2,7 @@
 /***************************************************************
 *  Copyright notice
 *
-*  (c) 2006 exabis internet solutions <info@exabis.at>
+*  (c) 2006 GTN - Global Training Network GmbH <office@gtn-solutions.com>
 *  All rights reserved
 *
 *  You can redistribute it and/or modify
