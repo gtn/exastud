@@ -39,7 +39,7 @@ class class_edit_form extends moodleform {
 		$mform->addRule('title', null, 'required', null, 'client');
 
 		$subjects = $DB->get_records_menu('block_exastudsubjects', null, 'title', 'id, title');
-		$select = $mform->addElement('select', 'mysubjectids', \block_exastud\get_string('teached_by_me', 'block_exastud'), $subjects);
+		$select = $mform->addElement('select', 'mysubjectids', \block_exastud\get_string('subjects_taught_by_me'), $subjects);
 		$select->setMultiple(true);
 
 		/*

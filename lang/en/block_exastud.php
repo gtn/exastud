@@ -143,4 +143,4 @@ $string['settings_detailed_review_body'] = 'This setting allows you to see all t
 $string['settings_project_based_assessment'] = 'Project-based assessment';
 $string['settings_project_based_assessment_body'] = 'This setting allows you to use project-based assessment instead of class-assessment';
 
-$string['teached_by_me'] = 'Subjects teached by me (in this class)';
+$string['subjects_taught_by_me'] = 'Subjects in this class taught by me';
