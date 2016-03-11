@@ -139,6 +139,7 @@ $string['settings_project_based_assessment_body'] = 'Diese Einstellung erlaubt e
 
 $string['total'] = 'Gesamtpunkte';
 $string['project_based_total'] = 'Gesamtpunkte';
+$string['teached_by_me'] = 'Von mir in dieser Klasse unterrichtete Fächer';
 
 // load local langstrings
 if (file_exists(__DIR__.'/../../local.config/lang.php')){

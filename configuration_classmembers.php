@@ -17,7 +17,6 @@
 //
 // This copyright notice MUST APPEAR in all copies of the script!
 
-﻿<?php
 
 require __DIR__.'/inc.php';
 
