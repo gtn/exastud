@@ -379,6 +379,32 @@ namespace block_exastud {
 			'name' => $name,
 		]);
 	}
+
+	function check_profile_fields() {
+
+		$categoryid = g::$DB->get_field_sql("SELECT id FROM {user_info_category} ORDER BY sortorder LIMIT 1");
+		if (!$categoryid) {
+			$categoryid = g::$DB->insert_record('user_info_category', [
+				'name' => get_string('profiledefaultcategory', 'admin'),
+				'sortorder' => 1,
+			]);
+		}
+
+		g::$DB->insert_or_update_record('user_info_field', [
+			'name' => \block_exastud\trans('de:Geburtsdatum'),
+			'datatype' => 'text',
+			'categoryid' => $categoryid,
+			'sortorder' => g::$DB->get_field_sql('SELECT MAX(sortorder) FROM {user_info_field} WHERE categoryid=?', [$categoryid]) + 1,
+			'locked' => 1,
+			'required' => 0,
+			'visible' => 0,
+			'param1' => 30,
+			'param2' => 2048,
+			'param3' => 0,
+		], [
+			'shortname' => 'dateofbirth',
+		]);
+	}
 }
 
 namespace {

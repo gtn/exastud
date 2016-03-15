@@ -141,15 +141,6 @@ function xmldb_block_exastud_upgrade($oldversion = 0) {
 		upgrade_block_savepoint(true, 2015091907, 'exastud');
 	}
 	
-	// always check for profile fields after database upgrade
-	$categoryid = $DB->get_field_sql("SELECT id FROM {user_info_category} ORDER BY sortorder LIMIT 1");
-	if (!$categoryid) {
-		$defaultcategory = new stdClass();
-    	$defaultcategory->name = get_string('profiledefaultcategory', 'admin');
-    	$defaultcategory->sortorder = 1;
-		$categoryid = $DB->insert_record('user_info_category', $defaultcategory);
-	}
-
     if ($oldversion < 2016012500) {
 
         // Rename field title on table block_exastudclass to NEWNAMEGOESHERE.
@@ -186,23 +177,6 @@ function xmldb_block_exastud_upgrade($oldversion = 0) {
         upgrade_block_savepoint(true, 2016020500, 'exastud');
     }
 
-	if ($oldversion < 2016020501) {
-		g::$DB->insert_or_update_record('user_info_field', [
-			'name' => \block_exastud\trans('de:Geburtsdatum'),
-			'datatype' => 'text',
-			'categoryid' => $categoryid,
-			'sortorder' => $DB->get_field_sql('SELECT MAX(sortorder) FROM {user_info_field} WHERE categoryid=?', [$categoryid]) + 1,
-			'locked' => 1,
-			'required' => 0,
-			'visible' => 0,
-			'param1' => 30,
-			'param2' => 2048,
-			'param3' => 0,
-		], [
-			'shortname' => 'dateofbirth',
-		]);
-	}
-
     if ($oldversion < 2016022401) {
 
         // Define table block_exastuddata to be created.
@@ -226,6 +200,10 @@ function xmldb_block_exastud_upgrade($oldversion = 0) {
         // Exastud savepoint reached.
         upgrade_block_savepoint(true, 2016022401, 'exastud');
     }
+
+	if ($oldversion < 2016031100) {
+		block_exastud\check_profile_fields();
+	}
 
 	return $result;
 }

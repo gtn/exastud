@@ -17,9 +17,9 @@
 //
 // This copyright notice MUST APPEAR in all copies of the script!
 
-defined('MOODLE_INTERNAL') || die();
+require_once __DIR__.'/../lib/lib.php';
 
-$plugin->version = 2016031102;  // YYYYMMDDHH (year, month, day, 24-hr time)
-$plugin->requires = 2010112400; // YYYYMMDDHH (This is the release version for Moodle 2.0)
-$plugin->release  = "1.1.0";
-$plugin->component = 'block_exastud';
+// called when installing a plugin
+function xmldb_block_exastud_install() {
+	block_exastud\check_profile_fields();
+}
