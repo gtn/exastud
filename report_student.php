@@ -304,6 +304,8 @@ if (in_array($outputType, ['docx', 'docx_test'])) {
 $url = '/blocks/exastud/report_student.php';
 $PAGE->set_url($url);
 
+$output = get_renderer();
+
 $strstudentreview = get_string('reviewstudent');
 $strclassreview = get_string('reviewclass');
 echo $output->header(array('review',
@@ -315,7 +317,7 @@ echo $output->header(array('review',
 
 $studentdesc = $OUTPUT->user_picture($student, array("courseid" => $courseid)) . ' ' . fullname($student);
 
-echo $OUTPUT->heading($studentdesc);
+echo $output->heading($studentdesc);
 
 echo get_renderer()->print_student_report($categories, $textReviews);
 

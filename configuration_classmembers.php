@@ -101,6 +101,6 @@ $userlistType = 'members';
 require __DIR__.'/lib/configuration_userlist.inc.php';
 echo $OUTPUT->box_end();
 	
-$output->back_button($CFG->wwwroot . '/blocks/exastud/configuration_class.php?courseid='.$courseid.'&classid='.$class->id);
+echo $output->back_button($CFG->wwwroot . '/blocks/exastud/configuration_class.php?courseid='.$courseid.'&classid='.$class->id);
 
 echo $output->footer();
