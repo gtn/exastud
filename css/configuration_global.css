@@ -9,7 +9,7 @@
 	margin: 0 0 5px 0;
 	padding: 5px;
 }
-#exa-list:not([exa-sorting=false]) li {
+#exa-list:not([exa-sorting=false]) li:not(.ui-state-disabled) {
 	cursor: move;
 	padding-left: 40px;
 	background: url(../../../pix/t/sort.png) 13px 12px no-repeat #efefef;
@@ -26,6 +26,12 @@
 }
 #exa-list input[type=text] {
 	min-width: 400px;
+}
+#exa-list li.ui-state-disabled [exa=delete-button] {
+	display: none;
+}
+#exa-list li.ui-state-disabled input {
+	pointer-events:none;
 }
 #exa-list [exa=new-item] {
 	background-color: #efefef;

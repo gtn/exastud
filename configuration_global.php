@@ -30,7 +30,7 @@ $url = new moodle_url('/blocks/exastud/configuration_global.php', array('coursei
 $PAGE->set_url($url);
 $output = block_exastud\get_renderer();
 
-block_exastud_insert_default_entries();
+block_exastud\insert_default_entries();
 
 $availablecategories = $DB->get_records_sql('SELECT id, title
 	FROM {block_exastudcate}
@@ -38,7 +38,7 @@ $availablecategories = $DB->get_records_sql('SELECT id, title
 
 $availablesubjects = $DB->get_records_sql('SELECT id, title
 	FROM {block_exastudsubjects}
-	ORDER BY title');
+	ORDER BY sorting');
 
 $availableevalopts = $DB->get_records_sql('SELECT id, title
 	FROM {block_exastudevalopt}
@@ -48,7 +48,7 @@ if ($action == 'save-categories') {
 	if(!confirm_sesskey()) {
 		die(get_string("badsessionkey","block_exastud"));
 	}
-	
+
 	$items = block_exastud\param::required_array('items',
 			array(PARAM_INT => (object)array(
 				'id' => PARAM_INT,
@@ -61,24 +61,24 @@ if ($action == 'save-categories') {
 	foreach ($items as $item) {
 		$sorting++;
 		$item->sorting = $sorting;
-		
+
 		if (isset($availablecategories[$item->id])) {
 			// update
 			$DB->update_record('block_exastudcate', $item);
-			
+
 			unset($todelete[$item->id]);
 		} else {
 			// insert
 			$DB->insert_record('block_exastudcate', $item);
 		}
 	}
-	
+
 	foreach ($todelete as $item) {
 		$DB->delete_records('block_exastudcate', array('id'=>$item->id));
 	}
-	
+
 	echo 'ok';
-	
+
 	exit;
 }
 
@@ -86,7 +86,7 @@ if ($action == 'save-subjects') {
 	if(!confirm_sesskey()) {
 		die(get_string("badsessionkey","block_exastud"));
 	}
-	
+
 	$items = block_exastud\param::required_array('items',
 			array(PARAM_INT => (object)array(
 				'id' => PARAM_INT,
@@ -99,11 +99,11 @@ if ($action == 'save-subjects') {
 	foreach ($items as $item) {
 		$sorting++;
 		$item->sorting = $sorting;
-		
+
 		if (isset($availablesubjects[$item->id])) {
 			// update
 			$DB->update_record('block_exastudsubjects', $item);
-			
+
 			unset($todelete[$item->id]);
 		} else {
 			// insert
@@ -185,12 +185,22 @@ if ($action == 'categories') {
 
 if ($action == 'subjects') {
 	echo $output->header(['settings', ['id'=>'subjects', 'name'=>\block_exastud\trans(['de:Fachbezeichnungen', 'de_at:Gegenstände'])]]);
-	
+
+	/*
+	if (block_exastud\get_plugin_config('always_check_default_values')) {
+		$defaultSubjects = (array)block_exastud\get_plugin_config('default_subjects');
+
+		foreach ($availablesubjects as $subject) {
+			$subject->disabled = in_array($subject->title, $defaultSubjects);
+		}
+	}
+	*/
+
 	?>
 	<script>
 		var exa_list_items = <?php echo json_encode(array_values($availablesubjects) /* use array_values, because else the array gets sorted by key and not by sorting */); ?>
 	</script>
-	<div id="exa-list" exa-sorting="false">
+	<div id="exa-list">
 		<ul exa="items">
 			<li><input type="text" /> <span exa="delete-button"><?php echo get_string('delete'); ?></span></li>
 		</ul>

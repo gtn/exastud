@@ -34,10 +34,17 @@
 			$item.find(':text').val(this.title);
 			$item.data('id', this.id);
 			$item.appendTo($items);
+
+			if (this.disabled) {
+				$item.addClass('ui-state-disabled');
+				$item.prepend('Default: ');
+			}
 		});
 
 		if (sorting) {
-			$items.sortable();
+			$items.sortable({
+				items: "li:not(.ui-state-disabled)"
+			});
 		}
 		
 		// delete

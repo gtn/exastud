@@ -69,11 +69,14 @@ if ($type == \block_exastud\DATA_ID_LERN_UND_SOZIALVERHALTEN) {
 	$classheader = $class->title.' - '.\block_exastud\trans('de:Lern- und Sozialverhalten');
 } else {
 	$categories = [
+		/*
 		'ateliers' => \block_exastud\trans('de:Ateliers'),
 		'arbeitsgemeinschaften' => \block_exastud\trans('de:Arbeitsgemeinschaften'),
 		'besondere_staerken' => \block_exastud\trans('de:Besondere Stärken'),
+		*/
+		'comments' => \block_exastud\trans('de:Bemerkungen'),
 	];
-	$classheader = $class->title.' - '.\block_exastud\trans('de:Weitere Daten');
+	$classheader = $class->title.' - '.\block_exastud\trans('de:Bemerkungen');
 }
 
 $studentform = new student_other_data_form($PAGE->url, array('categories'=>$categories, 'type'=>$type));

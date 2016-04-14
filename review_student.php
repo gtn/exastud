@@ -18,7 +18,7 @@
 // This copyright notice MUST APPEAR in all copies of the script!
 
 require __DIR__.'/inc.php';
-require_once($CFG->dirroot . '/blocks/exastud/lib/edit_form.php');
+require_once($CFG->dirroot.'/blocks/exastud/lib/edit_form.php');
 
 use block_exastud\globals as g;
 
@@ -43,7 +43,7 @@ block_exastud_require_global_cap(block_exastud\CAP_REVIEW);
 
 $class = block_exastud\get_review_class($classid, $subjectid);
 
-if(!$class) {
+if (!$class) {
 	print_error('badclass', 'block_exastud');
 }
 
@@ -67,20 +67,20 @@ $formdata->subjectid = $subjectid;
 
 $teacherid = $USER->id;
 
-if (!$reviewdata = $DB->get_record('block_exastudreview', array('teacherid' => $teacherid, 'subjectid'=>$subjectid, 'periodid' => $actPeriod->id, 'studentid' => $studentid))) {
+if (!$reviewdata = $DB->get_record('block_exastudreview', array('teacherid' => $teacherid, 'subjectid' => $subjectid, 'periodid' => $actPeriod->id, 'studentid' => $studentid))) {
 	$formdata->review = '';
 } else {
-	foreach($categories as $category) {
-		$formdata->{$category->id.'_'.$category->source} = $DB->get_field('block_exastudreviewpos', 'value', array("categoryid"=>$category->id,"reviewid"=>$reviewdata->id,"categorysource"=>$category->source));
+	foreach ($categories as $category) {
+		$formdata->{$category->id.'_'.$category->source} = $DB->get_field('block_exastudreviewpos', 'value', array("categoryid" => $category->id, "reviewid" => $reviewdata->id, "categorysource" => $category->source));
 	}
 	$formdata->review = $reviewdata->review;
 }
-$studentform = new student_edit_form(null,array('categories'=>$categories, 'subjectid'=>$subjectid));
+$studentform = new student_edit_form(null, array('categories' => $categories, 'subjectid' => $subjectid));
 
-if ($studentedit = $studentform->get_data()) {
+if ($fromform = $studentform->get_data()) {
 	$newreview = new stdClass();
 	$newreview->timemodified = time();
-	$newreview->review = $studentedit->review;
+	$newreview->review = $fromform->review;
 
 	if (isset($reviewdata->id)) {
 		$newreview->id = $reviewdata->id;
@@ -95,7 +95,7 @@ if ($studentedit = $studentform->get_data()) {
 
 	g::$DB->insert_or_update_record('block_exastudreview', [
 		'timemodified' => time(),
-		'review' => $studentedit->vorschlag,
+		'review' => $fromform->vorschlag,
 	], [
 		'studentid' => $studentid,
 		'subjectid' => \block_exastud\SUBJECT_ID_LERN_UND_SOZIALVERHALTEN_VORSCHLAG,
@@ -103,29 +103,32 @@ if ($studentedit = $studentform->get_data()) {
 		'teacherid' => $teacherid,
 	]);
 
+	\block_exastud\set_subject_student_data($classid, $subjectid, $studentid, 'grade', $fromform->grade);
+	\block_exastud\set_subject_student_data($classid, $subjectid, $studentid, 'gme', $fromform->gme);
+
 	foreach ($categories as $category) {
-		if (!isset($studentedit->{$category->id.'_'.$category->source})) continue;
+		if (!isset($fromform->{$category->id.'_'.$category->source})) continue;
 
 		g::$DB->insert_or_update_record('block_exastudreviewpos',
-			["value"=>$studentedit->{$category->id.'_'.$category->source}],
-			["reviewid"=>$newreview->id,"categoryid"=>$category->id,"categorysource"=>$category->source]);
+			["value" => $fromform->{$category->id.'_'.$category->source}],
+			["reviewid" => $newreview->id, "categoryid" => $category->id, "categorysource" => $category->source]);
 	}
 
 	redirect($returnurl);
 }
 
-$classheader = $class->title.($class->subject_title?' - '.$class->subject_title:'');
+$classheader = $class->title.($class->subject_title ? ' - '.$class->subject_title : '');
 
 echo $output->header(array('review',
-	array('name' => $classheader, 'link' => $CFG->wwwroot . '/blocks/exastud/review_class.php?courseid=' . $courseid .
-		'&classid=' . $classid.'&subjectid=' . $subjectid),
-		), array('noheading'));
+	array('name' => $classheader, 'link' => $CFG->wwwroot.'/blocks/exastud/review_class.php?courseid='.$courseid.
+		'&classid='.$classid.'&subjectid='.$subjectid),
+), array('noheading'));
 
 $student = $DB->get_record('user', array('id' => $studentid));
 
 echo $OUTPUT->heading($classheader);
 
-$studentdesc = $OUTPUT->user_picture($student, array("courseid" => $courseid)) . ' ' . fullname($student);
+$studentdesc = $OUTPUT->user_picture($student, array("courseid" => $courseid)).' '.fullname($student);
 echo $OUTPUT->heading($studentdesc);
 
 // load lern&soz vorschlag
@@ -135,6 +138,8 @@ $formdata->vorschlag = $DB->get_field('block_exastudreview', 'review', [
 	'periodid' => $actPeriod->id,
 	'teacherid' => $teacherid,
 ]);
+
+$formdata = (object)array_merge((array)$formdata, (array)\block_exastud\get_subject_student_data($classid, $subjectid, $studentid));
 
 $studentform->set_data($formdata);
 $studentform->display();

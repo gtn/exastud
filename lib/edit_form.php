@@ -19,13 +19,13 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-require_once($CFG->dirroot . '/lib/formslib.php');
+require_once($CFG->dirroot.'/lib/formslib.php');
 
 class class_edit_form extends moodleform {
 
 	function definition() {
 		global $DB;
-		$mform = & $this->_form;
+		$mform = &$this->_form;
 
 		$mform->addElement('hidden', 'classid');
 		$mform->setType('classid', PARAM_INT);
@@ -65,11 +65,11 @@ class period_edit_form extends moodleform {
 		$mform->addElement('text', 'description', get_string('perioddesc', 'block_exastud'), array('size' => 50));
 		$mform->setType('description', PARAM_TEXT);
 		$mform->addRule('description', get_string('error'), 'required', null, 'server', false, false);
-		
+
 
 		$mform->addElement('hidden', 'courseid');
 		$mform->setType('courseid', PARAM_INT);
-		
+
 		$mform->addElement('date_time_selector', 'starttime', get_string('starttime', 'block_exastud'));
 		$mform->setType('starttime', PARAM_INT);
 		$mform->addRule('starttime', null, 'required', null, 'server');
@@ -94,7 +94,7 @@ class period_edit_form extends moodleform {
 class student_edit_form extends moodleform {
 
 	function definition() {
-		$mform = & $this->_form;
+		$mform = &$this->_form;
 
 		$mform->addElement('hidden', 'courseid');
 		$mform->setType('courseid', PARAM_INT);
@@ -114,10 +114,22 @@ class student_edit_form extends moodleform {
 
 		$selectoptions = block_exastud_get_evaluation_options(true);
 
+		$mform->addElement('header', 'grade_header', \block_exastud\trans("de:Note und Niveau"));
+		$mform->setExpanded('grade_header');
+
+		$mform->addElement('text', 'grade', 'Note');
+		$mform->setType('grade', PARAM_INT);
+		$mform->addElement('select', 'gme', 'Niveau', ['' => '', 'G' => 'G', 'M' => 'M', 'E' => 'E']);
+
+		$mform->addElement('static', '', 'Vorschläge aus Exacomp:', '&nbsp;');
+		$mform->addElement('static', '', 'Deutsch', 'Note: 2 / Niveau: G');
+		$mform->addElement('static', '', 'Englisch', 'Note: 1 / Niveau: E');
+
 		$mform->addElement('header', 'categories', \block_exastud\trans("de:Fachübergreifende Kompetenzen"));
+		$mform->setExpanded('categories');
 
 		$categories = $this->_customdata['categories'];
-		foreach($categories as $category) {
+		foreach ($categories as $category) {
 			$id = $category->id.'_'.$category->source;
 
 			$mform->addElement('select', $id, $category->title, $selectoptions);
@@ -126,14 +138,14 @@ class student_edit_form extends moodleform {
 		}
 
 		$mform->addElement('header', 'vorschlag_header', \block_exastud\trans("de:Lern- und Sozialverhalten: Formulierungsvorschlag für Klassenlehrkraft"));
+		$mform->setExpanded('vorschlag_header');
 		$mform->addElement('htmleditor', 'vorschlag', '', array('cols' => 50, 'rows' => 5));
 		$mform->setType('vorschlag', PARAM_RAW);
-		$mform->setExpanded('vorschlag_header');
 
 		$mform->addElement('header', 'review_header', \block_exastud\trans("de:Fachkompetenzen"));
+		$mform->setExpanded('review_header');
 		$mform->addElement('htmleditor', 'review', get_string('review', 'block_exastud'), array('cols' => 50, 'rows' => 20));
 		$mform->setType('review', PARAM_RAW);
-		$mform->setExpanded('review_header');
 
 		$this->add_action_buttons(false);
 	}
@@ -143,7 +155,7 @@ class student_edit_form extends moodleform {
 class student_other_data_form extends moodleform {
 
 	function definition() {
-		$mform = & $this->_form;
+		$mform = &$this->_form;
 
 		foreach ($this->_customdata['categories'] as $dataid => $name) {
 			$mform->addElement('header', 'header_'.$dataid, $name);

@@ -19,6 +19,7 @@
 
 namespace block_exastud;
 
+use \block_exastud\globals as g;
 require __DIR__.'/inc.php';
 
 $courseid = optional_param('courseid', 1, PARAM_INT); // Course ID
@@ -49,6 +50,7 @@ if (!$student = $DB->get_record('user', array('id' => $studentid))) {
 $textReviews = get_text_reviews($class, $studentid);
 $categories = get_class_categories_for_report($studentid, $class->id);
 
+/*
 if (optional_param('output', '', PARAM_TEXT) == 'template_test') {
 	require_once __DIR__.'/classes/PhpWord/Autoloader.php';
 	\PhpOffice\PhpWord\Autoloader::register();
@@ -106,11 +108,12 @@ if (optional_param('output', '', PARAM_TEXT) == 'template_test') {
 	$templateProcessor->setValue('userPhone#3', htmlspecialchars('+1 428 889 775', ENT_COMPAT, 'UTF-8'));
 	
 	echo date('H:i:s'), ' Saving the result document...', EOL;
-	*/
+	* /
 	$templateProcessor->saveAs('result.docx');
 	
 	exit;
 }
+*/
 
 $outputType = optional_param('output', '', PARAM_TEXT);
 if (in_array($outputType, ['docx', 'docx_test'])) {
@@ -131,7 +134,8 @@ if (in_array($outputType, ['docx', 'docx_test'])) {
 	$section->addText(' ',
 		null, ['align'=>'center', 'spaceBefore'=>1400]);
 
-	if ($logo = block_exastud_get_main_logo()) {
+	// BW will kein logo
+	if (false && $logo = block_exastud_get_main_logo()) {
 		$tmpLogoFile = $logo->copy_content_to_temp();
 		try {
 			$section->addImage($tmpLogoFile, [
@@ -189,18 +193,98 @@ if (in_array($outputType, ['docx', 'docx_test'])) {
 		$cell->getStyle()->setGridSpan(2);
 	}
 
-	foreach($textReviews as $textReview) {
+
+	// title => required
+	$bp2004subjects = array_map(function($a) { return explode("\t", $a); }, preg_split('!\s*\n\s*!', trim('
+		Alevitische Religionslehre (RALE)	0
+		Altkatholische Religionslehre (RAK)	0
+		Ehtik (ETH)	0
+		Evangelische Religionslehre (REV)	0
+		Islamische Religionslehre sunnitischer Prägung (RISL)	0
+		Jüdische Religionslehre (RJUED)	0
+		Katholische Religionslehre (RRK)	0
+		Orthodoxe Religionslehre (ROR)	0
+		Syrisch-Orthodoxe Religionslehre (RSYR)	0
+		Deutsch	1
+		Mathematik	1
+		Englisch	1
+		EWG (Erdkunde, Wirtschaftskunde, Gemeinschaftskunde)	1
+		NWA (Naturwissenschaftliches Arbeiten)	1
+		Geschichte	1
+		Bildende Kunst	1
+		Musik	1
+		Sport	1
+		Französisch	0
+		Technik	0
+		Mensch und Umwelt (Mum)	0
+		Bildende Kunst	0
+		Musik	0
+		NwT	0
+		Sport	0
+		Spanisch	0
+	')));
+
+	$textReviews = $DB->get_records_sql("
+		SELECT DISTINCT s.title AS id, r.review, s.title AS title, r.subjectid AS subjectid
+		FROM {block_exastudreview} r
+		JOIN {block_exastudsubjects} s ON r.subjectid = s.id
+		JOIN {block_exastudclass} c ON c.periodid = r.periodid
+		JOIN {block_exastudclassteachers} ct ON ct.classid=c.id AND ct.teacherid = r.teacherid AND ct.subjectid=r.subjectid
+
+		WHERE r.studentid = ? AND r.periodid = ? AND TRIM(r.review) !=  ''
+		GROUP BY s.title",
+		array($studentid, $class->periodid));
+
+	$subjects = [];
+	foreach ($bp2004subjects as $bp2004subject) {
+		$title = $bp2004subject[0];
+		$required = $bp2004subject[1];
+
+		if (isset($textReviews[$title])) {
+			$textReview = $textReviews[$title];
+			$subjects[] = (object)array_merge((array)$textReview, (array)\block_exastud\get_subject_student_data($class->id, $textReview->subjectid, $studentid));
+		} elseif ($required) {
+			$subjects[] = (object)[
+				'title' => $title,
+				'review' => '',
+			];
+		}
+	}
+
+	$lern_und_sozialverhalten = g::$DB->get_record('block_exastudreview', array('teacherid' => $class->userid, 'subjectid' => SUBJECT_ID_LERN_UND_SOZIALVERHALTEN, 'periodid' => $class->periodid, 'studentid' => $studentid));
+	if ($lern_und_sozialverhalten) {
+		$lern_und_sozialverhalten->title = trans('de:Lern- und Sozialverhalten');
+		array_unshift($textReviews, $lern_und_sozialverhalten);
+	}
+
+	foreach($subjects as $textReview) {
 		$table->addRow(null, ['cantSplit'=>true]);
 		$cell = $table->addCell($pageWidthTwips/4);
 		$cell->addText($textReview->title, ['bold' => true]);
 
-		\PhpOffice\PhpWord\Shared\Html::addHtml($table->addCell($pageWidthTwips/4*3), $textReview->review);
+		\PhpOffice\PhpWord\Shared\Html::addHtml($table->addCell($pageWidthTwips/4*3),
+			(@$textReview->subjectid == SUBJECT_ID_LERN_UND_SOZIALVERHALTEN ? '' :
+				'Note: '.(@$textReview->grade?:'---').'<br />'.
+				'Niveau: '.(@$textReview->gme?:'---').'<br />'
+			).
+			$textReview->review);
 	}
 
 	$section->addPageBreak();
 
 	$table = $section->addTable(['borderSize' => 6, 'borderColor' => 'black', 'cellMargin' => 80]);
 
+	$cell = $header_body_cell('Bemerkungen');
+	if (empty($studentdata['comments'])) {
+		$cell->addText('');
+		$cell->addText('');
+		$cell->addText('');
+		$cell->addText('');
+	} else {
+		\PhpOffice\PhpWord\Shared\Html::addHtml($cell, $studentdata['comments']);
+	}
+
+	/*
 	$cell = $header_body_cell('Ateliers');
 	if (empty($studentdata['ateliers'])) {
 		$cell->addText('');
@@ -224,6 +308,7 @@ if (in_array($outputType, ['docx', 'docx_test'])) {
 	} else {
 		\PhpOffice\PhpWord\Shared\Html::addHtml($cell, $studentdata['besondere_staerken']);
 	}
+	*/
 
 	$cell = $header_body_cell('Anlagen');
 	$cell->addText('Kompetenzprofile');

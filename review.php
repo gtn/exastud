@@ -101,7 +101,7 @@ else {
 						'courseid' => $courseid,
 						'classid' => $myclass->id,
 						'type' => 'others'
-					]), \block_exastud\trans('de:Weitere Daten'))
+					]), \block_exastud\trans('de:Bemerkungen'))
 				];
 			}
 		}
