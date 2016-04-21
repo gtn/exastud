@@ -19,7 +19,8 @@
 
 $string['pluginname'] = 'Exabis Student Review';
 
-//
+
+// grp1
 $string['exastud:use'] = 'Use of Exabis Student Review';
 $string['exastud:editperiods'] = 'Edit periods';
 $string['exastud:admin'] = 'Administrator';
@@ -27,11 +28,11 @@ $string['exastud:uploadpicture'] = 'Upload logo';
 $string['exastud:addinstance'] = 'add Exabis Student Review to the course';
 $string['exastud:myaddinstance'] = 'add Exabis Student Review on My home';
 
-//
+
+// grp2
 $string['head_teacher'] = 'Head of a class';
 $string['head_teachers'] = 'Heads of a class';
 $string['configuration_classes'] = 'Class Configuration';
-$string['project_based_configuration'] = 'Project Configuration';
 $string['project_based_configuration'] = 'Edit project';
 $string['report'] = 'Report';
 $string['reports'] = 'Reports';
@@ -39,7 +40,6 @@ $string['periods'] = 'Periods';
 $string['review'] = 'Review';
 $string['pictureupload'] = 'Logo Upload';
 $string['upload_picture'] = 'You can upload a logo for a school-specific report';
-$string['project_based_upload_picture'] = 'You can upload a logo for a project-specific report';
 $string['upload_success'] = 'The new logo was uploaded successfully!';
 $string['availableusers'] = 'Available Users';
 $string['teachers'] = 'Teachers';
@@ -47,14 +47,13 @@ $string['project_based_teachers'] = 'Project-Teachers';
 $string['members'] = 'Members';
 $string['project_based_members'] = 'Projects';
 $string['errorinsertingclass'] = 'Error when inserting class';
-$string['project_based_errorinsertingclass'] = 'Error when inserting project';
 $string['redirectingtoclassinput'] = 'No class information found, redirecting to class input.';
 $string['project_based_redirectingtoclassinput'] = 'No project information found, redirecting to project input.';
 $string['errorupdatingclass'] = 'Error when updating class';
 $string['project_based_errorupdatingclass'] = 'Error when updating project';
 $string['editclassmemberlist'] = 'Edit student list';
-$string['editclassteacherlist'] = 'Edit teacher list';
 $string['project_based_editclassmemberlist'] = 'Edit project list';
+$string['editclassteacherlist'] = 'Edit teacher list';
 $string['project_based_editclassteacherlist'] = 'Edit teacher list';
 $string['editclassname'] = 'Edit class';
 $string['project_based_editclassname'] = 'Edit project';
@@ -66,8 +65,8 @@ $string['project_based_configteacher'] = 'Teachers in {$a}';
 $string['configmember'] = 'Students of {$a}';
 $string['project_based_configmember'] = 'Students of {$a}';
 $string['configcategories'] = 'Assessment categories in {$a}';
-$string['errorinsertingcategories'] = 'Error when adding categorie to a course';
 $string['errorinsertingstudents'] = 'Error when adding student to a course';
+$string['errorinsertingcategories'] = 'Error when adding categorie to a course';
 $string['errorremovingstudents'] = 'Error when removing student from a course';
 $string['errorremovingcategories'] = 'Error when removing categories from a course';
 $string['back'] = 'Back';
@@ -76,14 +75,14 @@ $string['redirectingtoperiodsinput'] = 'No period information found, redirecting
 $string['errorinsertingperiod'] = 'Error when inserting period';
 $string['errorupdateingperiod'] = 'Error when updating period';
 $string['perioddescription'] = 'Description';
-$string['starttime'] = 'Start time';
-$string['endtime'] = 'End time';
+$string['starttime'] = 'starttime: ';
+$string['endtime'] = 'endtime: ';
 $string['newperiod'] = 'New period';
 $string['invalidperiodid'] = 'Invalid period id';
 $string['noclassestoreview'] = 'No classes to review';
 $string['project_based_noclassestoreview'] = 'No projects to review';
-$string['class'] = 'Class';
-$string['project_based_class'] = 'Project';
+$string['class'] = 'class';
+$string['project_based_class'] = 'project';
 $string['reviewclass'] = 'Class review';
 $string['project_based_reviewclass'] = 'Project review';
 $string['badclass'] = 'You cannot edit this class';
@@ -124,23 +123,25 @@ $string['logosize'] = 'For efficient use the logo banner must be 840x100px. Plea
 $string['detailedreview'] = 'Detailed review';
 $string['studentreview'] = 'STUDENT REVIEW';
 $string['project_based_studentreview'] = 'PROJECT REVIEW';
-$string['class'] = 'class';
-$string['project_based_class'] = 'project';
 $string['name'] = 'name';
 $string['periodreview'] = 'Review for period';
 $string['reviewcount'] = ' review(s) yet';
 $string['print'] = 'print';
-$string['total'] = 'total score';
-$string['project_based_total'] = 'total score';
-
 $string['perioddesc'] = 'description of the period: ';
-$string['starttime'] = 'starttime: ';
-$string['endtime'] = 'endtime: ';
 $string['noperiods'] = 'There is no assessment-period defined yet. Please contact the administrator - he will gladly help you!';
 $string['commentshouldnotbeempty'] = 'You have to enter a comment.';
+
+
+// settings
 $string['settings_detailed_review'] = 'Detailed review';
 $string['settings_detailed_review_body'] = 'This setting allows you to see all the assessments from teachers in detail';
 $string['settings_project_based_assessment'] = 'Project-based assessment';
 $string['settings_project_based_assessment_body'] = 'This setting allows you to use project-based assessment instead of class-assessment';
 
+
+// grp3
+$string['total'] = 'total score';
+$string['project_based_total'] = 'total score';
 $string['subjects_taught_by_me'] = 'Subjects in this class taught by me';
+$string['project_based_upload_picture'] = 'You can upload a logo for a project-specific report';
+$string['project_based_errorinsertingclass'] = 'Error when inserting project';

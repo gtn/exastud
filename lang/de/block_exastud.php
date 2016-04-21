@@ -19,7 +19,8 @@
 
 $string['pluginname'] = 'Exabis Student Review';
 
-//
+
+// grp1
 $string['exastud:use'] = 'Student Review benutzen';
 $string['exastud:editperiods'] = 'Einstellungen bearbeiten';
 $string['exastud:admin'] = 'Administrator';
@@ -27,7 +28,8 @@ $string['exastud:uploadpicture'] = 'Logo uploaden';
 $string['exastud:addinstance'] = 'Student Review auf Kursseite anlegen';
 $string['exastud:myaddinstance'] = 'Student Review auf Startseite anlegen';
 
-//
+
+// grp2
 $string['head_teacher'] = 'Klassenvorstand';
 $string['head_teachers'] = 'Klassenvorstände';
 $string['configuration_classes'] = 'Meine Klassen konfigurieren';
@@ -73,8 +75,8 @@ $string['redirectingtoperiodsinput'] = 'Keine Beurteilungszeiträume gefunden, W
 $string['errorinsertingperiod'] = 'Fehler beim Einfügen einer Beurteilungszeitraums';
 $string['errorupdateingperiod'] = 'Fehler bei der Aktualisierung einer Beurteilungszeitraums';
 $string['perioddescription'] = 'Beschreibung';
-$string['starttime'] = 'Beginn der Beurteilung';
-$string['endtime'] = 'Ende der Beurteilung';
+$string['starttime'] = 'Startdatum';
+$string['endtime'] = 'Enddatum';
 $string['newperiod'] = 'Neuer Beurteilungszeitraum';
 $string['invalidperiodid'] = 'Falsche Beurteilungszeitraums-ID';
 $string['noclassestoreview'] = 'Keine Klasse zur Beurteilung';
@@ -117,7 +119,7 @@ $string['evaluation10'] = '10 - sehr gut';
 $string['explainclassname'] = 'Hier können Sie den Klassennamen editieren';
 $string['project_based_explainclassname'] = 'Hier können Sie den Projektnamen editieren';
 $string['showall'] = 'Alle anzeigen';
-$string['logosize'] = ''; // 'Der Logo-Banner sollte die Größe 840x100px haben. Außerdem ist Transparenz in PNG Bildern zu vermeiden, da es sonst beim Erstellen eines PDF Berichtes zu Fehlern kommen kann.';
+$string['logosize'] = '';
 $string['detailedreview'] = 'Ausführliche Beurteilung';
 $string['studentreview'] = 'SCHÜLERBEWERTUNG';
 $string['project_based_studentreview'] = 'PROJEKTBEWERTUNG';
@@ -126,22 +128,24 @@ $string['periodreview'] = 'Bewertung für den Beurteilungszeitraum';
 $string['reviewcount'] = 'Bewertungen abgegeben';
 $string['print'] = 'Drucken';
 $string['perioddesc'] = 'Beschreibung des Beurteilungszeitraums';
-$string['starttime'] = 'Startdatum';
-$string['endtime'] = 'Enddatum';
 $string['noperiods'] = 'Es gibt noch keinen Beurteilungszeitraum. Bitte wenden Sie sich an den Administrator, der Ihnen freundlicherweise eine anlegen wird.';
 $string['commentshouldnotbeempty'] = 'Der Kommentar darf nicht leer sein.';
 
+
+// settings
 $string['settings_detailed_review'] = 'Einzelpunktevergabe anzeigen';
 $string['settings_detailed_review_body'] = 'Diese Einstellung erlaubt es die Punktevergabe der Beurteilenden einzeln einzusehen';
-
 $string['settings_project_based_assessment'] = 'Beurteilung auf Projekt-Basis';
 $string['settings_project_based_assessment_body'] = 'Diese Einstellung erlaubt es statt Klassen Projekte zu verwalten und zu beurteilen';
 
+
+// grp3
 $string['total'] = 'Gesamtpunkte';
 $string['project_based_total'] = 'Gesamtpunkte';
 $string['subjects_taught_by_me'] = 'Von mir in dieser Klasse unterrichtete Fächer';
 
+
 // load local langstrings
-if (file_exists(__DIR__.'/../../local.config/lang.php')){
-	require __DIR__.'/../../local.config/lang.php';
+if (file_exists(__DIR__."/../../local.config/lang.".basename(__DIR__).".php")){
+	require __DIR__."/../../local.config/lang.".basename(__DIR__).".php";
 }
