@@ -72,8 +72,6 @@ $string['errorremovingcategories'] = 'Error when removing categories from a cour
 $string['back'] = 'Back';
 $string['periodinput'] = 'Periods input';
 $string['redirectingtoperiodsinput'] = 'No period information found, redirecting to periods input';
-$string['errorinsertingperiod'] = 'Error when inserting period';
-$string['errorupdateingperiod'] = 'Error when updating period';
 $string['perioddescription'] = 'Description';
 $string['starttime'] = 'starttime: ';
 $string['endtime'] = 'endtime: ';
@@ -137,6 +135,7 @@ $string['settings_detailed_review'] = 'Detailed review';
 $string['settings_detailed_review_body'] = 'This setting allows you to see all the assessments from teachers in detail';
 $string['settings_project_based_assessment'] = 'Project-based assessment';
 $string['settings_project_based_assessment_body'] = 'This setting allows you to use project-based assessment instead of class-assessment';
+$string['blocksettings'] = NULL;
 
 
 // grp3

@@ -52,14 +52,10 @@ if ($periodform->is_cancelled()) {
 	if(isset($periodedit->id) && ($periodedit->action == 'edit')) {
 		$newperiod->id = $periodedit->id;
 		
-		if (!$DB->update_record('block_exastudperiod', $newperiod)) {
-			error('errorupdateingperiod', 'block_exastud');
-		}
+		$DB->update_record('block_exastudperiod', $newperiod);
 	}
 	else if($periodedit->action == 'new') {
-		if (!($DB->insert_record('block_exastudperiod', $newperiod))) {
-			error('errorinsertingperiod', 'block_exastud');
-		}
+		$DB->insert_record('block_exastudperiod', $newperiod);
 		//add_to_log($courseid, 'block_exastud', 'new', 'configuration_periods.php?courseid=' . $courseid . '&action=new', '');
 	}
 

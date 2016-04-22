@@ -17,14 +17,14 @@
 //
 // This copyright notice MUST APPEAR in all copies of the script!
 
-return  [
+return [
 	'pluginname' => [
 		'de' => 'Exabis Student Review',
 		'en' => 'Exabis Student Review',
 	],
 
 
-	'=== grp1 ===' => NULL,
+	'=== grp1 ===' => null,
 	'exastud:use' => [
 		'de' => 'Student Review benutzen',
 		'en' => 'Use of Exabis Student Review',
@@ -51,7 +51,7 @@ return  [
 	],
 
 
-	'=== grp2 ===' => NULL,
+	'=== grp2 ===' => null,
 	'head_teacher' => [
 		'de' => 'Klassenvorstand',
 		'en' => 'Head of a class',
@@ -77,7 +77,7 @@ return  [
 		'en' => 'Reports',
 	],
 	'periods' => [
-		'de' => 'Bewertungszeiträume',
+		'de' => 'Eingabezeiträume',
 		'en' => 'Periods',
 	],
 	'review' => [
@@ -217,16 +217,8 @@ return  [
 		'en' => 'Periods input',
 	],
 	'redirectingtoperiodsinput' => [
-		'de' => 'Keine Beurteilungszeiträume gefunden, Weiterleitung zur Eingabe eines Beurteilungszeitraums',
+		'de' => 'Keine Eingabezeiträume gefunden, Weiterleitung zur Eingabe eines Eingabezeitraums',
 		'en' => 'No period information found, redirecting to periods input',
-	],
-	'errorinsertingperiod' => [
-		'de' => 'Fehler beim Einfügen einer Beurteilungszeitraums',
-		'en' => 'Error when inserting period',
-	],
-	'errorupdateingperiod' => [
-		'de' => 'Fehler bei der Aktualisierung einer Beurteilungszeitraums',
-		'en' => 'Error when updating period',
 	],
 	'perioddescription' => [
 		'de' => 'Beschreibung',
@@ -337,7 +329,7 @@ return  [
 		'en' => 'No students to report.',
 	],
 	'errorstarttimebeforeendtime' => [
-		'de' => 'Beurteilungszeitraum {$a->description} hat ein Enddatum vor dem Startdatum!',
+		'de' => 'Eingabezeitraum {$a->description} hat ein Enddatum vor dem Startdatum!',
 		'en' => 'Period {$a->description} has its starttime before its endtime!',
 	],
 	'printversion' => [
@@ -349,11 +341,11 @@ return  [
 		'en' => 'Print all',
 	],
 	'periodoverlaps' => [
-		'de' => 'Beurteilungszeitraum {$a->period1} überschneidet sich mit {$a->period2}',
+		'de' => 'Eingabezeitraum {$a->period1} überschneidet sich mit {$a->period2}',
 		'en' => 'Period {$a->period1} overlaps with {$a->period2}',
 	],
 	'periodserror' => [
-		'de' => 'Fehler bei der Konfiguration der Beurteilungszeiträume',
+		'de' => 'Fehler bei der Konfiguration der Eingabezeiträume',
 		'en' => 'Error at the configuration of the periods',
 	],
 	'evaluation1' => [
@@ -429,7 +421,7 @@ return  [
 		'en' => 'name',
 	],
 	'periodreview' => [
-		'de' => 'Bewertung für den Beurteilungszeitraum',
+		'de' => 'Bewertung für den Eingabezeitraum',
 		'en' => 'Review for period',
 	],
 	'reviewcount' => [
@@ -441,11 +433,11 @@ return  [
 		'en' => 'print',
 	],
 	'perioddesc' => [
-		'de' => 'Beschreibung des Beurteilungszeitraums',
+		'de' => 'Beschreibung des Eingabezeitraums',
 		'en' => 'description of the period: ',
 	],
 	'noperiods' => [
-		'de' => 'Es gibt noch keinen Beurteilungszeitraum. Bitte wenden Sie sich an den Administrator, der Ihnen freundlicherweise eine anlegen wird.',
+		'de' => 'Es gibt noch keinen Eingabezeitraum. Bitte wenden Sie sich an den Administrator, der Ihnen freundlicherweise eine anlegen wird.',
 		'en' => 'There is no assessment-period defined yet. Please contact the administrator - he will gladly help you!',
 	],
 	'commentshouldnotbeempty' => [
@@ -454,7 +446,7 @@ return  [
 	],
 
 
-	'=== settings ===' => NULL,
+	'=== settings ===' => null,
 	'settings_detailed_review' => [
 		'de' => 'Einzelpunktevergabe anzeigen',
 		'en' => 'Detailed review',
@@ -471,9 +463,12 @@ return  [
 		'de' => 'Diese Einstellung erlaubt es statt Klassen Projekte zu verwalten und zu beurteilen',
 		'en' => 'This setting allows you to use project-based assessment instead of class-assessment',
 	],
+	'blocksettings' => [
+		'de' => 'Deckblattdaten',
+	],
 
 
-	'=== grp3 ===' => NULL,
+	'=== grp3 ===' => null,
 	'total' => [
 		'de' => 'Gesamtpunkte',
 		'en' => 'total score',

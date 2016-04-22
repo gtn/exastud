@@ -77,6 +77,18 @@ namespace block_exastud {
 		return $manager->get_string($identifier, '', $a);
 	}
 
+	function get_string_if_exists($identifier, $component = null, $a = null) {
+		$manager = get_string_manager();
+
+		if ($component === null)
+			$component = 'block_exastud';
+
+		if ($manager->string_exists($identifier, $component))
+			return $manager->get_string($identifier, $component, $a);
+
+		return null;
+	}
+
 	class permission_exception extends moodle_exception {
 		function __construct($errorcode = 'Not allowed', $module = '', $link = '', $a = null, $debuginfo = null) {
 			return parent::__construct($errorcode, $module, $link, $a, $debuginfo);

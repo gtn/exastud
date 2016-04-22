@@ -88,6 +88,8 @@ echo $OUTPUT->single_button($CFG->wwwroot . '/blocks/exastud/configuration_class
 		\block_exastud\get_string('editclassteacherlist', 'block_exastud'), 'get');
 
 /* Print the categories */
+// disabled for now
+/*
 echo html_writer::tag("h2",\block_exastud\get_string('categories', 'block_exastud'));
 
 $table = new html_table();
@@ -105,5 +107,6 @@ echo $output->table($table);
 
 echo $OUTPUT->single_button($CFG->wwwroot . '/blocks/exastud/configuration_categories.php?courseid='.$courseid.'&classid='.$class->id,
 		\block_exastud\get_string('editclasscategories', 'block_exastud'), 'get');
+*/
 
 echo $output->footer();

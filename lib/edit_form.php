@@ -122,8 +122,9 @@ class student_edit_form extends moodleform {
 		$mform->addElement('select', 'gme', 'Niveau', ['' => '', 'G' => 'G', 'M' => 'M', 'E' => 'E']);
 
 		$mform->addElement('static', '', 'Vorschläge aus Exacomp:', '&nbsp;');
-		$mform->addElement('static', '', 'Deutsch', 'Note: 2 / Niveau: G');
-		$mform->addElement('static', '', 'Englisch', 'Note: 1 / Niveau: E');
+		// TODO: change
+		$mform->addElement('static', '', 'Deutsch', 'Note: 2 / Niveau: G (Demo)');
+		$mform->addElement('static', '', 'Englisch', 'Note: 1 / Niveau: E (Demo)');
 
 		$mform->addElement('header', 'categories', \block_exastud\trans("de:Fachübergreifende Kompetenzen"));
 		$mform->setExpanded('categories');

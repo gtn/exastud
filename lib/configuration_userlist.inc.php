@@ -50,11 +50,10 @@ defined('MOODLE_INTERNAL') || die();
 			</td>
 			<td id="buttonscell">
 			  <div id="addcontrols">
-				  <input name="add" id="add" type="submit" value="◄ <?php echo get_string('add'); ?>" title="<?php print_string('add'); ?>" />
 				  <div class="enroloptions">
 				  <?php
 					if ($userlistType == 'teachers') {
-						$subjects = $DB->get_records('block_exastudsubjects', null, 'title');
+						$subjects = $DB->get_records('block_exastudsubjects', null, 'sorting');
 						echo '<p><label for="classteacher_subjectid">'.\block_exastud\trans('de:Fachbezeichnung / Rolle').'</label><br>';
 						echo '<select id="classteacher_subjectid" name="classteacher_subjectid">';
 						// no empty option
@@ -75,6 +74,7 @@ defined('MOODLE_INTERNAL') || die();
 						echo '</p>';
 					} ?>
 				  </div>
+				  <input name="add" id="add" type="submit" value="◄ <?php echo get_string('add'); ?>" title="<?php print_string('add'); ?>" />
 			  </div>
 				<div id="removecontrols">
 				  <input name="remove" id="remove" type="submit" value="<?php echo get_string('remove'); ?> ►" title="<?php print_string('remove'); ?>" />

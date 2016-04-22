@@ -46,9 +46,9 @@ class block_exastud_renderer extends plugin_renderer_base {
 			$tabs['settings'] = new tabobject('settings', new moodle_url('/blocks/exastud/periods.php', [ 'courseid' => g::$COURSE->id ]), \block_exastud\get_string("settings"), '', true);
 
 			$tabs['settings']->subtree[] = new tabobject('periods',	new moodle_url('/blocks/exastud/periods.php', [ 'courseid' => g::$COURSE->id ]), \block_exastud\get_string("periods"), '', true);
-			$tabs['settings']->subtree[] = new tabobject('categories', new moodle_url('/blocks/exastud/configuration_global.php', [ 'courseid' => g::$COURSE->id ]).'&action=categories', \block_exastud\trans("de:Kompetenzen"), '', true);
-			$tabs['settings']->subtree[] = new tabobject('subjects',   new moodle_url('/blocks/exastud/configuration_global.php', [ 'courseid' => g::$COURSE->id ]).'&action=subjects', \block_exastud\trans("de:Fachbezeichnungen"), '', true);
+			$tabs['settings']->subtree[] = new tabobject('categories', new moodle_url('/blocks/exastud/configuration_global.php', [ 'courseid' => g::$COURSE->id ]).'&action=categories', \block_exastud\trans("de:Fächerübergreifende Kompetenzen"), '', true);
 			$tabs['settings']->subtree[] = new tabobject('evalopts',   new moodle_url('/blocks/exastud/configuration_global.php', [ 'courseid' => g::$COURSE->id ]).'&action=evalopts', \block_exastud\trans("de:Bewertungsskala"), '', true);
+			$tabs['settings']->subtree[] = new tabobject('subjects',   new moodle_url('/blocks/exastud/configuration_global.php', [ 'courseid' => g::$COURSE->id ]).'&action=subjects', \block_exastud\trans("de:Fachbezeichnungen"), '', true);
 
 			if (block_exastud_has_global_cap(block_exastud\CAP_UPLOAD_PICTURE))
 				$tabs['settings']->subtree[] = new tabobject('pictureupload', new moodle_url('/blocks/exastud/pictureupload.php', [ 'courseid' => g::$COURSE->id ]), \block_exastud\get_string("pictureupload", "block_exastud"), '', true);
@@ -57,7 +57,8 @@ class block_exastud_renderer extends plugin_renderer_base {
 			// moodle can't use json_encode in tabobjects
 			// moodle can't use onclick in tabobjects
 			if (is_siteadmin()) {
-				$tabs['blockconfig'] = new tabobject('blockconfig',	'javascript:void window.open(\''.\block_exastud\url::create('/admin/settings.php?section=blocksettingexastud')->out(false).'\');', \block_exastud\get_string("blocksettings", 'block'), '', true);
+				$title = \block_exastud\get_string_if_exists('blocksettings') ?: \block_exastud\get_string("blocksettings", 'block');
+				$tabs['blockconfig'] = new tabobject('blockconfig',	'javascript:void window.open(\''.\block_exastud\url::create('/admin/settings.php?section=blocksettingexastud')->out(false).'\');', $title, '', true);
 			}
 			$tabs['head_teachers'] = new tabobject('head_teachers', 'javascript:void window.open(\''.\block_exastud\url::create('/cohort/assign.php', [ 'id' => block_exastud\get_head_teacher_cohort()->id ])->out(false).'\');', \block_exastud\get_string('head_teachers'), '', true);
 		}

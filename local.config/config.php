@@ -48,11 +48,11 @@ return [
 
 	'default_evalopt' =>
 		preg_split('!\s*\n\s*!', trim('
-			1 - sehr gut
+			1 - ungenügend
 			2
 			3
 			4
 			5
-			6 - ungenügend
+			6 - sehr gut
 		')),
 ];

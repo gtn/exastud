@@ -36,7 +36,7 @@ $string['configuration_classes'] = 'Meine Klassen konfigurieren';
 $string['project_based_configuration'] = 'Projekt konfigurieren';
 $string['report'] = 'Bericht';
 $string['reports'] = 'Berichte exportieren';
-$string['periods'] = 'Bewertungszeiträume';
+$string['periods'] = 'Eingabezeiträume';
 $string['review'] = 'Berichte befüllen';
 $string['pictureupload'] = 'Logo Upload';
 $string['upload_picture'] = 'Lade ein eigenes Logo für den Lernentwicklungsbericht hoch';
@@ -71,9 +71,7 @@ $string['errorremovingstudents'] = 'Fehler beim Löschen eines Schülers im Kurs
 $string['errorremovingcategories'] = 'Fehler beim Löschen von Kategorien aus einem Kurs';
 $string['back'] = 'zurück';
 $string['periodinput'] = 'Zeitraumeingabe';
-$string['redirectingtoperiodsinput'] = 'Keine Beurteilungszeiträume gefunden, Weiterleitung zur Eingabe eines Beurteilungszeitraums';
-$string['errorinsertingperiod'] = 'Fehler beim Einfügen einer Beurteilungszeitraums';
-$string['errorupdateingperiod'] = 'Fehler bei der Aktualisierung einer Beurteilungszeitraums';
+$string['redirectingtoperiodsinput'] = 'Keine Eingabezeiträume gefunden, Weiterleitung zur Eingabe eines Eingabezeitraums';
 $string['perioddescription'] = 'Beschreibung';
 $string['starttime'] = 'Startdatum';
 $string['endtime'] = 'Enddatum';
@@ -101,11 +99,11 @@ $string['project_based_badstudent'] = 'Der Schüler nimmt nicht an diesem Projek
 $string['errorupdatingstudent'] = 'Fehler beim Aktualisierung des Schülers';
 $string['errorinsertingstudent'] = 'Fehler beim Einfügen des Schülers';
 $string['nostudentstoreport'] = 'Kein Schüler zu beurteilen';
-$string['errorstarttimebeforeendtime'] = 'Beurteilungszeitraum {$a->description} hat ein Enddatum vor dem Startdatum!';
+$string['errorstarttimebeforeendtime'] = 'Eingabezeitraum {$a->description} hat ein Enddatum vor dem Startdatum!';
 $string['printversion'] = 'Druckversion';
 $string['printall'] = 'Alle drucken';
-$string['periodoverlaps'] = 'Beurteilungszeitraum {$a->period1} überschneidet sich mit {$a->period2}';
-$string['periodserror'] = 'Fehler bei der Konfiguration der Beurteilungszeiträume';
+$string['periodoverlaps'] = 'Eingabezeitraum {$a->period1} überschneidet sich mit {$a->period2}';
+$string['periodserror'] = 'Fehler bei der Konfiguration der Eingabezeiträume';
 $string['evaluation1'] = '1 - unzureichend';
 $string['evaluation2'] = '2';
 $string['evaluation3'] = '3';
@@ -124,11 +122,11 @@ $string['detailedreview'] = 'Ausführliche Beurteilung';
 $string['studentreview'] = 'SCHÜLERBEWERTUNG';
 $string['project_based_studentreview'] = 'PROJEKTBEWERTUNG';
 $string['name'] = 'Name';
-$string['periodreview'] = 'Bewertung für den Beurteilungszeitraum';
+$string['periodreview'] = 'Bewertung für den Eingabezeitraum';
 $string['reviewcount'] = 'Bewertungen abgegeben';
 $string['print'] = 'Drucken';
-$string['perioddesc'] = 'Beschreibung des Beurteilungszeitraums';
-$string['noperiods'] = 'Es gibt noch keinen Beurteilungszeitraum. Bitte wenden Sie sich an den Administrator, der Ihnen freundlicherweise eine anlegen wird.';
+$string['perioddesc'] = 'Beschreibung des Eingabezeitraums';
+$string['noperiods'] = 'Es gibt noch keinen Eingabezeitraum. Bitte wenden Sie sich an den Administrator, der Ihnen freundlicherweise eine anlegen wird.';
 $string['commentshouldnotbeempty'] = 'Der Kommentar darf nicht leer sein.';
 
 
@@ -137,6 +135,7 @@ $string['settings_detailed_review'] = 'Einzelpunktevergabe anzeigen';
 $string['settings_detailed_review_body'] = 'Diese Einstellung erlaubt es die Punktevergabe der Beurteilenden einzeln einzusehen';
 $string['settings_project_based_assessment'] = 'Beurteilung auf Projekt-Basis';
 $string['settings_project_based_assessment_body'] = 'Diese Einstellung erlaubt es statt Klassen Projekte zu verwalten und zu beurteilen';
+$string['blocksettings'] = 'Deckblattdaten';
 
 
 // grp3
