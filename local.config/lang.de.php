@@ -17,6 +17,5 @@
 //
 // This copyright notice MUST APPEAR in all copies of the script!
 
-$string['pluginname'] = 'Lernentwicklungsbericht';
 $string['head_teacher'] = 'Klassenlehrkraft';
 $string['head_teachers'] = 'Klassenlehrkräfte';

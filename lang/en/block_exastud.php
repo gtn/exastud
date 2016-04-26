@@ -18,6 +18,7 @@
 // This copyright notice MUST APPEAR in all copies of the script!
 
 $string['pluginname'] = 'Exabis Student Review';
+$string['blocktitle'] = 'Student Review';
 
 
 // grp1

@@ -18,9 +18,15 @@
 // This copyright notice MUST APPEAR in all copies of the script!
 
 return [
+	// shown in admin plugin list
 	'pluginname' => [
-		'de' => 'Exabis Student Review',
+		'de' => 'Exabis Lernentwicklungsbericht',
 		'en' => 'Exabis Student Review',
+	],
+	// shown in block title and all headers
+	'blocktitle' => [
+		'de' => 'Lernentwicklungsbericht',
+		'en' => 'Student Review',
 	],
 
 

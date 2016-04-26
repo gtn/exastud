@@ -17,7 +17,8 @@
 //
 // This copyright notice MUST APPEAR in all copies of the script!
 
-$string['pluginname'] = 'Exabis Student Review';
+$string['pluginname'] = 'Exabis Lernentwicklungsbericht';
+$string['blocktitle'] = 'Lernentwicklungsbericht';
 
 
 // grp1

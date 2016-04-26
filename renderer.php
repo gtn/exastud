@@ -26,7 +26,7 @@ class block_exastud_renderer extends plugin_renderer_base {
 
 	public function header($items) {
 		$items = (array)$items;
-		$strheader = \block_exastud\get_string('pluginname', 'block_exastud');
+		$strheader = \block_exastud\get_string('blocktitle', 'block_exastud');
 
 		$last_item_name = '';
 		$tabs = array();

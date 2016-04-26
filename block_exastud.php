@@ -23,7 +23,7 @@ require_once __DIR__.'/../moodleblock.class.php';
 class block_exastud extends block_list {
 	
 	function init() {
-		$this->title = \block_exastud\get_string('pluginname');
+		$this->title = \block_exastud\get_string('blocktitle');
 	}
 
 	function instance_allow_multiple() {
