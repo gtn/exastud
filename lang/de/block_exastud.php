@@ -17,7 +17,9 @@
 //
 // This copyright notice MUST APPEAR in all copies of the script!
 
+// shown in admin plugin list
 $string['pluginname'] = 'Exabis Lernentwicklungsbericht';
+// shown in block title and all headers
 $string['blocktitle'] = 'Lernentwicklungsbericht';
 
 
@@ -139,7 +141,7 @@ $string['settings_project_based_assessment_body'] = 'Diese Einstellung erlaubt e
 $string['blocksettings'] = 'Deckblattdaten';
 
 
-// grp3
+// === grp3 ===
 $string['total'] = 'Gesamtpunkte';
 $string['project_based_total'] = 'Gesamtpunkte';
 $string['subjects_taught_by_me'] = 'Von mir in dieser Klasse unterrichtete Fächer';

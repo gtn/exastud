@@ -17,7 +17,9 @@
 //
 // This copyright notice MUST APPEAR in all copies of the script!
 
+// shown in admin plugin list
 $string['pluginname'] = 'Exabis Student Review';
+// shown in block title and all headers
 $string['blocktitle'] = 'Student Review';
 
 
@@ -136,10 +138,9 @@ $string['settings_detailed_review'] = 'Detailed review';
 $string['settings_detailed_review_body'] = 'This setting allows you to see all the assessments from teachers in detail';
 $string['settings_project_based_assessment'] = 'Project-based assessment';
 $string['settings_project_based_assessment_body'] = 'This setting allows you to use project-based assessment instead of class-assessment';
-$string['blocksettings'] = NULL;
 
 
-// grp3
+// === grp3 ===
 $string['total'] = 'total score';
 $string['project_based_total'] = 'total score';
 $string['subjects_taught_by_me'] = 'Subjects in this class taught by me';
