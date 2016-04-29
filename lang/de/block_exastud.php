@@ -23,7 +23,7 @@ $string['pluginname'] = 'Exabis Lernentwicklungsbericht';
 $string['blocktitle'] = 'Lernentwicklungsbericht';
 
 
-// grp1
+// === grp1 ===
 $string['exastud:use'] = 'Student Review benutzen';
 $string['exastud:editperiods'] = 'Einstellungen bearbeiten';
 $string['exastud:admin'] = 'Administrator';
@@ -32,7 +32,7 @@ $string['exastud:addinstance'] = 'Student Review auf Kursseite anlegen';
 $string['exastud:myaddinstance'] = 'Student Review auf Startseite anlegen';
 
 
-// grp2
+// === grp2 ===
 $string['head_teacher'] = 'Klassenvorstand';
 $string['head_teachers'] = 'Klassenvorstände';
 $string['configuration_classes'] = 'Meine Klassen konfigurieren';
@@ -133,7 +133,7 @@ $string['noperiods'] = 'Es gibt noch keinen Eingabezeitraum. Bitte wenden Sie si
 $string['commentshouldnotbeempty'] = 'Der Kommentar darf nicht leer sein.';
 
 
-// settings
+// === settings ===
 $string['settings_detailed_review'] = 'Einzelpunktevergabe anzeigen';
 $string['settings_detailed_review_body'] = 'Diese Einstellung erlaubt es die Punktevergabe der Beurteilenden einzeln einzusehen';
 $string['settings_project_based_assessment'] = 'Beurteilung auf Projekt-Basis';

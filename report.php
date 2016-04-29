@@ -131,7 +131,7 @@ if ($classid = optional_param('classid', 0, PARAM_INT)) {
 	} else {
 		$table = new html_table();
 
-		$table->head = array (\block_exastud\trans('Klasse'));
+		$table->head = array (\block_exastud\get_string('class'));
 		$table->align = array ("left", "left", "left");
 
 		foreach ($classes as $class) {

@@ -38,12 +38,12 @@ $output = block_exastud\get_renderer();
 echo $output->header('configuration_classes');
 
 /* Print the Students */
-echo html_writer::tag("h2", \block_exastud\trans('de:Meine Klassen'));
+echo html_writer::tag("h2", \block_exastud\trans(['de:Meine Klassen', 'en:My Classes']));
 
 if ($classes) {
 	$table = new html_table();
 
-	$table->head = array (\block_exastud\trans('Klasse'), '');
+	$table->head = array (\block_exastud\get_string('class'), '');
 	$table->align = array ("left", "left", "left");
 
 	foreach ($classes as $class) {
@@ -58,14 +58,14 @@ if ($classes) {
 }
 
 echo $OUTPUT->single_button($CFG->wwwroot . '/blocks/exastud/configuration_class_info.php?courseid=' . $courseid .'&action=add',
-		\block_exastud\trans('de:Klasse hinzufügen'), 'get');
+		\block_exastud\trans(['de:Klasse hinzufügen', 'en:Add Class']), 'get');
 
 if ($classes = block_exastud\get_head_teacher_classes_shared()) {
 	echo html_writer::tag("h2", \block_exastud\trans('de:Mit mir geteilte Klassen'));
 
 	$table = new html_table();
 
-	$table->head = array (\block_exastud\trans('Klasse'), '');
+	$table->head = array (\block_exastud\get_string('class'), '');
 	$table->align = array ("left", "left", "left");
 
 	foreach ($classes as $class) {

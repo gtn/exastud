@@ -23,7 +23,7 @@ $string['pluginname'] = 'Exabis Student Review';
 $string['blocktitle'] = 'Student Review';
 
 
-// grp1
+// === grp1 ===
 $string['exastud:use'] = 'Use of Exabis Student Review';
 $string['exastud:editperiods'] = 'Edit periods';
 $string['exastud:admin'] = 'Administrator';
@@ -32,7 +32,7 @@ $string['exastud:addinstance'] = 'add Exabis Student Review to the course';
 $string['exastud:myaddinstance'] = 'add Exabis Student Review on My home';
 
 
-// grp2
+// === grp2 ===
 $string['head_teacher'] = 'Head of a class';
 $string['head_teachers'] = 'Heads of a class';
 $string['configuration_classes'] = 'Class Configuration';
@@ -76,14 +76,14 @@ $string['back'] = 'Back';
 $string['periodinput'] = 'Periods input';
 $string['redirectingtoperiodsinput'] = 'No period information found, redirecting to periods input';
 $string['perioddescription'] = 'Description';
-$string['starttime'] = 'starttime: ';
-$string['endtime'] = 'endtime: ';
+$string['starttime'] = 'Starttime';
+$string['endtime'] = 'Endtime';
 $string['newperiod'] = 'New period';
 $string['invalidperiodid'] = 'Invalid period id';
 $string['noclassestoreview'] = 'No classes to review';
 $string['project_based_noclassestoreview'] = 'No projects to review';
-$string['class'] = 'class';
-$string['project_based_class'] = 'project';
+$string['class'] = 'Class';
+$string['project_based_class'] = 'Project';
 $string['reviewclass'] = 'Class review';
 $string['project_based_reviewclass'] = 'Project review';
 $string['badclass'] = 'You cannot edit this class';
@@ -131,9 +131,15 @@ $string['print'] = 'print';
 $string['perioddesc'] = 'description of the period: ';
 $string['noperiods'] = 'There is no assessment-period defined yet. Please contact the administrator - he will gladly help you!';
 $string['commentshouldnotbeempty'] = 'You have to enter a comment.';
+$string['de:Fächerübergreifende Kompetenzen'] = 'Competencies';
+$string['de:Bewertungsskala'] = 'Grading';
+$string['de:Fachbezeichnungen'] = 'Subject';
+$string['de:Lernentwicklungsbericht: Schulname'] = 'Report: Schoolname';
+$string['de:Lernentwicklungsbericht: Ort'] = 'Report: City';
+$string['de:Lernentwicklungsbericht: Zeugnisausgabedatum'] = 'Report: Date';
 
 
-// settings
+// === settings ===
 $string['settings_detailed_review'] = 'Detailed review';
 $string['settings_detailed_review_body'] = 'This setting allows you to see all the assessments from teachers in detail';
 $string['settings_project_based_assessment'] = 'Project-based assessment';

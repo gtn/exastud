@@ -30,5 +30,5 @@ if ($ADMIN->fulltree) {
 	}
 	$settings->add(new admin_setting_configtext('exastud/school_name', \block_exastud\trans('de:Lernentwicklungsbericht: Schulname'), '', '', PARAM_TEXT));
 	$settings->add(new admin_setting_configtext('exastud/school_location', \block_exastud\trans('de:Lernentwicklungsbericht: Ort'), '', '', PARAM_TEXT));
-	$settings->add(new admin_setting_configtext('exastud/certificate_issue_date', \block_exastud\trans('de:Zeugnisausgabedatum'), '', '', PARAM_TEXT));
+	$settings->add(new admin_setting_configtext('exastud/certificate_issue_date', \block_exastud\trans('de:Lernentwicklungsbericht: Zeugnisausgabedatum'), '', '', PARAM_TEXT));
 }

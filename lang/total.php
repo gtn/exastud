@@ -30,7 +30,7 @@ return [
 	],
 
 
-	'=== grp1 ===' => null,
+	// === grp1 ===
 	'exastud:use' => [
 		'Student Review benutzen',
 		'Use of Exabis Student Review',
@@ -57,7 +57,7 @@ return [
 	],
 
 
-	'=== grp2 ===' => null,
+	// === grp2 ===
 	'head_teacher' => [
 		'Klassenvorstand',
 		'Head of a class',
@@ -232,11 +232,11 @@ return [
 	],
 	'starttime' => [
 		'Startdatum',
-		'starttime: ',
+		'Starttime',
 	],
 	'endtime' => [
 		'Enddatum',
-		'endtime: ',
+		'Endtime',
 	],
 	'newperiod' => [
 		'Neuer Beurteilungszeitraum',
@@ -256,11 +256,11 @@ return [
 	],
 	'class' => [
 		'Klasse',
-		'class',
+		'Class',
 	],
 	'project_based_class' => [
 		'Projekt',
-		'project',
+		'Project',
 	],
 	'reviewclass' => [
 		'Klassenbeurteilung',
@@ -452,7 +452,33 @@ return [
 	],
 
 
-	'=== settings ===' => null,
+	'de:Fächerübergreifende Kompetenzen' => [
+		null,
+		'Competencies',
+	],
+	'de:Bewertungsskala' => [
+		null,
+		'Grading',
+	],
+	'de:Fachbezeichnungen' => [
+		null,
+		'Subject',
+	],
+	'de:Lernentwicklungsbericht: Schulname' => [
+		null,
+		'Report: Schoolname',
+	],
+	'de:Lernentwicklungsbericht: Ort' => [
+		null,
+		'Report: City',
+	],
+	'de:Lernentwicklungsbericht: Zeugnisausgabedatum' => [
+		null,
+		'Report: Date',
+	],
+
+
+	// === settings ===
 	'settings_detailed_review' => [
 		'Einzelpunktevergabe anzeigen',
 		'Detailed review',

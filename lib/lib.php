@@ -1068,7 +1068,7 @@ namespace {
 		global $DB;
 
 		$options = $also_empty ? array(
-			0 => \block_exastud\trans('nicht gewählt') // empty option
+			0 => \block_exastud\trans('de:nicht gewählt') // empty option
 		) : array();
 
 		$options += $DB->get_records_menu('block_exastudevalopt', [], 'sorting', 'id, title');

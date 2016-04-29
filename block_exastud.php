@@ -39,7 +39,7 @@ class block_exastud extends block_list {
 	}
 
 	function get_content() {
-		global $CFG, $COURSE, $USER, $DB;
+		global $CFG, $COURSE;
 
 		if (!block_exastud_has_global_cap(block_exastud\CAP_USE)) {
 			$this->content = '';
@@ -71,7 +71,7 @@ class block_exastud extends block_list {
 			}
 			if (block_exastud_has_global_cap(block_exastud\CAP_VIEW_REPORT)) {
 				$this->content->icons[] = '<img src="' . $CFG->wwwroot . '/blocks/exastud/pix/zeugnisse.png" height="16" width="23" alt="" />';
-				$this->content->items[] = '<a title="' . \block_exastud\get_string('report') . '" href="' . $CFG->wwwroot . '/blocks/exastud/report.php?courseid=' . $COURSE->id . '">' . \block_exastud\get_string('report') . '</a>';
+				$this->content->items[] = '<a title="' . \block_exastud\get_string('reports') . '" href="' . $CFG->wwwroot . '/blocks/exastud/report.php?courseid=' . $COURSE->id . '">' . \block_exastud\get_string('reports') . '</a>';
 			}
 		}
 
