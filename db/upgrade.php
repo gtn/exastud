@@ -205,5 +205,20 @@ function xmldb_block_exastud_upgrade($oldversion = 0) {
 		block_exastud\check_profile_fields();
 	}
 
+    if ($oldversion < 2016042900) {
+
+        // Define field subjectid to be added to block_exastuddata.
+        $table = new xmldb_table('block_exastuddata');
+        $field = new xmldb_field('subjectid', XMLDB_TYPE_INTEGER, '11', null, XMLDB_NOTNULL, null, null, 'classid');
+
+        // Conditionally launch add field subjectid.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Exastud savepoint reached.
+        upgrade_block_savepoint(true, 2016042900, 'exastud');
+    }
+
 	return $result;
 }
