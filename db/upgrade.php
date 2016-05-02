@@ -209,7 +209,7 @@ function xmldb_block_exastud_upgrade($oldversion = 0) {
 
         // Define field subjectid to be added to block_exastuddata.
         $table = new xmldb_table('block_exastuddata');
-        $field = new xmldb_field('subjectid', XMLDB_TYPE_INTEGER, '11', null, XMLDB_NOTNULL, null, null, 'classid');
+        $field = new xmldb_field('subjectid', XMLDB_TYPE_INTEGER, '11', null, XMLDB_NOTNULL, null, '0', 'classid');
 
         // Conditionally launch add field subjectid.
         if (!$dbman->field_exists($table, $field)) {
