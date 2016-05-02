@@ -16,16 +16,35 @@
 //
 // This copyright notice MUST APPEAR in all copies of the script!
 
-window.block_exastud = {
-	jquery: jQuery,
-	
-	get_param: function(name) {
-		name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
-		var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
-			results = regex.exec(location.search);
-		return results === null ? null : decodeURIComponent(results[1].replace(/\+/g, " "));
-	},
-};
+window.block_exastud = {};
 
-(function($) {
-})(block_exastud.jquery);
+$.extend(window.block_exastud, window.exacommon || {});
+
+$.extend(window.block_exastud, {
+});
+
+!function(){
+	function is_page(page) {
+		return !!$('body#page-blocks-exastud-'+page).length;
+	}
+
+	if (is_page('configuration_classmembers')) {
+		$(document).on('click', '#block_exastud :checkbox[name=selectallornone]', function(){
+			var checkboxes = $(this).closest('table').find('tbody :checkbox');
+			checkboxes.prop('checked', checkboxes.is(':not(:checked)'));
+
+			// disable check/uncheck on selectallornone
+			return false;
+		});
+	}
+
+}();
+
+/*
+	$(document).on('click', '.rg2 .selectallornone', function(){
+		$(this).trigger('rg2.open');
+
+		var $children = get_children(this);
+		$children.find(':checkbox').prop('checked', $children.find(':checkbox:not(:checked)').length > 0);
+	});
+*/

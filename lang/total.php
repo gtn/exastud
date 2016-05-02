@@ -59,11 +59,11 @@ return [
 
 	// === grp2 ===
 	'head_teacher' => [
-		'Klassenvorstand',
+		'Klassenlehrkraft',
 		'Head of a class',
 	],
 	'head_teachers' => [
-		'Klassenvorstände',
+		'Klassenlehrkräfte',
 		'Heads of a class',
 	],
 	'configuration_classes' => [

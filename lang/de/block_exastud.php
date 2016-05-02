@@ -33,8 +33,8 @@ $string['exastud:myaddinstance'] = 'Student Review auf Startseite anlegen';
 
 
 // === grp2 ===
-$string['head_teacher'] = 'Klassenvorstand';
-$string['head_teachers'] = 'Klassenvorstände';
+$string['head_teacher'] = 'Klassenlehrkraft';
+$string['head_teachers'] = 'Klassenlehrkräfte';
 $string['configuration_classes'] = 'Meine Klassen konfigurieren';
 $string['project_based_configuration'] = 'Projekt konfigurieren';
 $string['report'] = 'Bericht';
@@ -145,9 +145,3 @@ $string['blocksettings'] = 'Deckblattdaten';
 $string['total'] = 'Gesamtpunkte';
 $string['project_based_total'] = 'Gesamtpunkte';
 $string['subjects_taught_by_me'] = 'Von mir in dieser Klasse unterrichtete Fächer';
-
-
-// load local langstrings
-if (file_exists(__DIR__."/../../local.config/lang.".basename(__DIR__).".php")){
-	require __DIR__."/../../local.config/lang.".basename(__DIR__).".php";
-}

@@ -114,18 +114,6 @@ class student_edit_form extends moodleform {
 
 		$selectoptions = block_exastud_get_evaluation_options(true);
 
-		$mform->addElement('header', 'grade_header', \block_exastud\trans("de:Note und Niveau"));
-		$mform->setExpanded('grade_header');
-
-		$mform->addElement('text', 'grade', 'Note');
-		$mform->setType('grade', PARAM_INT);
-		$mform->addElement('select', 'gme', 'Niveau', ['' => '', 'G' => 'G', 'M' => 'M', 'E' => 'E']);
-
-		$mform->addElement('static', '', 'Vorschläge aus Exacomp:', '&nbsp;');
-		// TODO: change
-		$mform->addElement('static', '', 'Deutsch', 'Note: 2 / Niveau: G (Demo)');
-		$mform->addElement('static', '', 'Englisch', 'Note: 1 / Niveau: E (Demo)');
-
 		$mform->addElement('header', 'categories', \block_exastud\trans("de:Fachübergreifende Kompetenzen"));
 		$mform->setExpanded('categories');
 
@@ -147,6 +135,18 @@ class student_edit_form extends moodleform {
 		$mform->setExpanded('review_header');
 		$mform->addElement('htmleditor', 'review', get_string('review', 'block_exastud'), array('cols' => 50, 'rows' => 20));
 		$mform->setType('review', PARAM_RAW);
+
+		$mform->addElement('header', 'grade_header', \block_exastud\trans("de:Note und Niveau"));
+		$mform->setExpanded('grade_header');
+
+		$mform->addElement('text', 'grade', 'Note');
+		$mform->setType('grade', PARAM_INT);
+		$mform->addElement('select', 'gme', 'Niveau', ['' => '', 'G' => 'G', 'M' => 'M', 'E' => 'E']);
+
+		$mform->addElement('static', '', 'Vorschläge aus Exacomp:', '&nbsp;');
+		// TODO: change
+		$mform->addElement('static', '', 'Deutsch', 'Note: 2 / Niveau: G (Demodaten)');
+		$mform->addElement('static', '', 'Englisch', 'Note: 1 / Niveau: E (Demodaten)');
 
 		$this->add_action_buttons(false);
 	}

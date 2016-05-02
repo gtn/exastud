@@ -186,4 +186,13 @@ class block_exastud_renderer extends plugin_renderer_base {
 			'onclick' => 'document.location.href = '.json_encode(block_exastud\url::create($url)->out(false))
 		]);
 	}
+	
+	function link_button($url, $label, $attributes = []) {
+		return html_writer::empty_tag('input', $attributes + [
+			'type' => 'button',
+			'exa-type' => 'link',
+			'href' => $url,
+			'value' => $label,
+		]);
+	}
 }

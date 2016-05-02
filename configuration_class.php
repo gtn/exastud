@@ -64,8 +64,11 @@ foreach($classstudents as $classstudent) {
 //echo html_writer::table($table);
 echo $output->table($table);
 
-echo $OUTPUT->single_button($CFG->wwwroot . '/blocks/exastud/configuration_classmembers.php?courseid='.$courseid.'&classid='.$class->id,
-		\block_exastud\get_string('editclassmemberlist', 'block_exastud'), 'get');
+echo $output->link_button($CFG->wwwroot . '/blocks/exastud/configuration_classmembers.php?courseid='.$courseid.'&classid='.$class->id,
+	\block_exastud\get_string('editclassmemberlist'));
+
+echo $output->link_button($CFG->wwwroot . '/blocks/exastud/configuration_classmembers_courses.php?courseid='.$courseid.'&classid='.$class->id,
+	\block_exastud\trans(['de:Aus Kurs hinzufügen', 'en:Add from Course']));
 
 /* Print the Classes */
 echo html_writer::tag("h2",\block_exastud\get_string('teachers', 'block_exastud'));

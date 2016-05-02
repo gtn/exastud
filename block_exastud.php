@@ -21,7 +21,7 @@ require_once __DIR__.'/lib/lib.php';
 require_once __DIR__.'/../moodleblock.class.php';
 
 class block_exastud extends block_list {
-	
+
 	function init() {
 		$this->title = \block_exastud\get_string('blocktitle');
 	}
@@ -39,19 +39,21 @@ class block_exastud extends block_list {
 	}
 
 	function get_content() {
-		global $CFG, $COURSE;
+		global $CFG, $COURSE, $OUTPUT;
 
 		if (!block_exastud_has_global_cap(block_exastud\CAP_USE)) {
 			$this->content = '';
+
 			return $this->content;
 		}
 
-		if ($this->content !== NULL) {
+		if ($this->content !== null) {
 			return $this->content;
 		}
 
 		if (empty($this->instance)) {
 			$this->content = '';
+
 			return $this->content;
 		}
 
@@ -62,24 +64,24 @@ class block_exastud extends block_list {
 
 		if (block_exastud_get_active_period()) {
 			if (block_exastud_has_global_cap(block_exastud\CAP_MANAGE_CLASSES)) {
-				$this->content->icons[] = '<img src="' . $CFG->wwwroot . '/blocks/exastud/pix/klassenzuteilung.png" height="16" width="23" alt="" />';
-				$this->content->items[] = '<a title="' . \block_exastud\get_string('configuration_classes') . '" href="' . $CFG->wwwroot . '/blocks/exastud/configuration_classes.php?courseid=' . $COURSE->id . '">' . \block_exastud\get_string('configuration_classes') . '</a>';
+				$icon = '<img src="'.$OUTPUT->pix_url('klassenzuteilung', 'block_exastud').'" class="icon" alt="" />';
+				$this->content->items[] = '<a title="'.\block_exastud\get_string('configuration_classes').'" href="'.$CFG->wwwroot.'/blocks/exastud/configuration_classes.php?courseid='.$COURSE->id.'">'.$icon.\block_exastud\get_string('configuration_classes').'</a>';
 			}
 			if (block_exastud_has_global_cap(block_exastud\CAP_REVIEW)) {
-				$this->content->icons[] = '<img src="' . $CFG->wwwroot . '/blocks/exastud/pix/beurteilung.png" height="16" width="23" alt="" />';
-				$this->content->items[] = '<a title="' . \block_exastud\get_string('review') . '" href="' . $CFG->wwwroot . '/blocks/exastud/review.php?courseid=' . $COURSE->id . '">' . \block_exastud\get_string('review') . '</a>';
+				$icon = '<img src="'.$OUTPUT->pix_url('beurteilung', 'block_exastud').'" class="icon" alt="" />';
+				$this->content->items[] = '<a title="'.\block_exastud\get_string('review').'" href="'.$CFG->wwwroot.'/blocks/exastud/review.php?courseid='.$COURSE->id.'">'.$icon.\block_exastud\get_string('review').'</a>';
 			}
 			if (block_exastud_has_global_cap(block_exastud\CAP_VIEW_REPORT)) {
-				$this->content->icons[] = '<img src="' . $CFG->wwwroot . '/blocks/exastud/pix/zeugnisse.png" height="16" width="23" alt="" />';
-				$this->content->items[] = '<a title="' . \block_exastud\get_string('reports') . '" href="' . $CFG->wwwroot . '/blocks/exastud/report.php?courseid=' . $COURSE->id . '">' . \block_exastud\get_string('reports') . '</a>';
+				$icon = '<img src="'.$OUTPUT->pix_url('zeugnisse', 'block_exastud').'" class="icon" alt="" />';
+				$this->content->items[] = '<a title="'.\block_exastud\get_string('reports').'" href="'.$CFG->wwwroot.'/blocks/exastud/report.php?courseid='.$COURSE->id.'">'.$icon.\block_exastud\get_string('reports').'</a>';
 			}
 		}
 
 		if (block_exastud_has_global_cap(block_exastud\CAP_ADMIN)) {
-			$this->content->icons[] = '<img src="' . $CFG->wwwroot . '/blocks/exastud/pix/eingabezeitraum.png" height="16" width="23" alt="" />';
-			$this->content->items[] = '<a title="' . \block_exastud\get_string('settings') . '" href="' . $CFG->wwwroot . '/blocks/exastud/periods.php?courseid=' . $COURSE->id . '">' . \block_exastud\get_string('settings') . '</a>';
-			$this->content->icons[] = '<img src="' . $CFG->wwwroot . '/blocks/exastud/pix/head_teachers.png" height="16" width="23" alt="" />';
-			$this->content->items[] = '<a title="' . \block_exastud\get_string('head_teachers') . '" href="' . $CFG->wwwroot . '/cohort/assign.php?id=' . block_exastud\get_head_teacher_cohort()->id . '">' . \block_exastud\get_string('head_teachers') . '</a>';
+			$icon = '<img src="'.$OUTPUT->pix_url('eingabezeitraum', 'block_exastud').'" class="icon" alt="" />';
+			$this->content->items[] = '<a title="'.\block_exastud\get_string('settings').'" href="'.$CFG->wwwroot.'/blocks/exastud/periods.php?courseid='.$COURSE->id.'">'.$icon.\block_exastud\get_string('settings').'</a>';
+			$icon = '<img src="'.$OUTPUT->pix_url('head_teachers', 'block_exastud').'" class="icon" alt="" />';
+			$this->content->items[] = '<a title="'.\block_exastud\get_string('head_teachers').'" href="'.$CFG->wwwroot.'/cohort/assign.php?id='.block_exastud\get_head_teacher_cohort()->id.'">'.$icon.\block_exastud\get_string('head_teachers').'</a>';
 		}
 
 		return $this->content;

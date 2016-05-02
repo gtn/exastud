@@ -31,7 +31,7 @@ $PAGE->set_url($url);
 $classes = block_exastud\get_head_teacher_classes_owner();
 
 if (!$classes && block_exastud_has_global_cap(block_exastud\CAP_HEAD_TEACHER)) {
-	redirect('configuration_class_info.php?courseid=' . $courseid .'&action=add', \block_exastud\get_string('redirectingtoclassinput', 'block_exastud'));
+	redirect('configuration_class_info.php?courseid='.$courseid.'&action=add', \block_exastud\get_string('redirectingtoclassinput', 'block_exastud'));
 }
 
 $output = block_exastud\get_renderer();
@@ -43,41 +43,46 @@ echo html_writer::tag("h2", \block_exastud\trans(['de:Meine Klassen', 'en:My Cla
 if ($classes) {
 	$table = new html_table();
 
-	$table->head = array (\block_exastud\get_string('class'), '');
-	$table->align = array ("left", "left", "left");
+	$table->head = array(\block_exastud\get_string('class'), '');
+	$table->align = array("left", "left");
+	$table->size = array("50%");
 
 	foreach ($classes as $class) {
 		$table->data[] = [
 			'<a href="configuration_class.php?courseid='.$courseid.'&action=edit&classid='.$class->id.'">'.$class->title.'</a>',
-			'<a href="configuration_class.php?courseid='.$courseid.'&action=edit&classid='.$class->id.'">'.block_exastud\get_string('edit').'</a> '.
-			'<a href="configuration_class.php?courseid='.$courseid.'&action=delete&classid='.$class->id.'&confirm=1" onclick="return confirm(\''.block_exastud\trans('de:Wirklich löschen?').'\');">'.block_exastud\get_string('delete').'</a>'
+			$output->link_button('configuration_class.php?courseid='.$courseid.'&action=edit&classid='.$class->id,
+				block_exastud\get_string('edit')).
+			$output->link_button('configuration_class.php?courseid='.$courseid.'&action=delete&classid='.$class->id.'&confirm=1',
+				block_exastud\get_string('delete'),
+				['exa-confirm' => block_exastud\trans('de:Wirklich löschen?')]),
 		];
 	}
 
 	echo $output->table($table);
 }
 
-echo $OUTPUT->single_button($CFG->wwwroot . '/blocks/exastud/configuration_class_info.php?courseid=' . $courseid .'&action=add',
-		\block_exastud\trans(['de:Klasse hinzufügen', 'en:Add Class']), 'get');
+echo $OUTPUT->single_button($CFG->wwwroot.'/blocks/exastud/configuration_class_info.php?courseid='.$courseid.'&action=add',
+	\block_exastud\trans(['de:Klasse hinzufügen', 'en:Add Class']), 'get');
 
 if ($classes = block_exastud\get_head_teacher_classes_shared()) {
 	echo html_writer::tag("h2", \block_exastud\trans('de:Mit mir geteilte Klassen'));
 
 	$table = new html_table();
 
-	$table->head = array (\block_exastud\get_string('class'), '');
-	$table->align = array ("left", "left", "left");
+	$table->head = array(\block_exastud\get_string('class'), '');
+	$table->align = array("left", "left");
+	$table->size = array("50%");
 
 	foreach ($classes as $class) {
 		$table->data[] = [
 			'<a href="configuration_class.php?courseid='.$courseid.'&action=edit&classid='.$class->id.'">'.$class->title.'</a>',
-			'<a href="configuration_class.php?courseid='.$courseid.'&action=edit&classid='.$class->id.'">'.block_exastud\get_string('edit').'</a> '
+			$output->link_button('configuration_class.php?courseid='.$courseid.'&action=edit&classid='.$class->id,
+				block_exastud\get_string('edit')),
 		];
 	}
 
 	echo $output->table($table);
 }
-
 
 
 echo $output->footer();

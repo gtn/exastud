@@ -995,6 +995,7 @@ namespace {
 		$PAGE->requires->css('/blocks/exastud/css/styles.css');
 		$PAGE->requires->jquery();
 		$PAGE->requires->jquery_plugin('ui');
+		$PAGE->requires->js('/blocks/exastud/javascript/common.js', true);
 		$PAGE->requires->js('/blocks/exastud/javascript/exastud.js', true);
 
 		// page specific js/css

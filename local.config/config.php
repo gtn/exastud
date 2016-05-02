@@ -2,6 +2,7 @@
 
 return [
 	'always_check_default_values' => true,
+
 	'default_subjects' =>
 		preg_split('!\s*\n\s*!', trim('
 			Alevitische Religionslehre (RALE)
@@ -48,11 +49,11 @@ return [
 
 	'default_evalopt' =>
 		preg_split('!\s*\n\s*!', trim('
-			1 - ungenügend
-			2
-			3
-			4
-			5
-			6 - sehr gut
+			Stufe 1 - ungenügend
+			Stufe 2
+			Stufe 3
+			Stufe 4
+			Stufe 5
+			Stufe 6 - sehr gut
 		')),
 ];
