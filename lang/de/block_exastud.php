@@ -129,7 +129,7 @@ $string['periodreview'] = 'Bewertung für den Eingabezeitraum';
 $string['reviewcount'] = 'Bewertungen abgegeben';
 $string['print'] = 'Drucken';
 $string['perioddesc'] = 'Beschreibung des Eingabezeitraums';
-$string['noperiods'] = 'Es gibt noch keinen Eingabezeitraum. Bitte wenden Sie sich an den Administrator, der Ihnen freundlicherweise eine anlegen wird.';
+$string['noperiods'] = 'Es gibt noch keinen Eingabezeitraum. Bitte wenden Sie sich an den Administrator.';
 $string['commentshouldnotbeempty'] = 'Der Kommentar darf nicht leer sein.';
 
 

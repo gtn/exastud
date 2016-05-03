@@ -443,8 +443,8 @@ return [
 		'description of the period: ',
 	],
 	'noperiods' => [
-		'Es gibt noch keinen Eingabezeitraum. Bitte wenden Sie sich an den Administrator, der Ihnen freundlicherweise eine anlegen wird.',
-		'There is no assessment-period defined yet. Please contact the administrator - he will gladly help you!',
+		'Es gibt noch keinen Eingabezeitraum. Bitte wenden Sie sich an den Administrator.',
+		'There is no assessment-period defined yet. Please contact the administrator.',
 	],
 	'commentshouldnotbeempty' => [
 		'Der Kommentar darf nicht leer sein.',
