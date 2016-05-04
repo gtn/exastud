@@ -341,8 +341,8 @@ if (in_array($outputType, ['docx', 'docx_test'])) {
 		block_exastud_report_subject_table(
 			$textReview->title,
 			$textReview->review,
-			'Note: '.(@$textReview->grade ?: '---').'<br />'.
-			'Niveau: '.(@$textReview->gme ?: '---').'<br />'
+			'Niveau: '.(@$textReview->gme ?: '---').'<br />'.
+			(trim(@$textReview->grade) ? 'Note: '.$textReview->grade.'<br />' : '')
 		);
 	}
 
@@ -466,7 +466,7 @@ $output = get_renderer();
 
 $strstudentreview = get_string('reviewstudent');
 $strclassreview = get_string('reviewclass');
-echo $output->header(array('review',
+echo $output->header(array('report',
 	array('name' => $strclassreview, 'link' => $CFG->wwwroot.'/blocks/exastud/review_class.php?courseid='.$courseid.
 		'&classid='.$classid),
 	'='.$strstudentreview,
@@ -478,5 +478,7 @@ $studentdesc = $OUTPUT->user_picture($student, array("courseid" => $courseid)).'
 echo $output->heading($studentdesc);
 
 echo get_renderer()->print_student_report($categories, $textReviews);
+
+echo $output->back_button(new url('report.php', ['courseid' => $courseid, 'classid' => $classid ]));
 
 echo $output->footer();

@@ -38,15 +38,12 @@ class class_edit_form extends moodleform {
 		$mform->setType('title', PARAM_TEXT);
 		$mform->addRule('title', null, 'required', null, 'client');
 
+		/*
 		$subjects = $DB->get_records_menu('block_exastudsubjects', null, 'title', 'id, title');
 		$select = $mform->addElement('select', 'mysubjectids', \block_exastud\get_string('subjects_taught_by_me'), $subjects);
 		$select->setMultiple(true);
-
-		/*
-		if (\block_exastud\is_subject_teacher()) {
-			$mform->addRule('mysubjectids', null, 'required', null, 'client');
-		}
 		*/
+
 
 		$this->add_action_buttons();
 	}
@@ -143,10 +140,9 @@ class student_edit_form extends moodleform {
 		$mform->setType('grade', PARAM_INT);
 		$mform->addElement('select', 'gme', 'Niveau', ['' => '', 'G' => 'G', 'M' => 'M', 'E' => 'E']);
 
-		$mform->addElement('static', '', 'Vorschläge aus Exacomp:', '&nbsp;');
-		// TODO: change
-		$mform->addElement('static', '', 'Deutsch', 'Note: 2 / Niveau: G (Demodaten)');
-		$mform->addElement('static', '', 'Englisch', 'Note: 1 / Niveau: E (Demodaten)');
+		foreach ($this->_customdata['exacomp_grades'] as $row) {
+			$mform->addElement('static', '', $row[0], $row[1]);
+		}
 
 		$this->add_action_buttons(false);
 	}

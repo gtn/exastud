@@ -180,11 +180,10 @@ class block_exastud_renderer extends plugin_renderer_base {
 	}
 
 	function back_button($url) {
-		return html_writer::empty_tag('input', [
-			'type' => 'button',
-			'value' => \block_exastud\get_string('back'),
-			'onclick' => 'document.location.href = '.json_encode(block_exastud\url::create($url)->out(false))
-		]);
+		return $this->link_button(
+			block_exastud\url::create($url),
+			\block_exastud\get_string('back')
+		);
 	}
 	
 	function link_button($url, $label, $attributes = []) {

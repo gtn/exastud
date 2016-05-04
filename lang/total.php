@@ -509,10 +509,12 @@ return [
 		'Gesamtpunkte',
 		'total score',
 	],
+	/*
 	'subjects_taught_by_me' => [
 		'Von mir in dieser Klasse unterrichtete Fächer',
 		'Subjects in this class taught by me',
 	],
+	*/
 	'project_based_upload_picture' => [
 		null,
 		'You can upload a logo for a project-specific report',

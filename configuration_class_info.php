@@ -60,6 +60,7 @@ if ($classform->is_cancelled()) {
 		$class->id = $DB->insert_record('block_exastudclass', $newclass);
 	}
 
+	/*
 	$DB->delete_records('block_exastudclassteachers', ['teacherid' => $USER->id, 'classid' => $class->id]);
 	if (!empty($classedit->mysubjectids)) {
 		foreach ($classedit->mysubjectids as $subjectid) {
@@ -71,6 +72,7 @@ if ($classform->is_cancelled()) {
 			]);
 		}
 	}
+	*/
 
 	redirect('configuration_class.php?courseid=' . $courseid.'&classid='.$class->id);
 }
@@ -85,7 +87,7 @@ echo '<div id="block_exastud">';
 echo $OUTPUT->box( text_to_html(\block_exastud\get_string("explainclassname","block_exastud")));
 echo $OUTPUT->heading($class->title);
 
-$class->mysubjectids = $DB->get_records_menu('block_exastudclassteachers', ['teacherid' => $USER->id, 'classid' => $class->id], null, 'subjectid, subjectid AS tmp');
+// $class->mysubjectids = $DB->get_records_menu('block_exastudclassteachers', ['teacherid' => $USER->id, 'classid' => $class->id], null, 'subjectid, subjectid AS tmp');
 $classform->set_data($class);
 $classform->display();
 

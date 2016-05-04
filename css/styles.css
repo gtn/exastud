@@ -85,3 +85,8 @@
 #block_exastud .esr_input {
 	min-width: 250px;
 }
+
+/* remove moodle button margin in tables */
+#block_exastud table td input[type=button] {
+	margin-bottom: 0;
+}

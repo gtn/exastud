@@ -67,6 +67,29 @@ $formdata->subjectid = $subjectid;
 
 $teacherid = $USER->id;
 
+
+$exacomp_grades = [];
+if (block_exastud\is_exacomp_installed()) {
+	$title = 'Vorschläge aus Exacomp:';
+
+	if (!method_exists('\block_exacomp\api', 'get_subjects_with_grade_for_teacher_and_student')) {
+		$exacomp_grades[] = [$title, 'Please update exacomp to latest version'];
+	} else {
+		$subjects = \block_exacomp\api::get_subjects_with_grade_for_teacher_and_student($teacherid, $studentid);
+		if (!$subjects ) {
+			$exacomp_grades[] = [$title, '---'];
+		}
+		foreach ($subjects as $subject) {
+			$exacomp_grades[] = [
+				$subject->title,
+				'Note: '.($subject->grade ?: '---').
+				' / Niveau: '.($subject->gme ?: '---'),
+			];
+		}
+	}
+}
+
+
 if (!$reviewdata = $DB->get_record('block_exastudreview', array('teacherid' => $teacherid, 'subjectid' => $subjectid, 'periodid' => $actPeriod->id, 'studentid' => $studentid))) {
 	$formdata->review = '';
 } else {
@@ -75,7 +98,11 @@ if (!$reviewdata = $DB->get_record('block_exastudreview', array('teacherid' => $
 	}
 	$formdata->review = $reviewdata->review;
 }
-$studentform = new student_edit_form(null, array('categories' => $categories, 'subjectid' => $subjectid));
+$studentform = new student_edit_form(null, [
+	'categories' => $categories,
+	'subjectid' => $subjectid,
+	'exacomp_grades' => $exacomp_grades,
+]);
 
 if ($fromform = $studentform->get_data()) {
 	$newreview = new stdClass();
