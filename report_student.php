@@ -341,7 +341,7 @@ if (in_array($outputType, ['docx', 'docx_test'])) {
 		block_exastud_report_subject_table(
 			$textReview->title,
 			$textReview->review,
-			'Niveau: '.(@$textReview->gme ?: '---').'<br />'.
+			'Niveau: '.(@$textReview->niveau ?: '---').'<br />'.
 			(trim(@$textReview->grade) ? 'Note: '.$textReview->grade.'<br />' : '')
 		);
 	}

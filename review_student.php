@@ -82,8 +82,8 @@ if (block_exastud\is_exacomp_installed()) {
 		foreach ($subjects as $subject) {
 			$exacomp_grades[] = [
 				$subject->title,
-				'Note: '.($subject->grade ?: '---').
-				' / Niveau: '.($subject->gme ?: '---'),
+				'Note: '.($subject->additionalinfo ?: '---').
+				' / Niveau: '.($subject->niveau ?: '---'),
 			];
 		}
 	}
@@ -131,7 +131,7 @@ if ($fromform = $studentform->get_data()) {
 	]);
 
 	\block_exastud\set_subject_student_data($classid, $subjectid, $studentid, 'grade', $fromform->grade);
-	\block_exastud\set_subject_student_data($classid, $subjectid, $studentid, 'gme', $fromform->gme);
+	\block_exastud\set_subject_student_data($classid, $subjectid, $studentid, 'niveau', $fromform->niveau);
 
 	foreach ($categories as $category) {
 		if (!isset($fromform->{$category->id.'_'.$category->source})) continue;
