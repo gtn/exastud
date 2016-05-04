@@ -144,4 +144,3 @@ $string['blocksettings'] = 'Deckblattdaten';
 // === grp3 ===
 $string['total'] = 'Gesamtpunkte';
 $string['project_based_total'] = 'Gesamtpunkte';
-$string['subjects_taught_by_me'] = 'Von mir in dieser Klasse unterrichtete Fächer';

@@ -149,6 +149,5 @@ $string['settings_project_based_assessment_body'] = 'This setting allows you to 
 // === grp3 ===
 $string['total'] = 'total score';
 $string['project_based_total'] = 'total score';
-$string['subjects_taught_by_me'] = 'Subjects in this class taught by me';
 $string['project_based_upload_picture'] = 'You can upload a logo for a project-specific report';
 $string['project_based_errorinsertingclass'] = 'Error when inserting project';
