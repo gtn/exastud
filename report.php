@@ -56,17 +56,17 @@ if ($classid = optional_param('classid', 0, PARAM_INT)) {
 	$table->head[] = '#'; //userpic
 	$table->head[] = ''; //userpic
 	$table->head[] = \block_exastud\get_string('name');
+	$table->head[] = ''; //action
 	foreach ($categories as $category)
 		$table->head[] = $category->title;
-	$table->head[] = ''; //action
 
 	$table->align = array();
 	$table->align[] = 'center';
 	$table->align[] = 'center';
 	$table->align[] = 'left';
+	$table->align[] = 'center';
 	for ($i = 0; $i < count($categories); $i++)
 		$table->align[] = 'center';
-	$table->align[] = 'center';
 
 	$i = 1;
 	foreach ($classstudents as $classstudent) {
@@ -92,14 +92,15 @@ if ($classid = optional_param('classid', 0, PARAM_INT)) {
 		$data[] = $OUTPUT->user_picture($classstudent, array("courseid" => $courseid));
 		$data[] = $studentdesc;
 
-		foreach ($categories as $category) {
-			$data[] = @$userReport->category_averages[$category->source.'-'.$category->id];
-		}
-
 		$data[] = $output->link_button($CFG->wwwroot.'/blocks/exastud/report_student.php?courseid='.$courseid.'&classid='.$classid.'&studentid='.$classstudent->id,
 				\block_exastud\trans('de:Alle Bewertungen zeigen')).
 			$output->link_button($CFG->wwwroot.'/blocks/exastud/report_student.php?courseid='.$courseid.'&classid='.$classid.'&studentid='.$classstudent->id.'&output=docx',
 				\block_exastud\trans('de:Lernentwicklungsbericht'));
+
+		foreach ($categories as $category) {
+			$data[] = @$userReport->category_averages[$category->source.'-'.$category->id];
+		}
+
 		$table->data[] = $data;
 	}
 

@@ -41,6 +41,11 @@ class block_exastud_renderer extends plugin_renderer_base {
 			if (block_exastud_has_global_cap(block_exastud\CAP_VIEW_REPORT)) {
 				$tabs['report'] = new tabobject('report', new moodle_url('/blocks/exastud/report.php', [ 'courseid' => g::$COURSE->id ]), \block_exastud\get_string("reports", "block_exastud"), '', true);
 			}
+			/*
+			if (block_exastud_has_global_cap(block_exastud\CAP_MANAGE_CLASSES)) {
+				$tabs[] = new tabobject('set_bildungsstandard', new moodle_url('/blocks/exastud/set_bildungsstandard.php', [ 'courseid' => g::$COURSE->id ]), \block_exastud\trans("de:Bildungsstandard festlegen"), '', true);
+			}
+			*/
 		}
 		if (block_exastud_has_global_cap(block_exastud\CAP_ADMIN)) {
 			$tabs['settings'] = new tabobject('settings', new moodle_url('/blocks/exastud/periods.php', [ 'courseid' => g::$COURSE->id ]), \block_exastud\get_string("settings"), '', true);
