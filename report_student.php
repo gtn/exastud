@@ -376,8 +376,8 @@ if (in_array($outputType, ['docx', 'docx_test'])) {
 	block_exastud_report_standard_footer($section);
 	block_exastud_report_standard_header($section);
 
-	$table = block_exastud_report_header_body_table('Bemerkungen', @$studentdata['comments']);
-	if (empty($studentdata['comments'])) {
+	$table = block_exastud_report_header_body_table('Bemerkungen', @$studentdata->comments);
+	if (empty($studentdata->comments)) {
 		$cell = $table->getRows()[1]->getCells()[0];
 		$cell->addText('');
 		$cell->addText('');

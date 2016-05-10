@@ -165,7 +165,7 @@ if ($type == \block_exastud\DATA_ID_LERN_UND_SOZIALVERHALTEN) {
 	echo $OUTPUT->heading($studentdesc);
 }
 
-$formdata = block_exastud\get_class_student_data($classid, $studentid);
+$formdata = (array)block_exastud\get_class_student_data($classid, $studentid);
 
 /*
 $studentdata = block_exastud\get_class_student_data($classid, $studentid);

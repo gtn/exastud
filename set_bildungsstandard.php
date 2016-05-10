@@ -27,11 +27,48 @@ block_exastud_require_global_cap(block_exastud\CAP_MANAGE_CLASSES);
 
 $classid = required_param('classid', PARAM_INT);
 $class = block_exastud\get_teacher_class($classid);
+$classstudents = \block_exastud\get_class_students($class->id);
 
 $url = '/blocks/exastud/set_bildungsstandard.php';
 $PAGE->set_url($url);
 
 if ($action == 'save') {
+	require_sesskey();
+	
+	$userdatas = \block_exastud\param::optional_array('userdatas', [PARAM_INT => (object)[
+		'bildungsstandard_erreicht' => PARAM_TEXT,
+		'dropped_out' => PARAM_BOOL,
+	]]);
+
+	foreach ($classstudents as $student) {
+		if (!isset($userdatas[$student->id])) {
+			continue;
+		}
+
+		$current = \block_exastud\get_class_student_data($class->id, $student->id);
+		$new = $userdatas[$student->id];
+
+		if (@$current->bildungsstandard_erreicht != @$new->bildungsstandard_erreicht) {
+			// set it, if changed
+			if (@$new->bildungsstandard_erreicht) {
+				\block_exastud\set_class_student_data($class->id, $student->id, 'bildungsstandard_erreicht', $new->bildungsstandard_erreicht);
+				\block_exastud\set_class_student_data($class->id, $student->id, 'bildungsstandard_erreicht_time', time());
+			} else {
+				\block_exastud\set_class_student_data($class->id, $student->id, 'bildungsstandard_erreicht', null);
+				\block_exastud\set_class_student_data($class->id, $student->id, 'bildungsstandard_erreicht_time', null);
+			}
+		}
+		if (@$current->dropped_out != @$new->dropped_out) {
+			// set it, if changed
+			if (@$new->dropped_out) {
+				\block_exastud\set_class_student_data($class->id, $student->id, 'dropped_out', 1);
+				\block_exastud\set_class_student_data($class->id, $student->id, 'dropped_out_time', time());
+			} else {
+				\block_exastud\set_class_student_data($class->id, $student->id, 'dropped_out', null);
+				\block_exastud\set_class_student_data($class->id, $student->id, 'dropped_out_time', null);
+			}
+		}
+	}
 }
 
 $output = block_exastud\get_renderer();
@@ -51,26 +88,38 @@ $table->head = [
 	\block_exastud\get_string('email'),
 ];
 $table->align = array("left", "left", "left");
-$table->attributes['style'] = "width: 75%;";
-$table->size = ['5%', '5%', '20%', '20%', '20%'];
-
-$classstudents = \block_exastud\get_class_students($class->id);
+// $table->attributes['style'] = "width: 75%;";
+// $table->size = ['5%', '5%', '20%', '20%', '20%'];
 
 foreach ($classstudents as $classstudent) {
+	$userdata = \block_exastud\get_class_student_data($class->id, $classstudent->id);
+
+	$bildungsstandard = html_writer::select([
+		'5-6' => '5-6',
+		'7-8' => '7-8',
+	], 'userdatas['.$classstudent->id.'][bildungsstandard_erreicht]', @$userdata->bildungsstandard_erreicht, ['' => '']);
+
 	$table->data[] = [
-		'<select><option></option><option>5-6</option><option>7-8</option></select>',
-		'<input type="checkbox" />',
+		$bildungsstandard.
+		(!empty($userdata->bildungsstandard_erreicht) ? ' '.userdate($userdata->bildungsstandard_erreicht_time) : ''),
+		'<input name="userdatas['.$classstudent->id.'][dropped_out]" type="hidden" value="0"/>'.
+		'<input name="userdatas['.$classstudent->id.'][dropped_out]" type="checkbox" value="1"'.
+		(!empty($userdata->dropped_out) ? ' checked="checked"' : '').'/>'.
+		(!empty($userdata->dropped_out) ? userdate($userdata->dropped_out_time) : ''),
 		$classstudent->firstname,
 		$classstudent->lastname,
 		$classstudent->email,
 	];
 }
 
-//echo html_writer::table($table);
+echo '<form method="post">';
+echo '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
+echo '<input type="hidden" name="action" value="save" />';
+
 echo $output->table($table);
 
-echo $output->link_button($CFG->wwwroot.'/blocks/exastud/configuration_classes.php?courseid='.$courseid,
-	\block_exastud\get_string('savechanges'),
-	['onclick' => "alert('Todo: Hier wird gespeichert')"]);
+echo '<input type="submit" value="'.\block_exastud\get_string('savechanges').'"/>';
+
+echo '</form>';
 
 echo $output->footer();

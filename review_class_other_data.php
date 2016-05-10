@@ -81,7 +81,7 @@ foreach($classstudents as $classstudent) {
 	$icons = '<img src="' . $CFG->wwwroot . '/pix/i/edit.gif" width="16" height="16" alt="' . \block_exastud\get_string('edit'). '" />';
 	$userdesc = fullname($classstudent);
 
-	$data = block_exastud\get_class_student_data($classid, $classstudent->id);
+	$data = (array)block_exastud\get_class_student_data($classid, $classstudent->id);
 
 	$row = new html_table_row();
 	$row->cells[] = $OUTPUT->user_picture($classstudent,array("courseid"=>$courseid));

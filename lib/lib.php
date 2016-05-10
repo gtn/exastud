@@ -384,15 +384,11 @@ namespace block_exastud {
 	}
 
 	function get_class_student_data($classid, $userid) {
-		return g::$DB->get_records_menu('block_exastuddata', [
-			'classid' => $classid,
-			'studentid' => $userid,
-			'subjectid' => 0,
-		], 'name', 'name, value');
+		return get_subject_student_data($classid, 0, $userid);
 	}
 
 	function get_subject_student_data($classid, $subjectid, $userid) {
-		return g::$DB->get_records_menu('block_exastuddata', [
+		return (object)g::$DB->get_records_menu('block_exastuddata', [
 			'classid' => $classid,
 			'studentid' => $userid,
 			'subjectid' => $subjectid,
@@ -400,25 +396,24 @@ namespace block_exastud {
 	}
 
 	function set_class_student_data($classid, $userid, $name, $value) {
-		g::$DB->insert_or_update_record('block_exastuddata', [
-			'value' => $value,
-		], [
-			'classid' => $classid,
-			'studentid' => $userid,
-			'subjectid' => 0,
-			'name' => $name,
-		]);
+		return set_subject_student_data($classid, 0, $userid, $name, $value);
 	}
 
 	function set_subject_student_data($classid, $subjectid, $userid, $name, $value) {
-		g::$DB->insert_or_update_record('block_exastuddata', [
-			'value' => $value,
-		], [
+		$conditions = [
 			'classid' => $classid,
 			'studentid' => $userid,
 			'subjectid' => $subjectid,
 			'name' => $name,
-		]);
+		];
+
+		if ($value === null) {
+			g::$DB->delete_records('block_exastuddata', $conditions);
+		} else {
+			g::$DB->insert_or_update_record('block_exastuddata', [
+				'value' => $value,
+			], $conditions);
+		}
 	}
 
 	function check_profile_fields() {
