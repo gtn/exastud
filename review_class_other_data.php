@@ -29,13 +29,13 @@ block_exastud_require_global_cap(block_exastud\CAP_REVIEW);
 
 $class = block_exastud\get_review_class($classid, \block_exastud\SUBJECT_ID_OTHER_DATA);
 
-if(!$class) {
-	print_error("badclass","block_exastud");
+if (!$class) {
+	print_error("badclass", "block_exastud");
 }
 
 if ($type == \block_exastud\DATA_ID_LERN_UND_SOZIALVERHALTEN) {
 	$categories = [
-		\block_exastud\DATA_ID_LERN_UND_SOZIALVERHALTEN => \block_exastud\trans('de:Lern- und Sozialverhalten')
+		\block_exastud\DATA_ID_LERN_UND_SOZIALVERHALTEN => \block_exastud\trans('de:Lern- und Sozialverhalten'),
 	];
 	$classheader = $class->title.' - '.\block_exastud\trans('de:Lern- und Sozialverhalten');
 } else {
@@ -53,7 +53,7 @@ if ($type == \block_exastud\DATA_ID_LERN_UND_SOZIALVERHALTEN) {
 $output = \block_exastud\get_renderer();
 
 $url = '/blocks/exastud/review_class.php';
-$PAGE->set_url($url, [ 'courseid'=>$courseid, 'classid'=>$classid, 'type'=>$type ]);
+$PAGE->set_url($url, ['courseid' => $courseid, 'classid' => $classid, 'type' => $type]);
 echo $output->header(array('review', '='.$classheader));
 echo $output->heading($classheader);
 
@@ -68,7 +68,7 @@ $table->head = array();
 $table->head[] = ''; //userpic
 $table->head[] = \block_exastud\get_string('name');
 $table->head[] = ''; // bewerten button
-foreach($categories as $category) {
+foreach ($categories as $category) {
 	$table->head[] = $category;
 }
 
@@ -77,20 +77,20 @@ $table->align[] = 'center';
 $table->align[] = 'left';
 $table->align[] = 'center';
 
-foreach($classstudents as $classstudent) {
-	$icons = '<img src="' . $CFG->wwwroot . '/pix/i/edit.gif" width="16" height="16" alt="' . \block_exastud\get_string('edit'). '" />';
+foreach ($classstudents as $classstudent) {
+	$icons = '<img src="'.$CFG->wwwroot.'/pix/i/edit.gif" width="16" height="16" alt="'.\block_exastud\get_string('edit').'" />';
 	$userdesc = fullname($classstudent);
 
 	$data = (array)block_exastud\get_class_student_data($classid, $classstudent->id);
 
 	$row = new html_table_row();
-	$row->cells[] = $OUTPUT->user_picture($classstudent,array("courseid"=>$courseid));
+	$row->cells[] = $OUTPUT->user_picture($classstudent, array("courseid" => $courseid));
 	$row->cells[] = $userdesc;
 
-	$row->cells[] = '<a href="' . $CFG->wwwroot . '/blocks/exastud/review_student_other_data.php?courseid=' . $courseid . '&classid=' . $classid . '&type=' . $type . '&studentid=' . $classstudent->id . '">'.
-		\block_exastud\trans('de:Bearbeiten').'</a>';
+	$row->cells[] = $output->link_button($CFG->wwwroot.'/blocks/exastud/review_student_other_data.php?courseid='.$courseid.'&classid='.$classid.'&type='.$type.'&studentid='.$classstudent->id,
+		\block_exastud\get_string('edit'));
 
-	foreach($categories as $dataid=>$category) {
+	foreach ($categories as $dataid => $category) {
 		$row->cells[] = !empty($data[$dataid]) ? $data[$dataid] : '';
 	}
 

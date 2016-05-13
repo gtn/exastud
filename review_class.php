@@ -131,7 +131,7 @@ foreach($classstudents as $classstudent) {
 	}
 	$row->cells[] = '<a style="padding-right: 15px;" href="'.$show_hide_url.'">'.$show_hide_icon.'</a>';
 
-	$row->cells[] = ($visible ? $output->link_button($CFG->wwwroot . '/blocks/exastud/review_student.php?courseid=' . $courseid . '&classid=' . $classid . '&subjectid=' . $subjectid . '&studentid=' . $classstudent->id,
+	$row->cells[] = ($visible ? $output->link_button($CFG->wwwroot.'/blocks/exastud/review_student.php?courseid='.$courseid.'&classid='.$classid.'&subjectid='.$subjectid.'&studentid='.$classstudent->id,
 		\block_exastud\trans(['de:Bewerten', 'en:Review'])) : '');
 
 	/* if (!$visible) {
