@@ -8,7 +8,7 @@ If you have any problems installing this block or suggestions for improvement pl
 
 The main focus of this block is a periodical review of students by more teachers. The basic idea of this module (acknowledging all new features of the moodle gradebook) is that teachers do not always have time during the year to give solid feedback to the students but
 seek a simple way to do this periodically – for example at the end of each school-semester. The feedback can be seen as an additional information that are given to the students where students are assessed by a teacher-team.
-In case exabis competencies block is also installed, assessment-categories can be made available from there. Students can print out their review at any time in the pdf-format.
+If Exabis Competence Grid block is also installed, assessment-categories can be made available from there. Students can print out their review at any time in the pdf-format.
 
 * exabis student review Block - Disclaimer *
 
