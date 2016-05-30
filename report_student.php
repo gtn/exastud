@@ -423,8 +423,8 @@ if (in_array($outputType, ['docx', 'docx_test'])) {
 	$cell->addText('Schüler /', null, ['align' => 'center', 'spaceBefore' => 0, 'spaceAfter' => 0]);
 	$cell->addText('Schülerin', null, ['align' => 'center', 'spaceBefore' => 0, 'spaceAfter' => 0]);
 	$cell = $table->addCell($tableWidthTwips / 4);
-	$cell->addText('Erziehungsberechtiger /', null, ['align' => 'center', 'spaceBefore' => 0, 'spaceAfter' => 0]);
-	$cell->addText('Erziehungsberechtige', null, ['align' => 'center', 'spaceBefore' => 0, 'spaceAfter' => 0]);
+	$cell->addText('Erziehungsberechtigter /', null, ['align' => 'center', 'spaceBefore' => 0, 'spaceAfter' => 0]);
+	$cell->addText('Erziehungsberechtigte', null, ['align' => 'center', 'spaceBefore' => 0, 'spaceAfter' => 0]);
 	$cell = $table->addCell($tableWidthTwips / 4);
 	$cell->addText('Lernbegleiter /', null, ['align' => 'center', 'spaceBefore' => 0, 'spaceAfter' => 0]);
 	$cell->addText('Lernbegleiterin', null, ['align' => 'center', 'spaceBefore' => 0, 'spaceAfter' => 0]);

@@ -548,6 +548,12 @@ namespace block_exastud {
 			return $config;
 		}
 	}
+	
+	function get_bildungsstandards() {
+		$bildungsstandards = array_map('trim', explode(',', get_plugin_config('bildungsstandards')));
+		$bildungsstandards = array_combine($bildungsstandards, $bildungsstandards);
+		return $bildungsstandards;
+	}
 }
 
 namespace {

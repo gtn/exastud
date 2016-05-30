@@ -94,20 +94,7 @@ $table->align = array("left", "left", "left");
 foreach ($classstudents as $classstudent) {
 	$userdata = \block_exastud\get_class_student_data($class->id, $classstudent->id);
 
-	$bildungsstandard = html_writer::select([
-		5 => 5,
-		6 => 6,
-		7 => 7,
-		8 => 8,
-		9 => 9,
-		10 => 10,
-		11 => 11,
-		12 => 12,
-		13 => 13,
-		14 => 14,
-		15 => 15,
-		16 => 16,
-	], 'userdatas['.$classstudent->id.'][bildungsstandard_erreicht]', @$userdata->bildungsstandard_erreicht, ['' => '']);
+	$bildungsstandard = html_writer::select(block_exastud\get_bildungsstandards(), 'userdatas['.$classstudent->id.'][bildungsstandard_erreicht]', @$userdata->bildungsstandard_erreicht, ['' => '']);
 
 	$table->data[] = [
 		$bildungsstandard.
