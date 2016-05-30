@@ -31,7 +31,9 @@ require_login($courseid);
 
 block_exastud_require_global_cap(CAP_VIEW_REPORT);
 
-if (!block_exastud_is_new_version()) die('not allowed');
+if (!block_exastud_is_new_version()) {
+	die('not allowed');
+}
 
 // is my class?
 $class = get_teacher_class($classid);
@@ -126,21 +128,26 @@ if (in_array($outputType, ['docx', 'docx_test'])) {
 	\PhpOffice\PhpWord\Settings::setTempDir($CFG->tempdir);
 
 	$phpWord = new \PhpOffice\PhpWord\PhpWord();
+	$phpWord->setDefaultFontSize(11);
 
 	$pageWidthTwips = 9200;
 	$tableWidthTwips = 9200 - 200;
 	$tmpLogoFile = null;
 
 	function block_exastud_report_standard_footer($section) {
-		$footer = $section->createFooter();
+		$footer = $section->addFooter();
 		$footer->addPreserveText('Seite {PAGE} von {NUMPAGES}', null, ['align' => 'center']);
+
+		return $footer;
 	}
 
 	function block_exastud_report_standard_header($section) {
 		global $student, $class;
 
-		$header = $section->createHeader();
+		$header = $section->addHeader();
 		$header->addTExt($student->lastname.', '.$student->firstname.', '.$class->title.', '.block_exastud_get_active_period()->description);
+
+		return $header;
 	}
 
 	function block_exastud_report_wrapper_table() {
@@ -167,8 +174,10 @@ if (in_array($outputType, ['docx', 'docx_test'])) {
 		$cell->getStyle()->setBgColor('D9D9D9');
 		$cell->addText($header, ['bold' => true]);
 
-		$table->addRow();
-		\PhpOffice\PhpWord\Shared\Html::addHtml($table->addCell($tableWidthTwips), $body);
+		if ($body !== null) {
+			$table->addRow();
+			\PhpOffice\PhpWord\Shared\Html::addHtml($table->addCell($tableWidthTwips), $body);
+		}
 
 		return $table;
 	}
@@ -181,10 +190,14 @@ if (in_array($outputType, ['docx', 'docx_test'])) {
 		// innere tabelle
 		$table = $cell->addTable(['borderSize' => 6, 'borderColor' => 'black', 'cellMargin' => 80]);
 		$table->addRow();
-		$cell = $table->addCell($tableWidthTwips);
+		$cell = $table->addCell($tableWidthTwips / 4 * 3);
 		$cell->getStyle()->setBgColor('D9D9D9');
-		$cell->getStyle()->setGridSpan(2);
+		// $cell->getStyle()->setGridSpan(2);
 		$cell->addText($header, ['bold' => true]);
+
+		$cell = $table->addCell($tableWidthTwips / 4);
+		$cell->getStyle()->setBgColor('D9D9D9');
+		$cell->addText('Niveaustufe *', ['bold' => true]);
 
 		$table->addRow();
 		$cell = $table->addCell($tableWidthTwips / 4 * 3);
@@ -196,10 +209,18 @@ if (in_array($outputType, ['docx', 'docx_test'])) {
 		return $table;
 	}
 
-	;
-
 	$section = $phpWord->addSection();
+
+	// empty header on first page
+	$header = $section->addHeader();
+	$header->firstPage();
+	// $footer = $section->addFooter();
+	$footer = block_exastud_report_standard_footer($section);
+	$footer->firstPage();
+
 	block_exastud_report_standard_footer($section);
+	block_exastud_report_standard_header($section);
+
 	// no header here
 
 	// BW will kein logo
@@ -216,28 +237,30 @@ if (in_array($outputType, ['docx', 'docx_test'])) {
 		}
 	}
 
-	if (get_config('exastud', 'school_name')) $section->addText(get_config('exastud', 'school_name'),
-		['size' => 26, 'bold' => false], ['align' => 'center', 'spaceBefore' => 250, 'spaceAfter' => 10]);
-	$section->addText('Gemeinschaftsschule',
-		['size' => 26, 'bold' => false], ['align' => 'center', 'spaceBefore' => 10, 'spaceAfter' => 10]);
+	if (get_config('exastud', 'school_name')) {
+		$section->addText(get_config('exastud', 'school_name'),
+			['size' => 16, 'bold' => true], ['align' => 'center', 'spaceBefore' => 350]);
+	}
 	$section->addText('Lernentwicklungsbericht',
-		['size' => 26, 'bold' => true], ['align' => 'center', 'spaceBefore' => 10, 'spaceAfter' => 200]);
-	$section->addText('Information über die Lernentwicklung im '.block_exastud_get_active_period()->description,
-		['size' => 14], ['align' => 'center', 'lineHeight' => 1, 'spaceAfter' => 100]);
-	$section->addText('für',
-		['size' => 14], ['align' => 'center', 'lineHeight' => 1, 'spaceAfter' => 300]);
+		['size' => 16, 'bold' => true], ['align' => 'center', 'spaceBefore' => 350]);
+	$section->addText(block_exastud_get_active_period()->description,
+		['size' => 12], ['align' => 'center', 'lineHeight' => 1, 'spaceBefore' => 350, 'spaceAfter' => 350]);
 
-	$table = block_exastud_report_wrapper_table()->addTable(array('borderSize' => 6, 'borderColor' => 'black', 'cellMargin' => 80));
+	$table = block_exastud_report_wrapper_table()->addTable(array('borderSize' => 0, 'borderColor' => 'FFFFFF', 'cellMargin' => 80));
 	$table->addRow();
-	$table->addCell(2500)->addText('Vorname, Name');
-	$table->addCell($tableWidthTwips - 2500)->addText($student->firstname.', '.$student->lastname);
+	$table->addCell($tableWidthTwips / 6);
+	$table->addCell($tableWidthTwips / 6 * 2)->addText(trans('de:Vor- und Zuname').':', ['bold' => true]);
+	$table->addCell($tableWidthTwips / 6 * 2)->addText($student->firstname.', '.$student->lastname);
 	$table->addRow();
-	$table->addCell()->addText(trans('de:Geburtsdatum'));
+	$table->addCell();
+	$table->addCell()->addText(trans('de:Geburtsdatum').':', ['bold' => true]);
 	$table->addCell()->addText($dateofbirth);
 	$table->addRow();
-	$table->addCell()->addText('Lerngruppe');
+	$table->addCell();
+	$table->addCell()->addText(trans('de:Lerngruppe').':', ['bold' => true]);
 	$table->addCell()->addText($class->title);
-
+	$table->addRow();
+	$table->addCell();
 
 	$studentdata = get_class_student_data($classid, $studentid);
 
@@ -271,6 +294,8 @@ if (in_array($outputType, ['docx', 'docx_test'])) {
 		NwT	0
 		Sport	0
 		Spanisch	0
+		Wahlpflichtfach	1
+		Profilfach	1
 	')));
 
 	$textReviews = $DB->get_records_sql("
@@ -319,16 +344,23 @@ if (in_array($outputType, ['docx', 'docx_test'])) {
 	// $table->getStyle()->set
 	*/
 
+	/*
 	$section = $phpWord->addSection();
 	block_exastud_report_standard_footer($section);
 	block_exastud_report_standard_header($section);
+	*/
+
+	/*
+	$footer = $section->addFooter();
+	$footer->firstPage();
+	*/
 
 	// $section->addPageBreak();
 	// phpword bug: pagebreak needs some text
 	// $section->addText('.', ['size' => 1, 'color'=>'ffffff']);
 
 	$lern_und_sozialverhalten = g::$DB->get_record('block_exastudreview', array('teacherid' => $class->userid, 'subjectid' => SUBJECT_ID_LERN_UND_SOZIALVERHALTEN, 'periodid' => $class->periodid, 'studentid' => $studentid));
-	$table = block_exastud_report_header_body_table(trans('de:Lern- und Sozialverhalten'), $lern_und_sozialverhalten);
+	$table = block_exastud_report_header_body_table(trans('de:Lern- und Sozialverhalten'), (string)$lern_und_sozialverhalten);
 	if (empty($lern_und_sozialverhalten)) {
 		$cell = $table->getRows()[1]->getCells()[0];
 		$cell->addText('');
@@ -336,6 +368,11 @@ if (in_array($outputType, ['docx', 'docx_test'])) {
 		$cell->addText('');
 		$cell->addText('');
 	}
+
+	$table = block_exastud_report_header_body_table(trans('de:Leistung in den einzelnen Fächern'), null);
+	$cell = $table->getRows()[0]->getCells()[0];
+	$cell->addText('mit Angabe der Niveaustufe *, auf der die Leistungen überwiegend erbracht wurden. Auf Elternwunsch zusätzlich Note.',
+		['size' => 9, 'bold' => true]);
 
 	foreach ($subjects as $textReview) {
 		block_exastud_report_subject_table(
@@ -372,11 +409,13 @@ if (in_array($outputType, ['docx', 'docx_test'])) {
 	}
 	*/
 
+	/*
 	$section = $phpWord->addSection();
 	block_exastud_report_standard_footer($section);
 	block_exastud_report_standard_header($section);
+	*/
 
-	$table = block_exastud_report_header_body_table('Bemerkungen', @$studentdata->comments);
+	$table = block_exastud_report_header_body_table('Bemerkungen', (string)@$studentdata->comments);
 	if (empty($studentdata->comments)) {
 		$cell = $table->getRows()[1]->getCells()[0];
 		$cell->addText('');
@@ -385,6 +424,52 @@ if (in_array($outputType, ['docx', 'docx_test'])) {
 		$cell->addText('');
 	}
 
+	$section->addText('');
+	$section->addText('');
+	$table = block_exastud_report_wrapper_table()->addTable(array('borderSize' => 0, 'borderColor' => 'FFFFFF', 'cellMargin' => 0));
+	$table->addRow();
+	$table->addCell(500)->addText('G =');
+	$table->addCell(3000)->addText('Grundlegendes Niveau');
+	$table->addRow();
+	$table->addCell(500)->addText('M =');
+	$table->addCell(3000)->addText('Mittleres Niveau');
+	$table->addRow();
+	$table->addCell(500)->addText('E =');
+	$table->addCell(3000)->addText('Erweitertes Niveau');
+
+	$section->addText('');
+	$section->addText('');
+	$section->addText('');
+
+	$wrapper = block_exastud_report_wrapper_table();
+
+	$location = get_config('exastud', 'school_location');
+	$certificate_issue_date = trim(get_config('exastud', 'certificate_issue_date'));
+	$wrapper->addText(($location ?: "[Ort]").", den ".($certificate_issue_date ?: "______________"));
+
+	$wrapper->addText('');
+	$wrapper->addText('');
+	$wrapper->addText('');
+	$wrapper->addText('');
+	$wrapper->addText('');
+	$wrapper->addText('');
+	$table = $wrapper->addTable(array('borderSize' => 0, 'borderColor' => 'FFFFFF', 'cellMargin' => 40));
+	$table->addRow();
+	$table->addCell($tableWidthTwips / 7 * 3, ['borderTopSize' => 6, 'borderTopColor' => 'black'])->addText('Lerngruppenbegleiterin/Lerngruppenbegleiter', ['size' => 8], ['align' => 'center']);
+
+	$wrapper->addText('');
+	$wrapper->addText('');
+	$wrapper->addText('');
+	$wrapper->addText('');
+	$wrapper->addText('');
+	$wrapper->addText('');
+	$table = $wrapper->addTable(array('borderSize' => 0, 'borderColor' => 'FFFFFF', 'cellMargin' => 40));
+	$table->addRow();
+	$table->addCell($tableWidthTwips / 7 * 3, ['borderTopSize' => 6, 'borderTopColor' => 'black'])->addText('Schülerin/Schüler', ['size' => 8], ['align' => 'center']);
+	$table->addCell($tableWidthTwips / 7 * 1);
+	$table->addCell($tableWidthTwips / 7 * 3, ['borderTopSize' => 6, 'borderTopColor' => 'black'])->addText('Erziehungsberechtigte/Erziehungsberechtigter', ['size' => 8], ['align' => 'center']);
+
+	/*
 	block_exastud_report_header_body_table('Anlagen', 'Kompetenzprofile<br />Zielvereinbarungen');
 
 	$section->addText('');
@@ -431,7 +516,9 @@ if (in_array($outputType, ['docx', 'docx_test'])) {
 	$cell = $table->addCell($tableWidthTwips / 4);
 	$cell->addText('Schulleiter /', null, ['align' => 'center', 'spaceBefore' => 0, 'spaceAfter' => 0]);
 	$cell->addText('Schulleiterin', null, ['align' => 'center', 'spaceBefore' => 0, 'spaceAfter' => 0]);
+	*/
 
+	$certificate_issue_date = trim(get_config('exastud', 'certificate_issue_date'));
 	$filename = ($certificate_issue_date ?: date('Y-m-d'))."-Lernentwicklungsbericht-{$class->title}-{$student->lastname}-{$student->firstname}.docx";
 
 	if ($outputType == 'docx_test') {
@@ -447,7 +534,9 @@ if (in_array($outputType, ['docx', 'docx_test'])) {
 	$temp_file = tempnam($CFG->tempdir, 'PHPWord');
 	$objWriter->save($temp_file);
 
-	if ($tmpLogoFile) unlink($tmpLogoFile);
+	if ($tmpLogoFile) {
+		unlink($tmpLogoFile);
+	}
 
 	require_once $CFG->dirroot.'/lib/filelib.php';
 
@@ -479,6 +568,6 @@ echo $output->heading($studentdesc);
 
 echo get_renderer()->print_student_report($categories, $textReviews);
 
-echo $output->back_button(new url('report.php', ['courseid' => $courseid, 'classid' => $classid ]));
+echo $output->back_button(new url('report.php', ['courseid' => $courseid, 'classid' => $classid]));
 
 echo $output->footer();
