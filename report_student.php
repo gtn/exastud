@@ -320,7 +320,7 @@ if (in_array($outputType, ['docx', 'docx_test'])) {
 		} elseif ($required) {
 			$subjects[] = (object)[
 				'title' => $title,
-				'review' => '',
+				'review' => '---',
 			];
 		}
 	}
@@ -420,10 +420,7 @@ if (in_array($outputType, ['docx', 'docx_test'])) {
 	$table = block_exastud_report_header_body_table('Bemerkungen', (string)@$studentdata->comments);
 	if (empty($studentdata->comments)) {
 		$cell = $table->getRows()[1]->getCells()[0];
-		$cell->addText('');
-		$cell->addText('');
-		$cell->addText('');
-		$cell->addText('');
+		$cell->addText('---');
 	}
 
 	$section->addText('');
