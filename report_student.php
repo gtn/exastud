@@ -250,7 +250,7 @@ if (in_array($outputType, ['docx', 'docx_test'])) {
 	$table->addRow();
 	$table->addCell($tableWidthTwips / 6);
 	$table->addCell($tableWidthTwips / 6 * 2)->addText(trans('de:Vor- und Zuname').':', ['bold' => true]);
-	$table->addCell($tableWidthTwips / 6 * 2)->addText($student->firstname.', '.$student->lastname);
+	$table->addCell($tableWidthTwips / 6 * 3)->addText($student->firstname.', '.$student->lastname);
 	$table->addRow();
 	$table->addCell();
 	$table->addCell()->addText(trans('de:Geburtsdatum').':', ['bold' => true]);
@@ -415,6 +415,8 @@ if (in_array($outputType, ['docx', 'docx_test'])) {
 	block_exastud_report_standard_header($section);
 	*/
 
+	$section->addText('');
+
 	$table = block_exastud_report_header_body_table('Bemerkungen', (string)@$studentdata->comments);
 	if (empty($studentdata->comments)) {
 		$cell = $table->getRows()[1]->getCells()[0];
@@ -429,45 +431,66 @@ if (in_array($outputType, ['docx', 'docx_test'])) {
 	$table = block_exastud_report_wrapper_table()->addTable(array('borderSize' => 0, 'borderColor' => 'FFFFFF', 'cellMargin' => 0));
 	$table->addRow();
 	$table->addCell(500)->addText('G =');
-	$table->addCell(3000)->addText('Grundlegendes Niveau');
+	$table->addCell($tableWidthTwips-500)->addText('Grundlegendes Niveau, entspricht den Bildungsstandards der Hauptschule');
 	$table->addRow();
 	$table->addCell(500)->addText('M =');
-	$table->addCell(3000)->addText('Mittleres Niveau');
+	$table->addCell($tableWidthTwips-500)->addText('Mittleres Niveau, entspricht den Bildungsstandards der Realschule');
 	$table->addRow();
 	$table->addCell(500)->addText('E =');
-	$table->addCell(3000)->addText('Erweitertes Niveau');
-
-	$section->addText('');
-	$section->addText('');
-	$section->addText('');
+	$table->addCell($tableWidthTwips-500)->addText('Erweitertes Niveau, entspricht den Bildungsstandards des Gymnasiums');
 
 	$wrapper = block_exastud_report_wrapper_table();
 
 	$location = get_config('exastud', 'school_location');
 	$certificate_issue_date = trim(get_config('exastud', 'certificate_issue_date'));
-	$wrapper->addText(($location ?: "[Ort]").", den ".($certificate_issue_date ?: "______________"));
+	$ort_datum = ($location ? $location.", " : '').$certificate_issue_date;
 
 	$wrapper->addText('');
 	$wrapper->addText('');
 	$wrapper->addText('');
 	$wrapper->addText('');
-	$wrapper->addText('');
-	$wrapper->addText('');
-	$table = $wrapper->addTable(array('borderSize' => 0, 'borderColor' => 'FFFFFF', 'cellMargin' => 40));
-	$table->addRow();
-	$table->addCell($tableWidthTwips / 7 * 3, ['borderTopSize' => 6, 'borderTopColor' => 'black'])->addText('Lerngruppenbegleiterin/Lerngruppenbegleiter', ['size' => 8], ['align' => 'center']);
 
-	$wrapper->addText('');
-	$wrapper->addText('');
-	$wrapper->addText('');
-	$wrapper->addText('');
-	$wrapper->addText('');
-	$wrapper->addText('');
 	$table = $wrapper->addTable(array('borderSize' => 0, 'borderColor' => 'FFFFFF', 'cellMargin' => 40));
 	$table->addRow();
-	$table->addCell($tableWidthTwips / 7 * 3, ['borderTopSize' => 6, 'borderTopColor' => 'black'])->addText('Schülerin/Schüler', ['size' => 8], ['align' => 'center']);
+	$table->addCell($tableWidthTwips / 7 * 3)->addText('', null, ['align' => 'center']);
 	$table->addCell($tableWidthTwips / 7 * 1);
-	$table->addCell($tableWidthTwips / 7 * 3, ['borderTopSize' => 6, 'borderTopColor' => 'black'])->addText('Erziehungsberechtigte/Erziehungsberechtigter', ['size' => 8], ['align' => 'center']);
+	$table->addCell($tableWidthTwips / 7 * 3, ['borderBottomSize' => 6, 'borderBottomColor' => 'black'])->addText($ort_datum, null, ['align' => 'center']);
+	$table->addRow();
+	$table->addCell()->addText('', ['size' => 8], ['align' => 'center']);
+	$table->addCell();
+	$table->addCell()->addText('Ort, Datum', ['size' => 8], ['align' => 'center']);
+
+	$wrapper->addText('');
+	$wrapper->addText('');
+	$table = $wrapper->addTable(array('borderSize' => 0, 'borderColor' => 'FFFFFF', 'cellMargin' => 0));
+	$table->addRow();
+	$table->addCell($tableWidthTwips)->addText('Dienstsiegel', null, ['align' => 'center']);
+	$wrapper->addText('');
+
+	$table = $wrapper->addTable(array('borderSize' => 0, 'borderColor' => 'FFFFFF', 'cellMargin' => 40));
+	$table->addRow();
+	$table->addCell($tableWidthTwips / 7 * 3, ['borderBottomSize' => 6, 'borderBottomColor' => 'black'])->addText('', null, ['align' => 'center']);
+	$table->addCell($tableWidthTwips / 7 * 1);
+	$table->addCell($tableWidthTwips / 7 * 3, ['borderBottomSize' => 6, 'borderBottomColor' => 'black'])->addText('', null, ['align' => 'center']);
+	$table->addRow();
+	$table->addCell()->addText('Lerngruppenbegleiterin/Lerngruppenbegleiter', ['size' => 8], ['align' => 'center']);
+	$table->addCell();
+	$table->addCell()->addText('Schulleiterin/Schulleiter', ['size' => 8], ['align' => 'center']);
+
+	$wrapper->addText('');
+	$wrapper->addText('');
+	$wrapper->addText('');
+	$wrapper->addText('');
+
+	$table = $wrapper->addTable(array('borderSize' => 0, 'borderColor' => 'FFFFFF', 'cellMargin' => 40));
+	$table->addRow();
+	$table->addCell($tableWidthTwips / 7 * 3, ['borderBottomSize' => 6, 'borderBottomColor' => 'black'])->addText('', null, ['align' => 'center']);
+	$table->addCell($tableWidthTwips / 7 * 1);
+	$table->addCell($tableWidthTwips / 7 * 3, ['borderBottomSize' => 6, 'borderBottomColor' => 'black'])->addText('', null, ['align' => 'center']);
+	$table->addRow();
+	$table->addCell()->addText('Schülerin/Schüler', ['size' => 8], ['align' => 'center']);
+	$table->addCell();
+	$table->addCell()->addText('Erziehungsberechtigte/Erziehungsberechtigter', ['size' => 8], ['align' => 'center']);
 
 	/*
 	block_exastud_report_header_body_table('Anlagen', 'Kompetenzprofile<br />Zielvereinbarungen');
