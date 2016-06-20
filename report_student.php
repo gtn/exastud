@@ -128,7 +128,7 @@ if (in_array($outputType, ['docx', 'docx_test'])) {
 	\PhpOffice\PhpWord\Settings::setTempDir($CFG->tempdir);
 
 	$phpWord = new \PhpOffice\PhpWord\PhpWord();
-	$phpWord->setDefaultFontSize(11);
+	$phpWord->setDefaultFontSize(10);
 
 	$pageWidthTwips = 9200;
 	$tableWidthTwips = 9200 - 200;
@@ -162,6 +162,29 @@ if (in_array($outputType, ['docx', 'docx_test'])) {
 		return $cell;
 	}
 
+	function block_exastud_report_add_html($element, $html) {
+
+		// delete span
+		$html = preg_replace('!<span(\s[^>]+)?>!i', '', $html);
+		$html = preg_replace('!</span>!i', '', $html);
+
+		// delete styles
+		$html = preg_replace('!\sstyle\s*=\s*"[^"]*"!i', '', $html);
+
+		// delete empty paragraphs (moodle bug)
+		$html = preg_replace('!<p>\s*</p>!i', '', $html);
+
+		// delete double paraggraphs (moodle bug)
+		$html = preg_replace('!<p>\s*<p>!i', '<p>', $html);
+		$html = preg_replace('!</p>\s*</p>!i', '</p>', $html);
+
+		$html = preg_replace('!&nbsp;!i', ' ', $html);
+
+		// var_dump($html);
+
+		\PhpOffice\PhpWord\Shared\Html::addHtml($element, $html);
+	}
+
 	function block_exastud_report_header_body_table($header, $body = null) {
 		global $tableWidthTwips;
 
@@ -176,7 +199,7 @@ if (in_array($outputType, ['docx', 'docx_test'])) {
 
 		if ($body !== null) {
 			$table->addRow();
-			\PhpOffice\PhpWord\Shared\Html::addHtml($table->addCell($tableWidthTwips), $body);
+			block_exastud_report_add_html($table->addCell($tableWidthTwips), $body);
 		}
 
 		return $table;
@@ -190,21 +213,21 @@ if (in_array($outputType, ['docx', 'docx_test'])) {
 		// innere tabelle
 		$table = $cell->addTable(['borderSize' => 6, 'borderColor' => 'black', 'cellMargin' => 80]);
 		$table->addRow();
-		$cell = $table->addCell($tableWidthTwips / 4 * 3);
+		$cell = $table->addCell($tableWidthTwips / 7 * 6);
 		$cell->getStyle()->setBgColor('D9D9D9');
 		// $cell->getStyle()->setGridSpan(2);
 		$cell->addText($header, ['bold' => true]);
 
-		$cell = $table->addCell($tableWidthTwips / 4);
+		$cell = $table->addCell($tableWidthTwips / 7);
 		$cell->getStyle()->setBgColor('D9D9D9');
-		$cell->addText('Niveaustufe *', ['bold' => true]);
+		// $cell->addText('Niveaustufe *', ['bold' => true]);
 
 		$table->addRow();
-		$cell = $table->addCell($tableWidthTwips / 4 * 3);
-		\PhpOffice\PhpWord\Shared\Html::addHtml($cell, $body);
+		$cell = $table->addCell($tableWidthTwips / 7 * 6);
+		block_exastud_report_add_html($cell, $body);
 
-		$cell = $table->addCell($tableWidthTwips / 4);
-		\PhpOffice\PhpWord\Shared\Html::addHtml($cell, $right);
+		$cell = $table->addCell($tableWidthTwips / 7);
+		block_exastud_report_add_html($cell, $right);
 
 		return $table;
 	}
@@ -270,7 +293,7 @@ if (in_array($outputType, ['docx', 'docx_test'])) {
 	}, preg_split('!\s*\n\s*!', trim('
 		Alevitische Religionslehre (RALE)	0
 		Altkatholische Religionslehre (RAK)	0
-		Ehtik (ETH)	0
+		Ethtik (ETH)	0
 		Evangelische Religionslehre (REV)	0
 		Islamische Religionslehre sunnitischer Prägung (RISL)	0
 		Jüdische Religionslehre (RJUED)	0
@@ -359,8 +382,9 @@ if (in_array($outputType, ['docx', 'docx_test'])) {
 	// phpword bug: pagebreak needs some text
 	// $section->addText('.', ['size' => 1, 'color'=>'ffffff']);
 
-	$lern_und_sozialverhalten = g::$DB->get_record('block_exastudreview', array('teacherid' => $class->userid, 'subjectid' => SUBJECT_ID_LERN_UND_SOZIALVERHALTEN, 'periodid' => $class->periodid, 'studentid' => $studentid));
-	$table = block_exastud_report_header_body_table(trans('de:Lern- und Sozialverhalten'), (string)$lern_und_sozialverhalten);
+	$lern_und_sozialverhalten = g::$DB->get_field('block_exastudreview', 'review', array('teacherid' => $class->userid, 'subjectid' => SUBJECT_ID_LERN_UND_SOZIALVERHALTEN, 'periodid' => $class->periodid, 'studentid' => $studentid));
+	$table = block_exastud_report_header_body_table(trans('de:Lern- und Sozialverhalten'), $lern_und_sozialverhalten ?: '---');
+	/*
 	if (empty($lern_und_sozialverhalten)) {
 		$cell = $table->getRows()[1]->getCells()[0];
 		$cell->addText('');
@@ -368,11 +392,12 @@ if (in_array($outputType, ['docx', 'docx_test'])) {
 		$cell->addText('');
 		$cell->addText('');
 	}
+	*/
 
 	$table = block_exastud_report_header_body_table(trans('de:Leistung in den einzelnen Fächern'), null);
 	$cell = $table->getRows()[0]->getCells()[0];
-	$cell->addText('mit Angabe der Niveaustufe *, auf der die Leistungen überwiegend erbracht wurden. Auf Elternwunsch zusätzlich Note.',
-		['size' => 9, 'bold' => true]);
+	//$cell->addText('mit Angabe der Niveaustufe *, auf der die Leistungen überwiegend erbracht wurden. Auf Elternwunsch zusätzlich Note.',
+	//	['size' => 9, 'bold' => true]);
 
 	foreach ($subjects as $textReview) {
 		block_exastud_report_subject_table(
@@ -388,14 +413,14 @@ if (in_array($outputType, ['docx', 'docx_test'])) {
 	if (empty($studentdata['ateliers'])) {
 		$cell->addText('');
 	} else {
-		\PhpOffice\PhpWord\Shared\Html::addHtml($cell, $studentdata['ateliers']);
+		block_exastud_report_add_html($cell, $studentdata['ateliers']);
 	}
 
 	$cell = $header_body_cell('Arbeitsgemeinschaften');
 	if (empty($studentdata['arbeitsgemeinschaften'])) {
 		$cell->addText('');
 	} else {
-		\PhpOffice\PhpWord\Shared\Html::addHtml($cell, $studentdata['arbeitsgemeinschaften']);
+		block_exastud_report_add_html($cell, $studentdata['arbeitsgemeinschaften']);
 	}
 
 	$cell = $header_body_cell('Besondere Stärken');
@@ -405,7 +430,7 @@ if (in_array($outputType, ['docx', 'docx_test'])) {
 		$cell->addText('');
 		$cell->addText('');
 	} else {
-		\PhpOffice\PhpWord\Shared\Html::addHtml($cell, $studentdata['besondere_staerken']);
+		block_exastud_report_add_html($cell, $studentdata['besondere_staerken']);
 	}
 	*/
 

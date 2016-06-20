@@ -1,13 +1,13 @@
 <?php
 
 return [
-	'always_check_default_values' => true,
+	'always_check_default_values' => false,
 
 	'default_subjects' =>
 		preg_split('!\s*\n\s*!', trim('
 			Alevitische Religionslehre (RALE)
 			Altkatholische Religionslehre (RAK)
-			Ehtik (ETH)
+			Ethik (ETH)
 			Evangelische Religionslehre (REV)
 			Islamische Religionslehre sunnitischer Prägung (RISL)
 			Jüdische Religionslehre (RJUED)
