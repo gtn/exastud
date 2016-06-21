@@ -293,7 +293,7 @@ if (in_array($outputType, ['docx', 'docx_test'])) {
 	}, preg_split('!\s*\n\s*!', trim('
 		Alevitische Religionslehre (RALE)	0
 		Altkatholische Religionslehre (RAK)	0
-		Ethtik (ETH)	0
+		Ethik (ETH)	0
 		Evangelische Religionslehre (REV)	0
 		Islamische Religionslehre sunnitischer Prägung (RISL)	0
 		Jüdische Religionslehre (RJUED)	0
