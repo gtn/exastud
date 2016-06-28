@@ -80,11 +80,13 @@ namespace block_exastud {
 	function get_string_if_exists($identifier, $component = null, $a = null) {
 		$manager = get_string_manager();
 
-		if ($component === null)
+		if ($component === null) {
 			$component = 'block_exastud';
+		}
 
-		if ($manager->string_exists($identifier, $component))
+		if ($manager->string_exists($identifier, $component)) {
 			return $manager->get_string($identifier, $component, $a);
+		}
 
 		return null;
 	}
@@ -309,10 +311,12 @@ namespace block_exastud {
 			array($studentid, $class->periodid)), false);
 
 		foreach ($textReviews as $key => $textReview) {
-			if ($textReview->subject_title)
-				$textReview->title = $textReview->subject_title; // .' ('.fullname($textReview).')';
-			else
+			if ($textReview->subject_title) {
+				$textReview->title = $textReview->subject_title;
+			} // .' ('.fullname($textReview).')';
+			else {
 				$textReview->title = fullname($textReview);
+			}
 
 			$textReviews[$key] = (object)array_merge((array)$textReview, (array)\block_exastud\get_subject_student_data($class->id, $textReview->subjectid, $studentid));
 		}
@@ -383,16 +387,22 @@ namespace block_exastud {
 		return class_exists('\block_exacomp\api') && \block_exacomp\api::active();
 	}
 
-	function get_class_student_data($classid, $userid) {
-		return get_subject_student_data($classid, 0, $userid);
+	function get_class_student_data($classid, $userid, $name = null) {
+		return get_subject_student_data($classid, 0, $userid, $name);
 	}
 
-	function get_subject_student_data($classid, $subjectid, $userid) {
-		return (object)g::$DB->get_records_menu('block_exastuddata', [
+	function get_subject_student_data($classid, $subjectid, $userid, $name = null) {
+		$data = (object)g::$DB->get_records_menu('block_exastuddata', [
 			'classid' => $classid,
 			'studentid' => $userid,
 			'subjectid' => $subjectid,
 		], 'name', 'name, value');
+
+		if ($name) {
+			return @$data->$name;
+		} else {
+			return $data;
+		}
 	}
 
 	function set_class_student_data($classid, $userid, $name, $value) {
@@ -516,8 +526,9 @@ namespace block_exastud {
 			}
 		} elseif (!$evalopts) {
 			for ($i = 1; $i <= 10; $i++) {
-				if (!get_string_manager()->string_exists('evaluation'.$i, 'block_exastud'))
+				if (!get_string_manager()->string_exists('evaluation'.$i, 'block_exastud')) {
 					break;
+				}
 				g::$DB->insert_record('block_exastudevalopt', array("sorting" => $i, "title" => get_string('evaluation'.$i, 'block_exastud')));
 			}
 		}
@@ -548,10 +559,11 @@ namespace block_exastud {
 			return $config;
 		}
 	}
-	
+
 	function get_bildungsstandards() {
 		$bildungsstandards = array_map('trim', explode(',', get_plugin_config('bildungsstandards')));
 		$bildungsstandards = array_combine($bildungsstandards, $bildungsstandards);
+
 		return $bildungsstandards;
 	}
 }
@@ -754,8 +766,9 @@ namespace {
 
 		$categories = array();
 		foreach ($reviewcategories as $reviewcategory) {
-			if ($tmp = block_exastud_get_category($reviewcategory->categoryid, $reviewcategory->categorysource))
+			if ($tmp = block_exastud_get_category($reviewcategory->categoryid, $reviewcategory->categorysource)) {
 				$categories[] = $tmp;
+			}
 		}
 
 		return $categories;
@@ -851,8 +864,10 @@ namespace {
 
 		if (is_file($CFG->dirroot.'/blocks/exastud/template/'.$filename)) {
 			$filecontent = file_get_contents($CFG->dirroot.'/blocks/exastud/template/'.$filename);
-		} else if (is_file($CFG->dirroot.'/blocks/exastud/default_template/'.$filename)) {
-			$filecontent = file_get_contents($CFG->dirroot.'/blocks/exastud/default_template/'.$filename);
+		} else {
+			if (is_file($CFG->dirroot.'/blocks/exastud/default_template/'.$filename)) {
+				$filecontent = file_get_contents($CFG->dirroot.'/blocks/exastud/default_template/'.$filename);
+			}
 		}
 		$filecontent = str_replace('###WWWROOT###', $CFG->wwwroot, $filecontent);
 
@@ -899,8 +914,11 @@ namespace {
 						<td class="printpersonalinfo_subheading">###RANKINGTRANSLATION###</td>
 					</tr>', "", $studentreport);
 		}
-		if (!$pdf) $studentreport = str_replace('###USERPIC###', $OUTPUT->user_picture($DB->get_record('user', array("id" => $studentid)), array("size" => 100)), $studentreport);
-		else $studentreport = str_replace('###USERPIC###', '', $studentreport);
+		if (!$pdf) {
+			$studentreport = str_replace('###USERPIC###', $OUTPUT->user_picture($DB->get_record('user', array("id" => $studentid)), array("size" => 100)), $studentreport);
+		} else {
+			$studentreport = str_replace('###USERPIC###', '', $studentreport);
+		}
 
 		if ($logo = block_exastud_get_main_logo_url()) {
 			$img = '<img id="logo" width="840" height="100" src="'.$logo.'"/>';
@@ -928,9 +946,10 @@ namespace {
 					JOIN {user} u ON r.teacherid = u.id
 					LEFT JOIN {block_exastudsubjects} s ON r.subjectid = s.id
 					WHERE studentid = ? AND periodid = ? AND pos.categoryid = ? AND pos.categorysource = ?", array($studentid, $periodid, $category->id, $category->source));
-				foreach ($detaildata as $detailrow)
+				foreach ($detaildata as $detailrow) {
 					$html .= '<tr class="ratings"><td class="teacher">'.($detailrow->subject_title ? $detailrow->subject_title.' ('.fullname($detailrow).')' : fullname($detailrow)).'</td>
 				<td class="rating legend teacher">'.$detailrow->value.'</td></tr>';
+				}
 			}
 		}
 		$studentreport = str_replace('###CATEGORIES###', $html, $studentreport);
@@ -971,7 +990,9 @@ namespace {
 				$pdf = new TCPDF("P", "pt", "A4", true, 'UTF-8', false);
 				$pdf->SetTitle('Bericht');
 				$pdf->AddPage();
-				if ($file) $pdf->Image($newfile, 480, 185, 75, 75);
+				if ($file) {
+					$pdf->Image($newfile, 480, 185, 75, 75);
+				}
 				$pdf->writeHTML($studentreport, true, false, true, false, '');
 
 				$pdf->Output('Student Review.pdf', 'I');
@@ -980,8 +1001,9 @@ namespace {
 				echo $e;
 				exit;
 			}
-		} else
+		} else {
 			echo $studentreport;
+		}
 	}
 
 	function block_exastud_init_js_css() {
@@ -989,7 +1011,9 @@ namespace {
 
 		// only allowed to be called once
 		static $js_inited = false;
-		if ($js_inited) return;
+		if ($js_inited) {
+			return;
+		}
 		$js_inited = true;
 
 		// js/css for whole block
@@ -1001,10 +1025,12 @@ namespace {
 
 		// page specific js/css
 		$scriptName = preg_replace('!\.[^\.]+$!', '', basename($_SERVER['PHP_SELF']));
-		if (file_exists($CFG->dirroot.'/blocks/exastud/css/'.$scriptName.'.css'))
+		if (file_exists($CFG->dirroot.'/blocks/exastud/css/'.$scriptName.'.css')) {
 			$PAGE->requires->css('/blocks/exastud/css/'.$scriptName.'.css');
-		if (file_exists($CFG->dirroot.'/blocks/exastud/javascript/'.$scriptName.'.js'))
+		}
+		if (file_exists($CFG->dirroot.'/blocks/exastud/javascript/'.$scriptName.'.js')) {
 			$PAGE->requires->js('/blocks/exastud/javascript/'.$scriptName.'.js', true);
+		}
 	}
 
 	function block_exastud_get_category($categoryid, $categorysource) {
@@ -1012,8 +1038,9 @@ namespace {
 		switch ($categorysource) {
 			case 'exastud':
 				$category = $DB->get_record('block_exastudcate', array("id" => $categoryid));
-				if (!$category)
+				if (!$category) {
 					return null;
+				}
 
 				$category->source = 'exastud';
 
@@ -1021,8 +1048,9 @@ namespace {
 			case 'exacomp':
 				if (\block_exastud\is_exacomp_installed()) {
 					$category = $DB->get_record('block_exacomptopics', array("id" => $categoryid));
-					if (!$category)
+					if (!$category) {
 						return null;
+					}
 
 					$category->source = 'exacomp';
 
@@ -1059,8 +1087,9 @@ namespace {
 
 		$categories = array();
 		foreach ($classcategories as $category) {
-			if ($tmp = block_exastud_get_category($category->categoryid, $category->categorysource))
+			if ($tmp = block_exastud_get_category($category->categoryid, $category->categorysource)) {
 				$categories[] = $tmp;
+			}
 		}
 
 		return $categories;

@@ -382,7 +382,7 @@ if (in_array($outputType, ['docx', 'docx_test'])) {
 	// phpword bug: pagebreak needs some text
 	// $section->addText('.', ['size' => 1, 'color'=>'ffffff']);
 
-	$lern_und_sozialverhalten = g::$DB->get_field('block_exastudreview', 'review', array('teacherid' => $class->userid, 'subjectid' => SUBJECT_ID_LERN_UND_SOZIALVERHALTEN, 'periodid' => $class->periodid, 'studentid' => $studentid));
+	$lern_und_sozialverhalten = get_class_student_data($classid, $studentid, \block_exastud\DATA_ID_LERN_UND_SOZIALVERHALTEN);
 	$table = block_exastud_report_header_body_table(trans('de:Lern- und Sozialverhalten'), $lern_und_sozialverhalten ?: '---');
 	/*
 	if (empty($lern_und_sozialverhalten)) {
