@@ -507,7 +507,7 @@ namespace block_exastud {
 		$evalopts = g::$DB->get_records_menu('block_exastudevalopt', null, 'sorting', 'id, title');
 		$defaultItems = (array)get_plugin_config('default_evalopt');
 
-		if ($defaultItems && get_plugin_config('always_check_default_values')) {
+		if ($defaultItems && (!$evalopts || get_plugin_config('always_check_default_values'))) {
 			$sorting = 1;
 			foreach ($defaultItems as $title) {
 				if (false !== $id = array_search($title, $evalopts)) {

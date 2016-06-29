@@ -129,6 +129,7 @@ if (in_array($outputType, ['docx', 'docx_test'])) {
 
 	$phpWord = new \PhpOffice\PhpWord\PhpWord();
 	$phpWord->setDefaultFontSize(10);
+	$phpWord->setDefaultParagraphStyle(['spaceBefore' => 0, 'spaceAfter' => 0]);
 
 	$pageWidthTwips = 9200;
 	$tableWidthTwips = 9200 - 200;
@@ -303,8 +304,8 @@ if (in_array($outputType, ['docx', 'docx_test'])) {
 		Deutsch	1
 		Mathematik	1
 		Englisch	1
-		EWG (Erdkunde, Wirtschaftskunde, Gemeinschaftskunde)	1
-		NWA (Naturwissenschaftliches Arbeiten)	1
+		Erdkunde, Wirtschaftskunde, Gemeinschaftskunde (EWG)	1
+		Naturwissenschaftliches Arbeiten (NWA)	1
 		Geschichte	1
 		Bildende Kunst	1
 		Musik	1
@@ -313,9 +314,7 @@ if (in_array($outputType, ['docx', 'docx_test'])) {
 		Technik	0
 		Mensch und Umwelt (Mum)	0
 		Bildende Kunst	0
-		Musik	0
 		NwT	0
-		Sport	0
 		Spanisch	0
 		Wahlpflichtfach	1
 		Profilfach	1
@@ -339,13 +338,19 @@ if (in_array($outputType, ['docx', 'docx_test'])) {
 
 		if (isset($textReviews[$title])) {
 			$textReview = $textReviews[$title];
-			$subjects[] = (object)array_merge((array)$textReview, (array)\block_exastud\get_subject_student_data($class->id, $textReview->subjectid, $studentid));
+			$subject = (object)array_merge((array)$textReview, (array)\block_exastud\get_subject_student_data($class->id, $textReview->subjectid, $studentid));
 		} elseif ($required) {
-			$subjects[] = (object)[
+			$subject = (object)[
 				'title' => $title,
 				'review' => '---',
 			];
+		} else {
+			continue;
 		}
+
+		$subject->title = preg_replace('!\s*\(.*$!', '', $subject->title);
+
+		$subjects[] = $subject;
 	}
 
 	/*
@@ -453,13 +458,13 @@ if (in_array($outputType, ['docx', 'docx_test'])) {
 	$table = block_exastud_report_wrapper_table()->addTable(array('borderSize' => 0, 'borderColor' => 'FFFFFF', 'cellMargin' => 0));
 	$table->addRow();
 	$table->addCell(500)->addText('G =');
-	$table->addCell($tableWidthTwips-500)->addText('Grundlegendes Niveau, entspricht den Bildungsstandards der Hauptschule');
+	$table->addCell($tableWidthTwips - 500)->addText('Grundlegendes Niveau, entspricht den Bildungsstandards der Hauptschule');
 	$table->addRow();
 	$table->addCell(500)->addText('M =');
-	$table->addCell($tableWidthTwips-500)->addText('Mittleres Niveau, entspricht den Bildungsstandards der Realschule');
+	$table->addCell($tableWidthTwips - 500)->addText('Mittleres Niveau, entspricht den Bildungsstandards der Realschule');
 	$table->addRow();
 	$table->addCell(500)->addText('E =');
-	$table->addCell($tableWidthTwips-500)->addText('Erweitertes Niveau, entspricht den Bildungsstandards des Gymnasiums');
+	$table->addCell($tableWidthTwips - 500)->addText('Erweitertes Niveau, entspricht den Bildungsstandards des Gymnasiums');
 
 	$wrapper = block_exastud_report_wrapper_table();
 

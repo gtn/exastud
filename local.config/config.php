@@ -17,8 +17,8 @@ return [
 			Deutsch
 			Mathematik
 			Englisch
-			EWG (Erdkunde, Wirtschaftskunde, Gemeinschaftskunde)
-			NWA (Naturwissenschaftliches Arbeiten)
+			Erdkunde, Wirtschaftskunde, Gemeinschaftskunde (EWG)
+			Naturwissenschaftliches Arbeiten (NWA)
 			Geschichte
 			Bildende Kunst
 			Musik
@@ -27,9 +27,7 @@ return [
 			Technik
 			Mensch und Umwelt (Mum)
 			Bildende Kunst
-			Musik
 			NwT
-			Sport
 			Spanisch
 		')),
 

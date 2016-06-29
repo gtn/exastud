@@ -168,6 +168,10 @@ $formdata->vorschlag = $DB->get_field('block_exastudreview', 'review', [
 
 $formdata = (object)array_merge((array)$formdata, (array)\block_exastud\get_subject_student_data($classid, $subjectid, $studentid));
 
+if (!$formdata->grade) {
+	$formdata->grade = '';
+}
+
 $studentform->set_data($formdata);
 $studentform->display();
 
