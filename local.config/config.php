@@ -5,27 +5,27 @@ return [
 
 	'default_subjects' =>
 		preg_split('!\s*\n\s*!', trim('
-			Alevitische Religionslehre (RALE)
-			Altkatholische Religionslehre (RAK)
-			Ethik (ETH)
-			Evangelische Religionslehre (REV)
-			Islamische Religionslehre sunnitischer Prägung (RISL)
-			Jüdische Religionslehre (RJUED)
-			Katholische Religionslehre (RRK)
-			Orthodoxe Religionslehre (ROR)
-			Syrisch-Orthodoxe Religionslehre (RSYR)
+			Alevitische Religionslehre
+			Altkatholische Religionslehre
+			Ethik
+			Evangelische Religionslehre
+			Islamische Religionslehre sunnitischer Prägung
+			Jüdische Religionslehre
+			Katholische Religionslehre
+			Orthodoxe Religionslehre
+			Syrisch-Orthodoxe Religionslehre
 			Deutsch
 			Mathematik
 			Englisch
-			Erdkunde, Wirtschaftskunde, Gemeinschaftskunde (EWG)
-			Naturwissenschaftliches Arbeiten (NWA)
+			Erdkunde, Wirtschaftskunde, Gemeinschaftskunde
+			Naturwissenschaftliches Arbeiten
 			Geschichte
 			Bildende Kunst
 			Musik
 			Sport
 			Französisch
 			Technik
-			Mensch und Umwelt (Mum)
+			Mensch und Umwelt
 			Bildende Kunst
 			NwT
 			Spanisch

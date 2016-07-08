@@ -95,7 +95,7 @@ return [
 		'Logo Upload',
 	],
 	'upload_picture' => [
-		'Lade ein eigenes Logo für den Lernentwicklungsbericht hoch',
+		'Laden Sie das große Landeswappen für das Abschlusszeugnis hoch.',
 		'You can upload a logo for a school-specific report',
 	],
 	'upload_success' => [

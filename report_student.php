@@ -221,7 +221,7 @@ if (in_array($outputType, ['docx', 'docx_test'])) {
 
 		$cell = $table->addCell($tableWidthTwips / 7);
 		$cell->getStyle()->setBgColor('D9D9D9');
-		// $cell->addText('Niveaustufe *', ['bold' => true]);
+		$cell->addText('Niveaustufe', ['bold' => true]);
 
 		$table->addRow();
 		$cell = $table->addCell($tableWidthTwips / 7 * 6);
@@ -274,7 +274,7 @@ if (in_array($outputType, ['docx', 'docx_test'])) {
 	$table->addRow();
 	$table->addCell($tableWidthTwips / 6);
 	$table->addCell($tableWidthTwips / 6 * 2)->addText(trans('de:Vor- und Zuname').':', ['bold' => true]);
-	$table->addCell($tableWidthTwips / 6 * 3)->addText($student->firstname.', '.$student->lastname);
+	$table->addCell($tableWidthTwips / 6 * 3)->addText($student->firstname.$student->lastname);
 	$table->addRow();
 	$table->addCell();
 	$table->addCell()->addText(trans('de:Geburtsdatum').':', ['bold' => true]);
@@ -292,27 +292,27 @@ if (in_array($outputType, ['docx', 'docx_test'])) {
 	$bp2004subjects = array_map(function($a) {
 		return explode("\t", $a);
 	}, preg_split('!\s*\n\s*!', trim('
-		Alevitische Religionslehre (RALE)	0
-		Altkatholische Religionslehre (RAK)	0
-		Ethik (ETH)	0
-		Evangelische Religionslehre (REV)	0
-		Islamische Religionslehre sunnitischer Prägung (RISL)	0
-		Jüdische Religionslehre (RJUED)	0
-		Katholische Religionslehre (RRK)	0
-		Orthodoxe Religionslehre (ROR)	0
-		Syrisch-Orthodoxe Religionslehre (RSYR)	0
+		Alevitische Religionslehre	0
+		Altkatholische Religionslehre	0
+		Ethik	0
+		Evangelische Religionslehre	0
+		Islamische Religionslehre sunnitischer Prägung	0
+		Jüdische Religionslehre	0
+		Katholische Religionslehre	0
+		Orthodoxe Religionslehre	0
+		Syrisch-Orthodoxe Religionslehre	0
 		Deutsch	1
 		Mathematik	1
 		Englisch	1
-		Erdkunde, Wirtschaftskunde, Gemeinschaftskunde (EWG)	1
-		Naturwissenschaftliches Arbeiten (NWA)	1
+		Erdkunde, Wirtschaftskunde, Gemeinschaftskunde	1
+		Naturwissenschaftliches Arbeiten	1
 		Geschichte	1
 		Bildende Kunst	1
 		Musik	1
 		Sport	1
 		Französisch	0
 		Technik	0
-		Mensch und Umwelt (Mum)	0
+		Mensch und Umwelt	0
 		Bildende Kunst	0
 		NwT	0
 		Spanisch	0
