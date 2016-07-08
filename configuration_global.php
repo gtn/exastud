@@ -44,6 +44,12 @@ $availableevalopts = $DB->get_records_sql('SELECT id, title
 	FROM {block_exastudevalopt}
 	ORDER BY sorting');
 
+$availablebps = $DB->get_records_sql('SELECT id, title
+	FROM {block_exastudbp}
+	ORDER BY sorting');
+
+$availablesubjects = $DB->get_records('block_exastudsubjects', ['bpid' =>optional_param('bpid', 0, PARAM_INT)], 'sorting');
+
 if ($action == 'save-categories') {
 	if(!confirm_sesskey()) {
 		die(get_string("badsessionkey","block_exastud"));
@@ -94,6 +100,8 @@ if ($action == 'save-subjects') {
 			)
 		));
 
+	$bpid = required_param('bpid', PARAM_INT);
+
 	$todelete = $availablesubjects;
 	$sorting = 0;
 	foreach ($items as $item) {
@@ -107,6 +115,7 @@ if ($action == 'save-subjects') {
 			unset($todelete[$item->id]);
 		} else {
 			// insert
+			$item->bpid = $bpid;
 			$DB->insert_record('block_exastudsubjects', $item);
 		}
 	}
@@ -158,6 +167,44 @@ if ($action == 'save-evalopts') {
 	exit;
 }
 
+if ($action == 'save-bps') {
+	if(!confirm_sesskey()) {
+		die(get_string("badsessionkey","block_exastud"));
+	}
+
+	$items = block_exastud\param::required_array('items',
+			array(PARAM_INT => (object)array(
+				'id' => PARAM_INT,
+				'title' => PARAM_TEXT
+			)
+		));
+
+	$todelete = $availablebps;
+	$sorting = 0;
+	foreach ($items as $item) {
+		$sorting++;
+		$item->sorting = $sorting;
+
+		if (isset($availablebps[$item->id])) {
+			// update
+			$DB->update_record('block_exastudbp', $item);
+
+			unset($todelete[$item->id]);
+		} else {
+			// insert
+			$DB->insert_record('block_exastudbp', $item);
+		}
+	}
+
+	foreach ($todelete as $item) {
+		$DB->delete_records('block_exastudbp', array('id'=>$item->id));
+	}
+
+	echo 'ok';
+
+	exit;
+}
+
 if ($action == 'categories') {
 	echo $output->header(['settings', ['id'=>'categories', 'name'=>\block_exastud\trans("de:Kompetenzen")]]);
 	
@@ -184,7 +231,9 @@ if ($action == 'categories') {
 }
 
 if ($action == 'subjects') {
-	echo $output->header(['settings', ['id'=>'subjects', 'name'=>\block_exastud\trans(['de:Fachbezeichnungen', 'de_at:Gegenstände'])]]);
+	echo $output->header(['settings', ['id'=>'bps', 'name'=>\block_exastud\trans(['de:Fachbezeichnungen', 'de_at:Gegenstände'])]]);
+
+	$bp = $DB->get_record('block_exastudbp', ['id' => required_param('bpid', PARAM_INT)]);
 
 	/*
 	if (block_exastud\get_plugin_config('always_check_default_values')) {
@@ -196,7 +245,9 @@ if ($action == 'subjects') {
 	}
 	*/
 
+	echo "<h2>".\block_exastud\trans('de:Bildungsplan').": {$bp->title}</h2>";
 	?>
+
 	<script>
 		var exa_list_items = <?php echo json_encode(array_values($availablesubjects) /* use array_values, because else the array gets sorted by key and not by sorting */); ?>
 	</script>
@@ -239,6 +290,35 @@ if ($action == 'evalopts') {
 	</div>
 	<?php
 	
+	echo $output->footer();
+	exit;
+}
+
+if ($action == 'bps') {
+	echo $output->header(['settings', ['id'=>'bps', 'name'=>\block_exastud\trans("de:Bildungspläne")]]);
+
+	?>
+	<script>
+		var exa_list_items = <?php echo json_encode(array_values($availablebps) /* use array_values, because else the array gets sorted by key and not by sorting */); ?>
+	</script>
+	<div id="exa-list">
+		<ul exa="items">
+			<li>
+				<input type="text" />
+				<span exa="delete-button"><?php echo get_string('delete'); ?></span>
+				<a exa="subjects-button"><?php echo \block_exastud\trans('de:Fachbezeichnungen'); ?></a>
+			</li>
+		</ul>
+		<div exa="new-item">
+			<input type="text" exa="new-text" />
+			<input type="button" exa="new-button" value="<?php echo get_string('add'); ?>">
+		</div>
+		<div exa="save">
+			<input type="button" exa="save-button" value="<?php echo get_string('savechanges'); ?>">
+		</div>
+	</div>
+	<?php
+
 	echo $output->footer();
 	exit;
 }

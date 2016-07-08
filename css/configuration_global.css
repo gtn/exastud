@@ -24,6 +24,10 @@
 #exa-list li [exa=delete-button]:hover {
 	text-decoration: underline;
 }
+#exa-list li a {
+	margin-left: 10px;
+	cursor: pointer;
+}
 #exa-list input[type=text] {
 	min-width: 400px;
 }

@@ -52,6 +52,17 @@
 			$(this).closest('li').remove();
 		});
 		
+		// subjects for bps
+		$items.on('click', '[exa=subjects-button]', function(){
+			var id = $(this).closest('li').data('id');
+
+			if (!id) {
+				alert('Bitte zuerst speichern');
+			} else {
+				document.location.href = 'configuration_global.php?courseid='+exacommon.get_param('courseid')+'&action=subjects&bpid='+id;
+			}
+		});
+
 		// add
 		$container.find("[exa=new-button]").click(function(){
 			var $input = $container.find("[exa=new-text]");

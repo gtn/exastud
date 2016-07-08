@@ -53,7 +53,7 @@ class block_exastud_renderer extends plugin_renderer_base {
 			$tabs['settings']->subtree[] = new tabobject('periods',	new moodle_url('/blocks/exastud/periods.php', [ 'courseid' => g::$COURSE->id ]), \block_exastud\get_string("periods"), '', true);
 			$tabs['settings']->subtree[] = new tabobject('categories', new moodle_url('/blocks/exastud/configuration_global.php', [ 'courseid' => g::$COURSE->id ]).'&action=categories', \block_exastud\trans("de:Fächerübergreifende Kompetenzen"), '', true);
 			$tabs['settings']->subtree[] = new tabobject('evalopts',   new moodle_url('/blocks/exastud/configuration_global.php', [ 'courseid' => g::$COURSE->id ]).'&action=evalopts', \block_exastud\trans("de:Bewertungsskala"), '', true);
-			$tabs['settings']->subtree[] = new tabobject('subjects',   new moodle_url('/blocks/exastud/configuration_global.php', [ 'courseid' => g::$COURSE->id ]).'&action=subjects', \block_exastud\trans("de:Fachbezeichnungen"), '', true);
+			$tabs['settings']->subtree[] = new tabobject('bps',   new moodle_url('/blocks/exastud/configuration_global.php', [ 'courseid' => g::$COURSE->id ]).'&action=bps', \block_exastud\trans("de:Bildungspläne"), '', true);
 
 			if (block_exastud_has_global_cap(block_exastud\CAP_UPLOAD_PICTURE))
 				$tabs['settings']->subtree[] = new tabobject('pictureupload', new moodle_url('/blocks/exastud/pictureupload.php', [ 'courseid' => g::$COURSE->id ]), \block_exastud\get_string("pictureupload", "block_exastud"), '', true);
