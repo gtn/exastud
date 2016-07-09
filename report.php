@@ -22,8 +22,9 @@ require __DIR__.'/inc.php';
 $courseid = optional_param('courseid', 1, PARAM_INT); // Course ID
 $periodid = optional_param('periodid', 0, PARAM_INT); // Period ID
 
-if (!empty($CFG->block_exastud_project_based_assessment))
+if (!empty($CFG->block_exastud_project_based_assessment)) {
 	redirect('report_project.php?courseid='.$courseid);
+}
 
 require_login($courseid);
 
@@ -36,8 +37,6 @@ $PAGE->set_url($url);
 
 
 if ($classid = optional_param('classid', 0, PARAM_INT)) {
-	$actPeriod = ($periodid == 0 || $periodid == block_exastud_check_active_period()->id) ? block_exastud_check_active_period() : $DB->get_record('block_exastudperiod', array('id' => $periodid));
-
 	$class = block_exastud\get_teacher_class($classid);
 	$categories = ($periodid == 0 || $periodid == block_exastud_check_active_period()->id) ? block_exastud_get_class_categories($class->id) : block_exastud_get_period_categories($periodid);
 
@@ -57,20 +56,22 @@ if ($classid = optional_param('classid', 0, PARAM_INT)) {
 	$table->head[] = ''; //userpic
 	$table->head[] = \block_exastud\get_string('name');
 	$table->head[] = ''; //action
-	foreach ($categories as $category)
+	foreach ($categories as $category) {
 		$table->head[] = $category->title;
+	}
 
 	$table->align = array();
 	$table->align[] = 'center';
 	$table->align[] = 'center';
 	$table->align[] = 'left';
 	$table->align[] = 'center';
-	for ($i = 0; $i < count($categories); $i++)
+	for ($i = 0; $i < count($categories); $i++) {
 		$table->align[] = 'center';
+	}
 
 	$i = 1;
 	foreach ($classstudents as $classstudent) {
-		$userReport = block_exastud_get_report($classstudent->id, $actPeriod->id);
+		$userReport = block_exastud_get_report($classstudent->id, $class->periodid);
 
 		// $link = '<a href="' . $CFG->wwwroot . '/blocks/exastud/report_student.php?courseid=' . $courseid . '&amp;studentid=' . $classstudent->id . '&periodid='.$periodid.'&classid='.$class->id.'">';
 		// $icons = $link.'<img src="' . $CFG->wwwroot . '/blocks/exastud/pix/print.png" width="16" height="16" alt="' . \block_exastud\get_string('printversion', 'block_exastud'). '" /></a>';
@@ -125,20 +126,26 @@ if ($classid = optional_param('classid', 0, PARAM_INT)) {
 } else {
 	echo $output->header('report');
 
-	$classes = block_exastud\get_head_teacher_classes_all();
+	$periods = $DB->get_records_sql('SELECT * FROM {block_exastudperiod} WHERE (starttime <= '.time().') ORDER BY endtime DESC');
 
-	if (!$classes) {
-		echo block_exastud\trans('de:Keine Klassen gefunden');
-	} else {
+	foreach ($periods as $period) {
+		$classes = block_exastud\get_head_teacher_classes_all($period->id);
+
 		$table = new html_table();
 
-		$table->head = array(\block_exastud\get_string('class'));
-		$table->align = array("left", "left", "left");
+		$table->head = [$period->description];
+		$table->align = array("left");
 
-		foreach ($classes as $class) {
+		if (!$classes) {
 			$table->data[] = [
-				'<a href="report.php?courseid='.$courseid.'&classid='.$class->id.'">'.$class->title.'</a>',
+				block_exastud\trans('de:Keine Klassen gefunden'),
 			];
+		} else {
+			foreach ($classes as $class) {
+				$table->data[] = [
+					'<a href="report.php?courseid='.$courseid.'&classid='.$class->id.'">'.$class->title.'</a>',
+				];
+			}
 		}
 
 		echo $output->table($table);

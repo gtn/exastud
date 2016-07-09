@@ -62,19 +62,17 @@ class block_exastud extends block_list {
 		$this->content->icons = array();
 		$this->content->footer = '';
 
-		if (block_exastud_get_active_period()) {
-			if (block_exastud_has_global_cap(block_exastud\CAP_MANAGE_CLASSES)) {
-				$icon = '<img src="'.$OUTPUT->pix_url('klassenzuteilung', 'block_exastud').'" class="icon" alt="" />';
-				$this->content->items[] = '<a title="'.\block_exastud\get_string('configuration_classes').'" href="'.$CFG->wwwroot.'/blocks/exastud/configuration_classes.php?courseid='.$COURSE->id.'">'.$icon.\block_exastud\get_string('configuration_classes').'</a>';
-			}
-			if (block_exastud_has_global_cap(block_exastud\CAP_REVIEW)) {
-				$icon = '<img src="'.$OUTPUT->pix_url('beurteilung', 'block_exastud').'" class="icon" alt="" />';
-				$this->content->items[] = '<a title="'.\block_exastud\get_string('review').'" href="'.$CFG->wwwroot.'/blocks/exastud/review.php?courseid='.$COURSE->id.'">'.$icon.\block_exastud\get_string('review').'</a>';
-			}
-			if (block_exastud_has_global_cap(block_exastud\CAP_VIEW_REPORT)) {
-				$icon = '<img src="'.$OUTPUT->pix_url('zeugnisse', 'block_exastud').'" class="icon" alt="" />';
-				$this->content->items[] = '<a title="'.\block_exastud\get_string('reports').'" href="'.$CFG->wwwroot.'/blocks/exastud/report.php?courseid='.$COURSE->id.'">'.$icon.\block_exastud\get_string('reports').'</a>';
-			}
+		if (block_exastud_get_active_or_next_period() && block_exastud_has_global_cap(block_exastud\CAP_MANAGE_CLASSES)) {
+			$icon = '<img src="'.$OUTPUT->pix_url('klassenzuteilung', 'block_exastud').'" class="icon" alt="" />';
+			$this->content->items[] = '<a title="'.\block_exastud\get_string('configuration_classes').'" href="'.$CFG->wwwroot.'/blocks/exastud/configuration_classes.php?courseid='.$COURSE->id.'">'.$icon.\block_exastud\get_string('configuration_classes').'</a>';
+		}
+		if (block_exastud_get_active_period() && block_exastud_has_global_cap(block_exastud\CAP_REVIEW)) {
+			$icon = '<img src="'.$OUTPUT->pix_url('beurteilung', 'block_exastud').'" class="icon" alt="" />';
+			$this->content->items[] = '<a title="'.\block_exastud\get_string('review').'" href="'.$CFG->wwwroot.'/blocks/exastud/review.php?courseid='.$COURSE->id.'">'.$icon.\block_exastud\get_string('review').'</a>';
+		}
+		if (block_exastud_get_active_or_last_period() && block_exastud_has_global_cap(block_exastud\CAP_VIEW_REPORT)) {
+			$icon = '<img src="'.$OUTPUT->pix_url('zeugnisse', 'block_exastud').'" class="icon" alt="" />';
+			$this->content->items[] = '<a title="'.\block_exastud\get_string('reports').'" href="'.$CFG->wwwroot.'/blocks/exastud/report.php?courseid='.$COURSE->id.'">'.$icon.\block_exastud\get_string('reports').'</a>';
 		}
 
 		if (block_exastud_has_global_cap(block_exastud\CAP_ADMIN)) {

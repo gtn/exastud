@@ -146,7 +146,7 @@ if (in_array($outputType, ['docx', 'docx_test'])) {
 		global $student, $class;
 
 		$header = $section->addHeader();
-		$header->addTExt($student->lastname.', '.$student->firstname.', '.$class->title.', '.block_exastud_get_active_period()->description);
+		$header->addTExt($student->lastname.', '.$student->firstname.', '.$class->title.', '.block_exastud_get_active_or_last_period()->description);
 
 		return $header;
 	}
@@ -214,20 +214,20 @@ if (in_array($outputType, ['docx', 'docx_test'])) {
 		// innere tabelle
 		$table = $cell->addTable(['borderSize' => 6, 'borderColor' => 'black', 'cellMargin' => 80]);
 		$table->addRow();
-		$cell = $table->addCell($tableWidthTwips / 7 * 6);
+		$cell = $table->addCell($tableWidthTwips / 6 * 5);
 		$cell->getStyle()->setBgColor('D9D9D9');
 		// $cell->getStyle()->setGridSpan(2);
 		$cell->addText($header, ['bold' => true]);
 
-		$cell = $table->addCell($tableWidthTwips / 7);
+		$cell = $table->addCell($tableWidthTwips / 6);
 		$cell->getStyle()->setBgColor('D9D9D9');
 		$cell->addText('Niveaustufe', ['bold' => true]);
 
 		$table->addRow();
-		$cell = $table->addCell($tableWidthTwips / 7 * 6);
+		$cell = $table->addCell($tableWidthTwips / 6 * 5);
 		block_exastud_report_add_html($cell, $body);
 
-		$cell = $table->addCell($tableWidthTwips / 7);
+		$cell = $table->addCell($tableWidthTwips / 6);
 		block_exastud_report_add_html($cell, $right);
 
 		return $table;
@@ -267,7 +267,7 @@ if (in_array($outputType, ['docx', 'docx_test'])) {
 	}
 	$section->addText('Lernentwicklungsbericht',
 		['size' => 16, 'bold' => true], ['align' => 'center', 'spaceBefore' => 350]);
-	$section->addText(block_exastud_get_active_period()->description,
+	$section->addText(block_exastud_get_active_or_last_period()->description,
 		['size' => 12], ['align' => 'center', 'lineHeight' => 1, 'spaceBefore' => 350, 'spaceAfter' => 350]);
 
 	$table = block_exastud_report_wrapper_table()->addTable(array('borderSize' => 0, 'borderColor' => 'FFFFFF', 'cellMargin' => 80));

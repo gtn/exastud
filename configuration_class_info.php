@@ -27,7 +27,7 @@ $classid = optional_param('classid', 0, PARAM_INT); // Course ID
 require_login($courseid);
 
 block_exastud_require_global_cap(block_exastud\CAP_MANAGE_CLASSES);
-$curPeriod = block_exastud_check_active_period();
+$curPeriod = block_exastud_get_active_or_next_period();
 
 if (!$classid) {
 	$class = new stdClass();
