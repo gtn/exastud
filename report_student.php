@@ -288,37 +288,7 @@ if (in_array($outputType, ['docx', 'docx_test'])) {
 
 	$studentdata = get_class_student_data($classid, $studentid);
 
-	// title => required
-	$bp2004subjects = array_map(function($a) {
-		return explode("\t", $a);
-	}, preg_split('!\s*\n\s*!', trim('
-		Alevitische Religionslehre	0
-		Altkatholische Religionslehre	0
-		Ethik	0
-		Evangelische Religionslehre	0
-		Islamische Religionslehre sunnitischer Prägung	0
-		Jüdische Religionslehre	0
-		Katholische Religionslehre	0
-		Orthodoxe Religionslehre	0
-		Syrisch-Orthodoxe Religionslehre	0
-		Deutsch	1
-		Mathematik	1
-		Englisch	1
-		Erdkunde, Wirtschaftskunde, Gemeinschaftskunde	1
-		Naturwissenschaftliches Arbeiten	1
-		Geschichte	1
-		Bildende Kunst	1
-		Musik	1
-		Sport	1
-		Französisch	0
-		Technik	0
-		Mensch und Umwelt	0
-		Bildende Kunst	0
-		NwT	0
-		Spanisch	0
-		Wahlpflichtfach	1
-		Profilfach	1
-	')));
+	$availablesubjects = $DB->get_records('block_exastudsubjects', ['bpid' => $class->bpid], 'sorting');
 
 	$textReviews = $DB->get_records_sql("
 		SELECT DISTINCT s.title AS id, r.review, s.title AS title, r.subjectid AS subjectid
@@ -332,16 +302,13 @@ if (in_array($outputType, ['docx', 'docx_test'])) {
 		array($studentid, $class->periodid));
 
 	$subjects = [];
-	foreach ($bp2004subjects as $bp2004subject) {
-		$title = $bp2004subject[0];
-		$required = $bp2004subject[1];
-
-		if (isset($textReviews[$title])) {
-			$textReview = $textReviews[$title];
+	foreach ($availablesubjects as $availablesubject) {
+		if (isset($textReviews[$availablesubject->title])) {
+			$textReview = $textReviews[$availablesubject->title];
 			$subject = (object)array_merge((array)$textReview, (array)\block_exastud\get_subject_student_data($class->id, $textReview->subjectid, $studentid));
-		} elseif ($required) {
+		} elseif ($availablesubject->always_print) {
 			$subject = (object)[
-				'title' => $title,
+				'title' => $availablesubject->title,
 				'review' => '---',
 			];
 		} else {

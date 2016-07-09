@@ -482,25 +482,39 @@ namespace block_exastud {
 			*/
 		}
 
-		$subjects = g::$DB->get_records_menu('block_exastudsubjects', null, 'sorting', 'id, title');
-		$defaultItems = (array)get_plugin_config('default_subjects');
+		$bps = g::$DB->get_records_menu('block_exastudbp', null, 'sorting', 'id, title');
+		$defaultBps = (array)get_plugin_config('default_bps');
 
-		if (!$subjects || get_plugin_config('always_check_default_values')) {
+		if (!$bps || get_plugin_config('always_check_default_values')) {
 			$sorting = 1;
-			foreach ($defaultItems as $title) {
-				if (false !== $id = array_search($title, $subjects)) {
-					g::$DB->update_record('block_exastudsubjects', ['id' => $id, 'sorting' => $sorting]);
-					unset($subjects[$id]);
+			foreach ($defaultBps as $defaultBp) {
+				if (false !== $bpid = array_search($defaultBp->title, $bps)) {
+					// found
 				} else {
-					g::$DB->insert_record('block_exastudsubjects', ['title' => $title, 'sorting' => $sorting]);
+					$bpid = g::$DB->insert_record('block_exastudbp', $defaultBp);
 				}
 
-				$sorting++;
-			}
+				$subjects = g::$DB->get_records_menu('block_exastudsubjects', ['bpid' => $bpid], 'sorting', 'id, title');
 
-			foreach ($subjects as $id => $title) {
-				g::$DB->update_record('block_exastudsubjects', ['id' => $id, 'sorting' => $sorting]);
-				$sorting++;
+				foreach ($defaultBp->subjects as $subject) {
+					$subject = (object)$subject;
+
+					if (false !== $id = array_search($subject->title, $subjects)) {
+						$subject->id = $id;
+						g::$DB->update_record('block_exastudsubjects', $subject);
+						unset($subjects[$id]);
+					} else {
+						$subject->bpid = $bpid;
+						g::$DB->insert_record('block_exastudsubjects', $subject);
+					}
+
+					$sorting++;
+				}
+
+				foreach ($subjects as $id => $title) {
+					g::$DB->update_record('block_exastudsubjects', ['id' => $id, 'sorting' => $sorting]);
+					$sorting++;
+				}
 			}
 		}
 
@@ -1124,6 +1138,32 @@ namespace {
 		}
 
 		return moodle_url::make_pluginfile_url($file->get_contextid(), $file->get_component(), $file->get_filearea(), null, null, null);
+	}
+
+	function block_exastud_str_to_csv($string, $delimiter, $has_header) {
+		$string = trim($string, "\r\n");
+		$string = rtrim($string);
+		$csv = preg_split("!\r?\n!", $string);
+
+		foreach ($csv as &$item) {
+			$item = str_getcsv($item, $delimiter);
+		}
+		unset($item);
+
+		if ($has_header) {
+			$header = array_shift($csv);
+
+			foreach ($csv as &$item) {
+				$newItem = [];
+				foreach ($item as $i => $part) {
+					$newItem[$header[$i]] = $part;
+				}
+				$item = $newItem;
+			}
+			unset($item);
+		}
+
+		return $csv;
 	}
 
 }

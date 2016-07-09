@@ -28,9 +28,17 @@
 	margin-left: 10px;
 	cursor: pointer;
 }
-#exa-list input[type=text] {
+#exa-list input[name=title] {
 	min-width: 400px;
 }
+#exa-list input[name=shorttitle] {
+	width: 150px;
+}
+#exa-list input[name=always_print] {
+	margin-right: 140px;
+	margin-left: 10px;
+}
+
 #exa-list li.ui-state-disabled [exa=delete-button] {
 	display: none;
 }
@@ -47,6 +55,26 @@
 }
 #exa-list:not([exa-sorting=false]) [exa=new-item] {
 	padding-left: 40px;
+}
+
+#exa-list div.header {
+	background-color: #efefef;
+	margin: 0 0 5px 0;
+	padding: 5px;
+	font-weight: bold;
+	padding-left: 40px;
+}
+#exa-list div.header [for-field=title]{
+	margin: 0 0 0 5px;
+	width: 410px;
+}
+#exa-list div.header [for-field=shorttitle]{
+	width: 170px;
+}
+#exa-list div.header [for-field=always_print]{
+}
+#exa-list div.header > div {
+	display: inline-block;
 }
 
 #exa-list [exa=save] {
