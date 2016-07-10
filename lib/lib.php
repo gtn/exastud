@@ -134,13 +134,9 @@ namespace block_exastud {
 		return $cohort;
 	}
 
-	function get_head_teacher_classes_owner($periodid = null) {
+	function get_head_teacher_classes_owner($periodid) {
 		if (!block_exastud_has_global_cap(CAP_MANAGE_CLASSES)) {
 			return [];
-		}
-
-		if (!$periodid) {
-			$periodid = block_exastud_get_active_or_next_period()->id;
 		}
 
 		return g::$DB->get_records_sql("

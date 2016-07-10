@@ -109,7 +109,10 @@ if ($classid = optional_param('classid', 0, PARAM_INT)) {
 
 	echo $output->table($table);
 
-	if (!block_exastud_is_new_version()) {
+	if (block_exastud_is_new_version()) {
+		echo $output->link_button($CFG->wwwroot.'/blocks/exastud/report_student.php?courseid='.$courseid.'&classid='.$classid.'&all_students=1',
+			\block_exastud\trans('de:Alle Lernentwicklungsberichte als Zip-Datei exportieren'));
+	} else {
 		echo '<a href="'.$CFG->wwwroot.'/blocks/exastud/printclass.php?courseid='.$courseid.'&amp;classid='.$class->id.'&periodid='.$periodid.'"><img src="'.$CFG->wwwroot.'/blocks/exastud/pix/print.png" width="16" height="16" alt="'.\block_exastud\get_string('printall', 'block_exastud').'" /></a>';
 		echo '<a href="'.$CFG->wwwroot.'/blocks/exastud/printclass.php?courseid='.$courseid.'&amp;classid='.$class->id.'&periodid='.$periodid.'&detailedreport=true"><img src="'.$CFG->wwwroot.'/blocks/exastud/pix/print_detail.png" width="16" height="16" alt="'.\block_exastud\get_string('printall', 'block_exastud').'" /></a>';
 

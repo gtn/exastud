@@ -28,7 +28,8 @@ block_exastud_require_global_cap(block_exastud\CAP_MANAGE_CLASSES);
 $url = '/blocks/exastud/configuration_classes.php';
 $PAGE->set_url($url);
 
-$classes = block_exastud\get_head_teacher_classes_owner();
+$actPeriod = block_exastud_get_active_or_next_period();
+$classes = block_exastud\get_head_teacher_classes_owner($actPeriod->id);
 
 if (!$classes && block_exastud_has_global_cap(block_exastud\CAP_HEAD_TEACHER)) {
 	redirect('configuration_class_info.php?courseid='.$courseid.'&action=add', \block_exastud\get_string('redirectingtoclassinput', 'block_exastud'));
@@ -38,7 +39,7 @@ $output = block_exastud\get_renderer();
 echo $output->header('configuration_classes');
 
 /* Print the Students */
-echo html_writer::tag("h2", \block_exastud\trans(['de:Meine Klassen', 'en:My Classes']));
+echo html_writer::tag("h2", $actPeriod->description.': '.\block_exastud\get_string('configuration_classes'));
 
 if ($classes) {
 	$table = new html_table();
