@@ -313,7 +313,6 @@ if (in_array($outputType, ['docx', 'docx_test'])) {
 		Französisch	0
 		Technik	0
 		Mensch und Umwelt	0
-		Bildende Kunst	0
 		NwT	0
 		Spanisch	0
 		Wahlpflichtfach	1
