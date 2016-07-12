@@ -491,7 +491,6 @@ namespace block_exastud {
 		$defaultBps = (array)get_plugin_config('default_bps');
 
 		if (!$bps || get_plugin_config('always_check_default_values')) {
-			$sorting = 1;
 			foreach ($defaultBps as $defaultBp) {
 				if (false !== $bpid = array_search($defaultBp->title, $bps)) {
 					// found
@@ -500,9 +499,12 @@ namespace block_exastud {
 				}
 
 				$subjects = g::$DB->get_records_menu('block_exastudsubjects', ['bpid' => $bpid], 'sorting', 'id, title');
+				$sorting = 1;
 
 				foreach ($defaultBp->subjects as $subject) {
 					$subject = (object)$subject;
+					$subject->sorting = $sorting;
+					$sorting++;
 
 					if (false !== $id = array_search($subject->title, $subjects)) {
 						$subject->id = $id;
@@ -512,8 +514,6 @@ namespace block_exastud {
 						$subject->bpid = $bpid;
 						g::$DB->insert_record('block_exastudsubjects', $subject);
 					}
-
-					$sorting++;
 				}
 
 				foreach ($subjects as $id => $title) {
