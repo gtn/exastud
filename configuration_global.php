@@ -256,9 +256,9 @@ if ($action == 'subjects') {
 	</script>
 	<div id="exa-list">
 		<div class="header">
-			<div for-field="title">Bezeichnung</div>
-			<div for-field="shorttitle">Kurzbezeichnung</div>
-			<div for-field="always_print">Immer im LEB drucken</div>
+			<div for-field="title"><?php echo \block_exastud\trans(['de:Bezeichnung', 'en:Name']); ?></div>
+			<div for-field="shorttitle"><?php echo \block_exastud\trans(['de:Kurzbezeichnung', 'en:Shortname']); ?></div>
+			<div for-field="always_print"><?php echo \block_exastud\trans(['de:Immer im LEB drucken', 'en:Always print']); ?></div>
 		</div>
 		<ul exa="items">
 			<li>

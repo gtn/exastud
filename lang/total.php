@@ -462,7 +462,11 @@ return [
 	],
 	'de:Fachbezeichnungen' => [
 		null,
-		'Subject',
+		'Subjects',
+	],
+	'de:Bildungspläne' => [
+		null,
+		'Educational Plans',
 	],
 	'de:Lernentwicklungsbericht: Schulname' => [
 		null,
