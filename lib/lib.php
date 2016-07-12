@@ -134,27 +134,28 @@ namespace block_exastud {
 		return $cohort;
 	}
 
-	function get_head_teacher_classes_owner() {
+	function get_head_teacher_classes_owner($periodid) {
 		if (!block_exastud_has_global_cap(CAP_MANAGE_CLASSES)) {
 			return [];
 		}
-
-		$curPeriod = block_exastud_check_active_period();
 
 		return g::$DB->get_records_sql("
 			SELECT c.*,
 				'normal' AS type
 			FROM {block_exastudclass} c
 			WHERE c.userid=? AND c.periodid=?
-			ORDER BY c.title", [g::$USER->id, $curPeriod->id]);
+			ORDER BY c.title", [g::$USER->id, $periodid]);
 	}
 
-	function get_head_teacher_classes_shared() {
+	function get_head_teacher_classes_shared($periodid = null) {
 		if (!block_exastud_has_global_cap(CAP_MANAGE_CLASSES)) {
 			return [];
 		}
 
-		$curPeriod = block_exastud_check_active_period();
+		if (!$periodid) {
+			$periodid = block_exastud_get_active_or_next_period()->id;
+		}
+
 		$classes = g::$DB->get_records_sql("
 			SELECT c.*,
 				'shared' AS type,
@@ -163,7 +164,7 @@ namespace block_exastud {
 			JOIN {block_exastudclassteachers} ct ON ct.classid=c.id
 			JOIN {user} u ON c.userid = u.id
 			WHERE ct.subjectid=".SUBJECT_ID_ADDITIONAL_CLASS_TEACHER." AND ct.teacherid=? AND c.periodid=?
-			ORDER BY c.title", [g::$USER->id, $curPeriod->id]);
+			ORDER BY c.title", [g::$USER->id, $periodid]);
 
 		/*
 		foreach ($classes as $class) {
@@ -174,18 +175,22 @@ namespace block_exastud {
 		return $classes;
 	}
 
-	function get_head_teacher_classes_all() {
-		return get_head_teacher_classes_owner() + get_head_teacher_classes_shared();
+	function get_head_teacher_classes_all($periodid = null) {
+		return get_head_teacher_classes_owner($periodid) + get_head_teacher_classes_shared($periodid);
 	}
 
 	function get_teacher_class($classid) {
-		$classes = get_head_teacher_classes_all();
+		$periods = g::$DB->get_records_sql('SELECT * FROM {block_exastudperiod}');
 
-		if (!isset($classes[$classid])) {
-			throw new moodle_exception('class not found');
+		foreach ($periods as $period) {
+			$classes = get_head_teacher_classes_all($period->id);
+
+			if (isset($classes[$classid])) {
+				return $classes[$classid];
+			}
 		}
 
-		return $classes[$classid];
+		throw new moodle_exception('class not found');
 	}
 
 	function get_class_students($classid) {
@@ -367,7 +372,7 @@ namespace block_exastud {
 				$category->evaluationOtions[$pos_value] = (object)[
 					'value' => $pos_value,
 					'title' => $option,
-					'reviewers' => get_reviewers_by_category_and_pos(block_exastud_get_active_period()->id, $studentid, $category->id, $category->source, $pos_value),
+					'reviewers' => get_reviewers_by_category_and_pos(block_exastud_get_active_or_last_period()->id, $studentid, $category->id, $category->source, $pos_value),
 				];
 			}
 		}
@@ -482,25 +487,39 @@ namespace block_exastud {
 			*/
 		}
 
-		$subjects = g::$DB->get_records_menu('block_exastudsubjects', null, 'sorting', 'id, title');
-		$defaultItems = (array)get_plugin_config('default_subjects');
+		$bps = g::$DB->get_records_menu('block_exastudbp', null, 'sorting', 'id, title');
+		$defaultBps = (array)get_plugin_config('default_bps');
 
-		if (!$subjects || get_plugin_config('always_check_default_values')) {
+		if (!$bps || get_plugin_config('always_check_default_values')) {
 			$sorting = 1;
-			foreach ($defaultItems as $title) {
-				if (false !== $id = array_search($title, $subjects)) {
-					g::$DB->update_record('block_exastudsubjects', ['id' => $id, 'sorting' => $sorting]);
-					unset($subjects[$id]);
+			foreach ($defaultBps as $defaultBp) {
+				if (false !== $bpid = array_search($defaultBp->title, $bps)) {
+					// found
 				} else {
-					g::$DB->insert_record('block_exastudsubjects', ['title' => $title, 'sorting' => $sorting]);
+					$bpid = g::$DB->insert_record('block_exastudbp', $defaultBp);
 				}
 
-				$sorting++;
-			}
+				$subjects = g::$DB->get_records_menu('block_exastudsubjects', ['bpid' => $bpid], 'sorting', 'id, title');
 
-			foreach ($subjects as $id => $title) {
-				g::$DB->update_record('block_exastudsubjects', ['id' => $id, 'sorting' => $sorting]);
-				$sorting++;
+				foreach ($defaultBp->subjects as $subject) {
+					$subject = (object)$subject;
+
+					if (false !== $id = array_search($subject->title, $subjects)) {
+						$subject->id = $id;
+						g::$DB->update_record('block_exastudsubjects', $subject);
+						unset($subjects[$id]);
+					} else {
+						$subject->bpid = $bpid;
+						g::$DB->insert_record('block_exastudsubjects', $subject);
+					}
+
+					$sorting++;
+				}
+
+				foreach ($subjects as $id => $title) {
+					g::$DB->update_record('block_exastudsubjects', ['id' => $id, 'sorting' => $sorting]);
+					$sorting++;
+				}
 			}
 		}
 
@@ -724,9 +743,7 @@ namespace {
 	}
 
 	function block_exastud_get_active_period() {
-		global $DB;
-
-		$periods = $DB->get_records_sql('SELECT * FROM {block_exastudperiod} WHERE (starttime <= '.time().') AND (endtime >= '.time().')');
+		$periods = g::$DB->get_records_sql('SELECT * FROM {block_exastudperiod} WHERE (starttime <= '.time().') AND (endtime >= '.time().')');
 
 		// genau 1e periode?
 		if (count($periods) == 1) {
@@ -734,6 +751,14 @@ namespace {
 		} else {
 			return null;
 		}
+	}
+
+	function block_exastud_get_active_or_next_period() {
+		return g::$DB->get_record_sql('SELECT * FROM {block_exastudperiod} WHERE (endtime >= '.time().') ORDER BY starttime ASC LIMIT 1');
+	}
+
+	function block_exastud_get_active_or_last_period() {
+		return g::$DB->get_record_sql('SELECT * FROM {block_exastudperiod} WHERE (starttime <= '.time().') ORDER BY endtime DESC LIMIT 1');
 	}
 
 	function block_exastud_get_period($periodid, $loadActive = true) {
@@ -1124,6 +1149,32 @@ namespace {
 		}
 
 		return moodle_url::make_pluginfile_url($file->get_contextid(), $file->get_component(), $file->get_filearea(), null, null, null);
+	}
+
+	function block_exastud_str_to_csv($string, $delimiter, $has_header) {
+		$string = trim($string, "\r\n");
+		$string = rtrim($string);
+		$csv = preg_split("!\r?\n!", $string);
+
+		foreach ($csv as &$item) {
+			$item = str_getcsv($item, $delimiter);
+		}
+		unset($item);
+
+		if ($has_header) {
+			$header = array_shift($csv);
+
+			foreach ($csv as &$item) {
+				$newItem = [];
+				foreach ($item as $i => $part) {
+					$newItem[$header[$i]] = $part;
+				}
+				$item = $newItem;
+			}
+			unset($item);
+		}
+
+		return $csv;
 	}
 
 }

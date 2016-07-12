@@ -24,7 +24,6 @@ require_once($CFG->dirroot.'/lib/formslib.php');
 class class_edit_form extends moodleform {
 
 	function definition() {
-		global $DB;
 		$mform = &$this->_form;
 
 		$mform->addElement('hidden', 'classid');
@@ -37,6 +36,10 @@ class class_edit_form extends moodleform {
 		$mform->addElement('text', 'title', \block_exastud\get_string('class', 'block_exastud').': ', array('size' => 50));
 		$mform->setType('title', PARAM_TEXT);
 		$mform->addRule('title', null, 'required', null, 'client');
+
+		global $DB;
+		$bps = $DB->get_records_menu('block_exastudbp', null, 'sorting', 'id, title');
+		$mform->addElement('select', 'bpid', \block_exastud\trans('de:Bildungsplan'), $bps);
 
 		/*
 		$subjects = $DB->get_records_menu('block_exastudsubjects', null, 'title', 'id, title');
