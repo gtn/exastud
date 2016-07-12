@@ -307,7 +307,7 @@ function block_exastud_print_student_report_to_file($class, $student, $outputTyp
 	$table->addRow();
 	$table->addCell($tableWidthTwips / 6);
 	$table->addCell($tableWidthTwips / 6 * 2)->addText(trans('de:Vor- und Zuname').':', ['bold' => true]);
-	$table->addCell($tableWidthTwips / 6 * 3)->addText($student->firstname.$student->lastname);
+	$table->addCell($tableWidthTwips / 6 * 3)->addText($student->firstname.' '.$student->lastname);
 	$table->addRow();
 	$table->addCell();
 	$table->addCell()->addText(trans('de:Geburtsdatum').':', ['bold' => true]);
