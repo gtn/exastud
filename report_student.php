@@ -194,6 +194,9 @@ function block_exastud_report_add_html($element, $html) {
 
 	$html = preg_replace('!&nbsp;!i', ' ', $html);
 
+	// delete special ms office tags
+	$html = preg_replace('!</?o:[^>]*>!i', '', $html);
+
 	// var_dump($html);
 
 	\PhpOffice\PhpWord\Shared\Html::addHtml($element, $html);
