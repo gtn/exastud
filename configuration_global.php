@@ -26,7 +26,7 @@ require_login($courseid);
 block_exastud_require_global_cap(block_exastud\CAP_ADMIN);
 
 $header = \block_exastud\get_string('settings');
-$url = new moodle_url('/blocks/exastud/configuration_global.php', array('courseid' => $courseid));
+$url = new moodle_url('/blocks/exastud/configuration_global.php', array('courseid' => $courseid, 'action' => $action));
 $PAGE->set_url($url);
 $output = block_exastud\get_renderer();
 
