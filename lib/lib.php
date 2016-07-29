@@ -147,13 +147,9 @@ namespace block_exastud {
 			ORDER BY c.title", [g::$USER->id, $periodid]);
 	}
 
-	function get_head_teacher_classes_shared($periodid = null) {
+	function get_head_teacher_classes_shared($periodid) {
 		if (!block_exastud_has_global_cap(CAP_MANAGE_CLASSES)) {
 			return [];
-		}
-
-		if (!$periodid) {
-			$periodid = block_exastud_get_active_or_next_period()->id;
 		}
 
 		$classes = g::$DB->get_records_sql("
@@ -175,7 +171,7 @@ namespace block_exastud {
 		return $classes;
 	}
 
-	function get_head_teacher_classes_all($periodid = null) {
+	function get_head_teacher_classes_all($periodid) {
 		return get_head_teacher_classes_owner($periodid) + get_head_teacher_classes_shared($periodid);
 	}
 
@@ -223,7 +219,7 @@ namespace block_exastud {
 	}
 
 	function get_head_teacher_lern_und_sozialverhalten_classes() {
-		$classes = get_head_teacher_classes_all();
+		$classes = get_head_teacher_classes_all(block_exastud_get_active_or_next_period()->id);
 
 		$ret = [];
 		foreach ($classes as $class) {
@@ -305,6 +301,7 @@ namespace block_exastud {
 	function get_text_reviews($class, $studentid) {
 		$textReviews = iterator_to_array(g::$DB->get_recordset_sql("
 			SELECT DISTINCT ".\user_picture::fields('u').", r.review, s.title AS subject_title, r.subjectid AS subjectid
+				, NOT(r.subjectid<0) -- needed for postgres
 			FROM {block_exastudreview} r
 			JOIN {user} u ON r.teacherid = u.id
 			JOIN {block_exastudsubjects} s ON r.subjectid = s.id
@@ -337,7 +334,7 @@ namespace block_exastud {
 
 	function get_reviewers_by_category_and_pos($periodid, $studentid, $categoryid, $categorysource, $pos_value) {
 		return iterator_to_array(g::$DB->get_recordset_sql("
-			SELECT u.*, s.title AS subject_title, pos.value
+			SELECT DISTINCT u.*, s.title AS subject_title, pos.value
 			FROM {block_exastudreview} r
 			JOIN {block_exastudreviewpos} pos ON pos.reviewid = r.id
 			JOIN {user} u ON r.teacherid = u.id
@@ -347,7 +344,7 @@ namespace block_exastud {
 			WHERE c.periodid = ? AND r.studentid = ?
 				AND pos.categoryid = ? AND pos.categorysource = ?
 			".($pos_value !== null ? "AND pos.value = ?" : "AND pos.value > 0")."
-			GROUP BY r.teacherid, s.id, pos.value
+			-- GROUP BY r.teacherid, s.id, pos.value
 		", [$periodid, $studentid, $categoryid, $categorysource, $pos_value]), false);
 	}
 

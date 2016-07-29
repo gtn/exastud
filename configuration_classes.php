@@ -69,7 +69,7 @@ if ($classes) {
 echo $OUTPUT->single_button($CFG->wwwroot.'/blocks/exastud/configuration_class_info.php?courseid='.$courseid.'&action=add',
 	\block_exastud\trans(['de:Klasse hinzufügen', 'en:Add Class']), 'get');
 
-if ($classes = block_exastud\get_head_teacher_classes_shared()) {
+if ($classes = block_exastud\get_head_teacher_classes_shared($actPeriod->id)) {
 	echo html_writer::tag("h2", \block_exastud\trans('de:Mit mir geteilte Klassen'));
 
 	$table = new html_table();

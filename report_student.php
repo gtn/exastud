@@ -332,10 +332,8 @@ function block_exastud_print_student_report_to_file($class, $student, $outputTyp
 		JOIN {block_exastudsubjects} s ON r.subjectid = s.id
 		JOIN {block_exastudclass} c ON c.periodid = r.periodid
 		JOIN {block_exastudclassteachers} ct ON ct.classid=c.id AND ct.teacherid = r.teacherid AND ct.subjectid=r.subjectid
-
 		WHERE r.studentid = ? AND r.periodid = ? AND TRIM(r.review) !=  ''
-		GROUP BY s.title",
-		array($student->id, $class->periodid));
+	", [$student->id, $class->periodid]);
 
 	$subjects = [];
 	foreach ($availablesubjects as $availablesubject) {
