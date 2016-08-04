@@ -275,6 +275,9 @@ if ($action == 'subjects') {
 		</div>
 		<div exa="save">
 			<input type="button" exa="save-button" value="<?php echo get_string('savechanges'); ?>">
+			<?php
+				echo $output->back_button($CFG->wwwroot.'/blocks/exastud/configuration_global.php?courseid='.$courseid.'&action=bps');
+			?>
 		</div>
 	</div>
 	<?php

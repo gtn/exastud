@@ -57,8 +57,10 @@ if ($classes) {
 				block_exastud\get_string('delete'),
 				['exa-confirm' => block_exastud\trans('de:Wirklich löschen?')]).
 			'<div style="margin-top: 10px;">'.
-			$output->link_button('set_bildungsstandard.php?courseid='.$courseid.'&action=bildungsstandard&classid='.$class->id,
-				block_exastud\trans('de:Bildungsstandard / Ausscheiden festlegen')).
+			$output->link_button('set_bildungsstandard.php?courseid='.$courseid.'&type=bildungsstandard&classid='.$class->id,
+				block_exastud\trans('de:Bildungsstandard festlegen')).
+			$output->link_button('set_bildungsstandard.php?courseid='.$courseid.'&type=ausscheiden&classid='.$class->id,
+				block_exastud\trans('de:Ausscheiden festlegen')).
 			'</div>',
 		];
 	}
