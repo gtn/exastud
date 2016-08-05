@@ -689,7 +689,8 @@ namespace {
 					return;
 				}
 			case \block_exastud\CAP_REVIEW:
-				if (!\block_exastud\get_review_classes()) {
+				$actPeriod = block_exastud_check_active_period();
+				if (!\block_exastud\get_review_classes() && !block_exastud\get_head_teacher_classes_all($actPeriod->id)) {
 					throw new block_exastud\permission_exception('no classes');
 				} else {
 					return;
