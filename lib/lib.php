@@ -454,19 +454,50 @@ namespace block_exastud {
 		]);
 	}
 
-	function insert_default_entries() {
+	function find_object_in_array_by_property($array, $key, $value) {
+		if (!$array) {
+			return null;
+		}
+
+		foreach ($array as $item) {
+			if ($item->$key == $value) {
+				return $item;
+			}
+		}
+
+		return null;
+	}
+
+	function insert_default_entries($dorecheck = false) {
+
 		//if empty import
-		$categories = g::$DB->get_records_menu('block_exastudcate', null, 'sorting', 'id, title');
+		$categories = g::$DB->get_records('block_exastudcate', null, 'sorting', 'id, title, sourceinfo');
 		$defaultItems = (array)get_plugin_config('default_categories');
 
-		if (!$categories || get_plugin_config('always_check_default_values')) {
+		if (!$categories || $dorecheck || get_plugin_config('always_check_default_values')) {
 			$sorting = 1;
-			foreach ($defaultItems as $title) {
-				if (false !== $id = array_search($title, $categories)) {
-					g::$DB->update_record('block_exastudcate', ['id' => $id, 'sorting' => $sorting]);
-					unset($categories[$id]);
+			foreach ($defaultItems as $defaultItem) {
+				$defaultItem = (object)$defaultItem;
+
+				if ($dbItem = find_object_in_array_by_property($categories, 'sourceinfo', $defaultItem->sourceinfo)) {
+					g::$DB->update_record('block_exastudcate', [
+						'id' => $dbItem->id,
+						'sorting' => $sorting,
+					]);
+					unset($categories[$dbItem->id]);
+				} elseif ($dbItem = find_object_in_array_by_property($categories, 'title', $defaultItem->title)) {
+					g::$DB->update_record('block_exastudcate', [
+						'id' => $dbItem->id,
+						'sourceinfo' => $defaultItem->sourceinfo,
+						'sorting' => $sorting,
+					]);
+					unset($categories[$dbItem->id]);
 				} else {
-					g::$DB->insert_record('block_exastudcate', ['title' => $title, 'sorting' => $sorting]);
+					g::$DB->insert_record('block_exastudcate', [
+						'sourceinfo' => $defaultItem->sourceinfo,
+						'title' => $defaultItem->title,
+						'sorting' => $sorting
+					]);
 				}
 
 				$sorting++;
@@ -476,61 +507,35 @@ namespace block_exastud {
 				g::$DB->update_record('block_exastudcate', ['id' => $id, 'sorting' => $sorting]);
 				$sorting++;
 			}
-
-			/*
-			g::$DB->insert_record('block_exastudcate', array("sorting" => 1, "title" => get_string('teamplayer')));
-			g::$DB->insert_record('block_exastudcate', array("sorting" => 2, "title" => get_string('responsibility')));
-			g::$DB->insert_record('block_exastudcate', array("sorting" => 3, "title" => get_string('selfreliance', 'block_exastud')));
-			*/
 		}
 
-		$bps = g::$DB->get_records_menu('block_exastudbp', null, 'sorting', 'id, title');
-		$defaultBps = (array)get_plugin_config('default_bps');
-
-		if (!$bps || get_plugin_config('always_check_default_values')) {
-			foreach ($defaultBps as $defaultBp) {
-				if (false !== $bpid = array_search($defaultBp->title, $bps)) {
-					// found
-				} else {
-					$bpid = g::$DB->insert_record('block_exastudbp', $defaultBp);
-				}
-
-				$subjects = g::$DB->get_records_menu('block_exastudsubjects', ['bpid' => $bpid], 'sorting', 'id, title');
-				$sorting = 1;
-
-				foreach ($defaultBp->subjects as $subject) {
-					$subject = (object)$subject;
-					$subject->sorting = $sorting;
-					$sorting++;
-
-					if (false !== $id = array_search($subject->title, $subjects)) {
-						$subject->id = $id;
-						g::$DB->update_record('block_exastudsubjects', $subject);
-						unset($subjects[$id]);
-					} else {
-						$subject->bpid = $bpid;
-						g::$DB->insert_record('block_exastudsubjects', $subject);
-					}
-				}
-
-				foreach ($subjects as $id => $title) {
-					g::$DB->update_record('block_exastudsubjects', ['id' => $id, 'sorting' => $sorting]);
-					$sorting++;
-				}
-			}
-		}
-
-		$evalopts = g::$DB->get_records_menu('block_exastudevalopt', null, 'sorting', 'id, title');
+		$evalopts = g::$DB->get_records('block_exastudevalopt', null, 'sorting', 'id, title, sourceinfo');
 		$defaultItems = (array)get_plugin_config('default_evalopt');
 
-		if ($defaultItems && (!$evalopts || get_plugin_config('always_check_default_values'))) {
+		if ($defaultItems && (!$evalopts || $dorecheck || get_plugin_config('always_check_default_values'))) {
 			$sorting = 1;
-			foreach ($defaultItems as $title) {
-				if (false !== $id = array_search($title, $evalopts)) {
-					g::$DB->update_record('block_exastudevalopt', ['id' => $id, 'sorting' => $sorting]);
-					unset($evalopts[$id]);
+			foreach ($defaultItems as $defaultItem) {
+				$defaultItem = (object)$defaultItem;
+
+				if ($dbItem = find_object_in_array_by_property($evalopts, 'sourceinfo', $defaultItem->sourceinfo)) {
+					g::$DB->update_record('block_exastudevalopt', [
+						'id' => $dbItem->id,
+						'sorting' => $sorting,
+					]);
+					unset($evalopts[$dbItem->id]);
+				} elseif ($dbItem = find_object_in_array_by_property($evalopts, 'title', $defaultItem->title)) {
+					g::$DB->update_record('block_exastudevalopt', [
+						'id' => $dbItem->id,
+						'sourceinfo' => $defaultItem->sourceinfo,
+						'sorting' => $sorting,
+					]);
+					unset($evalopts[$dbItem->id]);
 				} else {
-					g::$DB->insert_record('block_exastudevalopt', ['title' => $title, 'sorting' => $sorting]);
+					g::$DB->insert_record('block_exastudevalopt', [
+						'sourceinfo' => $defaultItem->sourceinfo,
+						'title' => $defaultItem->title,
+						'sorting' => $sorting
+					]);
 				}
 
 				$sorting++;
@@ -545,7 +550,65 @@ namespace block_exastud {
 				if (!get_string_manager()->string_exists('evaluation'.$i, 'block_exastud')) {
 					break;
 				}
-				g::$DB->insert_record('block_exastudevalopt', array("sorting" => $i, "title" => get_string('evaluation'.$i, 'block_exastud')));
+				g::$DB->insert_record('block_exastudevalopt', [
+					'sourceinfo' => 'default-from-lang-'.$i,
+					"sorting" => $i,
+					"title" => get_string('evaluation'.$i, 'block_exastud')
+				]);
+			}
+		}
+
+		$bps = g::$DB->get_records('block_exastudbp', null, 'sorting', 'id, title, sourceinfo');
+		$defaultBps = (array)get_plugin_config('default_bps');
+
+		if (!$bps || $dorecheck || get_plugin_config('always_check_default_values')) {
+			foreach ($defaultBps as $defaultBp) {
+				$defaultBp = (object)$defaultBp;
+
+				if ($dbBp = find_object_in_array_by_property($bps, 'sourceinfo', $defaultBp->sourceinfo)) {
+					// nothing todo
+				} elseif ($dbBp = find_object_in_array_by_property($bps, 'title', $defaultBp->title)) {
+					g::$DB->update_record('block_exastudbp', [
+						'id' => $dbBp->id,
+						'sourceinfo' => $defaultBp->sourceinfo,
+						'sorting' => $sorting,
+					]);
+				} else {
+					$dbBp = $defaultBp;
+					$dbBp->id = g::$DB->insert_record('block_exastudbp', $dbBp);
+				}
+
+				$subjects = g::$DB->get_records('block_exastudsubjects', ['bpid' => $dbBp->id], 'sorting', 'id, title, sourceinfo');
+				$sorting = 1;
+
+				foreach ($defaultBp->subjects as $subject) {
+					$subject = (object)$subject;
+					$subject->sorting = $sorting;
+					$sorting++;
+
+					if ($dbSubject = find_object_in_array_by_property($subjects, 'sourceinfo', $subject->sourceinfo)) {
+						g::$DB->update_record('block_exastudsubjects', [
+							'id' => $dbItem->id,
+							'sorting' => $sorting,
+						]);
+						unset($subjects[$dbSubject->id]);
+					} elseif ($dbSubject = find_object_in_array_by_property($subjects, 'title', $subject->title)) {
+						g::$DB->update_record('block_exastudsubjects', [
+							'id' => $dbSubject->id,
+							'sourceinfo' => $subject->sourceinfo,
+							'sorting' => $sorting,
+						]);
+						unset($subjects[$dbSubject->id]);
+					} else {
+						$subject->bpid = $dbBp->id;
+						g::$DB->insert_record('block_exastudsubjects', $subject);
+					}
+				}
+
+				foreach ($subjects as $id => $title) {
+					g::$DB->update_record('block_exastudsubjects', ['id' => $id, 'sorting' => $sorting]);
+					$sorting++;
+				}
 			}
 		}
 	}

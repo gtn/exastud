@@ -274,5 +274,35 @@ function xmldb_block_exastud_upgrade($oldversion = 0) {
 		upgrade_block_savepoint(true, 2016070901, 'exastud');
 	}
 
+    if ($oldversion < 2016080400) {
+        $table = new xmldb_table('block_exastudbp');
+        $field = new xmldb_field('sourceinfo', XMLDB_TYPE_TEXT, null, null, null, null, null, 'sorting');
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        $table = new xmldb_table('block_exastudevalopt');
+       	$field = new xmldb_field('sourceinfo', XMLDB_TYPE_TEXT, null, null, null, null, null, 'sorting');
+		if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        $table = new xmldb_table('block_exastudsubjects');
+        $field = new xmldb_field('sourceinfo', XMLDB_TYPE_TEXT, null, null, null, null, null, 'always_print');
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        $table = new xmldb_table('block_exastudcate');
+        $field = new xmldb_field('sourceinfo', XMLDB_TYPE_TEXT, null, null, null, null, null, 'sorting');
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        upgrade_block_savepoint(true, 2016080400, 'exastud');
+    }
+
+	\block_exastud\insert_default_entries(true);
+
 	return $result;
 }
