@@ -822,6 +822,10 @@ namespace {
 		return g::$DB->get_record_sql('SELECT * FROM {block_exastudperiod} WHERE (starttime <= '.time().') ORDER BY endtime DESC LIMIT 1');
 	}
 
+	function block_exastud_get_last_period() {
+		return g::$DB->get_record_sql('SELECT * FROM {block_exastudperiod} WHERE (endtime <= '.time().') ORDER BY starttime DESC LIMIT 1');
+	}
+
 	function block_exastud_get_period($periodid, $loadActive = true) {
 		if ($periodid) {
 			return g::$DB->get_record('block_exastudperiod', array('id' => $periodid));
