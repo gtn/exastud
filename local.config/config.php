@@ -67,7 +67,7 @@ bw-bp2016-ph;Physik;Ph;1
 bw-bp2016-ch;Chemie;Ch;1
 bw-bp2016-bio;Biologie;Bio;1
 bw-bp2016-mu;Musik;Mu;1
-bw-bp2016-b;Bildende Kunst;B;1
+bw-bp2016-b;Bildende Kunst;BK;1
 bw-bp2016-sp;Sport;Sp;1
 bw-bp2016-wpf-aes;Wahlpflichtfach Alltagskultur, Ernähung, Soziales;WPF AES;0
 bw-bp2016-wpf-f;Wahlpflichtfach Französisch;WPF F;0
