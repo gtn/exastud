@@ -67,7 +67,9 @@ $table = new html_table();
 $table->head = array();
 $table->head[] = ''; //userpic
 $table->head[] = \block_exastud\get_string('name');
-$table->head[] = ''; // bewerten button
+if (block_exastud_can_edit_class($class)) {
+	$table->head[] = ''; // bewerten button
+}
 foreach ($categories as $category) {
 	$table->head[] = $category;
 }
@@ -75,7 +77,9 @@ foreach ($categories as $category) {
 $table->align = array();
 $table->align[] = 'center';
 $table->align[] = 'left';
-$table->align[] = 'center';
+if (block_exastud_can_edit_class($class)) {
+	$table->align[] = 'center';
+}
 
 foreach ($classstudents as $classstudent) {
 	$icons = '<img src="'.$CFG->wwwroot.'/pix/i/edit.gif" width="16" height="16" alt="'.\block_exastud\get_string('edit').'" />';
@@ -87,11 +91,13 @@ foreach ($classstudents as $classstudent) {
 	$row->cells[] = $OUTPUT->user_picture($classstudent, array("courseid" => $courseid));
 	$row->cells[] = $userdesc;
 
-	$row->cells[] = $output->link_button($CFG->wwwroot.'/blocks/exastud/review_student_other_data.php?courseid='.$courseid.'&classid='.$classid.'&type='.$type.'&studentid='.$classstudent->id,
-		\block_exastud\get_string('edit'));
+	if (block_exastud_can_edit_class($class)) {
+		$row->cells[] = $output->link_button($CFG->wwwroot.'/blocks/exastud/review_student_other_data.php?courseid='.$courseid.'&classid='.$classid.'&type='.$type.'&studentid='.$classstudent->id,
+			\block_exastud\get_string('edit'));
+	}
 
 	foreach ($categories as $dataid => $category) {
-		$row->cells[] = !empty($data[$dataid]) ? $data[$dataid] : '';
+		$row->cells[] = !empty($data[$dataid]) ? block_exastud_text_to_html($data[$dataid]) : '';
 	}
 
 	$table->data[] = $row;

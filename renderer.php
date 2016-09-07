@@ -24,7 +24,7 @@ use block_exastud\globals as g;
 
 class block_exastud_renderer extends plugin_renderer_base {
 
-	public function header($items) {
+	public function header($items, $options = []) {
 		$items = (array)$items;
 		$strheader = \block_exastud\get_string('blocktitle', 'block_exastud');
 
@@ -71,6 +71,16 @@ class block_exastud_renderer extends plugin_renderer_base {
 			$tabs['head_teachers'] = new tabobject('head_teachers', 'javascript:void window.open(\''.\block_exastud\url::create('/cohort/assign.php', ['id' => block_exastud\get_head_teacher_cohort()->id])->out(false).'\');', \block_exastud\get_string('head_teachers'), '', true);
 		}
 
+		if (@$items[0]['id'] == 'configuration_classes' && $classid = $items[0]['classid']) {
+			$tabs['configuration_classes']->subtree[] = new tabobject('students', new moodle_url('/blocks/exastud/configuration_class.php', ['courseid' => g::$COURSE->id, 'action'=>'edit', 'classid'=>$classid, 'type'=>'students']), \block_exastud\get_string('students'), '', true);
+			$tabs['configuration_classes']->subtree[] = new tabobject('teachers', new moodle_url('/blocks/exastud/configuration_class.php', ['courseid' => g::$COURSE->id, 'action'=>'edit', 'classid'=>$classid, 'type'=>'teachers']), \block_exastud\get_string('teachers'), '', true);
+			$tabs['configuration_classes']->subtree[] = new tabobject('bildungsstandard', new moodle_url('/blocks/exastud/set_bildungsstandard.php?courseid='.g::$COURSE->id.'&type=bildungsstandard&classid='.$classid), \block_exastud\trans('de:Bildungsstandard'), '', true);
+			$tabs['configuration_classes']->subtree[] = new tabobject('ausscheiden', new moodle_url('/blocks/exastud/set_bildungsstandard.php?courseid='.g::$COURSE->id.'&type=ausscheiden&classid='.$classid), \block_exastud\trans('de:Ausscheiden'), '', true);
+			if (\block_exastud\get_plugin_config('can_edit_bps_and_subjects')) {
+				$tabs['configuration_classes']->subtree[] = new tabobject('categories', new moodle_url('/blocks/exastud/configuration_class.php', ['courseid' => g::$COURSE->id, 'action'=>'edit', 'classid'=>$classid, 'type'=>'categories']), \block_exastud\get_string('categories'), '', true);
+			}
+		}
+
 		$tabtree = new tabtree($tabs);
 
 		foreach ($items as $level => $item) {
@@ -82,10 +92,14 @@ class block_exastud_renderer extends plugin_renderer_base {
 				if ($item[0] == '=') {
 					$item_name = substr($item, 1);
 				} else {
-					$item_name = \block_exastud\get_string($item, "block_exastud");
+					$item_name = @\block_exastud\get_string($item, "block_exastud");
 				}
 
 				$item = array('name' => $item_name, 'id' => $item);
+			} else {
+				if (!isset($item['name'])) {
+					$item['name'] = @\block_exastud\get_string($item['id'], "block_exastud");
+				}
 			}
 
 			if (!empty($item['id']) && $tabobj = $tabtree->find($item['id'])) {
@@ -97,8 +111,10 @@ class block_exastud_renderer extends plugin_renderer_base {
 				}
 			}
 
-			$last_item_name = $item['name'];
-			g::$PAGE->navbar->add($item['name'], !empty($item['link']) ? $item['link'] : null);
+			if ($item['name']) {
+				$last_item_name = $item['name'];
+				g::$PAGE->navbar->add($item['name'], !empty($item['link']) ? $item['link'] : null);
+			}
 		}
 
 		g::$PAGE->set_title($strheader.': '.$last_item_name);
@@ -133,8 +149,8 @@ class block_exastud_renderer extends plugin_renderer_base {
 		return html_writer::table($table);
 	}
 
-	function print_subtitle($subtitle, $editlink = null) {
-		return html_writer::tag("p", $subtitle.(($editlink == null) ? "" : " ".html_writer::tag("a", html_writer::tag("img", '', array('src' => 'pix/edit.png')), array('href' => $editlink, 'class' => 'ers_inlineicon'))), array('class' => 'esr_subtitle'));
+	function print_subtitle($content) {
+		return html_writer::tag("p", $content, array('class' => 'esr_subtitle'));
 	}
 
 	function print_edit_link($link) {
@@ -194,11 +210,9 @@ class block_exastud_renderer extends plugin_renderer_base {
 	}
 
 	function link_button($url, $label, $attributes = []) {
-		return html_writer::empty_tag('input', $attributes + [
-				'type' => 'button',
+		return html_writer::tag('button', $label, $attributes + [
 				'exa-type' => 'link',
 				'href' => $url,
-				'value' => $label,
 			]);
 	}
 }

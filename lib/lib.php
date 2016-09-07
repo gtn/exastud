@@ -1242,4 +1242,27 @@ namespace {
 		return $csv;
 	}
 
+	function block_exastud_html_to_text($html) {
+		if (preg_match('!</p>|<br\s*/?>!', $html)) {
+			// is html
+			$html = html_to_text($html, 0);
+		}
+
+		return $html;
+	}
+
+	function block_exastud_text_to_html($text) {
+		// make sure it's text
+		$text = block_exastud_html_to_text($text);
+
+		return text_to_html($text);
+	}
+
+	function block_exastud_can_edit_bp($bp) {
+		return !preg_match('!^bw\-*!', $bp->sourceinfo);
+	}
+
+	function block_exastud_can_edit_class($class) {
+		return $class->userid == g::$USER->id;
+	}
 }

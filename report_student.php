@@ -197,7 +197,10 @@ function block_exastud_report_add_html($element, $html) {
 	// delete special ms office tags
 	$html = preg_replace('!</?o:[^>]*>!i', '', $html);
 
-	// var_dump($html);
+	// phpoffice doesn't know <i> and <b>
+	// it expects <strong> and <em>
+	$html = preg_replace('!(</?)b(>)!i', '$1strong$2', $html);
+	$html = preg_replace('!(</?)i(>)!i', '$1em$2', $html);
 
 	\PhpOffice\PhpWord\Shared\Html::addHtml($element, $html);
 }
@@ -389,7 +392,7 @@ function block_exastud_print_student_report_to_file($class, $student, $outputTyp
 	// $section->addText('.', ['size' => 1, 'color'=>'ffffff']);
 
 	$lern_und_sozialverhalten = get_class_student_data($class->id, $student->id, \block_exastud\DATA_ID_LERN_UND_SOZIALVERHALTEN);
-	$table = block_exastud_report_header_body_table($section, trans('de:Lern- und Sozialverhalten'), $lern_und_sozialverhalten ?: '---');
+	$table = block_exastud_report_header_body_table($section, trans('de:Lern- und Sozialverhalten'), block_exastud_text_to_html($lern_und_sozialverhalten) ?: '---');
 	/*
 	if (empty($lern_und_sozialverhalten)) {
 		$cell = $table->getRows()[1]->getCells()[0];
@@ -409,7 +412,7 @@ function block_exastud_print_student_report_to_file($class, $student, $outputTyp
 		block_exastud_report_subject_table(
 			$section,
 			$textReview->title,
-			$textReview->review,
+			block_exastud_text_to_html($textReview->review),
 			'Niveau: '.(@$textReview->niveau ?: '---').'<br />'.
 			(trim(@$textReview->grade) ? 'Note: '.$textReview->grade.'<br />' : '')
 		);
@@ -449,7 +452,7 @@ function block_exastud_print_student_report_to_file($class, $student, $outputTyp
 
 	$section->addText('');
 
-	$table = block_exastud_report_header_body_table($section, 'Bemerkungen', (string)@$studentdata->comments);
+	$table = block_exastud_report_header_body_table($section, 'Bemerkungen', block_exastud_text_to_html(@$studentdata->comments));
 	if (empty($studentdata->comments)) {
 		$cell = $table->getRows()[1]->getCells()[0];
 		$cell->addText('---');

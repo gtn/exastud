@@ -47,7 +47,6 @@
 
 			if (this.disabled) {
 				$item.addClass('ui-state-disabled');
-				$item.prepend('Default: ');
 			}
 		});
 

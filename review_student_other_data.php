@@ -172,6 +172,9 @@ if ($type == \block_exastud\DATA_ID_LERN_UND_SOZIALVERHALTEN) {
 
 $formdata = (array)block_exastud\get_class_student_data($classid, $studentid);
 
+foreach ($categories as $dataid=>$category) {
+	$formdata[$dataid] = block_exastud_html_to_text(@$formdata[$dataid]);
+}
 /*
 $studentdata = block_exastud\get_class_student_data($classid, $studentid);
 $formdata = new stdClass;

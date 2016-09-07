@@ -37,11 +37,10 @@ $curPeriod = block_exastud_get_active_or_next_period();
 
 $class = block_exastud\get_teacher_class($classid);
 
-$header = \block_exastud\get_string('configteacher', 'block_exastud', $class->title);
 $url = '/blocks/exastud/configuration_classteachers.php';
 $PAGE->set_url($url);
 $output = \block_exastud\get_renderer();
-echo $output->header(array('configuration_classes', '='.$header));
+echo $output->header([['id' => 'configuration_classes', 'classid' => $classid], 'teachers']);
 
 if ($frm = data_submitted()) {
 	require_sesskey();
@@ -104,6 +103,6 @@ $userlistType = 'teachers';
 require __DIR__.'/lib/configuration_userlist.inc.php';
 echo $OUTPUT->box_end();
 
-echo $output->back_button($CFG->wwwroot . '/blocks/exastud/configuration_class.php?courseid='.$courseid.'&classid='.$class->id);
+echo $output->back_button($CFG->wwwroot . '/blocks/exastud/configuration_class.php?courseid='.$courseid.'&classid='.$class->id.'&type=teachers');
 
 echo $output->footer();

@@ -21,6 +21,11 @@ require __DIR__.'/inc.php';
 
 $courseid = optional_param('courseid', 1, PARAM_INT); // Course ID
 $action = optional_param('action', '', PARAM_TEXT);
+$type = optional_param('type', '', PARAM_TEXT);
+
+if ($type != 'categories' && $type != 'teachers') {
+	$type = 'students';
+}
 
 require_login($courseid);
 
@@ -43,57 +48,95 @@ if ($action == 'delete') {
 }
 
 $output = block_exastud\get_renderer();
-echo $output->header('configuration_classes');
+echo $output->header([['id' => 'configuration_classes', 'classid' => $classid], $type]);
 
-echo $output->print_subtitle($class->title, $CFG->wwwroot.'/blocks/exastud/configuration_class_info.php?courseid='.$courseid.'&classid='.$class->id);
+if (!\block_exastud\get_class_students($class->id)) {
+	$deleteButton = $output->link_button('configuration_class.php?courseid='.$courseid.'&action=delete&classid='.$class->id.'&confirm=1',
+		block_exastud\get_string('delete'),
+		['exa-confirm' => block_exastud\trans('de:Wirklich löschen?')]);
+} else {
+	$deleteButton = html_writer::empty_tag('input', [
+		'type' => 'button',
+		'onclick' => "alert(".json_encode(block_exastud\trans('de:Es können nur Klassen ohne Schüler gelöscht werden')).")",
+		'value' => block_exastud\trans('de:Klasse löschen'),
+	]);
+}
+
+$subtitle = '';
+$subtitle .= $class->title;
+$editlink = $CFG->wwwroot.'/blocks/exastud/configuration_class_info.php?courseid='.$courseid.'&classid='.$class->id;
+$subtitle .= $output->link_button($editlink, html_writer::tag("img", '', array('src' => 'pix/edit.png')).' '.block_exastud\trans('de:Klasse bearbeiten'));
+$subtitle .= $deleteButton;
+
+echo $output->print_subtitle($subtitle);
 
 /* Print the Students */
-echo html_writer::tag("h2", \block_exastud\get_string('members', 'block_exastud'));
-$table = new html_table();
+if ($type == 'students') {
+	echo html_writer::tag("h2", \block_exastud\get_string('students'));
+	$table = new html_table();
 
-$table->head = array(\block_exastud\get_string('firstname'), \block_exastud\get_string('lastname'), \block_exastud\get_string('email'));
-$table->align = array("left", "left", "left");
-$table->attributes['style'] = "width: 75%;";
-$table->size = ['33%', '33%', '33%'];
+	$table->head = [
+		\block_exastud\get_string('lastname'),
+		\block_exastud\get_string('firstname'),
+		\block_exastud\trans('de:Geburtsdatum'),
+	];
+	$table->align = array("left", "left", "left");
+	$table->attributes['style'] = "width: 75%;";
+	$table->size = ['33%', '33%', '33%'];
 
-$classstudents = \block_exastud\get_class_students($class->id);
+	$classstudents = \block_exastud\get_class_students($class->id);
 
-foreach ($classstudents as $classstudent) {
-	$table->data[] = array($classstudent->firstname, $classstudent->lastname, $classstudent->email);
-}
+	foreach ($classstudents as $classstudent) {
+		$table->data[] = [
+			$classstudent->lastname,
+			$classstudent->firstname,
+			block_exastud\get_custom_profile_field_value($classstudent->id, 'dateofbirth'),
+		];
+	}
 
 //echo html_writer::table($table);
-echo $output->table($table);
+	echo $output->table($table);
 
-echo $output->link_button($CFG->wwwroot.'/blocks/exastud/configuration_classmembers.php?courseid='.$courseid.'&classid='.$class->id,
-	\block_exastud\get_string('editclassmemberlist'));
+	echo $output->link_button($CFG->wwwroot.'/blocks/exastud/configuration_classmembers.php?courseid='.$courseid.'&classid='.$class->id,
+		\block_exastud\get_string('editclassmemberlist'));
 
-echo $output->link_button($CFG->wwwroot.'/blocks/exastud/configuration_classmembers_courses.php?courseid='.$courseid.'&classid='.$class->id,
-	\block_exastud\trans(['de:Aus Kurs hinzufügen', 'en:Add from Course']));
+	echo $output->link_button($CFG->wwwroot.'/blocks/exastud/configuration_classmembers_courses.php?courseid='.$courseid.'&classid='.$class->id,
+		\block_exastud\trans(['de:Aus Kurs hinzufügen', 'en:Add from Course']));
+}
 
 /* Print the Classes */
-echo html_writer::tag("h2", \block_exastud\get_string('teachers', 'block_exastud'));
-$table = new html_table();
+if ($type == 'teachers') {
+	echo html_writer::tag("h2", \block_exastud\get_string('teachers', 'block_exastud'));
+	$table = new html_table();
 
-$table->head = array(\block_exastud\trans('de:Fachbezeichnung'), \block_exastud\get_string('firstname'), \block_exastud\get_string('lastname'), \block_exastud\get_string('email'));
-$table->align = array("left", "left", "left", "left");
-$table->size = ['25%', '25%', '25%', '25%'];
+	$table->head = array(
+		\block_exastud\get_string('lastname'),
+		\block_exastud\get_string('firstname'),
+		\block_exastud\trans('de:Fachbezeichnung'),
+	);
+	$table->align = array("left", "left", "left", "left");
+	$table->size = ['25%', '25%', '25%', '25%'];
 
-$classteachers = block_exastud\get_class_teachers($class->id);
+	$classteachers = block_exastud\get_class_teachers($class->id);
 
-foreach ($classteachers as $classteacher) {
-	$table->data[] = array($classteacher->subject_title ?: \block_exastud\trans('de:nicht zugeordnet'), $classteacher->firstname, $classteacher->lastname, $classteacher->email);
+	foreach ($classteachers as $classteacher) {
+		$table->data[] = [
+			$classteacher->lastname,
+			$classteacher->firstname,
+			$classteacher->subject_title ?: \block_exastud\trans('de:nicht zugeordnet'),
+		];
+	}
+
+	//echo html_writer::table($table);
+	echo $output->table($table);
+
+	echo $OUTPUT->single_button($CFG->wwwroot.'/blocks/exastud/configuration_classteachers.php?courseid='.$courseid.'&classid='.$class->id,
+		\block_exastud\get_string('editclassteacherlist', 'block_exastud'), 'get');
 }
 
-//echo html_writer::table($table);
-echo $output->table($table);
-
-echo $OUTPUT->single_button($CFG->wwwroot.'/blocks/exastud/configuration_classteachers.php?courseid='.$courseid.'&classid='.$class->id,
-	\block_exastud\get_string('editclassteacherlist', 'block_exastud'), 'get');
-
 /* Print the categories */
-if (\block_exastud\get_plugin_config('can_edit_bps_and_subjects')) {
-	echo html_writer::tag("h2", \block_exastud\get_string('categories', 'block_exastud'));
+if ($type == 'categories' && \block_exastud\get_plugin_config('can_edit_bps_and_subjects')) {
+	echo html_writer::tag("h2", \block_exastud\get_string('categories'));
 
 	$table = new html_table();
 

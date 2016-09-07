@@ -225,6 +225,9 @@ if ($lastPeriodClass) {
 	}
 }
 
+$formdata->review = block_exastud_html_to_text($formdata->review);
+$formdata->vorschlag = block_exastud_html_to_text($formdata->vorschlag);
+
 $studentform->set_data($formdata);
 $studentform->display();
 

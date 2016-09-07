@@ -44,10 +44,13 @@ $availableevalopts = $DB->get_records_sql('SELECT id, title
 	FROM {block_exastudevalopt}
 	ORDER BY sorting');
 
-$availablebps = $DB->get_records_sql('SELECT id, title
+$availablebps = $DB->get_records_sql('SELECT id, sourceinfo, title
 	FROM {block_exastudbp}
 	ORDER BY sorting');
 
+foreach ($availablebps as $availablebp) {
+	$availablebp->disabled = !block_exastud_can_edit_bp($availablebp);
+}
 $availablesubjects = $DB->get_records('block_exastudsubjects', ['bpid' => optional_param('bpid', 0, PARAM_INT)], 'sorting');
 
 if ($action == 'save-categories') {
@@ -123,7 +126,7 @@ if ($action == 'save-subjects') {
 	}
 
 	foreach ($todelete as $item) {
-		$DB->delete_records('block_exastudsubjects', array('id' => $item->id));
+		$DB->delete_records('block_exastudsubjects', ['id' => $item->id]);
 	}
 
 	echo 'ok';
@@ -199,7 +202,15 @@ if ($action == 'save-bps') {
 	}
 
 	foreach ($todelete as $item) {
-		$DB->delete_records('block_exastudbp', array('id' => $item->id));
+		$item = $DB->get_record('block_exastudbp', ['id' => $item->id]);
+		if (!$item) {
+			continue;
+		}
+		if (!block_exastud_can_edit_bp($item)) {
+			continue;
+		}
+
+		$DB->delete_records('block_exastudbp', ['id' => $item->id]);
 	}
 
 	echo 'ok';
@@ -238,6 +249,8 @@ if ($action == 'subjects') {
 
 	$bp = $DB->get_record('block_exastudbp', ['id' => required_param('bpid', PARAM_INT)]);
 
+	$canEdit = block_exastud_can_edit_bp($bp);
+
 	/*
 	if (block_exastud\get_plugin_config('always_check_default_values')) {
 		$defaultSubjects = (array)block_exastud\get_plugin_config('default_subjects');
@@ -248,13 +261,19 @@ if ($action == 'subjects') {
 	}
 	*/
 
+	if (!$canEdit) {
+		foreach ($availablesubjects as $subject) {
+			$subject->disabled = true;
+		}
+	}
+
 	echo "<h2>".\block_exastud\trans('de:Bildungsplan').": {$bp->title}</h2>";
 	?>
 
 	<script>
 		var exa_list_items = <?php echo json_encode(array_values($availablesubjects) /* use array_values, because else the array gets sorted by key and not by sorting */); ?>
 	</script>
-	<div id="exa-list">
+	<div id="exa-list" <?php if (!$canEdit) { echo 'exa-sorting="false"'; } ?>>
 		<div class="header">
 			<div for-field="title"><?php echo \block_exastud\trans(['de:Bezeichnung', 'en:Name']); ?></div>
 			<div for-field="shorttitle"><?php echo \block_exastud\trans(['de:Kurzbezeichnung', 'en:Shortname']); ?></div>
@@ -267,16 +286,20 @@ if ($action == 'subjects') {
 				<input type="checkbox" name="always_print" value="1"/>
 				<span exa="delete-button"><?php echo get_string('delete'); ?></span></li>
 		</ul>
+		<?php if ($canEdit) { ?>
 		<div exa="new-item">
 			<input type="text" name="title"/>
 			<input type="text" name="shorttitle"/>
 			<input type="checkbox" name="always_print" value="1"/>
 			<input type="button" exa="new-button" value="<?php echo get_string('add'); ?>">
 		</div>
+		<?php } ?>
 		<div exa="save">
+			<?php if ($canEdit) { ?>
 			<input type="button" exa="save-button" value="<?php echo get_string('savechanges'); ?>">
+			<?php } ?>
 			<?php
-				echo $output->back_button($CFG->wwwroot.'/blocks/exastud/configuration_global.php?courseid='.$courseid.'&action=bps');
+			echo $output->back_button($CFG->wwwroot.'/blocks/exastud/configuration_global.php?courseid='.$courseid.'&action=bps');
 			?>
 		</div>
 	</div>
@@ -323,8 +346,8 @@ if ($action == 'bps') {
 		<ul exa="items">
 			<li>
 				<input type="text" name="title"/>
-				<span exa="delete-button"><?php echo get_string('delete'); ?></span>
-				<a exa="subjects-button"><?php echo \block_exastud\trans('de:Fachbezeichnungen'); ?></a>
+				<button exa="delete-button"><?php echo get_string('delete'); ?></button>
+				<button exa="subjects-button"><?php echo \block_exastud\trans('de:Fachbezeichnungen'); ?></button>
 			</li>
 		</ul>
 		<div exa="new-item">

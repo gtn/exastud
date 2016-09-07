@@ -90,3 +90,35 @@
 #block_exastud table td input[type=button] {
 	margin-bottom: 0;
 }
+
+
+#page-blocks-exastud-review_student #fitem_id_vorschlag .fitemtitle {
+	display: none;
+}
+#page-blocks-exastud-review_student #fitem_id_vorschlag .felement {
+	margin-left: 0;
+}
+#page-blocks-exastud-review_student #fitem_id_vorschlag textarea {
+	width: 95%;
+	height: 200px;
+}
+#page-blocks-exastud-review_student #fitem_id_review .fitemtitle {
+	display: none;
+}
+#page-blocks-exastud-review_student #fitem_id_review .felement {
+	margin-left: 0;
+}
+#page-blocks-exastud-review_student #fitem_id_review textarea {
+	width: 95%;
+	height: 200px;
+}
+#page-blocks-exastud-review_student_other_data .fitem_ftextarea .fitemtitle {
+	display: none;
+}
+#page-blocks-exastud-review_student_other_data .fitem_ftextarea .felement {
+	margin-left: 0;
+}
+#page-blocks-exastud-review_student_other_data .fitem_ftextarea textarea {
+	width: 95%;
+	height: 200px;
+}

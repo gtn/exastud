@@ -77,21 +77,21 @@ if ($action == 'save') {
 }
 
 $output = block_exastud\get_renderer();
-echo $output->header('configuration_classes');
+echo $output->header([['id' => 'configuration_classes', 'classid' => $classid], ['id' => $type, 'name' => '']]);
 
 echo $output->print_subtitle($class->title);
 
 /* Print the Students */
-echo html_writer::tag("h2", \block_exastud\get_string('members', 'block_exastud'));
+echo html_writer::tag("h2", \block_exastud\get_string('students', 'block_exastud'));
 $table = new html_table();
 
 $table->head = [
+	\block_exastud\get_string('lastname'),
+	\block_exastud\get_string('firstname'),
+	\block_exastud\trans('de:Geburtsdatum'),
 	$type == 'bildungsstandard'
 		? \block_exastud\trans('de:Bildungsstandard')
 		: \block_exastud\trans('de:Ausgeschieden'),
-	\block_exastud\get_string('firstname'),
-	\block_exastud\get_string('lastname'),
-	\block_exastud\get_string('email'),
 ];
 $table->align = array("left", "left", "left");
 // $table->attributes['style'] = "width: 75%;";
@@ -114,10 +114,10 @@ foreach ($classstudents as $classstudent) {
 
 
 	$table->data[] = [
-		$input,
-		$classstudent->firstname,
 		$classstudent->lastname,
-		$classstudent->email,
+		$classstudent->firstname,
+		block_exastud\get_custom_profile_field_value($classstudent->id, 'dateofbirth'),
+		$input,
 	];
 }
 
@@ -129,7 +129,7 @@ echo $output->table($table);
 
 echo '<input type="submit" value="'.\block_exastud\get_string('savechanges').'"/>';
 
-echo $output->back_button($CFG->wwwroot.'/blocks/exastud/configuration_classes.php?courseid='.$courseid);
+// echo $output->back_button($CFG->wwwroot.'/blocks/exastud/configuration_classes.php?courseid='.$courseid);
 
 echo '</form>';
 
