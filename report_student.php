@@ -24,6 +24,7 @@ use \block_exastud\globals as g;
 require __DIR__.'/inc.php';
 
 $courseid = optional_param('courseid', 1, PARAM_INT); // Course ID
+$print_grades = optional_param('print_grades', 1, PARAM_INT); // Course ID
 $classid = required_param('classid', PARAM_INT);
 
 require_login($courseid);
@@ -414,7 +415,7 @@ function block_exastud_print_student_report_to_file($class, $student, $outputTyp
 			$textReview->title,
 			block_exastud_text_to_html($textReview->review),
 			'Niveau: '.(@$textReview->niveau ?: '---').'<br />'.
-			(trim(@$textReview->grade) ? 'Note: '.$textReview->grade.'<br />' : '')
+			(@$studentdata->print_grades ? 'Note: '.(trim(@$textReview->grade) ?: '---').'<br />' : '')
 		);
 	}
 

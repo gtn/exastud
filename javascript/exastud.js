@@ -20,16 +20,15 @@ window.block_exastud = {};
 
 $.extend(window.block_exastud, window.exacommon || {});
 
-$.extend(window.block_exastud, {
-});
+$.extend(window.block_exastud, {});
 
-!function(){
+!function () {
 	function is_page(page) {
-		return !!$('body#page-blocks-exastud-'+page).length;
+		return !!$('body#page-blocks-exastud-' + page).length;
 	}
 
 	if (is_page('configuration_classmembers')) {
-		$(document).on('click', '#block_exastud :checkbox[name=selectallornone]', function(){
+		$(document).on('click', '#block_exastud :checkbox[name=selectallornone]', function () {
 			var checkboxes = $(this).closest('table').find('tbody :checkbox');
 			checkboxes.prop('checked', checkboxes.is(':not(:checked)'));
 

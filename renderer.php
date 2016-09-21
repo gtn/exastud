@@ -74,8 +74,6 @@ class block_exastud_renderer extends plugin_renderer_base {
 		if (@$items[0]['id'] == 'configuration_classes' && $classid = $items[0]['classid']) {
 			$tabs['configuration_classes']->subtree[] = new tabobject('students', new moodle_url('/blocks/exastud/configuration_class.php', ['courseid' => g::$COURSE->id, 'action'=>'edit', 'classid'=>$classid, 'type'=>'students']), \block_exastud\get_string('students'), '', true);
 			$tabs['configuration_classes']->subtree[] = new tabobject('teachers', new moodle_url('/blocks/exastud/configuration_class.php', ['courseid' => g::$COURSE->id, 'action'=>'edit', 'classid'=>$classid, 'type'=>'teachers']), \block_exastud\get_string('teachers'), '', true);
-			$tabs['configuration_classes']->subtree[] = new tabobject('bildungsstandard', new moodle_url('/blocks/exastud/set_bildungsstandard.php?courseid='.g::$COURSE->id.'&type=bildungsstandard&classid='.$classid), \block_exastud\trans('de:Bildungsstandard'), '', true);
-			$tabs['configuration_classes']->subtree[] = new tabobject('ausscheiden', new moodle_url('/blocks/exastud/set_bildungsstandard.php?courseid='.g::$COURSE->id.'&type=ausscheiden&classid='.$classid), \block_exastud\trans('de:Ausscheiden'), '', true);
 			if (\block_exastud\get_plugin_config('can_edit_bps_and_subjects')) {
 				$tabs['configuration_classes']->subtree[] = new tabobject('categories', new moodle_url('/blocks/exastud/configuration_class.php', ['courseid' => g::$COURSE->id, 'action'=>'edit', 'classid'=>$classid, 'type'=>'categories']), \block_exastud\get_string('categories'), '', true);
 			}
