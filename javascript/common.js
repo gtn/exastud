@@ -32,34 +32,34 @@
 
 	var common = window.exacommon = {
 		jquery: jQuery,
-		
-		get_param: function(name) {
-			name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
+
+		get_param: function (name) {
+			name = encodeURIComponent(name);
 			var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
 				results = regex.exec(location.search);
 
 			return results === null ? null : decodeURIComponent(results[1].replace(/\+/g, " "));
 		},
 
-		get_location: function(params) {
+		get_location: function (params) {
 			var url = document.location.href;
 
-			$.each(params, function(name, value){
-				name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
+			$.each(params, function (name, value) {
+				name = encodeURIComponent(name);
 				var regex = new RegExp("[\\?&](" + name + "=([^&#]*))"),
 					results = regex.exec(location.search);
 
 				if (results === null) {
-					url += (url.indexOf('?') != -1 ? '&' : '?')+name+'='+encodeURIComponent(value);
+					url += (url.indexOf('?') != -1 ? '&' : '?') + name + '=' + encodeURIComponent(value);
 				} else {
-					url = url.replace(results[1], name+'='+encodeURIComponent(value));
+					url = url.replace(results[1], name + '=' + encodeURIComponent(value));
 				}
 			});
 
 			return url;
 		},
 
-		set_location_params: function(params) {
+		set_location_params: function (params) {
 			document.location.href = this.get_location(params);
 		}
 	};
