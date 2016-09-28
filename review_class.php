@@ -156,7 +156,7 @@ foreach($classstudents as $classstudent) {
 
 	if ($visible && $report) {
 		$cell = new html_table_cell();
-		$cell->text = $report->review;
+		$cell->text = block_exastud_text_to_html($report->review);
 		$cell->colspan = count($categories);
 		$cell->style = 'text-align: left;';
 		$row = new html_table_row(array(

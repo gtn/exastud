@@ -132,7 +132,12 @@ if ($type == \block_exastud\DATA_ID_LERN_UND_SOZIALVERHALTEN) {
 
 	$vorschlaege = [];
 	foreach (\block_exastud\get_class_teachers($classid) as $class_teacher) {
+		if ($class_teacher->subjectid == \block_exastud\SUBJECT_ID_ADDITIONAL_CLASS_TEACHER) {
+			continue;
+		}
+
 		if (isset($vorschlaege[$class_teacher->userid])) {
+			$vorschlaege[$class_teacher->userid]->subject_title .= ', '.$class_teacher->subject_title;
 			continue;
 		}
 
@@ -153,7 +158,7 @@ if ($type == \block_exastud\DATA_ID_LERN_UND_SOZIALVERHALTEN) {
 	echo '<div>';
 	if ($vorschlaege) {
 		foreach ($vorschlaege as $vorschlag) {
-			echo '<b>'.$vorschlag->subject_title.':</b> '.$vorschlag->vorschlag;
+			echo '<div style="font-weight: bold;">'.$vorschlag->subject_title.':</div>'.$vorschlag->vorschlag;
 			echo '<hr>';
 		}
 	} else {
@@ -167,6 +172,9 @@ if ($type == \block_exastud\DATA_ID_LERN_UND_SOZIALVERHALTEN) {
 
 $formdata = (array)block_exastud\get_class_student_data($classid, $studentid);
 
+foreach ($categories as $dataid=>$category) {
+	$formdata[$dataid] = block_exastud_html_to_text(@$formdata[$dataid]);
+}
 /*
 $studentdata = block_exastud\get_class_student_data($classid, $studentid);
 $formdata = new stdClass;

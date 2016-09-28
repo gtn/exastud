@@ -32,15 +32,14 @@ $remove		 = optional_param('remove', 0, PARAM_BOOL);
 require_login($courseid);
 
 block_exastud_require_global_cap(block_exastud\CAP_MANAGE_CLASSES);
-$curPeriod = block_exastud_check_active_period();
+$curPeriod = block_exastud_get_active_or_next_period();
 
 $class = block_exastud\get_teacher_class($classid);
 
-$header = \block_exastud\get_string('configmember', 'block_exastud', $class->title);
 $url = '/blocks/exastud/configuration_classmembers.php';
 $PAGE->set_url($url);
 $output = \block_exastud\get_renderer();
-echo $output->header(array('configuration_classes', '='.$header));
+echo $output->header([['id' => 'configuration_classes', 'classid' => $classid], 'students']);
 
 if ($frm = data_submitted()) {
 	require_sesskey();
@@ -97,10 +96,10 @@ $availableusers = $DB->get_records_sql('SELECT id, firstname, lastname, email
 $classstudents = \block_exastud\get_class_students($class->id);
 
 echo $OUTPUT->box_start();
-$userlistType = 'members';
+$userlistType = 'students';
 require __DIR__.'/lib/configuration_userlist.inc.php';
 echo $OUTPUT->box_end();
 	
-echo $output->back_button($CFG->wwwroot . '/blocks/exastud/configuration_class.php?courseid='.$courseid.'&classid='.$class->id);
+echo $output->back_button($CFG->wwwroot . '/blocks/exastud/configuration_class.php?courseid='.$courseid.'&classid='.$class->id.'&type=students');
 
 echo $output->footer();

@@ -25,68 +25,63 @@ require_login($courseid);
 
 block_exastud_require_global_cap(block_exastud\CAP_MANAGE_CLASSES);
 
+$actPeriod = block_exastud_get_active_or_next_period();
+$lastPeriod = block_exastud_get_last_period();
+$classes = block_exastud\get_head_teacher_classes_owner($actPeriod->id);
+$lastPeriodClasses = $lastPeriod ? block_exastud\get_head_teacher_classes_owner($lastPeriod->id) : [];
+
 $url = '/blocks/exastud/configuration_classes.php';
 $PAGE->set_url($url);
-
-$classes = block_exastud\get_head_teacher_classes_owner();
-
-if (!$classes && block_exastud_has_global_cap(block_exastud\CAP_HEAD_TEACHER)) {
-	redirect('configuration_class_info.php?courseid='.$courseid.'&action=add', \block_exastud\get_string('redirectingtoclassinput', 'block_exastud'));
-}
 
 $output = block_exastud\get_renderer();
 echo $output->header('configuration_classes');
 
 /* Print the Students */
-echo html_writer::tag("h2", \block_exastud\trans(['de:Meine Klassen', 'en:My Classes']));
+echo html_writer::tag("h2", $actPeriod->description.': '.\block_exastud\get_string('configuration_classes'));
 
-if ($classes) {
+if (!$classes) {
+	echo '<div style="padding-bottom: 20px;">'.\block_exastud\get_string('noclassfound').'</div>';
+} else {
 	$table = new html_table();
 
-	$table->head = array(\block_exastud\get_string('class'), '');
-	$table->align = array("left", "left");
-	$table->size = array("50%");
+	$table->head = array(\block_exastud\get_string('class'));
+	$table->align = array("left");
 
 	foreach ($classes as $class) {
 		$table->data[] = [
-			'<a href="configuration_class.php?courseid='.$courseid.'&action=edit&classid='.$class->id.'">'.$class->title.'</a>',
-			$output->link_button('configuration_class.php?courseid='.$courseid.'&action=edit&classid='.$class->id,
-				block_exastud\get_string('edit')).
-			$output->link_button('configuration_class.php?courseid='.$courseid.'&action=delete&classid='.$class->id.'&confirm=1',
-				block_exastud\get_string('delete'),
-				['exa-confirm' => block_exastud\trans('de:Wirklich löschen?')]).
-			'<div style="margin-top: 10px;">'.
-			$output->link_button('set_bildungsstandard.php?courseid='.$courseid.'&action=bildungsstandard&classid='.$class->id,
-				block_exastud\trans('de:Bildungsstandard / Ausscheiden festlegen')).
-			'</div>',
+			'<a href="configuration_class.php?courseid='.$courseid.'&classid='.$class->id.'">'.$class->title.'</a>',
 		];
 	}
 
 	echo $output->table($table);
 }
 
-echo $OUTPUT->single_button($CFG->wwwroot.'/blocks/exastud/configuration_class_info.php?courseid='.$courseid.'&action=add',
-	\block_exastud\trans(['de:Klasse hinzufügen', 'en:Add Class']), 'get');
+echo $output->link_button($CFG->wwwroot.'/blocks/exastud/configuration_class_info.php?courseid='.$courseid.'&action=add',
+	\block_exastud\trans(['de:Klasse hinzufügen', 'en:Add Class']));
 
-if ($classes = block_exastud\get_head_teacher_classes_shared()) {
+if ($lastPeriodClasses) {
+	echo $output->link_button($CFG->wwwroot.'/blocks/exastud/copy_classes.php?courseid='.$courseid,
+		\block_exastud\trans(['de:Klasse vom vorigen Eingabezeitraum kopieren', 'en:Copy Class from last Period']));
+}
+
+/*
+if ($classes = block_exastud\get_head_teacher_classes_shared($actPeriod->id)) {
 	echo html_writer::tag("h2", \block_exastud\trans('de:Mit mir geteilte Klassen'));
 
 	$table = new html_table();
 
-	$table->head = array(\block_exastud\get_string('class'), '');
-	$table->align = array("left", "left");
+	$table->head = array(\block_exastud\get_string('class'));
+	$table->align = array("left");
 	$table->size = array("50%");
 
 	foreach ($classes as $class) {
 		$table->data[] = [
-			'<a href="configuration_class.php?courseid='.$courseid.'&action=edit&classid='.$class->id.'">'.$class->title.'</a>',
-			$output->link_button('configuration_class.php?courseid='.$courseid.'&action=edit&classid='.$class->id,
-				block_exastud\get_string('edit')),
+			'<a href="configuration_class.php?courseid='.$courseid.'&classid='.$class->id.'">'.$class->title.'</a>'
 		];
 	}
 
 	echo $output->table($table);
 }
-
+*/
 
 echo $output->footer();

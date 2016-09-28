@@ -134,27 +134,24 @@ namespace block_exastud {
 		return $cohort;
 	}
 
-	function get_head_teacher_classes_owner() {
+	function get_head_teacher_classes_owner($periodid) {
 		if (!block_exastud_has_global_cap(CAP_MANAGE_CLASSES)) {
 			return [];
 		}
-
-		$curPeriod = block_exastud_check_active_period();
 
 		return g::$DB->get_records_sql("
 			SELECT c.*,
 				'normal' AS type
 			FROM {block_exastudclass} c
 			WHERE c.userid=? AND c.periodid=?
-			ORDER BY c.title", [g::$USER->id, $curPeriod->id]);
+			ORDER BY c.title", [g::$USER->id, $periodid]);
 	}
 
-	function get_head_teacher_classes_shared() {
+	function get_head_teacher_classes_shared($periodid) {
 		if (!block_exastud_has_global_cap(CAP_MANAGE_CLASSES)) {
 			return [];
 		}
 
-		$curPeriod = block_exastud_check_active_period();
 		$classes = g::$DB->get_records_sql("
 			SELECT c.*,
 				'shared' AS type,
@@ -163,7 +160,7 @@ namespace block_exastud {
 			JOIN {block_exastudclassteachers} ct ON ct.classid=c.id
 			JOIN {user} u ON c.userid = u.id
 			WHERE ct.subjectid=".SUBJECT_ID_ADDITIONAL_CLASS_TEACHER." AND ct.teacherid=? AND c.periodid=?
-			ORDER BY c.title", [g::$USER->id, $curPeriod->id]);
+			ORDER BY c.title", [g::$USER->id, $periodid]);
 
 		/*
 		foreach ($classes as $class) {
@@ -174,18 +171,22 @@ namespace block_exastud {
 		return $classes;
 	}
 
-	function get_head_teacher_classes_all() {
-		return get_head_teacher_classes_owner() + get_head_teacher_classes_shared();
+	function get_head_teacher_classes_all($periodid) {
+		return get_head_teacher_classes_owner($periodid) + get_head_teacher_classes_shared($periodid);
 	}
 
 	function get_teacher_class($classid) {
-		$classes = get_head_teacher_classes_all();
+		$periods = g::$DB->get_records_sql('SELECT * FROM {block_exastudperiod}');
 
-		if (!isset($classes[$classid])) {
-			throw new moodle_exception('class not found');
+		foreach ($periods as $period) {
+			$classes = get_head_teacher_classes_all($period->id);
+
+			if (isset($classes[$classid])) {
+				return $classes[$classid];
+			}
 		}
 
-		return $classes[$classid];
+		throw new moodle_exception('class not found');
 	}
 
 	function get_class_students($classid) {
@@ -218,7 +219,7 @@ namespace block_exastud {
 	}
 
 	function get_head_teacher_lern_und_sozialverhalten_classes() {
-		$classes = get_head_teacher_classes_all();
+		$classes = get_head_teacher_classes_all(block_exastud_get_active_or_next_period()->id);
 
 		$ret = [];
 		foreach ($classes as $class) {
@@ -300,6 +301,7 @@ namespace block_exastud {
 	function get_text_reviews($class, $studentid) {
 		$textReviews = iterator_to_array(g::$DB->get_recordset_sql("
 			SELECT DISTINCT ".\user_picture::fields('u').", r.review, s.title AS subject_title, r.subjectid AS subjectid
+				, NOT(r.subjectid<0) -- needed for postgres
 			FROM {block_exastudreview} r
 			JOIN {user} u ON r.teacherid = u.id
 			JOIN {block_exastudsubjects} s ON r.subjectid = s.id
@@ -332,7 +334,7 @@ namespace block_exastud {
 
 	function get_reviewers_by_category_and_pos($periodid, $studentid, $categoryid, $categorysource, $pos_value) {
 		return iterator_to_array(g::$DB->get_recordset_sql("
-			SELECT u.*, s.title AS subject_title, pos.value
+			SELECT DISTINCT u.*, s.title AS subject_title, pos.value
 			FROM {block_exastudreview} r
 			JOIN {block_exastudreviewpos} pos ON pos.reviewid = r.id
 			JOIN {user} u ON r.teacherid = u.id
@@ -342,7 +344,7 @@ namespace block_exastud {
 			WHERE c.periodid = ? AND r.studentid = ?
 				AND pos.categoryid = ? AND pos.categorysource = ?
 			".($pos_value !== null ? "AND pos.value = ?" : "AND pos.value > 0")."
-			GROUP BY r.teacherid, s.id, pos.value
+			-- GROUP BY r.teacherid, s.id, pos.value
 		", [$periodid, $studentid, $categoryid, $categorysource, $pos_value]), false);
 	}
 
@@ -367,7 +369,7 @@ namespace block_exastud {
 				$category->evaluationOtions[$pos_value] = (object)[
 					'value' => $pos_value,
 					'title' => $option,
-					'reviewers' => get_reviewers_by_category_and_pos(block_exastud_get_active_period()->id, $studentid, $category->id, $category->source, $pos_value),
+					'reviewers' => get_reviewers_by_category_and_pos(block_exastud_get_active_or_last_period()->id, $studentid, $category->id, $category->source, $pos_value),
 				];
 			}
 		}
@@ -452,19 +454,50 @@ namespace block_exastud {
 		]);
 	}
 
-	function insert_default_entries() {
+	function find_object_in_array_by_property($array, $key, $value) {
+		if (!$array) {
+			return null;
+		}
+
+		foreach ($array as $item) {
+			if ($item->$key == $value) {
+				return $item;
+			}
+		}
+
+		return null;
+	}
+
+	function insert_default_entries($dorecheck = false) {
+
 		//if empty import
-		$categories = g::$DB->get_records_menu('block_exastudcate', null, 'sorting', 'id, title');
+		$categories = g::$DB->get_records('block_exastudcate', null, 'sorting', 'id, title, sourceinfo');
 		$defaultItems = (array)get_plugin_config('default_categories');
 
-		if (!$categories || get_plugin_config('always_check_default_values')) {
+		if (!$categories || $dorecheck || get_plugin_config('always_check_default_values')) {
 			$sorting = 1;
-			foreach ($defaultItems as $title) {
-				if (false !== $id = array_search($title, $categories)) {
-					g::$DB->update_record('block_exastudcate', ['id' => $id, 'sorting' => $sorting]);
-					unset($categories[$id]);
+			foreach ($defaultItems as $defaultItem) {
+				$defaultItem = (object)$defaultItem;
+
+				if ($dbItem = find_object_in_array_by_property($categories, 'sourceinfo', $defaultItem->sourceinfo)) {
+					g::$DB->update_record('block_exastudcate', [
+						'id' => $dbItem->id,
+						'sorting' => $sorting,
+					]);
+					unset($categories[$dbItem->id]);
+				} elseif ($dbItem = find_object_in_array_by_property($categories, 'title', $defaultItem->title)) {
+					g::$DB->update_record('block_exastudcate', [
+						'id' => $dbItem->id,
+						'sourceinfo' => $defaultItem->sourceinfo,
+						'sorting' => $sorting,
+					]);
+					unset($categories[$dbItem->id]);
 				} else {
-					g::$DB->insert_record('block_exastudcate', ['title' => $title, 'sorting' => $sorting]);
+					g::$DB->insert_record('block_exastudcate', [
+						'sourceinfo' => $defaultItem->sourceinfo,
+						'title' => $defaultItem->title,
+						'sorting' => $sorting
+					]);
 				}
 
 				$sorting++;
@@ -474,47 +507,35 @@ namespace block_exastud {
 				g::$DB->update_record('block_exastudcate', ['id' => $id, 'sorting' => $sorting]);
 				$sorting++;
 			}
-
-			/*
-			g::$DB->insert_record('block_exastudcate', array("sorting" => 1, "title" => get_string('teamplayer')));
-			g::$DB->insert_record('block_exastudcate', array("sorting" => 2, "title" => get_string('responsibility')));
-			g::$DB->insert_record('block_exastudcate', array("sorting" => 3, "title" => get_string('selfreliance', 'block_exastud')));
-			*/
 		}
 
-		$subjects = g::$DB->get_records_menu('block_exastudsubjects', null, 'sorting', 'id, title');
-		$defaultItems = (array)get_plugin_config('default_subjects');
-
-		if (!$subjects || get_plugin_config('always_check_default_values')) {
-			$sorting = 1;
-			foreach ($defaultItems as $title) {
-				if (false !== $id = array_search($title, $subjects)) {
-					g::$DB->update_record('block_exastudsubjects', ['id' => $id, 'sorting' => $sorting]);
-					unset($subjects[$id]);
-				} else {
-					g::$DB->insert_record('block_exastudsubjects', ['title' => $title, 'sorting' => $sorting]);
-				}
-
-				$sorting++;
-			}
-
-			foreach ($subjects as $id => $title) {
-				g::$DB->update_record('block_exastudsubjects', ['id' => $id, 'sorting' => $sorting]);
-				$sorting++;
-			}
-		}
-
-		$evalopts = g::$DB->get_records_menu('block_exastudevalopt', null, 'sorting', 'id, title');
+		$evalopts = g::$DB->get_records('block_exastudevalopt', null, 'sorting', 'id, title, sourceinfo');
 		$defaultItems = (array)get_plugin_config('default_evalopt');
 
-		if ($defaultItems && (!$evalopts || get_plugin_config('always_check_default_values'))) {
+		if ($defaultItems && (!$evalopts || $dorecheck || get_plugin_config('always_check_default_values'))) {
 			$sorting = 1;
-			foreach ($defaultItems as $title) {
-				if (false !== $id = array_search($title, $evalopts)) {
-					g::$DB->update_record('block_exastudevalopt', ['id' => $id, 'sorting' => $sorting]);
-					unset($evalopts[$id]);
+			foreach ($defaultItems as $defaultItem) {
+				$defaultItem = (object)$defaultItem;
+
+				if ($dbItem = find_object_in_array_by_property($evalopts, 'sourceinfo', $defaultItem->sourceinfo)) {
+					g::$DB->update_record('block_exastudevalopt', [
+						'id' => $dbItem->id,
+						'sorting' => $sorting,
+					]);
+					unset($evalopts[$dbItem->id]);
+				} elseif ($dbItem = find_object_in_array_by_property($evalopts, 'title', $defaultItem->title)) {
+					g::$DB->update_record('block_exastudevalopt', [
+						'id' => $dbItem->id,
+						'sourceinfo' => $defaultItem->sourceinfo,
+						'sorting' => $sorting,
+					]);
+					unset($evalopts[$dbItem->id]);
 				} else {
-					g::$DB->insert_record('block_exastudevalopt', ['title' => $title, 'sorting' => $sorting]);
+					g::$DB->insert_record('block_exastudevalopt', [
+						'sourceinfo' => $defaultItem->sourceinfo,
+						'title' => $defaultItem->title,
+						'sorting' => $sorting
+					]);
 				}
 
 				$sorting++;
@@ -529,7 +550,65 @@ namespace block_exastud {
 				if (!get_string_manager()->string_exists('evaluation'.$i, 'block_exastud')) {
 					break;
 				}
-				g::$DB->insert_record('block_exastudevalopt', array("sorting" => $i, "title" => get_string('evaluation'.$i, 'block_exastud')));
+				g::$DB->insert_record('block_exastudevalopt', [
+					'sourceinfo' => 'default-from-lang-'.$i,
+					"sorting" => $i,
+					"title" => get_string('evaluation'.$i, 'block_exastud')
+				]);
+			}
+		}
+
+		$bps = g::$DB->get_records('block_exastudbp', null, 'sorting', 'id, title, sourceinfo');
+		$defaultBps = (array)get_plugin_config('default_bps');
+
+		if (!$bps || $dorecheck || get_plugin_config('always_check_default_values')) {
+			foreach ($defaultBps as $defaultBp) {
+				$defaultBp = (object)$defaultBp;
+
+				if ($dbBp = find_object_in_array_by_property($bps, 'sourceinfo', $defaultBp->sourceinfo)) {
+					// nothing todo
+				} elseif ($dbBp = find_object_in_array_by_property($bps, 'title', $defaultBp->title)) {
+					g::$DB->update_record('block_exastudbp', [
+						'id' => $dbBp->id,
+						'sourceinfo' => $defaultBp->sourceinfo,
+						'sorting' => $sorting,
+					]);
+				} else {
+					$dbBp = $defaultBp;
+					$dbBp->id = g::$DB->insert_record('block_exastudbp', $dbBp);
+				}
+
+				$subjects = g::$DB->get_records('block_exastudsubjects', ['bpid' => $dbBp->id], 'sorting', 'id, title, sourceinfo');
+				$sorting = 1;
+
+				foreach ($defaultBp->subjects as $subject) {
+					$subject = (object)$subject;
+					$subject->sorting = $sorting;
+					$sorting++;
+
+					if ($dbSubject = find_object_in_array_by_property($subjects, 'sourceinfo', $subject->sourceinfo)) {
+						g::$DB->update_record('block_exastudsubjects', [
+							'id' => $dbItem->id,
+							'sorting' => $sorting,
+						]);
+						unset($subjects[$dbSubject->id]);
+					} elseif ($dbSubject = find_object_in_array_by_property($subjects, 'title', $subject->title)) {
+						g::$DB->update_record('block_exastudsubjects', [
+							'id' => $dbSubject->id,
+							'sourceinfo' => $subject->sourceinfo,
+							'sorting' => $sorting,
+						]);
+						unset($subjects[$dbSubject->id]);
+					} else {
+						$subject->bpid = $dbBp->id;
+						g::$DB->insert_record('block_exastudsubjects', $subject);
+					}
+				}
+
+				foreach ($subjects as $id => $title) {
+					g::$DB->update_record('block_exastudsubjects', ['id' => $id, 'sorting' => $sorting]);
+					$sorting++;
+				}
 			}
 		}
 	}
@@ -610,7 +689,8 @@ namespace {
 					return;
 				}
 			case \block_exastud\CAP_REVIEW:
-				if (!\block_exastud\get_review_classes()) {
+				$actPeriod = block_exastud_check_active_period();
+				if (!\block_exastud\get_review_classes() && !block_exastud\get_head_teacher_classes_all($actPeriod->id)) {
 					throw new block_exastud\permission_exception('no classes');
 				} else {
 					return;
@@ -724,9 +804,7 @@ namespace {
 	}
 
 	function block_exastud_get_active_period() {
-		global $DB;
-
-		$periods = $DB->get_records_sql('SELECT * FROM {block_exastudperiod} WHERE (starttime <= '.time().') AND (endtime >= '.time().')');
+		$periods = g::$DB->get_records_sql('SELECT * FROM {block_exastudperiod} WHERE (starttime <= '.time().') AND (endtime >= '.time().')');
 
 		// genau 1e periode?
 		if (count($periods) == 1) {
@@ -734,6 +812,18 @@ namespace {
 		} else {
 			return null;
 		}
+	}
+
+	function block_exastud_get_active_or_next_period() {
+		return g::$DB->get_record_sql('SELECT * FROM {block_exastudperiod} WHERE (endtime >= '.time().') ORDER BY starttime ASC LIMIT 1');
+	}
+
+	function block_exastud_get_active_or_last_period() {
+		return g::$DB->get_record_sql('SELECT * FROM {block_exastudperiod} WHERE (starttime <= '.time().') ORDER BY endtime DESC LIMIT 1');
+	}
+
+	function block_exastud_get_last_period() {
+		return g::$DB->get_record_sql('SELECT * FROM {block_exastudperiod} WHERE (endtime <= '.time().') ORDER BY starttime DESC LIMIT 1');
 	}
 
 	function block_exastud_get_period($periodid, $loadActive = true) {
@@ -1126,4 +1216,53 @@ namespace {
 		return moodle_url::make_pluginfile_url($file->get_contextid(), $file->get_component(), $file->get_filearea(), null, null, null);
 	}
 
+	function block_exastud_str_to_csv($string, $delimiter, $has_header) {
+		$string = trim($string, "\r\n");
+		$string = rtrim($string);
+		$csv = preg_split("!\r?\n!", $string);
+
+		foreach ($csv as &$item) {
+			$item = str_getcsv($item, $delimiter);
+		}
+		unset($item);
+
+		if ($has_header) {
+			$header = array_shift($csv);
+
+			foreach ($csv as &$item) {
+				$newItem = [];
+				foreach ($item as $i => $part) {
+					$newItem[$header[$i]] = $part;
+				}
+				$item = $newItem;
+			}
+			unset($item);
+		}
+
+		return $csv;
+	}
+
+	function block_exastud_html_to_text($html) {
+		if (preg_match('!</p>|<br\s*/?>!', $html)) {
+			// is html
+			$html = html_to_text($html, 0);
+		}
+
+		return $html;
+	}
+
+	function block_exastud_text_to_html($text) {
+		// make sure it's text
+		$text = block_exastud_html_to_text($text);
+
+		return text_to_html($text);
+	}
+
+	function block_exastud_can_edit_bp($bp) {
+		return !preg_match('!^bw\-*!', $bp->sourceinfo);
+	}
+
+	function block_exastud_can_edit_class($class) {
+		return $class->userid == g::$USER->id;
+	}
 }

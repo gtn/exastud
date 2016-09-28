@@ -32,7 +32,7 @@ $remove		 = optional_param('remove', 0, PARAM_BOOL);
 require_login($courseid);
 
 block_exastud_require_global_cap(block_exastud\CAP_MANAGE_CLASSES);
-$curPeriod = block_exastud_check_active_period();
+$curPeriod = block_exastud_get_active_or_next_period();
 
 $class = block_exastud\get_teacher_class($classid);
 
@@ -40,7 +40,7 @@ $header = \block_exastud\get_string('configcategories', 'block_exastud', $class-
 $url = '/blocks/exastud/configuration_categories.php';
 $PAGE->set_url($url);
 $output = \block_exastud\get_renderer();
-echo $output->header(array('configuration_classes', '='.$header));
+echo $output->header([['id' => 'configuration_classes', 'classid' => $classid], 'categories']);
 
 if ($frm = data_submitted()) {
 	if(!confirm_sesskey()) {
@@ -119,6 +119,6 @@ $userlistType = 'configurations';
 require __DIR__.'/lib/configuration_categories.inc.php';
 echo $OUTPUT->box_end();
 
-echo $output->back_button($CFG->wwwroot . '/blocks/exastud/configuration_class.php?courseid='.$courseid.'&classid='.$class->id);
+echo $output->back_button($CFG->wwwroot . '/blocks/exastud/configuration_class.php?courseid='.$courseid.'&classid='.$class->id.'&type=categories');
 
 echo $output->footer();

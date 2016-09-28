@@ -32,8 +32,7 @@ echo $output->header('review');
 
 $actPeriod = block_exastud_check_active_period();
 
-
-$reviewclasses = block_exastud\get_head_teacher_classes_all();
+$reviewclasses = block_exastud\get_head_teacher_classes_all($actPeriod->id);
 
 // first headteacher classes
 foreach ($reviewclasses as $class) {

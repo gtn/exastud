@@ -67,7 +67,7 @@ return [
 		'Heads of a class',
 	],
 	'configuration_classes' => [
-		'Meine Klassen konfigurieren',
+		'Meine Klassen',
 		'Class Configuration',
 	],
 	'project_based_configuration' => [
@@ -114,11 +114,11 @@ return [
 		'Projektbeurteiler',
 		'Project-Teachers',
 	],
-	'members' => [
+	'students' => [
 		'Schülerinnen und Schüler',
 		'Members',
 	],
-	'project_based_members' => [
+	'project_based_students' => [
 		'Projekte',
 		'Projects',
 	],
@@ -143,7 +143,7 @@ return [
 		'Error when updating project',
 	],
 	'editclassmemberlist' => [
-		'Klassenteilnehmer/innen bearbeiten',
+		'Schüler/innen bearbeiten',
 		'Edit student list',
 	],
 	'project_based_editclassmemberlist' => [
@@ -462,7 +462,11 @@ return [
 	],
 	'de:Fachbezeichnungen' => [
 		null,
-		'Subject',
+		'Subjects',
+	],
+	'de:Bildungspläne' => [
+		null,
+		'Educational Plans',
 	],
 	'de:Lernentwicklungsbericht: Schulname' => [
 		null,

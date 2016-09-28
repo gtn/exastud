@@ -24,7 +24,6 @@ require_once($CFG->dirroot.'/lib/formslib.php');
 class class_edit_form extends moodleform {
 
 	function definition() {
-		global $DB;
 		$mform = &$this->_form;
 
 		$mform->addElement('hidden', 'classid');
@@ -37,6 +36,10 @@ class class_edit_form extends moodleform {
 		$mform->addElement('text', 'title', \block_exastud\get_string('class', 'block_exastud').': ', array('size' => 50));
 		$mform->setType('title', PARAM_TEXT);
 		$mform->addRule('title', null, 'required', null, 'client');
+
+		global $DB;
+		$bps = $DB->get_records_menu('block_exastudbp', null, 'sorting', 'id, title');
+		$mform->addElement('select', 'bpid', \block_exastud\trans('de:Bildungsplan'), $bps);
 
 		/*
 		$subjects = $DB->get_records_menu('block_exastudsubjects', null, 'title', 'id, title');
@@ -125,12 +128,12 @@ class student_edit_form extends moodleform {
 
 		$mform->addElement('header', 'vorschlag_header', \block_exastud\trans("de:Lern- und Sozialverhalten: Formulierungsvorschlag für Klassenlehrkraft"));
 		$mform->setExpanded('vorschlag_header');
-		$mform->addElement('htmleditor', 'vorschlag', '', array('cols' => 50, 'rows' => 5));
+		$mform->addElement('textarea', 'vorschlag', '', array('cols' => 50, 'rows' => 5));
 		$mform->setType('vorschlag', PARAM_RAW);
 
 		$mform->addElement('header', 'review_header', \block_exastud\trans("de:Fachkompetenzen"));
 		$mform->setExpanded('review_header');
-		$mform->addElement('htmleditor', 'review', get_string('review', 'block_exastud'), array('cols' => 50, 'rows' => 20));
+		$mform->addElement('textarea', 'review', '', array('cols' => 50, 'rows' => 20));
 		$mform->setType('review', PARAM_RAW);
 
 		$mform->addElement('header', 'grade_header', \block_exastud\trans("de:Note und Niveau"));
@@ -155,7 +158,7 @@ class student_other_data_form extends moodleform {
 
 		foreach ($this->_customdata['categories'] as $dataid => $name) {
 			$mform->addElement('header', 'header_'.$dataid, $name);
-			$mform->addElement('htmleditor', $dataid, $name, array('cols' => 50, 'rows' => 10));
+			$mform->addElement('textarea', $dataid, $name, array('cols' => 50, 'rows' => 10));
 			$mform->setType($dataid, PARAM_RAW);
 			$mform->setExpanded('header_'.$dataid);
 		}

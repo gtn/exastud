@@ -24,24 +24,24 @@ use block_exastud\globals as g;
 function xmldb_block_exastud_upgrade($oldversion = 0) {
 	global $DB;
 	$dbman = $DB->get_manager();
-	$result=true;
+	$result = true;
 
 	if ($oldversion < 2014043000) {
-	
+
 		// Define field periodid to be added to block_exastudclass
 		$table = new xmldb_table('block_exastudclass');
 		$field = new xmldb_field('periodid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0', 'class');
-	
+
 		// Conditionally launch add field periodid
 		if (!$dbman->field_exists($table, $field)) {
 			$dbman->add_field($table, $field);
 		}
-	
+
 		// block_exastud savepoint reached
 		upgrade_block_savepoint(true, 2014043000, 'exastud');
 	}
-	
-	
+
+
 	if ($oldversion < 2015072200) {
 
 		// Define field sorting to be added to block_exastudcate.
@@ -56,7 +56,7 @@ function xmldb_block_exastud_upgrade($oldversion = 0) {
 		// block_exastud savepoint reached.
 		upgrade_block_savepoint(true, 2015072200, 'exastud');
 	}
-	
+
 	if ($oldversion < 2015091907) {
 
 		// Define table block_exastudsubjects to be created.
@@ -106,7 +106,7 @@ function xmldb_block_exastud_upgrade($oldversion = 0) {
 		if ($dbman->field_exists($table, $field)) {
 			$dbman->drop_field($table, $field);
 		}
-		
+
 		$field = new xmldb_field('resp');
 		if ($dbman->field_exists($table, $field)) {
 			$dbman->drop_field($table, $field);
@@ -122,103 +122,187 @@ function xmldb_block_exastud_upgrade($oldversion = 0) {
 			$dbman->rename_field($table, $field, 'studentid');
 		}
 
-			$field = new xmldb_field('periods_id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0', 'timemodified');
+		$field = new xmldb_field('periods_id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0', 'timemodified');
 		if ($dbman->field_exists($table, $field)) {
 			$dbman->rename_field($table, $field, 'periodid');
 		}
-		
-			$field = new xmldb_field('teacher_id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0', 'timemodified');
+
+		$field = new xmldb_field('teacher_id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0', 'timemodified');
 		if ($dbman->field_exists($table, $field)) {
 			$dbman->rename_field($table, $field, 'teacherid');
 		}
-		
+
 		$field = new xmldb_field('subjectid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0', 'teacherid');
 		if (!$dbman->field_exists($table, $field)) {
 			$dbman->add_field($table, $field);
 		}
-	
+
 		// Exastud savepoint reached.
 		upgrade_block_savepoint(true, 2015091907, 'exastud');
 	}
-	
-    if ($oldversion < 2016012500) {
 
-        // Rename field title on table block_exastudclass to NEWNAMEGOESHERE.
-        $table = new xmldb_table('block_exastudclass');
-        $field = new xmldb_field('class', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null, 'userid');
+	if ($oldversion < 2016012500) {
 
-        // Launch rename field title.
-        $dbman->rename_field($table, $field, 'title');
+		// Rename field title on table block_exastudclass to NEWNAMEGOESHERE.
+		$table = new xmldb_table('block_exastudclass');
+		$field = new xmldb_field('class', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null, 'userid');
 
-        // Exastud savepoint reached.
-        upgrade_block_savepoint(true, 2016012500, 'exastud');
-    }
+		// Launch rename field title.
+		$dbman->rename_field($table, $field, 'title');
 
-    if ($oldversion < 2016020500) {
+		// Exastud savepoint reached.
+		upgrade_block_savepoint(true, 2016012500, 'exastud');
+	}
 
-        // Define table block_exastudclassteastudvis to be created.
-        $table = new xmldb_table('block_exastudclassteastudvis');
+	if ($oldversion < 2016020500) {
 
-        // Adding fields to table block_exastudclassteastudvis.
-        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
-        $table->add_field('classteacherid', XMLDB_TYPE_INTEGER, '11', null, XMLDB_NOTNULL, null, null);
-        $table->add_field('studentid', XMLDB_TYPE_INTEGER, '11', null, XMLDB_NOTNULL, null, null);
-        $table->add_field('visible', XMLDB_TYPE_INTEGER, '2', null, null, null, '1');
+		// Define table block_exastudclassteastudvis to be created.
+		$table = new xmldb_table('block_exastudclassteastudvis');
 
-        // Adding keys to table block_exastudclassteastudvis.
-        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+		// Adding fields to table block_exastudclassteastudvis.
+		$table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+		$table->add_field('classteacherid', XMLDB_TYPE_INTEGER, '11', null, XMLDB_NOTNULL, null, null);
+		$table->add_field('studentid', XMLDB_TYPE_INTEGER, '11', null, XMLDB_NOTNULL, null, null);
+		$table->add_field('visible', XMLDB_TYPE_INTEGER, '2', null, null, null, '1');
 
-        // Conditionally launch create table for block_exastudclassteastudvis.
-        if (!$dbman->table_exists($table)) {
-            $dbman->create_table($table);
-        }
+		// Adding keys to table block_exastudclassteastudvis.
+		$table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
 
-        // Exastud savepoint reached.
-        upgrade_block_savepoint(true, 2016020500, 'exastud');
-    }
+		// Conditionally launch create table for block_exastudclassteastudvis.
+		if (!$dbman->table_exists($table)) {
+			$dbman->create_table($table);
+		}
 
-    if ($oldversion < 2016022401) {
+		// Exastud savepoint reached.
+		upgrade_block_savepoint(true, 2016020500, 'exastud');
+	}
 
-        // Define table block_exastuddata to be created.
-        $table = new xmldb_table('block_exastuddata');
+	if ($oldversion < 2016022401) {
 
-        // Adding fields to table block_exastuddata.
-        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
-        $table->add_field('classid', XMLDB_TYPE_INTEGER, '11', null, XMLDB_NOTNULL, null, null);
-        $table->add_field('studentid', XMLDB_TYPE_INTEGER, '11', null, XMLDB_NOTNULL, null, null);
- 		$table->add_field('name', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null);
-        $table->add_field('value', XMLDB_TYPE_TEXT, null, null, XMLDB_NOTNULL, null, null);
+		// Define table block_exastuddata to be created.
+		$table = new xmldb_table('block_exastuddata');
 
-        // Adding keys to table block_exastuddata.
-        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+		// Adding fields to table block_exastuddata.
+		$table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+		$table->add_field('classid', XMLDB_TYPE_INTEGER, '11', null, XMLDB_NOTNULL, null, null);
+		$table->add_field('studentid', XMLDB_TYPE_INTEGER, '11', null, XMLDB_NOTNULL, null, null);
+		$table->add_field('name', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null);
+		$table->add_field('value', XMLDB_TYPE_TEXT, null, null, XMLDB_NOTNULL, null, null);
 
-        // Conditionally launch create table for block_exastuddata.
-        if (!$dbman->table_exists($table)) {
-            $dbman->create_table($table);
-        }
+		// Adding keys to table block_exastuddata.
+		$table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
 
-        // Exastud savepoint reached.
-        upgrade_block_savepoint(true, 2016022401, 'exastud');
-    }
+		// Conditionally launch create table for block_exastuddata.
+		if (!$dbman->table_exists($table)) {
+			$dbman->create_table($table);
+		}
+
+		// Exastud savepoint reached.
+		upgrade_block_savepoint(true, 2016022401, 'exastud');
+	}
 
 	if ($oldversion < 2016031100) {
 		block_exastud\check_profile_fields();
 	}
 
-    if ($oldversion < 2016042900) {
+	if ($oldversion < 2016042900) {
 
-        // Define field subjectid to be added to block_exastuddata.
-        $table = new xmldb_table('block_exastuddata');
-        $field = new xmldb_field('subjectid', XMLDB_TYPE_INTEGER, '11', null, XMLDB_NOTNULL, null, '0', 'classid');
+		// Define field subjectid to be added to block_exastuddata.
+		$table = new xmldb_table('block_exastuddata');
+		$field = new xmldb_field('subjectid', XMLDB_TYPE_INTEGER, '11', null, XMLDB_NOTNULL, null, '0', 'classid');
 
-        // Conditionally launch add field subjectid.
+		// Conditionally launch add field subjectid.
+		if (!$dbman->field_exists($table, $field)) {
+			$dbman->add_field($table, $field);
+		}
+
+		// Exastud savepoint reached.
+		upgrade_block_savepoint(true, 2016042900, 'exastud');
+	}
+
+	if ($oldversion < 2016070901) {
+        // Define table block_exastudbp to be created.
+        $table = new xmldb_table('block_exastudbp');
+
+        // Adding fields to table block_exastudbp.
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '18', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('title', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('sorting', XMLDB_TYPE_INTEGER, '18', null, null, null, null);
+
+        // Adding keys to table block_exastudbp.
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+
+        // Conditionally launch create table for block_exastudbp.
+        if (!$dbman->table_exists($table)) {
+            $dbman->create_table($table);
+        }
+
+		// Define field bpid to be added to block_exastudsubjects.
+		$table = new xmldb_table('block_exastudsubjects');
+		$field = new xmldb_field('bpid', XMLDB_TYPE_INTEGER, '10', null, null, null, '0', 'id');
+		if (!$dbman->field_exists($table, $field)) {
+			$dbman->add_field($table, $field);
+		}
+
+        $field = new xmldb_field('shorttitle', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null, 'title');
         if (!$dbman->field_exists($table, $field)) {
             $dbman->add_field($table, $field);
         }
 
-        // Exastud savepoint reached.
-        upgrade_block_savepoint(true, 2016042900, 'exastud');
+        $field = new xmldb_field('always_print', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, '0', 'shorttitle');
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+		// Define field bpid to be added to block_exastudclass.
+		$table = new xmldb_table('block_exastudclass');
+		$field = new xmldb_field('bpid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0', 'title');
+
+		// Conditionally launch add field bpid.
+		if (!$dbman->field_exists($table, $field)) {
+			$dbman->add_field($table, $field);
+		}
+
+		if (!$DB->get_record('block_exastudbp', ['id'=>1])) {
+			$DB->execute("INSERT INTO {block_exastudbp} (id, title, sorting) VALUES (1, ?, 1)", [\block_exastud\trans('de:Alte Fächer')]);
+		}
+
+		$DB->execute("UPDATE {block_exastudsubjects} SET bpid=1 WHERE bpid=0");
+		$DB->execute("UPDATE {block_exastudclass} SET bpid=1 WHERE bpid=0");
+
+		// Exastud savepoint reached.
+		upgrade_block_savepoint(true, 2016070901, 'exastud');
+	}
+
+    if ($oldversion < 2016080400) {
+        $table = new xmldb_table('block_exastudbp');
+        $field = new xmldb_field('sourceinfo', XMLDB_TYPE_TEXT, null, null, null, null, null, 'sorting');
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        $table = new xmldb_table('block_exastudevalopt');
+       	$field = new xmldb_field('sourceinfo', XMLDB_TYPE_TEXT, null, null, null, null, null, 'sorting');
+		if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        $table = new xmldb_table('block_exastudsubjects');
+        $field = new xmldb_field('sourceinfo', XMLDB_TYPE_TEXT, null, null, null, null, null, 'always_print');
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        $table = new xmldb_table('block_exastudcate');
+        $field = new xmldb_field('sourceinfo', XMLDB_TYPE_TEXT, null, null, null, null, null, 'sorting');
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        upgrade_block_savepoint(true, 2016080400, 'exastud');
     }
+
+	\block_exastud\insert_default_entries(true);
 
 	return $result;
 }
