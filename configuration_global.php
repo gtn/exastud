@@ -227,7 +227,9 @@ if ($action == 'categories') {
 	</script>
 	<div id="exa-list">
 		<ul exa="items">
-			<li><input type="text" name="title"/> <span exa="delete-button"><?php echo get_string('delete'); ?></span>
+			<li>
+				<input type="text" name="title"/>
+				<button exa="delete-button"><?php echo get_string('delete'); ?></button>
 			</li>
 		</ul>
 		<div exa="new-item">
@@ -284,7 +286,8 @@ if ($action == 'subjects') {
 				<input type="text" name="title"/>
 				<input type="text" name="shorttitle"/>
 				<input type="checkbox" name="always_print" value="1"/>
-				<span exa="delete-button"><?php echo get_string('delete'); ?></span></li>
+				<button exa="delete-button"><?php echo get_string('delete'); ?></button>
+			</li>
 		</ul>
 		<?php if ($canEdit) { ?>
 		<div exa="new-item">
@@ -318,7 +321,9 @@ if ($action == 'evalopts') {
 	</script>
 	<div id="exa-list">
 		<ul exa="items">
-			<li><input type="text" name="title"/> <span exa="delete-button"><?php echo get_string('delete'); ?></span>
+			<li>
+				<input type="text" name="title"/>
+				<button exa="delete-button"><?php echo get_string('delete'); ?></button>
 			</li>
 		</ul>
 		<div exa="new-item">
