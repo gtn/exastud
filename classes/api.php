@@ -23,7 +23,7 @@ defined('MOODLE_INTERNAL') || die();
 
 require_once __DIR__.'/../lib/lib.php';
 
-use block_exacomp\globals as g;
+use block_exastud\globals as g;
 
 class api {
 	static function active() {

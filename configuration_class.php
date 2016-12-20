@@ -123,8 +123,8 @@ if ($type == 'students') {
 		\block_exastud\get_string('lastname'),
 		\block_exastud\get_string('firstname'),
 		\block_exastud\trans('de:Geburtsdatum'),
-		\block_exastud\trans('de:Note im Lern&shy;entwicklungs&shy;bericht drucken'),
-		\block_exastud\trans('de:Bildungsstandard'),
+		\block_exastud\trans('de:Note im Lern&shy;entwicklungs&shy;bericht ausweisen'),
+		\block_exastud\trans('de:Bildungsstandard erreicht'),
 		\block_exastud\trans('de:Ausgeschieden'),
 	];
 	$table->align = array("left", "left", "left");

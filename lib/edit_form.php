@@ -39,7 +39,7 @@ class class_edit_form extends moodleform {
 
 		global $DB;
 		$bps = $DB->get_records_menu('block_exastudbp', null, 'sorting', 'id, title');
-		$mform->addElement('select', 'bpid', \block_exastud\trans('de:Bildungsplan'), $bps);
+		$mform->addElement('select', 'bpid', \block_exastud\trans('de:Bildungsplan').':', $bps);
 
 		/*
 		$subjects = $DB->get_records_menu('block_exastudsubjects', null, 'title', 'id, title');
