@@ -365,14 +365,29 @@ namespace block_exastud {
 			}
 
 			$category->evaluationOtions = [];
+			$reviewPoints = 0;
+			$reviewCnt = 0;
+			$i = 0;
+
 			foreach ($evaluationOtions as $pos_value => $option) {
+
 				$category->evaluationOtions[$pos_value] = (object)[
 					'value' => $pos_value,
 					'title' => $option,
-					'reviewers' => get_reviewers_by_category_and_pos(block_exastud_get_active_or_last_period()->id, $studentid, $category->id, $category->source, $pos_value),
+					'reviewers' => $reviewers = get_reviewers_by_category_and_pos(block_exastud_get_active_or_last_period()->id, $studentid, $category->id, $category->source, $pos_value),
 				];
+				$reviewPoints += count($reviewers) * $i;
+				$reviewCnt += count($reviewers);
+				$i++;
+			}
+
+			if ($reviewCnt) {
+				$category->average = $reviewPoints / $reviewCnt;
+			} else {
+				$category->average = null;
 			}
 		}
+
 
 		return $categories;
 	}
@@ -496,7 +511,7 @@ namespace block_exastud {
 					g::$DB->insert_record('block_exastudcate', [
 						'sourceinfo' => $defaultItem->sourceinfo,
 						'title' => $defaultItem->title,
-						'sorting' => $sorting
+						'sorting' => $sorting,
 					]);
 				}
 
@@ -534,7 +549,7 @@ namespace block_exastud {
 					g::$DB->insert_record('block_exastudevalopt', [
 						'sourceinfo' => $defaultItem->sourceinfo,
 						'title' => $defaultItem->title,
-						'sorting' => $sorting
+						'sorting' => $sorting,
 					]);
 				}
 
@@ -553,7 +568,7 @@ namespace block_exastud {
 				g::$DB->insert_record('block_exastudevalopt', [
 					'sourceinfo' => 'default-from-lang-'.$i,
 					"sorting" => $i,
-					"title" => get_string('evaluation'.$i, 'block_exastud')
+					"title" => get_string('evaluation'.$i, 'block_exastud'),
 				]);
 			}
 		}
@@ -1265,4 +1280,24 @@ namespace {
 	function block_exastud_can_edit_class($class) {
 		return $class->userid == g::$USER->id;
 	}
+
+	function block_exastud_get_date_of_birth_as_timestamp($userid) {
+		$str = trim(\block_exastud\get_custom_profile_field_value($userid, 'dateofbirth'));
+		if (!$str) {
+			return null;
+		}
+		$parts = preg_split('![^0-9]+!', $str);
+
+		return mktime(0, 0, 0, $parts[1], $parts[0], $parts[2]);
+	}
+
+	function block_exastud_get_date_of_birth($userid) {
+		$timestamp = block_exastud_get_date_of_birth_as_timestamp($userid);
+		if (!$timestamp) {
+			return null;
+		}
+
+		return date('d.m.Y', $timestamp);
+	}
 }
+

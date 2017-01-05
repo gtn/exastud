@@ -120,7 +120,7 @@ if ($type == \block_exastud\DATA_ID_LERN_UND_SOZIALVERHALTEN) {
 	$row = array();
 	$row[] = $OUTPUT->user_picture($user,array("courseid"=>$courseid));
 	$row[] = fullname($user);
-	$row[] = block_exastud\get_custom_profile_field_value($student->id, 'dateofbirth');
+	$row[] = block_exastud_get_date_of_birth($student->id);
 
 	foreach($reviewcategories as $category) {
 		$row[] = @$userReport->category_averages[$category->source.'-'.$category->id];

@@ -149,7 +149,7 @@ if ($type == 'students') {
 		$table->data[] = [
 			$classstudent->lastname,
 			$classstudent->firstname,
-			block_exastud\get_custom_profile_field_value($classstudent->id, 'dateofbirth'),
+			block_exastud_get_date_of_birth($classstudent->id),
 			$print_grades,
 			$bildungsstandard,
 			$ausgeschieden,

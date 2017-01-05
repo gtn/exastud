@@ -101,7 +101,7 @@ if ($action == 'save-subjects') {
 			'id' => PARAM_INT,
 			'title' => PARAM_TEXT,
 			'shorttitle' => PARAM_TEXT,
-			'always_print' => PARAM_BOOL,
+			// 'always_print' => PARAM_BOOL,
 		))
 	);
 
@@ -279,13 +279,13 @@ if ($action == 'subjects') {
 		<div class="header">
 			<div for-field="title"><?php echo \block_exastud\trans(['de:Bezeichnung', 'en:Name']); ?></div>
 			<div for-field="shorttitle"><?php echo \block_exastud\trans(['de:Kurzbezeichnung', 'en:Shortname']); ?></div>
-			<div for-field="always_print"><?php echo \block_exastud\trans(['de:Immer im LEB drucken', 'en:Always print']); ?></div>
+			<!-- div for-field="always_print"><?php echo \block_exastud\trans(['de:Immer im LEB drucken', 'en:Always print']); ?></div -->
 		</div>
 		<ul exa="items">
 			<li>
 				<input type="text" name="title"/>
 				<input type="text" name="shorttitle"/>
-				<input type="checkbox" name="always_print" value="1"/>
+				<!-- input type="checkbox" name="always_print" value="1"/ -->
 				<button exa="delete-button"><?php echo get_string('delete'); ?></button>
 			</li>
 		</ul>
@@ -293,7 +293,7 @@ if ($action == 'subjects') {
 		<div exa="new-item">
 			<input type="text" name="title"/>
 			<input type="text" name="shorttitle"/>
-			<input type="checkbox" name="always_print" value="1"/>
+			<!-- input type="checkbox" name="always_print" value="1"/ -->
 			<input type="button" exa="new-button" value="<?php echo get_string('add'); ?>">
 		</div>
 		<?php } ?>

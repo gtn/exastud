@@ -61,6 +61,10 @@ class block_exastud_renderer extends plugin_renderer_base {
 				$tabs['settings']->subtree[] = new tabobject('pictureupload', new moodle_url('/blocks/exastud/pictureupload.php', ['courseid' => g::$COURSE->id]), \block_exastud\get_string("pictureupload", "block_exastud"), '', true);
 			}
 
+			if (block_exastud_has_global_cap(block_exastud\CAP_ADMIN)) {
+				$tabs['settings']->subtree[] = new tabobject('backup', new moodle_url('/blocks/exastud/backup.php', ['courseid' => g::$COURSE->id]), \block_exastud\get_string("backup"), '', true);
+			}
+
 			// syntax muss hier so sein: javascript:void ...!
 			// moodle can't use json_encode in tabobjects
 			// moodle can't use onclick in tabobjects
@@ -163,9 +167,9 @@ class block_exastud_renderer extends plugin_renderer_base {
 
 			if ($current_parent !== $category->parent) {
 				$current_parent = $category->parent;
-				$output .= '<tr><th class="category category-parent">'.($category->parent ? $category->parent.':' : '').'</th>';
+				$output .= '<tr><th class="category category-parent" width="25%">'.($category->parent ? $category->parent.':' : '').'</th>';
 				foreach ($category->evaluationOtions as $option) {
-					$output .= '<th class="evaluation-header"><b>'.$option->title.'</th>';
+					$output .= '<th class="evaluation-header" width="'.round((100-25) / count($category->evaluationOtions)).'%"><b>'.$option->title.'</th>';
 				}
 				$output .= '</tr>';
 			}

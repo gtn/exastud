@@ -97,7 +97,7 @@ if (!$users) {
 	$table = new html_table();
 
 	$table->head = [
-		'<input type="checkbox" name="selectallornone" title="'.\block_exastud\get_string('selectallornone', 'form').'" />',
+		'<input type="checkbox" name="checkallornone" title="'.\block_exastud\get_string('selectallornone', 'form').'" />',
 		\block_exastud\get_string('lastname'),
 		\block_exastud\get_string('firstname'),
 	];

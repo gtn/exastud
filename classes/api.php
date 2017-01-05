@@ -21,7 +21,7 @@ namespace block_exastud;
 
 defined('MOODLE_INTERNAL') || die();
 
-require_once __DIR__.'/../lib/lib.php';
+require_once __DIR__.'/../inc.php';
 
 use block_exastud\globals as g;
 

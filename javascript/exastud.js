@@ -27,23 +27,18 @@ $.extend(window.block_exastud, {});
 		return !!$('body#page-blocks-exastud-' + page).length;
 	}
 
-	if (is_page('configuration_classmembers')) {
-		$(document).on('click', '#block_exastud :checkbox[name=selectallornone]', function () {
-			var checkboxes = $(this).closest('table').find('tbody :checkbox');
-			checkboxes.prop('checked', checkboxes.is(':not(:checked)'));
-
-			// disable check/uncheck on selectallornone
-			return false;
-		});
-	}
-
-}();
-
-/*
-	$(document).on('click', '.rg2 .selectallornone', function(){
-		$(this).trigger('rg2.open');
-
-		var $children = get_children(this);
-		$children.find(':checkbox').prop('checked', $children.find(':checkbox:not(:checked)').length > 0);
+	$(document).on('click', '.exa_table :checkbox[name=checkallornone]', function () {
+		var checkboxes = $(this).closest('table').find(':checkbox:not([name=checkallornone])');
+		checkboxes.prop('checked', $(this).prop('checked'));
 	});
-*/
+	$(document).on('click', '.exa_table :checkbox:not([name=checkallornone])', function () {
+		var checkboxes = $(this).closest('table').find(':checkbox:not([name=checkallornone])');
+
+		$(this).closest('table').find(':checkbox[name=checkallornone]').prop('checked', checkboxes.filter(':not(:checked)').length == 0);
+	});
+	$(function(){
+		// check all on load
+		// trigger click twice = check+uncheck
+		$('.exa_table :checkbox[name=checkallornone]').closest('table').find(':checkbox:not([name=checkallornone]):first').click().click();
+	});
+}();

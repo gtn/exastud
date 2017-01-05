@@ -35,10 +35,8 @@ $output = block_exastud\get_renderer();
 $url = '/blocks/exastud/report.php';
 $PAGE->set_url($url);
 
-
 if ($classid = optional_param('classid', 0, PARAM_INT)) {
 	$class = block_exastud\get_teacher_class($classid);
-	$categories = ($periodid == 0 || $periodid == block_exastud_check_active_period()->id) ? block_exastud_get_class_categories($class->id) : block_exastud_get_period_categories($periodid);
 
 	if (!$classstudents = block_exastud\get_class_students($class->id)) {
 		echo $output->header('report');
@@ -48,82 +46,132 @@ if ($classid = optional_param('classid', 0, PARAM_INT)) {
 		exit;
 	}
 
+	if ($template = optional_param('template', '', PARAM_TEXT)) {
+		$studentids = \block_exastud\param::optional_array('studentids', PARAM_INT);
+
+		$printStudents = [];
+		foreach ($studentids as $studentid) {
+			if (isset($classstudents[$studentid])) {
+				$printStudents[] = $classstudents[$studentid];
+			}
+		}
+
+		if ($printStudents && $template == 'html_report') {
+			echo $output->header('report');
+
+			foreach ($printStudents as $student) {
+				$textReviews = \block_exastud\get_text_reviews($class, $student->id);
+				$categories = \block_exastud\get_class_categories_for_report($student->id, $class->id);
+
+				$studentdesc = $OUTPUT->user_picture($student, array("courseid" => $courseid)).' '.fullname($student);
+				echo $output->heading($studentdesc);
+
+				echo $output->print_student_report($categories, $textReviews);
+
+				echo '<hr>';
+			}
+
+			echo $output->back_button(new moodle_url('report.php', ['courseid' => $courseid, 'classid' => $classid]));
+			echo $output->footer();
+			exit;
+		}
+
+		if (!$printStudents) {
+			// do nothing
+		} elseif (count($printStudents) == 1) {
+			// print one student
+			$student = reset($printStudents);
+			$file = \block_exastud\printer::report_to_temp_file($class, $student, $template);
+
+			if ($content = ob_get_clean()) {
+				throw new \Exception('there was some other output: '.$content);
+			}
+
+			require_once $CFG->dirroot.'/lib/filelib.php';
+			send_temp_file($file->temp_file, $file->filename);
+
+			exit;
+		} else {
+			$zipfilename = tempnam($CFG->tempdir, "zip");
+			$zip = new \ZipArchive();
+			$zip->open($zipfilename, \ZipArchive::OVERWRITE);
+
+			$temp_files = [];
+
+			foreach ($printStudents as $student) {
+				$file = \block_exastud\printer::report_to_temp_file($class, $student, $template);
+				$zip->addFile($file->temp_file, $file->filename);
+				$temp_files[] = $file->temp_file;
+			}
+
+			$zip->close();
+
+			// bug in zip?!? first close the zip and then we can delete the temp files
+			foreach ($temp_files as $temp_file) {
+				unlink($temp_file);
+			}
+
+			$certificate_issue_date = trim(get_config('exastud', 'certificate_issue_date'));
+			$filename = ($certificate_issue_date ?: date('Y-m-d'))."-Lernentwicklungsbericht-{$class->title}.zip";
+
+			require_once $CFG->dirroot.'/lib/filelib.php';
+			send_temp_file($zipfilename, $filename);
+			exit;
+		}
+	}
+
 	/* Print the Students */
 	$table = new html_table();
 
 	$table->head = array();
-	$table->head[] = '#'; //userpic
-	$table->head[] = ''; //userpic
+	$table->head[] = '<input type="checkbox" name="checkallornone"/>';
+	$table->head[] = '';
+	$table->head[] = '';
 	$table->head[] = \block_exastud\get_string('name');
-	$table->head[] = ''; //action
-	foreach ($categories as $category) {
-		$table->head[] = $category->title;
-	}
+
+	$table->size = ['5%', '5%', '5%'];
 
 	$table->align = array();
 	$table->align[] = 'center';
 	$table->align[] = 'center';
-	$table->align[] = 'left';
 	$table->align[] = 'center';
-	for ($i = 0; $i < count($categories); $i++) {
-		$table->align[] = 'center';
-	}
+	$table->align[] = 'left';
 
 	$i = 1;
 	foreach ($classstudents as $classstudent) {
-		$userReport = block_exastud_get_report($classstudent->id, $class->periodid);
-
-		// $link = '<a href="' . $CFG->wwwroot . '/blocks/exastud/report_student.php?courseid=' . $courseid . '&amp;studentid=' . $classstudent->id . '&periodid='.$periodid.'&classid='.$class->id.'">';
-		// $icons = $link.'<img src="' . $CFG->wwwroot . '/blocks/exastud/pix/print.png" width="16" height="16" alt="' . \block_exastud\get_string('printversion', 'block_exastud'). '" /></a>';
-
-		if (!empty($CFG->block_exastud_detailed_review)) {
-			$link = '<a href="'.$CFG->wwwroot.'/blocks/exastud/report_student.php?courseid='.$courseid.'&amp;studentid='.$classstudent->id.'&periodid='.$periodid.'&classid='.$class->id.'">';
-			$icons .= $link.'<img src="'.$CFG->wwwroot.'/blocks/exastud/pix/print_detail.png" width="16" height="16" alt="'.\block_exastud\get_string('printversion', 'block_exastud').'" /></a>';
-		}
-		//$link = '<a href="' . $CFG->wwwroot . '/blocks/exastud/printstudent.php?courseid=' . $courseid . '&amp;studentid=' . $classstudent->id . '&amp;sesskey=' . sesskey() . '&periodid='.$periodid.'&pdf=true">';
-		//$icons .= $link.'<img src="' . $CFG->wwwroot . '/blocks/exastud/pix/pdf.png" width="23" height="16" alt="' . \block_exastud\get_string('printversion', 'block_exastud'). '" /></a>';
-
 		$studentdesc = fullname($classstudent);
-		//$studentdesc = print_user_picture($classstudent->id, $courseid, $classstudent->picture, 0, true, false) . ' ' . $link.fullname($classstudent, $classstudent->id).'</a>';
-
-		//$table->data[] = array($studentdesc, $userReport->team, $userReport->resp, $userReport->inde, $icons);
 
 		$data = array();
+		$data[] = '<input type="checkbox" name="studentids[]" value="'.$classstudent->id.'"/>';
 		$data[] = $i++;
 		$data[] = $OUTPUT->user_picture($classstudent, array("courseid" => $courseid));
 		$data[] = $studentdesc;
-
-		$data[] = $output->link_button($CFG->wwwroot.'/blocks/exastud/report_student.php?courseid='.$courseid.'&classid='.$classid.'&studentid='.$classstudent->id,
-				\block_exastud\trans('de:Alle Bewertungen zeigen')).
-			$output->link_button($CFG->wwwroot.'/blocks/exastud/report_student.php?courseid='.$courseid.'&classid='.$classid.'&studentid='.$classstudent->id.'&output=docx',
-				\block_exastud\trans('de:Lernentwicklungsbericht'));
-
-		foreach ($categories as $category) {
-			$data[] = @$userReport->category_averages[$category->source.'-'.$category->id];
-		}
 
 		$table->data[] = $data;
 	}
 
 	echo $output->header('report');
 
+	echo '<form method="post">';
+
 	echo $output->table($table);
 
-	if (block_exastud_is_new_version()) {
-		echo $output->link_button($CFG->wwwroot.'/blocks/exastud/report_student.php?courseid='.$courseid.'&classid='.$classid.'&all_students=1',
-			\block_exastud\trans('de:Alle Lernentwicklungsberichte als Zip-Datei exportieren'));
-	} else {
-		echo '<a href="'.$CFG->wwwroot.'/blocks/exastud/printclass.php?courseid='.$courseid.'&amp;classid='.$class->id.'&periodid='.$periodid.'"><img src="'.$CFG->wwwroot.'/blocks/exastud/pix/print.png" width="16" height="16" alt="'.\block_exastud\get_string('printall', 'block_exastud').'" /></a>';
-		echo '<a href="'.$CFG->wwwroot.'/blocks/exastud/printclass.php?courseid='.$courseid.'&amp;classid='.$class->id.'&periodid='.$periodid.'&detailedreport=true"><img src="'.$CFG->wwwroot.'/blocks/exastud/pix/print_detail.png" width="16" height="16" alt="'.\block_exastud\get_string('printall', 'block_exastud').'" /></a>';
+	$bp = $DB->get_record('block_exastudbp', ['id' => $class->bpid]);
 
-		echo '<form name="periodselect" action="'.$CFG->wwwroot.$url.'?courseid='.$courseid.'" method="POST">
-		<select name="periodid" onchange="this.form.submit();">';
-		foreach ($DB->get_records('block_exastudperiod', null, 'endtime desc') as $period) {
-			$select = ($period->id == $periodid) ? " selected " : "";
-			echo '<option value="'.$period->id.'"'.$select.'>'.$period->description.'</option>';
-		}
-		echo '</select></form>';
+	echo '<select name="template">';
+	echo '<option value="">--- Vorlage wählen ---</option>';
+	echo '<option value="html_report">Ausgabe am Bildschirm</option>';
+	echo '<option value="Deckblatt und 1. Innenseite LEB">Deckblatt und 1. Innenseite LEB</option>';
+
+	if ($bp->sourceinfo !== 'bw-bp2016') {
+		echo '<option value="Lernentwicklungsbericht alter BP 1.HJ">Lernentwicklungsbericht alter BP 1.HJ</option>';
 	}
+	if ($bp->sourceinfo !== 'bw-bp2004') {
+		echo '<option value="Lernentwicklungsbericht neuer BP 1.HJ">Lernentwicklungsbericht neuer BP 1.HJ</option>';
+	}
+	echo '<option value="Anlage zum Lernentwicklungsbericht">Anlage zum Lernentwicklungsbericht</option>';
+	echo '</select>';
+	echo '<input type="submit" value="'.\block_exastud\trans(['de:Weiter', 'en:Next']).'"/>';
 
 	echo $output->footer();
 } else {

@@ -19,7 +19,7 @@
 
 defined('MOODLE_INTERNAL') || die;
 
-require_once __DIR__.'/lib/lib.php';
+require_once __DIR__.'/inc.php';
 
 if ($ADMIN->fulltree) {
 	if (!block_exastud_is_new_version()) {
