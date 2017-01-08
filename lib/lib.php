@@ -577,41 +577,49 @@ namespace block_exastud {
 		$defaultBps = (array)get_plugin_config('default_bps');
 
 		if (!$bps || $dorecheck || get_plugin_config('always_check_default_values')) {
+			$sorting = 1;
 			foreach ($defaultBps as $defaultBp) {
 				$defaultBp = (object)$defaultBp;
 
 				if ($dbBp = find_object_in_array_by_property($bps, 'sourceinfo', $defaultBp->sourceinfo)) {
-					// nothing todo
+					g::$DB->update_record('block_exastudbp', [
+						'id' => $dbBp->id,
+						'sorting' => $sorting,
+					]);
+					unset($bps[$dbBp->id]);
 				} elseif ($dbBp = find_object_in_array_by_property($bps, 'title', $defaultBp->title)) {
 					g::$DB->update_record('block_exastudbp', [
 						'id' => $dbBp->id,
 						'sourceinfo' => $defaultBp->sourceinfo,
 						'sorting' => $sorting,
 					]);
+					unset($bps[$dbBp->id]);
 				} else {
 					$dbBp = $defaultBp;
+					$dbBp->sorting;
 					$dbBp->id = g::$DB->insert_record('block_exastudbp', $dbBp);
 				}
+				$sorting++;
 
 				$subjects = g::$DB->get_records('block_exastudsubjects', ['bpid' => $dbBp->id], 'sorting', 'id, title, sourceinfo');
-				$sorting = 1;
+				$subjectSorting = 1;
 
 				foreach ($defaultBp->subjects as $subject) {
 					$subject = (object)$subject;
-					$subject->sorting = $sorting;
-					$sorting++;
+					$subject->sorting = $subjectSorting;
+					$subjectSorting++;
 
 					if ($dbSubject = find_object_in_array_by_property($subjects, 'sourceinfo', $subject->sourceinfo)) {
 						g::$DB->update_record('block_exastudsubjects', [
 							'id' => $dbItem->id,
-							'sorting' => $sorting,
+							'sorting' => $subjectSorting,
 						]);
 						unset($subjects[$dbSubject->id]);
 					} elseif ($dbSubject = find_object_in_array_by_property($subjects, 'title', $subject->title)) {
 						g::$DB->update_record('block_exastudsubjects', [
 							'id' => $dbSubject->id,
 							'sourceinfo' => $subject->sourceinfo,
-							'sorting' => $sorting,
+							'sorting' => $subjectSorting,
 						]);
 						unset($subjects[$dbSubject->id]);
 					} else {
@@ -621,9 +629,14 @@ namespace block_exastud {
 				}
 
 				foreach ($subjects as $id => $title) {
-					g::$DB->update_record('block_exastudsubjects', ['id' => $id, 'sorting' => $sorting]);
-					$sorting++;
+					g::$DB->update_record('block_exastudsubjects', ['id' => $id, 'sorting' => $subjectSorting]);
+					$subjectSorting++;
 				}
+			}
+
+			foreach ($bps as $id => $tmp) {
+				g::$DB->update_record('block_exastudbp', ['id' => $id, 'sorting' => $sorting]);
+				$sorting++;
 			}
 		}
 	}

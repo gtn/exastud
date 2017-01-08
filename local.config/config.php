@@ -6,40 +6,6 @@ return [
 	'always_check_default_values' => false,
 
 	'default_bps' => [
-		'bp2004' => [
-			'sourceinfo' => 'bw-bp2004',
-			'title' => 'Bp 2004',
-			'subjects' =>
-				block_exastud_str_to_csv('
-sourceinfo;title;shorttitle;always_print
-bw-bp2004-rale;Alevitische Religionslehre;RALE;0
-bw-bp2004-rak;Altkatholische Religionslehre;RAK;0
-bw-bp2004-eth;Ethik;ETH;0
-bw-bp2004-rev;Evangelische Religionslehre;REV;0
-bw-bp2004-risl;Islamische Religionslehre sunnitischer Prägung;RISL;0
-bw-bp2004-rjued;Jüdische Religionslehre;RJUED;0
-bw-bp2004-rrk;Katholische Religionslehre;RRK;0
-bw-bp2004-ror;Orthodoxe Religionslehre;ROR;0
-bw-bp2004-rsyr;Syrisch-Orthodoxe Religionslehre;RSYR;0
-bw-bp2004-d;Deutsch;D;1
-bw-bp2004-m;Mathematik;M;1
-bw-bp2004-e;Englisch;E;1
-bw-bp2004-ewg;Erdkunde, Wirtschaftskunde, Gemeinschaftskunde;EWG;1
-bw-bp2004-nwa;Naturwissenschaftliches Arbeiten;NWA;1
-bw-bp2004-g;Geschichte;G;1
-bw-bp2004-bk;Bildende Kunst;BK;1
-bw-bp2004-mu;Musik;Mu;1
-bw-bp2004-sp;Sport;Sp;1
-bw-bp2004-wpf-f;Wahlpflichtfach Französisch;WPF F;0
-bw-bp2004-wpf-mum;Wahlpflichtfach Mensch und Umwelt;WPF MuM;0
-bw-bp2004-wpf-te;Wahlpflichtfach Technik;WPF Te;0
-bw-bp2004-profil-bk;Profilfach Bildende Kunst;Profil BK;0
-bw-bp2004-profil-mum;Profilfach Musik;Profil MuM;0
-bw-bp2004-profil-nut;Profilfach Naturwissenschaft und Technik;Profil Nut;0
-bw-bp2004-profil-s;Profilfach Spanisch;Profil S;0
-bw-bp2004-profil-sp;Profilfach Sport;Profil Sp;0
-				', ";", true),
-		],
 		'bp2016' => [
 			'sourceinfo' => 'bw-bp2016',
 			'title' => 'Bp 2016',
@@ -77,6 +43,40 @@ bw-bp2016-profil-f;Profilfach Fanzösisch;Profil F;0
 bw-bp2016-profil-mu;Profilfach Musik;Profil Mu;0
 bw-bp2016-profil-nwt;Profilfach Naturwissenschaft und Technik;Profil NwT;0
 bw-bp2016-profil-sp;Profilfach Sport;Profil Sp;0
+				', ";", true),
+		],
+		'bp2004' => [
+			'sourceinfo' => 'bw-bp2004',
+			'title' => 'Bp 2004',
+			'subjects' =>
+				block_exastud_str_to_csv('
+sourceinfo;title;shorttitle;always_print
+bw-bp2004-rale;Alevitische Religionslehre;RALE;0
+bw-bp2004-rak;Altkatholische Religionslehre;RAK;0
+bw-bp2004-eth;Ethik;ETH;0
+bw-bp2004-rev;Evangelische Religionslehre;REV;0
+bw-bp2004-risl;Islamische Religionslehre sunnitischer Prägung;RISL;0
+bw-bp2004-rjued;Jüdische Religionslehre;RJUED;0
+bw-bp2004-rrk;Katholische Religionslehre;RRK;0
+bw-bp2004-ror;Orthodoxe Religionslehre;ROR;0
+bw-bp2004-rsyr;Syrisch-Orthodoxe Religionslehre;RSYR;0
+bw-bp2004-d;Deutsch;D;1
+bw-bp2004-m;Mathematik;M;1
+bw-bp2004-e;Englisch;E;1
+bw-bp2004-ewg;Erdkunde, Wirtschaftskunde, Gemeinschaftskunde;EWG;1
+bw-bp2004-nwa;Naturwissenschaftliches Arbeiten;NWA;1
+bw-bp2004-g;Geschichte;G;1
+bw-bp2004-bk;Bildende Kunst;BK;1
+bw-bp2004-mu;Musik;Mu;1
+bw-bp2004-sp;Sport;Sp;1
+bw-bp2004-wpf-f;Wahlpflichtfach Französisch;WPF F;0
+bw-bp2004-wpf-mum;Wahlpflichtfach Mensch und Umwelt;WPF MuM;0
+bw-bp2004-wpf-te;Wahlpflichtfach Technik;WPF Te;0
+bw-bp2004-profil-bk;Profilfach Bildende Kunst;Profil BK;0
+bw-bp2004-profil-mum;Profilfach Musik;Profil MuM;0
+bw-bp2004-profil-nut;Profilfach Naturwissenschaft und Technik;Profil Nut;0
+bw-bp2004-profil-s;Profilfach Spanisch;Profil S;0
+bw-bp2004-profil-sp;Profilfach Sport;Profil Sp;0
 				', ";", true),
 		],
 	],
