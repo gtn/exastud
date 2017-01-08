@@ -129,6 +129,19 @@ class block_exastud_renderer extends plugin_renderer_base {
 		$content = '';
 		$content .= parent::header();
 		$content .= '<div id="block_exastud">';
+
+		/*
+		if ($tabtree->subtree['configuration_classes']->selected) {
+		}
+		if (@$tabtree->subtree[$items[0]['id']]->selected && !empty($options['betweenTabRowsCallback'])) {
+			$subtree = $tabtree->subtree['configuration_classes']->subtree;
+			unset($tabtree->subtree['configuration_classes']->subtree);
+
+			$content .= $this->render($tabtree);
+			$content .= $options['betweenTabRowsCallback']();
+			$content .= $this->render(new tabtree($subtree));
+		} else {
+		*/
 		$content .= $this->render($tabtree);
 
 		return $content;

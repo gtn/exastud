@@ -25,7 +25,7 @@ defined('MOODLE_INTERNAL') || die();
 		<input type="hidden" name="sesskey" value="<?php p(sesskey()) ?>"/>
 		<table class="roleassigntable generaltable generalbox boxaligncenter" cellspacing="0">
 			<tr>
-				<td valign="top">
+				<td valign="top" width="40%">
 					<p><label for="removeselect"><?php print_string($userlistType, 'block_exastud'); ?></label></p>
 					<div class="userselector">
 						<select name="removeselect[]" size="20" id="removeselect" multiple="multiple"
@@ -39,7 +39,8 @@ defined('MOODLE_INTERNAL') || die();
 
 								$fullname = fullname($classstudent);
 								$hidden = "";
-								echo "<option value=\"$classstudent->record_id\">".(!empty($classstudent->subject_title) ? $classstudent->subject_title.' ('.$fullname.", ".$classstudent->email.')' : $fullname.", ".$classstudent->email)."</option>\n";
+								$title = (!empty($classstudent->subject_title) ? $fullname." => ".$classstudent->subject_title : $fullname.", ".$classstudent->email);
+								echo "<option value=\"$classstudent->record_id\" title=\"$title\">".$title."</option>\n";
 								$i++;
 							}
 							if ($i == 0) {
@@ -49,28 +50,31 @@ defined('MOODLE_INTERNAL') || die();
 						</select>
 					</div>
 				</td>
-				<td id="buttonscell">
+				<td id="buttonscell" width="20%">
 					<div id="addcontrols">
 						<div class="enroloptions">
 							<?php
 							if ($userlistType == 'teachers') {
 								$subjects = $DB->get_records('block_exastudsubjects', ['bpid' => $class->bpid], 'sorting');
 								echo '<p><label for="classteacher_subjectid">'.\block_exastud\trans('de:Fachbezeichnung / Rolle').'</label><br>';
-								echo '<select id="classteacher_subjectid" name="classteacher_subjectid">';
+								echo '<select id="classteacher_subjectid" name="classteacher_subjectid" style="max-width: 250px">';
 								// no empty option
 								// echo '<option></option>';
 
-								$subjects = array_merge($subjects, [
-									(object)['id' => block_exastud\SUBJECT_ID_ADDITIONAL_CLASS_TEACHER, 'title' => '-----------------'],
+								$subjects = array_merge([
 									(object)['id' => block_exastud\SUBJECT_ID_ADDITIONAL_CLASS_TEACHER, 'title' => \block_exastud\get_string('head_teacher')],
-								]);
+									(object)['id' => '', 'title' => '', 'disabled'=>1],
+								], $subjects);
 
 								foreach ($subjects as $subject) {
 									echo '<option value="'.$subject->id.'"';
-									if ($subject->id == optional_param('classteacher_subjectid', 0, PARAM_INT)) {
+									if (!empty($subject->disabled)) {
+										echo ' disabled="disabled"';
+									}
+									if ($subject->id == optional_param('classteacher_subjectid', 0, PARAM_INT) && empty($subject->disabled)) {
 										echo ' selected="selected"';
 									}
-									echo '>'.s($subject->title).'</option>';
+									echo 'title="'.s($subject->title).'">'.s($subject->title).'</option>';
 								}
 								echo '</select>';
 								echo '</p>';
@@ -84,7 +88,7 @@ defined('MOODLE_INTERNAL') || die();
 							   title="<?php print_string('remove'); ?>"/>
 					</div>
 				</td>
-				<td valign="top">
+				<td valign="top" width="40%">
 					<p><label for="addselect"><?php print_string('availableusers', 'block_exastud'); ?></label></p>
 					<div class="userselector" id="addselect_wrapper">
 						<select name="addselect[]" size="20" id="addselect" multiple="multiple"
@@ -121,7 +125,7 @@ defined('MOODLE_INTERNAL') || die();
 						</select>
 					</div>
 					<label for="searchtext" class="accesshide"><?php p($strsearch) ?></label>
-					<input type="text" name="searchtext" id="searchtext" size="30" value="<?php p($searchtext, true) ?>"
+					<input type="text" name="searchtext" id="searchtext2" value="<?php p($searchtext, true) ?>"
 						   onfocus="getElementById('assignform').add.disabled=true;
 								  getElementById('assignform').remove.disabled=true;
 								  getElementById('assignform').removeselect.selectedIndex=-1;
