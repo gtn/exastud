@@ -48,7 +48,7 @@ if ($action == 'backup') {
 	}, $tables);
 
 
-	if ($CFG->dbtype == 'mysqli') {
+	if ($CFG->dbtype == 'mysqli' || $CFG->dbtype == 'mariadb') {
 		$dbtype = 'mysql';
 	} else {
 		$dbtype = $CFG->dbtype;
@@ -61,6 +61,7 @@ if ($action == 'backup') {
 	$file = tempnam($CFG->tempdir, "zip");
 	$dump->start($file);
 
+	require_once($CFG->libdir.'/filelib.php');
 	send_temp_file($file, 'backup_exastud_'.date('Y-m-d').'.gz');
 
 	exit;
