@@ -154,8 +154,6 @@ if ($classid = optional_param('classid', 0, PARAM_INT)) {
 
 	echo '<form method="post">';
 
-	echo $output->table($table);
-
 	$bp = $DB->get_record('block_exastudbp', ['id' => $class->bpid]);
 
 	echo '<select name="template">';
@@ -171,6 +169,9 @@ if ($classid = optional_param('classid', 0, PARAM_INT)) {
 	}
 	echo '<option value="Anlage zum Lernentwicklungsbericht">Anlage zum Lernentwicklungsbericht</option>';
 	echo '</select>';
+
+	echo $output->table($table);
+
 	echo '<input type="submit" value="'.\block_exastud\trans(['de:Weiter', 'en:Next']).'"/>';
 
 	echo $output->footer();
