@@ -85,7 +85,7 @@ if ($searchtext !== '') {   // Search for a subset of remaining users
 	$selectsql = ""; 
 }
 
-$availableusers = $DB->get_records_sql('SELECT id, firstname, lastname, email
+$availableusers = $DB->get_records_sql('SELECT id, firstname, lastname, email, '.get_all_user_name_fields(true).'
 									FROM {user}
 									WHERE '.$select.'
 									-- disabled, allow teacher to be assign more than once (eg. 2 different subjects)
