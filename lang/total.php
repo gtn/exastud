@@ -114,6 +114,10 @@ return [
 		'Projektbeurteiler',
 		'Project-Teachers',
 	],
+	'class_info' => [
+		'Klasse bearbeiten',
+		'Edit Class',
+	],
 	'students' => [
 		'Schülerinnen und Schüler',
 		'Members',
@@ -395,8 +399,8 @@ return [
 		'10 - very good',
 	],
 	'explainclassname' => [
-		'Hier können Sie den Klassennamen editieren',
-		'Click here to edit the class name',
+		'Hier können Sie den Klassennamen editieren und löschen',
+		'Here to edit the class name',
 	],
 	'project_based_explainclassname' => [
 		'Hier können Sie den Projektnamen editieren',

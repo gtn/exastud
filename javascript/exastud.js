@@ -41,4 +41,10 @@ $.extend(window.block_exastud, {});
 		// trigger click twice = check+uncheck
 		$('.exa_table :checkbox[name=checkallornone]').closest('table').find(':checkbox:not([name=checkallornone]):first').click().click();
 	});
+
+	$(function(){
+		var $item = $('.full-width').closest('.fitem');
+		$item.find('.fitemtitle').hide();
+		$item.find('.felement').css('margin-left', 0);
+	});
 }();

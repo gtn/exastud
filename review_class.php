@@ -117,7 +117,14 @@ foreach($classstudents as $classstudent) {
 
 	$icons = '<img src="' . $CFG->wwwroot . '/pix/i/edit.gif" width="16" height="16" alt="' . \block_exastud\get_string('edit'). '" />';
 
+	/*
+	$report = $DB->get_records('block_exastudreview', array('subjectid'=>$subjectid, 'periodid'=>$actPeriod->id, 'studentid'=>$classstudent->id), 'timemodified DESC');
+	$report = reset($report);
+	*/
 	$report = $DB->get_record('block_exastudreview', array('teacherid'=>$teacherid, 'subjectid'=>$subjectid, 'periodid'=>$actPeriod->id, 'studentid'=>$classstudent->id));
+
+	$textReviewdata = block_exastud_get_review($classid, $subjectid, $classstudent->id);
+
 	$row = new html_table_row();
 	$row->cells[] = $output->user_picture($classstudent,array("courseid"=>$courseid));
 	$row->cells[] = fullname($classstudent);
@@ -151,20 +158,24 @@ foreach($classstudents as $classstudent) {
 	}
 
 	$row->attributes['class'] = 'oddeven'.(int)$oddeven;
-	$oddeven = !$oddeven;
 	$table->data[] = $row;
 
-	if ($visible && $report) {
+	if ($visible) {
 		$cell = new html_table_cell();
-		$cell->text = block_exastud_text_to_html($report->review);
+		$cell->text = ($textReviewdata ? block_exastud_text_to_html($textReviewdata->review) : '') ?: '---';
 		$cell->colspan = count($categories);
 		$cell->style = 'text-align: left;';
+
+		$spacerCell = new html_table_cell();
+		$spacerCell->colspan = 4;
 		$row = new html_table_row(array(
-			'', '', '', '', $cell
+			$spacerCell, $cell
 		));
 		$row->attributes['class'] = 'oddeven'.(int)$oddeven;
 		$table->data[] = $row;
 	}
+
+	$oddeven = !$oddeven;
 }
 
 echo $output->table($table);

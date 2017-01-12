@@ -116,6 +116,9 @@ class student_edit_form extends moodleform {
 
 		$mform->addElement('header', 'categories', \block_exastud\trans("de:Fachübergreifende Kompetenzen"));
 		$mform->setExpanded('categories');
+		if ($this->_customdata['categories.modified']) {
+			$mform->addElement('static', '', '', $this->_customdata['categories.modified']);
+		}
 
 		$categories = $this->_customdata['categories'];
 		foreach ($categories as $category) {
@@ -133,11 +136,18 @@ class student_edit_form extends moodleform {
 
 		$mform->addElement('header', 'review_header', \block_exastud\trans("de:Fachkompetenzen"));
 		$mform->setExpanded('review_header');
+		if ($this->_customdata['review.modified']) {
+			$mform->addElement('static', '', '', $this->_customdata['review.modified']);
+		}
 		$mform->addElement('textarea', 'review', '', array('cols' => 50, 'rows' => 20));
 		$mform->setType('review', PARAM_RAW);
 
 		$mform->addElement('header', 'grade_header', \block_exastud\trans("de:Note und Niveau"));
 		$mform->setExpanded('grade_header');
+
+		if ($this->_customdata['grade.modified']) {
+			$mform->addElement('static', '', '', $this->_customdata['grade.modified']);
+		}
 
 		$mform->addElement('text', 'grade', 'Note');
 		$mform->setType('grade', PARAM_INT);
@@ -158,9 +168,14 @@ class student_other_data_form extends moodleform {
 
 		foreach ($this->_customdata['categories'] as $dataid => $name) {
 			$mform->addElement('header', 'header_'.$dataid, $name);
+			$mform->setExpanded('header_'.$dataid);
+
+			if ($this->_customdata['modified']) {
+				$mform->addElement('static', '', '', $this->_customdata['modified']);
+			}
+
 			$mform->addElement('textarea', $dataid, $name, array('cols' => 50, 'rows' => 10));
 			$mform->setType($dataid, PARAM_RAW);
-			$mform->setExpanded('header_'.$dataid);
 		}
 
 		$this->add_action_buttons(false);

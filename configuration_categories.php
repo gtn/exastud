@@ -40,7 +40,7 @@ $header = \block_exastud\get_string('configcategories', 'block_exastud', $class-
 $url = '/blocks/exastud/configuration_categories.php';
 $PAGE->set_url($url);
 $output = \block_exastud\get_renderer();
-echo $output->header([['id' => 'configuration_classes', 'classid' => $classid], 'categories']);
+echo $output->header(['configuration_classes', 'categories'], ['class' => $class]);
 
 if ($frm = data_submitted()) {
 	if(!confirm_sesskey()) {

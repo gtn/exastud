@@ -74,13 +74,12 @@ if (optional_param('action', '', PARAM_TEXT) == 'add') {
 }
 
 
-$header = \block_exastud\get_string('configmember', 'block_exastud', $class->title);
 $url = new moodle_url('/blocks/exastud/configuration_classmembers.php');
 $PAGE->set_url($url);
 $output = \block_exastud\get_renderer();
-echo $output->header(array('configuration_classes', '='.$header));
+echo $output->header(['configuration_classes', 'students'], ['class' => $class]);
 
-echo '<div>';
+echo '<div>'.get_string('course').': ';
 echo html_writer::select(array_map(function($c) {
 	return $c->fullname;
 }, $courses), "selectedcourseid", $selectedcourseid, false,

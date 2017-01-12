@@ -92,6 +92,6 @@
 		html += '</table>';
 
 		$fieldset.find('.fitem_fselect').remove();
-		$container.prepend(html);
+		$container.append(html);
 	});
 })(block_exastud.jquery);

@@ -204,8 +204,9 @@ namespace block_exastud {
 			SELECT u.id, ct.id AS record_id, ".\user_picture::fields('u', null, 'userid').", ct.subjectid, s.title AS subject_title
 			FROM {user} u
 			JOIN {block_exastudclassteachers} ct ON ct.teacherid=u.id
-			LEFT JOIN {block_exastudsubjects} s ON ct.subjectid = s.id
-			WHERE ct.classid=?
+			JOIN {block_exastudclass} c ON c.id=ct.classid
+			JOIN {block_exastudsubjects} s ON ct.subjectid = s.id AND s.bpid=c.bpid
+			WHERE c.id=?
 			ORDER BY s.sorting, u.lastname, u.firstname, s.id
 		", [$classid]), false);
 
@@ -251,7 +252,7 @@ namespace block_exastud {
 			SELECT ct.id, ct.subjectid, ct.classid, c.title, s.title AS subject_title
 			FROM {block_exastudclassteachers} ct
 			JOIN {block_exastudclass} c ON ct.classid=c.id
-			LEFT JOIN {block_exastudsubjects} s ON ct.subjectid = s.id
+			JOIN {block_exastudsubjects} s ON ct.subjectid = s.id AND s.bpid=c.bpid 
 			WHERE ct.teacherid=? AND c.periodid=? AND ct.subjectid >= 0
 			ORDER BY c.title, s.sorting
 		", array(g::$USER->id, $actPeriod->id));
@@ -299,24 +300,22 @@ namespace block_exastud {
 	}
 
 	function get_text_reviews($class, $studentid) {
-		$textReviews = iterator_to_array(g::$DB->get_recordset_sql("
-			SELECT DISTINCT ".\user_picture::fields('u').", r.review, s.title AS subject_title, r.subjectid AS subjectid
-				, NOT(r.subjectid<0) -- needed for postgres
-			FROM {block_exastudreview} r
-			JOIN {user} u ON r.teacherid = u.id
-			JOIN {block_exastudsubjects} s ON r.subjectid = s.id
-			JOIN {block_exastudclass} c ON c.periodid = r.periodid
-			JOIN {block_exastudclassteachers} ct ON ct.classid=c.id AND ct.teacherid = r.teacherid AND ct.subjectid=r.subjectid
 
-			WHERE r.studentid = ? AND r.periodid = ? AND TRIM(r.review) !=  ''
-			ORDER BY NOT(r.subjectid<0), s.title, u.lastname, u.firstname -- TODO: anpassen",
-			array($studentid, $class->periodid)), false);
+		$textReviews = [];
+		$subjects = block_exastud_get_bildungsplan_subjects($class->bpid);
+		foreach ($subjects as $subject) {
+			$review = block_exastud_get_review($class->id, $subject->id, $studentid);
+			if ($review) {
+				$review->subject_title = $subject->title;
+				$review->subjectid = $subject->id;
+				$textReviews[] = $review;
+			}
+		}
 
 		foreach ($textReviews as $key => $textReview) {
 			if ($textReview->subject_title) {
 				$textReview->title = $textReview->subject_title;
-			} // .' ('.fullname($textReview).')';
-			else {
+			} else {
 				$textReview->title = fullname($textReview);
 			}
 
@@ -601,7 +600,7 @@ namespace block_exastud {
 				}
 				$sorting++;
 
-				$subjects = g::$DB->get_records('block_exastudsubjects', ['bpid' => $dbBp->id], 'sorting', 'id, title, sourceinfo');
+				$subjects = block_exastud_get_bildungsplan_subjects($dbBp->id);
 				$subjectSorting = 1;
 
 				foreach ($defaultBp->subjects as $subject) {
@@ -1312,5 +1311,33 @@ namespace {
 
 		return date('d.m.Y', $timestamp);
 	}
-}
 
+	function block_exastud_get_review($classid, $subjectid, $studentid) {
+		$data = \block_exastud\get_subject_student_data($classid, $subjectid, $studentid);
+
+		if (@$data->review) {
+			return (object)[
+				'review' => $data->review,
+				'modifiedby' => $data->{'review.modifiedby'},
+				'timemodified' => $data->{'review.timemodified'},
+			];
+		}
+
+		// fallback for old style with own table
+		$class = \block_exastud\get_teacher_class($classid);
+
+		$reviewdata = g::$DB->get_records('block_exastudreview', array('subjectid' => $subjectid, 'periodid' => $class->periodid, 'studentid' => $studentid), 'timemodified DESC');
+		$reviewdata = reset($reviewdata);
+		if ($reviewdata) {
+			return (object)[
+				'review' => $reviewdata->review,
+				'modifiedby' => $reviewdata->teacherid,
+				'timemodified' => $reviewdata->timemodified,
+			];
+		}
+	}
+
+	function block_exastud_get_bildungsplan_subjects($bpid) {
+		return g::$DB->get_records('block_exastudsubjects', ['bpid' => $bpid], 'sorting');
+	}
+}

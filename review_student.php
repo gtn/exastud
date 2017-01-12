@@ -102,19 +102,45 @@ if (block_exastud\is_exacomp_installed()) {
 	}
 }
 
+$reviewdata = $DB->get_record('block_exastudreview', array('teacherid' => $teacherid, 'subjectid' => $subjectid, 'periodid' => $actPeriod->id, 'studentid' => $studentid));
 
-if (!$reviewdata = $DB->get_record('block_exastudreview', array('teacherid' => $teacherid, 'subjectid' => $subjectid, 'periodid' => $actPeriod->id, 'studentid' => $studentid))) {
+$textReviewdata = block_exastud_get_review($classid, $subjectid, $studentid);
+if (!$textReviewdata) {
 	$formdata->review = '';
 } else {
+	$formdata->review = $textReviewdata->review;
+}
+
+if ($reviewdata) {
 	foreach ($categories as $category) {
 		$formdata->{$category->id.'_'.$category->source} = $DB->get_field('block_exastudreviewpos', 'value', array("categoryid" => $category->id, "reviewid" => $reviewdata->id, "categorysource" => $category->source));
 	}
-	$formdata->review = $reviewdata->review;
 }
+
+$formdata = (object)array_merge((array)$formdata, (array)\block_exastud\get_subject_student_data($classid, $subjectid, $studentid));
+
 $studentform = new student_edit_form(null, [
 	'categories' => $categories,
 	'subjectid' => $subjectid,
 	'exacomp_grades' => $exacomp_grades,
+	'categories.modified' =>
+		$reviewdata
+			? '<div class="full-width">'.
+			\block_exastud\get_renderer()->last_modified($reviewdata->teacherid, $reviewdata->timemodified).
+			'</div>'
+			: '',
+	'review.modified' =>
+		$textReviewdata
+			? '<div class="full-width">'.
+			\block_exastud\get_renderer()->last_modified($textReviewdata->modifiedby, $textReviewdata->timemodified).
+			'</div>'
+			: '',
+	'grade.modified' =>
+		@$formdata->{'grade.modifiedby'}
+			? '<div class="full-width">'.
+			\block_exastud\get_renderer()->last_modified(@$formdata->{'grade.modifiedby'}, @$formdata->{'grade.timemodified'}).
+			'</div>'
+			: '',
 ]);
 
 if ($fromform = $studentform->get_data()) {
@@ -122,16 +148,12 @@ if ($fromform = $studentform->get_data()) {
 	$newreview->timemodified = time();
 	$newreview->review = $fromform->review;
 
-	if (isset($reviewdata->id)) {
-		$newreview->id = $reviewdata->id;
-		$DB->update_record('block_exastudreview', $newreview);
-	} else {
-		$newreview->studentid = $studentid;
-		$newreview->subjectid = $subjectid;
-		$newreview->periodid = $actPeriod->id;
-		$newreview->teacherid = $teacherid;
-		$newreview->id = $DB->insert_record('block_exastudreview', $newreview);
-	}
+	$newreview = g::$DB->insert_or_update_record('block_exastudreview', $newreview, [
+		'studentid' => $studentid,
+		'subjectid' => $subjectid,
+		'periodid' => $actPeriod->id,
+		'teacherid' => $teacherid,
+	]);
 
 	g::$DB->insert_or_update_record('block_exastudreview', [
 		'timemodified' => time(),
@@ -143,8 +165,15 @@ if ($fromform = $studentform->get_data()) {
 		'teacherid' => $teacherid,
 	]);
 
+	\block_exastud\set_subject_student_data($classid, $subjectid, $studentid, 'review', $fromform->review);
+	\block_exastud\set_subject_student_data($classid, $subjectid, $studentid, 'review.modifiedby', $USER->id);
+	\block_exastud\set_subject_student_data($classid, $subjectid, $studentid, 'review.timemodified', time());
+
 	\block_exastud\set_subject_student_data($classid, $subjectid, $studentid, 'grade', $fromform->grade);
 	\block_exastud\set_subject_student_data($classid, $subjectid, $studentid, 'niveau', $fromform->niveau);
+
+	\block_exastud\set_subject_student_data($classid, $subjectid, $studentid, 'grade.modifiedby', $USER->id);
+	\block_exastud\set_subject_student_data($classid, $subjectid, $studentid, 'grade.timemodified', time());
 
 	foreach ($categories as $category) {
 		if (!isset($fromform->{$category->id.'_'.$category->source})) {
@@ -181,8 +210,6 @@ $formdata->vorschlag = $DB->get_field('block_exastudreview', 'review', [
 	'teacherid' => $teacherid,
 ]);
 
-$formdata = (object)array_merge((array)$formdata, (array)\block_exastud\get_subject_student_data($classid, $subjectid, $studentid));
-
 if (empty($formdata->grade)) {
 	$formdata->grade = '';
 }
@@ -197,7 +224,13 @@ if ($lastPeriodClass && optional_param('action', null, PARAM_TEXT) == 'load_last
 		'teacherid' => $teacherid,
 	]);
 
-	if ($reviewdata = $DB->get_record('block_exastudreview', array('teacherid' => $teacherid, 'subjectid' => $subjectid, 'periodid' => $lastPeriod->id, 'studentid' => $studentid))) {
+	/*
+	$reviewdata = $DB->get_records('block_exastudreview', array('subjectid' => $subjectid, 'periodid' => $lastPeriod->id, 'studentid' => $studentid), 'timemodified DESC');
+	$reviewdata = reset($reviewdata);
+	*/
+	$reviewdata = $DB->get_record('block_exastudreview', array('teacherid' => $teacherid, 'subjectid' => $subjectid, 'periodid' => $lastPeriod->id, 'studentid' => $studentid));
+
+	if ($reviewdata) {
 		foreach ($categories as $category) {
 			$formdata->{$category->id.'_'.$category->source} = $DB->get_field('block_exastudreviewpos', 'value', array("categoryid" => $category->id, "reviewid" => $reviewdata->id, "categorysource" => $category->source));
 		}

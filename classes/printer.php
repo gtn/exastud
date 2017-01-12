@@ -89,16 +89,7 @@ class printer {
 				$dataTextReplacer['yyyy'] = date('Y', $dateofbirth);
 			}
 
-			$availablesubjects = g::$DB->get_records('block_exastudsubjects', ['bpid' => $class->bpid], 'sorting');
-
-			$textReviews = g::$DB->get_records_sql("
-				SELECT DISTINCT s.title AS id, s.shorttitle, r.review, s.title AS title, r.subjectid AS subjectid
-				FROM {block_exastudreview} r
-				JOIN {block_exastudsubjects} s ON r.subjectid = s.id
-				JOIN {block_exastudclass} c ON c.periodid = r.periodid
-				JOIN {block_exastudclassteachers} ct ON ct.classid=c.id AND ct.teacherid = r.teacherid AND ct.subjectid=r.subjectid
-				WHERE r.studentid = ? AND r.periodid = ? AND TRIM(r.review) !=  ''
-			", [$student->id, $class->periodid]);
+			$availablesubjects = block_exastud_get_bildungsplan_subjects($class->bpid);
 
 			// zuerst standardwerte
 			foreach ($availablesubjects as $subject) {
@@ -110,11 +101,10 @@ class printer {
 			$profilfach = '---';
 
 			// danach mit richtigen werten überschreiben
-			foreach ($availablesubjects as $availablesubject) {
-				if (isset($textReviews[$availablesubject->title])) {
-					$textReview = $textReviews[$availablesubject->title];
-					$subject = (object)array_merge((array)$textReview, (array)\block_exastud\get_subject_student_data($class->id, $textReview->subjectid, $student->id));
-				} else {
+			foreach ($availablesubjects as $subject) {
+				$subjectData = \block_exastud\get_subject_student_data($class->id, $subject->id, $student->id);
+
+				if (!@$subjectData->review) {
 					continue;
 				}
 
@@ -125,20 +115,22 @@ class printer {
 					$contentId = 'religion';
 				} elseif (strpos($subject->title, 'Wahlpflichtfach') === 0) {
 					$wahlpflichtfach = preg_replace('!^[^\s]+!', '', $subject->title);
+					$contentId = 'wahlpflichtfach';
 				} elseif (strpos($subject->title, 'Profilfach') === 0) {
 					$profilfach = preg_replace('!^[^\s]+!', '', $subject->title);
+					$contentId = 'profilfach';
 				} else {
 					$contentId = strtolower($subject->title);
 				}
 
-				$data[$contentId] = static::spacerIfEmpty($subject->review);
+				$data[$contentId] = static::spacerIfEmpty($subjectData->review);
 
-				$niveau = !empty($subject->niveau) ? 'Niveau '.$subject->niveau : '';
+				$niveau = !empty($subjectData->niveau) ? 'Niveau '.$subjectData->niveau : '';
 				$filters[] = function($content) use ($contentId, $niveau) {
 					return preg_replace('!({'.$contentId.'}.*>)Bitte die Niveaustufe auswählen(<)!U', '$1'.$niveau.'$2', $content);
 				};
 
-				$grade = (@$studentdata->print_grades ? 'Note '.static::spacerIfEmpty(@$subject->grade) : '');
+				$grade = (@$studentdata->print_grades ? 'Note '.static::spacerIfEmpty(@$subjectData->grade) : '');
 
 				$filters[] = function($content) use ($contentId, $grade) {
 					return preg_replace('!({'.$contentId.'}.*>)ggf. Note(<)!U', '$1'.$grade.'$2', $content);
@@ -450,7 +442,7 @@ class printer {
 
 		$studentdata = get_class_student_data($class->id, $student->id);
 
-		$availablesubjects = g::$DB->get_records('block_exastudsubjects', ['bpid' => $class->bpid], 'sorting');
+		$availablesubjects = block_exastud_get_bildungsplan_subjects($class->bpid);
 
 		$textReviews = g::$DB->get_records_sql("
 		SELECT DISTINCT s.title AS id, r.review, s.title AS title, r.subjectid AS subjectid

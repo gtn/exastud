@@ -40,7 +40,7 @@ $class = block_exastud\get_teacher_class($classid);
 $url = '/blocks/exastud/configuration_classteachers.php';
 $PAGE->set_url($url);
 $output = \block_exastud\get_renderer();
-echo $output->header([['id' => 'configuration_classes', 'classid' => $classid], 'teachers']);
+echo $output->header(['configuration_classes', 'teachers'], ['class' => $class]);
 
 if ($frm = data_submitted()) {
 	require_sesskey();

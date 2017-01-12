@@ -18,7 +18,7 @@
 // This copyright notice MUST APPEAR in all copies of the script!
 
 require __DIR__.'/inc.php';
-require_once($CFG->dirroot . '/blocks/exastud/lib/edit_form.php');
+require_once($CFG->dirroot.'/blocks/exastud/lib/edit_form.php');
 
 $courseid = optional_param('courseid', 1, PARAM_INT); // Course ID
 $classid = required_param('classid', PARAM_INT);
@@ -36,9 +36,9 @@ if (!$returnurl) {
 $output = block_exastud\get_renderer();
 
 $PAGE->set_url('/blocks/exastud/review_student_other_data.php', [
-	'courseid'=>$courseid,
-	'classid'=>$classid,
-	'type'=>$type,
+	'courseid' => $courseid,
+	'classid' => $classid,
+	'type' => $type,
 	'studentid' => $studentid,
 	'returnurl' => $returnurl,
 ]);
@@ -47,7 +47,7 @@ block_exastud_require_global_cap(block_exastud\CAP_REVIEW);
 
 $class = block_exastud\get_review_class($classid, \block_exastud\SUBJECT_ID_OTHER_DATA);
 
-if(!$class) {
+if (!$class) {
 	print_error('badclass', 'block_exastud');
 }
 
@@ -64,7 +64,7 @@ $actPeriod = block_exastud_check_active_period();
 
 if ($type == \block_exastud\DATA_ID_LERN_UND_SOZIALVERHALTEN) {
 	$categories = [
-		\block_exastud\DATA_ID_LERN_UND_SOZIALVERHALTEN => \block_exastud\trans('de:Lern- und Sozialverhalten')
+		\block_exastud\DATA_ID_LERN_UND_SOZIALVERHALTEN => \block_exastud\trans('de:Lern- und Sozialverhalten'),
 	];
 	$classheader = $class->title.' - '.\block_exastud\trans('de:Lern- und Sozialverhalten');
 } else {
@@ -79,11 +79,24 @@ if ($type == \block_exastud\DATA_ID_LERN_UND_SOZIALVERHALTEN) {
 	$classheader = $class->title.' - '.\block_exastud\trans('de:Bemerkungen');
 }
 
-$studentform = new student_other_data_form($PAGE->url, array('categories'=>$categories, 'type'=>$type));
+$olddata = (array)block_exastud\get_class_student_data($classid, $studentid);
+
+$dataid = key($categories);
+$studentform = new student_other_data_form($PAGE->url, [
+	'categories' => $categories, 'type' => $type,
+	'modified' =>
+		@$olddata[$dataid.'.modifiedby'] ?
+			'<div class="full-width">'.
+			\block_exastud\get_renderer()->last_modified(@$olddata[$dataid.'.modifiedby'], @$olddata[$dataid.'.timemodified']).
+			'</div>'
+			: '',
+]);
 
 if ($fromform = $studentform->get_data()) {
-	foreach ($categories as $dataid=>$category) {
+	foreach ($categories as $dataid => $category) {
 		\block_exastud\set_class_student_data($classid, $studentid, $dataid, $fromform->{$dataid});
+		\block_exastud\set_class_student_data($classid, $studentid, $dataid.'.modifiedby', $USER->id);
+		\block_exastud\set_class_student_data($classid, $studentid, $dataid.'.timemodified', time());
 	}
 
 	redirect($returnurl);
@@ -91,7 +104,7 @@ if ($fromform = $studentform->get_data()) {
 
 echo $output->header(array('review',
 	array('name' => $classheader, 'link' => $parenturl),
-		), array('noheading'));
+), array('noheading'));
 
 echo $OUTPUT->heading($classheader);
 
@@ -107,22 +120,24 @@ if ($type == \block_exastud\DATA_ID_LERN_UND_SOZIALVERHALTEN) {
 	$table->head[] = '';
 	$table->head[] = \block_exastud\get_string('name');
 	$table->head[] = \block_exastud\trans('de:Geburtsdatum');
-	foreach($reviewcategories as $category)
+	foreach ($reviewcategories as $category) {
 		$table->head[] = $category->title;
+	}
 
 	$table->align = array();
 	$table->align[] = 'center';
 	$table->align[] = 'left';
 	$table->align[] = 'left';
-	for($i=0;$i<count($reviewcategories);$i++)
+	for ($i = 0; $i < count($reviewcategories); $i++) {
 		$table->align[] = 'center';
+	}
 
 	$row = array();
-	$row[] = $OUTPUT->user_picture($user,array("courseid"=>$courseid));
+	$row[] = $OUTPUT->user_picture($user, array("courseid" => $courseid));
 	$row[] = fullname($user);
 	$row[] = block_exastud_get_date_of_birth($student->id);
 
-	foreach($reviewcategories as $category) {
+	foreach ($reviewcategories as $category) {
 		$row[] = @$userReport->category_averages[$category->source.'-'.$category->id];
 	}
 
@@ -153,9 +168,8 @@ if ($type == \block_exastud\DATA_ID_LERN_UND_SOZIALVERHALTEN) {
 		}
 	}
 
-	echo '<fieldset>';
 	echo '<legend>'.\block_exastud\trans("de:Formulierungsvorschläge").'</legend>';
-	echo '<div>';
+
 	if ($vorschlaege) {
 		foreach ($vorschlaege as $vorschlag) {
 			echo '<div style="font-weight: bold;">'.$vorschlag->subject_title.':</div>'.$vorschlag->vorschlag;
@@ -164,15 +178,15 @@ if ($type == \block_exastud\DATA_ID_LERN_UND_SOZIALVERHALTEN) {
 	} else {
 		echo block_exastud\trans('de:Keine Vorschläge gefunden');
 	}
-	echo '</div></fieldset><br />';
+
 } else {
-	$studentdesc = $OUTPUT->user_picture($student, array("courseid" => $courseid)) . ' ' . fullname($student);
+	$studentdesc = $OUTPUT->user_picture($student, array("courseid" => $courseid)).' '.fullname($student);
 	echo $OUTPUT->heading($studentdesc);
 }
 
-$formdata = (array)block_exastud\get_class_student_data($classid, $studentid);
+$formdata = $olddata;
 
-foreach ($categories as $dataid=>$category) {
+foreach ($categories as $dataid => $category) {
 	$formdata[$dataid] = block_exastud_html_to_text(@$formdata[$dataid]);
 }
 /*

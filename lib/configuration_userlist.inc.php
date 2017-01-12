@@ -55,7 +55,7 @@ defined('MOODLE_INTERNAL') || die();
 						<div class="enroloptions">
 							<?php
 							if ($userlistType == 'teachers') {
-								$subjects = $DB->get_records('block_exastudsubjects', ['bpid' => $class->bpid], 'sorting');
+								$subjects = block_exastud_get_bildungsplan_subjects($class->bpid);
 								echo '<p><label for="classteacher_subjectid">'.\block_exastud\trans('de:Fachbezeichnung / Rolle').'</label><br>';
 								echo '<select id="classteacher_subjectid" name="classteacher_subjectid" style="max-width: 250px">';
 								// no empty option

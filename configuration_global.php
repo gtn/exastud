@@ -51,7 +51,7 @@ $availablebps = $DB->get_records_sql('SELECT id, sourceinfo, title
 foreach ($availablebps as $availablebp) {
 	$availablebp->disabled = !block_exastud_can_edit_bp($availablebp);
 }
-$availablesubjects = $DB->get_records('block_exastudsubjects', ['bpid' => optional_param('bpid', 0, PARAM_INT)], 'sorting');
+$availablesubjects = block_exastud_get_bildungsplan_subjects(optional_param('bpid', 0, PARAM_INT));
 
 if ($action == 'save-categories') {
 	if (!confirm_sesskey()) {

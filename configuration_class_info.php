@@ -18,7 +18,7 @@
 // This copyright notice MUST APPEAR in all copies of the script!
 
 require __DIR__.'/inc.php';
-require_once($CFG->dirroot . '/blocks/exastud/lib/edit_form.php');
+require_once($CFG->dirroot.'/blocks/exastud/lib/edit_form.php');
 global $DB, $OUTPUT, $PAGE;
 
 $courseid = optional_param('courseid', 1, PARAM_INT); // Course ID
@@ -41,12 +41,12 @@ $class->courseid = $courseid;
 
 $classform = new class_edit_form();
 if ($classform->is_cancelled()) {
-	redirect('configuration_classes.php?courseid=' . $courseid);
-} else if ($classedit = $classform->get_data()) {
-	if(!confirm_sesskey()) {
-		print_error("badsessionkey","block_exastud");
+	redirect('configuration_classes.php?courseid='.$courseid);
+} elseif ($classedit = $classform->get_data()) {
+	if (!confirm_sesskey()) {
+		print_error("badsessionkey", "block_exastud");
 	}
-	
+
 	$newclass = new stdClass();
 	$newclass->timemodified = time();
 	$newclass->title = $classedit->title;
@@ -75,22 +75,37 @@ if ($classform->is_cancelled()) {
 	}
 	*/
 
-	redirect('configuration_class.php?courseid=' . $courseid.'&classid='.$class->id);
+	redirect('configuration_class.php?courseid='.$courseid.'&classid='.$class->id);
 }
+
 
 $url = "/blocks/exastud/configuration_class_info.php";
 $PAGE->set_url($url);
 $output = block_exastud\get_renderer();
-echo $output->header(array('configuration_classes', 'editclassname'));
+echo $output->header(['configuration_classes', 'class_info'], ['class' => ($class && $class->id) ? $class : null]);
 
-// TODO: two divs? -- daniel
-echo '<div id="block_exastud">';
-echo $OUTPUT->box( text_to_html(\block_exastud\get_string("explainclassname","block_exastud")));
-echo $OUTPUT->heading($class->title);
+if ($class && $class->id) {
+	echo $OUTPUT->box(text_to_html(\block_exastud\get_string("explainclassname", "block_exastud")));
+// echo $OUTPUT->heading($class->title);
+
+	if (!\block_exastud\get_class_students($class->id)) {
+		$deleteButton = $output->link_button('configuration_class.php?courseid='.$COURSE->id.'&action=delete&classid='.$class->id.'&confirm=1',
+			block_exastud\get_string('delete'),
+			['exa-confirm' => block_exastud\trans('de:Wirklich löschen?')]);
+	} else {
+		$deleteButton = html_writer::empty_tag('input', [
+			'type' => 'button',
+			'onclick' => "alert(".json_encode(block_exastud\trans('de:Es können nur Klassen ohne Schüler gelöscht werden')).")",
+			'value' => block_exastud\trans('de:Klasse löschen'),
+		]);
+	}
+
+	echo $deleteButton;
+}
+
 
 // $class->mysubjectids = $DB->get_records_menu('block_exastudclassteachers', ['teacherid' => $USER->id, 'classid' => $class->id], null, 'subjectid, subjectid AS tmp');
 $classform->set_data($class);
 $classform->display();
 
-echo '</div>';
 echo $output->footer();

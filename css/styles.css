@@ -64,10 +64,13 @@
 }
 
 #block_exastud h2 {
+	font-size: 150%;
+	/*
 	font-size: 1rem;
 	font-weight: bold;
 	margin-bottom: 1.2rem;
 	text-align: left;
+	*/
 }
 
 #block_exastud .esr_subtitle {

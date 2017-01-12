@@ -75,12 +75,16 @@ class block_exastud_renderer extends plugin_renderer_base {
 			$tabs['head_teachers'] = new tabobject('head_teachers', 'javascript:void window.open(\''.\block_exastud\url::create('/cohort/assign.php', ['id' => block_exastud\get_head_teacher_cohort()->id])->out(false).'\');', \block_exastud\get_string('head_teachers'), '', true);
 		}
 
-		if (@$items[0]['id'] == 'configuration_classes' && $classid = $items[0]['classid']) {
-			$tabs['configuration_classes']->subtree[] = new tabobject('students', new moodle_url('/blocks/exastud/configuration_class.php', ['courseid' => g::$COURSE->id, 'action'=>'edit', 'classid'=>$classid, 'type'=>'students']), \block_exastud\get_string('students'), '', true);
-			$tabs['configuration_classes']->subtree[] = new tabobject('teachers', new moodle_url('/blocks/exastud/configuration_class.php', ['courseid' => g::$COURSE->id, 'action'=>'edit', 'classid'=>$classid, 'type'=>'teachers']), \block_exastud\get_string('teachers'), '', true);
+		$class = @$options['class'];
+
+		if ($class) {
+			$tabs['configuration_classes']->subtree[] = new tabobject('students', new moodle_url('/blocks/exastud/configuration_class.php', ['courseid' => g::$COURSE->id, 'action' => 'edit', 'classid' => $class->id, 'type' => 'students']), \block_exastud\get_string('students'), '', true);
+			$tabs['configuration_classes']->subtree[] = new tabobject('teachers', new moodle_url('/blocks/exastud/configuration_class.php', ['courseid' => g::$COURSE->id, 'action' => 'edit', 'classid' => $class->id, 'type' => 'teachers']), \block_exastud\get_string('teachers'), '', true);
 			if (\block_exastud\get_plugin_config('can_edit_bps_and_subjects')) {
-				$tabs['configuration_classes']->subtree[] = new tabobject('categories', new moodle_url('/blocks/exastud/configuration_class.php', ['courseid' => g::$COURSE->id, 'action'=>'edit', 'classid'=>$classid, 'type'=>'categories']), \block_exastud\get_string('categories'), '', true);
+				$tabs['configuration_classes']->subtree[] = new tabobject('categories', new moodle_url('/blocks/exastud/configuration_class.php', ['courseid' => g::$COURSE->id, 'action' => 'edit', 'classid' => $class->id, 'type' => 'categories']), \block_exastud\get_string('categories'), '', true);
 			}
+
+			$tabs['configuration_classes']->subtree[] = new tabobject('class_info', new moodle_url('/blocks/exastud/configuration_class_info.php', ['courseid' => g::$COURSE->id, 'classid' => $class->id]), \block_exastud\get_string('class_info'), '', true);
 		}
 
 		$tabtree = new tabtree($tabs);
@@ -130,19 +134,25 @@ class block_exastud_renderer extends plugin_renderer_base {
 		$content .= parent::header();
 		$content .= '<div id="block_exastud">';
 
-		/*
-		if ($tabtree->subtree['configuration_classes']->selected) {
-		}
-		if (@$tabtree->subtree[$items[0]['id']]->selected && !empty($options['betweenTabRowsCallback'])) {
+		if ($class && $tabtree->subtree['configuration_classes']->selected) {
+			// if (@$tabtree->subtree[$items[0]['id']]->selected && !empty($options['betweenTabRowsCallback'])) {
 			$subtree = $tabtree->subtree['configuration_classes']->subtree;
 			unset($tabtree->subtree['configuration_classes']->subtree);
 
 			$content .= $this->render($tabtree);
-			$content .= $options['betweenTabRowsCallback']();
+
+			$subtitle = '<div style="padding-bottom: 20px;"><h2>';
+			$subtitle .= $class->title;
+
+			$subtitle .= '</h2></div>';
+
+			$content .= '<div>'.$this->print_subtitle($subtitle).'</div>';
+
+			// $content .= $options['betweenTabRowsCallback']();
 			$content .= $this->render(new tabtree($subtree));
 		} else {
-		*/
-		$content .= $this->render($tabtree);
+			$content .= $this->render($tabtree);
+		}
 
 		return $content;
 	}
@@ -182,7 +192,7 @@ class block_exastud_renderer extends plugin_renderer_base {
 				$current_parent = $category->parent;
 				$output .= '<tr><th class="category category-parent" width="25%">'.($category->parent ? $category->parent.':' : '').'</th>';
 				foreach ($category->evaluationOtions as $option) {
-					$output .= '<th class="evaluation-header" width="'.round((100-25) / count($category->evaluationOtions)).'%"><b>'.$option->title.'</th>';
+					$output .= '<th class="evaluation-header" width="'.round((100 - 25) / count($category->evaluationOtions)).'%"><b>'.$option->title.'</th>';
 				}
 				$output .= '</tr>';
 			}
@@ -229,5 +239,19 @@ class block_exastud_renderer extends plugin_renderer_base {
 				'exa-type' => 'link',
 				'href' => $url,
 			]);
+	}
+
+	function last_modified($modifiedby, $timemodified) {
+		if (is_scalar($modifiedby) && $modifiedby) {
+			$modifiedby = g::$DB->get_record('user', array('id' => $modifiedby));
+		}
+
+		if (!$modifiedby) {
+			return '';
+		}
+
+		return g::$OUTPUT->notification(\block_exastud\trans(['de:Letzte Änderung von {$a->name} am {$a->time}', 'en:Last Change by {$a->name} on {$a->time}'], [
+			'time' => userdate($timemodified), 'name' => fullname($modifiedby),
+		]), g::$USER->id !== $modifiedby->id ? '' : 'notifymessage');
 	}
 }

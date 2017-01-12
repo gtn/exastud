@@ -48,27 +48,7 @@ if ($action == 'delete') {
 }
 
 $output = block_exastud\get_renderer();
-echo $output->header([['id' => 'configuration_classes', 'classid' => $classid], $type]);
-
-if (!\block_exastud\get_class_students($class->id)) {
-	$deleteButton = $output->link_button('configuration_class.php?courseid='.$courseid.'&action=delete&classid='.$class->id.'&confirm=1',
-		block_exastud\get_string('delete'),
-		['exa-confirm' => block_exastud\trans('de:Wirklich löschen?')]);
-} else {
-	$deleteButton = html_writer::empty_tag('input', [
-		'type' => 'button',
-		'onclick' => "alert(".json_encode(block_exastud\trans('de:Es können nur Klassen ohne Schüler gelöscht werden')).")",
-		'value' => block_exastud\trans('de:Klasse löschen'),
-	]);
-}
-
-$subtitle = '';
-$subtitle .= $class->title;
-$editlink = $CFG->wwwroot.'/blocks/exastud/configuration_class_info.php?courseid='.$courseid.'&classid='.$class->id;
-$subtitle .= $output->link_button($editlink, html_writer::tag("img", '', array('src' => 'pix/edit.png')).' '.block_exastud\trans('de:Klasse bearbeiten'));
-$subtitle .= $deleteButton;
-
-echo $output->print_subtitle($subtitle);
+echo $output->header(['configuration_classes', $type], ['class' => $class]);
 
 /* Print the Students */
 if ($type == 'students') {
@@ -116,7 +96,7 @@ if ($type == 'students') {
 		}
 	}
 
-	echo html_writer::tag("h2", \block_exastud\get_string('students'));
+	// echo html_writer::tag("legend", \block_exastud\get_string('students'));
 	$table = new html_table();
 
 	$table->head = [
@@ -176,7 +156,7 @@ if ($type == 'students') {
 
 /* Print the Classes */
 if ($type == 'teachers') {
-	echo html_writer::tag("h2", \block_exastud\get_string('teachers', 'block_exastud'));
+	// echo html_writer::tag("h2", \block_exastud\get_string('teachers', 'block_exastud'));
 	$table = new html_table();
 
 	$table->head = array(
@@ -206,7 +186,7 @@ if ($type == 'teachers') {
 
 /* Print the categories */
 if ($type == 'categories' && \block_exastud\get_plugin_config('can_edit_bps_and_subjects')) {
-	echo html_writer::tag("h2", \block_exastud\get_string('categories'));
+	// echo html_writer::tag("h2", \block_exastud\get_string('categories'));
 
 	$table = new html_table();
 
