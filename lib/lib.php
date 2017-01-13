@@ -49,7 +49,7 @@ namespace block_exastud {
 	const SUBJECT_ID_LERN_UND_SOZIALVERHALTEN = -1;
 	const SUBJECT_ID_LERN_UND_SOZIALVERHALTEN_VORSCHLAG = -3;
 	const SUBJECT_ID_OTHER_DATA = -1;
-	const SUBJECT_ID_ADDITIONAL_CLASS_TEACHER = -2;
+	const SUBJECT_ID_ADDITIONAL_HEAD_TEACHER = -2;
 
 	/**
 	 * Returns a localized string.
@@ -159,7 +159,7 @@ namespace block_exastud {
 			FROM {block_exastudclass} c
 			JOIN {block_exastudclassteachers} ct ON ct.classid=c.id
 			JOIN {user} u ON c.userid = u.id
-			WHERE ct.subjectid=".SUBJECT_ID_ADDITIONAL_CLASS_TEACHER." AND ct.teacherid=? AND c.periodid=?
+			WHERE ct.subjectid=".SUBJECT_ID_ADDITIONAL_HEAD_TEACHER." AND ct.teacherid=? AND c.periodid=?
 			ORDER BY c.title", [g::$USER->id, $periodid]);
 
 		/*
@@ -200,7 +200,11 @@ namespace block_exastud {
 	}
 
 	function get_class_teachers($classid) {
-		$classteachers = iterator_to_array(g::$DB->get_recordset_sql("
+		return array_merge(get_class_additional_head_teachers($classid), get_class_subject_teachers($classid));
+	}
+
+	function get_class_subject_teachers($classid) {
+		return iterator_to_array(g::$DB->get_recordset_sql("
 			SELECT u.id, ct.id AS record_id, ".\user_picture::fields('u', null, 'userid').", ct.subjectid, s.title AS subject_title
 			FROM {user} u
 			JOIN {block_exastudclassteachers} ct ON ct.teacherid=u.id
@@ -209,11 +213,21 @@ namespace block_exastud {
 			WHERE c.id=?
 			ORDER BY s.sorting, u.lastname, u.firstname, s.id
 		", [$classid]), false);
+	}
+
+	function get_class_additional_head_teachers($classid) {
+		$classteachers = g::$DB->get_records_sql("
+			SELECT u.*, ct.subjectid
+			FROM {user} u
+			JOIN {block_exastudclassteachers} ct ON ct.teacherid=u.id
+			JOIN {block_exastudclass} c ON c.id=ct.classid
+			WHERE c.id=? AND ct.subjectid = ".SUBJECT_ID_ADDITIONAL_HEAD_TEACHER."
+			AND c.userid<>u.id
+			ORDER BY u.lastname, u.firstname
+		", [$classid]);
 
 		foreach ($classteachers as $classteacher) {
-			if ($classteacher->subjectid == SUBJECT_ID_ADDITIONAL_CLASS_TEACHER) {
-				$classteacher->subject_title = get_string('head_teacher');
-			}
+			$classteacher->subject_title = get_string('additional_head_teacher');
 		}
 
 		return $classteachers;
@@ -284,6 +298,7 @@ namespace block_exastud {
 		return g::$PAGE->get_renderer('block_exastud');
 	}
 
+	/*
 	function filter_fields_by_prefix($object_or_array, $prefix) {
 		$ret = [];
 		foreach ($object_or_array as $key => $value) {
@@ -298,6 +313,7 @@ namespace block_exastud {
 
 		return $ret;
 	}
+	*/
 
 	function get_text_reviews($class, $studentid) {
 
@@ -308,10 +324,13 @@ namespace block_exastud {
 			if ($review) {
 				$review->subject_title = $subject->title;
 				$review->subjectid = $subject->id;
+				$review->title = $subject->title;
+
 				$textReviews[] = $review;
 			}
 		}
 
+		/*
 		foreach ($textReviews as $key => $textReview) {
 			if ($textReview->subject_title) {
 				$textReview->title = $textReview->subject_title;
@@ -321,6 +340,7 @@ namespace block_exastud {
 
 			$textReviews[$key] = (object)array_merge((array)$textReview, (array)\block_exastud\get_subject_student_data($class->id, $textReview->subjectid, $studentid));
 		}
+		*/
 
 		$lern_und_sozialverhalten = g::$DB->get_record('block_exastudreview', array('teacherid' => $class->userid, 'subjectid' => SUBJECT_ID_LERN_UND_SOZIALVERHALTEN, 'periodid' => $class->periodid, 'studentid' => $studentid));
 		if ($lern_und_sozialverhalten) {
@@ -665,13 +685,6 @@ namespace block_exastud {
 			return $config;
 		}
 	}
-
-	function get_bildungsstandards() {
-		$bildungsstandards = array_map('trim', explode(',', get_plugin_config('bildungsstandards')));
-		$bildungsstandards = array_combine($bildungsstandards, $bildungsstandards);
-
-		return $bildungsstandards;
-	}
 }
 
 namespace {
@@ -729,7 +742,7 @@ namespace {
 
 	function block_exastud_check_periods($printBoxInsteadOfError = false) {
 		block_exastud_has_wrong_periods($printBoxInsteadOfError);
-		block_exastud_check_if_period_ovelap($printBoxInsteadOfError);
+		block_exastud_check_if_periods_overlap($printBoxInsteadOfError);
 	}
 
 	/*
@@ -738,7 +751,6 @@ namespace {
 		return $DB->get_records_sql('SELECT periods_id FROM {block_exastudreview} r
 				WHERE student_id = ? GROUP BY periods_id',array($studentid));
 	}
-	*/
 	function block_exastud_reviews_available() {
 		global $DB, $USER, $CFG;
 
@@ -766,6 +778,7 @@ namespace {
 
 		return (bool)$availablereviews;
 	}
+	*/
 
 	function block_exastud_has_wrong_periods($printBoxInsteadOfError = false) {
 		global $DB;
@@ -785,7 +798,7 @@ namespace {
 		return true;
 	}
 
-	function block_exastud_check_if_period_ovelap($printBoxInsteadOfError = false) {
+	function block_exastud_check_if_periods_overlap($printBoxInsteadOfError = false) {
 		global $DB;
 		$allPeriods = $DB->get_records('block_exastudperiod', null, 'id, description, starttime, endtime');
 
@@ -1339,5 +1352,17 @@ namespace {
 
 	function block_exastud_get_bildungsplan_subjects($bpid) {
 		return g::$DB->get_records('block_exastudsubjects', ['bpid' => $bpid], 'sorting');
+	}
+
+	function block_exastud_get_class($classid) {
+		return g::$DB->get_record('block_exastudclass', ['id'=>$classid]);
+	}
+
+
+	function block_exastud_get_bildungsstandards() {
+		$bildungsstandards = array_map('trim', explode(',', \block_exastud\get_plugin_config('bildungsstandards')));
+		$bildungsstandards = array_combine($bildungsstandards, $bildungsstandards);
+
+		return $bildungsstandards;
 	}
 }

@@ -151,6 +151,8 @@ if ($classid = optional_param('classid', 0, PARAM_INT)) {
 	}
 
 	echo $output->header('report');
+	$classheader = block_exastud_get_period($class->periodid)->description.' - '.$class->title;
+	echo $output->heading($classheader);
 
 	echo '<form method="post">';
 

@@ -46,8 +46,15 @@ if ($frm = data_submitted()) {
 	require_sesskey();
 
 	if ($add and !empty($frm->addselect)) {
+		$subjectid = required_param('classteacher_subjectid', PARAM_INT);
+
 		foreach ($frm->addselect as $adduser) {
 			if (!$adduser = clean_param($adduser, PARAM_INT)) {
+				continue;
+			}
+
+			if ($subjectid == \block_exastud\SUBJECT_ID_ADDITIONAL_HEAD_TEACHER && $adduser == $class->userid) {
+				// classteacher can't add himself
 				continue;
 			}
 
@@ -56,7 +63,7 @@ if ($frm = data_submitted()) {
 				[
 					'teacherid' => $adduser,
 					'classid' => $class->id,
-					'subjectid' => optional_param('classteacher_subjectid', 0, PARAM_INT),
+					'subjectid' => $subjectid,
 				]);
 		}
 	} else if ($remove and !empty($frm->removeselect)) {

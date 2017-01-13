@@ -53,6 +53,7 @@ echo $output->header(['configuration_classes', $type], ['class' => $class]);
 /* Print the Students */
 if ($type == 'students') {
 	$classstudents = \block_exastud\get_class_students($class->id);
+	$additional_head_teachers = block_exastud\get_class_additional_head_teachers($classid);
 
 	if ($action == 'save') {
 		require_sesskey();
@@ -61,6 +62,7 @@ if ($type == 'students') {
 			'print_grades' => PARAM_BOOL,
 			'bildungsstandard_erreicht' => PARAM_TEXT,
 			'dropped_out' => PARAM_BOOL,
+			'head_teacher' => PARAM_INT,
 		]]);
 
 		foreach ($classstudents as $student) {
@@ -72,6 +74,7 @@ if ($type == 'students') {
 			$new = $userdatas[$student->id];
 
 			\block_exastud\set_class_student_data($class->id, $student->id, 'print_grades', $new->print_grades);
+			\block_exastud\set_class_student_data($class->id, $student->id, 'head_teacher', $new->head_teacher);
 
 			if (@$current->bildungsstandard_erreicht != @$new->bildungsstandard_erreicht) {
 				// set it, if changed
@@ -96,56 +99,74 @@ if ($type == 'students') {
 		}
 	}
 
-	// echo html_writer::tag("legend", \block_exastud\get_string('students'));
-	$table = new html_table();
+	if (!$classstudents) {
+		echo $OUTPUT->notification(block_exastud\get_string('no_entries_found'), 'notifymessage');
+	} else {
+		$table = new html_table();
 
-	$table->head = [
-		\block_exastud\get_string('lastname'),
-		\block_exastud\get_string('firstname'),
-		\block_exastud\trans('de:Geburtsdatum'),
-		\block_exastud\trans('de:Note im Lern&shy;entwicklungs&shy;bericht ausweisen'),
-		\block_exastud\trans('de:Bildungsstandard erreicht'),
-		\block_exastud\trans('de:Ausgeschieden'),
-	];
-	$table->align = array("left", "left", "left");
-	// $table->attributes['style'] = "width: 75%;";
-	$table->size = ['20%', '20%', '15%', '15%', '15%', '15%'];
-
-	foreach ($classstudents as $classstudent) {
-		$userdata = \block_exastud\get_class_student_data($class->id, $classstudent->id);
-
-		$print_grades = '<input name="userdatas['.$classstudent->id.'][print_grades]" type="hidden" value="0"/>'.
-			html_writer::checkbox('userdatas['.$classstudent->id.'][print_grades]', 1, @$userdata->print_grades);
-
-		$bildungsstandard = html_writer::select(block_exastud\get_bildungsstandards(), 'userdatas['.$classstudent->id.'][bildungsstandard_erreicht]', @$userdata->bildungsstandard_erreicht, ['' => '']);
-		$bildungsstandard = $bildungsstandard.
-			(!empty($userdata->bildungsstandard_erreicht) ? ' '.userdate($userdata->bildungsstandard_erreicht_time, get_string('strftimedate', 'langconfig')) : '');
-
-		$ausgeschieden = '<input name="userdatas['.$classstudent->id.'][dropped_out]" type="hidden" value="0"/>'.
-			'<input name="userdatas['.$classstudent->id.'][dropped_out]" type="checkbox" value="1"'.
-			(!empty($userdata->dropped_out) ? ' checked="checked"' : '').'/>'.
-			(!empty($userdata->dropped_out) ? userdate($userdata->dropped_out_time, get_string('strftimedate', 'langconfig')) : '');
-
-		$table->data[] = [
-			$classstudent->lastname,
-			$classstudent->firstname,
-			block_exastud_get_date_of_birth($classstudent->id),
-			$print_grades,
-			$bildungsstandard,
-			$ausgeschieden,
+		$table->head = [
+			\block_exastud\get_string('lastname'),
+			\block_exastud\get_string('firstname'),
+			\block_exastud\trans('de:Geburtsdatum'),
+			\block_exastud\trans('de:Note im Lern&shy;entwicklungs&shy;bericht ausweisen'),
+			\block_exastud\trans('de:Bildungsstandard erreicht'),
+			\block_exastud\trans('de:Ausgeschieden'),
 		];
+
+		$table->align = array("left", "left", "left");
+		// $table->attributes['style'] = "width: 75%;";
+		$table->size = ['20%', '20%', '12%', '12%', '12%', '12%'];
+
+		if ($additional_head_teachers) {
+			$table->head[] = \block_exastud\trans('de:Zuständiger Klassenlehrer');
+			$table->align[] = 'left';
+			$table->size[] = '12%';
+			$additional_head_teachers_select = array_map(function($teacher) {
+				return fullname($teacher);
+			}, $additional_head_teachers);
+		}
+
+		foreach ($classstudents as $classstudent) {
+			$userdata = \block_exastud\get_class_student_data($class->id, $classstudent->id);
+
+			$print_grades = '<input name="userdatas['.$classstudent->id.'][print_grades]" type="hidden" value="0"/>'.
+				html_writer::checkbox('userdatas['.$classstudent->id.'][print_grades]', 1, @$userdata->print_grades);
+
+			$bildungsstandard = html_writer::select(block_exastud_get_bildungsstandards(), 'userdatas['.$classstudent->id.'][bildungsstandard_erreicht]', @$userdata->bildungsstandard_erreicht, ['' => '']);
+			$bildungsstandard = $bildungsstandard.
+				(!empty($userdata->bildungsstandard_erreicht) ? ' '.userdate($userdata->bildungsstandard_erreicht_time, get_string('strftimedate', 'langconfig')) : '');
+
+			$ausgeschieden = '<input name="userdatas['.$classstudent->id.'][dropped_out]" type="hidden" value="0"/>'.
+				'<input name="userdatas['.$classstudent->id.'][dropped_out]" type="checkbox" value="1"'.
+				(!empty($userdata->dropped_out) ? ' checked="checked"' : '').'/>'.
+				(!empty($userdata->dropped_out) ? userdate($userdata->dropped_out_time, get_string('strftimedate', 'langconfig')) : '');
+
+			$row = [
+				$classstudent->lastname,
+				$classstudent->firstname,
+				block_exastud_get_date_of_birth($classstudent->id),
+				$print_grades,
+				$bildungsstandard,
+				$ausgeschieden,
+			];
+
+			if ($additional_head_teachers) {
+				$row[] = html_writer::select($additional_head_teachers_select, 'userdatas['.$classstudent->id.'][head_teacher]', @$userdata->head_teacher, fullname($USER));
+			}
+
+			$table->data[] = $row;
+		}
+
+		echo '<form method="post">';
+		echo '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
+		echo '<input type="hidden" name="action" value="save" />';
+
+		echo $output->table($table);
+
+		echo '<div style="text-align: right;"><input type="submit" value="'.\block_exastud\get_string('savechanges').'"/></div>';
+
+		echo '</form>';
 	}
-
-//echo html_writer::table($table);
-	echo '<form method="post">';
-	echo '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
-	echo '<input type="hidden" name="action" value="save" />';
-
-	echo $output->table($table);
-
-	echo '<div style="text-align: right;"><input type="submit" value="'.\block_exastud\get_string('savechanges').'"/></div>';
-
-	echo '</form>';
 
 	echo $output->link_button($CFG->wwwroot.'/blocks/exastud/configuration_classmembers.php?courseid='.$courseid.'&classid='.$class->id,
 		\block_exastud\get_string('editclassmemberlist'));
@@ -160,25 +181,46 @@ if ($type == 'teachers') {
 	$table = new html_table();
 
 	$table->head = array(
+		\block_exastud\trans('de:Fachbezeichnung'),
 		\block_exastud\get_string('lastname'),
 		\block_exastud\get_string('firstname'),
-		\block_exastud\trans('de:Fachbezeichnung'),
 	);
-	$table->align = array("left", "left", "left", "left");
-	$table->size = ['25%', '25%', '25%', '25%'];
+	$table->align = array("left", "left", "left");
+	$table->size = ['33%', '33%', '33%'];
 
-	$classteachers = block_exastud\get_class_teachers($class->id);
+	$classteachers = block_exastud\get_class_subject_teachers($class->id);
+	$additional_head_teachers = block_exastud\get_class_additional_head_teachers($class->id);
+	// need to clone the table, else the output won't work twice
+	$table_clone = clone($table);
 
+	if ($additional_head_teachers) {
+		foreach ($additional_head_teachers as $classteacher) {
+			$table->data[] = [
+				$classteacher->subject_title ?: \block_exastud\trans('de:nicht zugeordnet'),
+				$classteacher->lastname,
+				$classteacher->firstname,
+			];
+		}
+
+		echo $output->heading2(block_exastud\get_string('additional_head_teachers'));
+		echo $output->table($table);
+		echo $output->heading2(block_exastud\get_string('teachers'));
+	}
+
+	$table = $table_clone;
 	foreach ($classteachers as $classteacher) {
 		$table->data[] = [
+			$classteacher->subject_title ?: \block_exastud\trans('de:nicht zugeordnet'),
 			$classteacher->lastname,
 			$classteacher->firstname,
-			$classteacher->subject_title ?: \block_exastud\trans('de:nicht zugeordnet'),
 		];
 	}
 
-	//echo html_writer::table($table);
-	echo $output->table($table);
+	if (!$classteachers) {
+		echo $OUTPUT->notification(block_exastud\get_string('no_entries_found'), 'notifymessage');
+	} else {
+		echo $output->table($table);
+	}
 
 	echo $OUTPUT->single_button($CFG->wwwroot.'/blocks/exastud/configuration_classteachers.php?courseid='.$courseid.'&classid='.$class->id,
 		\block_exastud\get_string('editclassteacherlist', 'block_exastud'), 'get');

@@ -125,21 +125,15 @@ $studentform = new student_edit_form(null, [
 	'exacomp_grades' => $exacomp_grades,
 	'categories.modified' =>
 		$reviewdata
-			? '<div class="full-width">'.
-			\block_exastud\get_renderer()->last_modified($reviewdata->teacherid, $reviewdata->timemodified).
-			'</div>'
+			? \block_exastud\get_renderer()->last_modified($reviewdata->teacherid, $reviewdata->timemodified)
 			: '',
 	'review.modified' =>
 		$textReviewdata
-			? '<div class="full-width">'.
-			\block_exastud\get_renderer()->last_modified($textReviewdata->modifiedby, $textReviewdata->timemodified).
-			'</div>'
+			? \block_exastud\get_renderer()->last_modified($textReviewdata->modifiedby, $textReviewdata->timemodified)
 			: '',
 	'grade.modified' =>
 		@$formdata->{'grade.modifiedby'}
-			? '<div class="full-width">'.
-			\block_exastud\get_renderer()->last_modified(@$formdata->{'grade.modifiedby'}, @$formdata->{'grade.timemodified'}).
-			'</div>'
+			? \block_exastud\get_renderer()->last_modified(@$formdata->{'grade.modifiedby'}, @$formdata->{'grade.timemodified'})
 			: '',
 ]);
 
@@ -200,7 +194,7 @@ $student = $DB->get_record('user', array('id' => $studentid));
 echo $OUTPUT->heading($classheader);
 
 $studentdesc = $OUTPUT->user_picture($student, array("courseid" => $courseid)).' '.fullname($student);
-echo $OUTPUT->heading($studentdesc);
+echo $output->heading($studentdesc);
 
 // load lern&soz vorschlag
 $formdata->vorschlag = $DB->get_field('block_exastudreview', 'review', [

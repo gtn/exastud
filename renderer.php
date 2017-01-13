@@ -141,14 +141,8 @@ class block_exastud_renderer extends plugin_renderer_base {
 
 			$content .= $this->render($tabtree);
 
-			$subtitle = '<div style="padding-bottom: 20px;"><h2>';
-			$subtitle .= $class->title;
+			$content .= $this->heading($class->title);
 
-			$subtitle .= '</h2></div>';
-
-			$content .= '<div>'.$this->print_subtitle($subtitle).'</div>';
-
-			// $content .= $options['betweenTabRowsCallback']();
 			$content .= $this->render(new tabtree($subtree));
 		} else {
 			$content .= $this->render($tabtree);
@@ -253,5 +247,20 @@ class block_exastud_renderer extends plugin_renderer_base {
 		return g::$OUTPUT->notification(\block_exastud\trans(['de:Letzte Änderung von {$a->name} am {$a->time}', 'en:Last Change by {$a->name} on {$a->time}'], [
 			'time' => userdate($timemodified), 'name' => fullname($modifiedby),
 		]), g::$USER->id !== $modifiedby->id ? '' : 'notifymessage');
+	}
+
+	function heading($text) {
+		$content = '<legend class="heading1">';
+		$content .= $text;
+		$content .= '</legend>';
+
+		return $content;
+	}
+	function heading2($text) {
+		$content = '<legend class="heading2">';
+		$content .= $text;
+		$content .= '</legend>';
+
+		return $content;
 	}
 }

@@ -91,7 +91,18 @@ foreach ($classstudents as $classstudent) {
 	$row->cells[] = $OUTPUT->user_picture($classstudent, array("courseid" => $courseid));
 	$row->cells[] = $userdesc;
 
-	if (true) { // block_exastud_can_edit_class($class)) {
+	// if (true) { // block_exastud_can_edit_class($class)) {
+	$editUser = null;
+	if (@$data['head_teacher']) {
+		$editUser = $DB->get_record('user', array('id' => $data['head_teacher']));
+	}
+	if (!$editUser) {
+		$editUser = $DB->get_record('user', array('id' => $class->userid));
+	}
+
+	if ($editUser->id !== $USER->id) {
+		$row->cells[] = block_exastud\trans(['de:Zugeteilt zu {$a}'], fullname($editUser));
+	} else {
 		$row->cells[] = $output->link_button($CFG->wwwroot.'/blocks/exastud/review_student_other_data.php?courseid='.$courseid.'&classid='.$classid.'&type='.$type.'&studentid='.$classstudent->id,
 			\block_exastud\get_string('edit'));
 	}

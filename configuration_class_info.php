@@ -79,14 +79,18 @@ if ($classform->is_cancelled()) {
 }
 
 
+$classform->set_data($class);
+
 $url = "/blocks/exastud/configuration_class_info.php";
 $PAGE->set_url($url);
 $output = block_exastud\get_renderer();
 echo $output->header(['configuration_classes', 'class_info'], ['class' => ($class && $class->id) ? $class : null]);
 
+
 if ($class && $class->id) {
-	echo $OUTPUT->box(text_to_html(\block_exastud\get_string("explainclassname", "block_exastud")));
-// echo $OUTPUT->heading($class->title);
+	$classform->display();
+
+	echo $output->heading2(block_exastud\trans('de:Klasse löschen'));
 
 	if (!\block_exastud\get_class_students($class->id)) {
 		$deleteButton = $output->link_button('configuration_class.php?courseid='.$COURSE->id.'&action=delete&classid='.$class->id.'&confirm=1',
@@ -101,11 +105,10 @@ if ($class && $class->id) {
 	}
 
 	echo $deleteButton;
+} else {
+	echo $output->heading(\block_exastud\trans(['de:Klasse hinzufügen', 'en:Add Class']));
+
+	$classform->display();
 }
-
-
-// $class->mysubjectids = $DB->get_records_menu('block_exastudclassteachers', ['teacherid' => $USER->id, 'classid' => $class->id], null, 'subjectid, subjectid AS tmp');
-$classform->set_data($class);
-$classform->display();
 
 echo $output->footer();

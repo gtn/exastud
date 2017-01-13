@@ -66,6 +66,14 @@ return [
 		'Klassenlehrkräfte',
 		'Heads of a class',
 	],
+	'additional_head_teacher' => [
+		'Zusätzliche Klassenlehrkraft',
+		'Additional Head of a class',
+	],
+	'additional_head_teachers' => [
+		'Zusätzliche Klassenlehrkräfte',
+		'Additional Heads of a class',
+	],
 	'configuration_classes' => [
 		'Meine Klassen',
 		'Class Configuration',
@@ -121,6 +129,10 @@ return [
 	'students' => [
 		'Schülerinnen und Schüler',
 		'Members',
+	],
+	'no_entries_found' => [
+		'Keine Einträge gefunden',
+		'No Entries found',
 	],
 	'project_based_students' => [
 		'Projekte',

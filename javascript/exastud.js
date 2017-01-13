@@ -27,6 +27,7 @@ $.extend(window.block_exastud, {});
 		return !!$('body#page-blocks-exastud-' + page).length;
 	}
 
+	// checkallornone logic
 	$(document).on('click', '.exa_table :checkbox[name=checkallornone]', function () {
 		var checkboxes = $(this).closest('table').find(':checkbox:not([name=checkallornone])');
 		checkboxes.prop('checked', $(this).prop('checked'));
@@ -40,11 +41,5 @@ $.extend(window.block_exastud, {});
 		// check all on load
 		// trigger click twice = check+uncheck
 		$('.exa_table :checkbox[name=checkallornone]').closest('table').find(':checkbox:not([name=checkallornone]):first').click().click();
-	});
-
-	$(function(){
-		var $item = $('.full-width').closest('.fitem');
-		$item.find('.fitemtitle').hide();
-		$item.find('.felement').css('margin-left', 0);
 	});
 }();

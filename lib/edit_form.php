@@ -21,6 +21,8 @@ defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->dirroot.'/lib/formslib.php');
 
+use block_exastud\globals as g;
+
 class class_edit_form extends moodleform {
 
 	function definition() {
@@ -33,13 +35,16 @@ class class_edit_form extends moodleform {
 		$mform->addElement('hidden', 'courseid');
 		$mform->setType('courseid', PARAM_INT);
 
-		$mform->addElement('text', 'title', \block_exastud\get_string('class', 'block_exastud').': ', array('size' => 50));
+		$mform->addElement('text', 'title', \block_exastud\get_string('class', 'block_exastud').':', array('size' => 50));
 		$mform->setType('title', PARAM_TEXT);
 		$mform->addRule('title', null, 'required', null, 'client');
 
-		global $DB;
-		$bps = $DB->get_records_menu('block_exastudbp', null, 'sorting', 'id, title');
+		$bps = g::$DB->get_records_menu('block_exastudbp', null, 'sorting', 'id, title');
 		$mform->addElement('select', 'bpid', \block_exastud\trans('de:Bildungsplan').':', $bps);
+
+		$mform->addElement('static', '', '&nbsp;',
+			g::$OUTPUT->notification(\block_exastud\trans(['de:Bitte beachten Sie: Bei einer Änderung des Bildungsplans müssen alle Bewertungen erneut eingegeben werden.', 'en:']), 'notifymessage')
+		);
 
 		/*
 		$subjects = $DB->get_records_menu('block_exastudsubjects', null, 'title', 'id, title');
@@ -174,7 +179,7 @@ class student_other_data_form extends moodleform {
 				$mform->addElement('static', '', '', $this->_customdata['modified']);
 			}
 
-			$mform->addElement('textarea', $dataid, $name, array('cols' => 50, 'rows' => 10));
+			$mform->addElement('textarea', $dataid, '', array('cols' => 50, 'rows' => 10));
 			$mform->setType($dataid, PARAM_RAW);
 		}
 

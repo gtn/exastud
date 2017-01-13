@@ -35,6 +35,8 @@ $string['exastud:myaddinstance'] = 'Student Review auf Startseite anlegen';
 // === grp2 ===
 $string['head_teacher'] = 'Klassenlehrkraft';
 $string['head_teachers'] = 'Klassenlehrkräfte';
+$string['additional_head_teacher'] = 'Zusätzliche Klassenlehrkraft';
+$string['additional_head_teachers'] = 'Zusätzliche Klassenlehrkräfte';
 $string['configuration_classes'] = 'Meine Klassen';
 $string['project_based_configuration'] = 'Projekt konfigurieren';
 $string['report'] = 'Bericht';
@@ -49,6 +51,7 @@ $string['teachers'] = 'Lehrkräfte';
 $string['project_based_teachers'] = 'Projektbeurteiler';
 $string['class_info'] = 'Klasse bearbeiten';
 $string['students'] = 'Schülerinnen und Schüler';
+$string['no_entries_found'] = 'Keine Einträge gefunden';
 $string['project_based_students'] = 'Projekte';
 $string['errorinsertingclass'] = 'Fehler bei der Erstellung einer Klasse';
 $string['redirectingtoclassinput'] = 'Keine Klasse definiert, Weiterleitung zur Eingabe';

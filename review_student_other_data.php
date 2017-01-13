@@ -86,9 +86,7 @@ $studentform = new student_other_data_form($PAGE->url, [
 	'categories' => $categories, 'type' => $type,
 	'modified' =>
 		@$olddata[$dataid.'.modifiedby'] ?
-			'<div class="full-width">'.
-			\block_exastud\get_renderer()->last_modified(@$olddata[$dataid.'.modifiedby'], @$olddata[$dataid.'.timemodified']).
-			'</div>'
+			\block_exastud\get_renderer()->last_modified(@$olddata[$dataid.'.modifiedby'], @$olddata[$dataid.'.timemodified'])
 			: '',
 ]);
 
@@ -106,7 +104,7 @@ echo $output->header(array('review',
 	array('name' => $classheader, 'link' => $parenturl),
 ), array('noheading'));
 
-echo $OUTPUT->heading($classheader);
+echo $output->heading($classheader);
 
 if ($type == \block_exastud\DATA_ID_LERN_UND_SOZIALVERHALTEN) {
 	$user = $student;
@@ -147,7 +145,7 @@ if ($type == \block_exastud\DATA_ID_LERN_UND_SOZIALVERHALTEN) {
 
 	$vorschlaege = [];
 	foreach (\block_exastud\get_class_teachers($classid) as $class_teacher) {
-		if ($class_teacher->subjectid == \block_exastud\SUBJECT_ID_ADDITIONAL_CLASS_TEACHER) {
+		if ($class_teacher->subjectid == \block_exastud\SUBJECT_ID_ADDITIONAL_HEAD_TEACHER) {
 			continue;
 		}
 

@@ -37,7 +37,7 @@ $output = block_exastud\get_renderer();
 echo $output->header('configuration_classes');
 
 /* Print the Students */
-echo html_writer::tag("h2", $actPeriod->description.': '.\block_exastud\get_string('configuration_classes'));
+echo $output->heading($actPeriod->description.': '.\block_exastud\get_string('configuration_classes'));
 
 if (!$classes) {
 	echo '<div style="padding-bottom: 20px;">'.\block_exastud\get_string('noclassfound').'</div>';

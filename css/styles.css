@@ -73,6 +73,17 @@
 	*/
 }
 
+#block_exastud h3 {
+	font-size: 130%;
+}
+#block_exastud legend {
+	font-weight: bold;
+	font-size: 130%;
+}
+#block_exastud .heading1 {
+	font-size: 150%;
+}
+
 #block_exastud .esr_subtitle {
 	margin-bottom: 1.2rem;
 }
@@ -94,34 +105,13 @@
 	margin-bottom: 0;
 }
 
-
-#page-blocks-exastud-review_student #fitem_id_vorschlag .fitemtitle {
+.femptylabel .fitemtitle {
 	display: none;
 }
-#page-blocks-exastud-review_student #fitem_id_vorschlag .felement {
-	margin-left: 0;
+.femptylabel .felement {
+	margin-left: 0 !important;
 }
-#page-blocks-exastud-review_student #fitem_id_vorschlag textarea {
-	width: 95%;
-	height: 200px;
-}
-#page-blocks-exastud-review_student #fitem_id_review .fitemtitle {
-	display: none;
-}
-#page-blocks-exastud-review_student #fitem_id_review .felement {
-	margin-left: 0;
-}
-#page-blocks-exastud-review_student #fitem_id_review textarea {
-	width: 95%;
-	height: 200px;
-}
-#page-blocks-exastud-review_student_other_data .fitem_ftextarea .fitemtitle {
-	display: none;
-}
-#page-blocks-exastud-review_student_other_data .fitem_ftextarea .felement {
-	margin-left: 0;
-}
-#page-blocks-exastud-review_student_other_data .fitem_ftextarea textarea {
+.femptylabel.fitem_ftextarea textarea {
 	width: 95%;
 	height: 200px;
 }

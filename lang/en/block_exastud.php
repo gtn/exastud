@@ -35,6 +35,8 @@ $string['exastud:myaddinstance'] = 'add Exabis Student Review on My home';
 // === grp2 ===
 $string['head_teacher'] = 'Head of a class';
 $string['head_teachers'] = 'Heads of a class';
+$string['additional_head_teacher'] = 'Additional Head of a class';
+$string['additional_head_teachers'] = 'Additional Heads of a class';
 $string['configuration_classes'] = 'Class Configuration';
 $string['project_based_configuration'] = 'Edit project';
 $string['report'] = 'Report';
@@ -49,6 +51,7 @@ $string['teachers'] = 'Teachers';
 $string['project_based_teachers'] = 'Project-Teachers';
 $string['class_info'] = 'Edit Class';
 $string['students'] = 'Members';
+$string['no_entries_found'] = 'No Entries found';
 $string['project_based_students'] = 'Projects';
 $string['errorinsertingclass'] = 'Error when inserting class';
 $string['redirectingtoclassinput'] = 'No class information found, redirecting to class input.';

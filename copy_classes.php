@@ -67,7 +67,7 @@ $PAGE->set_url($url);
 
 $output = block_exastud\get_renderer();
 echo $output->header('configuration_classes');
-
+echo $output->heading(\block_exastud\trans(['de:Klasse vom vorigen Eingabezeitraum kopieren', 'en:Copy Class from last Period']));
 $table = new html_table();
 
 $table->head = [\block_exastud\get_string('class'), ''];
