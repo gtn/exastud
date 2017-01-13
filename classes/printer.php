@@ -195,20 +195,20 @@ class printer {
 					$templateProcessor->setValue("topic", $topic->title, 1);
 
 					$templateProcessor->setValue("n", $topic->teacher_eval_niveau_text, 1);
-					$templateProcessor->setValue("ne", $topic->teacher_eval_additional_grading == 0 ? 'X' : '', 1);
-					$templateProcessor->setValue("tw", $topic->teacher_eval_additional_grading == 1 ? 'X' : '', 1);
-					$templateProcessor->setValue("ue", $topic->teacher_eval_additional_grading == 2 ? 'X' : '', 1);
-					$templateProcessor->setValue("ve", $topic->teacher_eval_additional_grading == 3 ? 'X' : '', 1);
+					$templateProcessor->setValue("ne", $topic->teacher_eval_additional_grading === 0 ? 'X' : '', 1);
+					$templateProcessor->setValue("tw", $topic->teacher_eval_additional_grading === 1 ? 'X' : '', 1);
+					$templateProcessor->setValue("ue", $topic->teacher_eval_additional_grading === 2 ? 'X' : '', 1);
+					$templateProcessor->setValue("ve", $topic->teacher_eval_additional_grading === 3 ? 'X' : '', 1);
 
 					/*
 					$gme = ['G', 'M', 'E'][$test % 3];
 					$x = $test % 4;
 					$test++;
 					$templateProcessor->setValue("n", $gme.$test, 1);
-					$templateProcessor->setValue("ne", $x == 0 ? 'X' : '', 1);
-					$templateProcessor->setValue("tw", $x == 1 ? 'X' : '', 1);
-					$templateProcessor->setValue("ue", $x == 2 ? 'X' : '', 1);
-					$templateProcessor->setValue("ve", $x == 3 ? 'X' : '', 1);
+					$templateProcessor->setValue("ne", $x === 0 ? 'X' : '', 1);
+					$templateProcessor->setValue("tw", $x === 1 ? 'X' : '', 1);
+					$templateProcessor->setValue("ue", $x === 2 ? 'X' : '', 1);
+					$templateProcessor->setValue("ve", $x === 3 ? 'X' : '', 1);
 					*/
 
 					foreach ($topic->descriptors as $descriptor) {
@@ -216,20 +216,20 @@ class printer {
 						$templateProcessor->setValue("descriptor", ($descriptor->niveau_title ? $descriptor->niveau_title.': ' : '').$descriptor->title, 1);
 
 						$templateProcessor->setValue("n", $descriptor->teacher_eval_niveau_text, 1);
-						$templateProcessor->setValue("ne", $descriptor->teacher_eval_additional_grading == 0 ? 'X' : '', 1);
-						$templateProcessor->setValue("tw", $descriptor->teacher_eval_additional_grading == 1 ? 'X' : '', 1);
-						$templateProcessor->setValue("ue", $descriptor->teacher_eval_additional_grading == 2 ? 'X' : '', 1);
-						$templateProcessor->setValue("ve", $descriptor->teacher_eval_additional_grading == 3 ? 'X' : '', 1);
+						$templateProcessor->setValue("ne", $descriptor->teacher_eval_additional_grading === 0 ? 'X' : '', 1);
+						$templateProcessor->setValue("tw", $descriptor->teacher_eval_additional_grading === 1 ? 'X' : '', 1);
+						$templateProcessor->setValue("ue", $descriptor->teacher_eval_additional_grading === 2 ? 'X' : '', 1);
+						$templateProcessor->setValue("ve", $descriptor->teacher_eval_additional_grading === 3 ? 'X' : '', 1);
 
 						/*
 						$gme = ['G', 'M', 'E'][$test % 3];
 						$x = $test % 4;
 						$test++;
 						$templateProcessor->setValue("n", $gme.$test, 1);
-						$templateProcessor->setValue("ne", $x == 0 ? 'X' : '', 1);
-						$templateProcessor->setValue("tw", $x == 1 ? 'X' : '', 1);
-						$templateProcessor->setValue("ue", $x == 2 ? 'X' : '', 1);
-						$templateProcessor->setValue("ve", $x == 3 ? 'X' : '', 1);
+						$templateProcessor->setValue("ne", $x === 0 ? 'X' : '', 1);
+						$templateProcessor->setValue("tw", $x === 1 ? 'X' : '', 1);
+						$templateProcessor->setValue("ue", $x === 2 ? 'X' : '', 1);
+						$templateProcessor->setValue("ve", $x === 3 ? 'X' : '', 1);
 						*/
 					}
 
@@ -720,11 +720,44 @@ class printer {
 		$niveau_titles = g::$DB->get_records_menu(\block_exacomp\DB_EVALUATION_NIVEAU, [], '', 'id,title');
 
 		// todo check timestamp for current semester
+
+		// neue logik: weil für eine komepetenz in mehreren kursen eine bewertung abgegeben werden kann, wird hier nur die letzte bewertung ausgelesen.
+		$records = g::$DB->get_recordset_sql("
+			SELECT * FROM {".\block_exacomp\DB_COMPETENCES."}
+			WHERE userid=? AND role=? AND comptype IN (?,?)
+			ORDER BY timestamp DESC", [$studentid, \block_exacomp\ROLE_TEACHER, \block_exacomp\TYPE_DESCRIPTOR, \block_exacomp\TYPE_TOPIC]);
+
+		$niveaus_topics = [];
+		$niveaus_competencies = [];
+		$teacher_additional_grading_topics = [];
+		$teacher_additional_grading_competencies = [];
+
+		foreach ($records as $record) {
+			if ($record->comptype == \block_exacomp\TYPE_TOPIC) {
+				if ($record->evalniveauid !== null && !isset($niveaus_topics[$record->compid])) {
+					$niveaus_topics[$record->compid] = $record->evalniveauid;
+				}
+				if ($record->additionalinfo !== null && !isset($teacher_additional_grading_topics[$record->compid])) {
+					$teacher_additional_grading_topics[$record->compid] = $record->additionalinfo;
+				}
+			} else {
+				// is descriptor
+				if ($record->evalniveauid !== null && !isset($niveaus_competencies[$record->compid])) {
+					$niveaus_competencies[$record->compid] = $record->evalniveauid;
+				}
+				if ($record->additionalinfo !== null && !isset($teacher_additional_grading_competencies[$record->compid])) {
+					$teacher_additional_grading_competencies[$record->compid] = $record->additionalinfo;
+				}
+			}
+		}
+
+		/*
 		$niveaus_topics = g::$DB->get_records_menu(\block_exacomp\DB_COMPETENCES, array("userid" => $studentid, "role" => \block_exacomp\ROLE_TEACHER, "comptype" => TYPE_TOPIC), '', 'compid as id, evalniveauid');
 		$niveaus_competencies = g::$DB->get_records_menu(\block_exacomp\DB_COMPETENCES, array("userid" => $studentid, "role" => \block_exacomp\ROLE_TEACHER, "comptype" => TYPE_DESCRIPTOR), '', 'compid as id, evalniveauid');
 
 		$teacher_additional_grading_topics = g::$DB->get_records_menu(\block_exacomp\DB_COMPETENCES,array("userid" => $studentid, "role" => \block_exacomp\ROLE_TEACHER, "comptype" => TYPE_TOPIC),'','compid as id, additionalinfo');
 		$teacher_additional_grading_competencies = g::$DB->get_records_menu(\block_exacomp\DB_COMPETENCES,array("userid" => $studentid, "role" => \block_exacomp\ROLE_TEACHER, "comptype" => TYPE_DESCRIPTOR),'','compid as id, additionalinfo');
+		*/
 
 		foreach ($subjects as $subject) {
 			// echo $subject->title."<br/>\n";
