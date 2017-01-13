@@ -155,7 +155,7 @@ class student_edit_form extends moodleform {
 		}
 
 		$mform->addElement('text', 'grade', 'Note');
-		$mform->setType('grade', PARAM_INT);
+		$mform->setType('grade', PARAM_TEXT);
 		$mform->addElement('select', 'niveau', 'Niveau', ['' => '', 'G' => 'G', 'M' => 'M', 'E' => 'E']);
 
 		foreach ($this->_customdata['exacomp_grades'] as $row) {
