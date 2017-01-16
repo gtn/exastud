@@ -788,7 +788,7 @@ namespace {
 		if ($wrongs) {
 			foreach ($wrongs as $wrong) {
 				if ($printBoxInsteadOfError) {
-					notify(get_string('errorstarttimebeforeendtime', 'block_exastud', $wrong));
+					notify(get_string('errorstarttimebeforeendtime', null, $wrong));
 				} else {
 					error('errorstarttimebeforeendtime', 'block_exastud', '', $wrong);
 				}
@@ -820,7 +820,7 @@ namespace {
 					$a->period2 = $overlapPeriod->description;
 
 					if ($printBoxInsteadOfError) {
-						notify(get_string('periodoverlaps', 'block_exastud', $a));
+						notify(get_string('periodoverlaps', null, $a));
 					} else {
 						print_error('periodoverlaps', 'block_exastud', '', $a);
 					}

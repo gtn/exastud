@@ -36,7 +36,7 @@ $curPeriod = block_exastud_get_active_or_next_period();
 
 $class = block_exastud\get_teacher_class($classid);
 
-$header = \block_exastud\get_string('configcategories', 'block_exastud', $class->title);
+$header = \block_exastud\get_string('configcategories', null, $class->title);
 $url = '/blocks/exastud/configuration_categories.php';
 $PAGE->set_url($url);
 $output = \block_exastud\get_renderer();

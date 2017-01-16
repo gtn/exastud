@@ -32,13 +32,13 @@ class block_exastud_renderer extends plugin_renderer_base {
 		$tabs = array();
 
 		if (block_exastud_get_active_or_next_period() && block_exastud_has_global_cap(block_exastud\CAP_MANAGE_CLASSES)) {
-			$tabs['configuration_classes'] = new tabobject('configuration_classes', new moodle_url('/blocks/exastud/configuration_classes.php', ['courseid' => g::$COURSE->id]), \block_exastud\get_string("configuration_classes", "block_exastud"), '', true);
+			$tabs['configuration_classes'] = new tabobject('configuration_classes', new moodle_url('/blocks/exastud/configuration_classes.php', ['courseid' => g::$COURSE->id]), \block_exastud\get_string('configuration_classes', 'block_exastud'), '', true);
 		}
 		if (block_exastud_get_active_period() && block_exastud_has_global_cap(block_exastud\CAP_REVIEW)) {
-			$tabs['review'] = new tabobject('review', new moodle_url('/blocks/exastud/review.php', ['courseid' => g::$COURSE->id]), \block_exastud\get_string("review", "block_exastud"), '', true);
+			$tabs['review'] = new tabobject('review', new moodle_url('/blocks/exastud/review.php', ['courseid' => g::$COURSE->id]), \block_exastud\get_string('review', 'block_exastud'), '', true);
 		}
 		if (block_exastud_get_active_or_last_period() && block_exastud_has_global_cap(block_exastud\CAP_VIEW_REPORT)) {
-			$tabs['report'] = new tabobject('report', new moodle_url('/blocks/exastud/report.php', ['courseid' => g::$COURSE->id]), \block_exastud\get_string("reports", "block_exastud"), '', true);
+			$tabs['report'] = new tabobject('report', new moodle_url('/blocks/exastud/report.php', ['courseid' => g::$COURSE->id]), \block_exastud\get_string('reports', 'block_exastud'), '', true);
 		}
 		/*
 		if (block_exastud_has_global_cap(block_exastud\CAP_MANAGE_CLASSES)) {
@@ -58,7 +58,7 @@ class block_exastud_renderer extends plugin_renderer_base {
 			}
 
 			if (block_exastud_has_global_cap(block_exastud\CAP_UPLOAD_PICTURE)) {
-				$tabs['settings']->subtree[] = new tabobject('pictureupload', new moodle_url('/blocks/exastud/pictureupload.php', ['courseid' => g::$COURSE->id]), \block_exastud\get_string("pictureupload", "block_exastud"), '', true);
+				$tabs['settings']->subtree[] = new tabobject('pictureupload', new moodle_url('/blocks/exastud/pictureupload.php', ['courseid' => g::$COURSE->id]), \block_exastud\get_string('pictureupload', 'block_exastud'), '', true);
 			}
 
 			if (block_exastud_has_global_cap(block_exastud\CAP_ADMIN)) {

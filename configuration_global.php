@@ -55,7 +55,7 @@ $availablesubjects = block_exastud_get_bildungsplan_subjects(optional_param('bpi
 
 if ($action == 'save-categories') {
 	if (!confirm_sesskey()) {
-		die(get_string("badsessionkey", "block_exastud"));
+		die(get_string('badsessionkey', 'block_exastud'));
 	}
 
 	$items = block_exastud\param::required_array('items',
@@ -93,7 +93,7 @@ if ($action == 'save-categories') {
 
 if ($action == 'save-subjects') {
 	if (!confirm_sesskey()) {
-		die(get_string("badsessionkey", "block_exastud"));
+		die(get_string('badsessionkey', 'block_exastud'));
 	}
 
 	$items = block_exastud\param::required_array('items',
@@ -136,7 +136,7 @@ if ($action == 'save-subjects') {
 
 if ($action == 'save-evalopts') {
 	if (!confirm_sesskey()) {
-		die(get_string("badsessionkey", "block_exastud"));
+		die(get_string('badsessionkey', 'block_exastud'));
 	}
 
 	$items = block_exastud\param::required_array('items',
@@ -174,7 +174,7 @@ if ($action == 'save-evalopts') {
 
 if ($action == 'save-bps') {
 	if (!confirm_sesskey()) {
-		die(get_string("badsessionkey", "block_exastud"));
+		die(get_string('badsessionkey', 'block_exastud'));
 	}
 
 	$items = block_exastud\param::required_array('items',
