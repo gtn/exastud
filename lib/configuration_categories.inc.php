@@ -47,10 +47,10 @@ defined('MOODLE_INTERNAL') || die();
 			</td>
 			<td id="buttonscell">
 			  <div id="addcontrols">
-				  <input name="add" id="add" type="submit" value="◄ <?php echo get_string('add'); ?>" title="<?php print_string('add'); ?>" />
+				  <input name="add" id="add" type="submit" value="◄ <?php echo block_exastud_get_string('add'); ?>" title="<?php print_string('add'); ?>" />
 			  </div>
 				<div id="removecontrols">
-				  <input name="remove" id="remove" type="submit" value="<?php echo get_string('remove'); ?> ►" title="<?php print_string('remove'); ?>" />
+				  <input name="remove" id="remove" type="submit" value="<?php echo block_exastud_get_string('remove'); ?> ►" title="<?php print_string('remove'); ?>" />
 			  	</div>
 			</td>
 			<td valign="top">
@@ -63,7 +63,7 @@ defined('MOODLE_INTERNAL') || die();
 				<?php
 					$i = 0;
 				  	if (!empty($searchtext)) {
-						echo '<optgroup label="' . get_string('searchresults') . ' (' . count($availablecategories) . ')">\n';
+						echo '<optgroup label="' . block_exastud_get_string('searchresults') . ' (' . count($availablecategories) . ')">\n';
 				  		foreach ($availablecategories as $category) {
 						  	echo '<option value="' . $category->id . '_'.$category->source.'">' . $category->title . '</option>\n';
 							$i++;
@@ -71,8 +71,8 @@ defined('MOODLE_INTERNAL') || die();
 						echo "</optgroup>\n";
 					} else {
 						if (count($availablecategories) > MAX_USERS_PER_PAGE) {
-							echo '<optgroup label="'.get_string('toomanytoshow').'"><option></option></optgroup>'."\n"
-								  .'<optgroup label="'.get_string('trysearching').'"><option></option></optgroup>'."\n";
+							echo '<optgroup label="'.block_exastud_get_string('toomanytoshow').'"><option></option></optgroup>'."\n"
+								  .'<optgroup label="'.block_exastud_get_string('trysearching').'"><option></option></optgroup>'."\n";
 						} else {
 							$subject="";
 							foreach ($availablecategories as $category) {
@@ -107,7 +107,7 @@ defined('MOODLE_INTERNAL') || die();
 			   <input name="search" id="search" type="submit" value="<?php print_string('search') ?>" />
 			   <?php
 					if (!empty($searchtext)) {
-						echo '<input name="showall" id="showall" type="submit" value="'.get_string('showall',null,get_string('categories','block_exastud')).'" />'."\n";
+						echo '<input name="showall" id="showall" type="submit" value="'.block_exastud_get_string('showall',null,block_exastud_get_string('categories')).'" />'."\n";
 					}
 			   ?>
 			 </td>

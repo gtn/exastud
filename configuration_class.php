@@ -29,10 +29,10 @@ if ($type != 'categories' && $type != 'teachers') {
 
 require_login($courseid);
 
-block_exastud_require_global_cap(block_exastud\CAP_MANAGE_CLASSES);
+block_exastud_require_global_cap(BLOCK_EXASTUD_CAP_MANAGE_CLASSES);
 
 $classid = required_param('classid', PARAM_INT);
-$class = block_exastud\get_teacher_class($classid);
+$class = block_exastud_get_teacher_class($classid);
 
 $url = '/blocks/exastud/configuration_classes.php';
 $PAGE->set_url($url);
@@ -47,13 +47,13 @@ if ($action == 'delete') {
 	redirect(new moodle_url('/blocks/exastud/configuration_classes.php?courseid='.$courseid));
 }
 
-$output = block_exastud\get_renderer();
+$output = block_exastud_get_renderer();
 echo $output->header(['configuration_classes', $type], ['class' => $class]);
 
 /* Print the Students */
 if ($type == 'students') {
-	$classstudents = \block_exastud\get_class_students($class->id);
-	$additional_head_teachers = block_exastud\get_class_additional_head_teachers($classid);
+	$classstudents = block_exastud_get_class_students($class->id);
+	$additional_head_teachers = block_exastud_get_class_additional_head_teachers($classid);
 
 	if ($action == 'save') {
 		require_sesskey();
@@ -70,47 +70,47 @@ if ($type == 'students') {
 				continue;
 			}
 
-			$current = \block_exastud\get_class_student_data($class->id, $student->id);
+			$current = block_exastud_get_class_student_data($class->id, $student->id);
 			$new = $userdatas[$student->id];
 
-			\block_exastud\set_class_student_data($class->id, $student->id, 'print_grades', $new->print_grades);
-			\block_exastud\set_class_student_data($class->id, $student->id, 'head_teacher', $new->head_teacher);
+			block_exastud_set_class_student_data($class->id, $student->id, 'print_grades', $new->print_grades);
+			block_exastud_set_class_student_data($class->id, $student->id, 'head_teacher', $new->head_teacher);
 
 			if (@$current->bildungsstandard_erreicht != @$new->bildungsstandard_erreicht) {
 				// set it, if changed
 				if (@$new->bildungsstandard_erreicht) {
-					\block_exastud\set_class_student_data($class->id, $student->id, 'bildungsstandard_erreicht', $new->bildungsstandard_erreicht);
-					\block_exastud\set_class_student_data($class->id, $student->id, 'bildungsstandard_erreicht_time', time());
+					block_exastud_set_class_student_data($class->id, $student->id, 'bildungsstandard_erreicht', $new->bildungsstandard_erreicht);
+					block_exastud_set_class_student_data($class->id, $student->id, 'bildungsstandard_erreicht_time', time());
 				} else {
-					\block_exastud\set_class_student_data($class->id, $student->id, 'bildungsstandard_erreicht', null);
-					\block_exastud\set_class_student_data($class->id, $student->id, 'bildungsstandard_erreicht_time', null);
+					block_exastud_set_class_student_data($class->id, $student->id, 'bildungsstandard_erreicht', null);
+					block_exastud_set_class_student_data($class->id, $student->id, 'bildungsstandard_erreicht_time', null);
 				}
 			}
 			if (@$current->dropped_out != @$new->dropped_out) {
 				// set it, if changed
 				if (@$new->dropped_out) {
-					\block_exastud\set_class_student_data($class->id, $student->id, 'dropped_out', 1);
-					\block_exastud\set_class_student_data($class->id, $student->id, 'dropped_out_time', time());
+					block_exastud_set_class_student_data($class->id, $student->id, 'dropped_out', 1);
+					block_exastud_set_class_student_data($class->id, $student->id, 'dropped_out_time', time());
 				} else {
-					\block_exastud\set_class_student_data($class->id, $student->id, 'dropped_out', null);
-					\block_exastud\set_class_student_data($class->id, $student->id, 'dropped_out_time', null);
+					block_exastud_set_class_student_data($class->id, $student->id, 'dropped_out', null);
+					block_exastud_set_class_student_data($class->id, $student->id, 'dropped_out_time', null);
 				}
 			}
 		}
 	}
 
 	if (!$classstudents) {
-		echo $OUTPUT->notification(block_exastud\get_string('no_entries_found'), 'notifymessage');
+		echo $OUTPUT->notification(block_exastud_get_string('no_entries_found'), 'notifymessage');
 	} else {
 		$table = new html_table();
 
 		$table->head = [
-			\block_exastud\get_string('lastname'),
-			\block_exastud\get_string('firstname'),
-			\block_exastud\trans('de:Geburtsdatum'),
-			\block_exastud\trans('de:Note im Lern&shy;entwicklungs&shy;bericht ausweisen'),
-			\block_exastud\trans('de:Bildungsstandard erreicht'),
-			\block_exastud\trans('de:Ausgeschieden'),
+			block_exastud_get_string('lastname'),
+			block_exastud_get_string('firstname'),
+			block_exastud_trans('de:Geburtsdatum'),
+			block_exastud_trans('de:Note im Lern&shy;entwicklungs&shy;bericht ausweisen'),
+			block_exastud_trans('de:Bildungsstandard erreicht'),
+			block_exastud_trans('de:Ausgeschieden'),
 		];
 
 		$table->align = array("left", "left", "left");
@@ -118,7 +118,7 @@ if ($type == 'students') {
 		$table->size = ['20%', '20%', '12%', '12%', '12%', '12%'];
 
 		if ($additional_head_teachers) {
-			$table->head[] = \block_exastud\trans('de:Zuständiger Klassenlehrer');
+			$table->head[] = block_exastud_trans('de:Zuständiger Klassenlehrer');
 			$table->align[] = 'left';
 			$table->size[] = '12%';
 			$additional_head_teachers_select = array_map(function($teacher) {
@@ -127,19 +127,19 @@ if ($type == 'students') {
 		}
 
 		foreach ($classstudents as $classstudent) {
-			$userdata = \block_exastud\get_class_student_data($class->id, $classstudent->id);
+			$userdata = block_exastud_get_class_student_data($class->id, $classstudent->id);
 
 			$print_grades = '<input name="userdatas['.$classstudent->id.'][print_grades]" type="hidden" value="0"/>'.
 				html_writer::checkbox('userdatas['.$classstudent->id.'][print_grades]', 1, @$userdata->print_grades);
 
 			$bildungsstandard = html_writer::select(block_exastud_get_bildungsstandards(), 'userdatas['.$classstudent->id.'][bildungsstandard_erreicht]', @$userdata->bildungsstandard_erreicht, ['' => '']);
 			$bildungsstandard = $bildungsstandard.
-				(!empty($userdata->bildungsstandard_erreicht) ? ' '.userdate($userdata->bildungsstandard_erreicht_time, get_string('strftimedate', 'langconfig')) : '');
+				(!empty($userdata->bildungsstandard_erreicht) ? ' '.userdate($userdata->bildungsstandard_erreicht_time, block_exastud_get_string('strftimedate', 'langconfig')) : '');
 
 			$ausgeschieden = '<input name="userdatas['.$classstudent->id.'][dropped_out]" type="hidden" value="0"/>'.
 				'<input name="userdatas['.$classstudent->id.'][dropped_out]" type="checkbox" value="1"'.
 				(!empty($userdata->dropped_out) ? ' checked="checked"' : '').'/>'.
-				(!empty($userdata->dropped_out) ? userdate($userdata->dropped_out_time, get_string('strftimedate', 'langconfig')) : '');
+				(!empty($userdata->dropped_out) ? userdate($userdata->dropped_out_time, block_exastud_get_string('strftimedate', 'langconfig')) : '');
 
 			$row = [
 				$classstudent->lastname,
@@ -163,72 +163,72 @@ if ($type == 'students') {
 
 		echo $output->table($table);
 
-		echo '<div style="text-align: right;"><input type="submit" value="'.\block_exastud\get_string('savechanges').'"/></div>';
+		echo '<div style="text-align: right;"><input type="submit" value="'.block_exastud_get_string('savechanges').'"/></div>';
 
 		echo '</form>';
 	}
 
 	echo $output->link_button($CFG->wwwroot.'/blocks/exastud/configuration_classmembers.php?courseid='.$courseid.'&classid='.$class->id,
-		\block_exastud\get_string('editclassmemberlist'));
+		block_exastud_get_string('editclassmemberlist'));
 
 	echo $output->link_button($CFG->wwwroot.'/blocks/exastud/configuration_classmembers_courses.php?courseid='.$courseid.'&classid='.$class->id,
-		\block_exastud\trans(['de:Aus Kurs hinzufügen', 'en:Add from Course']));
+		block_exastud_trans(['de:Aus Kurs hinzufügen', 'en:Add from Course']));
 }
 
 /* Print the Classes */
 if ($type == 'teachers') {
-	// echo html_writer::tag("h2", \block_exastud\get_string('teachers', 'block_exastud'));
+	// echo html_writer::tag("h2", block_exastud_get_string('teachers'));
 	$table = new html_table();
 
 	$table->head = array(
-		\block_exastud\trans('de:Fachbezeichnung'),
-		\block_exastud\get_string('lastname'),
-		\block_exastud\get_string('firstname'),
+		block_exastud_trans('de:Fachbezeichnung'),
+		block_exastud_get_string('lastname'),
+		block_exastud_get_string('firstname'),
 	);
 	$table->align = array("left", "left", "left");
 	$table->size = ['33%', '33%', '33%'];
 
-	$classteachers = block_exastud\get_class_subject_teachers($class->id);
-	$additional_head_teachers = block_exastud\get_class_additional_head_teachers($class->id);
+	$classteachers = block_exastud_get_class_subject_teachers($class->id);
+	$additional_head_teachers = block_exastud_get_class_additional_head_teachers($class->id);
 	// need to clone the table, else the output won't work twice
 	$table_clone = clone($table);
 
 	if ($additional_head_teachers) {
 		foreach ($additional_head_teachers as $classteacher) {
 			$table->data[] = [
-				$classteacher->subject_title ?: \block_exastud\trans('de:nicht zugeordnet'),
+				$classteacher->subject_title ?: block_exastud_trans('de:nicht zugeordnet'),
 				$classteacher->lastname,
 				$classteacher->firstname,
 			];
 		}
 
-		echo $output->heading2(block_exastud\get_string('additional_head_teachers'));
+		echo $output->heading2(block_exastud_get_string('additional_head_teachers'));
 		echo $output->table($table);
-		echo $output->heading2(block_exastud\get_string('teachers'));
+		echo $output->heading2(block_exastud_get_string('teachers'));
 	}
 
 	$table = $table_clone;
 	foreach ($classteachers as $classteacher) {
 		$table->data[] = [
-			$classteacher->subject_title ?: \block_exastud\trans('de:nicht zugeordnet'),
+			$classteacher->subject_title ?: block_exastud_trans('de:nicht zugeordnet'),
 			$classteacher->lastname,
 			$classteacher->firstname,
 		];
 	}
 
 	if (!$classteachers) {
-		echo $OUTPUT->notification(block_exastud\get_string('no_entries_found'), 'notifymessage');
+		echo $OUTPUT->notification(block_exastud_get_string('no_entries_found'), 'notifymessage');
 	} else {
 		echo $output->table($table);
 	}
 
 	echo $OUTPUT->single_button($CFG->wwwroot.'/blocks/exastud/configuration_classteachers.php?courseid='.$courseid.'&classid='.$class->id,
-		\block_exastud\get_string('editclassteacherlist', 'block_exastud'), 'get');
+		block_exastud_get_string('editclassteacherlist'), 'get');
 }
 
 /* Print the categories */
-if ($type == 'categories' && \block_exastud\get_plugin_config('can_edit_bps_and_subjects')) {
-	// echo html_writer::tag("h2", \block_exastud\get_string('categories'));
+if ($type == 'categories' && block_exastud_get_plugin_config('can_edit_bps_and_subjects')) {
+	// echo html_writer::tag("h2", block_exastud_get_string('categories'));
 
 	$table = new html_table();
 
@@ -244,7 +244,7 @@ if ($type == 'categories' && \block_exastud\get_plugin_config('can_edit_bps_and_
 	echo $output->table($table);
 
 	echo $OUTPUT->single_button($CFG->wwwroot.'/blocks/exastud/configuration_categories.php?courseid='.$courseid.'&classid='.$class->id,
-		\block_exastud\get_string('editclasscategories', 'block_exastud'), 'get');
+		block_exastud_get_string('editclasscategories'), 'get');
 }
 
 echo $output->footer();

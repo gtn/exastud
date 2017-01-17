@@ -25,7 +25,7 @@ $classid = optional_param('classid',0,PARAM_INT);
 $detail = optional_param('detailedreport', false, PARAM_BOOL);
 require_login($courseid);
 
-block_exastud_require_global_cap(block_exastud\CAP_USE);
+block_exastud_require_global_cap(BLOCK_EXASTUD_CAP_USE);
 
 $actPeriod = ($periodid==0) ? block_exastud_check_active_period() : $DB->get_record('block_exastudperiod', array('id'=>$periodid));
 
@@ -46,7 +46,7 @@ if(!$mystudents = $DB->get_records_sql('
 }
 
 block_exastud_print_student_report_header();
-echo '<div><a href="javascript:window.print()" title="'.block_exastud\get_string('print').'">'.block_exastud\get_string('print').'</a></div>';
+echo '<div><a href="javascript:window.print()" title="'.block_exastud_get_string('print').'">'.block_exastud_get_string('print').'</a></div>';
 $ranking = 1;
 foreach($mystudents as $mystudent) {
 	block_exastud_print_student_report($mystudent->studentid, $actPeriod->id, $class,false,$detail,$ranking++);

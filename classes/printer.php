@@ -43,7 +43,7 @@ class printer {
 		global $CFG;
 
 		$certificate_issue_date = trim(get_config('exastud', 'certificate_issue_date'));
-		$studentdata = get_class_student_data($class->id, $student->id);
+		$studentdata = block_exastud_get_class_student_data($class->id, $student->id);
 
 		if ($template == 'leb_alter_bp_hj') {
 			return static::leb($class, $student);
@@ -76,7 +76,7 @@ class printer {
 				'klasse' => $class->title,
 				// 'geburtsdatum' => get_custom_profile_field_value($student->id, 'dateofbirth'),
 				'certdate' => $certificate_issue_date,
-				'lern_und_sozialverhalten' => static::spacerIfEmpty(get_class_student_data($class->id, $student->id, \block_exastud\DATA_ID_LERN_UND_SOZIALVERHALTEN)),
+				'lern_und_sozialverhalten' => static::spacerIfEmpty(block_exastud_get_class_student_data($class->id, $student->id, BLOCK_EXASTUD_DATA_ID_LERN_UND_SOZIALVERHALTEN)),
 				'bemerkungen' => static::spacerIfEmpty(@$studentdata->comments),
 				'religion' => '---',
 				'profilfach' => '---',
@@ -102,7 +102,7 @@ class printer {
 
 			// danach mit richtigen werten überschreiben
 			foreach ($availablesubjects as $subject) {
-				$subjectData = \block_exastud\get_subject_student_data($class->id, $subject->id, $student->id);
+				$subjectData = block_exastud_get_subject_student_data($class->id, $subject->id, $student->id);
 
 				if (!@$subjectData->review) {
 					continue;
@@ -151,7 +151,7 @@ class printer {
 		}
 		if ($template == 'Anlage zum Lernentwicklungsbericht') {
 			$evalopts = g::$DB->get_records('block_exastudevalopt', null, 'sorting', 'id, title, sourceinfo');
-			$categories = get_class_categories_for_report($student->id, $class->id);
+			$categories = block_exastud_get_class_categories_for_report($student->id, $class->id);
 			$subjects = static::get_exacomp_subjects($student->id);
 
 			$data = [
@@ -411,7 +411,7 @@ class printer {
 					'align' => 'center',
 				]);
 			} catch (\PhpOffice\PhpWord\Exception\InvalidImageException $e) {
-				print_error(trans('en:The configured header image has a not supported format, please contat your administrator'));
+				print_error(block_exastud_trans('en:The configured header image has a not supported format, please contat your administrator'));
 			}
 		}
 
@@ -427,20 +427,20 @@ class printer {
 		$table = static::leb_wrapper_table($section)->addTable(array('borderSize' => 0, 'borderColor' => 'FFFFFF', 'cellMargin' => 80));
 		$table->addRow();
 		$table->addCell($tableWidthTwips / 6);
-		$table->addCell($tableWidthTwips / 6 * 2)->addText(trans('de:Vor- und Zuname').':', ['bold' => true]);
+		$table->addCell($tableWidthTwips / 6 * 2)->addText(block_exastud_trans('de:Vor- und Zuname').':', ['bold' => true]);
 		$table->addCell($tableWidthTwips / 6 * 3)->addText($student->firstname.' '.$student->lastname);
 		$table->addRow();
 		$table->addCell();
-		$table->addCell()->addText(trans('de:Geburtsdatum').':', ['bold' => true]);
+		$table->addCell()->addText(block_exastud_trans('de:Geburtsdatum').':', ['bold' => true]);
 		$table->addCell()->addText($dateofbirth);
 		$table->addRow();
 		$table->addCell();
-		$table->addCell()->addText(trans('de:Lerngruppe').':', ['bold' => true]);
+		$table->addCell()->addText(block_exastud_trans('de:Lerngruppe').':', ['bold' => true]);
 		$table->addCell()->addText($class->title);
 		$table->addRow();
 		$table->addCell();
 
-		$studentdata = get_class_student_data($class->id, $student->id);
+		$studentdata = block_exastud_get_class_student_data($class->id, $student->id);
 
 		$availablesubjects = block_exastud_get_bildungsplan_subjects($class->bpid);
 
@@ -457,7 +457,7 @@ class printer {
 		foreach ($availablesubjects as $availablesubject) {
 			if (isset($textReviews[$availablesubject->title])) {
 				$textReview = $textReviews[$availablesubject->title];
-				$subject = (object)array_merge((array)$textReview, (array)\block_exastud\get_subject_student_data($class->id, $textReview->subjectid, $student->id));
+				$subject = (object)array_merge((array)$textReview, (array)block_exastud_get_subject_student_data($class->id, $textReview->subjectid, $student->id));
 			} elseif ($availablesubject->always_print) {
 				$subject = (object)[
 					'title' => $availablesubject->title,
@@ -506,8 +506,8 @@ class printer {
 		// phpword bug: pagebreak needs some text
 		// $section->addText('.', ['size' => 1, 'color'=>'ffffff']);
 
-		$lern_und_sozialverhalten = get_class_student_data($class->id, $student->id, \block_exastud\DATA_ID_LERN_UND_SOZIALVERHALTEN);
-		$table = static::leb_header_body_table($section, trans('de:Lern- und Sozialverhalten'), block_exastud_text_to_html($lern_und_sozialverhalten) ?: '---');
+		$lern_und_sozialverhalten = block_exastud_get_class_student_data($class->id, $student->id, BLOCK_EXASTUD_DATA_ID_LERN_UND_SOZIALVERHALTEN);
+		$table = static::leb_header_body_table($section, block_exastud_trans('de:Lern- und Sozialverhalten'), block_exastud_text_to_html($lern_und_sozialverhalten) ?: '---');
 		/*
 		if (empty($lern_und_sozialverhalten)) {
 			$cell = $table->getRows()[1]->getCells()[0];
@@ -518,7 +518,7 @@ class printer {
 		}
 		*/
 
-		$table = static::leb_header_body_table($section, trans('de:Leistung in den einzelnen Fächern'), null);
+		$table = static::leb_header_body_table($section, block_exastud_trans('de:Leistung in den einzelnen Fächern'), null);
 		$cell = $table->getRows()[0]->getCells()[0];
 		//$cell->addText('mit Angabe der Niveaustufe *, auf der die Leistungen überwiegend erbracht wurden. Auf Elternwunsch zusätzlich Note.',
 		//	['size' => 9, 'bold' => true]);

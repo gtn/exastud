@@ -33,7 +33,7 @@ if (!$returnurl) {
 	$returnurl = $parenturl;
 }
 
-$output = block_exastud\get_renderer();
+$output = block_exastud_get_renderer();
 
 $PAGE->set_url('/blocks/exastud/review_student_other_data.php', [
 	'courseid' => $courseid,
@@ -43,9 +43,9 @@ $PAGE->set_url('/blocks/exastud/review_student_other_data.php', [
 	'returnurl' => $returnurl,
 ]);
 
-block_exastud_require_global_cap(block_exastud\CAP_REVIEW);
+block_exastud_require_global_cap(BLOCK_EXASTUD_CAP_REVIEW);
 
-$class = block_exastud\get_review_class($classid, \block_exastud\SUBJECT_ID_OTHER_DATA);
+$class = block_exastud_get_review_class($classid, BLOCK_EXASTUD_SUBJECT_ID_OTHER_DATA);
 
 if (!$class) {
 	print_error('badclass', 'block_exastud');
@@ -56,45 +56,45 @@ if ($DB->count_records('block_exastudclassstudents', array('studentid' => $stude
 }
 $student = $DB->get_record('user', array('id' => $studentid));
 
-$strstudentreview = \block_exastud\get_string('reviewstudent', 'block_exastud');
-$strclassreview = \block_exastud\get_string('reviewclass', 'block_exastud');
-$strreview = \block_exastud\get_string('review', 'block_exastud');
+$strstudentreview = block_exastud_get_string('reviewstudent');
+$strclassreview = block_exastud_get_string('reviewclass');
+$strreview = block_exastud_get_string('review');
 
 $actPeriod = block_exastud_check_active_period();
 
-if ($type == \block_exastud\DATA_ID_LERN_UND_SOZIALVERHALTEN) {
+if ($type == BLOCK_EXASTUD_DATA_ID_LERN_UND_SOZIALVERHALTEN) {
 	$categories = [
-		\block_exastud\DATA_ID_LERN_UND_SOZIALVERHALTEN => \block_exastud\trans('de:Lern- und Sozialverhalten'),
+		BLOCK_EXASTUD_DATA_ID_LERN_UND_SOZIALVERHALTEN => block_exastud_trans('de:Lern- und Sozialverhalten'),
 	];
-	$classheader = $class->title.' - '.\block_exastud\trans('de:Lern- und Sozialverhalten');
+	$classheader = $class->title.' - '.block_exastud_trans('de:Lern- und Sozialverhalten');
 } else {
 	$categories = [
 		/*
-		'ateliers' => \block_exastud\trans('de:Ateliers'),
-		'arbeitsgemeinschaften' => \block_exastud\trans('de:Arbeitsgemeinschaften'),
-		'besondere_staerken' => \block_exastud\trans('de:Besondere Stärken'),
+		'ateliers' => block_exastud_trans('de:Ateliers'),
+		'arbeitsgemeinschaften' => block_exastud_trans('de:Arbeitsgemeinschaften'),
+		'besondere_staerken' => block_exastud_trans('de:Besondere Stärken'),
 		*/
-		'comments' => \block_exastud\trans('de:Bemerkungen'),
+		'comments' => block_exastud_trans('de:Bemerkungen'),
 	];
-	$classheader = $class->title.' - '.\block_exastud\trans('de:Bemerkungen');
+	$classheader = $class->title.' - '.block_exastud_trans('de:Bemerkungen');
 }
 
-$olddata = (array)block_exastud\get_class_student_data($classid, $studentid);
+$olddata = (array)block_exastud_get_class_student_data($classid, $studentid);
 
 $dataid = key($categories);
 $studentform = new student_other_data_form($PAGE->url, [
 	'categories' => $categories, 'type' => $type,
 	'modified' =>
 		@$olddata[$dataid.'.modifiedby'] ?
-			\block_exastud\get_renderer()->last_modified(@$olddata[$dataid.'.modifiedby'], @$olddata[$dataid.'.timemodified'])
+			block_exastud_get_renderer()->last_modified(@$olddata[$dataid.'.modifiedby'], @$olddata[$dataid.'.timemodified'])
 			: '',
 ]);
 
 if ($fromform = $studentform->get_data()) {
 	foreach ($categories as $dataid => $category) {
-		\block_exastud\set_class_student_data($classid, $studentid, $dataid, $fromform->{$dataid});
-		\block_exastud\set_class_student_data($classid, $studentid, $dataid.'.modifiedby', $USER->id);
-		\block_exastud\set_class_student_data($classid, $studentid, $dataid.'.timemodified', time());
+		block_exastud_set_class_student_data($classid, $studentid, $dataid, $fromform->{$dataid});
+		block_exastud_set_class_student_data($classid, $studentid, $dataid.'.modifiedby', $USER->id);
+		block_exastud_set_class_student_data($classid, $studentid, $dataid.'.timemodified', time());
 	}
 
 	redirect($returnurl);
@@ -106,7 +106,7 @@ echo $output->header(array('review',
 
 echo $output->heading($classheader);
 
-if ($type == \block_exastud\DATA_ID_LERN_UND_SOZIALVERHALTEN) {
+if ($type == BLOCK_EXASTUD_DATA_ID_LERN_UND_SOZIALVERHALTEN) {
 	$user = $student;
 	$userReport = block_exastud_get_report($user->id, $actPeriod->id);
 
@@ -116,8 +116,8 @@ if ($type == \block_exastud\DATA_ID_LERN_UND_SOZIALVERHALTEN) {
 
 	$table->head = array();
 	$table->head[] = '';
-	$table->head[] = \block_exastud\get_string('name');
-	$table->head[] = \block_exastud\trans('de:Geburtsdatum');
+	$table->head[] = block_exastud_get_string('name');
+	$table->head[] = block_exastud_trans('de:Geburtsdatum');
 	foreach ($reviewcategories as $category) {
 		$table->head[] = $category->title;
 	}
@@ -144,8 +144,8 @@ if ($type == \block_exastud\DATA_ID_LERN_UND_SOZIALVERHALTEN) {
 	echo $output->table($table);
 
 	$vorschlaege = [];
-	foreach (\block_exastud\get_class_teachers($classid) as $class_teacher) {
-		if ($class_teacher->subjectid == \block_exastud\SUBJECT_ID_ADDITIONAL_HEAD_TEACHER) {
+	foreach (block_exastud_get_class_teachers($classid) as $class_teacher) {
+		if ($class_teacher->subjectid == BLOCK_EXASTUD_SUBJECT_ID_ADDITIONAL_HEAD_TEACHER) {
 			continue;
 		}
 
@@ -156,7 +156,7 @@ if ($type == \block_exastud\DATA_ID_LERN_UND_SOZIALVERHALTEN) {
 
 		$class_teacher->vorschlag = $DB->get_field('block_exastudreview', 'review', [
 			'studentid' => $studentid,
-			'subjectid' => \block_exastud\SUBJECT_ID_LERN_UND_SOZIALVERHALTEN_VORSCHLAG,
+			'subjectid' => BLOCK_EXASTUD_SUBJECT_ID_LERN_UND_SOZIALVERHALTEN_VORSCHLAG,
 			'periodid' => $actPeriod->id,
 			'teacherid' => $class_teacher->userid,
 		]);
@@ -166,7 +166,7 @@ if ($type == \block_exastud\DATA_ID_LERN_UND_SOZIALVERHALTEN) {
 		}
 	}
 
-	echo '<legend>'.\block_exastud\trans("de:Formulierungsvorschläge").'</legend>';
+	echo '<legend>'.block_exastud_trans("de:Formulierungsvorschläge").'</legend>';
 
 	if ($vorschlaege) {
 		foreach ($vorschlaege as $vorschlag) {
@@ -174,7 +174,7 @@ if ($type == \block_exastud\DATA_ID_LERN_UND_SOZIALVERHALTEN) {
 			echo '<hr>';
 		}
 	} else {
-		echo block_exastud\trans('de:Keine Vorschläge gefunden');
+		echo block_exastud_trans('de:Keine Vorschläge gefunden');
 	}
 
 } else {
@@ -188,7 +188,7 @@ foreach ($categories as $dataid => $category) {
 	$formdata[$dataid] = block_exastud_html_to_text(@$formdata[$dataid]);
 }
 /*
-$studentdata = block_exastud\get_class_student_data($classid, $studentid);
+$studentdata = block_exastud_get_class_student_data($classid, $studentid);
 $formdata = new stdClass;
 foreach ($categories as $dataid=>$category) {
 	$formdata->{$dataid} = array('text'=>isset($studentdata[$dataid]) ? $studentdata[$dataid] : '', 'format'=>FORMAT_HTML);

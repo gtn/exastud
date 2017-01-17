@@ -21,6 +21,6 @@ require_once __DIR__.'/../inc.php';
 
 // called when installing a plugin
 function xmldb_block_exastud_install() {
-	block_exastud\check_profile_fields();
-	block_exastud\insert_default_entries();
+	block_exastud_check_profile_fields();
+	block_exastud_insert_default_entries();
 }

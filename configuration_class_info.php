@@ -26,7 +26,7 @@ $classid = optional_param('classid', 0, PARAM_INT); // Course ID
 
 require_login($courseid);
 
-block_exastud_require_global_cap(block_exastud\CAP_MANAGE_CLASSES);
+block_exastud_require_global_cap(BLOCK_EXASTUD_CAP_MANAGE_CLASSES);
 $curPeriod = block_exastud_get_active_or_next_period();
 
 if (!$classid) {
@@ -34,7 +34,7 @@ if (!$classid) {
 	$class->id = 0;
 	$class->title = '';
 } else {
-	$class = block_exastud\get_teacher_class($classid);
+	$class = block_exastud_get_teacher_class($classid);
 }
 $class->classid = $class->id;
 $class->courseid = $courseid;
@@ -83,30 +83,30 @@ $classform->set_data($class);
 
 $url = "/blocks/exastud/configuration_class_info.php";
 $PAGE->set_url($url);
-$output = block_exastud\get_renderer();
+$output = block_exastud_get_renderer();
 echo $output->header(['configuration_classes', 'class_info'], ['class' => ($class && $class->id) ? $class : null]);
 
 
 if ($class && $class->id) {
 	$classform->display();
 
-	echo $output->heading2(block_exastud\trans('de:Klasse löschen'));
+	echo $output->heading2(block_exastud_trans('de:Klasse löschen'));
 
-	if (!\block_exastud\get_class_students($class->id)) {
+	if (!block_exastud_get_class_students($class->id)) {
 		$deleteButton = $output->link_button('configuration_class.php?courseid='.$COURSE->id.'&action=delete&classid='.$class->id.'&confirm=1',
-			block_exastud\get_string('delete'),
-			['exa-confirm' => block_exastud\trans('de:Wirklich löschen?')]);
+			block_exastud_get_string('delete'),
+			['exa-confirm' => block_exastud_trans('de:Wirklich löschen?')]);
 	} else {
 		$deleteButton = html_writer::empty_tag('input', [
 			'type' => 'button',
-			'onclick' => "alert(".json_encode(block_exastud\trans('de:Es können nur Klassen ohne Schüler gelöscht werden')).")",
-			'value' => block_exastud\trans('de:Klasse löschen'),
+			'onclick' => "alert(".json_encode(block_exastud_trans('de:Es können nur Klassen ohne Schüler gelöscht werden')).")",
+			'value' => block_exastud_trans('de:Klasse löschen'),
 		]);
 	}
 
 	echo $deleteButton;
 } else {
-	echo $output->heading(\block_exastud\trans(['de:Klasse hinzufügen', 'en:Add Class']));
+	echo $output->heading(block_exastud_trans(['de:Klasse hinzufügen', 'en:Add Class']));
 
 	$classform->display();
 }

@@ -24,11 +24,11 @@ $courseid = optional_param('courseid', 1, PARAM_INT); // Course ID
 
 require_login($courseid);
 
-block_exastud_require_global_cap(block_exastud\CAP_UPLOAD_PICTURE);
+block_exastud_require_global_cap(BLOCK_EXASTUD_CAP_UPLOAD_PICTURE);
 
 $url = '/blocks/exastud/pictureupload.php';
 $PAGE->set_url($url, [ 'courseid' => $courseid ]);
-$output = block_exastud\get_renderer();
+$output = block_exastud_get_renderer();
 
 echo $output->header(['settings', 'pictureupload']);
 
@@ -45,7 +45,7 @@ if ($mform->is_cancelled()) {
 	// save new logo
 	$mform->save_stored_file('file', context_system::instance()->id	, 'block_exastud', 'main_logo', 0);
 							  
-	\block_exastud\get_string('upload_success','block_exastud');
+	block_exastud_get_string('upload_success');
 }
 
 if ($logo = block_exastud_get_main_logo_url()) {

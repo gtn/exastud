@@ -28,19 +28,19 @@ if (!empty($CFG->block_exastud_project_based_assessment)) {
 
 require_login($courseid);
 
-block_exastud_require_global_cap(block_exastud\CAP_VIEW_REPORT);
+block_exastud_require_global_cap(BLOCK_EXASTUD_CAP_VIEW_REPORT);
 
-$output = block_exastud\get_renderer();
+$output = block_exastud_get_renderer();
 
 $url = '/blocks/exastud/report.php';
 $PAGE->set_url($url);
 
 if ($classid = optional_param('classid', 0, PARAM_INT)) {
-	$class = block_exastud\get_teacher_class($classid);
+	$class = block_exastud_get_teacher_class($classid);
 
-	if (!$classstudents = block_exastud\get_class_students($class->id)) {
+	if (!$classstudents = block_exastud_get_class_students($class->id)) {
 		echo $output->header('report');
-		echo $output->heading(\block_exastud\trans(['de:Keine Schüler gefunden', 'en:No students found']));
+		echo $output->heading(block_exastud_trans(['de:Keine Schüler gefunden', 'en:No students found']));
 		echo $output->back_button(new moodle_url('report.php', ['courseid' => $courseid]));
 		echo $output->footer();
 		exit;
@@ -60,8 +60,8 @@ if ($classid = optional_param('classid', 0, PARAM_INT)) {
 			echo $output->header('report');
 
 			foreach ($printStudents as $student) {
-				$textReviews = \block_exastud\get_text_reviews($class, $student->id);
-				$categories = \block_exastud\get_class_categories_for_report($student->id, $class->id);
+				$textReviews = block_exastud_get_text_reviews($class, $student->id);
+				$categories = block_exastud_get_class_categories_for_report($student->id, $class->id);
 
 				$studentdesc = $OUTPUT->user_picture($student, array("courseid" => $courseid)).' '.fullname($student);
 				echo $output->heading($studentdesc);
@@ -127,7 +127,7 @@ if ($classid = optional_param('classid', 0, PARAM_INT)) {
 	$table->head[] = '<input type="checkbox" name="checkallornone"/>';
 	$table->head[] = '';
 	$table->head[] = '';
-	$table->head[] = \block_exastud\get_string('name');
+	$table->head[] = block_exastud_get_string('name');
 
 	$table->size = ['5%', '5%', '5%'];
 
@@ -174,7 +174,7 @@ if ($classid = optional_param('classid', 0, PARAM_INT)) {
 
 	echo $output->table($table);
 
-	echo '<input type="submit" value="'.\block_exastud\trans(['de:Weiter', 'en:Next']).'"/>';
+	echo '<input type="submit" value="'.block_exastud_trans(['de:Weiter', 'en:Next']).'"/>';
 
 	echo $output->footer();
 } else {
@@ -183,7 +183,7 @@ if ($classid = optional_param('classid', 0, PARAM_INT)) {
 	$periods = $DB->get_records_sql('SELECT * FROM {block_exastudperiod} WHERE (starttime <= '.time().') ORDER BY endtime DESC');
 
 	foreach ($periods as $period) {
-		$classes = block_exastud\get_head_teacher_classes_all($period->id);
+		$classes = block_exastud_get_head_teacher_classes_all($period->id);
 
 		$table = new html_table();
 
@@ -192,7 +192,7 @@ if ($classid = optional_param('classid', 0, PARAM_INT)) {
 
 		if (!$classes) {
 			$table->data[] = [
-				block_exastud\trans('de:Keine Klassen gefunden'),
+				block_exastud_trans('de:Keine Klassen gefunden'),
 			];
 		} else {
 			foreach ($classes as $class) {

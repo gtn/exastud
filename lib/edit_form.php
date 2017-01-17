@@ -35,20 +35,20 @@ class class_edit_form extends moodleform {
 		$mform->addElement('hidden', 'courseid');
 		$mform->setType('courseid', PARAM_INT);
 
-		$mform->addElement('text', 'title', \block_exastud\get_string('class', 'block_exastud').':', array('size' => 50));
+		$mform->addElement('text', 'title', block_exastud_get_string('class').':', array('size' => 50));
 		$mform->setType('title', PARAM_TEXT);
 		$mform->addRule('title', null, 'required', null, 'client');
 
 		$bps = g::$DB->get_records_menu('block_exastudbp', null, 'sorting', 'id, title');
-		$mform->addElement('select', 'bpid', \block_exastud\trans('de:Bildungsplan').':', $bps);
+		$mform->addElement('select', 'bpid', block_exastud_trans('de:Bildungsplan').':', $bps);
 
 		$mform->addElement('static', '', '&nbsp;',
-			g::$OUTPUT->notification(\block_exastud\trans(['de:Bitte beachten Sie: Bei einer Änderung des Bildungsplans müssen alle Bewertungen erneut eingegeben werden.', 'en:']), 'notifymessage')
+			g::$OUTPUT->notification(block_exastud_trans(['de:Bitte beachten Sie: Bei einer Änderung des Bildungsplans müssen alle Bewertungen erneut eingegeben werden.', 'en:']), 'notifymessage')
 		);
 
 		/*
 		$subjects = $DB->get_records_menu('block_exastudsubjects', null, 'title', 'id, title');
-		$select = $mform->addElement('select', 'mysubjectids', \block_exastud\get_string('subjects_taught_by_me'), $subjects);
+		$select = $mform->addElement('select', 'mysubjectids', block_exastud_get_string('subjects_taught_by_me'), $subjects);
 		$select->setMultiple(true);
 		*/
 
@@ -67,19 +67,19 @@ class period_edit_form extends moodleform {
 	function definition() {
 		$mform = $this->_form;
 
-		$mform->addElement('text', 'description', get_string('perioddesc', 'block_exastud'), array('size' => 50));
+		$mform->addElement('text', 'description', block_exastud_get_string('perioddesc'), array('size' => 50));
 		$mform->setType('description', PARAM_TEXT);
-		$mform->addRule('description', get_string('error'), 'required', null, 'server', false, false);
+		$mform->addRule('description', block_exastud_get_string('error'), 'required', null, 'server', false, false);
 
 
 		$mform->addElement('hidden', 'courseid');
 		$mform->setType('courseid', PARAM_INT);
 
-		$mform->addElement('date_time_selector', 'starttime', get_string('starttime', 'block_exastud'));
+		$mform->addElement('date_time_selector', 'starttime', block_exastud_get_string('starttime'));
 		$mform->setType('starttime', PARAM_INT);
 		$mform->addRule('starttime', null, 'required', null, 'server');
 
-		$mform->addElement('date_time_selector', 'endtime', get_string('endtime', 'block_exastud'));
+		$mform->addElement('date_time_selector', 'endtime', block_exastud_get_string('endtime'));
 		$mform->setType('endtime', PARAM_INT);
 		$mform->addRule('endtime', null, 'required', null, 'server');
 
@@ -119,7 +119,7 @@ class student_edit_form extends moodleform {
 
 		$selectoptions = block_exastud_get_evaluation_options(true);
 
-		$mform->addElement('header', 'categories', \block_exastud\trans("de:Fachübergreifende Kompetenzen"));
+		$mform->addElement('header', 'categories', block_exastud_trans("de:Fachübergreifende Kompetenzen"));
 		$mform->setExpanded('categories');
 		if ($this->_customdata['categories.modified']) {
 			$mform->addElement('static', '', '', $this->_customdata['categories.modified']);
@@ -134,12 +134,12 @@ class student_edit_form extends moodleform {
 			$mform->setDefault($id, key($selectoptions));
 		}
 
-		$mform->addElement('header', 'vorschlag_header', \block_exastud\trans("de:Lern- und Sozialverhalten: Formulierungsvorschlag für Klassenlehrkraft"));
+		$mform->addElement('header', 'vorschlag_header', block_exastud_trans("de:Lern- und Sozialverhalten: Formulierungsvorschlag für Klassenlehrkraft"));
 		$mform->setExpanded('vorschlag_header');
 		$mform->addElement('textarea', 'vorschlag', '', array('cols' => 50, 'rows' => 5));
 		$mform->setType('vorschlag', PARAM_RAW);
 
-		$mform->addElement('header', 'review_header', \block_exastud\trans("de:Fachkompetenzen"));
+		$mform->addElement('header', 'review_header', block_exastud_trans("de:Fachkompetenzen"));
 		$mform->setExpanded('review_header');
 		if ($this->_customdata['review.modified']) {
 			$mform->addElement('static', '', '', $this->_customdata['review.modified']);
@@ -147,7 +147,7 @@ class student_edit_form extends moodleform {
 		$mform->addElement('textarea', 'review', '', array('cols' => 50, 'rows' => 20));
 		$mform->setType('review', PARAM_RAW);
 
-		$mform->addElement('header', 'grade_header', \block_exastud\trans("de:Note und Niveau"));
+		$mform->addElement('header', 'grade_header', block_exastud_trans("de:Note und Niveau"));
 		$mform->setExpanded('grade_header');
 
 		if ($this->_customdata['grade.modified']) {

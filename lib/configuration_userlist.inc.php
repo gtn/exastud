@@ -56,13 +56,13 @@ defined('MOODLE_INTERNAL') || die();
 							<?php
 							if ($userlistType == 'teachers') {
 								$subjects = block_exastud_get_bildungsplan_subjects($class->bpid);
-								echo '<p><label for="classteacher_subjectid">'.\block_exastud\trans('de:Fachbezeichnung / Rolle').'</label><br>';
+								echo '<p><label for="classteacher_subjectid">'.block_exastud_trans('de:Fachbezeichnung / Rolle').'</label><br>';
 								echo '<select id="classteacher_subjectid" name="classteacher_subjectid" style="max-width: 250px">';
 								// no empty option
 								// echo '<option></option>';
 
 								$subjects = array_merge([
-									(object)['id' => block_exastud\SUBJECT_ID_ADDITIONAL_HEAD_TEACHER, 'title' => \block_exastud\get_string('additional_head_teacher')],
+									(object)['id' => BLOCK_EXASTUD_SUBJECT_ID_ADDITIONAL_HEAD_TEACHER, 'title' => block_exastud_get_string('additional_head_teacher')],
 									(object)['id' => '', 'title' => '-----------------', 'disabled'=>1],
 								], $subjects);
 
@@ -80,11 +80,11 @@ defined('MOODLE_INTERNAL') || die();
 								echo '</p>';
 							} ?>
 						</div>
-						<input name="add" id="add" type="submit" value="◄ <?php echo get_string('add'); ?>"
+						<input name="add" id="add" type="submit" value="◄ <?php echo block_exastud_get_string('add'); ?>"
 							   title="<?php print_string('add'); ?>"/>
 					</div>
 					<div id="removecontrols">
-						<input name="remove" id="remove" type="submit" value="<?php echo get_string('remove'); ?> ►"
+						<input name="remove" id="remove" type="submit" value="<?php echo block_exastud_get_string('remove'); ?> ►"
 							   title="<?php print_string('remove'); ?>"/>
 					</div>
 				</td>
@@ -98,7 +98,7 @@ defined('MOODLE_INTERNAL') || die();
 							<?php
 							$i = 0;
 							if (!empty($searchtext)) {
-								echo '<optgroup label="'.get_string('searchresults').' ('.count($availableusers).')">\n';
+								echo '<optgroup label="'.block_exastud_get_string('searchresults').' ('.count($availableusers).')">\n';
 								foreach ($availableusers as $user) {
 									$fullname = fullname($user);
 									echo '<option value="'.$user->id.'">'.$fullname.', '.$user->email.'</option>\n';
@@ -107,8 +107,8 @@ defined('MOODLE_INTERNAL') || die();
 								echo "</optgroup>\n";
 							} else {
 								if (count($availableusers) > MAX_USERS_PER_PAGE) {
-									echo '<optgroup label="'.get_string('toomanytoshow').'"><option></option></optgroup>'."\n"
-										.'<optgroup label="'.get_string('trysearching').'"><option></option></optgroup>'."\n";
+									echo '<optgroup label="'.block_exastud_get_string('toomanytoshow').'"><option></option></optgroup>'."\n"
+										.'<optgroup label="'.block_exastud_get_string('trysearching').'"><option></option></optgroup>'."\n";
 								} else {
 									foreach ($availableusers as $user) {
 										$fullname = fullname($user);
@@ -138,7 +138,7 @@ defined('MOODLE_INTERNAL') || die();
 					<input name="search" id="search" type="submit" value="<?php print_string('search') ?>"/>
 					<?php
 					if (!empty($searchtext)) {
-						echo '<input name="showall" id="showall" type="submit" value="'.get_string('showall', 'block_exastud').'" />'."\n";
+						echo '<input name="showall" id="showall" type="submit" value="'.block_exastud_get_string('showall').'" />'."\n";
 					}
 					?>
 				</td>

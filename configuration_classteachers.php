@@ -32,14 +32,14 @@ $remove		 = optional_param('remove', 0, PARAM_BOOL);
 
 require_login($courseid);
 
-block_exastud_require_global_cap(block_exastud\CAP_MANAGE_CLASSES);
+block_exastud_require_global_cap(BLOCK_EXASTUD_CAP_MANAGE_CLASSES);
 $curPeriod = block_exastud_get_active_or_next_period();
 
-$class = block_exastud\get_teacher_class($classid);
+$class = block_exastud_get_teacher_class($classid);
 
 $url = '/blocks/exastud/configuration_classteachers.php';
 $PAGE->set_url($url);
-$output = \block_exastud\get_renderer();
+$output = block_exastud_get_renderer();
 echo $output->header(['configuration_classes', 'teachers'], ['class' => $class]);
 
 if ($frm = data_submitted()) {
@@ -53,7 +53,7 @@ if ($frm = data_submitted()) {
 				continue;
 			}
 
-			if ($subjectid == \block_exastud\SUBJECT_ID_ADDITIONAL_HEAD_TEACHER && $adduser == $class->userid) {
+			if ($subjectid == BLOCK_EXASTUD_SUBJECT_ID_ADDITIONAL_HEAD_TEACHER && $adduser == $class->userid) {
 				// classteacher can't add himself
 				continue;
 			}
@@ -103,7 +103,7 @@ $availableusers = $DB->get_records_sql('SELECT id, firstname, lastname, email, '
 									--			   '.$selectsql.')
 									 ORDER BY lastname ASC, firstname ASC');
 
-$classstudents = block_exastud\get_class_teachers($class->id);
+$classstudents = block_exastud_get_class_teachers($class->id);
 
 echo $OUTPUT->box_start();
 $userlistType = 'teachers';

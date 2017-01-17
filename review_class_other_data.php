@@ -25,32 +25,32 @@ $type = required_param('type', PARAM_TEXT);
 
 require_login($courseid);
 
-block_exastud_require_global_cap(block_exastud\CAP_REVIEW);
+block_exastud_require_global_cap(BLOCK_EXASTUD_CAP_REVIEW);
 
-$class = block_exastud\get_review_class($classid, \block_exastud\SUBJECT_ID_OTHER_DATA);
+$class = block_exastud_get_review_class($classid, BLOCK_EXASTUD_SUBJECT_ID_OTHER_DATA);
 
 if (!$class) {
 	print_error("badclass", "block_exastud");
 }
 
-if ($type == \block_exastud\DATA_ID_LERN_UND_SOZIALVERHALTEN) {
+if ($type == BLOCK_EXASTUD_DATA_ID_LERN_UND_SOZIALVERHALTEN) {
 	$categories = [
-		\block_exastud\DATA_ID_LERN_UND_SOZIALVERHALTEN => \block_exastud\trans('de:Lern- und Sozialverhalten'),
+		BLOCK_EXASTUD_DATA_ID_LERN_UND_SOZIALVERHALTEN => block_exastud_trans('de:Lern- und Sozialverhalten'),
 	];
-	$classheader = $class->title.' - '.\block_exastud\trans('de:Lern- und Sozialverhalten');
+	$classheader = $class->title.' - '.block_exastud_trans('de:Lern- und Sozialverhalten');
 } else {
 	$categories = [
 		/*
-		'ateliers' => \block_exastud\trans('de:Ateliers'),
-		'arbeitsgemeinschaften' => \block_exastud\trans('de:Arbeitsgemeinschaften'),
-		'besondere_staerken' => \block_exastud\trans('de:Besondere Stärken'),
+		'ateliers' => block_exastud_trans('de:Ateliers'),
+		'arbeitsgemeinschaften' => block_exastud_trans('de:Arbeitsgemeinschaften'),
+		'besondere_staerken' => block_exastud_trans('de:Besondere Stärken'),
 		*/
-		'comments' => \block_exastud\trans('de:Bemerkungen'),
+		'comments' => block_exastud_trans('de:Bemerkungen'),
 	];
-	$classheader = $class->title.' - '.\block_exastud\trans('de:Bemerkungen');
+	$classheader = $class->title.' - '.block_exastud_trans('de:Bemerkungen');
 }
 
-$output = \block_exastud\get_renderer();
+$output = block_exastud_get_renderer();
 
 $url = '/blocks/exastud/review_class.php';
 $PAGE->set_url($url, ['courseid' => $courseid, 'classid' => $classid, 'type' => $type]);
@@ -58,7 +58,7 @@ echo $output->header(array('review', '='.$classheader));
 echo $output->heading($classheader);
 
 $actPeriod = block_exastud_check_active_period();
-$classstudents = \block_exastud\get_class_students($classid);
+$classstudents = block_exastud_get_class_students($classid);
 $evaluation_options = block_exastud_get_evaluation_options();
 
 /* Print the Students */
@@ -66,7 +66,7 @@ $table = new html_table();
 
 $table->head = array();
 $table->head[] = ''; //userpic
-$table->head[] = \block_exastud\get_string('name');
+$table->head[] = block_exastud_get_string('name');
 if (true) { // block_exastud_can_edit_class($class)) {
 	$table->head[] = ''; // bewerten button
 }
@@ -82,10 +82,10 @@ if (true) { // block_exastud_can_edit_class($class)) {
 }
 
 foreach ($classstudents as $classstudent) {
-	$icons = '<img src="'.$CFG->wwwroot.'/pix/i/edit.gif" width="16" height="16" alt="'.\block_exastud\get_string('edit').'" />';
+	$icons = '<img src="'.$CFG->wwwroot.'/pix/i/edit.gif" width="16" height="16" alt="'.block_exastud_get_string('edit').'" />';
 	$userdesc = fullname($classstudent);
 
-	$data = (array)block_exastud\get_class_student_data($classid, $classstudent->id);
+	$data = (array)block_exastud_get_class_student_data($classid, $classstudent->id);
 
 	$row = new html_table_row();
 	$row->cells[] = $OUTPUT->user_picture($classstudent, array("courseid" => $courseid));
@@ -101,10 +101,10 @@ foreach ($classstudents as $classstudent) {
 	}
 
 	if ($editUser->id !== $USER->id) {
-		$row->cells[] = block_exastud\trans(['de:Zugeteilt zu {$a}'], fullname($editUser));
+		$row->cells[] = block_exastud_trans(['de:Zugeteilt zu {$a}'], fullname($editUser));
 	} else {
 		$row->cells[] = $output->link_button($CFG->wwwroot.'/blocks/exastud/review_student_other_data.php?courseid='.$courseid.'&classid='.$classid.'&type='.$type.'&studentid='.$classstudent->id,
-			\block_exastud\get_string('edit'));
+			block_exastud_get_string('edit'));
 	}
 
 	foreach ($categories as $dataid => $category) {

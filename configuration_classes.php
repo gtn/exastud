@@ -23,28 +23,28 @@ $courseid = optional_param('courseid', 1, PARAM_INT); // Course ID
 $action = optional_param('action', '', PARAM_TEXT);
 require_login($courseid);
 
-block_exastud_require_global_cap(block_exastud\CAP_MANAGE_CLASSES);
+block_exastud_require_global_cap(BLOCK_EXASTUD_CAP_MANAGE_CLASSES);
 
 $actPeriod = block_exastud_get_active_or_next_period();
 $lastPeriod = block_exastud_get_last_period();
-$classes = block_exastud\get_head_teacher_classes_owner($actPeriod->id);
-$lastPeriodClasses = $lastPeriod ? block_exastud\get_head_teacher_classes_owner($lastPeriod->id) : [];
+$classes = block_exastud_get_head_teacher_classes_owner($actPeriod->id);
+$lastPeriodClasses = $lastPeriod ? block_exastud_get_head_teacher_classes_owner($lastPeriod->id) : [];
 
 $url = '/blocks/exastud/configuration_classes.php';
 $PAGE->set_url($url);
 
-$output = block_exastud\get_renderer();
+$output = block_exastud_get_renderer();
 echo $output->header('configuration_classes');
 
 /* Print the Students */
-echo $output->heading($actPeriod->description.': '.\block_exastud\get_string('configuration_classes'));
+echo $output->heading($actPeriod->description.': '.block_exastud_get_string('configuration_classes'));
 
 if (!$classes) {
-	echo '<div style="padding-bottom: 20px;">'.\block_exastud\get_string('noclassfound').'</div>';
+	echo '<div style="padding-bottom: 20px;">'.block_exastud_get_string('noclassfound').'</div>';
 } else {
 	$table = new html_table();
 
-	$table->head = array(\block_exastud\get_string('class'));
+	$table->head = array(block_exastud_get_string('class'));
 	$table->align = array("left");
 
 	foreach ($classes as $class) {
@@ -57,20 +57,20 @@ if (!$classes) {
 }
 
 echo $output->link_button($CFG->wwwroot.'/blocks/exastud/configuration_class_info.php?courseid='.$courseid.'&action=add',
-	\block_exastud\trans(['de:Klasse hinzufügen', 'en:Add Class']));
+	block_exastud_trans(['de:Klasse hinzufügen', 'en:Add Class']));
 
 if ($lastPeriodClasses) {
 	echo $output->link_button($CFG->wwwroot.'/blocks/exastud/copy_classes.php?courseid='.$courseid,
-		\block_exastud\trans(['de:Klasse vom vorigen Eingabezeitraum kopieren', 'en:Copy Class from last Period']));
+		block_exastud_trans(['de:Klasse vom vorigen Eingabezeitraum kopieren', 'en:Copy Class from last Period']));
 }
 
 /*
-if ($classes = block_exastud\get_head_teacher_classes_shared($actPeriod->id)) {
-	echo html_writer::tag("h2", \block_exastud\trans('de:Mit mir geteilte Klassen'));
+if ($classes = block_exastud_get_head_teacher_classes_shared($actPeriod->id)) {
+	echo html_writer::tag("h2", block_exastud_trans('de:Mit mir geteilte Klassen'));
 
 	$table = new html_table();
 
-	$table->head = array(\block_exastud\get_string('class'));
+	$table->head = array(block_exastud_get_string('class'));
 	$table->align = array("left");
 	$table->size = array("50%");
 

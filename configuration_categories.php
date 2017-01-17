@@ -31,15 +31,15 @@ $remove		 = optional_param('remove', 0, PARAM_BOOL);
 
 require_login($courseid);
 
-block_exastud_require_global_cap(block_exastud\CAP_MANAGE_CLASSES);
+block_exastud_require_global_cap(BLOCK_EXASTUD_CAP_MANAGE_CLASSES);
 $curPeriod = block_exastud_get_active_or_next_period();
 
-$class = block_exastud\get_teacher_class($classid);
+$class = block_exastud_get_teacher_class($classid);
 
-$header = \block_exastud\get_string('configcategories', null, $class->title);
+$header = block_exastud_get_string('configcategories', null, $class->title);
 $url = '/blocks/exastud/configuration_categories.php';
 $PAGE->set_url($url);
-$output = \block_exastud\get_renderer();
+$output = block_exastud_get_renderer();
 echo $output->header(['configuration_classes', 'categories'], ['class' => $class]);
 
 if ($frm = data_submitted()) {
@@ -91,10 +91,10 @@ $availablecategories = $DB->get_records_sql('SELECT id, title
 		'.$selectsql.')');
 foreach($availablecategories as $availablecategory) {
 	$availablecategory->source = 'exastud';
-	$availablecategory->subject_title = \block_exastud\get_string('basiccategories','block_exastud');
+	$availablecategory->subject_title = block_exastud_get_string('basiccategories');
 }
 
-if(\block_exastud\is_exacomp_installed()) {
+if(block_exastud_is_exacomp_installed()) {
 	$availablesubjects = $DB->get_records('block_exacompsubjects');
 	foreach($availablesubjects as $subject) {
 		$availabletopics = $DB->get_records_sql('SELECT id, title

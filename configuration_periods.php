@@ -26,7 +26,7 @@ $action = optional_param('action', '', PARAM_ALPHA);
 
 require_login($courseid);
 
-block_exastud_require_global_cap(block_exastud\CAP_EDIT_PERIODS);
+block_exastud_require_global_cap(BLOCK_EXASTUD_CAP_EDIT_PERIODS);
 
 ob_start();
 $periodform = new period_edit_form();
@@ -94,7 +94,7 @@ else {
 
 $url = '/blocks/exastud/configuration_periods.php';
 $PAGE->set_url($url);
-$output = block_exastud\get_renderer();
+$output = block_exastud_get_renderer();
 echo $output->header(array('settings', 'periods'));
 
 echo "<br/>";

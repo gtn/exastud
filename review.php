@@ -23,16 +23,16 @@ $courseid = optional_param('courseid', 1, PARAM_INT);
 
 require_login($courseid);
 
-block_exastud_require_global_cap(block_exastud\CAP_REVIEW);
+block_exastud_require_global_cap(BLOCK_EXASTUD_CAP_REVIEW);
 
 $url = '/blocks/exastud/review.php';
 $PAGE->set_url($url);
-$output = block_exastud\get_renderer();
+$output = block_exastud_get_renderer();
 echo $output->header('review');
 
 $actPeriod = block_exastud_check_active_period();
 
-$reviewclasses = block_exastud\get_head_teacher_classes_all($actPeriod->id);
+$reviewclasses = block_exastud_get_head_teacher_classes_all($actPeriod->id);
 
 // first headteacher classes
 foreach ($reviewclasses as $class) {
@@ -41,7 +41,7 @@ foreach ($reviewclasses as $class) {
 }
 
 // then add the subjects to the classes
-$reviewsubjects = block_exastud\get_review_classes();
+$reviewsubjects = block_exastud_get_review_classes();
 foreach ($reviewsubjects as $reviewsubject) {
 	if (!isset($reviewclasses[$reviewsubject->classid])) {
 		$reviewclasses[$reviewsubject->classid] = $reviewsubject;
@@ -53,10 +53,10 @@ foreach ($reviewsubjects as $reviewsubject) {
 	$reviewclasses[$reviewsubject->classid]->subjects[] = $reviewsubject;
 }
 
-// $lern_und_sozialverhalten_classes = \block_exastud\get_head_teacher_lern_und_sozialverhalten_classes();
+// $lern_und_sozialverhalten_classes = block_exastud_get_head_teacher_lern_und_sozialverhalten_classes();
 
 if(!$reviewclasses) {
-	echo \block_exastud\get_string('noclassestoreview','block_exastud');
+	echo block_exastud_get_string('noclassestoreview');
 }
 else {
 	foreach ($reviewclasses as $myclass) {
@@ -66,10 +66,10 @@ else {
 
 		$table->align = array("left");
 
-		$classstudents = \block_exastud\get_class_students($myclass->id);
+		$classstudents = block_exastud_get_class_students($myclass->id);
 		if (!$classstudents) {
 			$table->data[] = [
-				\block_exastud\get_string('nostudentstoreview')
+				block_exastud_get_string('nostudentstoreview')
 			];
 		} else {
 			foreach ($myclass->subjects as $subject) {
@@ -78,7 +78,7 @@ else {
 						'courseid' => $courseid,
 						'classid' => $myclass->id,
 						'subjectid' => $subject->subjectid
-					]), $subject->subject_title ?: \block_exastud\trans('de:nicht zugeordnet'))
+					]), $subject->subject_title ?: block_exastud_trans('de:nicht zugeordnet'))
 				];
 			}
 
@@ -92,15 +92,15 @@ else {
 					html_writer::link(new moodle_url('/blocks/exastud/review_class_other_data.php', [
 						'courseid' => $courseid,
 						'classid' => $myclass->id,
-						'type' => \block_exastud\DATA_ID_LERN_UND_SOZIALVERHALTEN
-					]), \block_exastud\trans('de:Lern- und Sozialverhalten'))
+						'type' => BLOCK_EXASTUD_DATA_ID_LERN_UND_SOZIALVERHALTEN
+					]), block_exastud_trans('de:Lern- und Sozialverhalten'))
 				];
 				$table->data[] = [
 					html_writer::link(new moodle_url('/blocks/exastud/review_class_other_data.php', [
 						'courseid' => $courseid,
 						'classid' => $myclass->id,
 						'type' => 'others'
-					]), \block_exastud\trans('de:Bemerkungen'))
+					]), block_exastud_trans('de:Bemerkungen'))
 				];
 			}
 		}

@@ -26,65 +26,65 @@ class block_exastud_renderer extends plugin_renderer_base {
 
 	public function header($items, $options = []) {
 		$items = (array)$items;
-		$strheader = \block_exastud\get_string('blocktitle', 'block_exastud');
+		$strheader = block_exastud_get_string('blocktitle');
 
 		$last_item_name = '';
 		$tabs = array();
 
-		if (block_exastud_get_active_or_next_period() && block_exastud_has_global_cap(block_exastud\CAP_MANAGE_CLASSES)) {
-			$tabs['configuration_classes'] = new tabobject('configuration_classes', new moodle_url('/blocks/exastud/configuration_classes.php', ['courseid' => g::$COURSE->id]), \block_exastud\get_string('configuration_classes', 'block_exastud'), '', true);
+		if (block_exastud_get_active_or_next_period() && block_exastud_has_global_cap(BLOCK_EXASTUD_CAP_MANAGE_CLASSES)) {
+			$tabs['configuration_classes'] = new tabobject('configuration_classes', new moodle_url('/blocks/exastud/configuration_classes.php', ['courseid' => g::$COURSE->id]), block_exastud_get_string('configuration_classes'), '', true);
 		}
-		if (block_exastud_get_active_period() && block_exastud_has_global_cap(block_exastud\CAP_REVIEW)) {
-			$tabs['review'] = new tabobject('review', new moodle_url('/blocks/exastud/review.php', ['courseid' => g::$COURSE->id]), \block_exastud\get_string('review', 'block_exastud'), '', true);
+		if (block_exastud_get_active_period() && block_exastud_has_global_cap(BLOCK_EXASTUD_CAP_REVIEW)) {
+			$tabs['review'] = new tabobject('review', new moodle_url('/blocks/exastud/review.php', ['courseid' => g::$COURSE->id]), block_exastud_get_string('review'), '', true);
 		}
-		if (block_exastud_get_active_or_last_period() && block_exastud_has_global_cap(block_exastud\CAP_VIEW_REPORT)) {
-			$tabs['report'] = new tabobject('report', new moodle_url('/blocks/exastud/report.php', ['courseid' => g::$COURSE->id]), \block_exastud\get_string('reports', 'block_exastud'), '', true);
+		if (block_exastud_get_active_or_last_period() && block_exastud_has_global_cap(BLOCK_EXASTUD_CAP_VIEW_REPORT)) {
+			$tabs['report'] = new tabobject('report', new moodle_url('/blocks/exastud/report.php', ['courseid' => g::$COURSE->id]), block_exastud_get_string('reports'), '', true);
 		}
 		/*
-		if (block_exastud_has_global_cap(block_exastud\CAP_MANAGE_CLASSES)) {
-			$tabs[] = new tabobject('set_bildungsstandard', new moodle_url('/blocks/exastud/set_bildungsstandard.php', [ 'courseid' => g::$COURSE->id ]), \block_exastud\trans("de:Bildungsstandard festlegen"), '', true);
+		if (block_exastud_has_global_cap(BLOCK_EXASTUD_CAP_MANAGE_CLASSES)) {
+			$tabs[] = new tabobject('set_bildungsstandard', new moodle_url('/blocks/exastud/set_bildungsstandard.php', [ 'courseid' => g::$COURSE->id ]), block_exastud_trans("de:Bildungsstandard festlegen"), '', true);
 		}
 		*/
 
-		if (block_exastud_has_global_cap(block_exastud\CAP_ADMIN)) {
-			$tabs['settings'] = new tabobject('settings', new moodle_url('/blocks/exastud/periods.php', ['courseid' => g::$COURSE->id]), \block_exastud\get_string("settings"), '', true);
+		if (block_exastud_has_global_cap(BLOCK_EXASTUD_CAP_ADMIN)) {
+			$tabs['settings'] = new tabobject('settings', new moodle_url('/blocks/exastud/periods.php', ['courseid' => g::$COURSE->id]), block_exastud_get_string("settings"), '', true);
 
-			$tabs['settings']->subtree[] = new tabobject('periods', new moodle_url('/blocks/exastud/periods.php', ['courseid' => g::$COURSE->id]), \block_exastud\get_string("periods"), '', true);
-			$tabs['settings']->subtree[] = new tabobject('categories', new moodle_url('/blocks/exastud/configuration_global.php', ['courseid' => g::$COURSE->id]).'&action=categories', \block_exastud\trans("de:Fächerübergreifende Kompetenzen"), '', true);
-			$tabs['settings']->subtree[] = new tabobject('evalopts', new moodle_url('/blocks/exastud/configuration_global.php', ['courseid' => g::$COURSE->id]).'&action=evalopts', \block_exastud\trans("de:Bewertungsskala"), '', true);
+			$tabs['settings']->subtree[] = new tabobject('periods', new moodle_url('/blocks/exastud/periods.php', ['courseid' => g::$COURSE->id]), block_exastud_get_string("periods"), '', true);
+			$tabs['settings']->subtree[] = new tabobject('categories', new moodle_url('/blocks/exastud/configuration_global.php', ['courseid' => g::$COURSE->id]).'&action=categories', block_exastud_trans("de:Fächerübergreifende Kompetenzen"), '', true);
+			$tabs['settings']->subtree[] = new tabobject('evalopts', new moodle_url('/blocks/exastud/configuration_global.php', ['courseid' => g::$COURSE->id]).'&action=evalopts', block_exastud_trans("de:Bewertungsskala"), '', true);
 
-			if (\block_exastud\get_plugin_config('can_edit_bps_and_subjects')) {
-				$tabs['settings']->subtree[] = new tabobject('bps', new moodle_url('/blocks/exastud/configuration_global.php', ['courseid' => g::$COURSE->id]).'&action=bps', \block_exastud\trans("de:Bildungspläne"), '', true);
+			if (block_exastud_get_plugin_config('can_edit_bps_and_subjects')) {
+				$tabs['settings']->subtree[] = new tabobject('bps', new moodle_url('/blocks/exastud/configuration_global.php', ['courseid' => g::$COURSE->id]).'&action=bps', block_exastud_trans("de:Bildungspläne"), '', true);
 			}
 
-			if (block_exastud_has_global_cap(block_exastud\CAP_UPLOAD_PICTURE)) {
-				$tabs['settings']->subtree[] = new tabobject('pictureupload', new moodle_url('/blocks/exastud/pictureupload.php', ['courseid' => g::$COURSE->id]), \block_exastud\get_string('pictureupload', 'block_exastud'), '', true);
+			if (block_exastud_has_global_cap(BLOCK_EXASTUD_CAP_UPLOAD_PICTURE)) {
+				$tabs['settings']->subtree[] = new tabobject('pictureupload', new moodle_url('/blocks/exastud/pictureupload.php', ['courseid' => g::$COURSE->id]), block_exastud_get_string('pictureupload'), '', true);
 			}
 
-			if (block_exastud_has_global_cap(block_exastud\CAP_ADMIN)) {
-				$tabs['settings']->subtree[] = new tabobject('backup', new moodle_url('/blocks/exastud/backup.php', ['courseid' => g::$COURSE->id]), \block_exastud\get_string("backup"), '', true);
+			if (block_exastud_has_global_cap(BLOCK_EXASTUD_CAP_ADMIN)) {
+				$tabs['settings']->subtree[] = new tabobject('backup', new moodle_url('/blocks/exastud/backup.php', ['courseid' => g::$COURSE->id]), block_exastud_get_string("backup"), '', true);
 			}
 
 			// syntax muss hier so sein: javascript:void ...!
 			// moodle can't use json_encode in tabobjects
 			// moodle can't use onclick in tabobjects
 			if (is_siteadmin()) {
-				$title = \block_exastud\get_string_if_exists('blocksettings') ?: \block_exastud\get_string("blocksettings", 'block');
+				$title = block_exastud_get_string_if_exists('blocksettings') ?: block_exastud_get_string("blocksettings", 'block');
 				$tabs['blockconfig'] = new tabobject('blockconfig', 'javascript:void window.open(\''.\block_exastud\url::create('/admin/settings.php?section=blocksettingexastud')->out(false).'\');', $title, '', true);
 			}
-			$tabs['head_teachers'] = new tabobject('head_teachers', 'javascript:void window.open(\''.\block_exastud\url::create('/cohort/assign.php', ['id' => block_exastud\get_head_teacher_cohort()->id])->out(false).'\');', \block_exastud\get_string('head_teachers'), '', true);
+			$tabs['head_teachers'] = new tabobject('head_teachers', 'javascript:void window.open(\''.\block_exastud\url::create('/cohort/assign.php', ['id' => block_exastud_get_head_teacher_cohort()->id])->out(false).'\');', block_exastud_get_string('head_teachers'), '', true);
 		}
 
 		$class = @$options['class'];
 
 		if ($class) {
-			$tabs['configuration_classes']->subtree[] = new tabobject('students', new moodle_url('/blocks/exastud/configuration_class.php', ['courseid' => g::$COURSE->id, 'action' => 'edit', 'classid' => $class->id, 'type' => 'students']), \block_exastud\get_string('students'), '', true);
-			$tabs['configuration_classes']->subtree[] = new tabobject('teachers', new moodle_url('/blocks/exastud/configuration_class.php', ['courseid' => g::$COURSE->id, 'action' => 'edit', 'classid' => $class->id, 'type' => 'teachers']), \block_exastud\get_string('teachers'), '', true);
-			if (\block_exastud\get_plugin_config('can_edit_bps_and_subjects')) {
-				$tabs['configuration_classes']->subtree[] = new tabobject('categories', new moodle_url('/blocks/exastud/configuration_class.php', ['courseid' => g::$COURSE->id, 'action' => 'edit', 'classid' => $class->id, 'type' => 'categories']), \block_exastud\get_string('categories'), '', true);
+			$tabs['configuration_classes']->subtree[] = new tabobject('students', new moodle_url('/blocks/exastud/configuration_class.php', ['courseid' => g::$COURSE->id, 'action' => 'edit', 'classid' => $class->id, 'type' => 'students']), block_exastud_get_string('students'), '', true);
+			$tabs['configuration_classes']->subtree[] = new tabobject('teachers', new moodle_url('/blocks/exastud/configuration_class.php', ['courseid' => g::$COURSE->id, 'action' => 'edit', 'classid' => $class->id, 'type' => 'teachers']), block_exastud_get_string('teachers'), '', true);
+			if (block_exastud_get_plugin_config('can_edit_bps_and_subjects')) {
+				$tabs['configuration_classes']->subtree[] = new tabobject('categories', new moodle_url('/blocks/exastud/configuration_class.php', ['courseid' => g::$COURSE->id, 'action' => 'edit', 'classid' => $class->id, 'type' => 'categories']), block_exastud_get_string('categories'), '', true);
 			}
 
-			$tabs['configuration_classes']->subtree[] = new tabobject('class_info', new moodle_url('/blocks/exastud/configuration_class_info.php', ['courseid' => g::$COURSE->id, 'classid' => $class->id]), \block_exastud\get_string('class_info'), '', true);
+			$tabs['configuration_classes']->subtree[] = new tabobject('class_info', new moodle_url('/blocks/exastud/configuration_class_info.php', ['courseid' => g::$COURSE->id, 'classid' => $class->id]), block_exastud_get_string('class_info'), '', true);
 		}
 
 		$tabtree = new tabtree($tabs);
@@ -98,13 +98,13 @@ class block_exastud_renderer extends plugin_renderer_base {
 				if ($item[0] == '=') {
 					$item_name = substr($item, 1);
 				} else {
-					$item_name = @\block_exastud\get_string($item, "block_exastud");
+					$item_name = @block_exastud_get_string($item);
 				}
 
 				$item = array('name' => $item_name, 'id' => $item);
 			} else {
 				if (!isset($item['name'])) {
-					$item['name'] = @\block_exastud\get_string($item['id'], "block_exastud");
+					$item['name'] = @block_exastud_get_string($item['id']);
 				}
 			}
 
@@ -208,7 +208,7 @@ class block_exastud_renderer extends plugin_renderer_base {
 		$output .= '</table>';
 
 
-		$output .= '<h3>'.\block_exastud\get_string('detailedreview').'</h3>';
+		$output .= '<h3>'.block_exastud_get_string('detailedreview').'</h3>';
 
 		$output .= '<table id="ratingtable">';
 		foreach ($textReviews as $textReview) {
@@ -224,7 +224,7 @@ class block_exastud_renderer extends plugin_renderer_base {
 	function back_button($url) {
 		return $this->link_button(
 			block_exastud\url::create($url),
-			\block_exastud\get_string('back')
+			block_exastud_get_string('back')
 		);
 	}
 
@@ -244,7 +244,7 @@ class block_exastud_renderer extends plugin_renderer_base {
 			return '';
 		}
 
-		return g::$OUTPUT->notification(\block_exastud\trans(['de:Letzte Änderung von {$a->name} am {$a->time}', 'en:Last Change by {$a->name} on {$a->time}'], [
+		return g::$OUTPUT->notification(block_exastud_trans(['de:Letzte Änderung von {$a->name} am {$a->time}', 'en:Last Change by {$a->name} on {$a->time}'], [
 			'time' => userdate($timemodified), 'name' => fullname($modifiedby),
 		]), g::$USER->id !== $modifiedby->id ? '' : 'notifymessage');
 	}

@@ -34,14 +34,14 @@ if (!$returnurl) {
 	$returnurl = new moodle_url('/blocks/exastud/review_class.php?courseid='.$courseid.'&classid='.$classid.'&subjectid='.$subjectid);
 }
 
-$output = block_exastud\get_renderer();
+$output = block_exastud_get_renderer();
 
 $url = '/blocks/exastud/review_student.php';
 $PAGE->set_url($url);
 
-block_exastud_require_global_cap(block_exastud\CAP_REVIEW);
+block_exastud_require_global_cap(BLOCK_EXASTUD_CAP_REVIEW);
 
-$class = block_exastud\get_review_class($classid, $subjectid);
+$class = block_exastud_get_review_class($classid, $subjectid);
 
 if (!$class) {
 	print_error('badclass', 'block_exastud');
@@ -51,9 +51,9 @@ if ($DB->count_records('block_exastudclassstudents', array('studentid' => $stude
 	print_error('badstudent', 'block_exastud');
 }
 
-$strstudentreview = \block_exastud\get_string('reviewstudent', 'block_exastud');
-$strclassreview = \block_exastud\get_string('reviewclass', 'block_exastud');
-$strreview = \block_exastud\get_string('review', 'block_exastud');
+$strstudentreview = block_exastud_get_string('reviewstudent');
+$strclassreview = block_exastud_get_string('reviewclass');
+$strreview = block_exastud_get_string('review');
 
 $actPeriod = block_exastud_check_active_period();
 $categories = block_exastud_get_class_categories($classid);
@@ -82,7 +82,7 @@ $teacherid = $USER->id;
 
 
 $exacomp_grades = [];
-if (block_exastud\is_exacomp_installed()) {
+if (block_exastud_is_exacomp_installed()) {
 	$title = 'Vorschläge aus Exacomp:';
 
 	if (!method_exists('\block_exacomp\api', 'get_subjects_with_grade_for_teacher_and_student')) {
@@ -117,7 +117,7 @@ if ($reviewdata) {
 	}
 }
 
-$formdata = (object)array_merge((array)$formdata, (array)\block_exastud\get_subject_student_data($classid, $subjectid, $studentid));
+$formdata = (object)array_merge((array)$formdata, (array)block_exastud_get_subject_student_data($classid, $subjectid, $studentid));
 
 $studentform = new student_edit_form(null, [
 	'categories' => $categories,
@@ -125,15 +125,15 @@ $studentform = new student_edit_form(null, [
 	'exacomp_grades' => $exacomp_grades,
 	'categories.modified' =>
 		$reviewdata
-			? \block_exastud\get_renderer()->last_modified($reviewdata->teacherid, $reviewdata->timemodified)
+			? block_exastud_get_renderer()->last_modified($reviewdata->teacherid, $reviewdata->timemodified)
 			: '',
 	'review.modified' =>
 		$textReviewdata
-			? \block_exastud\get_renderer()->last_modified($textReviewdata->modifiedby, $textReviewdata->timemodified)
+			? block_exastud_get_renderer()->last_modified($textReviewdata->modifiedby, $textReviewdata->timemodified)
 			: '',
 	'grade.modified' =>
 		@$formdata->{'grade.modifiedby'}
-			? \block_exastud\get_renderer()->last_modified(@$formdata->{'grade.modifiedby'}, @$formdata->{'grade.timemodified'})
+			? block_exastud_get_renderer()->last_modified(@$formdata->{'grade.modifiedby'}, @$formdata->{'grade.timemodified'})
 			: '',
 ]);
 
@@ -154,20 +154,20 @@ if ($fromform = $studentform->get_data()) {
 		'review' => $fromform->vorschlag,
 	], [
 		'studentid' => $studentid,
-		'subjectid' => \block_exastud\SUBJECT_ID_LERN_UND_SOZIALVERHALTEN_VORSCHLAG,
+		'subjectid' => BLOCK_EXASTUD_SUBJECT_ID_LERN_UND_SOZIALVERHALTEN_VORSCHLAG,
 		'periodid' => $actPeriod->id,
 		'teacherid' => $teacherid,
 	]);
 
-	\block_exastud\set_subject_student_data($classid, $subjectid, $studentid, 'review', $fromform->review);
-	\block_exastud\set_subject_student_data($classid, $subjectid, $studentid, 'review.modifiedby', $USER->id);
-	\block_exastud\set_subject_student_data($classid, $subjectid, $studentid, 'review.timemodified', time());
+	block_exastud_set_subject_student_data($classid, $subjectid, $studentid, 'review', $fromform->review);
+	block_exastud_set_subject_student_data($classid, $subjectid, $studentid, 'review.modifiedby', $USER->id);
+	block_exastud_set_subject_student_data($classid, $subjectid, $studentid, 'review.timemodified', time());
 
-	\block_exastud\set_subject_student_data($classid, $subjectid, $studentid, 'grade', $fromform->grade);
-	\block_exastud\set_subject_student_data($classid, $subjectid, $studentid, 'niveau', $fromform->niveau);
+	block_exastud_set_subject_student_data($classid, $subjectid, $studentid, 'grade', $fromform->grade);
+	block_exastud_set_subject_student_data($classid, $subjectid, $studentid, 'niveau', $fromform->niveau);
 
-	\block_exastud\set_subject_student_data($classid, $subjectid, $studentid, 'grade.modifiedby', $USER->id);
-	\block_exastud\set_subject_student_data($classid, $subjectid, $studentid, 'grade.timemodified', time());
+	block_exastud_set_subject_student_data($classid, $subjectid, $studentid, 'grade.modifiedby', $USER->id);
+	block_exastud_set_subject_student_data($classid, $subjectid, $studentid, 'grade.timemodified', time());
 
 	foreach ($categories as $category) {
 		if (!isset($fromform->{$category->id.'_'.$category->source})) {
@@ -199,7 +199,7 @@ echo $output->heading($studentdesc);
 // load lern&soz vorschlag
 $formdata->vorschlag = $DB->get_field('block_exastudreview', 'review', [
 	'studentid' => $studentid,
-	'subjectid' => \block_exastud\SUBJECT_ID_LERN_UND_SOZIALVERHALTEN_VORSCHLAG,
+	'subjectid' => BLOCK_EXASTUD_SUBJECT_ID_LERN_UND_SOZIALVERHALTEN_VORSCHLAG,
 	'periodid' => $actPeriod->id,
 	'teacherid' => $teacherid,
 ]);
@@ -209,11 +209,11 @@ if (empty($formdata->grade)) {
 }
 
 if ($lastPeriodClass && optional_param('action', null, PARAM_TEXT) == 'load_last_period_data') {
-	$lastPeriodData = (object)\block_exastud\get_subject_student_data($lastPeriodClass->id, $subjectid, $studentid);
+	$lastPeriodData = (object)block_exastud_get_subject_student_data($lastPeriodClass->id, $subjectid, $studentid);
 
 	$formdata->vorschlag = $DB->get_field('block_exastudreview', 'review', [
 		'studentid' => $studentid,
-		'subjectid' => \block_exastud\SUBJECT_ID_LERN_UND_SOZIALVERHALTEN_VORSCHLAG,
+		'subjectid' => BLOCK_EXASTUD_SUBJECT_ID_LERN_UND_SOZIALVERHALTEN_VORSCHLAG,
 		'periodid' => $lastPeriod->id,
 		'teacherid' => $teacherid,
 	]);
@@ -244,11 +244,11 @@ if ($lastPeriodClass && optional_param('action', null, PARAM_TEXT) == 'load_last
 
 if ($lastPeriodClass) {
 	if (optional_param('action', null, PARAM_TEXT) == 'load_last_period_data') {
-		echo '<h2>'.block_exastud\trans('de:Daten wurden geladen').'</h2>';
+		echo '<h2>'.block_exastud_trans('de:Daten wurden geladen').'</h2>';
 	} else {
 		$url = block_exastud\url::request_uri();
 		$url->param('action', 'load_last_period_data');
-		echo $output->link_button($url, block_exastud\trans('de:Eingaben von der letzten Periode/Halbjahr übernehmen'));
+		echo $output->link_button($url, block_exastud_trans('de:Eingaben von der letzten Periode/Halbjahr übernehmen'));
 	}
 }
 

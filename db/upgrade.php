@@ -202,7 +202,7 @@ function xmldb_block_exastud_upgrade($oldversion = 0) {
 	}
 
 	if ($oldversion < 2016031100) {
-		block_exastud\check_profile_fields();
+		block_exastud_check_profile_fields();
 	}
 
 	if ($oldversion < 2016042900) {
@@ -264,7 +264,7 @@ function xmldb_block_exastud_upgrade($oldversion = 0) {
 		}
 
 		if (!$DB->get_record('block_exastudbp', ['id'=>1])) {
-			$DB->execute("INSERT INTO {block_exastudbp} (id, title, sorting) VALUES (1, ?, 1)", [\block_exastud\trans('de:Alte Fächer')]);
+			$DB->execute("INSERT INTO {block_exastudbp} (id, title, sorting) VALUES (1, ?, 1)", [block_exastud_trans('de:Alte Fächer')]);
 		}
 
 		$DB->execute("UPDATE {block_exastudsubjects} SET bpid=1 WHERE bpid=0");
@@ -302,7 +302,7 @@ function xmldb_block_exastud_upgrade($oldversion = 0) {
         upgrade_block_savepoint(true, 2016080400, 'exastud');
     }
 
-	\block_exastud\insert_default_entries(true);
+	block_exastud_insert_default_entries(true);
 
 	return $result;
 }

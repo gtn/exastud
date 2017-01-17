@@ -546,7 +546,7 @@ namespace block_exastud\common {
 	 * @param null $a
 	 * @return string
 	 */
-	function get_string($identifier, $component = null, $a = null) {
+	function block_exastud_get_string($identifier, $component = null, $a = null) {
 		$manager = get_string_manager();
 
 		if ($component === null) {
@@ -733,8 +733,8 @@ namespace block_exastud {
 		}
 	}
 
-	if (_export_function('get_string')) {
-		function get_string($identifier, $component = null, $a = null) {
+	if (_export_function('block_exastud_get_string')) {
+		function block_exastud_get_string($identifier, $component = null, $a = null) {
 		}
 	}
 	if (_export_function('print_error')) {
@@ -766,7 +766,7 @@ namespace {
 		return false;
 	}
 
-	if (_block_exastud_export_function('get_string')) {
+	if (_block_exastud_export_function('block_exastud_get_string')) {
 		function block_exastud_get_string($identifier, $component = null, $a = null) {
 		}
 	}

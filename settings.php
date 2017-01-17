@@ -23,14 +23,14 @@ require_once __DIR__.'/inc.php';
 
 if ($ADMIN->fulltree) {
 	if (!block_exastud_is_new_version()) {
-		$settings->add(new admin_setting_configcheckbox('block_exastud_detailed_review', get_string('settings_detailed_review', 'block_exastud'),
-						   get_string('settings_detailed_review_body', 'block_exastud'), 0, 1, 0));
-		$settings->add(new admin_setting_configcheckbox('block_exastud_project_based_assessment', get_string('settings_project_based_assessment', 'block_exastud'),
-				get_string('settings_project_based_assessment_body', 'block_exastud'), 0, 1, 0));
+		$settings->add(new admin_setting_configcheckbox('block_exastud_detailed_review', block_exastud_get_string('settings_detailed_review'),
+						   block_exastud_get_string('settings_detailed_review_body'), 0, 1, 0));
+		$settings->add(new admin_setting_configcheckbox('block_exastud_project_based_assessment', block_exastud_get_string('settings_project_based_assessment'),
+				block_exastud_get_string('settings_project_based_assessment_body'), 0, 1, 0));
 	}
-	$settings->add(new admin_setting_configtext('exastud/school_name', \block_exastud\trans('de:Lernentwicklungsbericht: Schulname'), '', '', PARAM_TEXT));
-	$settings->add(new admin_setting_configtext('exastud/school_location', \block_exastud\trans('de:Lernentwicklungsbericht: Ort'), '', '', PARAM_TEXT));
-	$settings->add(new admin_setting_configtext('exastud/certificate_issue_date', \block_exastud\trans('de:Lernentwicklungsbericht: Zeugnisausgabedatum'), '', '', PARAM_TEXT));
-	$settings->add(new admin_setting_configtext('exastud/bildungsstandards', \block_exastud\trans('de:Bildungsstandards'),
-		\block_exastud\trans('de:Liste mit Beistrich getrennt'), '5,6,7,8,9,10', PARAM_TEXT));
+	$settings->add(new admin_setting_configtext('exastud/school_name', block_exastud_trans('de:Lernentwicklungsbericht: Schulname'), '', '', PARAM_TEXT));
+	$settings->add(new admin_setting_configtext('exastud/school_location', block_exastud_trans('de:Lernentwicklungsbericht: Ort'), '', '', PARAM_TEXT));
+	$settings->add(new admin_setting_configtext('exastud/certificate_issue_date', block_exastud_trans('de:Lernentwicklungsbericht: Zeugnisausgabedatum'), '', '', PARAM_TEXT));
+	$settings->add(new admin_setting_configtext('exastud/bildungsstandards', block_exastud_trans('de:Bildungsstandards'),
+		block_exastud_trans('de:Liste mit Beistrich getrennt'), '5,6,7,8,9,10', PARAM_TEXT));
 }

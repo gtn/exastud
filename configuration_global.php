@@ -23,14 +23,14 @@ $courseid = optional_param('courseid', 1, PARAM_INT); // Course ID
 $action = optional_param('action', '', PARAM_TEXT);
 require_login($courseid);
 
-block_exastud_require_global_cap(block_exastud\CAP_ADMIN);
+block_exastud_require_global_cap(BLOCK_EXASTUD_CAP_ADMIN);
 
-$header = \block_exastud\get_string('settings');
+$header = block_exastud_get_string('settings');
 $url = new moodle_url('/blocks/exastud/configuration_global.php', array('courseid' => $courseid, 'action' => $action));
 $PAGE->set_url($url);
-$output = block_exastud\get_renderer();
+$output = block_exastud_get_renderer();
 
-block_exastud\insert_default_entries();
+block_exastud_insert_default_entries();
 
 $availablecategories = $DB->get_records_sql('SELECT id, title
 	FROM {block_exastudcate}
@@ -55,7 +55,7 @@ $availablesubjects = block_exastud_get_bildungsplan_subjects(optional_param('bpi
 
 if ($action == 'save-categories') {
 	if (!confirm_sesskey()) {
-		die(get_string('badsessionkey', 'block_exastud'));
+		die(block_exastud_get_string('badsessionkey'));
 	}
 
 	$items = block_exastud\param::required_array('items',
@@ -93,7 +93,7 @@ if ($action == 'save-categories') {
 
 if ($action == 'save-subjects') {
 	if (!confirm_sesskey()) {
-		die(get_string('badsessionkey', 'block_exastud'));
+		die(block_exastud_get_string('badsessionkey'));
 	}
 
 	$items = block_exastud\param::required_array('items',
@@ -136,7 +136,7 @@ if ($action == 'save-subjects') {
 
 if ($action == 'save-evalopts') {
 	if (!confirm_sesskey()) {
-		die(get_string('badsessionkey', 'block_exastud'));
+		die(block_exastud_get_string('badsessionkey'));
 	}
 
 	$items = block_exastud\param::required_array('items',
@@ -174,7 +174,7 @@ if ($action == 'save-evalopts') {
 
 if ($action == 'save-bps') {
 	if (!confirm_sesskey()) {
-		die(get_string('badsessionkey', 'block_exastud'));
+		die(block_exastud_get_string('badsessionkey'));
 	}
 
 	$items = block_exastud\param::required_array('items',
@@ -219,7 +219,7 @@ if ($action == 'save-bps') {
 }
 
 if ($action == 'categories') {
-	echo $output->header(['settings', ['id' => 'categories', 'name' => \block_exastud\trans("de:Kompetenzen")]]);
+	echo $output->header(['settings', ['id' => 'categories', 'name' => block_exastud_trans("de:Kompetenzen")]]);
 
 	?>
 	<script>
@@ -229,15 +229,15 @@ if ($action == 'categories') {
 		<ul exa="items">
 			<li>
 				<input type="text" name="title"/>
-				<button exa="delete-button"><?php echo get_string('delete'); ?></button>
+				<button exa="delete-button"><?php echo block_exastud_get_string('delete'); ?></button>
 			</li>
 		</ul>
 		<div exa="new-item">
 			<input type="text" name="title"/>
-			<input type="button" exa="new-button" value="<?php echo get_string('add'); ?>">
+			<input type="button" exa="new-button" value="<?php echo block_exastud_get_string('add'); ?>">
 		</div>
 		<div exa="save">
-			<input type="button" exa="save-button" value="<?php echo get_string('savechanges'); ?>">
+			<input type="button" exa="save-button" value="<?php echo block_exastud_get_string('savechanges'); ?>">
 		</div>
 	</div>
 	<?php
@@ -247,15 +247,15 @@ if ($action == 'categories') {
 }
 
 if ($action == 'subjects') {
-	echo $output->header(['settings', ['id' => 'bps', 'name' => \block_exastud\trans(['de:Fachbezeichnungen', 'de_at:Gegenstände'])]]);
+	echo $output->header(['settings', ['id' => 'bps', 'name' => block_exastud_trans(['de:Fachbezeichnungen', 'de_at:Gegenstände'])]]);
 
 	$bp = $DB->get_record('block_exastudbp', ['id' => required_param('bpid', PARAM_INT)]);
 
 	$canEdit = block_exastud_can_edit_bp($bp);
 
 	/*
-	if (block_exastud\get_plugin_config('always_check_default_values')) {
-		$defaultSubjects = (array)block_exastud\get_plugin_config('default_subjects');
+	if (block_exastud_get_plugin_config('always_check_default_values')) {
+		$defaultSubjects = (array)block_exastud_get_plugin_config('default_subjects');
 
 		foreach ($availablesubjects as $subject) {
 			$subject->disabled = in_array($subject->title, $defaultSubjects);
@@ -269,7 +269,7 @@ if ($action == 'subjects') {
 		}
 	}
 
-	echo "<h2>".\block_exastud\trans('de:Bildungsplan').": {$bp->title}</h2>";
+	echo "<h2>".block_exastud_trans('de:Bildungsplan').": {$bp->title}</h2>";
 	?>
 
 	<script>
@@ -277,16 +277,16 @@ if ($action == 'subjects') {
 	</script>
 	<div id="exa-list" <?php if (!$canEdit) { echo 'exa-sorting="false"'; } ?>>
 		<div class="header">
-			<div for-field="title"><?php echo \block_exastud\trans(['de:Bezeichnung', 'en:Name']); ?></div>
-			<div for-field="shorttitle"><?php echo \block_exastud\trans(['de:Kurzbezeichnung', 'en:Shortname']); ?></div>
-			<!-- div for-field="always_print"><?php echo \block_exastud\trans(['de:Immer im LEB drucken', 'en:Always print']); ?></div -->
+			<div for-field="title"><?php echo block_exastud_trans(['de:Bezeichnung', 'en:Name']); ?></div>
+			<div for-field="shorttitle"><?php echo block_exastud_trans(['de:Kurzbezeichnung', 'en:Shortname']); ?></div>
+			<!-- div for-field="always_print"><?php echo block_exastud_trans(['de:Immer im LEB drucken', 'en:Always print']); ?></div -->
 		</div>
 		<ul exa="items">
 			<li>
 				<input type="text" name="title"/>
 				<input type="text" name="shorttitle"/>
 				<!-- input type="checkbox" name="always_print" value="1"/ -->
-				<button exa="delete-button"><?php echo get_string('delete'); ?></button>
+				<button exa="delete-button"><?php echo block_exastud_get_string('delete'); ?></button>
 			</li>
 		</ul>
 		<?php if ($canEdit) { ?>
@@ -294,12 +294,12 @@ if ($action == 'subjects') {
 			<input type="text" name="title"/>
 			<input type="text" name="shorttitle"/>
 			<!-- input type="checkbox" name="always_print" value="1"/ -->
-			<input type="button" exa="new-button" value="<?php echo get_string('add'); ?>">
+			<input type="button" exa="new-button" value="<?php echo block_exastud_get_string('add'); ?>">
 		</div>
 		<?php } ?>
 		<div exa="save">
 			<?php if ($canEdit) { ?>
-			<input type="button" exa="save-button" value="<?php echo get_string('savechanges'); ?>">
+			<input type="button" exa="save-button" value="<?php echo block_exastud_get_string('savechanges'); ?>">
 			<?php } ?>
 			<?php
 			echo $output->back_button($CFG->wwwroot.'/blocks/exastud/configuration_global.php?courseid='.$courseid.'&action=bps');
@@ -313,7 +313,7 @@ if ($action == 'subjects') {
 }
 
 if ($action == 'evalopts') {
-	echo $output->header(['settings', ['id' => 'evalopts', 'name' => \block_exastud\trans("de:Bewertungsskala")]]);
+	echo $output->header(['settings', ['id' => 'evalopts', 'name' => block_exastud_trans("de:Bewertungsskala")]]);
 
 	?>
 	<script>
@@ -323,15 +323,15 @@ if ($action == 'evalopts') {
 		<ul exa="items">
 			<li>
 				<input type="text" name="title"/>
-				<button exa="delete-button"><?php echo get_string('delete'); ?></button>
+				<button exa="delete-button"><?php echo block_exastud_get_string('delete'); ?></button>
 			</li>
 		</ul>
 		<div exa="new-item">
 			<input type="text" name="title"/>
-			<input type="button" exa="new-button" value="<?php echo get_string('add'); ?>">
+			<input type="button" exa="new-button" value="<?php echo block_exastud_get_string('add'); ?>">
 		</div>
 		<div exa="save">
-			<input type="button" exa="save-button" value="<?php echo get_string('savechanges'); ?>">
+			<input type="button" exa="save-button" value="<?php echo block_exastud_get_string('savechanges'); ?>">
 		</div>
 	</div>
 	<?php
@@ -341,7 +341,7 @@ if ($action == 'evalopts') {
 }
 
 if ($action == 'bps') {
-	echo $output->header(['settings', ['id' => 'bps', 'name' => \block_exastud\trans("de:Bildungspläne")]]);
+	echo $output->header(['settings', ['id' => 'bps', 'name' => block_exastud_trans("de:Bildungspläne")]]);
 
 	?>
 	<script>
@@ -351,16 +351,16 @@ if ($action == 'bps') {
 		<ul exa="items">
 			<li>
 				<input type="text" name="title"/>
-				<button exa="delete-button"><?php echo get_string('delete'); ?></button>
-				<button exa="subjects-button"><?php echo \block_exastud\trans('de:Fachbezeichnungen'); ?></button>
+				<button exa="delete-button"><?php echo block_exastud_get_string('delete'); ?></button>
+				<button exa="subjects-button"><?php echo block_exastud_trans('de:Fachbezeichnungen'); ?></button>
 			</li>
 		</ul>
 		<div exa="new-item">
 			<input type="text" name="title"/>
-			<input type="button" exa="new-button" value="<?php echo get_string('add'); ?>">
+			<input type="button" exa="new-button" value="<?php echo block_exastud_get_string('add'); ?>">
 		</div>
 		<div exa="save">
-			<input type="button" exa="save-button" value="<?php echo get_string('savechanges'); ?>">
+			<input type="button" exa="save-button" value="<?php echo block_exastud_get_string('savechanges'); ?>">
 		</div>
 	</div>
 	<?php

@@ -24,11 +24,11 @@ $action = optional_param('action', '', PARAM_TEXT);
 
 require_login($courseid);
 
-block_exastud_require_global_cap(block_exastud\CAP_MANAGE_CLASSES);
+block_exastud_require_global_cap(BLOCK_EXASTUD_CAP_MANAGE_CLASSES);
 
 $actPeriod = block_exastud_get_active_or_next_period();
 $lastPeriod = block_exastud_get_last_period();
-$lastPeriodClasses = $lastPeriod ? block_exastud\get_head_teacher_classes_owner($lastPeriod->id) : [];
+$lastPeriodClasses = $lastPeriod ? block_exastud_get_head_teacher_classes_owner($lastPeriod->id) : [];
 
 if (!$lastPeriodClasses) {
 	throw new Exception('no classes found');
@@ -46,7 +46,7 @@ if ($action == 'copy') {
 	unset($class->id);
 	$class->timemodified = time();
 	$class->periodid = $actPeriod->id;
-	$class->title = \block_exastud\trans(['de:Kopie von {$a}', 'en:Copy of {$a}'], $class->title);
+	$class->title = block_exastud_trans(['de:Kopie von {$a}', 'en:Copy of {$a}'], $class->title);
 	$newId = $DB->insert_record('block_exastudclass', $class);
 
 	$DB->execute("INSERT INTO {block_exastudclassstudents} (timemodified, classid, studentid)
@@ -65,24 +65,24 @@ if ($action == 'copy') {
 $url = '/blocks/exastud/copy_classes.php';
 $PAGE->set_url($url);
 
-$output = block_exastud\get_renderer();
+$output = block_exastud_get_renderer();
 echo $output->header('configuration_classes');
-echo $output->heading(\block_exastud\trans(['de:Klasse vom vorigen Eingabezeitraum kopieren', 'en:Copy Class from last Period']));
+echo $output->heading(block_exastud_trans(['de:Klasse vom vorigen Eingabezeitraum kopieren', 'en:Copy Class from last Period']));
 $table = new html_table();
 
-$table->head = [\block_exastud\get_string('class'), ''];
+$table->head = [block_exastud_get_string('class'), ''];
 
 foreach ($lastPeriodClasses as $class) {
 	$table->data[] = [
 		$class->title,
 		$output->link_button($CFG->wwwroot.'/blocks/exastud/copy_classes.php?courseid='.$courseid.'&action=copy&classid='.$class->id,
-			\block_exastud\trans(['de:Klasse kopieren', 'en:Copy Class'])),
+			block_exastud_trans(['de:Klasse kopieren', 'en:Copy Class'])),
 	];
 }
 
 echo $output->table($table);
 
 echo $output->link_button($CFG->wwwroot.'/blocks/exastud/configuration_classes.php?courseid='.$courseid,
-	\block_exastud\get_string('back'));
+	block_exastud_get_string('back'));
 
 echo $output->footer();
