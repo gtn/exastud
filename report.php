@@ -169,7 +169,9 @@ if ($classid = optional_param('classid', 0, PARAM_INT)) {
 	if ($bp->sourceinfo !== 'bw-bp2004') {
 		echo '<option value="Lernentwicklungsbericht neuer BP 1.HJ">Lernentwicklungsbericht neuer BP 1.HJ</option>';
 	}
-	echo '<option value="Anlage zum Lernentwicklungsbericht">Anlage zum Lernentwicklungsbericht</option>';
+	if (block_exastud_is_exacomp_installed()) {
+		echo '<option value="Anlage zum Lernentwicklungsbericht">Anlage zum Lernentwicklungsbericht</option>';
+	}
 	echo '</select>';
 
 	echo $output->table($table);
