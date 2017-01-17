@@ -499,7 +499,7 @@ function block_exastud_insert_default_entries($dorecheck = false) {
 	$categories = g::$DB->get_records('block_exastudcate', null, 'sorting', 'id, title, sourceinfo');
 	$defaultItems = (array)block_exastud_get_plugin_config('default_categories');
 
-	if (!$categories || $dorecheck ||block_exastud_get_plugin_config('always_check_default_values')) {
+	if (!$categories || $dorecheck || block_exastud_get_plugin_config('always_check_default_values')) {
 		$sorting = 1;
 		foreach ($defaultItems as $defaultItem) {
 			$defaultItem = (object)$defaultItem;
@@ -1348,4 +1348,17 @@ function block_exastud_get_bildungsstandards() {
 	$bildungsstandards = array_combine($bildungsstandards, $bildungsstandards);
 
 	return $bildungsstandards;
+}
+
+function block_exastud_get_grade_options() {
+	$values = [
+		'1', '1-', '1-2',
+		'2+', '2', '2-', '2-3',
+		'3+', '3', '3-', '3-4',
+		'4+', '4', '4-', '4-5',
+		'5+', '5', '5-', '5-6',
+		'6+', '6',
+	];
+
+	return array_combine($values, $values);
 }

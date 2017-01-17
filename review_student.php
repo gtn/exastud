@@ -123,6 +123,7 @@ $studentform = new student_edit_form(null, [
 	'categories' => $categories,
 	'subjectid' => $subjectid,
 	'exacomp_grades' => $exacomp_grades,
+	'old_grade' => $formdata->grade,
 	'categories.modified' =>
 		$reviewdata
 			? block_exastud_get_renderer()->last_modified($reviewdata->teacherid, $reviewdata->timemodified)

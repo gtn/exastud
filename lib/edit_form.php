@@ -144,7 +144,8 @@ class student_edit_form extends moodleform {
 		if ($this->_customdata['review.modified']) {
 			$mform->addElement('static', '', '', $this->_customdata['review.modified']);
 		}
-		$mform->addElement('textarea', 'review', '', array('cols' => 50, 'rows' => 20));
+		$mform->addElement('textarea', 'review', '', array('cols' => 50, 'rows' => 20,
+			'style' => "width: 556px; overflow: hidden; height: 160px; font-family: Arial !important; font-size: 11pt !important;"));
 		$mform->setType('review', PARAM_RAW);
 
 		$mform->addElement('header', 'grade_header', block_exastud_trans("de:Note und Niveau"));
@@ -154,9 +155,13 @@ class student_edit_form extends moodleform {
 			$mform->addElement('static', '', '', $this->_customdata['grade.modified']);
 		}
 
-		$mform->addElement('text', 'grade', 'Note');
-		$mform->setType('grade', PARAM_TEXT);
+		$values = block_exastud_get_grade_options();
+		if ($this->_customdata['old_grade'] && !isset($values[$this->_customdata['old_grade']])) {
+			$values = [$this->_customdata['old_grade'] => $this->_customdata['old_grade']] + $values;
+		}
+
 		$mform->addElement('select', 'niveau', 'Niveau', ['' => '', 'G' => 'G', 'M' => 'M', 'E' => 'E']);
+		$mform->addElement('select', 'grade', 'Note', ['' => ''] + $values);
 
 		foreach ($this->_customdata['exacomp_grades'] as $row) {
 			$mform->addElement('static', '', $row[0], $row[1]);
@@ -179,7 +184,8 @@ class student_other_data_form extends moodleform {
 				$mform->addElement('static', '', '', $this->_customdata['modified']);
 			}
 
-			$mform->addElement('textarea', $dataid, '', array('cols' => 50, 'rows' => 10));
+			$mform->addElement('textarea', $dataid, '', array('cols' => 50, 'rows' => 10,
+				'style' => "width: 738px; overflow: hidden; height: 160px; font-family: Arial !important; font-size: 11pt !important;"));
 			$mform->setType($dataid, PARAM_RAW);
 		}
 
