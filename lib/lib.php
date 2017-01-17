@@ -208,7 +208,7 @@ function block_exastud_get_class_subject_teachers($classid) {
 
 function block_exastud_get_class_additional_head_teachers($classid) {
 	$classteachers = g::$DB->get_records_sql("
-			SELECT u.*, ct.subjectid
+			SELECT u.*, ct.id AS record_id, ct.subjectid
 			FROM {user} u
 			JOIN {block_exastudclassteachers} ct ON ct.teacherid=u.id
 			JOIN {block_exastudclass} c ON c.id=ct.classid
