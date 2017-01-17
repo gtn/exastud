@@ -45,9 +45,11 @@ class printer {
 		$certificate_issue_date = trim(get_config('exastud', 'certificate_issue_date'));
 		$studentdata = block_exastud_get_class_student_data($class->id, $student->id);
 
+		/*
 		if ($template == 'leb_alter_bp_hj') {
 			return static::leb($class, $student);
 		}
+		*/
 
 		$templateFile = __DIR__.'/../template/'.$template.'.docx';
 
@@ -103,8 +105,9 @@ class printer {
 			// danach mit richtigen werten überschreiben
 			foreach ($availablesubjects as $subject) {
 				$subjectData = block_exastud_get_subject_student_data($class->id, $subject->id, $student->id);
+				$reviewData = block_exastud_get_review($class->id, $subject->id, $student->id);
 
-				if (!@$subjectData->review) {
+				if (!@$reviewData->review) {
 					continue;
 				}
 
@@ -123,7 +126,7 @@ class printer {
 					$contentId = strtolower($subject->title);
 				}
 
-				$data[$contentId] = static::spacerIfEmpty($subjectData->review);
+				$data[$contentId] = static::spacerIfEmpty(@$reviewData->review);
 
 				$niveau = !empty($subjectData->niveau) ? 'Niveau '.$subjectData->niveau : '';
 				$filters[] = function($content) use ($contentId, $niveau) {
@@ -265,6 +268,7 @@ class printer {
 		];
 	}
 
+	/*
 	static function leb_standard_header($section) {
 		global $student, $class;
 
@@ -489,18 +493,18 @@ class printer {
 		$cell->addText("fsdfssdf");
 		$cell->getStyle()->setBgColor('666666');
 		// $table->getStyle()->set
-		*/
+		* /
 
 		/*
 		$section = $phpWord->addSection();
 		static::leb_standard_footer($section);
 		static::leb_standard_header($section);
-		*/
+		* /
 
 		/*
 		$footer = $section->addFooter();
 		$footer->firstPage();
-		*/
+		* /
 
 		// $section->addPageBreak();
 		// phpword bug: pagebreak needs some text
@@ -516,7 +520,7 @@ class printer {
 			$cell->addText('');
 			$cell->addText('');
 		}
-		*/
+		* /
 
 		$table = static::leb_header_body_table($section, block_exastud_trans('de:Leistung in den einzelnen Fächern'), null);
 		$cell = $table->getRows()[0]->getCells()[0];
@@ -557,13 +561,13 @@ class printer {
 		} else {
 			static::leb_add_html($cell, $studentdata['besondere_staerken']);
 		}
-		*/
+		* /
 
 		/*
 		$section = $phpWord->addSection();
 		static::leb_standard_footer($section);
 		static::leb_standard_header($section);
-		*/
+		* /
 
 		$section->addText('');
 
@@ -686,7 +690,7 @@ class printer {
 		$cell = $table->addCell($tableWidthTwips / 4);
 		$cell->addText('Schulleiter /', null, ['align' => 'center', 'spaceBefore' => 0, 'spaceAfter' => 0]);
 		$cell->addText('Schulleiterin', null, ['align' => 'center', 'spaceBefore' => 0, 'spaceAfter' => 0]);
-		*/
+		* /
 
 		$certificate_issue_date = trim(get_config('exastud', 'certificate_issue_date'));
 		$filename = ($certificate_issue_date ?: date('Y-m-d'))."-Lernentwicklungsbericht-{$class->title}-{$student->lastname}-{$student->firstname}.docx";
@@ -713,6 +717,7 @@ class printer {
 			'filename' => $filename,
 		];
 	}
+	*/
 
 	static function get_exacomp_subjects($studentid) {
 		$subjects = \block_exacomp\db_layer_all_user_courses::create($studentid)->get_subjects();
