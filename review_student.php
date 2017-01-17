@@ -159,7 +159,7 @@ if ($fromform = $studentform->get_data()) {
 		'teacherid' => $teacherid,
 	]);
 
-	block_exastud_set_subject_student_data($classid, $subjectid, $studentid, 'review', $fromform->review);
+	block_exastud_set_subject_student_data($classid, $subjectid, $studentid, 'review', trim($fromform->review));
 	block_exastud_set_subject_student_data($classid, $subjectid, $studentid, 'review.modifiedby', $USER->id);
 	block_exastud_set_subject_student_data($classid, $subjectid, $studentid, 'review.timemodified', time());
 

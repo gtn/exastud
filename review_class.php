@@ -162,7 +162,7 @@ foreach($classstudents as $classstudent) {
 
 	if ($visible) {
 		$cell = new html_table_cell();
-		$cell->text = ($textReviewdata ? block_exastud_text_to_html($textReviewdata->review) : '') ?: '---';
+		$cell->text = ($textReviewdata ? block_exastud_text_to_html(trim($textReviewdata->review)) : '') ?: '---';
 		$cell->colspan = count($categories);
 		$cell->style = 'text-align: left;';
 
