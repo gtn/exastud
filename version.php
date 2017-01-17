@@ -20,7 +20,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 $plugin->component = 'block_exastud';
-$plugin->release  = "4.5.1.experimental";
-$plugin->version   = 2017011803;
+$plugin->release  = "4.5.2.experimental";
+$plugin->version   = 2017011804;
 $plugin->requires  = 2015051100;
 $plugin->maturity = MATURITY_STABLE;

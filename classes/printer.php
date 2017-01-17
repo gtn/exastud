@@ -720,88 +720,11 @@ class printer {
 	*/
 
 	static function get_exacomp_subjects($studentid) {
-		$subjects = \block_exacomp\db_layer_all_user_courses::create($studentid)->get_subjects();
-
-		$niveau_titles = g::$DB->get_records_menu(\block_exacomp\DB_EVALUATION_NIVEAU, [], '', 'id,title');
-
-		// todo check timestamp for current semester
-
-		// neue logik: weil für eine komepetenz in mehreren kursen eine bewertung abgegeben werden kann, wird hier nur die letzte bewertung ausgelesen.
-		$records = g::$DB->get_recordset_sql("
-			SELECT * FROM {".\block_exacomp\DB_COMPETENCES."}
-			WHERE userid=? AND role=? AND comptype IN (?,?)
-			ORDER BY timestamp DESC", [$studentid, \block_exacomp\ROLE_TEACHER, \block_exacomp\TYPE_DESCRIPTOR, \block_exacomp\TYPE_TOPIC]);
-
-		$niveaus_topics = [];
-		$niveaus_competencies = [];
-		$teacher_additional_grading_topics = [];
-		$teacher_additional_grading_competencies = [];
-
-		foreach ($records as $record) {
-			if ($record->comptype == \block_exacomp\TYPE_TOPIC) {
-				if ($record->evalniveauid !== null && !isset($niveaus_topics[$record->compid])) {
-					$niveaus_topics[$record->compid] = $record->evalniveauid;
-				}
-				if ($record->additionalinfo !== null && !isset($teacher_additional_grading_topics[$record->compid])) {
-					$teacher_additional_grading_topics[$record->compid] = $record->additionalinfo;
-				}
-			} else {
-				// is descriptor
-				if ($record->evalniveauid !== null && !isset($niveaus_competencies[$record->compid])) {
-					$niveaus_competencies[$record->compid] = $record->evalniveauid;
-				}
-				if ($record->additionalinfo !== null && !isset($teacher_additional_grading_competencies[$record->compid])) {
-					$teacher_additional_grading_competencies[$record->compid] = $record->additionalinfo;
-				}
-			}
+		if (!block_exastud_is_exacomp_installed()) {
+			return [];
 		}
 
-		/*
-		$niveaus_topics = g::$DB->get_records_menu(\block_exacomp\DB_COMPETENCES, array("userid" => $studentid, "role" => \block_exacomp\ROLE_TEACHER, "comptype" => TYPE_TOPIC), '', 'compid as id, evalniveauid');
-		$niveaus_competencies = g::$DB->get_records_menu(\block_exacomp\DB_COMPETENCES, array("userid" => $studentid, "role" => \block_exacomp\ROLE_TEACHER, "comptype" => TYPE_DESCRIPTOR), '', 'compid as id, evalniveauid');
-
-		$teacher_additional_grading_topics = g::$DB->get_records_menu(\block_exacomp\DB_COMPETENCES,array("userid" => $studentid, "role" => \block_exacomp\ROLE_TEACHER, "comptype" => TYPE_TOPIC),'','compid as id, additionalinfo');
-		$teacher_additional_grading_competencies = g::$DB->get_records_menu(\block_exacomp\DB_COMPETENCES,array("userid" => $studentid, "role" => \block_exacomp\ROLE_TEACHER, "comptype" => TYPE_DESCRIPTOR),'','compid as id, additionalinfo');
-		*/
-
-		foreach ($subjects as $subject) {
-			// echo $subject->title."<br/>\n";
-			foreach ($subject->topics as $topic) {
-				// echo 'x '.$topic->title.' '.(@$niveaus_topics[$topic->id])."<br/>\n";
-				foreach ($topic->descriptors as $descriptor) {
-					// echo 'x x '.$descriptor->title.' '.(@$niveaus_competencies[$descriptor->id])."<br/>\n";
-					$descriptor->teacher_eval_niveau_text = @$niveau_titles[$niveaus_competencies[$descriptor->id]];
-					if (isset($teacher_additional_grading_competencies[$descriptor->id])) {
-						// \block_exacomp\global_config::get_value_title_by_id
-						$descriptor->teacher_eval_additional_grading = \block_exacomp\global_config::get_additionalinfo_value_mapping($teacher_additional_grading_competencies[$descriptor->id]);
-					} else {
-						$descriptor->teacher_eval_additional_grading = null;
-					}
-
-					if (!$descriptor->teacher_eval_niveau_text && !$descriptor->teacher_eval_additional_grading) {
-						unset($topic->descriptors[$descriptor->id]);
-					}
-				}
-
-				$topic->teacher_eval_niveau_text = @$niveau_titles[$niveaus_topics[$topic->id]];
-				if (isset($teacher_additional_grading_topics[$topic->id])) {
-					// \block_exacomp\global_config::get_value_title_by_id
-					$topic->teacher_eval_additional_grading = \block_exacomp\global_config::get_additionalinfo_value_mapping($teacher_additional_grading_topics[$topic->id]);
-				} else {
-					$topic->teacher_eval_additional_grading = null;
-				}
-
-				if (!$topic->descriptors && !$topic->teacher_eval_niveau_text && ! $topic->teacher_eval_additional_grading) {
-					unset($subject->topics[$topic->id]);
-				}
-			}
-
-			if (!$subject->topics) {
-				unset($subjects[$subject->id]);
-			}
-		}
-
-		return $subjects;
+		return \block_exacomp\api::get_comp_tree_for_exastud($studentid);
 	}
 }
 
