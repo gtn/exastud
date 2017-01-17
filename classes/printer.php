@@ -123,7 +123,7 @@ class printer {
 					$profilfach = preg_replace('!^[^\s]+!', '', $subject->title);
 					$contentId = 'profilfach';
 				} else {
-					$contentId = strtolower($subject->title);
+					$contentId = preg_replace('![^a-z]+!', '_', strtolower(trim($subject->title)));
 				}
 
 				$data[$contentId] = static::spacerIfEmpty(@$reviewData->review);
