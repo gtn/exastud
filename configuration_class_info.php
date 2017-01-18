@@ -34,7 +34,7 @@ if (!$classid) {
 	$class->id = 0;
 	$class->title = '';
 } else {
-	$class = block_exastud_get_teacher_class($classid);
+	$class = block_exastud_get_head_teacher_class($classid);
 }
 $class->classid = $class->id;
 $class->courseid = $courseid;

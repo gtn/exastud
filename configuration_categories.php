@@ -34,7 +34,7 @@ require_login($courseid);
 block_exastud_require_global_cap(BLOCK_EXASTUD_CAP_MANAGE_CLASSES);
 $curPeriod = block_exastud_get_active_or_next_period();
 
-$class = block_exastud_get_teacher_class($classid);
+$class = block_exastud_get_head_teacher_class($classid);
 
 $header = block_exastud_get_string('configcategories', null, $class->title);
 $url = '/blocks/exastud/configuration_categories.php';

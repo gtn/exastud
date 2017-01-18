@@ -166,7 +166,7 @@ function block_exastud_get_head_teacher_classes_all($periodid) {
 	return block_exastud_get_head_teacher_classes_owner($periodid) + block_exastud_get_head_teacher_classes_shared($periodid);
 }
 
-function block_exastud_get_teacher_class($classid) {
+function block_exastud_get_head_teacher_class($classid) {
 	$periods = g::$DB->get_records_sql('SELECT * FROM {block_exastudperiod}');
 
 	foreach ($periods as $period) {
@@ -192,6 +192,15 @@ function block_exastud_get_class_students($classid) {
 
 function block_exastud_get_class_teachers($classid) {
 	return array_merge(block_exastud_get_class_additional_head_teachers($classid), block_exastud_get_class_subject_teachers($classid));
+}
+
+function block_exastud_get_class_subjects($class) {
+	$subjects = block_exastud_get_bildungsplan_subjects($class->bpid);
+	$teachers = block_exastud_get_class_subject_teachers($class->id);
+
+	return array_filter($subjects, function($subject) use ($teachers) {
+		return block_exastud_find_object_in_array_by_property($teachers, 'subjectid', $subject->id);
+	});
 }
 
 function block_exastud_get_class_subject_teachers($classid) {
@@ -250,7 +259,7 @@ function block_exastud_get_head_teacher_lern_und_sozialverhalten_classes() {
  * this returns all review classes, can have multiple class entries if teacher has more than 1 subject
  * @return array
  */
-function block_exastud_get_review_classes() {
+function block_exastud_get_review_subjects() {
 	$actPeriod = block_exastud_get_active_period();
 
 	return g::$DB->get_records_sql("
@@ -309,10 +318,11 @@ function block_exastud_filter_fields_by_prefix($object_or_array, $prefix) {
 function block_exastud_get_text_reviews($class, $studentid) {
 
 	$textReviews = [];
-	$subjects = block_exastud_get_bildungsplan_subjects($class->bpid);
+
+	$subjects = block_exastud_get_class_subjects($class);
 	foreach ($subjects as $subject) {
 		$review = block_exastud_get_review($class->id, $subject->id, $studentid);
-		if ($review) {
+		if ($review && $review->review) {
 			$review->subject_title = $subject->title;
 			$review->subjectid = $subject->id;
 			$review->title = $subject->title;
@@ -714,7 +724,7 @@ function block_exastud_require_global_cap($cap, $user = null) {
 			}
 		case BLOCK_EXASTUD_CAP_REVIEW:
 			$actPeriod = block_exastud_check_active_period();
-			if (!block_exastud_get_review_classes() && !block_exastud_get_head_teacher_classes_all($actPeriod->id)) {
+			if (!block_exastud_get_review_subjects() && !block_exastud_get_head_teacher_classes_all($actPeriod->id)) {
 				throw new block_exastud_permission_exception('no classes');
 			} else {
 				return;
@@ -1279,7 +1289,7 @@ function block_exastud_text_to_html($text) {
 	// make sure it's text
 	$text = block_exastud_html_to_text($text);
 
-	return text_to_html($text);
+	return text_to_html($text, null, false);
 }
 
 function block_exastud_can_edit_bp($bp) {
@@ -1321,7 +1331,7 @@ function block_exastud_get_review($classid, $subjectid, $studentid) {
 	}
 
 	// fallback for old style with own table
-	$class = block_exastud_get_teacher_class($classid);
+	$class = block_exastud_get_class($classid);
 
 	$reviewdata = g::$DB->get_records('block_exastudreview', array('subjectid' => $subjectid, 'periodid' => $class->periodid, 'studentid' => $studentid), 'timemodified DESC');
 	$reviewdata = reset($reviewdata);
@@ -1361,4 +1371,15 @@ function block_exastud_get_grade_options() {
 	];
 
 	return array_combine($values, $values);
+}
+
+function block_exastud_get_class_title($classid) {
+	$class = block_exastud_get_class($classid);
+
+	$classTitle = $class->title;
+	if ($head_teacher = g::$DB->get_record('user', array('id' => $class->userid))) {
+		$classTitle .= ' ('.fullname($head_teacher).')';
+	}
+
+	return $classTitle;
 }

@@ -36,7 +36,7 @@ $url = '/blocks/exastud/report.php';
 $PAGE->set_url($url);
 
 if ($classid = optional_param('classid', 0, PARAM_INT)) {
-	$class = block_exastud_get_teacher_class($classid);
+	$class = block_exastud_get_head_teacher_class($classid);
 
 	if (!$classstudents = block_exastud_get_class_students($class->id)) {
 		echo $output->header('report');
@@ -150,29 +150,30 @@ if ($classid = optional_param('classid', 0, PARAM_INT)) {
 		$table->data[] = $data;
 	}
 
+	$bp = $DB->get_record('block_exastudbp', ['id' => $class->bpid]);
+
+	$templates = [];
+	$templates['html_report'] = 'Ausgabe am Bildschirm';
+	$templates['Deckblatt und 1. Innenseite LEB'] = 'Deckblatt und 1. Innenseite LEB';
+
+	if ($bp->sourceinfo !== 'bw-bp2016') {
+		$templates['Lernentwicklungsbericht alter BP 1.HJ'] = 'Lernentwicklungsbericht alter BP 1.HJ';
+	}
+	if ($bp->sourceinfo !== 'bw-bp2004') {
+		$templates['Lernentwicklungsbericht neuer BP 1.HJ'] = 'Lernentwicklungsbericht neuer BP 1.HJ';
+	}
+	if (block_exastud_is_exacomp_installed()) {
+		$templates['Anlage zum Lernentwicklungsbericht'] = 'Anlage zum Lernentwicklungsbericht';
+	}
+
 	echo $output->header('report');
 	$classheader = block_exastud_get_period($class->periodid)->description.' - '.$class->title;
 	echo $output->heading($classheader);
 
 	echo '<form method="post">';
 
-	$bp = $DB->get_record('block_exastudbp', ['id' => $class->bpid]);
-
-	echo '<select name="template">';
-	echo '<option value="">--- Vorlage wählen ---</option>';
-	echo '<option value="html_report">Ausgabe am Bildschirm</option>';
-	echo '<option value="Deckblatt und 1. Innenseite LEB">Deckblatt und 1. Innenseite LEB</option>';
-
-	if ($bp->sourceinfo !== 'bw-bp2016') {
-		echo '<option value="Lernentwicklungsbericht alter BP 1.HJ">Lernentwicklungsbericht alter BP 1.HJ</option>';
-	}
-	if ($bp->sourceinfo !== 'bw-bp2004') {
-		echo '<option value="Lernentwicklungsbericht neuer BP 1.HJ">Lernentwicklungsbericht neuer BP 1.HJ</option>';
-	}
-	if (block_exastud_is_exacomp_installed()) {
-		echo '<option value="Anlage zum Lernentwicklungsbericht">Anlage zum Lernentwicklungsbericht</option>';
-	}
-	echo '</select>';
+	echo block_exastud_trans(['de:Vorlage', 'en:Template']).': ';
+	echo html_writer::select($templates, 'template', $template, false);
 
 	echo $output->table($table);
 
