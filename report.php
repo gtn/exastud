@@ -158,19 +158,21 @@ if ($classid = optional_param('classid', 0, PARAM_INT)) {
 
 	$bp = $DB->get_record('block_exastudbp', ['id' => $class->bpid]);
 
-	echo '<select name="template">';
-	echo '<option value="">--- Vorlage wählen ---</option>';
-	echo '<option value="html_report">Ausgabe am Bildschirm</option>';
-	echo '<option value="Deckblatt und 1. Innenseite LEB">Deckblatt und 1. Innenseite LEB</option>';
+	echo block_exastud_trans(['de:Vorlage', 'en:Template']).': ';
+
+	$templates = [];
+	$templates['html_report'] = 'Ausgabe am Bildschirm';
+	$templates['Deckblatt und 1. Innenseite LEB'] = 'Deckblatt und 1. Innenseite LEB';
 
 	if ($bp->sourceinfo !== 'bw-bp2016') {
-		echo '<option value="Lernentwicklungsbericht alter BP 1.HJ">Lernentwicklungsbericht alter BP 1.HJ</option>';
+		$templates['Lernentwicklungsbericht alter BP 1.HJ'] = 'Lernentwicklungsbericht alter BP 1.HJ';
 	}
 	if ($bp->sourceinfo !== 'bw-bp2004') {
-		echo '<option value="Lernentwicklungsbericht neuer BP 1.HJ">Lernentwicklungsbericht neuer BP 1.HJ</option>';
+		$templates['Lernentwicklungsbericht neuer BP 1.HJ'] = 'Lernentwicklungsbericht neuer BP 1.HJ';
 	}
-	echo '<option value="Anlage zum Lernentwicklungsbericht">Anlage zum Lernentwicklungsbericht</option>';
-	echo '</select>';
+	$templates['Anlage zum Lernentwicklungsbericht'] = 'Anlage zum Lernentwicklungsbericht';
+
+	echo html_writer::select($templates, 'template', $template, false);
 
 	echo $output->table($table);
 

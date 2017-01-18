@@ -39,6 +39,10 @@ class printer {
 		}
 	}
 
+	static function toTemplateVarId($name) {
+		return preg_replace('![^a-z]+!', '_', strtolower(trim($name)));
+	}
+
 	static function report_to_temp_file($class, $student, $template) {
 		global $CFG;
 
@@ -91,12 +95,12 @@ class printer {
 				$dataTextReplacer['yyyy'] = date('Y', $dateofbirth);
 			}
 
-			$availablesubjects = block_exastud_get_bildungsplan_subjects($class->bpid);
+			$bpsubjects = block_exastud_get_bildungsplan_subjects($class->bpid);
+			$availablesubjects = block_exastud_get_class_subjects($class);
 
 			// zuerst standardwerte
-			foreach ($availablesubjects as $subject) {
-				$data[strtolower($subject->title)] = '---';
-				$data[$subject->shorttitle] = '---';
+			foreach ($bpsubjects as $subject) {
+				$data[static::toTemplateVarId($subject->title)] = '---';
 			}
 
 			$wahlpflichtfach = '---';
@@ -123,12 +127,12 @@ class printer {
 					$profilfach = preg_replace('!^[^\s]+!', '', $subject->title);
 					$contentId = 'profilfach';
 				} else {
-					$contentId = preg_replace('![^a-z]+!', '_', strtolower(trim($subject->title)));
+					$contentId = static::toTemplateVarId($subject->title);
 				}
 
 				$data[$contentId] = static::spacerIfEmpty(@$reviewData->review);
 
-				$niveau = !empty($subjectData->niveau) ? 'Niveau '.$subjectData->niveau : '';
+				$niveau = 'Niveau '.static::spacerIfEmpty($subjectData->niveau);
 				$filters[] = function($content) use ($contentId, $niveau) {
 					return preg_replace('!({'.$contentId.'}.*>)Bitte die Niveaustufe auswählen(<)!U', '$1'.$niveau.'$2', $content);
 				};

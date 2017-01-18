@@ -194,6 +194,15 @@ function block_exastud_get_class_teachers($classid) {
 	return array_merge(block_exastud_get_class_additional_head_teachers($classid), block_exastud_get_class_subject_teachers($classid));
 }
 
+function block_exastud_get_class_subjects($class) {
+	$subjects = block_exastud_get_bildungsplan_subjects($class->bpid);
+	$teachers = block_exastud_get_class_subject_teachers($class->id);
+
+	return array_filter($subjects, function($subject) use ($teachers) {
+		return block_exastud_find_object_in_array_by_property($teachers, 'subjectid', $subject->id);
+	});
+}
+
 function block_exastud_get_class_subject_teachers($classid) {
 	return iterator_to_array(g::$DB->get_recordset_sql("
 			SELECT u.id, ct.id AS record_id, ".\user_picture::fields('u', null, 'userid').", ct.subjectid, s.title AS subject_title
@@ -309,10 +318,11 @@ function block_exastud_filter_fields_by_prefix($object_or_array, $prefix) {
 function block_exastud_get_text_reviews($class, $studentid) {
 
 	$textReviews = [];
-	$subjects = block_exastud_get_bildungsplan_subjects($class->bpid);
+
+	$subjects = block_exastud_get_class_subjects($class);
 	foreach ($subjects as $subject) {
 		$review = block_exastud_get_review($class->id, $subject->id, $studentid);
-		if ($review) {
+		if ($review && $review->review) {
 			$review->subject_title = $subject->title;
 			$review->subjectid = $subject->id;
 			$review->title = $subject->title;
@@ -1279,7 +1289,7 @@ function block_exastud_text_to_html($text) {
 	// make sure it's text
 	$text = block_exastud_html_to_text($text);
 
-	return text_to_html($text);
+	return text_to_html($text, null, false);
 }
 
 function block_exastud_can_edit_bp($bp) {
