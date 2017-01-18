@@ -166,7 +166,7 @@ function block_exastud_get_head_teacher_classes_all($periodid) {
 	return block_exastud_get_head_teacher_classes_owner($periodid) + block_exastud_get_head_teacher_classes_shared($periodid);
 }
 
-function block_exastud_get_teacher_class($classid) {
+function block_exastud_get_head_teacher_class($classid) {
 	$periods = g::$DB->get_records_sql('SELECT * FROM {block_exastudperiod}');
 
 	foreach ($periods as $period) {
@@ -1321,7 +1321,7 @@ function block_exastud_get_review($classid, $subjectid, $studentid) {
 	}
 
 	// fallback for old style with own table
-	$class = block_exastud_get_teacher_class($classid);
+	$class = block_exastud_get_class($classid);
 
 	$reviewdata = g::$DB->get_records('block_exastudreview', array('subjectid' => $subjectid, 'periodid' => $class->periodid, 'studentid' => $studentid), 'timemodified DESC');
 	$reviewdata = reset($reviewdata);

@@ -36,7 +36,7 @@ $url = '/blocks/exastud/report.php';
 $PAGE->set_url($url);
 
 if ($classid = optional_param('classid', 0, PARAM_INT)) {
-	$class = block_exastud_get_teacher_class($classid);
+	$class = block_exastud_get_head_teacher_class($classid);
 
 	if (!$classstudents = block_exastud_get_class_students($class->id)) {
 		echo $output->header('report');

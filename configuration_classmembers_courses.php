@@ -31,7 +31,7 @@ require_login($courseid);
 block_exastud_require_global_cap(BLOCK_EXASTUD_CAP_MANAGE_CLASSES);
 $curPeriod = block_exastud_check_active_period();
 
-$class = block_exastud_get_teacher_class($classid);
+$class = block_exastud_get_head_teacher_class($classid);
 
 $courses = enrol_get_all_users_courses($USER->id, false, null, 'fullname');
 if (!isset($courses[$selectedcourseid])) {
