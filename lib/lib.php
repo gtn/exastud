@@ -259,7 +259,7 @@ function block_exastud_get_head_teacher_lern_und_sozialverhalten_classes() {
  * this returns all review classes, can have multiple class entries if teacher has more than 1 subject
  * @return array
  */
-function block_exastud_get_review_classes() {
+function block_exastud_get_review_subjects() {
 	$actPeriod = block_exastud_get_active_period();
 
 	return g::$DB->get_records_sql("
@@ -724,7 +724,7 @@ function block_exastud_require_global_cap($cap, $user = null) {
 			}
 		case BLOCK_EXASTUD_CAP_REVIEW:
 			$actPeriod = block_exastud_check_active_period();
-			if (!block_exastud_get_review_classes() && !block_exastud_get_head_teacher_classes_all($actPeriod->id)) {
+			if (!block_exastud_get_review_subjects() && !block_exastud_get_head_teacher_classes_all($actPeriod->id)) {
 				throw new block_exastud_permission_exception('no classes');
 			} else {
 				return;
@@ -1371,4 +1371,15 @@ function block_exastud_get_grade_options() {
 	];
 
 	return array_combine($values, $values);
+}
+
+function block_exastud_get_class_title($classid) {
+	$class = block_exastud_get_class($classid);
+
+	$classTitle = $class->title;
+	if ($head_teacher = g::$DB->get_record('user', array('id' => $class->userid))) {
+		$classTitle .= ' ('.fullname($head_teacher).')';
+	}
+
+	return $classTitle;
 }

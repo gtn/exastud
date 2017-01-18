@@ -150,15 +150,7 @@ if ($classid = optional_param('classid', 0, PARAM_INT)) {
 		$table->data[] = $data;
 	}
 
-	echo $output->header('report');
-	$classheader = block_exastud_get_period($class->periodid)->description.' - '.$class->title;
-	echo $output->heading($classheader);
-
-	echo '<form method="post">';
-
 	$bp = $DB->get_record('block_exastudbp', ['id' => $class->bpid]);
-
-	echo block_exastud_trans(['de:Vorlage', 'en:Template']).': ';
 
 	$templates = [];
 	$templates['html_report'] = 'Ausgabe am Bildschirm';
@@ -170,8 +162,17 @@ if ($classid = optional_param('classid', 0, PARAM_INT)) {
 	if ($bp->sourceinfo !== 'bw-bp2004') {
 		$templates['Lernentwicklungsbericht neuer BP 1.HJ'] = 'Lernentwicklungsbericht neuer BP 1.HJ';
 	}
-	$templates['Anlage zum Lernentwicklungsbericht'] = 'Anlage zum Lernentwicklungsbericht';
+	if (block_exastud_is_exacomp_installed()) {
+		$templates['Anlage zum Lernentwicklungsbericht'] = 'Anlage zum Lernentwicklungsbericht';
+	}
 
+	echo $output->header('report');
+	$classheader = block_exastud_get_period($class->periodid)->description.' - '.$class->title;
+	echo $output->heading($classheader);
+
+	echo '<form method="post">';
+
+	echo block_exastud_trans(['de:Vorlage', 'en:Template']).': ';
 	echo html_writer::select($templates, 'template', $template, false);
 
 	echo $output->table($table);

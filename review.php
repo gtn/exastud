@@ -41,7 +41,7 @@ foreach ($reviewclasses as $class) {
 }
 
 // then add the subjects to the classes
-$reviewsubjects = block_exastud_get_review_classes();
+$reviewsubjects = block_exastud_get_review_subjects();
 foreach ($reviewsubjects as $reviewsubject) {
 	if (!isset($reviewclasses[$reviewsubject->classid])) {
 		$reviewclasses[$reviewsubject->classid] = $reviewsubject;
@@ -62,7 +62,7 @@ else {
 	foreach ($reviewclasses as $myclass) {
 		$table = new html_table();
 
-		$table->head = array($myclass->title);
+		$table->head = array(block_exastud_get_class_title($myclass->id));
 
 		$table->align = array("left");
 
