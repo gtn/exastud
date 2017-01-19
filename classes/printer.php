@@ -725,7 +725,11 @@ class printer {
 
 	static function get_exacomp_subjects($studentid) {
 		if (!block_exastud_is_exacomp_installed()) {
-			return [];
+			throw new \Exception('exacomp is not installed');
+		}
+
+		if (!method_exists('block_exacomp\api', 'get_comp_tree_for_exastud')) {
+			throw new \Exception('please update exacomp version to match exastud version number');
 		}
 
 		return \block_exacomp\api::get_comp_tree_for_exastud($studentid);
