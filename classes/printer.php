@@ -108,12 +108,13 @@ class printer {
 
 			// danach mit richtigen werten überschreiben
 			foreach ($availablesubjects as $subject) {
-				$subjectData = block_exastud_get_subject_student_data($class->id, $subject->id, $student->id);
-				$reviewData = block_exastud_get_review($class->id, $subject->id, $student->id);
+				$subjectData = block_exastud_get_review($class->id, $subject->id, $student->id);
 
-				if (!@$reviewData->review) {
+				/*
+				if (!@$subjectData->review) {
 					continue;
 				}
+				*/
 
 				$subject->title = preg_replace('!\s*\(.*$!', '', $subject->title);
 
@@ -130,9 +131,13 @@ class printer {
 					$contentId = static::toTemplateVarId($subject->title);
 				}
 
-				$data[$contentId] = static::spacerIfEmpty(@$reviewData->review);
+				$data[$contentId] = static::spacerIfEmpty(@$subjectData->review);
 
-				$niveau = 'Niveau '.static::spacerIfEmpty($subjectData->niveau);
+				$niveau = \block_exastud\global_config::get_niveau_option_title(@$subjectData->niveau) ?: @$subjectData->niveau;
+				if (strlen($niveau) == 1) {
+					// G M E
+					$niveau = 'Niveau '.$niveau;
+				}
 				$filters[] = function($content) use ($contentId, $niveau) {
 					return preg_replace('!({'.$contentId.'}.*>)Bitte die Niveaustufe auswählen(<)!U', '$1'.$niveau.'$2', $content);
 				};

@@ -123,7 +123,7 @@ foreach($classstudents as $classstudent) {
 	*/
 	$report = $DB->get_record('block_exastudreview', array('teacherid'=>$teacherid, 'subjectid'=>$subjectid, 'periodid'=>$actPeriod->id, 'studentid'=>$classstudent->id));
 
-	$textReviewdata = block_exastud_get_review($classid, $subjectid, $classstudent->id);
+	$subjectData = block_exastud_get_review($classid, $subjectid, $classstudent->id);
 
 	$row = new html_table_row();
 	$row->cells[] = $output->user_picture($classstudent,array("courseid"=>$courseid));
@@ -162,7 +162,15 @@ foreach($classstudents as $classstudent) {
 
 	if ($visible) {
 		$cell = new html_table_cell();
-		$cell->text = ($textReviewdata ? block_exastud_text_to_html(trim($textReviewdata->review)) : '') ?: '---';
+		$cell->text = '<p>'.((trim(@$subjectData->review) ? block_exastud_text_to_html(trim($subjectData->review)) : '') ?: '---').'</p>';
+
+		if (!empty($subjectData->niveau)) {
+			$cell->text .= '<p><b>'.block_exastud_get_string('de:Niveau').':</b> '.(block_exastud\global_config::get_niveau_option_title($subjectData->niveau) ?: $subjectData->niveau).'</p>';
+		}
+		if (!empty($subjectData->grade)) {
+			$cell->text .= '<p><b>'.block_exastud_get_string('de:Note').':</b> '.$subjectData->grade.'</p>';
+		}
+
 		$cell->colspan = count($categories);
 		$cell->style = 'text-align: left;';
 

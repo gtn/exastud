@@ -155,13 +155,13 @@ class student_edit_form extends moodleform {
 			$mform->addElement('static', '', '', $this->_customdata['grade.modified']);
 		}
 
-		$values = block_exastud_get_grade_options();
+		$mform->addElement('select', 'niveau', block_exastud_get_string('de:Niveau'), ['' => ''] + block_exastud\global_config::get_niveau_options());
+
+		$values = block_exastud\global_config::get_grade_options();
 		if ($this->_customdata['old_grade'] && !isset($values[$this->_customdata['old_grade']])) {
 			$values = [$this->_customdata['old_grade'] => $this->_customdata['old_grade']] + $values;
 		}
-
-		$mform->addElement('select', 'niveau', 'Niveau', ['' => '', 'G' => 'G', 'M' => 'M', 'E' => 'E']);
-		$mform->addElement('select', 'grade', 'Note', ['' => ''] + $values);
+		$mform->addElement('select', 'grade', block_exastud_get_string('de:Note'), ['' => ''] + $values);
 
 		foreach ($this->_customdata['exacomp_grades'] as $row) {
 			$mform->addElement('static', '', $row[0], $row[1]);

@@ -135,6 +135,15 @@ $string['print'] = 'Drucken';
 $string['perioddesc'] = 'Beschreibung des Eingabezeitraums';
 $string['noperiods'] = 'Es gibt noch keinen Eingabezeitraum. Bitte wenden Sie sich an den Administrator.';
 $string['commentshouldnotbeempty'] = 'Der Kommentar darf nicht leer sein.';
+$string['de:Fächerübergreifende Kompetenzen'] = 'Fächerübergreifende Kompetenzen';
+$string['de:Note'] = 'Note';
+$string['de:Niveau'] = 'Niveau';
+$string['de:Bewertungsskala'] = 'Bewertungsskala';
+$string['de:Fachbezeichnungen'] = 'Fachbezeichnungen';
+$string['de:Bildungspläne'] = 'Bildungspläne';
+$string['de:Lernentwicklungsbericht: Schulname'] = 'Lernentwicklungsbericht: Schulname';
+$string['de:Lernentwicklungsbericht: Ort'] = 'Lernentwicklungsbericht: Ort';
+$string['de:Lernentwicklungsbericht: Zeugnisausgabedatum'] = 'Lernentwicklungsbericht: Zeugnisausgabedatum';
 
 
 // === settings ===
