@@ -1331,13 +1331,10 @@ function block_exastud_get_review($classid, $subjectid, $studentid) {
 		$reviewdata = reset($reviewdata);
 		if ($reviewdata) {
 			$data->review = $reviewdata->review;
-			$data->modifiedby = $reviewdata->teacherid;
-			$data->timemodified = $reviewdata->timemodified;
+			$data->{'review.modifiedby'} = $reviewdata->teacherid;
+			$data->{'review.timemodified'} = $reviewdata->timemodified;
 		}
 	}
-
-	$data->modifiedby = @$data->{'review.modifiedby'};
-	$data->timemodified = @$data->{'review.timemodified'};
 
 	return $data;
 }
