@@ -616,7 +616,7 @@ function block_exastud_insert_default_entries($dorecheck = false) {
 				unset($bps[$dbBp->id]);
 			} else {
 				$dbBp = $defaultBp;
-				$dbBp->sorting;
+				$dbBp->sorting = $sorting;
 				$dbBp->id = g::$DB->insert_record('block_exastudbp', $dbBp);
 			}
 			$sorting++;
