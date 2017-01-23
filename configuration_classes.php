@@ -56,6 +56,23 @@ if (!$classes) {
 	echo $output->table($table);
 }
 
+if ($lastPeriodClasses) {
+	echo $output->heading($lastPeriod->description.': '.block_exastud_get_string('configuration_classes'));
+
+	$table = new html_table();
+
+	$table->head = array(block_exastud_get_string('class'));
+	$table->align = array("left");
+
+	foreach ($lastPeriodClasses as $class) {
+		$table->data[] = [
+			'<a href="configuration_class.php?courseid='.$courseid.'&classid='.$class->id.'">'.$class->title.'</a>',
+		];
+	}
+
+	echo $output->table($table);
+}
+
 echo $output->link_button($CFG->wwwroot.'/blocks/exastud/configuration_class_info.php?courseid='.$courseid.'&action=add',
 	block_exastud_trans(['de:Klasse hinzufügen', 'en:Add Class']));
 

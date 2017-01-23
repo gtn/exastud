@@ -34,6 +34,10 @@ block_exastud_require_global_cap(BLOCK_EXASTUD_CAP_MANAGE_CLASSES);
 $classid = required_param('classid', PARAM_INT);
 $class = block_exastud_get_head_teacher_class($classid);
 
+$period = block_exastud_get_period($class->periodid);
+// agelaufene periode => unlock anbieten
+$showUnlock = $period->endtime < time();
+
 $url = '/blocks/exastud/configuration_classes.php';
 $PAGE->set_url($url);
 
@@ -222,8 +226,46 @@ if ($type == 'teachers') {
 		echo $output->table($table);
 	}
 
-	echo $OUTPUT->single_button($CFG->wwwroot.'/blocks/exastud/configuration_classteachers.php?courseid='.$courseid.'&classid='.$class->id,
-		block_exastud_get_string('editclassteacherlist'), 'get');
+	echo $output->link_button($CFG->wwwroot.'/blocks/exastud/configuration_classteachers.php?courseid='.$courseid.'&classid='.$class->id,
+		block_exastud_get_string('editclassteacherlist'));
+
+	if ($showUnlock) {
+		echo $output->heading2(block_exastud_trans(['de:Bewertung erneuet freigeben', 'en:Allow reviewing this class']));
+
+		$unlocked_teachers = (array)json_decode(block_exastud_get_class_data($class->id, BLOCK_EXASTUD_DATA_ID_UNLOCKED_TEACHERS), true);
+
+		if ($action == 'unlock') {
+			require_sesskey();
+			$teacherid = required_param('teacherid', PARAM_INT);
+
+			echo $output->notification(block_exastud_trans(['de:freigegeben', 'en:unlocked']));
+
+			$unlocked_teachers[$teacherid] = strtotime('+1day');
+			block_exastud_set_class_data($class->id, BLOCK_EXASTUD_DATA_ID_UNLOCKED_TEACHERS, json_encode($unlocked_teachers));
+		}
+
+		$teachers = [ 0 => block_exastud_trans(['de:für alle', 'en:for all'])];
+		foreach (array_merge($additional_head_teachers, $classteachers) as $classteacher) {
+			$teachers[$classteacher->id] = fullname($classteacher);
+		}
+
+		foreach ($teachers as $teacherid => $teacherName) {
+			if (isset($unlocked_teachers[$teacherid]) && $unlocked_teachers[$teacherid] > time()) {
+				echo '<div>'.$teacherName.' '.
+					block_exastud_trans(['de:bis', 'en:until']).' '.userdate($unlocked_teachers[$teacherid]).'</div>';
+			}
+		}
+
+		echo '<form method="post">';
+		echo '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
+		echo '<input type="hidden" name="action" value="unlock" />';
+		echo '<div>';
+		echo html_writer::select($teachers, 'teacherid', '', false);
+		echo $output->link_button($CFG->wwwroot.'/blocks/exastud/configuration_classmembers_courses.php?courseid='.$courseid.'&classid='.$class->id,
+			block_exastud_get_string('go'));
+		echo '</div>';
+		echo '</form>';
+	}
 }
 
 /* Print the categories */

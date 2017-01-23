@@ -38,6 +38,8 @@ const BLOCK_EXASTUD_CAP_VIEW_REPORT = 'viewreport';
 const BLOCK_EXASTUD_CAP_REVIEW = 'review';
 
 const BLOCK_EXASTUD_DATA_ID_LERN_UND_SOZIALVERHALTEN = 'learning_and_social_behavior';
+const BLOCK_EXASTUD_DATA_ID_UNLOCKED_TEACHERS = 'unlocked_teachers';
+
 const BLOCK_EXASTUD_SUBJECT_ID_LERN_UND_SOZIALVERHALTEN = -1;
 const BLOCK_EXASTUD_SUBJECT_ID_LERN_UND_SOZIALVERHALTEN_VORSCHLAG = -3;
 const BLOCK_EXASTUD_SUBJECT_ID_OTHER_DATA = -1;
@@ -260,9 +262,7 @@ function block_exastud_get_head_teacher_lern_und_sozialverhalten_classes() {
  * this returns all review classes, can have multiple class entries if teacher has more than 1 subject
  * @return array
  */
-function block_exastud_get_review_subjects() {
-	$actPeriod = block_exastud_get_active_period();
-
+function block_exastud_get_review_subjects($periodid) {
 	return g::$DB->get_records_sql("
 			SELECT ct.id, ct.subjectid, ct.classid, c.title, s.title AS subject_title
 			FROM {block_exastudclassteachers} ct
@@ -270,7 +270,7 @@ function block_exastud_get_review_subjects() {
 			JOIN {block_exastudsubjects} s ON ct.subjectid = s.id AND s.bpid=c.bpid 
 			WHERE ct.teacherid=? AND c.periodid=? AND ct.subjectid >= 0
 			ORDER BY c.title, s.sorting
-		", array(g::$USER->id, $actPeriod->id));
+		", array(g::$USER->id, $periodid));
 }
 
 function block_exastud_get_review_class($classid, $subjectid) {
@@ -425,6 +425,10 @@ function block_exastud_is_exacomp_installed() {
 	return class_exists('\block_exacomp\api') && \block_exacomp\api::active();
 }
 
+function block_exastud_get_class_data($classid, $name = null) {
+	return block_exastud_get_subject_student_data($classid, 0, 0, $name);
+}
+
 function block_exastud_get_class_student_data($classid, $userid, $name = null) {
 	return block_exastud_get_subject_student_data($classid, 0, $userid, $name);
 }
@@ -441,6 +445,10 @@ function block_exastud_get_subject_student_data($classid, $subjectid, $userid, $
 	} else {
 		return $data;
 	}
+}
+
+function block_exastud_set_class_data($classid, $name, $value) {
+	return block_exastud_set_subject_student_data($classid, 0, 0, $name, $value);
 }
 
 function block_exastud_set_class_student_data($classid, $userid, $name, $value) {
@@ -724,11 +732,14 @@ function block_exastud_require_global_cap($cap, $user = null) {
 				return;
 			}
 		case BLOCK_EXASTUD_CAP_REVIEW:
-			$actPeriod = block_exastud_check_active_period();
-			if (!block_exastud_get_review_subjects() && !block_exastud_get_head_teacher_classes_all($actPeriod->id)) {
-				throw new block_exastud_permission_exception('no classes');
-			} else {
+			$actPeriod = block_exastud_get_active_period();
+			$lastPeriod = block_exastud_get_last_period();
+			if (($actPeriod && (block_exastud_get_review_subjects($actPeriod->id) || block_exastud_get_head_teacher_classes_all($actPeriod->id)))
+				|| ($lastPeriod && (block_exastud_get_review_subjects($lastPeriod->id) || block_exastud_get_head_teacher_classes_all($lastPeriod->id)))) {
+				// has reviews in this or last period (=a class is unlocked for late review)
 				return;
+			} else {
+				throw new block_exastud_permission_exception('no classes');
 			}
 	}
 
