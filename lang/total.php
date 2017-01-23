@@ -472,6 +472,14 @@ return [
 		null,
 		'Competencies',
 	],
+	'de:Note' => [
+		null,
+		'Grade',
+	],
+	'de:Niveau' => [
+		null,
+		'Level',
+	],
 	'de:Bewertungsskala' => [
 		null,
 		'Grading',

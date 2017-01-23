@@ -104,20 +104,14 @@ if (block_exastud_is_exacomp_installed()) {
 
 $reviewdata = $DB->get_record('block_exastudreview', array('teacherid' => $teacherid, 'subjectid' => $subjectid, 'periodid' => $actPeriod->id, 'studentid' => $studentid));
 
-$textReviewdata = block_exastud_get_review($classid, $subjectid, $studentid);
-if (!$textReviewdata) {
-	$formdata->review = '';
-} else {
-	$formdata->review = $textReviewdata->review;
-}
-
 if ($reviewdata) {
 	foreach ($categories as $category) {
 		$formdata->{$category->id.'_'.$category->source} = $DB->get_field('block_exastudreviewpos', 'value', array("categoryid" => $category->id, "reviewid" => $reviewdata->id, "categorysource" => $category->source));
 	}
 }
 
-$formdata = (object)array_merge((array)$formdata, (array)block_exastud_get_subject_student_data($classid, $subjectid, $studentid));
+$subjectData = block_exastud_get_subject_student_data($classid, $subjectid, $studentid);
+$formdata = (object)array_merge((array)$formdata, (array)$subjectData);
 
 $studentform = new student_edit_form(null, [
 	'categories' => $categories,
@@ -129,13 +123,9 @@ $studentform = new student_edit_form(null, [
 			? block_exastud_get_renderer()->last_modified($reviewdata->teacherid, $reviewdata->timemodified)
 			: '',
 	'review.modified' =>
-		$textReviewdata
-			? block_exastud_get_renderer()->last_modified($textReviewdata->modifiedby, $textReviewdata->timemodified)
-			: '',
+		block_exastud_get_renderer()->last_modified(@$subjectData->{'review.modifiedby'}, @$subjectData->{'review.timemodified'}),
 	'grade.modified' =>
-		@$formdata->{'grade.modifiedby'}
-			? block_exastud_get_renderer()->last_modified(@$formdata->{'grade.modifiedby'}, @$formdata->{'grade.timemodified'})
-			: '',
+		block_exastud_get_renderer()->last_modified(@$subjectData->{'grade.modifiedby'}, @$subjectData->{'grade.timemodified'}),
 ]);
 
 if ($fromform = $studentform->get_data()) {
@@ -233,13 +223,15 @@ if ($lastPeriodClass && optional_param('action', null, PARAM_TEXT) == 'load_last
 	}
 
 	if ($lastPeriodData->niveau || $lastPeriodData->grade) {
-		$formdata->review .= '<p><b>Bewertung '.$lastPeriod->description.':</b></p>';
+		$reviewText = 'Bewertung '.$lastPeriod->description.':'."\n";
 		if ($lastPeriodData->niveau) {
-			$formdata->review .= '<p>Niveau: '.$lastPeriodData->niveau.'</p>';
+			$reviewText .= 'Niveau: '.(block_exastud\global_config::get_niveau_option_title($lastPeriodData->niveau)?:$lastPeriodData->niveau)."\n";
 		}
 		if ($lastPeriodData->grade) {
-			$formdata->review .= '<p>Note: '.$lastPeriodData->grade.'</p>';
+			$reviewText .= 'Note: '.$lastPeriodData->grade."\n";
 		}
+
+		$formdata->review = $reviewText.$formdata->review;
 	}
 }
 
@@ -253,8 +245,8 @@ if ($lastPeriodClass) {
 	}
 }
 
-$formdata->review = block_exastud_html_to_text($formdata->review);
-$formdata->vorschlag = block_exastud_html_to_text($formdata->vorschlag);
+$formdata->review = block_exastud_html_to_text(@$formdata->review);
+$formdata->vorschlag = block_exastud_html_to_text(@$formdata->vorschlag);
 
 $studentform->set_data($formdata);
 $studentform->display();

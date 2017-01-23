@@ -22,6 +22,7 @@ defined('MOODLE_INTERNAL') || die();
 require_once $CFG->dirroot.'/cohort/lib.php';
 require_once __DIR__.'/../block_exastud.php';
 require_once __DIR__.'/common.php';
+require_once __DIR__.'/classes.php';
 
 use block_exastud\globals as g;
 
@@ -1322,26 +1323,20 @@ function block_exastud_get_date_of_birth($userid) {
 function block_exastud_get_review($classid, $subjectid, $studentid) {
 	$data = block_exastud_get_subject_student_data($classid, $subjectid, $studentid);
 
-	if (@$data->review) {
-		return (object)[
-			'review' => $data->review,
-			'modifiedby' => $data->{'review.modifiedby'},
-			'timemodified' => $data->{'review.timemodified'},
-		];
+	if (!isset($data->review)) {
+		// fallback for old style with own table
+		$class = block_exastud_get_class($classid);
+
+		$reviewdata = g::$DB->get_records('block_exastudreview', array('subjectid' => $subjectid, 'periodid' => $class->periodid, 'studentid' => $studentid), 'timemodified DESC');
+		$reviewdata = reset($reviewdata);
+		if ($reviewdata) {
+			$data->review = $reviewdata->review;
+			$data->{'review.modifiedby'} = $reviewdata->teacherid;
+			$data->{'review.timemodified'} = $reviewdata->timemodified;
+		}
 	}
 
-	// fallback for old style with own table
-	$class = block_exastud_get_class($classid);
-
-	$reviewdata = g::$DB->get_records('block_exastudreview', array('subjectid' => $subjectid, 'periodid' => $class->periodid, 'studentid' => $studentid), 'timemodified DESC');
-	$reviewdata = reset($reviewdata);
-	if ($reviewdata) {
-		return (object)[
-			'review' => $reviewdata->review,
-			'modifiedby' => $reviewdata->teacherid,
-			'timemodified' => $reviewdata->timemodified,
-		];
-	}
+	return $data;
 }
 
 function block_exastud_get_bildungsplan_subjects($bpid) {
@@ -1358,19 +1353,6 @@ function block_exastud_get_bildungsstandards() {
 	$bildungsstandards = array_combine($bildungsstandards, $bildungsstandards);
 
 	return $bildungsstandards;
-}
-
-function block_exastud_get_grade_options() {
-	$values = [
-		'1', '1-', '1-2',
-		'2+', '2', '2-', '2-3',
-		'3+', '3', '3-', '3-4',
-		'4+', '4', '4-', '4-5',
-		'5+', '5', '5-', '5-6',
-		'6+', '6',
-	];
-
-	return array_combine($values, $values);
 }
 
 function block_exastud_get_class_title($classid) {

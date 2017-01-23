@@ -17,10 +17,33 @@
 //
 // This copyright notice MUST APPEAR in all copies of the script!
 
+namespace block_exastud;
+
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->component = 'block_exastud';
-$plugin->release  = "4.6.0.experimental";
-$plugin->version   = 2017011805;
-$plugin->requires  = 2015051100;
-$plugin->maturity = MATURITY_STABLE;
+require_once __DIR__.'/../inc.php';
+
+use block_exastud\globals as g;
+
+class global_config {
+	static function get_grade_options() {
+		$values = [
+			'1', '1-', '1-2',
+			'2+', '2', '2-', '2-3',
+			'3+', '3', '3-', '3-4',
+			'4+', '4', '4-', '4-5',
+			'5+', '5', '5-', '5-6',
+			'6+', '6',
+		];
+
+		return array_combine($values, $values);
+	}
+
+	static function get_niveau_options() {
+		return ['G' => 'G', 'M' => 'M', 'E' => 'E', 'Z' => 'zieldifferenter Unterricht'];
+	}
+
+	static function get_niveau_option_title($id) {
+		return @static::get_niveau_options()[$id];
+	}
+}
