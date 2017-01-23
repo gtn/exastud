@@ -74,10 +74,14 @@ class api {
 		];
 	}
 	
+	static function get_periods() {
+		return g::$DB->get_records('block_exastudperiod', [], 'starttime DESC, endtime DESC');
+	}
+
 	static function get_student_periods_with_review($userid = 0) {
 		if ($userid == 0)
 			$userid = g::$USER->id;
-		
+
 		$sql = "
 			SELECT DISTINCT p.id, p.description
 			FROM {block_exastudreview} r
