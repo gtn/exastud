@@ -40,7 +40,7 @@ class global_config {
 	}
 
 	static function get_niveau_options() {
-		return ['G' => 'G', 'M' => 'M', 'E' => 'E', 'zdu' => 'zieldifferenter Unterricht'];
+		return ['G' => 'G', 'M' => 'M', 'E' => 'E', 'Z' => 'zieldifferenter Unterricht'];
 	}
 
 	static function get_niveau_option_title($id) {
