@@ -110,11 +110,9 @@ class printer {
 			foreach ($availablesubjects as $subject) {
 				$subjectData = block_exastud_get_review($class->id, $subject->id, $student->id);
 
-				/*
-				if (!@$subjectData->review) {
+				if (!@$subjectData->review && !@$subjectData->grade && !@$subjectData->niveau) {
 					continue;
 				}
-				*/
 
 				$subject->title = preg_replace('!\s*\(.*$!', '', $subject->title);
 
@@ -134,17 +132,16 @@ class printer {
 				$data[$contentId] = static::spacerIfEmpty(@$subjectData->review);
 
 				$niveau = \block_exastud\global_config::get_niveau_option_title(@$subjectData->niveau) ?: @$subjectData->niveau;
-				if (strlen($niveau) == 1) {
+				if (strlen($niveau) <= 1) {
 					// G M E
-					$niveau = 'Niveau '.$niveau;
+					$niveau = 'Niveau '.static::spacerIfEmpty($niveau);
 				}
-				$filters[] = function($content) use ($contentId, $niveau) {
+				$filters[$contentId.'_niveau'] = function($content) use ($contentId, $niveau) {
 					return preg_replace('!({'.$contentId.'}.*>)Bitte die Niveaustufe auswählen(<)!U', '$1'.$niveau.'$2', $content);
 				};
 
 				$grade = (@$studentdata->print_grades ? 'Note '.static::spacerIfEmpty(@$subjectData->grade) : '');
-
-				$filters[] = function($content) use ($contentId, $grade) {
+				$filters[$contentId.'_grade'] = function($content) use ($contentId, $grade) {
 					return preg_replace('!({'.$contentId.'}.*>)ggf. Note(<)!U', '$1'.$grade.'$2', $content);
 				};
 			}
@@ -158,8 +155,8 @@ class printer {
 			};
 
 			// nicht befüllte niveaus und noten befüllen
-			$dataTextReplacer['Bitte die Niveaustufe auswählen'] = 'Niveau: ---';
-			$dataTextReplacer['ggf. Note'] = @$studentdata->print_grades ? 'Note: ---' : '';
+			$dataTextReplacer['Bitte die Niveaustufe auswählen'] = 'Niveau ---';
+			$dataTextReplacer['ggf. Note'] = @$studentdata->print_grades ? 'Note ---' : '';
 		}
 		if ($template == 'Anlage zum Lernentwicklungsbericht') {
 			$evalopts = g::$DB->get_records('block_exastudevalopt', null, 'sorting', 'id, title, sourceinfo');

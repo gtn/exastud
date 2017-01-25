@@ -1324,6 +1324,9 @@ function block_exastud_get_review($classid, $subjectid, $studentid) {
 	$data = block_exastud_get_subject_student_data($classid, $subjectid, $studentid);
 
 	if (!isset($data->review)) {
+		// always fill review property
+		$data->review = null;
+
 		// fallback for old style with own table
 		$class = block_exastud_get_class($classid);
 
