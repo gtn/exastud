@@ -75,6 +75,10 @@ class printer {
 			];
 		}
 		if ($template == 'Lernentwicklungsbericht neuer BP 1.HJ' || $template == 'Lernentwicklungsbericht alter BP 1.HJ') {
+			$bpsubjects = block_exastud_get_bildungsplan_subjects($class->bpid);
+			$class_subjects = block_exastud_get_class_subjects($class);
+			$lern_soz = block_exastud_get_class_student_data($class->id, $student->id, BLOCK_EXASTUD_DATA_ID_LERN_UND_SOZIALVERHALTEN);
+
 			$data = [
 				'schule' => get_config('exastud', 'school_name'),
 				'ort' => get_config('exastud', 'school_location'),
@@ -82,7 +86,7 @@ class printer {
 				'klasse' => $class->title,
 				// 'geburtsdatum' => get_custom_profile_field_value($student->id, 'dateofbirth'),
 				'certdate' => $certificate_issue_date,
-				'lern_und_sozialverhalten' => static::spacerIfEmpty(block_exastud_get_class_student_data($class->id, $student->id, BLOCK_EXASTUD_DATA_ID_LERN_UND_SOZIALVERHALTEN)),
+				'lern_und_sozialverhalten' => static::spacerIfEmpty($lern_soz),
 				'bemerkungen' => static::spacerIfEmpty(@$studentdata->comments),
 				'religion' => '---',
 				'profilfach' => '---',
@@ -95,9 +99,6 @@ class printer {
 				$dataTextReplacer['yyyy'] = date('Y', $dateofbirth);
 			}
 
-			$bpsubjects = block_exastud_get_bildungsplan_subjects($class->bpid);
-			$availablesubjects = block_exastud_get_class_subjects($class);
-
 			// zuerst standardwerte
 			foreach ($bpsubjects as $subject) {
 				$data[static::toTemplateVarId($subject->title)] = '---';
@@ -107,7 +108,7 @@ class printer {
 			$profilfach = '---';
 
 			// danach mit richtigen werten überschreiben
-			foreach ($availablesubjects as $subject) {
+			foreach ($class_subjects as $subject) {
 				$subjectData = block_exastud_get_review($class->id, $subject->id, $student->id);
 
 				if (!@$subjectData->review && !@$subjectData->grade && !@$subjectData->niveau) {
