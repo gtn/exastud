@@ -110,7 +110,7 @@ if ($reviewdata) {
 	}
 }
 
-$subjectData = block_exastud_get_subject_student_data($classid, $subjectid, $studentid);
+$subjectData = block_exastud_get_review($classid, $subjectid, $studentid);
 $formdata = (object)array_merge((array)$formdata, (array)$subjectData);
 
 $studentform = new student_edit_form(null, [
@@ -200,7 +200,7 @@ if (empty($formdata->grade)) {
 }
 
 if ($lastPeriodClass && optional_param('action', null, PARAM_TEXT) == 'load_last_period_data') {
-	$lastPeriodData = (object)block_exastud_get_subject_student_data($lastPeriodClass->id, $subjectid, $studentid);
+	$lastPeriodData = (object)block_exastud_get_review($lastPeriodClass->id, $subjectid, $studentid);
 
 	$formdata->vorschlag = $DB->get_field('block_exastudreview', 'review', [
 		'studentid' => $studentid,

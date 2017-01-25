@@ -75,6 +75,10 @@ class printer {
 			];
 		}
 		if ($template == 'Lernentwicklungsbericht neuer BP 1.HJ' || $template == 'Lernentwicklungsbericht alter BP 1.HJ') {
+			$bpsubjects = block_exastud_get_bildungsplan_subjects($class->bpid);
+			$class_subjects = block_exastud_get_class_subjects($class);
+			$lern_soz = block_exastud_get_class_student_data($class->id, $student->id, BLOCK_EXASTUD_DATA_ID_LERN_UND_SOZIALVERHALTEN);
+
 			$data = [
 				'schule' => get_config('exastud', 'school_name'),
 				'ort' => get_config('exastud', 'school_location'),
@@ -82,7 +86,7 @@ class printer {
 				'klasse' => $class->title,
 				// 'geburtsdatum' => get_custom_profile_field_value($student->id, 'dateofbirth'),
 				'certdate' => $certificate_issue_date,
-				'lern_und_sozialverhalten' => static::spacerIfEmpty(block_exastud_get_class_student_data($class->id, $student->id, BLOCK_EXASTUD_DATA_ID_LERN_UND_SOZIALVERHALTEN)),
+				'lern_und_sozialverhalten' => static::spacerIfEmpty($lern_soz),
 				'bemerkungen' => static::spacerIfEmpty(@$studentdata->comments),
 				'religion' => '---',
 				'profilfach' => '---',
@@ -95,9 +99,6 @@ class printer {
 				$dataTextReplacer['yyyy'] = date('Y', $dateofbirth);
 			}
 
-			$bpsubjects = block_exastud_get_bildungsplan_subjects($class->bpid);
-			$availablesubjects = block_exastud_get_class_subjects($class);
-
 			// zuerst standardwerte
 			foreach ($bpsubjects as $subject) {
 				$data[static::toTemplateVarId($subject->title)] = '---';
@@ -107,14 +108,12 @@ class printer {
 			$profilfach = '---';
 
 			// danach mit richtigen werten überschreiben
-			foreach ($availablesubjects as $subject) {
+			foreach ($class_subjects as $subject) {
 				$subjectData = block_exastud_get_review($class->id, $subject->id, $student->id);
 
-				/*
-				if (!@$subjectData->review) {
+				if (!@$subjectData->review && !@$subjectData->grade && !@$subjectData->niveau) {
 					continue;
 				}
-				*/
 
 				$subject->title = preg_replace('!\s*\(.*$!', '', $subject->title);
 
@@ -134,17 +133,16 @@ class printer {
 				$data[$contentId] = static::spacerIfEmpty(@$subjectData->review);
 
 				$niveau = \block_exastud\global_config::get_niveau_option_title(@$subjectData->niveau) ?: @$subjectData->niveau;
-				if (strlen($niveau) == 1) {
+				if (strlen($niveau) <= 1) {
 					// G M E
-					$niveau = 'Niveau '.$niveau;
+					$niveau = 'Niveau '.static::spacerIfEmpty($niveau);
 				}
-				$filters[] = function($content) use ($contentId, $niveau) {
+				$filters[$contentId.'_niveau'] = function($content) use ($contentId, $niveau) {
 					return preg_replace('!({'.$contentId.'}.*>)Bitte die Niveaustufe auswählen(<)!U', '$1'.$niveau.'$2', $content);
 				};
 
 				$grade = (@$studentdata->print_grades ? 'Note '.static::spacerIfEmpty(@$subjectData->grade) : '');
-
-				$filters[] = function($content) use ($contentId, $grade) {
+				$filters[$contentId.'_grade'] = function($content) use ($contentId, $grade) {
 					return preg_replace('!({'.$contentId.'}.*>)ggf. Note(<)!U', '$1'.$grade.'$2', $content);
 				};
 			}
@@ -158,8 +156,8 @@ class printer {
 			};
 
 			// nicht befüllte niveaus und noten befüllen
-			$dataTextReplacer['Bitte die Niveaustufe auswählen'] = 'Niveau: ---';
-			$dataTextReplacer['ggf. Note'] = @$studentdata->print_grades ? 'Note: ---' : '';
+			$dataTextReplacer['Bitte die Niveaustufe auswählen'] = 'Niveau ---';
+			$dataTextReplacer['ggf. Note'] = @$studentdata->print_grades ? 'Note ---' : '';
 		}
 		if ($template == 'Anlage zum Lernentwicklungsbericht') {
 			$evalopts = g::$DB->get_records('block_exastudevalopt', null, 'sorting', 'id, title, sourceinfo');

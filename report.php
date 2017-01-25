@@ -60,13 +60,10 @@ if ($classid = optional_param('classid', 0, PARAM_INT)) {
 			echo $output->header('report');
 
 			foreach ($printStudents as $student) {
-				$textReviews = block_exastud_get_text_reviews($class, $student->id);
-				$categories = block_exastud_get_class_categories_for_report($student->id, $class->id);
-
 				$studentdesc = $OUTPUT->user_picture($student, array("courseid" => $courseid)).' '.fullname($student);
 				echo $output->heading($studentdesc);
 
-				echo $output->print_student_report($categories, $textReviews);
+				echo $output->print_student_report($class, $student);
 
 				echo '<hr>';
 			}

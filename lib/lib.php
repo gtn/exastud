@@ -316,43 +316,6 @@ function block_exastud_filter_fields_by_prefix($object_or_array, $prefix) {
 }
 */
 
-function block_exastud_get_text_reviews($class, $studentid) {
-
-	$textReviews = [];
-
-	$subjects = block_exastud_get_class_subjects($class);
-	foreach ($subjects as $subject) {
-		$review = block_exastud_get_review($class->id, $subject->id, $studentid);
-		if ($review && $review->review) {
-			$review->subject_title = $subject->title;
-			$review->subjectid = $subject->id;
-			$review->title = $subject->title;
-
-			$textReviews[] = $review;
-		}
-	}
-
-	/*
-	foreach ($textReviews as $key => $textReview) {
-		if ($textReview->subject_title) {
-			$textReview->title = $textReview->subject_title;
-		} else {
-			$textReview->title = fullname($textReview);
-		}
-
-		$textReviews[$key] = (object)array_merge((array)$textReview, (array)block_exastud_get_subject_student_data($class->id, $textReview->subjectid, $studentid));
-	}
-	*/
-
-	$lern_und_sozialverhalten = g::$DB->get_record('block_exastudreview', array('teacherid' => $class->userid, 'subjectid' => BLOCK_EXASTUD_SUBJECT_ID_LERN_UND_SOZIALVERHALTEN, 'periodid' => $class->periodid, 'studentid' => $studentid));
-	if ($lern_und_sozialverhalten) {
-		$lern_und_sozialverhalten->title = block_exastud_trans('de:Lern- und Sozialverhalten');
-		array_unshift($textReviews, $lern_und_sozialverhalten);
-	}
-
-	return $textReviews;
-}
-
 function block_exastud_get_reviewers_by_category_and_pos($periodid, $studentid, $categoryid, $categorysource, $pos_value) {
 	return iterator_to_array(g::$DB->get_recordset_sql("
 			SELECT DISTINCT u.*, s.title AS subject_title, pos.value
@@ -1335,6 +1298,9 @@ function block_exastud_get_review($classid, $subjectid, $studentid) {
 	$data = block_exastud_get_subject_student_data($classid, $subjectid, $studentid);
 
 	if (!isset($data->review)) {
+		// always fill review property
+		$data->review = null;
+
 		// fallback for old style with own table
 		$class = block_exastud_get_class($classid);
 

@@ -176,7 +176,11 @@ class block_exastud_renderer extends plugin_renderer_base {
 		return html_writer::tag("a", html_writer::tag("img", '', array('src' => 'pix/edit.png')), array('href' => $link, 'class' => 'ers_inlineicon'));
 	}
 
-	function print_student_report($categories, $textReviews) {
+	function print_student_report($class, $student) {
+		$categories = block_exastud_get_class_categories_for_report($student->id, $class->id);
+		$class_subjects = block_exastud_get_class_subjects($class);
+		$lern_soz = block_exastud_get_class_student_data($class->id, $student->id, BLOCK_EXASTUD_DATA_ID_LERN_UND_SOZIALVERHALTEN);
+
 		$output = '<table id="review-table">';
 
 		$current_parent = null;
@@ -211,11 +215,33 @@ class block_exastud_renderer extends plugin_renderer_base {
 		$output .= '<h3>'.block_exastud_get_string('detailedreview').'</h3>';
 
 		$output .= '<table id="ratingtable">';
-		foreach ($textReviews as $textReview) {
-			$output .= '<tr><td class="ratinguser">'.$textReview->title.'</td>
-				<td class="ratingtext">'.format_text($textReview->review).'</td>
+
+		if ($lern_soz) {
+			$output .= '<tr><td class="ratinguser">'.block_exastud_trans('de:Lern- und Sozialverhalten').'</td>
+				<td class="ratingtext">'.format_text($lern_soz).'</td>
 				</tr>';
 		}
+
+		foreach ($class_subjects as $subject) {
+			$subjectData = block_exastud_get_review($class->id, $subject->id, $student->id);
+
+			if (!@$subjectData->review && !@$subjectData->grade && !@$subjectData->niveau) {
+				continue;
+			}
+
+			$output .= '<tr><td class="ratinguser">'.$subject->title.'</td><td class="ratingtext">';
+			$output .= format_text(@$subjectData->review);
+			if (@$subjectData->niveau) {
+				$output .= '<div><b>'.block_exastud_trans('de:Niveau').':</b> ';
+				$output .= (\block_exastud\global_config::get_niveau_option_title($subjectData->niveau) ?:$subjectData->niveau).'</div>';
+			}
+			if (@$subjectData->grade) {
+				$output .= '<div><b>'.block_exastud_trans('de:Note').':</b> ';
+				$output .= $subjectData->grade.'</div>';
+			}
+			$output .= '</td></tr>';
+		}
+
 		$output .= '</table>';
 
 		return $output;
