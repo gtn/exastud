@@ -595,7 +595,7 @@ function block_exastud_insert_default_entries($dorecheck = false) {
 
 				if ($dbSubject = block_exastud_find_object_in_array_by_property($subjects, 'sourceinfo', $subject->sourceinfo)) {
 					g::$DB->update_record('block_exastudsubjects', [
-						'id' => $dbItem->id,
+						'id' => $dbSubject->id,
 						'sorting' => $subjectSorting,
 					]);
 					unset($subjects[$dbSubject->id]);
