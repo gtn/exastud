@@ -203,6 +203,7 @@ function block_exastud_report_add_html($element, $html) {
 	$html = preg_replace('!(</?)b(>)!i', '$1strong$2', $html);
 	$html = preg_replace('!(</?)i(>)!i', '$1em$2', $html);
 
+	\PhpOffice\PhpWord\Settings::setOutputEscapingEnabled(true);
 	\PhpOffice\PhpWord\Shared\Html::addHtml($element, $html);
 }
 
@@ -258,8 +259,7 @@ function block_exastud_print_student_report_to_file($class, $student, $outputTyp
 
 	$dateofbirth = get_custom_profile_field_value($student->id, 'dateofbirth');
 
-	require_once __DIR__.'/classes/PhpWord/Autoloader.php';
-	\PhpOffice\PhpWord\Autoloader::register();
+	require_once __DIR__.'/vendor/autoload.php';
 
 	\PhpOffice\PhpWord\Settings::setTempDir($CFG->tempdir);
 
@@ -330,14 +330,14 @@ function block_exastud_print_student_report_to_file($class, $student, $outputTyp
 
 	$availablesubjects = g::$DB->get_records('block_exastudsubjects', ['bpid' => $class->bpid], 'sorting');
 
-	$textReviews = g::$DB->get_records_sql("
+	$textReviews = iterator_to_array(g::$DB->get_recordset_sql("
 		SELECT DISTINCT s.title AS id, r.review, s.title AS title, r.subjectid AS subjectid
 		FROM {block_exastudreview} r
 		JOIN {block_exastudsubjects} s ON r.subjectid = s.id
 		JOIN {block_exastudclass} c ON c.periodid = r.periodid
 		JOIN {block_exastudclassteachers} ct ON ct.classid=c.id AND ct.teacherid = r.teacherid AND ct.subjectid=r.subjectid
 		WHERE r.studentid = ? AND r.periodid = ? AND TRIM(r.review) !=  ''
-	", [$student->id, $class->periodid]);
+	", [$student->id, $class->periodid]));
 
 	$subjects = [];
 	foreach ($availablesubjects as $availablesubject) {
