@@ -136,7 +136,10 @@ class student_edit_form extends moodleform {
 
 		$mform->addElement('header', 'vorschlag_header', block_exastud_trans("de:Lern- und Sozialverhalten: Formulierungsvorschlag für Klassenlehrkraft"));
 		$mform->setExpanded('vorschlag_header');
-		$mform->addElement('textarea', 'vorschlag', '', array('cols' => 50, 'rows' => 5));
+		$mform->addElement('textarea', 'vorschlag', '', ['cols' => 50, 'rows' => 5,
+			'class' => 'limit-input-length',
+			'style' => "width: 738px; height: 160px; resize: none; font-family: Arial !important; font-size: 11pt !important;",
+		]);
 		$mform->setType('vorschlag', PARAM_RAW);
 
 		$mform->addElement('header', 'review_header', block_exastud_trans("de:Fachkompetenzen"));
@@ -146,7 +149,7 @@ class student_edit_form extends moodleform {
 		}
 		$mform->addElement('textarea', 'review', '', ['cols' => 50, 'rows' => 20,
 			'class' => 'limit-input-length',
-			'style' => "width: 556px; height: 160px; resize: none; font-family: Arial !important; font-size: 11pt !important;"
+			'style' => "width: 556px; height: 160px; resize: none; font-family: Arial !important; font-size: 11pt !important;",
 		]);
 		$mform->setType('review', PARAM_RAW);
 
@@ -188,7 +191,7 @@ class student_other_data_form extends moodleform {
 
 			$mform->addElement('textarea', $dataid, '', ['cols' => 50, 'rows' => 10,
 				'class' => 'limit-input-length',
-				'style' => "width: 738px; height: 160px; resize: none; font-family: Arial !important; font-size: 11pt !important;"
+				'style' => "width: 738px; height: 160px; resize: none; font-family: Arial !important; font-size: 11pt !important;",
 			]);
 			$mform->setType($dataid, PARAM_RAW);
 		}

@@ -48,7 +48,6 @@ $.extend(window.block_exastud, {});
 			$(this).data('limit-input-initial-scrollHeight', this.scrollHeight);
 		})
 		.on('keypress keyup change input propertychange paste', function(e){
-			console.log(e);
 			var sh = $(this).data('limit-input-initial-scrollHeight');
 
 			if (this.scrollHeight > sh) {
@@ -56,11 +55,13 @@ $.extend(window.block_exastud, {});
 					'background-color': '#FFF0F0',
 					'color': '#D82323',
 				});
+				$(this).attr('maxlength', this.value.length-1);
 			} else {
 				$(this).css({
 					'background-color': '',
 					'color': '',
 				});
+				$(this).attr('maxlength', null);
 			}
 		});
 	});
