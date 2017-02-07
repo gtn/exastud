@@ -330,6 +330,7 @@ class printer {
 		$html = preg_replace('!(</?)b(>)!i', '$1strong$2', $html);
 		$html = preg_replace('!(</?)i(>)!i', '$1em$2', $html);
 
+		\PhpOffice\PhpWord\Settings::setOutputEscapingEnabled(true);
 		\PhpOffice\PhpWord\Shared\Html::addHtml($element, $html);
 	}
 
@@ -798,7 +799,7 @@ class printer {
 					$topic->teacher_eval_additional_grading = null;
 				}
 
-				if (!$topic->descriptors && !$topic->teacher_eval_niveau_text && ! $topic->teacher_eval_additional_grading) {
+				if (!$topic->descriptors && !$topic->teacher_eval_niveau_text && !$topic->teacher_eval_additional_grading) {
 					unset($subject->topics[$topic->id]);
 				}
 			}
@@ -844,17 +845,34 @@ class TemplateProcessor extends \PhpOffice\PhpWord\TemplateProcessor {
 	}
 
 	function setValues($data) {
-		$xmlEscaper = new Xml();
-
 		foreach ($data as $key => $value) {
-			$value = $xmlEscaper->escape($value);
-			$this->setValue($key, str_replace(["\r", "\n"], ['', '</w:t><w:br/><w:t>'], $value));
+			$this->setValue($key, $value);
 			/*
 			$value = ;
 			$content = str_replace('{'.$key.'}', $value, $content);
 			$content = str_replace('>'.$key.'<', '>'.$value.'<', $content);
 			*/
 		}
+	}
+
+	function setValue($search, $replace, $limit = self::MAXIMUM_REPLACEMENTS_DEFAULT) {
+		$replace = $this->escape($replace);
+		$replace = str_replace(["\r", "\n"], ['', '</w:t><w:br/><w:t>'], $replace);
+
+		return $this->setValueRaw($search, $replace, $limit);
+	}
+
+	function setValueRaw($search, $replace, $limit = self::MAXIMUM_REPLACEMENTS_DEFAULT) {
+		$oldEscaping = \PhpOffice\PhpWord\Settings::isOutputEscapingEnabled();
+
+		// it's a raw value
+		\PhpOffice\PhpWord\Settings::setOutputEscapingEnabled(false);
+
+		$ret = parent::setValue($search, $replace, $limit);
+
+		\PhpOffice\PhpWord\Settings::setOutputEscapingEnabled($oldEscaping);
+
+		return $ret;
 	}
 
 	function applyFilters($filters) {
@@ -1050,4 +1068,12 @@ class TemplateProcessor extends \PhpOffice\PhpWord\TemplateProcessor {
 		$this->tempDocumentMainPart = $table->join();
 	}
 
+	function escape($str) {
+		static $xmlEscaper = null;
+		if (!$xmlEscaper) {
+			$xmlEscaper = new Xml();
+		}
+
+		return $xmlEscaper->escape($str);
+	}
 }
