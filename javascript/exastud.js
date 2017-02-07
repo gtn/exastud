@@ -42,4 +42,65 @@ $.extend(window.block_exastud, {});
 		// trigger click twice = check+uncheck
 		$('.exa_table :checkbox[name=checkallornone]').closest('table').find(':checkbox:not([name=checkallornone]):first').click().click();
 	});
+
+	$(function(){
+		$('.limit-input-length').each(function(){
+			$(this).data('limit-input-initial-scrollHeight', this.scrollHeight);
+		})
+		.on('keypress keyup change input propertychange paste', function(e){
+			console.log(e);
+			var sh = $(this).data('limit-input-initial-scrollHeight');
+
+			if (this.scrollHeight > sh) {
+				$(this).css({
+					'background-color': '#FFF0F0',
+					'color': '#D82323',
+				});
+			} else {
+				$(this).css({
+					'background-color': '',
+					'color': '',
+				});
+			}
+		});
+	});
+
+	// eingabe limitieren, geht z.b. nicht bei mouse paste
+	/*
+	$(function(){
+		$('.limit-input-length').each(function(){
+			$(this).data('limit-input-last-scrollHeight', this.scrollHeight);
+		})
+	});
+
+	$(document).on('keydown', '.limit-input-length', function(){
+		if (!$(this).data('limit-input')) {
+			$(this).data('limit-input', {
+				scrollHeight: this.scrollHeight,
+				value: this.value,
+			});
+		}
+
+		if ($(this).data('limit-input-last-scrollHeight') && this.scrollHeight > $(this).data('limit-input-last-scrollHeight')) {
+			return false;
+		}
+	});
+
+	$(document).on('keyup', '.limit-input-length', function(){
+		var data = $(this).data('limit-input');
+
+		$(this).data('limit-input-last-scrollHeight', this.scrollHeight);
+
+		if (!data) {
+			return;
+		}
+
+		if (this.scrollHeight > data.scrollHeight) {
+			console.log('undo');
+			this.value = data.value;
+		}
+
+		$(this).data('limit-input', null);
+	});
+	*/
 }();

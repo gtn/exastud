@@ -144,8 +144,10 @@ class student_edit_form extends moodleform {
 		if ($this->_customdata['review.modified']) {
 			$mform->addElement('static', '', '', $this->_customdata['review.modified']);
 		}
-		$mform->addElement('textarea', 'review', '', array('cols' => 50, 'rows' => 20,
-			'style' => "width: 556px; overflow: hidden; height: 160px; font-family: Arial !important; font-size: 11pt !important;"));
+		$mform->addElement('textarea', 'review', '', ['cols' => 50, 'rows' => 20,
+			'class' => 'limit-input-length',
+			'style' => "width: 556px; height: 160px; resize: none; font-family: Arial !important; font-size: 11pt !important;"
+		]);
 		$mform->setType('review', PARAM_RAW);
 
 		$mform->addElement('header', 'grade_header', block_exastud_trans("de:Note und Niveau"));
@@ -184,8 +186,10 @@ class student_other_data_form extends moodleform {
 				$mform->addElement('static', '', '', $this->_customdata['modified']);
 			}
 
-			$mform->addElement('textarea', $dataid, '', array('cols' => 50, 'rows' => 10,
-				'style' => "width: 738px; overflow: hidden; height: 160px; font-family: Arial !important; font-size: 11pt !important;"));
+			$mform->addElement('textarea', $dataid, '', ['cols' => 50, 'rows' => 10,
+				'class' => 'limit-input-length',
+				'style' => "width: 738px; height: 160px; resize: none; font-family: Arial !important; font-size: 11pt !important;"
+			]);
 			$mform->setType($dataid, PARAM_RAW);
 		}
 
