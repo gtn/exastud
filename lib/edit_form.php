@@ -139,8 +139,8 @@ class student_edit_form extends moodleform {
 		$mform->addElement('header', 'grade_header', \block_exastud\trans("de:Note und Niveau"));
 		$mform->setExpanded('grade_header');
 
-		$mform->addElement('text', 'grade', 'Note');
-		$mform->setType('grade', PARAM_INT);
+		$mform->addElement('text', 'grade', 'Note', ['maxlength'=>3]);
+		$mform->setType('grade', PARAM_TEXT);
 		$mform->addElement('select', 'niveau', 'Niveau', ['' => '', 'G' => 'G', 'M' => 'M', 'E' => 'E']);
 
 		foreach ($this->_customdata['exacomp_grades'] as $row) {
