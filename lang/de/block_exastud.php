@@ -152,6 +152,7 @@ $string['settings_detailed_review_body'] = 'Diese Einstellung erlaubt es die Pun
 $string['settings_project_based_assessment'] = 'Beurteilung auf Projekt-Basis';
 $string['settings_project_based_assessment_body'] = 'Diese Einstellung erlaubt es statt Klassen Projekte zu verwalten und zu beurteilen';
 $string['blocksettings'] = 'Deckblattdaten';
+$string['delete_confirmation'] = 'Soll "{$a}" wirklich gelöscht werden?';
 
 
 // === grp3 ===

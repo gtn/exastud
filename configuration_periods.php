@@ -37,11 +37,8 @@ ob_clean();
 if ($periodform->is_cancelled()) {
 	redirect('periods.php?courseid=' . $courseid);
 } else if ($periodedit = $periodform->get_data()) {
-	if(!confirm_sesskey()) {
-		error("badsessionkey","block_exastud");
-	}
-	
-	
+	require_sesskey();
+
 	$newperiod = new stdClass();
 	$newperiod->timemodified = time();
 	$newperiod->userid=$USER->id;
@@ -65,9 +62,8 @@ if ($periodform->is_cancelled()) {
 $period = new stdClass();
 $period->courseid = $courseid;
 if($action == 'edit') {
-	if(!confirm_sesskey()) {
-		error("badsessionkey","block_exastud");
-	}
+	require_sesskey();
+
 	if (!$period = $DB->get_record('block_exastudperiod', array('id'=>$periodid))) {
 		error("invalidperiodid","block_exastud");
 	}
@@ -75,9 +71,8 @@ if($action == 'edit') {
 	$period->courseid = $courseid;
 }
 else if($action == 'delete') {
-	if(!confirm_sesskey()) {
-		error("badsessionkey","block_exastud");
-	}
+	require_sesskey();
+
 	$DB->delete_records('block_exastudperiod', array('id'=>$periodid));
 	redirect('periods.php?courseid=' . $courseid);
 }

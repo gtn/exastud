@@ -95,7 +95,7 @@ if ($class && $class->id) {
 	if (!block_exastud_get_class_students($class->id)) {
 		$deleteButton = $output->link_button('configuration_class.php?courseid='.$COURSE->id.'&action=delete&classid='.$class->id.'&confirm=1',
 			block_exastud_get_string('delete'),
-			['exa-confirm' => block_exastud_trans('de:Wirklich löschen?')]);
+			['exa-confirm' => block_exastud_get_string('delete_confirmation', null, $class->title)]);
 	} else {
 		$deleteButton = html_writer::empty_tag('input', [
 			'type' => 'button',
