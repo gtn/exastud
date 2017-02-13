@@ -51,15 +51,19 @@ $table->align = array("left", "left", "left", "right");
 
 foreach($periods as $period) {
 
-	$link = '<a href="' . $CFG->wwwroot . '/blocks/exastud/configuration_periods.php?courseid=' . $courseid . '&amp;periodid=' . $period->id . '&amp;sesskey=' . sesskey() . '&amp;action=edit">';
+	$editUrl = $CFG->wwwroot . '/blocks/exastud/configuration_periods.php?courseid=' . $courseid . '&periodid=' . $period->id . '&sesskey=' . sesskey() . '&action=edit';
 
-	$icons = $link.'<img src="pix/edit.png" alt="' . block_exastud_get_string('edit'). '" /></a>
-			  <a href="' . $CFG->wwwroot . '/blocks/exastud/configuration_periods.php?courseid=' . $courseid . '&amp;periodid=' . $period->id . '&amp;sesskey=' . sesskey() . '&amp;action=delete"><img src="pix/del.png" alt="' . block_exastud_get_string('delete'). '" /></a> ';
+	$icons = $output->link_button($editUrl,
+		'<img src="pix/edit.png" alt="' . block_exastud_get_string('edit'). '" />');
+	$icons .= $output->link_button($CFG->wwwroot . '/blocks/exastud/configuration_periods.php?courseid=' . $courseid . '&periodid=' . $period->id . '&sesskey=' . sesskey() . '&action=delete',
+		'<img src="pix/del.png" alt="' . block_exastud_get_string('delete'). '" />',
+		['exa-confirm' => block_exastud_get_string('delete_confirmation', null, $period->description)]
+	);
 
 	$starttime = date('d. M. Y - H:i', $period->starttime);
 	$endtime = date('d. M. Y - H:i', $period->endtime);
 	
-	$table->data[] = array ($link.$period->description.'</a>', $starttime, $endtime, $icons);
+	$table->data[] = array ('<a href="' . $editUrl.'">'.$period->description.'</a>', $starttime, $endtime, $icons);
 }
 
 echo $output->table($table);

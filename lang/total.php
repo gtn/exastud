@@ -526,6 +526,10 @@ return [
 	'blocksettings' => [
 		'Deckblattdaten',
 	],
+	'delete_confirmation' => [
+		'Soll "{$a}" wirklich gelöscht werden?',
+		'Do you really want to delete "{$a}"?',
+	],
 
 
 	// === grp3 ===

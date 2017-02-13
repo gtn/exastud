@@ -112,7 +112,8 @@ class api {
 		global $DB;
 
 		$DB->delete_records('block_exastudclass', array('userid'=>$userid));
-		$DB->delete_records('block_exastudperiod', array('userid'=>$userid));
+		// perioden sollte man hier nicht löschen
+		// $DB->delete_records('block_exastudperiod', array('userid'=>$userid));
 
 		$DB->delete_records('block_exastudclassteachers', array('teacherid'=>$userid));
 		$DB->delete_records('block_exastudreview', array('teacherid'=>$userid));
