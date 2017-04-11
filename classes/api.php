@@ -123,4 +123,26 @@ class api {
 
 		return true;
 	}
+
+	static function get_bildungsstandard_erreicht($studentid) {
+		global $DB;
+
+		// klase mit letztem bildugnsstandard erreicht
+		$class = g::$DB->get_record_sql("
+			SELECT c.*
+			FROM {block_exastudclass} c
+			JOIN {block_exastudclassstudents} cs ON cs.classid=c.id
+			JOIN {block_exastuddata} d ON d.classid=c.id AND cs.studentid=d.studentid
+				AND name='bildungsstandard_erreicht_time' AND value>0
+			WHERE cs.studentid=?
+			ORDER BY d.value DESC LIMIT 1
+		", [$studentid]);
+
+		if (!$class) {
+			return null;
+		}
+
+		$userdata = block_exastud_get_class_student_data($class->id, $studentid);
+		return $userdata;
+	}
 }
