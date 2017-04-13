@@ -73,8 +73,11 @@ class printer {
 				'name' => $student->firstname.' '.$student->lastname,
 				'geburtsdatum' => block_exastud_get_date_of_birth($student->id),
 			];
-		}
-		if ($template == 'Lernentwicklungsbericht neuer BP 1.HJ' || $template == 'Lernentwicklungsbericht alter BP 1.HJ') {
+		} elseif ($template == 'BP 2016/Lernentwicklungsbericht neuer BP 1.HJ'
+			|| $template == 'BP 2016/Lernentwicklungsbericht neuer BP SJ'
+			|| $template == 'BP 2004/Lernentwicklungsbericht alter BP 1.HJ'
+			|| $template == 'BP 2004/Lernentwicklungsbericht alter BP SJ'
+		) {
 			$bpsubjects = block_exastud_get_bildungsplan_subjects($class->bpid);
 			$class_subjects = block_exastud_get_class_subjects($class);
 			$lern_soz = block_exastud_get_class_student_data($class->id, $student->id, BLOCK_EXASTUD_DATA_ID_LERN_UND_SOZIALVERHALTEN);
@@ -158,8 +161,7 @@ class printer {
 			// nicht befüllte niveaus und noten befüllen
 			$dataTextReplacer['Bitte die Niveaustufe auswählen'] = 'Niveau ---';
 			$dataTextReplacer['ggf. Note'] = @$studentdata->print_grades ? 'Note ---' : '';
-		}
-		if ($template == 'Anlage zum Lernentwicklungsbericht') {
+		} elseif ($template == 'Anlage zum Lernentwicklungsbericht') {
 			$evalopts = g::$DB->get_records('block_exastudevalopt', null, 'sorting', 'id, title, sourceinfo');
 			$categories = block_exastud_get_class_categories_for_report($student->id, $class->id);
 			$subjects = static::get_exacomp_subjects($student->id);
@@ -249,6 +251,8 @@ class printer {
 				$templateProcessor->deleteRow("topic");
 				$templateProcessor->deleteRow("descriptor");
 			}
+		} else {
+			throw new moodle_exception("template $template not found");
 		}
 
 		// zuerst filters

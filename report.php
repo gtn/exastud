@@ -154,10 +154,13 @@ if ($classid = optional_param('classid', 0, PARAM_INT)) {
 	$templates['Deckblatt und 1. Innenseite LEB'] = 'Deckblatt und 1. Innenseite LEB';
 
 	if ($bp->sourceinfo !== 'bw-bp2016') {
-		$templates['Lernentwicklungsbericht alter BP 1.HJ'] = 'Lernentwicklungsbericht alter BP 1.HJ';
+		$templates['BP 2004/Lernentwicklungsbericht alter BP 1.HJ'] = 'Lernentwicklungsbericht alter BP 1.HJ';
+		$templates['BP 2004/Lernentwicklungsbericht alter BP SJ'] = 'Lernentwicklungsbericht alter BP SJ';
+		$templates['BP 2004/Jahreszeugnis Klasse 10 der Gemeinschaftsschule E-Niveau'] = 'Jahreszeugnis Klasse 10 der Gemeinschaftsschule E-Niveau';
 	}
 	if ($bp->sourceinfo !== 'bw-bp2004') {
-		$templates['Lernentwicklungsbericht neuer BP 1.HJ'] = 'Lernentwicklungsbericht neuer BP 1.HJ';
+		$templates['BP 2016/Lernentwicklungsbericht neuer BP 1.HJ'] = 'Lernentwicklungsbericht neuer BP 1.HJ';
+		$templates['BP 2016/Lernentwicklungsbericht neuer BP SJ'] = 'Lernentwicklungsbericht neuer BP SJ';
 	}
 	if (block_exastud_is_exacomp_installed()) {
 		$templates['Anlage zum Lernentwicklungsbericht'] = 'Anlage zum Lernentwicklungsbericht';
