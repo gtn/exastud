@@ -161,6 +161,111 @@ class printer {
 			// nicht befüllte niveaus und noten befüllen
 			$dataTextReplacer['Bitte die Niveaustufe auswählen'] = 'Niveau ---';
 			$dataTextReplacer['ggf. Note'] = @$studentdata->print_grades ? 'Note ---' : '';
+		} elseif ($template == 'BP 2004/Jahreszeugnis Klasse 10 der Gemeinschaftsschule E-Niveau') {
+			$class_subjects = block_exastud_get_class_subjects($class);
+
+			$wahlpflichtfach = '---';
+			$profilfach = '---';
+			$religion = '---';
+			$religion_sub = '';
+
+			$data = [
+				'schule' => get_config('exastud', 'school_name'),
+				'name' => $student->firstname.' '.$student->lastname,
+				'kla' => $class->title,
+				// 'geburtsdatum' => get_custom_profile_field_value($student->id, 'dateofbirth'),
+				'certda' => $certificate_issue_date,
+				'teilnahme' => '',
+				'bemerkungen' => static::spacerIfEmpty(@$studentdata->comments),
+			];
+
+			$placeholder = 'ph'.time();
+
+			$filters[] = function($content) use ($placeholder) {
+				$ret = preg_replace('!>\s*sgt\s*<!', '>'.$placeholder.'note<', $content, -1, $count);
+				if (!$count) {
+					throw new \Exception('sgt not found');
+				}
+
+				return $ret;
+			};
+
+			// noten
+			foreach ($class_subjects as $subject) {
+				$subjectData = block_exastud_get_review($class->id, $subject->id, $student->id);
+
+				if (!@$subjectData->review && !@$subjectData->grade && !@$subjectData->niveau) {
+					continue;
+				}
+
+				$subject->title = preg_replace('!\s*\(.*$!', '', $subject->title);
+
+				if (in_array($subject->shorttitle, ['RALE', 'RAK', 'ETH', 'REV', 'RISL', 'RJUED', 'RRK', 'ROR', 'RSYR'])) {
+					if ($subject->shorttitle == 'ETH') {
+						$religion = 'Ethik';
+						$religion_sub = '';
+					} else {
+						$religion = 'Religionslehre';
+						if ($subject->shorttitle == 'RISL') {
+							$religion_sub = 'islamisch sunnitischer Prägung';
+						} else {
+							$religion_sub = strtolower(trim(str_replace('Religionslehre', '', $subject->title)));
+						}
+					}
+					$gradeSearch = 'Ethik';
+				} elseif (strpos($subject->title, 'Wahlpflichtfach') === 0) {
+					$gradeSearch = 'Wahlpflicht';
+					$wahlpflichtfach = preg_replace('!^[^\s]+!', '', $subject->title);
+				} elseif (strpos($subject->title, 'Profilfach') === 0) {
+					$gradeSearch = 'Profilfach';
+					$profilfach = preg_replace('!^[^\s]+!', '', $subject->title);
+				} else {
+					$gradeSearch = $subject->title;
+				}
+
+				$grade = @$subjectData->grade;
+				// einfach die erste zahl nehmen und dann durch text ersetzen
+				$grade = str_replace([
+					'1', '2', '3', '4', '5', '6',
+				], [
+					'sgt', 'gut', 'bfr', 'ausr', 'mgh', 'ung',
+				], substr($grade, 0, 1));
+
+				$filters[] = function($content) use ($gradeSearch, $grade, $placeholder) {
+					$ret = preg_replace('!('.preg_quote($gradeSearch, '!').'.*)'.$placeholder.'note!U', '$1'.$grade, $content, -1, $count);
+					return $ret;
+				};
+			}
+
+			// religion + wahlpflichtfach + profilfach dropdowns
+			$filters[] = function($content) use ($religion, $religion_sub) {
+				$ret = preg_replace('!>\s*Ethik\s*<!U', '>'.$religion.'<', $content, -1, $count);
+				if (!$count) {
+					throw new \Exception('profilfach not found');
+				}
+
+				return $ret;
+			};
+			$filters[] = function($content) use ($wahlpflichtfach) {
+				$ret = preg_replace('!(Wahlpflichtbereich.*>)Technik(<)!U', '$1'.$wahlpflichtfach.'$2', $content, -1, $count);
+				if (!$count) {
+					throw new \Exception('wahlpflichtfach not found');
+				}
+
+				return $ret;
+			};
+			$filters[] = function($content) use ($profilfach) {
+				$ret = preg_replace('!(Profilfach.*>)Spanisch(<)!U', '$1'.$profilfach.'$2', $content, -1, $count);
+				if (!$count) {
+					throw new \Exception('profilfach not found');
+				}
+
+				return $ret;
+			};
+
+			$filters[] = function($content) use ($placeholder) {
+				return str_replace($placeholder.'note', '--', $content);
+			};
 		} elseif ($template == 'Anlage zum Lernentwicklungsbericht') {
 			$evalopts = g::$DB->get_records('block_exastudevalopt', null, 'sorting', 'id, title, sourceinfo');
 			$categories = block_exastud_get_class_categories_for_report($student->id, $class->id);
