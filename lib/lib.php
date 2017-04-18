@@ -698,7 +698,8 @@ function block_exastud_require_global_cap($cap, $user = null) {
 			$actPeriod = block_exastud_get_active_period();
 			$lastPeriod = block_exastud_get_last_period();
 			if (($actPeriod && (block_exastud_get_review_subjects($actPeriod->id) || block_exastud_get_head_teacher_classes_all($actPeriod->id)))
-				|| ($lastPeriod && (block_exastud_get_review_subjects($lastPeriod->id) || block_exastud_get_head_teacher_classes_all($lastPeriod->id)))) {
+				|| ($lastPeriod && (block_exastud_get_review_subjects($lastPeriod->id) || block_exastud_get_head_teacher_classes_all($lastPeriod->id)))
+			) {
 				// has reviews in this or last period (=a class is unlocked for late review)
 				return;
 			} else {
@@ -1314,6 +1315,27 @@ function block_exastud_get_review($classid, $subjectid, $studentid) {
 	}
 
 	return $data;
+}
+
+/**
+ * liefert einen review zurück, falls dieser (ganz oder teilweise) ausgfüllt wurde
+ * @param $classid
+ * @param $subjectid
+ * @param $studentid
+ */
+function block_exastud_get_graded_review($classid, $subjectid, $studentid) {
+	$subjectData = block_exastud_get_review($classid, $subjectid, $studentid);
+	if (!$subjectData) {
+		// no review
+		return;
+	}
+	if (!@$subjectData->review && !@$subjectData->grade && !@$subjectData->niveau) {
+		// empty review data
+		return;
+	}
+
+	// has a review
+	return $subjectData;
 }
 
 function block_exastud_get_bildungsplan_subjects($bpid) {

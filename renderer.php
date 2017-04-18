@@ -225,7 +225,7 @@ class block_exastud_renderer extends plugin_renderer_base {
 		foreach ($class_subjects as $subject) {
 			$subjectData = block_exastud_get_review($class->id, $subject->id, $student->id);
 
-			if (!@$subjectData->review && !@$subjectData->grade && !@$subjectData->niveau) {
+			if (!$subjectData) {
 				continue;
 			}
 

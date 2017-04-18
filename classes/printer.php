@@ -112,9 +112,9 @@ class printer {
 
 			// danach mit richtigen werten überschreiben
 			foreach ($class_subjects as $subject) {
-				$subjectData = block_exastud_get_review($class->id, $subject->id, $student->id);
+				$subjectData = block_exastud_get_graded_review($class->id, $subject->id, $student->id);
 
-				if (!@$subjectData->review && !@$subjectData->grade && !@$subjectData->niveau) {
+				if (!$subjectData) {
 					continue;
 				}
 
@@ -192,9 +192,9 @@ class printer {
 
 			// noten
 			foreach ($class_subjects as $subject) {
-				$subjectData = block_exastud_get_review($class->id, $subject->id, $student->id);
+				$subjectData = block_exastud_get_graded_review($class->id, $subject->id, $student->id);
 
-				if (!@$subjectData->review && !@$subjectData->grade && !@$subjectData->niveau) {
+				if (!$subjectData) {
 					continue;
 				}
 
