@@ -157,11 +157,20 @@ if ($classid = optional_param('classid', 0, PARAM_INT)) {
 		$templates['BP 2004/Lernentwicklungsbericht alter BP 1.HJ'] = 'Lernentwicklungsbericht alter BP 1.HJ';
 		$templates['BP 2004/Lernentwicklungsbericht alter BP SJ'] = 'Lernentwicklungsbericht alter BP SJ';
 		$templates['BP 2004/Jahreszeugnis Klasse 10 der Gemeinschaftsschule E-Niveau'] = 'Jahreszeugnis Klasse 10 der Gemeinschaftsschule E-Niveau';
+		$templates['BP 2004/Abgangszeugnis der Gemeinschaftsschule'] = 'Abgangszeugnis der Gemeinschaftsschule';
+		$templates['BP 2004/Abgangszeugnis der Gemeinschaftsschule HSA Kl.9 und 10'] = 'Abgangszeugnis der Gemeinschaftsschule HSA Kl.9 und 10';
+		/*
+		$templates['BP 2004/Hauptschulabschluszeugnis GMS BP 2004'] = 'Hauptschulabschluszeugnis GMS BP 2004';
+		$templates['BP 2004/Realschulabschlusszeugnis an der Gemeinschaftsschule BP 2004'] = 'Realschulabschlusszeugnis an der Gemeinschaftsschule BP 2004';
+		$templates['BP 2004/Zertifikat fuer Profilfach'] = 'Zertifikat für Profilfach';
+		$templates['BP 2004/Beiblatt zur Projektpruefung HSA'] = 'Beiblatt zur Projektprüfung HSA';
+		*/
 	}
 	if ($bp->sourceinfo !== 'bw-bp2004') {
 		$templates['BP 2016/Lernentwicklungsbericht neuer BP 1.HJ'] = 'Lernentwicklungsbericht neuer BP 1.HJ';
 		$templates['BP 2016/Lernentwicklungsbericht neuer BP SJ'] = 'Lernentwicklungsbericht neuer BP SJ';
 	}
+
 	if (block_exastud_is_exacomp_installed()) {
 		$templates['Anlage zum Lernentwicklungsbericht'] = 'Anlage zum Lernentwicklungsbericht';
 	}

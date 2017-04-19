@@ -73,11 +73,12 @@ class printer {
 				'name' => $student->firstname.' '.$student->lastname,
 				'geburtsdatum' => block_exastud_get_date_of_birth($student->id),
 			];
-		} elseif ($template == 'BP 2016/Lernentwicklungsbericht neuer BP 1.HJ'
-			|| $template == 'BP 2016/Lernentwicklungsbericht neuer BP SJ'
-			|| $template == 'BP 2004/Lernentwicklungsbericht alter BP 1.HJ'
-			|| $template == 'BP 2004/Lernentwicklungsbericht alter BP SJ'
-		) {
+		} elseif (in_array($template, [
+			'BP 2016/Lernentwicklungsbericht neuer BP 1.HJ',
+			'BP 2016/Lernentwicklungsbericht neuer BP SJ',
+			'BP 2004/Lernentwicklungsbericht alter BP 1.HJ',
+			'BP 2004/Lernentwicklungsbericht alter BP SJ',
+		])) {
 			$bpsubjects = block_exastud_get_bildungsplan_subjects($class->bpid);
 			$class_subjects = block_exastud_get_class_subjects($class);
 			$lern_soz = block_exastud_get_class_student_data($class->id, $student->id, BLOCK_EXASTUD_DATA_ID_LERN_UND_SOZIALVERHALTEN);
@@ -87,7 +88,6 @@ class printer {
 				'ort' => get_config('exastud', 'school_location'),
 				'name' => $student->firstname.' '.$student->lastname,
 				'klasse' => $class->title,
-				// 'geburtsdatum' => get_custom_profile_field_value($student->id, 'dateofbirth'),
 				'certdate' => $certificate_issue_date,
 				'lern_und_sozialverhalten' => static::spacerIfEmpty($lern_soz),
 				'bemerkungen' => static::spacerIfEmpty(@$studentdata->comments),
@@ -161,7 +161,15 @@ class printer {
 			// nicht befüllte niveaus und noten befüllen
 			$dataTextReplacer['Bitte die Niveaustufe auswählen'] = 'Niveau ---';
 			$dataTextReplacer['ggf. Note'] = @$studentdata->print_grades ? 'Note ---' : '';
-		} elseif ($template == 'BP 2004/Jahreszeugnis Klasse 10 der Gemeinschaftsschule E-Niveau') {
+		} elseif (in_array($template, [
+			'BP 2004/Jahreszeugnis Klasse 10 der Gemeinschaftsschule E-Niveau',
+			'BP 2004/Abgangszeugnis der Gemeinschaftsschule',
+			'BP 2004/Abgangszeugnis der Gemeinschaftsschule HSA Kl.9 und 10',
+			'BP 2004/Hauptschulabschluszeugnis GMS BP 2004',
+			'BP 2004/Realschulabschlusszeugnis an der Gemeinschaftsschule BP 2004',
+			'BP 2004/Zertifikat fuer Profilfach',
+			'BP 2004/Beiblatt zur Projektpruefung HSA',
+		])) {
 			$class_subjects = block_exastud_get_class_subjects($class);
 
 			$wahlpflichtfach = '---';
@@ -173,19 +181,28 @@ class printer {
 				'schule' => get_config('exastud', 'school_name'),
 				'name' => $student->firstname.' '.$student->lastname,
 				'kla' => $class->title,
-				// 'geburtsdatum' => get_custom_profile_field_value($student->id, 'dateofbirth'),
+				'geburt' => block_exastud_get_custom_profile_field_value($student->id, 'dateofbirth'),
 				'certda' => $certificate_issue_date,
-				'teilnahme' => '',
+				'certdate' => $certificate_issue_date,
+				'gebort' => static::spacerIfEmpty(''),
+				'thema' => static::spacerIfEmpty(''),
+				'teilnahme' => static::spacerIfEmpty(''),
+				'ags' => static::spacerIfEmpty(''),
+				'projekt' => static::spacerIfEmpty(''),
+				'verbalbeurteilung' => static::spacerIfEmpty(''),
 				'bemerkungen' => static::spacerIfEmpty(@$studentdata->comments),
 			];
 
 			$placeholder = 'ph'.time();
 
 			$filters[] = function($content) use ($placeholder) {
-				$ret = preg_replace('!>\s*sgt\s*<!', '>'.$placeholder.'note<', $content, -1, $count);
+				$ret = preg_replace('!>\s*(sgt|sehr gut)\s*<!', '>'.$placeholder.'note<', $content, -1, $count);
+
+				/*
 				if (!$count) {
 					throw new \Exception('sgt not found');
 				}
+				*/
 
 				return $ret;
 			};
@@ -225,14 +242,24 @@ class printer {
 
 				$grade = @$subjectData->grade;
 				// einfach die erste zahl nehmen und dann durch text ersetzen
-				$grade = str_replace([
-					'1', '2', '3', '4', '5', '6',
-				], [
-					'sgt', 'gut', 'bfr', 'ausr', 'mgh', 'ung',
-				], substr($grade, 0, 1));
+
+				if ($template == 'BP 2004/Jahreszeugnis Klasse 10 der Gemeinschaftsschule E-Niveau') {
+					$grade = str_replace([
+						'1', '2', '3', '4', '5', '6',
+					], [
+						'sgt', 'gut', 'bfr', 'ausr', 'mgh', 'ung',
+					], substr($grade, 0, 1));
+				} else {
+					$grade = str_replace([
+						'1', '2', '3', '4', '5', '6',
+					], [
+						'sehr gut', 'gut', 'befriedigend', 'ausreichend', 'mangelhaft', 'ungenügend',
+					], substr($grade, 0, 1));
+				}
 
 				$filters[] = function($content) use ($gradeSearch, $grade, $placeholder) {
 					$ret = preg_replace('!('.preg_quote($gradeSearch, '!').'.*)'.$placeholder.'note!U', '$1'.$grade, $content, -1, $count);
+
 					return $ret;
 				};
 			}
@@ -240,25 +267,34 @@ class printer {
 			// religion + wahlpflichtfach + profilfach dropdowns
 			$filters[] = function($content) use ($religion, $religion_sub) {
 				$ret = preg_replace('!>\s*Ethik\s*<!U', '>'.$religion.'<', $content, -1, $count);
+
+				/*
 				if (!$count) {
 					throw new \Exception('profilfach not found');
 				}
+				*/
 
 				return $ret;
 			};
 			$filters[] = function($content) use ($wahlpflichtfach) {
 				$ret = preg_replace('!(Wahlpflichtbereich.*>)Technik(<)!U', '$1'.$wahlpflichtfach.'$2', $content, -1, $count);
+
+				/*
 				if (!$count) {
 					throw new \Exception('wahlpflichtfach not found');
 				}
+				*/
 
 				return $ret;
 			};
 			$filters[] = function($content) use ($profilfach) {
 				$ret = preg_replace('!(Profilfach.*>)Spanisch(<)!U', '$1'.$profilfach.'$2', $content, -1, $count);
+
+				/*
 				if (!$count) {
 					throw new \Exception('profilfach not found');
 				}
+				*/
 
 				return $ret;
 			};
@@ -356,8 +392,12 @@ class printer {
 				$templateProcessor->deleteRow("topic");
 				$templateProcessor->deleteRow("descriptor");
 			}
+		} elseif ($template == 'BP 2004/Zertifikat fuer Profilfach') {
 		} else {
-			throw new moodle_exception("template $template not found");
+			echo g::$OUTPUT->header();
+			echo block_exastud_trans(['de:Leider wurde die Dokumentvorlage "{$a}" nicht gefunden.', 'en:Template "{$a}" not found.'], $template);
+			echo g::$OUTPUT->footer();
+			exit;
 		}
 
 		// zuerst filters
