@@ -186,7 +186,6 @@ class printer {
 				'certda' => $certificate_issue_date,
 				'certdate' => $certificate_issue_date,
 				'gebort' => static::spacerIfEmpty(''),
-				'thema' => static::spacerIfEmpty(''),
 				'teilnahme' => static::spacerIfEmpty(''),
 				'ags' => static::spacerIfEmpty(''),
 				'projekt' => static::spacerIfEmpty(''),

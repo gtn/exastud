@@ -11,3 +11,4 @@ Version 4.5.0
 * new word export template
 * use German "zieldifferenter Unterricht"
 * backup reviews
+* Erneute Bewertungsfreigabe 
