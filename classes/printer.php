@@ -61,6 +61,7 @@ class printer {
 			throw new \Exception("template $template not found");
 		}
 
+		\PhpOffice\PhpWord\Settings::setTempDir($CFG->tempdir);
 		$templateProcessor = new TemplateProcessor($templateFile);
 
 		$data = [];
