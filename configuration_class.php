@@ -111,7 +111,9 @@ if ($type == 'students') {
 		$table->head = [
 			block_exastud_get_string('lastname'),
 			block_exastud_get_string('firstname'),
+			block_exastud_trans('de:Geschlecht'),
 			block_exastud_trans('de:Geburtsdatum'),
+			block_exastud_trans('de:Geburtsort'),
 			block_exastud_trans('de:Note im Lern&shy;entwicklungs&shy;bericht ausweisen'),
 			block_exastud_trans('de:Bildungsstandard erreicht'),
 			block_exastud_trans('de:Ausgeschieden'),
@@ -145,10 +147,20 @@ if ($type == 'students') {
 				(!empty($userdata->dropped_out) ? ' checked="checked"' : '').'/>'.
 				(!empty($userdata->dropped_out) ? userdate($userdata->dropped_out_time, block_exastud_get_string('strftimedate', 'langconfig')) : '');
 
+			$gender = block_exastud_get_custom_profile_field_value($classstudent->id, 'gender');
+			if ($gender == 'male') {
+				$gender = block_exastud_trans('de:Männlich');
+			} elseif ($gender == 'female') {
+				$gender = block_exastud_trans('de:Weiblich');
+			} else {
+				$gender = '';
+			}
 			$row = [
 				$classstudent->lastname,
 				$classstudent->firstname,
+				$gender,
 				block_exastud_get_date_of_birth($classstudent->id),
+				block_exastud_get_custom_profile_field_value($classstudent->id, 'placeofbirth'),
 				$print_grades,
 				$bildungsstandard,
 				$ausgeschieden,

@@ -445,20 +445,63 @@ function block_exastud_check_profile_fields() {
 		]);
 	}
 
-	g::$DB->insert_or_update_record('user_info_field', [
-		'name' => block_exastud_trans('de:Geburtsdatum'),
-		'datatype' => 'text',
-		'categoryid' => $categoryid,
-		'sortorder' => g::$DB->get_field_sql('SELECT MAX(sortorder) FROM {user_info_field} WHERE categoryid=?', [$categoryid]) + 1,
-		'locked' => 1,
-		'required' => 0,
-		'visible' => 0,
-		'param1' => 30,
-		'param2' => 2048,
-		'param3' => 0,
-	], [
-		'shortname' => 'dateofbirth',
-	]);
+	$sort = g::$DB->get_field_sql('SELECT MAX(sortorder) FROM {user_info_field} WHERE categoryid=?', [$categoryid]);
+
+	$fields = [
+		[
+			'shortname' => 'dateofbirth',
+			'name' => block_exastud_trans('de:Geburtsdatum'),
+			'description' => '',
+			'datatype' => 'text',
+			'categoryid' => $categoryid,
+			'sortorder' => $sort,
+			'locked' => 1,
+			'required' => 0,
+			'visible' => 0,
+			'param1' => 30,
+			'param2' => 2048,
+			'param3' => 0,
+		], [
+			'shortname' => 'placeofbirth',
+			'name' => block_exastud_trans('de:Geburtsort'),
+			'description' => '',
+			'datatype' => 'text',
+			'categoryid' => $categoryid,
+			'sortorder' => $sort,
+			'locked' => 1,
+			'required' => 0,
+			'visible' => 0,
+			'param1' => 30,
+			'param2' => 2048,
+			'param3' => 0,
+		], [
+			'shortname' => 'gender',
+			'name' => block_exastud_trans('de:Geschlecht'),
+			'description' => '',
+			'datatype' => 'menu',
+			'categoryid' => $categoryid,
+			'sortorder' => $sort,
+			'locked' => 1,
+			'required' => 0,
+			'visible' => 0,
+			'param1' => "\nmale\nfemale",
+		],
+	];
+
+	foreach ($fields as $field) {
+		$id = g::$DB->get_field('user_info_field', 'id', ['shortname' => $field['shortname']]);
+		if ($id) {
+			// don't update those:
+			unset($field['name']);
+			unset($field['description']);
+
+			g::$DB->update_record('user_info_field', $field, ['id' => $id]);
+		} else {
+			$sort++;
+			$field['sort'] = $sort;
+			g::$DB->insert_record('user_info_field', $field);
+		}
+	}
 }
 
 function block_exastud_find_object_in_array_by_property($array, $key, $value) {
@@ -1363,4 +1406,97 @@ function block_exastud_get_class_title($classid) {
 	}
 
 	return $classTitle;
+}
+
+function block_exastud_get_class_other_data_forms($class) {
+	$bp = g::$DB->get_record('block_exastudbp', ['id' => $class->bpid]);
+	if ($bp->sourceinfo !== 'bw-bp2004') {
+		$templates['BP 2016/Lernentwicklungsbericht neuer BP'] = 'Lernentwicklungsbericht neu BP';
+	}
+	if ($bp->sourceinfo !== 'bw-bp2016') {
+		$templates['BP 2004/Lernentwicklungsbericht alter BP'] = 'Lernentwicklungsbericht alter BP';
+		$templates['BP 2004/Jahreszeugnis Klasse 10 der Gemeinschaftsschule E-Niveau'] = 'Jahreszeugnis Klasse 10 der Gemeinschaftsschule E-Niveau';
+		$templates['BP 2004/Abgangszeugnis der Gemeinschaftsschule'] = 'Abgangszeugnis der Gemeinschaftsschule';
+		$templates['BP 2004/Abgangszeugnis der Gemeinschaftsschule HSA Kl.9 und 10'] = 'Abgangszeugnis der Gemeinschaftsschule HSA Kl.9 und 10';
+		$templates['BP 2004/Hauptschulabschluszeugnis GMS BP 2004'] = 'Hauptschulabschluszeugnis GMS BP 2004';
+		$templates['BP 2004/Realschulabschlusszeugnis an der Gemeinschaftsschule BP 2004'] = 'Realschulabschlusszeugnis an der Gemeinschaftsschule BP 2004';
+		$templates['BP 2004/Zertifikat fuer Profilfach'] = 'Zertifikat für Profilfach';
+		$templates['BP 2004/Beiblatt zur Projektpruefung HSA'] = 'Beiblatt zur Projektprüfung HSA';
+	}
+
+	return $templates;
+}
+
+function block_exastud_get_class_other_data_form_inputs($class, $form) {
+	if ($form == 'BP 2016/Lernentwicklungsbericht neuer BP' ||
+		$form == 'BP 2004/Lernentwicklungsbericht alter BP'
+	) {
+		$inputs = [
+			'comments' => [
+				'title' => block_exastud_trans('de:Bemerkungen'),
+				'type' => 'textarea',
+			],
+		];
+	} elseif ($form == 'BP 2004/Jahreszeugnis Klasse 10 der Gemeinschaftsschule E-Niveau') {
+		$inputs = [
+			'verhalten' => [
+				'title' => 'verhalten',
+			],
+			'mitarbeit' => [
+				'title' => 'Mitarbeit',
+			],
+			'teilnahme' => [
+				'title' => 'Teilnahme an Arbeitsgemeinschaften',
+			],
+			'comments_short' => [
+				'title' => 'Bemerkungen',
+			],
+		];
+	} elseif ($form == 'BP 2004/Abgangszeugnis der Gemeinschaftsschule') {
+		$inputs = [
+			'ags' => [
+				'title' => 'Teilnahme an Arbeitsgemeinschaften',
+				'type' => 'textarea3lines',
+			],
+			'abgangszeugnis_niveau' => [
+				'title' => 'Die Leistung wurde in allen Fächern auf dem folgenden Niveau beurteilt',
+				'type' => 'select',
+				'values' => ['G', 'M', 'E'],
+			],
+			'comments_short' => [
+				'title' => 'Bemerkungen',
+				'type' => 'textarea3lines',
+			],
+		];
+	} elseif ($form == 'BP 2004/Abgangszeugnis der Gemeinschaftsschule HSA Kl.9 und 10') {
+		$inputs = [
+			'projekt_thema' => [
+				'title' => 'Projektprüfung: Thema',
+				'type' => 'text',
+			],
+			'projekt_grade' => [
+				'title' => 'Projektprüfung: Note',
+				'type' => 'select',
+				'values' => ['1', '2', '3', '4', '5', '6'],
+			],
+			'ags' => [
+				'title' => 'Teilnahme an Arbeitsgemeinschaften',
+				'type' => 'textarea3lines',
+			],
+			'comments_short' => [
+				'title' => 'Bemerkungen',
+				'type' => 'textarea3lines',
+			],
+		];
+	}
+
+	/*
+	if ($bp->sourceinfo !== 'bw-bp2016') {
+		$templates['BP 2004/Hauptschulabschluszeugnis GMS BP 2004'] = 'Hauptschulabschluszeugnis GMS BP 2004';
+		$templates['BP 2004/Realschulabschlusszeugnis an der Gemeinschaftsschule BP 2004'] = 'Realschulabschlusszeugnis an der Gemeinschaftsschule BP 2004';
+		$templates['BP 2004/Zertifikat fuer Profilfach'] = 'Zertifikat für Profilfach';
+		$templates['BP 2004/Beiblatt zur Projektpruefung HSA'] = 'Beiblatt zur Projektprüfung HSA';
+	*/
+
+	return $inputs;
 }

@@ -64,19 +64,14 @@ $actPeriod = block_exastud_check_active_period();
 
 if ($type == BLOCK_EXASTUD_DATA_ID_LERN_UND_SOZIALVERHALTEN) {
 	$categories = [
-		BLOCK_EXASTUD_DATA_ID_LERN_UND_SOZIALVERHALTEN => block_exastud_trans('de:Lern- und Sozialverhalten'),
+		BLOCK_EXASTUD_DATA_ID_LERN_UND_SOZIALVERHALTEN => [
+			'title' => block_exastud_trans('de:Lern- und Sozialverhalten'),
+		],
 	];
 	$classheader = $class->title.' - '.block_exastud_trans('de:Lern- und Sozialverhalten');
 } else {
-	$categories = [
-		/*
-		'ateliers' => block_exastud_trans('de:Ateliers'),
-		'arbeitsgemeinschaften' => block_exastud_trans('de:Arbeitsgemeinschaften'),
-		'besondere_staerken' => block_exastud_trans('de:Besondere Stärken'),
-		*/
-		'comments' => block_exastud_trans('de:Bemerkungen'),
-	];
-	$classheader = $class->title.' - '.block_exastud_trans('de:Bemerkungen');
+	$categories = block_exastud_get_class_other_data_form_inputs($class, $type);
+	$classheader = $class->title.' - '.$type;
 }
 
 $olddata = (array)block_exastud_get_class_student_data($classid, $studentid);

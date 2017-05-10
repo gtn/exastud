@@ -181,19 +181,39 @@ class student_other_data_form extends moodleform {
 	function definition() {
 		$mform = &$this->_form;
 
-		foreach ($this->_customdata['categories'] as $dataid => $name) {
-			$mform->addElement('header', 'header_'.$dataid, $name);
-			$mform->setExpanded('header_'.$dataid);
+		foreach ($this->_customdata['categories'] as $dataid => $input) {
+			if (empty($input['type']) || $input['type'] == 'textarea') {
+				$mform->addElement('header', 'header_'.$dataid, $input['title']);
+				$mform->setExpanded('header_'.$dataid);
 
-			if ($this->_customdata['modified']) {
-				$mform->addElement('static', '', '', $this->_customdata['modified']);
+				if ($this->_customdata['modified']) {
+					$mform->addElement('static', '', '', $this->_customdata['modified']);
+				}
+
+				$mform->addElement('textarea', $dataid, '', ['cols' => 50, 'rows' => 10,
+					'class' => 'limit-input-length',
+					'style' => "width: 738px; height: 160px; resize: none; font-family: Arial !important; font-size: 11pt !important;",
+				]);
+				$mform->setType($dataid, PARAM_RAW);
+			} elseif ($input['type'] == 'textarea3lines') {
+				$mform->addElement('header', 'header_'.$dataid, $input['title']);
+				$mform->setExpanded('header_'.$dataid);
+
+				$mform->addElement('textarea', $dataid, '', ['cols' => 50, 'rows' => 10,
+					'class' => 'limit-input-length',
+					'style' => "width: 738px; height: 80px; resize: none; font-family: Arial !important; font-size: 11pt !important;",
+				]);
+				$mform->setType($dataid, PARAM_RAW);
+			} elseif ($input['type'] == 'text') {
+				$mform->addElement('text', $dataid, $input['title']);
+				$mform->setType($dataid, PARAM_RAW);
+			} elseif ($input['type'] == 'select') {
+				$mform->addElement('select', $dataid, $input['title'], ['' => ''] + $input['values']);
+				$mform->setType($dataid, PARAM_RAW);
+			} else {
+				$mform->addElement('header', 'header_'.$dataid, $input['title']);
+				$mform->setExpanded('header_'.$dataid);
 			}
-
-			$mform->addElement('textarea', $dataid, '', ['cols' => 50, 'rows' => 10,
-				'class' => 'limit-input-length',
-				'style' => "width: 738px; height: 160px; resize: none; font-family: Arial !important; font-size: 11pt !important;",
-			]);
-			$mform->setType($dataid, PARAM_RAW);
 		}
 
 		$this->add_action_buttons(false);

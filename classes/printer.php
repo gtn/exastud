@@ -185,12 +185,11 @@ class printer {
 				'geburt' => block_exastud_get_custom_profile_field_value($student->id, 'dateofbirth'),
 				'certda' => $certificate_issue_date,
 				'certdate' => $certificate_issue_date,
-				'gebort' => static::spacerIfEmpty(''),
-				'teilnahme' => static::spacerIfEmpty(''),
-				'ags' => static::spacerIfEmpty(''),
-				'projekt' => static::spacerIfEmpty(''),
+				'gebort' => static::spacerIfEmpty(block_exastud_get_custom_profile_field_value($student->id, 'placeofbirth')),
+				'ags' => static::spacerIfEmpty(@$studentdata->ags),
+				'projekt_thema' => static::spacerIfEmpty(@$studentdata->projekt_thema),
 				'verbalbeurteilung' => static::spacerIfEmpty(''),
-				'bemerkungen' => static::spacerIfEmpty(@$studentdata->comments),
+				'comments_short' => static::spacerIfEmpty(@$studentdata->comments_short),
 			];
 
 			$placeholder = 'ph'.time();
