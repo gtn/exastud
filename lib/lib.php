@@ -224,10 +224,10 @@ function block_exastud_get_class_additional_head_teachers($classid) {
 			FROM {user} u
 			JOIN {block_exastudclassteachers} ct ON ct.teacherid=u.id
 			JOIN {block_exastudclass} c ON c.id=ct.classid
-			WHERE c.id=? AND ct.subjectid = ".BLOCK_EXASTUD_SUBJECT_ID_ADDITIONAL_HEAD_TEACHER."
+			WHERE c.id=? AND ct.subjectid=?
 			AND c.userid<>u.id
 			ORDER BY u.lastname, u.firstname
-		", [$classid]);
+		", [$classid, BLOCK_EXASTUD_SUBJECT_ID_ADDITIONAL_HEAD_TEACHER]);
 
 	foreach ($classteachers as $classteacher) {
 		$classteacher->subject_title = block_exastud_get_string('additional_head_teacher');
@@ -287,7 +287,7 @@ function block_exastud_get_review_class($classid, $subjectid) {
 			JOIN {block_exastudclass} c ON ct.classid=c.id
 			LEFT JOIN {block_exastudsubjects} s ON ct.subjectid = s.id
 			WHERE ct.teacherid=? AND ct.classid=? AND ct.subjectid >= 0 AND ".($subjectid ? 's.id=?' : 's.id IS NULL')."
-		", array($USER->id, $classid, $subjectid));
+		", array($USER->id, $classid, $subjectid), IGNORE_MULTIPLE);
 	}
 }
 

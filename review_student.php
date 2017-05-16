@@ -66,7 +66,7 @@ if ($lastPeriod) {
 		JOIN {block_exastudclassstudents} cs ON cs.classid=c.id 
 		JOIN {block_exastudclassteachers} ct ON ct.classid=c.id
 		WHERE c.periodid=? AND cs.studentid=? AND ct.teacherid=? AND ct.subjectid=?
-	", [$lastPeriod->id, $studentid, g::$USER->id, $subjectid]);
+	", [$lastPeriod->id, $studentid, g::$USER->id, $subjectid], IGNORE_MULTIPLE);
 } else {
 	$lastPeriodClass = null;
 }
@@ -222,12 +222,12 @@ if ($lastPeriodClass && optional_param('action', null, PARAM_TEXT) == 'load_last
 		$formdata->review = $reviewdata->review;
 	}
 
-	if ($lastPeriodData->niveau || $lastPeriodData->grade) {
+	if (@$lastPeriodData->niveau || @$lastPeriodData->grade) {
 		$reviewText = 'Bewertung '.$lastPeriod->description.':'."\n";
-		if ($lastPeriodData->niveau) {
+		if (@$lastPeriodData->niveau) {
 			$reviewText .= 'Niveau: '.(block_exastud\global_config::get_niveau_option_title($lastPeriodData->niveau)?:$lastPeriodData->niveau)."\n";
 		}
-		if ($lastPeriodData->grade) {
+		if (@$lastPeriodData->grade) {
 			$reviewText .= 'Note: '.$lastPeriodData->grade."\n";
 		}
 
