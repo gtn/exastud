@@ -1427,9 +1427,15 @@ function block_exastud_get_class_other_data_forms($class) {
 	return $templates;
 }
 
-function block_exastud_get_class_other_data_form_inputs($class, $form) {
-	if ($form == 'BP 2016/Lernentwicklungsbericht neuer BP' ||
-		$form == 'BP 2004/Lernentwicklungsbericht alter BP'
+function block_exastud_get_class_other_data_form_inputs($class, $template) {
+	if ($template == 'BP 2004/Jahreszeugnis Klasse 10 der Gemeinschaftsschule E-Niveau') {
+		$grades = ['', 'sgt', 'gut', 'bfr', 'ausr', 'mgh', 'ung'];
+	} else {
+		$grades = ['', 'sehr gut', 'gut', 'befriedigend', 'ausreichend', 'mangelhaft', 'ungenügend'];
+	}
+
+	if ($template == 'BP 2016/Lernentwicklungsbericht neuer BP' ||
+		$template == 'BP 2004/Lernentwicklungsbericht alter BP'
 	) {
 		$inputs = [
 			'comments' => [
@@ -1437,13 +1443,17 @@ function block_exastud_get_class_other_data_form_inputs($class, $form) {
 				'type' => 'textarea',
 			],
 		];
-	} elseif ($form == 'BP 2004/Jahreszeugnis Klasse 10 der Gemeinschaftsschule E-Niveau') {
+	} elseif ($template == 'BP 2004/Jahreszeugnis Klasse 10 der Gemeinschaftsschule E-Niveau') {
 		$inputs = [
 			'verhalten' => [
-				'title' => 'verhalten',
+				'title' => 'Verhalten',
+				'type' => 'select',
+				'values' => [1 => 'sgt', 2 => 'gut', 3 => 'bfr', 6 => 'unbfr'],
 			],
 			'mitarbeit' => [
 				'title' => 'Mitarbeit',
+				'type' => 'select',
+				'values' => [1 => 'sgt', 2 => 'gut', 3 => 'bfr', 6 => 'unbfr'],
 			],
 			'teilnahme' => [
 				'title' => 'Teilnahme an Arbeitsgemeinschaften',
@@ -1452,23 +1462,95 @@ function block_exastud_get_class_other_data_form_inputs($class, $form) {
 				'title' => 'Bemerkungen',
 			],
 		];
-	} elseif ($form == 'BP 2004/Abgangszeugnis der Gemeinschaftsschule') {
+	} elseif ($template == 'BP 2004/Abgangszeugnis der Gemeinschaftsschule') {
 		$inputs = [
+			'wann_verlassen' => [
+				'title' => 'verlässt ...',
+				'type' => 'select',
+				'values' => [
+					'heute8' => 'heute die Klasse 8 der Schule.',
+					'heute9' => 'heute die Klasse 9 der Schule.',
+					'heute10' => 'heute die Klasse 10 der Schule.',
+					'during8' => 'während der Klasse 8 die Schule.',
+					'during9' => 'während der Klasse 9 die Schule.',
+					'during10' => 'während der Klasse 10 die Schule.',
+					'ende8' => 'am Ende der Klasse 8 die Schule.',
+					'ende10' => 'am Ende der Klasse 10 die Schule.',
+				],
+			],
 			'ags' => [
 				'title' => 'Teilnahme an Arbeitsgemeinschaften',
+				'type' => 'textarea3lines',
+			],
+			'comments_short' => [
+				'title' => 'Bemerkungen',
 				'type' => 'textarea3lines',
 			],
 			'abgangszeugnis_niveau' => [
 				'title' => 'Die Leistung wurde in allen Fächern auf dem folgenden Niveau beurteilt',
 				'type' => 'select',
-				'values' => ['G', 'M', 'E'],
+				'values' => ['G' => 'G', 'M' => 'M', 'E' => 'E'],
+			],
+		];
+	} elseif ($template == 'BP 2004/Abgangszeugnis der Gemeinschaftsschule HSA Kl.9 und 10') {
+		$inputs = [
+			'wann_verlassen' => [
+				'title' => 'verlässt ...',
+				'type' => 'select',
+				'values' => [
+					'ende9' => 'am Ende der Klasse 9 die Schule.',
+					'ende10' => 'am Ende der Klasse 10 die Schule.',
+				],
+			],
+			'projekt_thema' => [
+				'title' => 'Projektprüfung: Thema',
+				'type' => 'text',
+			],
+			'projekt_grade' => [
+				'title' => 'Projektprüfung: Note',
+				'type' => 'select',
+				'values' => $grades,
+			],
+			'ags' => [
+				'title' => 'Teilnahme an Arbeitsgemeinschaften',
+				'type' => 'textarea3lines',
 			],
 			'comments_short' => [
 				'title' => 'Bemerkungen',
 				'type' => 'textarea3lines',
 			],
 		];
-	} elseif ($form == 'BP 2004/Abgangszeugnis der Gemeinschaftsschule HSA Kl.9 und 10') {
+	} elseif ($template == 'BP 2004/Hauptschulabschluszeugnis GMS BP 2004') {
+		$inputs = [
+			'abgelegt' => [
+				'title' => 'Hat die Hauptschulabschlussprüfung nach',
+				'type' => 'select',
+				'values' => [
+					'nach9' => 'Klasse 9 der Gemeinschaftsschule mit Erfolg abgelegt.',
+					'nach10' => 'Klasse 10 der Gemeinschaftsschule mit Erfolg abgelegt.',
+				],
+			],
+			'projekt_thema' => [
+				'title' => 'Projektprüfung: Thema',
+				'type' => 'text',
+			],
+			'projekt_grade' => [
+				'title' => 'Projektprüfung: Note',
+				'type' => 'select',
+				'values' => $grades,
+			],
+			'gesamtnote_und_durchschnitt_der_gesamtleistungen' => [
+				'title' => 'Gesamtnote und Durchschnitt der Gesamtleistungen',
+				'type' => 'text',
+			],
+			'teilnahme' => [
+				'title' => 'Teilnahme an Arbeitsgemeinschaften',
+			],
+			'comments_short' => [
+				'title' => 'Bemerkungen',
+			],
+		];
+	} elseif ($template == 'BP 2004/Realschulabschlusszeugnis an der Gemeinschaftsschule BP 2004') {
 		$inputs = [
 			'projekt_thema' => [
 				'title' => 'Projektprüfung: Thema',
@@ -1477,7 +1559,7 @@ function block_exastud_get_class_other_data_form_inputs($class, $form) {
 			'projekt_grade' => [
 				'title' => 'Projektprüfung: Note',
 				'type' => 'select',
-				'values' => ['1', '2', '3', '4', '5', '6'],
+				'values' => $grades,
 			],
 			'ags' => [
 				'title' => 'Teilnahme an Arbeitsgemeinschaften',
@@ -1488,6 +1570,8 @@ function block_exastud_get_class_other_data_form_inputs($class, $form) {
 				'type' => 'textarea3lines',
 			],
 		];
+	} else {
+		$inputs = [];
 	}
 
 	/*

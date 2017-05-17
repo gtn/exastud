@@ -103,7 +103,11 @@ foreach ($classstudents as $classstudent) {
 	}
 
 	foreach ($categories as $dataid => $category) {
-		$row->cells[] = !empty($data[$dataid]) ? block_exastud_text_to_html($data[$dataid]) : '';
+		if (@$category['type'] == 'select') {
+			$row->cells[] = @$category['values'][$data[$dataid]];
+		} else {
+			$row->cells[] = !empty($data[$dataid]) ? block_exastud_text_to_html($data[$dataid]) : '';
+		}
 	}
 
 	$table->data[] = $row;

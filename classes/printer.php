@@ -48,6 +48,7 @@ class printer {
 
 		$certificate_issue_date = trim(get_config('exastud', 'certificate_issue_date'));
 		$studentdata = block_exastud_get_class_student_data($class->id, $student->id);
+		$forminputs = block_exastud_get_class_other_data_form_inputs($class, $template);
 
 		/*
 		if ($template == 'leb_alter_bp_hj') {
@@ -67,6 +68,21 @@ class printer {
 		$data = [];
 		$dataTextReplacer = [];
 		$filters = [];
+
+		$add_filter = function($id, $filter = null) use (&$filters) {
+			if (is_callable($id)) {
+				$filters[] = $id;
+			} else {
+				if (!isset($filters[join(',', $id)])) {
+					$filters[join(',', $id)] = $filter;
+				}
+			}
+		};
+
+		$prepend_filter = function($filter = null) use (&$filters) {
+			$filters = array_merge([$filter], $filters);
+		};
+
 		if ($template == 'Deckblatt und 1. Innenseite LEB') {
 			$data = [
 				'schule' => get_config('exastud', 'school_name'),
@@ -142,22 +158,22 @@ class printer {
 					$niveau = 'Niveau '.static::spacerIfEmpty($niveau);
 				}
 				$filters[$contentId.'_niveau'] = function($content) use ($contentId, $niveau) {
-					return preg_replace('!({'.$contentId.'}.*>)Bitte die Niveaustufe auswählen(<)!U', '$1'.$niveau.'$2', $content);
+					return preg_replace('!({'.$contentId.'}.*>)Bitte die Niveaustufe auswählen(<)!U', '${1}'.$niveau.'${2}', $content);
 				};
 
 				$grade = (@$studentdata->print_grades ? 'Note '.static::spacerIfEmpty(@$subjectData->grade) : '');
 				$filters[$contentId.'_grade'] = function($content) use ($contentId, $grade) {
-					return preg_replace('!({'.$contentId.'}.*>)ggf. Note(<)!U', '$1'.$grade.'$2', $content);
+					return preg_replace('!({'.$contentId.'}.*>)ggf. Note(<)!U', '${1}'.$grade.'${2}', $content);
 				};
 			}
 
 			// wahlpflichtfach + profilfach dropdowns
-			$filters[] = function($content) use ($wahlpflichtfach) {
-				return preg_replace('!(>)Technik(<.*{'.'wahlpflichtfach'.'})!U', '$1'.$wahlpflichtfach.'$2', $content);
-			};
-			$filters[] = function($content) use ($profilfach) {
-				return preg_replace('!(>)Spanisch(<.*{'.'profilfach'.'})!U', '$1'.$profilfach.'$2', $content);
-			};
+			$add_filter(function($content) use ($wahlpflichtfach) {
+				return preg_replace('!(>)Technik(<.*{'.'wahlpflichtfach'.'})!U', '${1}'.$wahlpflichtfach.'${2}', $content);
+			});
+			$add_filter(function($content) use ($profilfach) {
+				return preg_replace('!(>)Spanisch(<.*{'.'profilfach'.'})!U', '${1}'.$profilfach.'${2}', $content);
+			});
 
 			// nicht befüllte niveaus und noten befüllen
 			$dataTextReplacer['Bitte die Niveaustufe auswählen'] = 'Niveau ---';
@@ -165,11 +181,11 @@ class printer {
 		} elseif (in_array($template, [
 			'BP 2004/Jahreszeugnis Klasse 10 der Gemeinschaftsschule E-Niveau',
 			'BP 2004/Abgangszeugnis der Gemeinschaftsschule',
-			'BP 2004/Abgangszeugnis der Gemeinschaftsschule HSA Kl.9 und 10',
+			'BP 2004/Abgangszeugnis der Gemeinschaftsschule HSA Kl.9 und 10', // TODO
 			'BP 2004/Hauptschulabschluszeugnis GMS BP 2004',
 			'BP 2004/Realschulabschlusszeugnis an der Gemeinschaftsschule BP 2004',
-			'BP 2004/Zertifikat fuer Profilfach',
-			'BP 2004/Beiblatt zur Projektpruefung HSA',
+			'BP 2004/Zertifikat fuer Profilfach', // TODO
+			'BP 2004/Beiblatt zur Projektpruefung HSA', // TODO
 		])) {
 			$class_subjects = block_exastud_get_class_subjects($class);
 
@@ -190,11 +206,19 @@ class printer {
 				'projekt_thema' => static::spacerIfEmpty(@$studentdata->projekt_thema),
 				'verbalbeurteilung' => static::spacerIfEmpty(''),
 				'comments_short' => static::spacerIfEmpty(@$studentdata->comments_short),
+				'teilnahme' => static::spacerIfEmpty(@$studentdata->teilnahme),
+				'bemerkungen' => static::spacerIfEmpty(@$studentdata->teilnahme),
 			];
 
 			$placeholder = 'ph'.time();
 
-			$filters[] = function($content) use ($placeholder) {
+			if ($template == 'BP 2004/Jahreszeugnis Klasse 10 der Gemeinschaftsschule E-Niveau') {
+				$grades = ['', 'sgt', 'gut', 'bfr', 'ausr', 'mgh', 'ung'];
+			} else {
+				$grades = ['', 'sehr gut', 'gut', 'befriedigend', 'ausreichend', 'mangelhaft', 'ungenügend'];
+			}
+
+			$add_filter(function($content) use ($placeholder) {
 				$ret = preg_replace('!>\s*(sgt|sehr gut)\s*<!', '>'.$placeholder.'note<', $content, -1, $count);
 
 				/*
@@ -204,7 +228,7 @@ class printer {
 				*/
 
 				return $ret;
-			};
+			});
 
 			// noten
 			foreach ($class_subjects as $subject) {
@@ -229,42 +253,126 @@ class printer {
 						}
 					}
 					$gradeSearch = 'Ethik';
+					$dropdownsBetween = 1;
 				} elseif (strpos($subject->title, 'Wahlpflichtfach') === 0) {
+					if (!@$subjectData->grade) {
+						continue;
+					}
 					$gradeSearch = 'Wahlpflicht';
 					$wahlpflichtfach = preg_replace('!^[^\s]+!', '', $subject->title);
+					// hier ist 1 dropdown dazwischen erlabt (wahlpflichtfach name dropdown)
+					$dropdownsBetween = 1;
 				} elseif (strpos($subject->title, 'Profilfach') === 0) {
+					if (!@$subjectData->grade) {
+						continue;
+					}
 					$gradeSearch = 'Profilfach';
 					$profilfach = preg_replace('!^[^\s]+!', '', $subject->title);
+					// hier ist 1 dropdown dazwischen erlabt (profilfach name dropdown)
+					$dropdownsBetween = 1;
 				} else {
-					$gradeSearch = $subject->title;
+					$gradeSearch = '>'.$subject->title.'<';
+					$dropdownsBetween = 0;
 				}
 
-				$grade = @$subjectData->grade;
 				// einfach die erste zahl nehmen und dann durch text ersetzen
+				$grade = @$grades[substr(@$subjectData->grade, 0, 1)];
 
-				if ($template == 'BP 2004/Jahreszeugnis Klasse 10 der Gemeinschaftsschule E-Niveau') {
-					$grade = str_replace([
-						'1', '2', '3', '4', '5', '6',
-					], [
-						'sgt', 'gut', 'bfr', 'ausr', 'mgh', 'ung',
-					], substr($grade, 0, 1));
-				} else {
-					$grade = str_replace([
-						'1', '2', '3', '4', '5', '6',
-					], [
-						'sehr gut', 'gut', 'befriedigend', 'ausreichend', 'mangelhaft', 'ungenügend',
-					], substr($grade, 0, 1));
-				}
+				// TEST:
+				// $grade = $subject->title.' '.$grade;
 
-				$filters[] = function($content) use ($gradeSearch, $grade, $placeholder) {
-					$ret = preg_replace('!('.preg_quote($gradeSearch, '!').'.*)'.$placeholder.'note!U', '$1'.$grade, $content, -1, $count);
+				$add_filter(['grade', $gradeSearch], function($content) use ($gradeSearch, $grade, $placeholder, $dropdownsBetween) {
+					if (!preg_match('!('.preg_quote($gradeSearch, '!').'.*)'.$placeholder.'note!U', $content, $matches)) {
+						return $content;
+					}
+
+					if (substr_count($matches[0], '<w:dropDownList') > ($dropdownsBetween + 1)) {
+						// da ist noch ein anderes dropdown dazwischen => fehler
+						return $content;
+					}
+
+					$ret = preg_replace('!('.preg_quote($gradeSearch, '!').'.*)'.$placeholder.'note!U', '${1}'.$grade, $content, 1, $count);
 
 					return $ret;
-				};
+				});
 			}
 
+
+			if ($template == 'BP 2004/Abgangszeugnis der Gemeinschaftsschule') {
+				$value = static::spacerIfEmpty(@$forminputs['wann_verlassen']['values'][@$studentdata->wann_verlassen]);
+				$add_filter(function($content) use ($placeholder, $value) {
+					$ret = preg_replace('!>[^<]*am Ende[^<]*<!U', '>'.$value.'<', $content, -1, $count);
+					if (!$count) {
+						throw new \Exception('"am Ende" not found');
+					}
+
+					return $ret;
+				});
+
+				$values = [
+					'G' => 'grundlegenden Niveau (G) beurteilt.',
+					'M' => 'mittleren Niveau (M) beurteilt.',
+					'E' => 'erweiteren Niveau (E) beurteilt.',
+				];
+				$value = static::spacerIfEmpty(@$values[@$studentdata->abgangszeugnis_niveau]);
+				$add_filter(function($content) use ($value) {
+					$ret = preg_replace('!>grundlegenden Niveau[^<]*<!U', '>'.$value.'<', $content, -1, $count);
+					if (!$count) {
+						throw new \Exception('"grundlegenden Niveau" not found');
+					}
+
+					return $ret;
+				});
+			} elseif ($template == 'BP 2004/Abgangszeugnis der Gemeinschaftsschule HSA Kl.9 und 10') {
+				$value = static::spacerIfEmpty(@$forminputs['wann_verlassen']['values'][@$studentdata->wann_verlassen]);
+				$add_filter(function($content) use ($placeholder, $value) {
+					$ret = preg_replace('!>[^<]*am Ende[^<]*<!U', '>'.$value.'<', $content, -1, $count);
+					if (!$count) {
+						throw new \Exception('"am Ende" not found');
+					}
+
+					return $ret;
+				});
+			} elseif ($template == 'BP 2004/Jahreszeugnis Klasse 10 der Gemeinschaftsschule E-Niveau') {
+				if (@$studentdata->verhalten) {
+					$value = @$forminputs['verhalten']['values'][$studentdata->verhalten];
+					$add_filter(function($content) use ($placeholder, $value) {
+						return preg_replace('!(Verhalten.*)'.$placeholder.'note!U', '${1}'.$value, $content, -1, $count);
+					});
+				}
+				if (@$studentdata->mitarbeit) {
+					$value = @$forminputs['mitarbeit']['values'][$studentdata->mitarbeit];
+					$add_filter(function($content) use ($placeholder, $value) {
+						return preg_replace('!(Mitarbeit.*)'.$placeholder.'note!U', '${1}'.$value, $content, -1, $count);
+					});
+				}
+			} elseif ($template == 'BP 2004/Hauptschulabschluszeugnis GMS BP 2004') {
+				$data['gd'] = @$studentdata->gesamtnote_und_durchschnitt_der_gesamtleistungen;
+
+				$values = [
+					'nach9' => 'hat die Hauptschulabschlussprüfung nach Klasse 9 der Gemeinschaftsschule mit Erfolg abge-legt.',
+					'nach10' => 'hat die Hauptschulabschlussprüfung nach Klasse 10 der Gemeinschaftsschule mit Erfolg abge-legt.',
+				];
+				$value = static::spacerIfEmpty(@$values[@$studentdata->abgelegt]);
+				$add_filter(function($content) use ($placeholder, $value) {
+					$ret = preg_replace('!>[^<]*mit Erfolg[^<]*<!U', '>'.$value.'<', $content, -1, $count);
+					if (!$count) {
+						throw new \Exception('mit erfolg not found');
+					}
+
+					return $ret;
+				});
+			}
+
+			if ($value = @$grades[@$studentdata->projekt_grade]) {
+				$add_filter(function($content) use ($placeholder, $value) {
+					return preg_replace('!(projekt_thema.*)'.$placeholder.'note!U', '${1}'.$value, $content, 1, $count);
+				});
+			};
+
+
 			// religion + wahlpflichtfach + profilfach dropdowns
-			$filters[] = function($content) use ($religion, $religion_sub) {
+			$add_filter(function($content) use ($religion, $religion_sub) {
 				$ret = preg_replace('!>\s*Ethik\s*<!U', '>'.$religion.'<', $content, -1, $count);
 
 				/*
@@ -274,9 +382,9 @@ class printer {
 				*/
 
 				return $ret;
-			};
-			$filters[] = function($content) use ($wahlpflichtfach) {
-				$ret = preg_replace('!(Wahlpflichtbereich.*>)Technik(<)!U', '$1'.$wahlpflichtfach.'$2', $content, -1, $count);
+			});
+			$add_filter(function($content) use ($wahlpflichtfach) {
+				$ret = preg_replace('!(Wahlpflichtbereich.*>)Technik(<)!U', '${1}'.$wahlpflichtfach.'${2}', $content, -1, $count);
 
 				/*
 				if (!$count) {
@@ -285,9 +393,9 @@ class printer {
 				*/
 
 				return $ret;
-			};
-			$filters[] = function($content) use ($profilfach) {
-				$ret = preg_replace('!(Profilfach.*>)Spanisch(<)!U', '$1'.$profilfach.'$2', $content, -1, $count);
+			});
+			$add_filter(function($content) use ($profilfach) {
+				$ret = preg_replace('!(Profilfach.*>)Spanisch(<)!U', '${1}'.$profilfach.'${2}', $content, -1, $count);
 
 				/*
 				if (!$count) {
@@ -296,11 +404,11 @@ class printer {
 				*/
 
 				return $ret;
-			};
+			});
 
-			$filters[] = function($content) use ($placeholder) {
+			$add_filter(function($content) use ($placeholder) {
 				return str_replace($placeholder.'note', '--', $content);
-			};
+			});
 		} elseif ($template == 'Anlage zum Lernentwicklungsbericht') {
 			$evalopts = g::$DB->get_records('block_exastudevalopt', null, 'sorting', 'id, title, sourceinfo');
 			$categories = block_exastud_get_class_categories_for_report($student->id, $class->id);
@@ -475,8 +583,8 @@ class printer {
 
 		// phpoffice doesn't know <i> and <b>
 		// it expects <strong> and <em>
-		$html = preg_replace('!(</?)b(>)!i', '$1strong$2', $html);
-		$html = preg_replace('!(</?)i(>)!i', '$1em$2', $html);
+		$html = preg_replace('!(</?)b(>)!i', '${1}strong${2}', $html);
+		$html = preg_replace('!(</?)i(>)!i', '${1}em${2}', $html);
 
 		\PhpOffice\PhpWord\Settings::setOutputEscapingEnabled(true);
 		\PhpOffice\PhpWord\Shared\Html::addHtml($element, $html);
