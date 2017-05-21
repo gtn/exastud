@@ -1,6 +1,7 @@
 v4.6.0
 * Delete Routine for exadelete Block
 * new Grade Reports for Final Grades
+* other new Reports (Abgangszeugnis, Abschlusszeugnis, Zertifikat Profilfach) 
 
 v4.5.1
 * bugfixes
