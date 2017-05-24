@@ -41,7 +41,7 @@ if ($type == BLOCK_EXASTUD_DATA_ID_LERN_UND_SOZIALVERHALTEN) {
 	];
 	$classheader = $class->title.' - '.block_exastud_trans('de:Lern- und Sozialverhalten');
 } else {
-	$categories = block_exastud_get_class_other_data_form_inputs($class, $type);
+	$categories = block_exastud_get_class_other_data_template_form_inputs($class, $type);
 	$classheader = $class->title.' - '.$type;
 }
 

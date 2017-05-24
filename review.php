@@ -134,7 +134,7 @@ function block_exastud_print_period($courseid, $period, $type) {
 						]), block_exastud_trans('de:Lern- und Sozialverhalten')),
 					];
 
-					$forms = block_exastud_get_class_other_data_forms($myclass);
+					$forms = block_exastud_get_class_other_data_templates($myclass);
 
 					foreach ($forms as $key => $value) {
 						$table->data[] = [

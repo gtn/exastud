@@ -48,7 +48,7 @@ class printer {
 
 		$certificate_issue_date = trim(get_config('exastud', 'certificate_issue_date'));
 		$studentdata = block_exastud_get_class_student_data($class->id, $student->id);
-		$forminputs = block_exastud_get_class_other_data_form_inputs($class, $template);
+		$forminputs = block_exastud_get_class_other_data_template_form_inputs($class, $template);
 
 		/*
 		if ($template == 'leb_alter_bp_hj') {
@@ -83,6 +83,17 @@ class printer {
 			$filters = array_merge([$filter], $filters);
 		};
 
+		// for all templates: filter schuljahr
+		$add_filter(function($content) {
+			if (date('m') >= 9) {
+				$year = date('y');
+			} else {
+				$year = date('y') - 1;
+			}
+
+			return preg_replace('!([^0-9])99([^0-9].{0,3000}[^0-9])99([^0-9])!U', '${1}'.$year.'${2}'.($year+1).'${3}', $content, 1, $count);
+		});
+
 		if ($template == 'Deckblatt und 1. Innenseite LEB') {
 			$data = [
 				'schule' => get_config('exastud', 'school_name'),
@@ -105,9 +116,9 @@ class printer {
 				'ort' => get_config('exastud', 'school_location'),
 				'name' => $student->firstname.' '.$student->lastname,
 				'klasse' => $class->title,
-				'certdate' => $certificate_issue_date,
+				'certda' => $certificate_issue_date,
 				'lern_und_sozialverhalten' => static::spacerIfEmpty($lern_soz),
-				'bemerkungen' => static::spacerIfEmpty(@$studentdata->comments),
+				'comments' => static::spacerIfEmpty(@$studentdata->comments),
 				'religion' => '---',
 				'profilfach' => '---',
 				'wahlpflichtfach' => '---',
@@ -179,9 +190,12 @@ class printer {
 			$dataTextReplacer['Bitte die Niveaustufe auswählen'] = 'Niveau ---';
 			$dataTextReplacer['ggf. Note'] = @$studentdata->print_grades ? 'Note ---' : '';
 		} elseif (in_array($template, [
+			'BP 2004/HalbjahreszeugnisRealschulabschluss an der Gemeinschaftsschule',
+			'BP 2004/Halbjahresinformation Klasse 10Gemeinschaftsschule_E-Niveau_BP 2004',
+			'BP 2004/HalbjahreszeugnisHauptschulabschluss an der Gemeinschaftsschule _BP alt',
 			'BP 2004/Jahreszeugnis Klasse 10 der Gemeinschaftsschule E-Niveau',
 			'BP 2004/Abgangszeugnis der Gemeinschaftsschule',
-			'BP 2004/Abgangszeugnis der Gemeinschaftsschule HSA Kl.9 und 10', // TODO
+			'BP 2004/Abgangszeugnis der Gemeinschaftsschule HSA Kl.9 und 10',
 			'BP 2004/Hauptschulabschluszeugnis GMS BP 2004',
 			'BP 2004/Realschulabschlusszeugnis an der Gemeinschaftsschule BP 2004',
 			'BP 2004/Zertifikat fuer Profilfach', // TODO
@@ -189,37 +203,35 @@ class printer {
 		])) {
 			$class_subjects = block_exastud_get_class_subjects($class);
 
-			$wahlpflichtfach = '---';
-			$profilfach = '---';
-			$religion = '---';
+			$wahlpflichtfach = static::spacerIfEmpty('');
+			$profilfach = static::spacerIfEmpty('');
+			$religion = static::spacerIfEmpty('');
 			$religion_sub = '';
 
 			$data = [
 				'schule' => get_config('exastud', 'school_name'),
+				'ort' => get_config('exastud', 'school_location'),
 				'name' => $student->firstname.' '.$student->lastname,
 				'kla' => $class->title,
 				'geburt' => block_exastud_get_custom_profile_field_value($student->id, 'dateofbirth'),
 				'certda' => $certificate_issue_date,
-				'certdate' => $certificate_issue_date,
 				'gebort' => static::spacerIfEmpty(block_exastud_get_custom_profile_field_value($student->id, 'placeofbirth')),
 				'ags' => static::spacerIfEmpty(@$studentdata->ags),
 				'projekt_thema' => static::spacerIfEmpty(@$studentdata->projekt_thema),
-				'verbalbeurteilung' => static::spacerIfEmpty(''),
 				'comments_short' => static::spacerIfEmpty(@$studentdata->comments_short),
-				'teilnahme' => static::spacerIfEmpty(@$studentdata->teilnahme),
-				'bemerkungen' => static::spacerIfEmpty(@$studentdata->teilnahme),
 			];
+
+			if ($template == 'BP 2004/Beiblatt zur Projektpruefung HSA') {
+				$data['projekt_verbalbeurteilung'] = static::spacerIfEmpty(@$studentdata->projekt_verbalbeurteilung);
+			}
 
 			$placeholder = 'ph'.time();
 
-			if ($template == 'BP 2004/Jahreszeugnis Klasse 10 der Gemeinschaftsschule E-Niveau') {
-				$grades = ['', 'sgt', 'gut', 'bfr', 'ausr', 'mgh', 'ung'];
-			} else {
-				$grades = ['', 'sehr gut', 'gut', 'befriedigend', 'ausreichend', 'mangelhaft', 'ungenügend'];
-			}
+			$grades = block_exastud_get_template_grade_scheme($template);
 
 			$add_filter(function($content) use ($placeholder) {
-				$ret = preg_replace('!>\s*(sgt|sehr gut)\s*<!', '>'.$placeholder.'note<', $content, -1, $count);
+				// im template 'BP 2004/Halbjahresinformation Klasse 10Gemeinschaftsschule_E-Niveau_BP 2004' ist der Standardwert "2 plus"
+				$ret = preg_replace('!>\s*(sgt|sehr gut|2 plus)\s*<!', '>'.$placeholder.'note<', $content, -1, $count);
 
 				/*
 				if (!$count) {
@@ -234,13 +246,19 @@ class printer {
 			foreach ($class_subjects as $subject) {
 				$subjectData = block_exastud_get_graded_review($class->id, $subject->id, $student->id);
 
-				if (!$subjectData) {
+				if (!$subjectData || !@$subjectData->grade) {
 					continue;
 				}
 
 				$subject->title = preg_replace('!\s*\(.*$!', '', $subject->title);
 
 				if (in_array($subject->shorttitle, ['RALE', 'RAK', 'ETH', 'REV', 'RISL', 'RJUED', 'RRK', 'ROR', 'RSYR'])) {
+					if ($religion != static::spacerIfEmpty('')) {
+						continue;
+						// only if there is still no religion set
+						// maybe there are 2 religion gradings? ignore the 2nd one
+					}
+
 					if ($subject->shorttitle == 'ETH') {
 						$religion = 'Ethik';
 						$religion_sub = '';
@@ -249,40 +267,48 @@ class printer {
 						if ($subject->shorttitle == 'RISL') {
 							$religion_sub = 'islamisch sunnitischer Prägung';
 						} else {
-							$religion_sub = strtolower(trim(str_replace('Religionslehre', '', $subject->title)));
+							// jüdische Relgigionslehre => jüdische
+							$religion_sub = mb_strtolower(trim(str_replace('Religionslehre', '', $subject->title)));
+							// jüdische => jüdisch
+							$religion_sub = rtrim($religion_sub, 'e');
+							// jüdisch => (jüdisch)
+							$religion_sub = '('.$religion_sub.')';
 						}
 					}
+
 					$gradeSearch = 'Ethik';
-					$dropdownsBetween = 1;
+					$dropdownsBetween = 1; // 1, weil es selber auch ein dropdown ist
 				} elseif (strpos($subject->title, 'Wahlpflichtfach') === 0) {
-					if (!@$subjectData->grade) {
-						continue;
-					}
 					$gradeSearch = 'Wahlpflicht';
 					$wahlpflichtfach = preg_replace('!^[^\s]+!', '', $subject->title);
-					// hier ist 1 dropdown dazwischen erlabt (wahlpflichtfach name dropdown)
+					// hier ist 1 dropdown dazwischen erlaubt (wahlpflichtfach name dropdown)
 					$dropdownsBetween = 1;
 				} elseif (strpos($subject->title, 'Profilfach') === 0) {
-					if (!@$subjectData->grade) {
-						continue;
-					}
 					$gradeSearch = 'Profilfach';
 					$profilfach = preg_replace('!^[^\s]+!', '', $subject->title);
-					// hier ist 1 dropdown dazwischen erlabt (profilfach name dropdown)
+					// hier ist 1 dropdown dazwischen erlaubt (profilfach name dropdown)
 					$dropdownsBetween = 1;
+				} elseif (in_array($subject->shorttitle, ['EWG', 'NWA'])) {
+					// hier den shorttitle suchen
+					$gradeSearch = $subject->shorttitle;
+					$dropdownsBetween = 0;
 				} else {
 					$gradeSearch = '>'.$subject->title.'<';
 					$dropdownsBetween = 0;
 				}
 
-				// einfach die erste zahl nehmen und dann durch text ersetzen
-				$grade = @$grades[substr(@$subjectData->grade, 0, 1)];
+				$grade = @$grades[@$subjectData->grade];
+				if (!$grade) {
+					// einfach die erste zahl nehmen und dann durch text ersetzen
+					$grade = @$grades[substr(@$subjectData->grade, 0, 1)];
+				}
 
 				// TEST:
 				// $grade = $subject->title.' '.$grade;
 
 				$add_filter(['grade', $gradeSearch], function($content) use ($gradeSearch, $grade, $placeholder, $dropdownsBetween) {
 					if (!preg_match('!('.preg_quote($gradeSearch, '!').'.*)'.$placeholder.'note!U', $content, $matches)) {
+						// var_dump(['fach nicht gefunden', $gradeSearch]);
 						return $content;
 					}
 
@@ -368,12 +394,12 @@ class printer {
 				$add_filter(function($content) use ($placeholder, $value) {
 					return preg_replace('!(projekt_thema.*)'.$placeholder.'note!U', '${1}'.$value, $content, 1, $count);
 				});
-			};
+			}
 
 
 			// religion + wahlpflichtfach + profilfach dropdowns
-			$add_filter(function($content) use ($religion, $religion_sub) {
-				$ret = preg_replace('!>\s*Ethik\s*<!U', '>'.$religion.'<', $content, -1, $count);
+			$add_filter(function($content) use ($religion, $religion_sub, $wahlpflichtfach, $profilfach) {
+				$content = preg_replace('!>\s*Ethik\s*<!U', '>'.$religion.'<', $content, 1, $count);
 
 				/*
 				if (!$count) {
@@ -381,10 +407,9 @@ class printer {
 				}
 				*/
 
-				return $ret;
-			});
-			$add_filter(function($content) use ($wahlpflichtfach) {
-				$ret = preg_replace('!(Wahlpflichtbereich.*>)Technik(<)!U', '${1}'.$wahlpflichtfach.'${2}', $content, -1, $count);
+				$content = preg_replace('!>\s*\(evangelisch\)\s*<!U', '>'.$religion_sub.'<', $content, 1, $count);
+
+				$content = preg_replace('!(Wahlpflichtbereich.*>)Technik(<)!U', '${1}'.$wahlpflichtfach.'${2}', $content, 1, $count);
 
 				/*
 				if (!$count) {
@@ -392,10 +417,7 @@ class printer {
 				}
 				*/
 
-				return $ret;
-			});
-			$add_filter(function($content) use ($profilfach) {
-				$ret = preg_replace('!(Profilfach.*>)Spanisch(<)!U', '${1}'.$profilfach.'${2}', $content, -1, $count);
+				$content = preg_replace('!(Profilfach.*>)Spanisch(<)!U', '${1}'.$profilfach.'${2}', $content, 1, $count);
 
 				/*
 				if (!$count) {
@@ -403,9 +425,10 @@ class printer {
 				}
 				*/
 
-				return $ret;
+				return $content;
 			});
 
+			// alle restlichen noten dropdowns zurücksetzen
 			$add_filter(function($content) use ($placeholder) {
 				return str_replace($placeholder.'note', '--', $content);
 			});
@@ -499,7 +522,6 @@ class printer {
 				$templateProcessor->deleteRow("topic");
 				$templateProcessor->deleteRow("descriptor");
 			}
-		} elseif ($template == 'BP 2004/Zertifikat fuer Profilfach') {
 		} else {
 			echo g::$OUTPUT->header();
 			echo block_exastud_trans(['de:Leider wurde die Dokumentvorlage "{$a}" nicht gefunden.', 'en:Template "{$a}" not found.'], $template);

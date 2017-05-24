@@ -1408,31 +1408,49 @@ function block_exastud_get_class_title($classid) {
 	return $classTitle;
 }
 
-function block_exastud_get_class_other_data_forms($class) {
+function block_exastud_get_class_other_data_templates($class) {
 	$bp = g::$DB->get_record('block_exastudbp', ['id' => $class->bpid]);
 	if ($bp->sourceinfo !== 'bw-bp2004') {
 		$templates['BP 2016/Lernentwicklungsbericht neuer BP'] = 'Lernentwicklungsbericht neu BP';
 	}
 	if ($bp->sourceinfo !== 'bw-bp2016') {
 		$templates['BP 2004/Lernentwicklungsbericht alter BP'] = 'Lernentwicklungsbericht alter BP';
+		$templates['BP 2004/HalbjahreszeugnisRealschulabschluss an der Gemeinschaftsschule'] = 'HalbjahreszeugnisRealschulabschluss an der Gemeinschaftsschule';
+		$templates['BP 2004/Halbjahresinformation Klasse 10Gemeinschaftsschule_E-Niveau_BP 2004'] = 'Halbjahresinformation Klasse 10Gemeinschaftsschule_E-Niveau_BP 2004';
+		$templates['BP 2004/HalbjahreszeugnisHauptschulabschluss an der Gemeinschaftsschule _BP alt'] = 'HalbjahreszeugnisHauptschulabschluss an der Gemeinschaftsschule _BP alt';
 		$templates['BP 2004/Jahreszeugnis Klasse 10 der Gemeinschaftsschule E-Niveau'] = 'Jahreszeugnis Klasse 10 der Gemeinschaftsschule E-Niveau';
 		$templates['BP 2004/Abgangszeugnis der Gemeinschaftsschule'] = 'Abgangszeugnis der Gemeinschaftsschule';
 		$templates['BP 2004/Abgangszeugnis der Gemeinschaftsschule HSA Kl.9 und 10'] = 'Abgangszeugnis der Gemeinschaftsschule HSA Kl.9 und 10';
 		$templates['BP 2004/Hauptschulabschluszeugnis GMS BP 2004'] = 'Hauptschulabschluszeugnis GMS BP 2004';
 		$templates['BP 2004/Realschulabschlusszeugnis an der Gemeinschaftsschule BP 2004'] = 'Realschulabschlusszeugnis an der Gemeinschaftsschule BP 2004';
-		$templates['BP 2004/Zertifikat fuer Profilfach'] = 'Zertifikat für Profilfach';
-		$templates['BP 2004/Beiblatt zur Projektpruefung HSA'] = 'Beiblatt zur Projektprüfung HSA';
+		// $templates['BP 2004/Zertifikat fuer Profilfach'] = 'Zertifikat für Profilfach';
+		// $templates['BP 2004/Beiblatt zur Projektpruefung HSA'] = 'Beiblatt zur Projektprüfung HSA';
 	}
 
 	return $templates;
 }
 
-function block_exastud_get_class_other_data_form_inputs($class, $template) {
-	if ($template == 'BP 2004/Jahreszeugnis Klasse 10 der Gemeinschaftsschule E-Niveau') {
-		$grades = ['', 'sgt', 'gut', 'bfr', 'ausr', 'mgh', 'ung'];
+function block_exastud_get_template_grade_scheme($template) {
+	if (in_array($template, [
+		'BP 2004/Jahreszeugnis Klasse 10 der Gemeinschaftsschule E-Niveau',
+		'BP 2004/HalbjahreszeugnisRealschulabschluss an der Gemeinschaftsschule',
+		'BP 2004/HalbjahreszeugnisHauptschulabschluss an der Gemeinschaftsschule _BP alt',
+	])) {
+		return ['', 'sgt', 'gut', 'bfr', 'ausr', 'mgh', 'ung'];
+	} elseif ($template == 'BP 2004/Halbjahresinformation Klasse 10Gemeinschaftsschule_E-Niveau_BP 2004') {
+		return [
+			'', '1', '2', '3', '4', '5', '6',
+			'2+' => '2 plus', '3+' => '3 plus', '4+' => '4 plus', '5+' => '5 plus', '6+' => '6 plus',
+			'1-' => '1 minus', '2-' => '2 minus', '3-' => '3 minus', '4-' => '4 minus', '5-' => '5 minus',
+			'1-2' => '1 - 2', '2-3' => '2 - 3', '3-4' => '3 - 4', '4-5' => '4 - 5', '5-6' => '5 - 6',
+		];
 	} else {
-		$grades = ['', 'sehr gut', 'gut', 'befriedigend', 'ausreichend', 'mangelhaft', 'ungenügend'];
+		return ['', 'sehr gut', 'gut', 'befriedigend', 'ausreichend', 'mangelhaft', 'ungenügend'];
 	}
+}
+
+function block_exastud_get_class_other_data_template_form_inputs($class, $template) {
+	$grades = block_exastud_get_template_grade_scheme($template);
 
 	if ($template == 'BP 2016/Lernentwicklungsbericht neuer BP' ||
 		$template == 'BP 2004/Lernentwicklungsbericht alter BP'
@@ -1455,7 +1473,7 @@ function block_exastud_get_class_other_data_form_inputs($class, $template) {
 				'type' => 'select',
 				'values' => [1 => 'sgt', 2 => 'gut', 3 => 'bfr', 6 => 'unbfr'],
 			],
-			'teilnahme' => [
+			'ags' => [
 				'title' => 'Teilnahme an Arbeitsgemeinschaften',
 			],
 			'comments_short' => [
@@ -1543,7 +1561,7 @@ function block_exastud_get_class_other_data_form_inputs($class, $template) {
 				'title' => 'Gesamtnote und Durchschnitt der Gesamtleistungen',
 				'type' => 'text',
 			],
-			'teilnahme' => [
+			'ags' => [
 				'title' => 'Teilnahme an Arbeitsgemeinschaften',
 			],
 			'comments_short' => [
@@ -1570,17 +1588,65 @@ function block_exastud_get_class_other_data_form_inputs($class, $template) {
 				'type' => 'textarea3lines',
 			],
 		];
+	} elseif ($template == 'BP 2004/Zertifikat fuer Profilfach') {
+		$inputs = [
+			'besondere_kompetenzen' => [
+				'title' => 'Besondere Kompetenzen in folgenden Bereichen erworben',
+				'type' => 'textarea',
+			],
+		];
+	} elseif ($template == 'BP 2004/Beiblatt zur Projektpruefung HSA') {
+		$inputs = [
+			'projekt_text3lines' => [
+				'title' => 'Projektthema',
+				'type' => 'textarea3lines',
+			],
+			'projekt_verbalbeurteilung' => [
+				'title' => 'Verbalbeurteilung',
+				'type' => 'textarea',
+			],
+			'projekt_grade' => [
+				'title' => 'Projektprüfung: Note',
+				'type' => 'select',
+				'values' => $grades,
+			],
+		];
+	} elseif ($template == 'BP 2004/HalbjahreszeugnisRealschulabschluss an der Gemeinschaftsschule') {
+		$inputs = [
+			'ags' => [
+				'title' => 'Teilnahme an Arbeitsgemeinschaften',
+				'type' => 'textarea3lines',
+			],
+			'comments_short' => [
+				'title' => 'Bemerkungen',
+				'type' => 'textarea3lines',
+			],
+		];
+	} elseif ($template == 'BP 2004/Halbjahresinformation Klasse 10Gemeinschaftsschule_E-Niveau_BP 2004') {
+		$inputs = [
+			'ags' => [
+				'title' => 'Teilnahme an Arbeitsgemeinschaften',
+				'type' => 'textarea3lines',
+			],
+			'comments_short' => [
+				'title' => 'Bemerkungen',
+				'type' => 'textarea3lines',
+			],
+		];
+	} elseif ($template == 'BP 2004/HalbjahreszeugnisHauptschulabschluss an der Gemeinschaftsschule _BP alt') {
+		$inputs = [
+			'ags' => [
+				'title' => 'Teilnahme an Arbeitsgemeinschaften',
+				'type' => 'textarea3lines',
+			],
+			'comments_short' => [
+				'title' => 'Bemerkungen',
+				'type' => 'textarea3lines',
+			],
+		];
 	} else {
 		$inputs = [];
 	}
-
-	/*
-	if ($bp->sourceinfo !== 'bw-bp2016') {
-		$templates['BP 2004/Hauptschulabschluszeugnis GMS BP 2004'] = 'Hauptschulabschluszeugnis GMS BP 2004';
-		$templates['BP 2004/Realschulabschlusszeugnis an der Gemeinschaftsschule BP 2004'] = 'Realschulabschlusszeugnis an der Gemeinschaftsschule BP 2004';
-		$templates['BP 2004/Zertifikat fuer Profilfach'] = 'Zertifikat für Profilfach';
-		$templates['BP 2004/Beiblatt zur Projektpruefung HSA'] = 'Beiblatt zur Projektprüfung HSA';
-	*/
 
 	return $inputs;
 }
