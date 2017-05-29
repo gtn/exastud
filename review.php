@@ -134,17 +134,13 @@ function block_exastud_print_period($courseid, $period, $type) {
 						]), block_exastud_trans('de:Lern- und Sozialverhalten')),
 					];
 
-					$forms = block_exastud_get_class_other_data_templates($myclass);
-
-					foreach ($forms as $key => $value) {
-						$table->data[] = [
-							html_writer::link(new moodle_url('/blocks/exastud/review_class_other_data.php', [
-								'courseid' => $courseid,
-								'classid' => $myclass->id,
-								'type' => $key,
-							]), $value),
-						];
-					}
+					$table->data[] = [
+						html_writer::link(new moodle_url('/blocks/exastud/review_class_other_data.php', [
+							'courseid' => $courseid,
+							'classid' => $myclass->id,
+							'type' => BLOCK_EXASTUD_DATA_ID_PRINT_TEMPLATE,
+						]), block_exastud_trans('de:Weitere Formularfelder')),
+					];
 				}
 			}
 

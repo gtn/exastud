@@ -153,6 +153,9 @@ if ($classid = optional_param('classid', 0, PARAM_INT)) {
 	$templates['html_report'] = 'Ausgabe am Bildschirm';
 	$templates['Deckblatt und 1. Innenseite LEB'] = 'Deckblatt und 1. Innenseite LEB';
 
+	$templates[BLOCK_EXASTUD_DATA_ID_PRINT_TEMPLATE] = 'Lernentwicklungsbericht / Abgangszeugnis';
+
+	/*
 	if ($bp->sourceinfo !== 'bw-bp2004') {
 		$templates['BP 2016/Lernentwicklungsbericht neuer BP 1.HJ'] = 'Lernentwicklungsbericht neuer BP 1.HJ';
 		$templates['BP 2016/Lernentwicklungsbericht neuer BP SJ'] = 'Lernentwicklungsbericht neuer BP SJ';
@@ -171,6 +174,7 @@ if ($classid = optional_param('classid', 0, PARAM_INT)) {
 		// $templates['BP 2004/Zertifikat fuer Profilfach'] = 'Zertifikat für Profilfach';
 		// $templates['BP 2004/Beiblatt zur Projektpruefung HSA'] = 'Beiblatt zur Projektprüfung HSA';
 	}
+	*/
 
 	if (block_exastud_is_exacomp_installed()) {
 		$templates['Anlage zum Lernentwicklungsbericht'] = 'Anlage zum Lernentwicklungsbericht';

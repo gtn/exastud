@@ -67,6 +67,7 @@ if ($type == 'students') {
 			'bildungsstandard_erreicht' => PARAM_TEXT,
 			'dropped_out' => PARAM_BOOL,
 			'head_teacher' => PARAM_INT,
+			'print_template' => PARAM_RAW,
 		]]);
 
 		foreach ($classstudents as $student) {
@@ -79,6 +80,7 @@ if ($type == 'students') {
 
 			block_exastud_set_class_student_data($class->id, $student->id, 'print_grades', $new->print_grades);
 			block_exastud_set_class_student_data($class->id, $student->id, 'head_teacher', $new->head_teacher);
+			block_exastud_set_class_student_data($class->id, $student->id, 'print_template', $new->print_template);
 
 			if (@$current->bildungsstandard_erreicht != @$new->bildungsstandard_erreicht) {
 				// set it, if changed
@@ -117,20 +119,21 @@ if ($type == 'students') {
 			block_exastud_trans('de:Note im Lern&shy;entwicklungs&shy;bericht ausweisen'),
 			block_exastud_trans('de:Bildungsstandard erreicht'),
 			block_exastud_trans('de:Ausgeschieden'),
+			block_exastud_trans('de:Zeugnis Formular'),
 		];
 
-		$table->align = array("left", "left", "left");
 		// $table->attributes['style'] = "width: 75%;";
-		$table->size = ['20%', '20%', '12%', '12%', '12%', '12%'];
+		$table->size = ['20%', '20%', '12%', '12%', '12%', '12%', '12%'];
 
 		if ($additional_head_teachers) {
 			$table->head[] = block_exastud_trans('de:Zuständiger Klassenlehrer');
-			$table->align[] = 'left';
 			$table->size[] = '12%';
 			$additional_head_teachers_select = array_map(function($teacher) {
 				return fullname($teacher);
 			}, $additional_head_teachers);
 		}
+
+		$available_templates = \block_exastud\print_template::get_class_available_print_templates($class);
 
 		foreach ($classstudents as $classstudent) {
 			$userdata = block_exastud_get_class_student_data($class->id, $classstudent->id);
@@ -164,10 +167,11 @@ if ($type == 'students') {
 				$print_grades,
 				$bildungsstandard,
 				$ausgeschieden,
+				html_writer::select($available_templates, 'userdatas['.$classstudent->id.'][print_template]', @$userdata->print_template, false),
 			];
 
 			if ($additional_head_teachers) {
-				$row[] = html_writer::select($additional_head_teachers_select, 'userdatas['.$classstudent->id.'][head_teacher]', @$userdata->head_teacher, fullname($USER));
+				$row[] = html_writer::select($additional_head_teachers_select, 'userdatas['.$classstudent->id.'][head_teacher]', block_exastud_get_student_print_templateid($class, $classstudent->id), fullname($USER));
 			}
 
 			$table->data[] = $row;

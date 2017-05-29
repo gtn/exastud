@@ -43,23 +43,31 @@ class printer {
 		return preg_replace('![^a-z]+!', '_', strtolower(trim($name)));
 	}
 
-	static function report_to_temp_file($class, $student, $template) {
+	static function report_to_temp_file($class, $student, $templateid) {
 		global $CFG;
 
 		$certificate_issue_date = trim(get_config('exastud', 'certificate_issue_date'));
 		$studentdata = block_exastud_get_class_student_data($class->id, $student->id);
-		$forminputs = block_exastud_get_class_other_data_template_form_inputs($class, $template);
+
+		if ($templateid == BLOCK_EXASTUD_DATA_ID_PRINT_TEMPLATE) {
+			$template = block_exastud_get_student_print_template($class, $student->id);
+			$templateid = $template->get_template_id();
+		} else {
+			$template = \block_exastud\print_template::create($templateid);
+		}
+
+		$forminputs = $template->get_inputs();
 
 		/*
-		if ($template == 'leb_alter_bp_hj') {
+		if ($templateid == 'leb_alter_bp_hj') {
 			return static::leb($class, $student);
 		}
 		*/
 
-		$templateFile = __DIR__.'/../template/'.$template.'.docx';
+		$templateFile = __DIR__.'/../template/'.$templateid.'.docx';
 
 		if (!file_exists($templateFile)) {
-			throw new \Exception("template $template not found");
+			throw new \Exception("template $templateid not found");
 		}
 
 		\PhpOffice\PhpWord\Settings::setTempDir($CFG->tempdir);
@@ -94,14 +102,14 @@ class printer {
 			return preg_replace('!([^0-9])99([^0-9].{0,3000}[^0-9])99([^0-9])!U', '${1}'.$year.'${2}'.($year+1).'${3}', $content, 1, $count);
 		});
 
-		if ($template == 'Deckblatt und 1. Innenseite LEB') {
+		if ($templateid == 'Deckblatt und 1. Innenseite LEB') {
 			$data = [
 				'schule' => get_config('exastud', 'school_name'),
 				'ort' => get_config('exastud', 'school_location'),
 				'name' => $student->firstname.' '.$student->lastname,
 				'geburtsdatum' => block_exastud_get_date_of_birth($student->id),
 			];
-		} elseif (in_array($template, [
+		} elseif (in_array($templateid, [
 			'BP 2016/Lernentwicklungsbericht neuer BP 1.HJ',
 			'BP 2016/Lernentwicklungsbericht neuer BP SJ',
 			'BP 2004/Lernentwicklungsbericht alter BP 1.HJ',
@@ -189,7 +197,7 @@ class printer {
 			// nicht befüllte niveaus und noten befüllen
 			$dataTextReplacer['Bitte die Niveaustufe auswählen'] = 'Niveau ---';
 			$dataTextReplacer['ggf. Note'] = @$studentdata->print_grades ? 'Note ---' : '';
-		} elseif (in_array($template, [
+		} elseif (in_array($templateid, [
 			'BP 2004/HalbjahreszeugnisRealschulabschluss an der Gemeinschaftsschule',
 			'BP 2004/Halbjahresinformation Klasse 10Gemeinschaftsschule_E-Niveau_BP 2004',
 			'BP 2004/HalbjahreszeugnisHauptschulabschluss an der Gemeinschaftsschule _BP alt',
@@ -221,13 +229,13 @@ class printer {
 				'comments_short' => static::spacerIfEmpty(@$studentdata->comments_short),
 			];
 
-			if ($template == 'BP 2004/Beiblatt zur Projektpruefung HSA') {
+			if ($templateid == 'BP 2004/Beiblatt zur Projektpruefung HSA') {
 				$data['projekt_verbalbeurteilung'] = static::spacerIfEmpty(@$studentdata->projekt_verbalbeurteilung);
 			}
 
 			$placeholder = 'ph'.time();
 
-			$grades = block_exastud_get_template_grade_scheme($template);
+			$grades = $template->get_grade_options();
 
 			$add_filter(function($content) use ($placeholder) {
 				// im template 'BP 2004/Halbjahresinformation Klasse 10Gemeinschaftsschule_E-Niveau_BP 2004' ist der Standardwert "2 plus"
@@ -324,7 +332,7 @@ class printer {
 			}
 
 
-			if ($template == 'BP 2004/Abgangszeugnis der Gemeinschaftsschule') {
+			if ($templateid == 'BP 2004/Abgangszeugnis der Gemeinschaftsschule') {
 				$value = static::spacerIfEmpty(@$forminputs['wann_verlassen']['values'][@$studentdata->wann_verlassen]);
 				$add_filter(function($content) use ($placeholder, $value) {
 					$ret = preg_replace('!>[^<]*am Ende[^<]*<!U', '>'.$value.'<', $content, -1, $count);
@@ -349,7 +357,7 @@ class printer {
 
 					return $ret;
 				});
-			} elseif ($template == 'BP 2004/Abgangszeugnis der Gemeinschaftsschule HSA Kl.9 und 10') {
+			} elseif ($templateid == 'BP 2004/Abgangszeugnis der Gemeinschaftsschule HSA Kl.9 und 10') {
 				$value = static::spacerIfEmpty(@$forminputs['wann_verlassen']['values'][@$studentdata->wann_verlassen]);
 				$add_filter(function($content) use ($placeholder, $value) {
 					$ret = preg_replace('!>[^<]*am Ende[^<]*<!U', '>'.$value.'<', $content, -1, $count);
@@ -359,7 +367,7 @@ class printer {
 
 					return $ret;
 				});
-			} elseif ($template == 'BP 2004/Jahreszeugnis Klasse 10 der Gemeinschaftsschule E-Niveau') {
+			} elseif ($templateid == 'BP 2004/Jahreszeugnis Klasse 10 der Gemeinschaftsschule E-Niveau') {
 				if (@$studentdata->verhalten) {
 					$value = @$forminputs['verhalten']['values'][$studentdata->verhalten];
 					$add_filter(function($content) use ($placeholder, $value) {
@@ -372,7 +380,7 @@ class printer {
 						return preg_replace('!(Mitarbeit.*)'.$placeholder.'note!U', '${1}'.$value, $content, -1, $count);
 					});
 				}
-			} elseif ($template == 'BP 2004/Hauptschulabschluszeugnis GMS BP 2004') {
+			} elseif ($templateid == 'BP 2004/Hauptschulabschluszeugnis GMS BP 2004') {
 				$data['gd'] = @$studentdata->gesamtnote_und_durchschnitt_der_gesamtleistungen;
 
 				$values = [
@@ -432,7 +440,7 @@ class printer {
 			$add_filter(function($content) use ($placeholder) {
 				return str_replace($placeholder.'note', '--', $content);
 			});
-		} elseif ($template == 'Anlage zum Lernentwicklungsbericht') {
+		} elseif ($templateid == 'Anlage zum Lernentwicklungsbericht') {
 			$evalopts = g::$DB->get_records('block_exastudevalopt', null, 'sorting', 'id, title, sourceinfo');
 			$categories = block_exastud_get_class_categories_for_report($student->id, $class->id);
 			$subjects = static::get_exacomp_subjects($student->id);
@@ -524,7 +532,7 @@ class printer {
 			}
 		} else {
 			echo g::$OUTPUT->header();
-			echo block_exastud_trans(['de:Leider wurde die Dokumentvorlage "{$a}" nicht gefunden.', 'en:Template "{$a}" not found.'], $template);
+			echo block_exastud_trans(['de:Leider wurde die Dokumentvorlage "{$a}" nicht gefunden.', 'en:Template "{$a}" not found.'], $templateid);
 			echo g::$OUTPUT->footer();
 			exit;
 		}
@@ -545,7 +553,7 @@ class printer {
 		$temp_file = tempnam($CFG->tempdir, 'exastud');
 		$templateProcessor->saveAs($temp_file);
 
-		$filename = ($certificate_issue_date ?: date('Y-m-d'))."-".ucfirst($template)."-{$class->title}-{$student->lastname}-{$student->firstname}.docx";
+		$filename = ($certificate_issue_date ?: date('Y-m-d'))."-".ucfirst($templateid)."-{$class->title}-{$student->lastname}-{$student->firstname}.docx";
 
 		return (object)[
 			'temp_file' => $temp_file,

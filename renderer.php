@@ -181,6 +181,8 @@ class block_exastud_renderer extends plugin_renderer_base {
 		$class_subjects = block_exastud_get_class_subjects($class);
 		$lern_soz = block_exastud_get_class_student_data($class->id, $student->id, BLOCK_EXASTUD_DATA_ID_LERN_UND_SOZIALVERHALTEN);
 
+		$template = block_exastud_get_student_print_template($class, $student->id);
+
 		$output = '<table id="review-table">';
 
 		$current_parent = null;
@@ -236,8 +238,9 @@ class block_exastud_renderer extends plugin_renderer_base {
 				$output .= (\block_exastud\global_config::get_niveau_option_title($subjectData->niveau) ?:$subjectData->niveau).'</div>';
 			}
 			if (@$subjectData->grade) {
-				$output .= '<div><b>'.block_exastud_trans('de:Note').':</b> ';
-				$output .= $subjectData->grade.'</div>';
+				$value = @$template->get_grade_options()[$subjectData->grade] ?: $subjectData->grade;
+
+				$output .= '<div><b>'.block_exastud_trans('de:Note').':</b> '.$value.'</div>';
 			}
 			$output .= '</td></tr>';
 		}

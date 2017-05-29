@@ -27,9 +27,10 @@ require_login($courseid);
 
 block_exastud_require_global_cap(BLOCK_EXASTUD_CAP_REVIEW);
 
-$class = block_exastud_get_review_class($classid, BLOCK_EXASTUD_SUBJECT_ID_OTHER_DATA);
+$reviewclass = block_exastud_get_review_class($classid, BLOCK_EXASTUD_SUBJECT_ID_OTHER_DATA);
+$class = block_exastud_get_class($classid);
 
-if (!$class) {
+if (!$reviewclass || !$class) {
 	print_error("badclass", "block_exastud");
 }
 
@@ -39,10 +40,17 @@ if ($type == BLOCK_EXASTUD_DATA_ID_LERN_UND_SOZIALVERHALTEN) {
 			'title' => block_exastud_trans('de:Lern- und Sozialverhalten'),
 		],
 	];
-	$classheader = $class->title.' - '.block_exastud_trans('de:Lern- und Sozialverhalten');
+	$classheader = $reviewclass->title.' - '.block_exastud_trans('de:Lern- und Sozialverhalten');
+} elseif ($type == BLOCK_EXASTUD_DATA_ID_PRINT_TEMPLATE) {
+	$categories = [
+		BLOCK_EXASTUD_DATA_ID_PRINT_TEMPLATE => [
+			'title' => block_exastud_trans('de:Weitere Formularfelder'),
+		],
+	];
+	$classheader = $reviewclass->title.' - '.block_exastud_trans('de:Weitere Formularfelder');
 } else {
-	$categories = block_exastud_get_class_other_data_template_form_inputs($class, $type);
-	$classheader = $class->title.' - '.$type;
+	$categories = [];
+	$classheader = $reviewclass->title.' - '.$type;
 }
 
 $output = block_exastud_get_renderer();
@@ -62,7 +70,7 @@ $table = new html_table();
 $table->head = array();
 $table->head[] = ''; //userpic
 $table->head[] = block_exastud_get_string('name');
-if (true) { // block_exastud_can_edit_class($class)) {
+if (true) { // block_exastud_can_edit_class($reviewclass)) {
 	$table->head[] = ''; // bewerten button
 }
 foreach ($categories as $category) {
@@ -72,7 +80,7 @@ foreach ($categories as $category) {
 $table->align = array();
 $table->align[] = 'center';
 $table->align[] = 'left';
-if (true) { // block_exastud_can_edit_class($class)) {
+if (true) { // block_exastud_can_edit_class($reviewclass)) {
 	$table->align[] = 'center';
 }
 
@@ -86,13 +94,13 @@ foreach ($classstudents as $classstudent) {
 	$row->cells[] = $OUTPUT->user_picture($classstudent, array("courseid" => $courseid));
 	$row->cells[] = $userdesc;
 
-	// if (true) { // block_exastud_can_edit_class($class)) {
+	// if (true) { // block_exastud_can_edit_class($reviewclass)) {
 	$editUser = null;
 	if (@$data['head_teacher']) {
 		$editUser = $DB->get_record('user', array('id' => $data['head_teacher']));
 	}
 	if (!$editUser) {
-		$editUser = $DB->get_record('user', array('id' => $class->userid));
+		$editUser = $DB->get_record('user', array('id' => $reviewclass->userid));
 	}
 
 	if ($editUser->id !== $USER->id) {
@@ -103,7 +111,24 @@ foreach ($classstudents as $classstudent) {
 	}
 
 	foreach ($categories as $dataid => $category) {
-		if (@$category['type'] == 'select') {
+		if ($dataid === BLOCK_EXASTUD_DATA_ID_PRINT_TEMPLATE) {
+			$template = block_exastud_get_student_print_template($class, $classstudent->id);
+
+			$content = '<div><b>Formular:</b> '.$template->get_name().'</div>';
+
+			foreach ($template->get_inputs() as $dataid => $form_input) {
+				if (@$form_input['type'] == 'select') {
+					$value = @$form_input['values'][$data[$dataid]];
+				} else {
+					$value = !empty($data[$dataid]) ? block_exastud_text_to_html($data[$dataid]) : '';
+				}
+
+				$content .= '<div style="padding-top: 10px; font-weight: bold;">'.$form_input['title'].'</div>';
+				$content .= '<div>'.$value.'</div>';
+			}
+
+			$row->cells[] = $content;
+		} elseif (@$category['type'] == 'select') {
 			$row->cells[] = @$category['values'][$data[$dataid]];
 		} else {
 			$row->cells[] = !empty($data[$dataid]) ? block_exastud_text_to_html($data[$dataid]) : '';
