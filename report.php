@@ -153,28 +153,7 @@ if ($classid = optional_param('classid', 0, PARAM_INT)) {
 	$templates['html_report'] = 'Ausgabe am Bildschirm';
 	$templates['Deckblatt und 1. Innenseite LEB'] = 'Deckblatt und 1. Innenseite LEB';
 
-	$templates[BLOCK_EXASTUD_DATA_ID_PRINT_TEMPLATE] = 'Lernentwicklungsbericht / Abgangszeugnis';
-
-	/*
-	if ($bp->sourceinfo !== 'bw-bp2004') {
-		$templates['BP 2016/Lernentwicklungsbericht neuer BP 1.HJ'] = 'Lernentwicklungsbericht neuer BP 1.HJ';
-		$templates['BP 2016/Lernentwicklungsbericht neuer BP SJ'] = 'Lernentwicklungsbericht neuer BP SJ';
-	}
-	if ($bp->sourceinfo !== 'bw-bp2016') {
-		$templates['BP 2004/Lernentwicklungsbericht alter BP 1.HJ'] = 'Lernentwicklungsbericht alter BP 1.HJ';
-		$templates['BP 2004/Lernentwicklungsbericht alter BP SJ'] = 'Lernentwicklungsbericht alter BP SJ';
-		$templates['BP 2004/HalbjahreszeugnisRealschulabschluss an der Gemeinschaftsschule'] = 'HalbjahreszeugnisRealschulabschluss an der Gemeinschaftsschule';
-		$templates['BP 2004/Halbjahresinformation Klasse 10Gemeinschaftsschule_E-Niveau_BP 2004'] = 'Halbjahresinformation Klasse 10Gemeinschaftsschule_E-Niveau_BP 2004';
-		$templates['BP 2004/HalbjahreszeugnisHauptschulabschluss an der Gemeinschaftsschule _BP alt'] = 'HalbjahreszeugnisHauptschulabschluss an der Gemeinschaftsschule _BP alt';
-		$templates['BP 2004/Jahreszeugnis Klasse 10 der Gemeinschaftsschule E-Niveau'] = 'Jahreszeugnis Klasse 10 der Gemeinschaftsschule E-Niveau';
-		$templates['BP 2004/Abgangszeugnis der Gemeinschaftsschule'] = 'Abgangszeugnis der Gemeinschaftsschule';
-		$templates['BP 2004/Abgangszeugnis der Gemeinschaftsschule HSA Kl.9 und 10'] = 'Abgangszeugnis der Gemeinschaftsschule HSA Kl.9 und 10';
-		$templates['BP 2004/Hauptschulabschluszeugnis GMS BP 2004'] = 'Hauptschulabschluszeugnis GMS BP 2004';
-		$templates['BP 2004/Realschulabschlusszeugnis an der Gemeinschaftsschule BP 2004'] = 'Realschulabschlusszeugnis an der Gemeinschaftsschule BP 2004';
-		// $templates['BP 2004/Zertifikat fuer Profilfach'] = 'Zertifikat für Profilfach';
-		// $templates['BP 2004/Beiblatt zur Projektpruefung HSA'] = 'Beiblatt zur Projektprüfung HSA';
-	}
-	*/
+	$templates[BLOCK_EXASTUD_DATA_ID_PRINT_TEMPLATE] = 'Zeugnis / Abgangszeugnis';
 
 	if (block_exastud_is_exacomp_installed()) {
 		$templates['Anlage zum Lernentwicklungsbericht'] = 'Anlage zum Lernentwicklungsbericht';

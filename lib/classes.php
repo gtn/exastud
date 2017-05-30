@@ -75,43 +75,23 @@ class print_template {
 		}
 
 		if (!$bp || $bp->sourceinfo !== 'bw-bp2004') {
-			$templates['BP 2016/Lernentwicklungsbericht neuer BP 1.HJ'] = 'LEB neuer BP 1.HJ';
-			$templates['BP 2016/Lernentwicklungsbericht neuer BP SJ'] = 'LEB neuer BP SJ';
+			$templates['BP 2016/Lernentwicklungsbericht neuer BP 1.HJ'] = 'BP 2016 GMS Zeugnis 1.HJ';
+			$templates['BP 2016/Lernentwicklungsbericht neuer BP SJ'] = 'BP 2016 GMS Zeugnis SJ';
 		}
 		if (!$bp || $bp->sourceinfo !== 'bw-bp2016') {
-			$templates['BP 2004/Lernentwicklungsbericht alter BP 1.HJ'] = 'LEB alter BP 1.HJ';
-			$templates['BP 2004/Lernentwicklungsbericht alter BP SJ'] = 'LEB alter BP SJ';
-			$templates['BP 2004/HalbjahreszeugnisRealschulabschluss an der Gemeinschaftsschule'] = 'Realschulabschluss GMS 1.HJ';
-			$templates['BP 2004/Realschulabschlusszeugnis an der Gemeinschaftsschule BP 2004'] = 'Realschulabschluss GMS SJ';
-			$templates['BP 2004/Halbjahresinformation Klasse 10Gemeinschaftsschule_E-Niveau_BP 2004'] = 'Klasse 10 GMS E-Niveau 1.HJ';
-			$templates['BP 2004/Jahreszeugnis Klasse 10 der Gemeinschaftsschule E-Niveau'] = 'Klasse 10 GMS E-Niveau SJ';
-			$templates['BP 2004/HalbjahreszeugnisHauptschulabschluss an der Gemeinschaftsschule _BP alt'] = 'Hauptschulabschluss GMS 1.HJ';
-			$templates['BP 2004/Hauptschulabschluszeugnis GMS BP 2004'] = 'Hauptschulabschluss GMS SJ';
-			$templates['BP 2004/Abgangszeugnis der Gemeinschaftsschule'] = 'Abgangszeugnis GMS';
-			$templates['BP 2004/Abgangszeugnis der Gemeinschaftsschule HSA Kl.9 und 10'] = 'Abgangszeugnis GMS HSA Kl.9 und 10';
+			$templates['BP 2004/Lernentwicklungsbericht alter BP 1.HJ'] = 'BP 2004 GMS Zeugnis 1. HJ';
+			$templates['BP 2004/Lernentwicklungsbericht alter BP SJ'] = 'BP 2004 GMS Zeugnis SJ';
+			$templates['BP 2004/HalbjahreszeugnisRealschulabschluss an der Gemeinschaftsschule'] = 'BP 2004 GMS Realschulabschluss 1.HJ';
+			$templates['BP 2004/Realschulabschlusszeugnis an der Gemeinschaftsschule BP 2004'] = 'BP 2004 GMS Realschulabschluss SJ';
+			$templates['BP 2004/Halbjahresinformation Klasse 10Gemeinschaftsschule_E-Niveau_BP 2004'] = 'BP 2004 GMS Klasse 10 E-Niveau 1.HJ';
+			$templates['BP 2004/Jahreszeugnis Klasse 10 der Gemeinschaftsschule E-Niveau'] = 'BP 2004 GMS Klasse 10 E-Niveau SJ';
+			$templates['BP 2004/HalbjahreszeugnisHauptschulabschluss an der Gemeinschaftsschule _BP alt'] = 'BP 2004 GMS Hauptschulabschluss 1.HJ';
+			$templates['BP 2004/Hauptschulabschluszeugnis GMS BP 2004'] = 'BP 2004 GMS Hauptschulabschluss SJ';
+			$templates['BP 2004/Abgangszeugnis der Gemeinschaftsschule'] = 'BP 2004 GMS Abgangszeugnis';
+			$templates['BP 2004/Abgangszeugnis der Gemeinschaftsschule HSA Kl.9 und 10'] = 'BP 2004 GMS Abgangszeugnis HSA Kl.9 und 10';
 			// $templates['BP 2004/Zertifikat fuer Profilfach'] = 'Zertifikat für Profilfach';
 			// $templates['BP 2004/Beiblatt zur Projektpruefung HSA'] = 'Beiblatt zur Projektprüfung HSA';
 		}
-		/*
-		if (!$bp || $bp->sourceinfo !== 'bw-bp2004') {
-			$templates['BP 2016/Lernentwicklungsbericht neuer BP 1.HJ'] = 'Lernentwicklungsbericht neuer BP 1.HJ';
-			$templates['BP 2016/Lernentwicklungsbericht neuer BP SJ'] = 'Lernentwicklungsbericht neuer BP SJ';
-		}
-		if (!$bp || $bp->sourceinfo !== 'bw-bp2016') {
-			$templates['BP 2004/Lernentwicklungsbericht alter BP 1.HJ'] = 'Lernentwicklungsbericht alter BP 1.HJ';
-			$templates['BP 2004/Lernentwicklungsbericht alter BP SJ'] = 'Lernentwicklungsbericht alter BP SJ';
-			$templates['BP 2004/HalbjahreszeugnisRealschulabschluss an der Gemeinschaftsschule'] = 'HalbjahreszeugnisRealschulabschluss an der Gemeinschaftsschule';
-			$templates['BP 2004/Halbjahresinformation Klasse 10Gemeinschaftsschule_E-Niveau_BP 2004'] = 'Halbjahresinformation Klasse 10Gemeinschaftsschule_E-Niveau_BP 2004';
-			$templates['BP 2004/HalbjahreszeugnisHauptschulabschluss an der Gemeinschaftsschule _BP alt'] = 'HalbjahreszeugnisHauptschulabschluss an der Gemeinschaftsschule _BP alt';
-			$templates['BP 2004/Jahreszeugnis Klasse 10 der Gemeinschaftsschule E-Niveau'] = 'Jahreszeugnis Klasse 10 der Gemeinschaftsschule E-Niveau';
-			$templates['BP 2004/Abgangszeugnis der Gemeinschaftsschule'] = 'Abgangszeugnis der Gemeinschaftsschule';
-			$templates['BP 2004/Abgangszeugnis der Gemeinschaftsschule HSA Kl.9 und 10'] = 'Abgangszeugnis der Gemeinschaftsschule HSA Kl.9 und 10';
-			$templates['BP 2004/Hauptschulabschluszeugnis GMS BP 2004'] = 'Hauptschulabschluszeugnis GMS BP 2004';
-			$templates['BP 2004/Realschulabschlusszeugnis an der Gemeinschaftsschule BP 2004'] = 'Realschulabschlusszeugnis an der Gemeinschaftsschule BP 2004';
-			// $templates['BP 2004/Zertifikat fuer Profilfach'] = 'Zertifikat für Profilfach';
-			// $templates['BP 2004/Beiblatt zur Projektpruefung HSA'] = 'Beiblatt zur Projektprüfung HSA';
-		}
-	 	*/
 
 		return $templates;
 	}
