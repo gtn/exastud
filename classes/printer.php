@@ -206,8 +206,8 @@ class printer {
 			'BP 2004/Abgangszeugnis der Gemeinschaftsschule HSA Kl.9 und 10',
 			'BP 2004/Hauptschulabschluszeugnis GMS BP 2004',
 			'BP 2004/Realschulabschlusszeugnis an der Gemeinschaftsschule BP 2004',
-			'BP 2004/Zertifikat fuer Profilfach', // TODO
-			'BP 2004/Beiblatt zur Projektpruefung HSA', // TODO
+			'BP 2004/Zertifikat fuer Profilfach',
+			'BP 2004/Beiblatt zur Projektpruefung HSA',
 		])) {
 			$class_subjects = block_exastud_get_class_subjects($class);
 
@@ -229,8 +229,10 @@ class printer {
 				'comments_short' => static::spacerIfEmpty(@$studentdata->comments_short),
 			];
 
-			if ($templateid == 'BP 2004/Beiblatt zur Projektpruefung HSA') {
-				$data['projekt_verbalbeurteilung'] = static::spacerIfEmpty(@$studentdata->projekt_verbalbeurteilung);
+			foreach ($template->get_inputs() as $inputid => $tmp) {
+				if (!isset($data[$inputid])) {
+					$data[$inputid] = static::spacerIfEmpty(@$studentdata->{$inputid});
+				}
 			}
 
 			$placeholder = 'ph'.time();
@@ -399,11 +401,11 @@ class printer {
 			}
 
 			if ($value = @$grades[@$studentdata->projekt_grade]) {
+				// im "Beiblatt zur Projektpruefung HSA" heisst das feld projet_text3lines
 				$add_filter(function($content) use ($placeholder, $value) {
-					return preg_replace('!(projekt_thema.*)'.$placeholder.'note!U', '${1}'.$value, $content, 1, $count);
+					return preg_replace('!((projekt_thema|projekt_text3lines).*)'.$placeholder.'note!U', '${1}'.$value, $content, 1, $count);
 				});
 			}
-
 
 			// religion + wahlpflichtfach + profilfach dropdowns
 			$add_filter(function($content) use ($religion, $religion_sub, $wahlpflichtfach, $profilfach) {

@@ -159,6 +159,8 @@ if ($classid = optional_param('classid', 0, PARAM_INT)) {
 		$templates['Anlage zum Lernentwicklungsbericht'] = 'Anlage zum Lernentwicklungsbericht';
 	}
 
+	$templates += \block_exastud\print_template::get_class_other_print_templates($class);
+
 	echo $output->header('report');
 	$classheader = block_exastud_get_period($class->periodid)->description.' - '.$class->title;
 	echo $output->heading($classheader);

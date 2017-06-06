@@ -55,11 +55,28 @@ class print_template {
 	}
 
 	static function get_all_available_print_templates() {
-		return static::_get_class_available_print_templates(null);
+		return static::_get_class_available_print_templates(null) + static::get_class_other_print_templates(null);
 	}
 
 	static function get_class_available_print_templates($class) {
 		return static::_get_class_available_print_templates($class);
+	}
+
+	static function get_class_other_print_templates($class) {
+		if ($class) {
+			$bp = g::$DB->get_record('block_exastudbp', ['id' => $class->bpid]);
+		} else {
+			$bp = null;
+		}
+
+		$templates = [];
+
+		if (!$bp || $bp->sourceinfo !== 'bw-bp2016') {
+			$templates['BP 2004/Zertifikat fuer Profilfach'] = 'Zertifikat für Profilfach';
+			$templates['BP 2004/Beiblatt zur Projektpruefung HSA'] = 'Beiblatt zur Projektprüfung HSA';
+		}
+
+		return $templates;
 	}
 
 	/**
@@ -89,8 +106,6 @@ class print_template {
 			$templates['BP 2004/Hauptschulabschluszeugnis GMS BP 2004'] = 'BP 2004 GMS Hauptschulabschluss SJ';
 			$templates['BP 2004/Abgangszeugnis der Gemeinschaftsschule'] = 'BP 2004 GMS Abgangszeugnis';
 			$templates['BP 2004/Abgangszeugnis der Gemeinschaftsschule HSA Kl.9 und 10'] = 'BP 2004 GMS Abgangszeugnis HSA Kl.9 und 10';
-			// $templates['BP 2004/Zertifikat fuer Profilfach'] = 'Zertifikat für Profilfach';
-			// $templates['BP 2004/Beiblatt zur Projektpruefung HSA'] = 'Beiblatt zur Projektprüfung HSA';
 		}
 
 		return $templates;
@@ -166,11 +181,13 @@ class print_template {
 				],
 				'ags' => [
 					'title' => 'Teilnahme an Arbeitsgemeinschaften',
-					'type' => 'textarea3lines',
+					'type' => 'textarea',
+					'lines' => 3,
 				],
 				'comments_short' => [
 					'title' => 'Bemerkungen',
-					'type' => 'textarea3lines',
+					'type' => 'textarea',
+					'lines' => 3,
 				],
 				'abgangszeugnis_niveau' => [
 					'title' => 'Die Leistung wurde in allen Fächern auf dem folgenden Niveau beurteilt',
@@ -199,11 +216,13 @@ class print_template {
 				],
 				'ags' => [
 					'title' => 'Teilnahme an Arbeitsgemeinschaften',
-					'type' => 'textarea3lines',
+					'type' => 'textarea',
+					'lines' => 3,
 				],
 				'comments_short' => [
 					'title' => 'Bemerkungen',
-					'type' => 'textarea3lines',
+					'type' => 'textarea',
+					'lines' => 3,
 				],
 			];
 		} elseif ($this->templateid == 'BP 2004/Hauptschulabschluszeugnis GMS BP 2004') {
@@ -249,11 +268,13 @@ class print_template {
 				],
 				'ags' => [
 					'title' => 'Teilnahme an Arbeitsgemeinschaften',
-					'type' => 'textarea3lines',
+					'type' => 'textarea',
+					'lines' => 3,
 				],
 				'comments_short' => [
 					'title' => 'Bemerkungen',
-					'type' => 'textarea3lines',
+					'type' => 'textarea',
+					'lines' => 3,
 				],
 			];
 		} elseif ($this->templateid == 'BP 2004/Zertifikat fuer Profilfach') {
@@ -261,17 +282,20 @@ class print_template {
 				'besondere_kompetenzen' => [
 					'title' => 'Besondere Kompetenzen in folgenden Bereichen erworben',
 					'type' => 'textarea',
+					'lines' => 13,
 				],
 			];
 		} elseif ($this->templateid == 'BP 2004/Beiblatt zur Projektpruefung HSA') {
 			$inputs = [
 				'projekt_text3lines' => [
 					'title' => 'Projektthema',
-					'type' => 'textarea3lines',
+					'type' => 'textarea',
+					'lines' => 3,
 				],
 				'projekt_verbalbeurteilung' => [
 					'title' => 'Verbalbeurteilung',
 					'type' => 'textarea',
+					'lines' => 5,
 				],
 				'projekt_grade' => [
 					'title' => 'Projektprüfung: Note',
@@ -283,33 +307,39 @@ class print_template {
 			$inputs = [
 				'ags' => [
 					'title' => 'Teilnahme an Arbeitsgemeinschaften',
-					'type' => 'textarea3lines',
+					'type' => 'textarea',
+					'lines' => 3,
 				],
 				'comments_short' => [
 					'title' => 'Bemerkungen',
-					'type' => 'textarea3lines',
+					'type' => 'textarea',
+					'lines' => 3,
 				],
 			];
 		} elseif ($this->templateid == 'BP 2004/Halbjahresinformation Klasse 10Gemeinschaftsschule_E-Niveau_BP 2004') {
 			$inputs = [
 				'ags' => [
 					'title' => 'Teilnahme an Arbeitsgemeinschaften',
-					'type' => 'textarea3lines',
+					'type' => 'textarea',
+					'lines' => 3,
 				],
 				'comments_short' => [
 					'title' => 'Bemerkungen',
-					'type' => 'textarea3lines',
+					'type' => 'textarea',
+					'lines' => 3,
 				],
 			];
 		} elseif ($this->templateid == 'BP 2004/HalbjahreszeugnisHauptschulabschluss an der Gemeinschaftsschule _BP alt') {
 			$inputs = [
 				'ags' => [
 					'title' => 'Teilnahme an Arbeitsgemeinschaften',
-					'type' => 'textarea3lines',
+					'type' => 'textarea',
+					'lines' => 3,
 				],
 				'comments_short' => [
 					'title' => 'Bemerkungen',
-					'type' => 'textarea3lines',
+					'type' => 'textarea',
+					'lines' => 3,
 				],
 			];
 		} else {

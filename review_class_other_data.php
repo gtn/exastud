@@ -49,8 +49,9 @@ if ($type == BLOCK_EXASTUD_DATA_ID_LERN_UND_SOZIALVERHALTEN) {
 	];
 	$classheader = $reviewclass->title.' - '.block_exastud_trans('de:Weitere Formularfelder');
 } else {
-	$categories = [];
-	$classheader = $reviewclass->title.' - '.$type;
+	$template = \block_exastud\print_template::create($type);
+	$categories = $template->get_inputs();
+	$classheader = $reviewclass->title.' - '.$template->get_name();
 }
 
 $output = block_exastud_get_renderer();
@@ -105,6 +106,9 @@ foreach ($classstudents as $classstudent) {
 
 	if ($editUser->id !== $USER->id) {
 		$row->cells[] = block_exastud_trans(['de:Zugeteilt zu {$a}'], fullname($editUser));
+	} elseif (!$categories || !@array_shift(array_keys($categories)) === BLOCK_EXASTUD_DATA_ID_PRINT_TEMPLATE && !block_exastud_get_student_print_template($class, $classstudent->id)->get_inputs()) {
+		// no categories, or it's a default printtemplate with no inputs
+		$row->cells[] = block_exastud_trans(['de:Dieses Formular hat keine weiteren Eingabfelder'], fullname($editUser));
 	} else {
 		$row->cells[] = $output->link_button($CFG->wwwroot.'/blocks/exastud/review_student_other_data.php?courseid='.$courseid.'&classid='.$classid.'&type='.$type.'&studentid='.$classstudent->id,
 			block_exastud_get_string('edit'));

@@ -74,8 +74,9 @@ if ($type == BLOCK_EXASTUD_DATA_ID_LERN_UND_SOZIALVERHALTEN) {
 	$categories = block_exastud_get_student_print_template($class, $student->id)->get_inputs();
 	$classheader = $reviewclass->title.' - '.block_exastud_trans('de:Weitere Formularfelder');
 } else {
-	$categories = [];
-	$classheader = $reviewclass->title.' - '.$type;
+	$template = \block_exastud\print_template::create($type);
+	$categories = $template->get_inputs();
+	$classheader = $reviewclass->title.' - '.$template->get_name();
 }
 
 $olddata = (array)block_exastud_get_class_student_data($classid, $studentid);

@@ -186,18 +186,13 @@ class student_other_data_form extends moodleform {
 					$mform->addElement('static', '', '', $this->_customdata['modified']);
 				}
 
-				$mform->addElement('textarea', $dataid, '', ['cols' => 50, 'rows' => 10,
-					'class' => 'limit-input-length',
-					'style' => "width: 738px; height: 160px; resize: none; font-family: Arial !important; font-size: 11pt !important;",
-				]);
-				$mform->setType($dataid, PARAM_RAW);
-			} elseif ($input['type'] == 'textarea3lines') {
-				$mform->addElement('header', 'header_'.$dataid, $input['title']);
-				$mform->setExpanded('header_'.$dataid);
+				if (empty($input['lines'])) {
+					$input['lines'] = 8;
+				}
 
 				$mform->addElement('textarea', $dataid, '', ['cols' => 50, 'rows' => 10,
 					'class' => 'limit-input-length',
-					'style' => "width: 738px; height: 80px; resize: none; font-family: Arial !important; font-size: 11pt !important;",
+					'style' => "width: 738px; height: ".($input['lines'] * 20)."px; resize: none; font-family: Arial !important; font-size: 11pt !important;",
 				]);
 				$mform->setType($dataid, PARAM_RAW);
 			} elseif ($input['type'] == 'text') {
