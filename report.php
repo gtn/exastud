@@ -57,18 +57,36 @@ if ($classid = optional_param('classid', 0, PARAM_INT)) {
 		}
 
 		if ($printStudents && $template == 'html_report') {
+
+			$PAGE->set_pagelayout('embedded');
 			echo $output->header('report');
+
+			$classheader = block_exastud_get_period($class->periodid)->description.' - '.$class->title;
+			echo $output->heading($classheader);
 
 			foreach ($printStudents as $student) {
 				$studentdesc = $OUTPUT->user_picture($student, array("courseid" => $courseid)).' '.fullname($student);
 				echo $output->heading($studentdesc);
 
-				echo $output->print_student_report($class, $student);
+				echo $output->student_report($class, $student);
 
 				echo '<hr>';
 			}
 
-			echo $output->back_button(new moodle_url('report.php', ['courseid' => $courseid, 'classid' => $classid]));
+			// echo $output->back_button(new moodle_url('report.php', ['courseid' => $courseid, 'classid' => $classid]));
+			echo $output->footer();
+			exit;
+		}
+
+		if ($printStudents && $template == 'html_report_grades') {
+			$PAGE->set_pagelayout('embedded');
+			echo $output->header('report');
+
+			$classheader = block_exastud_get_period($class->periodid)->description.' - '.$class->title;
+			echo $output->heading($classheader);
+
+			echo $output->report_grades($class, $printStudents);
+
 			echo $output->footer();
 			exit;
 		}
@@ -151,6 +169,7 @@ if ($classid = optional_param('classid', 0, PARAM_INT)) {
 
 	$templates = [];
 	$templates['html_report'] = 'Ausgabe am Bildschirm';
+	$templates['html_report_grades'] = 'Notenübersicht';
 	$templates['Deckblatt und 1. Innenseite LEB'] = 'Deckblatt und 1. Innenseite LEB';
 
 	$templates[BLOCK_EXASTUD_DATA_ID_PRINT_TEMPLATE] = 'Zeugnis / Abgangszeugnis';
@@ -165,7 +184,7 @@ if ($classid = optional_param('classid', 0, PARAM_INT)) {
 	$classheader = block_exastud_get_period($class->periodid)->description.' - '.$class->title;
 	echo $output->heading($classheader);
 
-	echo '<form method="post">';
+	echo '<form method="post" id="report" target="_blank">';
 
 	echo block_exastud_trans(['de:Vorlage', 'en:Template']).': ';
 	echo html_writer::select($templates, 'template', $template, false);

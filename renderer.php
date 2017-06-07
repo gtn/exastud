@@ -134,18 +134,20 @@ class block_exastud_renderer extends plugin_renderer_base {
 		$content .= parent::header();
 		$content .= '<div id="block_exastud">';
 
-		if ($class && $tabtree->subtree['configuration_classes']->selected) {
-			// if (@$tabtree->subtree[$items[0]['id']]->selected && !empty($options['betweenTabRowsCallback'])) {
-			$subtree = $tabtree->subtree['configuration_classes']->subtree;
-			unset($tabtree->subtree['configuration_classes']->subtree);
+		if (g::$PAGE->pagelayout != 'embedded') {
+			if ($class && $tabtree->subtree['configuration_classes']->selected) {
+				// if (@$tabtree->subtree[$items[0]['id']]->selected && !empty($options['betweenTabRowsCallback'])) {
+				$subtree = $tabtree->subtree['configuration_classes']->subtree;
+				unset($tabtree->subtree['configuration_classes']->subtree);
 
-			$content .= $this->render($tabtree);
+				$content .= $this->render($tabtree);
 
-			$content .= $this->heading($class->title);
+				$content .= $this->heading($class->title);
 
-			$content .= $this->render(new tabtree($subtree));
-		} else {
-			$content .= $this->render($tabtree);
+				$content .= $this->render(new tabtree($subtree));
+			} else {
+				$content .= $this->render($tabtree);
+			}
 		}
 
 		return $content;
@@ -168,6 +170,7 @@ class block_exastud_renderer extends plugin_renderer_base {
 		return html_writer::table($table);
 	}
 
+	/*
 	function print_subtitle($content) {
 		return html_writer::tag("p", $content, array('class' => 'esr_subtitle'));
 	}
@@ -175,8 +178,9 @@ class block_exastud_renderer extends plugin_renderer_base {
 	function print_edit_link($link) {
 		return html_writer::tag("a", html_writer::tag("img", '', array('src' => 'pix/edit.png')), array('href' => $link, 'class' => 'ers_inlineicon'));
 	}
+	*/
 
-	function print_student_report($class, $student) {
+	function student_report($class, $student) {
 		$categories = block_exastud_get_class_categories_for_report($student->id, $class->id);
 		$class_subjects = block_exastud_get_class_subjects($class);
 		$lern_soz = block_exastud_get_class_student_data($class->id, $student->id, BLOCK_EXASTUD_DATA_ID_LERN_UND_SOZIALVERHALTEN);
@@ -248,6 +252,49 @@ class block_exastud_renderer extends plugin_renderer_base {
 		$output .= '</table>';
 
 		return $output;
+	}
+
+	function report_grades($class, $students) {
+		$subjects = block_exastud_get_bildungsplan_subjects($class->bpid);
+
+		ob_start();
+		?>
+		<style>
+			#result td, th {
+				text-align: center;
+				width: 40px;
+			}
+			#result td:first-child, th:first-child {
+				text-align: left;
+				width:auto;
+			}
+
+		</style>
+		<?php
+		echo '<table border="1" id="result">';
+
+		echo '<tr><th></th>';
+		foreach ($subjects as $subject) {
+			echo "<th>{$subject->shorttitle}</th>";
+		}
+		echo '</tr>';
+
+		foreach ($students as $student) {
+			echo "<tr><td>".fullname($student)."</td>";
+
+			foreach ($subjects as $subject) {
+				$subjectData = block_exastud_get_graded_review($class->id, $subject->id, $student->id);
+				$value = @$subjectData->grade;
+
+				echo "<td>{$value}</td>";
+			}
+
+			echo '</tr>';
+		}
+
+		echo '</table>';
+
+		return ob_get_clean();
 	}
 
 	function back_button($url) {

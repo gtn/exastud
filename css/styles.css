@@ -115,3 +115,8 @@
 	width: 95%;
 	height: 200px;
 }
+
+/* für reports */
+body[id^=page-blocks-exastud].pagelayout-embedded {
+	padding-top: 0;
+}
