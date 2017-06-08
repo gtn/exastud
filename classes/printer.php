@@ -99,7 +99,7 @@ class printer {
 				$year = date('y') - 1;
 			}
 
-			return preg_replace('!([^0-9])99([^0-9].{0,3000}[^0-9])99([^0-9])!U', '${1}'.$year.'${2}'.($year+1).'${3}', $content, 1, $count);
+			return preg_replace('!([^0-9])99([^0-9].{0,3000}[^0-9])99([^0-9])!U', '${1}'.$year.'${2}'.($year + 1).'${3}', $content, 1, $count);
 		});
 
 		if ($templateid == 'Deckblatt und 1. Innenseite LEB') {
@@ -532,6 +532,8 @@ class printer {
 				$templateProcessor->deleteRow("topic");
 				$templateProcessor->deleteRow("descriptor");
 			}
+		} elseif ($templateid == 'grades_report') {
+
 		} else {
 			echo g::$OUTPUT->header();
 			echo block_exastud_trans(['de:Leider wurde die Dokumentvorlage "{$a}" nicht gefunden.', 'en:Template "{$a}" not found.'], $templateid);
@@ -561,6 +563,115 @@ class printer {
 			'temp_file' => $temp_file,
 			'filename' => $filename,
 		];
+	}
+
+	static function grades_report($class, $students) {
+		global $CFG;
+
+		$students = array_merge($students,$students);
+
+		$templateid = 'grades_report';
+
+		$templateFile = __DIR__.'/../template/'.$templateid.'.docx';
+
+		if (!file_exists($templateFile)) {
+			throw new \Exception("template $templateid not found");
+		}
+
+		\PhpOffice\PhpWord\Settings::setTempDir($CFG->tempdir);
+		$templateProcessor = new TemplateProcessor($templateFile);
+
+
+		$templateProcessor->setValue('schule', get_config('exastud', 'school_name'));
+		$templateProcessor->setValue('periode', block_exastud_get_active_period()->description);
+		$templateProcessor->setValue('klasse', $class->title);
+		$templateProcessor->setValue('lehrer', fullname(g::$USER));
+		$templateProcessor->setValue('datum', date('d.m.Y'));
+
+		$class_subjects = block_exastud_get_bildungsplan_subjects($class->bpid);
+
+		// split normal and grouped subjects (page 2)
+		$normal_subjects = [];
+		$grouped_subjects = [];
+		foreach ($class_subjects as $subject) {
+			if (preg_match('!religi|ethi!i', $subject->title)) {
+				@$grouped_subjects['Religion / Ethik'][] = $subject;
+				$subject->shorttitle_stripped = $subject->shorttitle;
+			} elseif (preg_match('!^Wahlpflicht!i', $subject->title)) {
+				$subject->shorttitle_stripped = preg_replace('!^WPF\s+!i', '', $subject->shorttitle);
+				@$grouped_subjects['WPF'][] = $subject;
+			} elseif (preg_match('!^Profilfach!i', $subject->title)) {
+				$subject->shorttitle_stripped = preg_replace('!^Profil\s+!i', '', $subject->shorttitle);
+				@$grouped_subjects['Profil'][] = $subject;
+			} else {
+				$normal_subjects[] = $subject;
+			}
+		}
+
+
+		// page 1
+		foreach ($normal_subjects as $subject) {
+			$templateProcessor->setValue("s", $subject->shorttitle, 1);
+		}
+		$templateProcessor->setValue("s", '');
+
+		$templateProcessor->cloneRow('student', count($students));
+		$studenti = 0;
+		foreach ($students as $student) {
+			$studenti++;
+			$templateProcessor->setValue("student#$studenti", fullname($student));
+
+			foreach ($normal_subjects as $subject) {
+				$subjectData = block_exastud_get_graded_review($class->id, $subject->id, $student->id);
+
+				$value = $subjectData ? $subjectData->grade : '';
+				$templateProcessor->setValue("g#$studenti", $value, 1);
+			}
+			$templateProcessor->setValue("g#$studenti", '');
+		}
+
+
+		// page 2
+		foreach ($grouped_subjects as $key => $subjects) {
+			$templateProcessor->setValue("gs", $key, 1);
+		}
+		$templateProcessor->setValue("gs", '');
+
+		$templateProcessor->cloneRow('gsstudent', count($students));
+		$studenti = 0;
+		foreach ($students as $student) {
+			$studenti++;
+			$templateProcessor->setValue("gsstudent#$studenti", fullname($student));
+
+			foreach ($grouped_subjects as $subjects) {
+				$subjectData = null;
+
+				foreach ($subjects as $subject) {
+					$subjectData = block_exastud_get_graded_review($class->id, $subject->id, $student->id);
+
+					if ($subjectData && $subjectData->grade) {
+						break;
+					}
+				}
+
+				$value = $subjectData ? $subjectData->grade : '';
+				$templateProcessor->setValue("gsg#$studenti", $value, 1);
+				$templateProcessor->setValue("gss#$studenti", $value ? $subject->shorttitle_stripped : '', 1);
+			}
+
+			$templateProcessor->setValue("gsg#$studenti", '');
+			$templateProcessor->setValue("gss#$studenti", '');
+		}
+
+
+		// save as a random file in temp file
+		$temp_file = tempnam($CFG->tempdir, 'exastud');
+		$templateProcessor->saveAs($temp_file);
+
+		$filename = date('Y-m-d')."-".'Notenuebersicht'."-{$class->title}.docx";
+
+		require_once $CFG->dirroot.'/lib/filelib.php';
+		send_temp_file($temp_file, $filename);
 	}
 
 	/*
