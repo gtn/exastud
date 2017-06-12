@@ -568,7 +568,7 @@ class printer {
 	static function grades_report($class, $students) {
 		global $CFG;
 
-		$students = array_merge($students,$students);
+		$students = array_merge($students, $students);
 
 		$templateid = 'grades_report';
 
@@ -616,18 +616,18 @@ class printer {
 		$templateProcessor->setValue("s", '');
 
 		$templateProcessor->cloneRow('student', count($students));
-		$studenti = 0;
+		$rowi = 0;
 		foreach ($students as $student) {
-			$studenti++;
-			$templateProcessor->setValue("student#$studenti", fullname($student));
+			$rowi++;
+			$templateProcessor->setValue("student#$rowi", $rowi.'. '.fullname($student));
 
 			foreach ($normal_subjects as $subject) {
 				$subjectData = block_exastud_get_graded_review($class->id, $subject->id, $student->id);
 
 				$value = $subjectData ? $subjectData->grade : '';
-				$templateProcessor->setValue("g#$studenti", $value, 1);
+				$templateProcessor->setValue("g#$rowi", $value, 1);
 			}
-			$templateProcessor->setValue("g#$studenti", '');
+			$templateProcessor->setValue("g#$rowi", '');
 		}
 
 
@@ -638,10 +638,10 @@ class printer {
 		$templateProcessor->setValue("gs", '');
 
 		$templateProcessor->cloneRow('gsstudent', count($students));
-		$studenti = 0;
+		$rowi = 0;
 		foreach ($students as $student) {
-			$studenti++;
-			$templateProcessor->setValue("gsstudent#$studenti", fullname($student));
+			$rowi++;
+			$templateProcessor->setValue("gsstudent#$rowi", $rowi.'. '.fullname($student));
 
 			foreach ($grouped_subjects as $subjects) {
 				$subjectData = null;
@@ -655,13 +655,55 @@ class printer {
 				}
 
 				$value = $subjectData ? $subjectData->grade : '';
-				$templateProcessor->setValue("gsg#$studenti", $value, 1);
-				$templateProcessor->setValue("gss#$studenti", $value ? $subject->shorttitle_stripped : '', 1);
+				$templateProcessor->setValue("gsg#$rowi", $value, 1);
+				$templateProcessor->setValue("gss#$rowi", $value ? $subject->shorttitle_stripped : '', 1);
 			}
 
-			$templateProcessor->setValue("gsg#$studenti", '');
-			$templateProcessor->setValue("gss#$studenti", '');
+			$templateProcessor->setValue("gsg#$rowi", '');
+			$templateProcessor->setValue("gss#$rowi", '');
 		}
+
+
+		// page 3
+		$class_teachers = block_exastud_get_class_subject_teachers($class->id);
+		$templateProcessor->cloneRow('sshort', count($class_teachers));
+		$rowi = 0;
+		foreach ($class_teachers as $class_teacher) {
+			$rowi++;
+
+			$subject = $class_subjects[$class_teacher->subjectid];
+			$templateProcessor->setValue("sshort#$rowi", $subject->shorttitle);
+			$templateProcessor->setValue("stitle#$rowi", $subject->title);
+			$templateProcessor->setValue("steacher#$rowi", fullname($class_teacher));
+		}
+
+
+		// image
+		// disable for now
+		/*
+		if ($logo = block_exastud_get_main_logo()) {
+			$image = $logo->copy_content_to_temp();
+			$size = @getimagesize($image);
+
+			if ($size) {
+				$templateProcessor->updateFile('word/media/image1.png', $image);
+
+				$templateProcessor->applyFiltersAllParts([function($content) use ($size) {
+					return preg_replace_callback('!<wp:extent cx="(?<viewportcx>[0-9]*)" cy="(?<viewportcy>[0-9]*)".*name="Picture [12]".*cx="(?<cx>[0-9]*)" cy="(?<cy>[0-9]*)"!U', function($matches) use ($size) {
+						if ($size[0] / $size[1] > $matches['cx'] / $matches['cy']) {
+							$w = round($matches['cx']);
+							$h = round($matches['cx'] / $size[0] * $size[1]);
+						} else {
+							$w = round($matches['cy'] / $size[1] * $size[0]);
+							$h = round($matches['cy']);
+						}
+
+						return str_replace([$matches['cx'], $matches['cy'], $matches['viewportcx'], $matches['viewportcy']], [$w, $h, $w, $h], $matches[0]);
+					}, $content);
+				}]);
+			}
+		}
+		*/
 
 
 		// save as a random file in temp file
@@ -669,6 +711,7 @@ class printer {
 		$templateProcessor->saveAs($temp_file);
 
 		$filename = date('Y-m-d')."-".'Notenuebersicht'."-{$class->title}.docx";
+
 
 		require_once $CFG->dirroot.'/lib/filelib.php';
 		send_temp_file($temp_file, $filename);
@@ -1207,6 +1250,14 @@ class TemplateProcessor extends \PhpOffice\PhpWord\TemplateProcessor {
 		}
 	}
 
+	function applyFiltersAllParts($filters) {
+		foreach ($filters as $filter) {
+			$this->tempDocumentHeaders = $filter($this->tempDocumentHeaders);
+			$this->tempDocumentMainPart = $filter($this->tempDocumentMainPart);
+			$this->tempDocumentFooters = $filter($this->tempDocumentFooters);
+		}
+	}
+
 	function replaceWords($data) {
 		foreach ($data as $key => $value) {
 			$this->tempDocumentMainPart = str_replace('>'.$key.'<', '>'.$value.'<', $this->tempDocumentMainPart);
@@ -1401,5 +1452,9 @@ class TemplateProcessor extends \PhpOffice\PhpWord\TemplateProcessor {
 		}
 
 		return $xmlEscaper->escape($str);
+	}
+
+	function updateFile($filename, $path) {
+		return $this->zipClass->addFromString($filename, file_get_contents($path));
 	}
 }
