@@ -1419,6 +1419,11 @@ function block_exastud_get_student_print_templateid($class, $userid) {
 	return $templateid;
 }
 
+/**
+ * @param $class
+ * @param $userid
+ * @return block_exastud\print_template
+ */
 function block_exastud_get_student_print_template($class, $userid) {
 	$templateid = block_exastud_get_student_print_templateid($class, $userid);
 

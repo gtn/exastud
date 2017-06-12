@@ -105,8 +105,17 @@ if ($type == 'students') {
 		}
 	}
 
+	$buttons_left = '';
+	$buttons_left .= $output->link_button($CFG->wwwroot.'/blocks/exastud/configuration_classmembers.php?courseid='.$courseid.'&classid='.$class->id,
+		block_exastud_get_string('editclassmemberlist'));
+
+	$buttons_left .= $output->link_button($CFG->wwwroot.'/blocks/exastud/configuration_classmembers_courses.php?courseid='.$courseid.'&classid='.$class->id,
+		block_exastud_trans(['de:Aus Kurs hinzufügen', 'en:Add from Course']));
+
 	if (!$classstudents) {
 		echo $OUTPUT->notification(block_exastud_get_string('no_entries_found'), 'notifymessage');
+
+		echo $buttons_left;
 	} else {
 		$table = new html_table();
 
@@ -167,7 +176,7 @@ if ($type == 'students') {
 				$print_grades,
 				$bildungsstandard,
 				$ausgeschieden,
-				html_writer::select($available_templates, 'userdatas['.$classstudent->id.'][print_template]', @$userdata->print_template, false),
+				html_writer::select($available_templates, 'userdatas['.$classstudent->id.'][print_template]', block_exastud_get_student_print_templateid($class, $classstudent->id), false),
 			];
 
 			if ($additional_head_teachers) {
@@ -183,16 +192,14 @@ if ($type == 'students') {
 
 		echo $output->table($table);
 
-		echo '<div style="text-align: right;"><input type="submit" value="'.block_exastud_get_string('savechanges').'"/></div>';
+		echo '<table style="width: 100%;"><tr><td>';
+		echo $buttons_left;
+		echo '</td><td style="text-align: right;">';
+		echo '<input type="submit" value="'.block_exastud_get_string('savechanges').'"/>';
+		echo '</td></tr></table>';
 
 		echo '</form>';
 	}
-
-	echo $output->link_button($CFG->wwwroot.'/blocks/exastud/configuration_classmembers.php?courseid='.$courseid.'&classid='.$class->id,
-		block_exastud_get_string('editclassmemberlist'));
-
-	echo $output->link_button($CFG->wwwroot.'/blocks/exastud/configuration_classmembers_courses.php?courseid='.$courseid.'&classid='.$class->id,
-		block_exastud_trans(['de:Aus Kurs hinzufügen', 'en:Add from Course']));
 }
 
 /* Print the Classes */

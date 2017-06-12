@@ -201,10 +201,6 @@ function xmldb_block_exastud_upgrade($oldversion = 0) {
 		upgrade_block_savepoint(true, 2016022401, 'exastud');
 	}
 
-	if ($oldversion < 2016031100) {
-		block_exastud_check_profile_fields();
-	}
-
 	if ($oldversion < 2016042900) {
 
 		// Define field subjectid to be added to block_exastuddata.
@@ -303,6 +299,7 @@ function xmldb_block_exastud_upgrade($oldversion = 0) {
     }
 
 	block_exastud_insert_default_entries(true);
+	block_exastud_check_profile_fields();
 
 	return $result;
 }

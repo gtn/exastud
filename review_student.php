@@ -182,7 +182,7 @@ if ($fromform = $studentform->get_data()) {
 	redirect($returnurl);
 }
 
-$classheader = $reviewclass->title.($reviewclass->subject_title ? ' - '.$reviewclass->subject_title : '');
+$classheader = $reviewclass->title.($reviewclass->subject_title ? ' - '.$reviewclass->subject_title : '').' - '.$template->get_name();
 
 echo $output->header(array('review',
 	array('name' => $classheader, 'link' => $CFG->wwwroot.'/blocks/exastud/review_class.php?courseid='.$courseid.
