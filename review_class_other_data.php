@@ -104,9 +104,15 @@ foreach ($classstudents as $classstudent) {
 		$editUser = $DB->get_record('user', array('id' => $reviewclass->userid));
 	}
 
+	if (@array_shift(array_keys($categories)) === BLOCK_EXASTUD_DATA_ID_PRINT_TEMPLATE) {
+		$hasInputs = !!block_exastud_get_student_print_template($class, $classstudent->id)->get_inputs();
+	} else {
+		$hasInputs = !!$categories;
+	}
+
 	if ($editUser->id !== $USER->id) {
 		$row->cells[] = block_exastud_trans(['de:Zugeteilt zu {$a}'], fullname($editUser));
-	} elseif (!$categories || !@array_shift(array_keys($categories)) === BLOCK_EXASTUD_DATA_ID_PRINT_TEMPLATE && !block_exastud_get_student_print_template($class, $classstudent->id)->get_inputs()) {
+	} elseif (!$hasInputs) {
 		// no categories, or it's a default printtemplate with no inputs
 		$row->cells[] = block_exastud_trans(['de:Dieses Formular hat keine weiteren Eingabfelder'], fullname($editUser));
 	} else {

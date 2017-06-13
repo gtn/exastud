@@ -125,22 +125,25 @@ if ($type == 'students') {
 			block_exastud_trans('de:Geschlecht'),
 			block_exastud_trans('de:Geburtsdatum'),
 			block_exastud_trans('de:Geburtsort'),
-			block_exastud_trans('de:Note im Lern&shy;entwicklungs&shy;bericht ausweisen'),
-			block_exastud_trans('de:Bildungsstandard erreicht'),
-			block_exastud_trans('de:Ausgeschieden'),
-			block_exastud_trans('de:Zeugnis Formular'),
 		];
 
 		// $table->attributes['style'] = "width: 75%;";
-		$table->size = ['20%', '20%', '12%', '12%', '12%', '12%', '12%'];
+		// $table->size = ['20%', '20%', '12%', '12%', '12%', '12%', '12%'];
 
 		if ($additional_head_teachers) {
 			$table->head[] = block_exastud_trans('de:Zuständiger Klassenlehrer');
-			$table->size[] = '12%';
 			$additional_head_teachers_select = array_map(function($teacher) {
 				return fullname($teacher);
 			}, $additional_head_teachers);
 		}
+
+		$table->head = array_merge($table->head, [
+			block_exastud_trans('de:Lehrkraft für Projektprüfung'),
+			block_exastud_trans('de:Zeugnis Formular'),
+			block_exastud_trans('de:Note im Lern&shy;entwicklungs&shy;bericht ausweisen'),
+			block_exastud_trans('de:Bildungsstandard erreicht'),
+			block_exastud_trans('de:Ausgeschieden'),
+		]);
 
 		$available_templates = \block_exastud\print_template::get_class_available_print_templates($class);
 
@@ -173,15 +176,27 @@ if ($type == 'students') {
 				$gender,
 				block_exastud_get_date_of_birth($classstudent->id),
 				block_exastud_get_custom_profile_field_value($classstudent->id, 'placeofbirth'),
-				$print_grades,
-				$bildungsstandard,
-				$ausgeschieden,
-				html_writer::select($available_templates, 'userdatas['.$classstudent->id.'][print_template]', block_exastud_get_student_print_templateid($class, $classstudent->id), false),
 			];
 
 			if ($additional_head_teachers) {
-				$row[] = html_writer::select($additional_head_teachers_select, 'userdatas['.$classstudent->id.'][head_teacher]', block_exastud_get_student_print_templateid($class, $classstudent->id), fullname($USER));
+				$row[] = html_writer::select($additional_head_teachers_select, 'userdatas['.$classstudent->id.'][head_teacher]', @$userdata->head_teacher, fullname($USER));
 			}
+
+			$project_teachers = [];
+			foreach (block_exastud_get_class_teachers($classid) as $teacher) {
+				if ($teacher->id !== $class->userid) {
+					$project_teachers[$teacher->id] = fullname($teacher);
+				}
+			}
+			natsort($project_teachers);
+
+			$row = array_merge($row, [
+				html_writer::select($project_teachers, 'userdatas['.$classstudent->id.'][project_teacher]', @$userdata->project_teacher, fullname($USER)),
+				html_writer::select($available_templates, 'userdatas['.$classstudent->id.'][print_template]', block_exastud_get_student_print_templateid($class, $classstudent->id), false),
+				$print_grades,
+				$bildungsstandard,
+				$ausgeschieden,
+			]);
 
 			$table->data[] = $row;
 		}

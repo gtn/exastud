@@ -46,6 +46,10 @@ class class_edit_form extends moodleform {
 			g::$OUTPUT->notification(block_exastud_trans(['de:Bitte beachten Sie: Bei einer Änderung des Bildungsplans müssen alle Bewertungen erneut eingegeben werden.', 'en:']), 'notifymessage')
 		);
 
+		$templates = \block_exastud\print_template::get_all_available_print_templates();
+		$mform->addElement('select', BLOCK_EXASTUD_DATA_ID_CLASS_DEFAULT_TEMPLATEID, block_exastud_trans('de:Standard Zeugnisformular').':', $templates);
+
+
 		/*
 		$subjects = $DB->get_records_menu('block_exastudsubjects', null, 'title', 'id, title');
 		$select = $mform->addElement('select', 'mysubjectids', block_exastud_get_string('subjects_taught_by_me'), $subjects);

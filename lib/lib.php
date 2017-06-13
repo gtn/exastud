@@ -40,6 +40,7 @@ const BLOCK_EXASTUD_CAP_REVIEW = 'review';
 const BLOCK_EXASTUD_DATA_ID_LERN_UND_SOZIALVERHALTEN = 'learning_and_social_behavior';
 const BLOCK_EXASTUD_DATA_ID_UNLOCKED_TEACHERS = 'unlocked_teachers';
 const BLOCK_EXASTUD_DATA_ID_PRINT_TEMPLATE = 'print_template';
+const BLOCK_EXASTUD_DATA_ID_CLASS_DEFAULT_TEMPLATEID = 'default_templateid';
 
 const BLOCK_EXASTUD_SUBJECT_ID_LERN_UND_SOZIALVERHALTEN = -1;
 const BLOCK_EXASTUD_SUBJECT_ID_LERN_UND_SOZIALVERHALTEN_VORSCHLAG = -3;
@@ -1412,11 +1413,16 @@ function block_exastud_get_class_title($classid) {
 function block_exastud_get_student_print_templateid($class, $userid) {
 	$templateid = block_exastud_get_class_student_data($class->id, $userid, 'print_template');
 	$available_templates = \block_exastud\print_template::get_class_available_print_templates($class);
-	if (!isset($available_templates[$templateid])) {
-		return key($available_templates);
+	if (isset($available_templates[$templateid])) {
+		return $templateid;
 	}
 
-	return $templateid;
+	$default_templateid = block_exastud_get_class_data($class->id, BLOCK_EXASTUD_DATA_ID_CLASS_DEFAULT_TEMPLATEID);
+	if (isset($available_templates[$default_templateid])) {
+		return $default_templateid;
+	}
+
+	return key($available_templates);
 }
 
 /**

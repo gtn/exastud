@@ -61,6 +61,8 @@ if ($classform->is_cancelled()) {
 		$class->id = $DB->insert_record('block_exastudclass', $newclass);
 	}
 
+	block_exastud_set_class_data($class->id, BLOCK_EXASTUD_DATA_ID_CLASS_DEFAULT_TEMPLATEID, $classedit->{BLOCK_EXASTUD_DATA_ID_CLASS_DEFAULT_TEMPLATEID});
+
 	/*
 	$DB->delete_records('block_exastudclassteachers', ['teacherid' => $USER->id, 'classid' => $class->id]);
 	if (!empty($classedit->mysubjectids)) {
@@ -78,8 +80,7 @@ if ($classform->is_cancelled()) {
 	redirect('configuration_class.php?courseid='.$courseid.'&classid='.$class->id);
 }
 
-
-$classform->set_data($class);
+$classform->set_data((array)$class + (array)block_exastud_get_class_data($class->id));
 
 $url = "/blocks/exastud/configuration_class_info.php";
 $PAGE->set_url($url);
