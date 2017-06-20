@@ -85,23 +85,20 @@ $formdata->subjectid = $subjectid;
 $teacherid = $USER->id;
 
 
-$exacomp_grades = [];
+$exacomp_grades = '';
 if (block_exastud_is_exacomp_installed()) {
-	$title = 'Vorschläge aus Exacomp:';
-
 	if (!method_exists('\block_exacomp\api', 'get_subjects_with_grade_for_teacher_and_student')) {
-		$exacomp_grades[] = [$title, 'Please update exacomp to latest version'];
+		$exacomp_grades = 'Please update exacomp to latest version';
 	} else {
 		$subjects = \block_exacomp\api::get_subjects_with_grade_for_teacher_and_student($teacherid, $studentid);
 		if (!$subjects) {
-			$exacomp_grades[] = [$title, '---'];
-		}
-		foreach ($subjects as $subject) {
-			$exacomp_grades[] = [
-				$subject->title,
-				'Note: '.($subject->additionalinfo ?: '---').
-				' / Niveau: '.($subject->niveau ?: '---'),
-			];
+			$exacomp_grades = '---';
+		} else {
+			foreach ($subjects as $subject) {
+				$exacomp_grades .= '<b>'.$subject->title.'</b><br/>';
+				$exacomp_grades .= 'Note: '.($subject->additionalinfo ?: '---').
+					' / Niveau: '.($subject->niveau ?: '---').'<br/>';
+			}
 		}
 	}
 }

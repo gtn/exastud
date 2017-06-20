@@ -168,9 +168,7 @@ class student_edit_form extends moodleform {
 
 		$mform->addElement('select', 'grade', block_exastud_get_string('de:Note'), ['' => ''] + $this->_customdata['grade_options']);
 
-		foreach ($this->_customdata['exacomp_grades'] as $row) {
-			$mform->addElement('static', '', $row[0], $row[1]);
-		}
+		$mform->addElement('static', 'exacomp_grades', block_exastud_trans('de:Vorschläge aus Exacomp'), $this->_customdata['exacomp_grades']);
 
 		$this->add_action_buttons(false);
 	}
