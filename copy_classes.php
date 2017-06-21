@@ -58,7 +58,7 @@ if ($action == 'copy') {
 		FROM {block_exastudclassteachers}
 		WHERE classid = ?", [time(), $newId, $oldId]);
 
-	redirect('configuration_class.php?courseid='.$courseid.'&classid='.$newId);
+	redirect('configuration_class_info.php?courseid='.$courseid.'&classid='.$newId);
 	exit;
 }
 

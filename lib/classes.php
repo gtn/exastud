@@ -58,6 +58,10 @@ class print_template {
 		return static::_get_class_available_print_templates(null) + static::get_class_other_print_templates(null);
 	}
 
+	static function get_all_default_print_templates() {
+		return static::_get_class_available_print_templates(null);
+	}
+
 	static function get_class_available_print_templates($class) {
 		return static::_get_class_available_print_templates($class);
 	}

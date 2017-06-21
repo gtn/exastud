@@ -139,7 +139,7 @@ if ($type == 'students') {
 
 		$table->head = array_merge($table->head, [
 			block_exastud_trans('de:Lehrkraft für Projektprüfung'),
-			block_exastud_trans('de:Zeugnis Formular'),
+			block_exastud_trans('de:Zeugnisformular'),
 			block_exastud_trans('de:Note im Lern&shy;entwicklungs&shy;bericht ausweisen'),
 			block_exastud_trans('de:Bildungsstandard erreicht'),
 			block_exastud_trans('de:Ausgeschieden'),
@@ -163,13 +163,7 @@ if ($type == 'students') {
 				(!empty($userdata->dropped_out) ? userdate($userdata->dropped_out_time, block_exastud_get_string('strftimedate', 'langconfig')) : '');
 
 			$gender = block_exastud_get_custom_profile_field_value($classstudent->id, 'gender');
-			if ($gender == 'male') {
-				$gender = block_exastud_trans('de:Männlich');
-			} elseif ($gender == 'female') {
-				$gender = block_exastud_trans('de:Weiblich');
-			} else {
-				$gender = '';
-			}
+
 			$row = [
 				$classstudent->lastname,
 				$classstudent->firstname,

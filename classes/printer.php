@@ -568,8 +568,6 @@ class printer {
 	static function grades_report($class, $students) {
 		global $CFG;
 
-		$students = array_merge($students, $students);
-
 		$templateid = 'grades_report';
 
 		$templateFile = __DIR__.'/../template/'.$templateid.'.docx';
@@ -661,6 +659,31 @@ class printer {
 
 			$templateProcessor->setValue("gsg#$rowi", '');
 			$templateProcessor->setValue("gss#$rowi", '');
+		}
+
+
+		// projekt
+		$templateProcessor->cloneRow('prostudent', count($students));
+		$rowi = 0;
+		foreach ($students as $student) {
+			$studentData = block_exastud_get_class_student_data($class->id, $student->id);
+			$rowi++;
+
+			$templateProcessor->setValue("prostudent#$rowi", $rowi.'. '.fullname($student));
+			$templateProcessor->setValue("prog#$rowi", @$studentData->projekt_grade);
+			$templateProcessor->setValue("prodescription#$rowi", @$studentData->projekt_text3lines.@$studentData->projekt_thema);
+		}
+
+
+		// ags
+		$templateProcessor->cloneRow('agstudent', count($students));
+		$rowi = 0;
+		foreach ($students as $student) {
+			$studentData = block_exastud_get_class_student_data($class->id, $student->id);
+			$rowi++;
+
+			$templateProcessor->setValue("agstudent#$rowi", $rowi.'. '.fullname($student));
+			$templateProcessor->setValue("agdescription#$rowi", @$studentData->ags);
 		}
 
 

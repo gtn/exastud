@@ -486,7 +486,9 @@ function block_exastud_check_profile_fields() {
 			'locked' => 1,
 			'required' => 0,
 			'visible' => 0,
-			'param1' => "\nmale\nfemale",
+			// TODO: english male / famle auch berücksichtigen.
+			// => die moodle default sprach einstellung hernehmen.
+			'param1' => "\nmännlich\nweiblich",
 		],
 	];
 

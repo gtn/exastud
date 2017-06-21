@@ -149,13 +149,16 @@ if ($classid = optional_param('classid', 0, PARAM_INT)) {
 	$table->head[] = '';
 	$table->head[] = '';
 	$table->head[] = block_exastud_get_string('name');
+	$table->head[] = block_exastud_trans('de:Zeugnisformular');
 
-	$table->size = ['5%', '5%', '5%'];
+	$table->size = ['5%', '5%', '5%', '', '25%'];
 
 	$table->align = array();
 	$table->align[] = 'center';
 	$table->align[] = 'center';
 	$table->align[] = 'center';
+	$table->align[] = 'left';
+	$table->align[] = 'left';
 	$table->align[] = 'left';
 
 	$i = 1;
@@ -167,6 +170,7 @@ if ($classid = optional_param('classid', 0, PARAM_INT)) {
 		$data[] = $i++;
 		$data[] = $OUTPUT->user_picture($classstudent, array("courseid" => $courseid));
 		$data[] = $studentdesc;
+		$data[] = block_exastud_get_student_print_template($class, $classstudent->id)->get_name();
 
 		$table->data[] = $data;
 	}
@@ -175,7 +179,8 @@ if ($classid = optional_param('classid', 0, PARAM_INT)) {
 
 	$templates = [];
 	$templates['html_report'] = 'Ausgabe am Bildschirm';
-	$templates['grades_report'] = 'Notenübersicht';
+	$templates['grades_report'] = 'Notenübersicht (docx)';
+	// $templates['grades_report_csv'] = 'Notenübersicht (csv)';
 	$templates['Deckblatt und 1. Innenseite LEB'] = 'Deckblatt und 1. Innenseite LEB';
 
 	$templates[BLOCK_EXASTUD_DATA_ID_PRINT_TEMPLATE] = 'Zeugnis / Abgangszeugnis';
