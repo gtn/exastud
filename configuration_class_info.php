@@ -63,6 +63,19 @@ if ($classform->is_cancelled()) {
 
 	block_exastud_set_class_data($class->id, BLOCK_EXASTUD_DATA_ID_CLASS_DEFAULT_TEMPLATEID, $classedit->{BLOCK_EXASTUD_DATA_ID_CLASS_DEFAULT_TEMPLATEID});
 
+	// standard zeugnis zurücksetzen (wegen alter version wo es kein standard zeugnis gab)
+	if ($class->id) {
+		$new_default_templateid = $classedit->{BLOCK_EXASTUD_DATA_ID_CLASS_DEFAULT_TEMPLATEID};
+		$old_default_templateid = block_exastud_get_class_data($class->id, BLOCK_EXASTUD_DATA_ID_CLASS_DEFAULT_TEMPLATEID);
+
+		foreach (block_exastud_get_class_students($class->id) as $student) {
+			$templateid = block_exastud_get_class_student_data($class->id, $student->id, BLOCK_EXASTUD_DATA_ID_PRINT_TEMPLATE);
+			if ($templateid && $templateid == $new_default_templateid || $templateid == $new_default_templateid) {
+				block_exastud_set_class_student_data($class->id, $student->id, BLOCK_EXASTUD_DATA_ID_PRINT_TEMPLATE, '');
+			}
+		}
+	}
+
 	/*
 	$DB->delete_records('block_exastudclassteachers', ['teacherid' => $USER->id, 'classid' => $class->id]);
 	if (!empty($classedit->mysubjectids)) {
@@ -77,7 +90,11 @@ if ($classform->is_cancelled()) {
 	}
 	*/
 
-	redirect('configuration_class.php?courseid='.$courseid.'&classid='.$class->id);
+	if ($class->id) {
+		redirect('configuration_class_info.php?courseid='.$courseid.'&classid='.$class->id);
+	} else {
+		redirect('configuration_class.php?courseid='.$courseid.'&classid='.$class->id);
+	}
 }
 
 $classform->set_data((array)$class + (array)block_exastud_get_class_data($class->id));

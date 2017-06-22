@@ -146,6 +146,16 @@ if ($type == 'students') {
 		]);
 
 		$available_templates = \block_exastud\print_template::get_class_available_print_templates($class);
+		$default_templateid = block_exastud_get_class_data($class->id, BLOCK_EXASTUD_DATA_ID_CLASS_DEFAULT_TEMPLATEID);
+		$available_templates_tmp = $available_templates;
+		$available_templates = [];
+		foreach ($available_templates_tmp as $templateid => $title) {
+			if ($templateid == $default_templateid) {
+				$available_templates[''] = $title.' (Standard)';
+			} else {
+				$available_templates[$templateid] = $title;
+			}
+		}
 
 		foreach ($classstudents as $classstudent) {
 			$userdata = block_exastud_get_class_student_data($class->id, $classstudent->id);
@@ -184,9 +194,14 @@ if ($type == 'students') {
 			}
 			natsort($project_teachers);
 
+			$templateid = block_exastud_get_student_print_templateid($class, $classstudent->id);
+			if ($templateid == $default_templateid) {
+				$templateid = '';
+			}
+
 			$row = array_merge($row, [
 				html_writer::select($project_teachers, 'userdatas['.$classstudent->id.'][project_teacher]', @$userdata->project_teacher, fullname($USER)),
-				html_writer::select($available_templates, 'userdatas['.$classstudent->id.'][print_template]', block_exastud_get_student_print_templateid($class, $classstudent->id), false),
+				html_writer::select($available_templates, 'userdatas['.$classstudent->id.'][print_template]', $templateid, false),
 				$print_grades,
 				$bildungsstandard,
 				$ausgeschieden,

@@ -49,6 +49,10 @@ class class_edit_form extends moodleform {
 		$templates = \block_exastud\print_template::get_all_default_print_templates();
 		$mform->addElement('select', BLOCK_EXASTUD_DATA_ID_CLASS_DEFAULT_TEMPLATEID, block_exastud_trans('de:Standard Zeugnisformular').':', $templates);
 
+		$mform->addElement('static', '', '&nbsp;',
+			g::$OUTPUT->notification(block_exastud_trans(['de:Bitte beachten Sie: Bei einer Änderung des Standard Zeugnisformulars wird für alle Schüler das Zeugnisformular geändert. Bestehende Formulareinstellungen wie z.B. Agangszeugnis werden beibehalten.', 'en:']), 'notifymessage')
+		);
+
 		/*
 		$subjects = $DB->get_records_menu('block_exastudsubjects', null, 'title', 'id, title');
 		$select = $mform->addElement('select', 'mysubjectids', block_exastud_get_string('subjects_taught_by_me'), $subjects);
