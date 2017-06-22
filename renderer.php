@@ -306,6 +306,7 @@ class block_exastud_renderer extends plugin_renderer_base {
 
 	function link_button($url, $label, $attributes = []) {
 		return html_writer::tag('button', $label, $attributes + [
+				'type' => 'button',
 				'exa-type' => 'link',
 				'href' => $url,
 			]);
