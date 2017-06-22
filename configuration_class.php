@@ -68,6 +68,7 @@ if ($type == 'students') {
 			'dropped_out' => PARAM_BOOL,
 			'head_teacher' => PARAM_INT,
 			'print_template' => PARAM_RAW,
+			'project_teacher' => PARAM_INT,
 		]]);
 
 		foreach ($classstudents as $student) {
@@ -81,6 +82,7 @@ if ($type == 'students') {
 			block_exastud_set_class_student_data($class->id, $student->id, 'print_grades', $new->print_grades);
 			block_exastud_set_class_student_data($class->id, $student->id, 'head_teacher', $new->head_teacher);
 			block_exastud_set_class_student_data($class->id, $student->id, 'print_template', $new->print_template);
+			block_exastud_set_class_student_data($class->id, $student->id, 'project_teacher', $new->project_teacher);
 
 			if (@$current->bildungsstandard_erreicht != @$new->bildungsstandard_erreicht) {
 				// set it, if changed
@@ -200,7 +202,7 @@ if ($type == 'students') {
 			}
 
 			$row = array_merge($row, [
-				html_writer::select($project_teachers, 'userdatas['.$classstudent->id.'][project_teacher]', @$userdata->project_teacher, fullname($USER)),
+				html_writer::select($project_teachers, 'userdatas['.$classstudent->id.'][project_teacher]', @$userdata->{BLOCK_EXASTUD_DATA_ID_PROJECT_TEACHER}, fullname($USER)),
 				html_writer::select($available_templates, 'userdatas['.$classstudent->id.'][print_template]', $templateid, false),
 				$print_grades,
 				$bildungsstandard,

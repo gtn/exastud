@@ -41,6 +41,7 @@ const BLOCK_EXASTUD_DATA_ID_LERN_UND_SOZIALVERHALTEN = 'learning_and_social_beha
 const BLOCK_EXASTUD_DATA_ID_UNLOCKED_TEACHERS = 'unlocked_teachers';
 const BLOCK_EXASTUD_DATA_ID_PRINT_TEMPLATE = 'print_template';
 const BLOCK_EXASTUD_DATA_ID_CLASS_DEFAULT_TEMPLATEID = 'default_templateid';
+const BLOCK_EXASTUD_DATA_ID_PROJECT_TEACHER = 'project_teacher';
 
 const BLOCK_EXASTUD_SUBJECT_ID_LERN_UND_SOZIALVERHALTEN = -1;
 const BLOCK_EXASTUD_SUBJECT_ID_LERN_UND_SOZIALVERHALTEN_VORSCHLAG = -3;
@@ -1436,4 +1437,21 @@ function block_exastud_get_student_print_template($class, $userid) {
 	$templateid = block_exastud_get_student_print_templateid($class, $userid);
 
 	return block_exastud\print_template::create($templateid);
+}
+
+function block_exastud_is_project_teacher($class, $userid) {
+	return !!block_exastud_get_project_teacher_students($class, $userid);
+}
+
+function block_exastud_get_project_teacher_students($class, $userid) {
+	$classstudents = block_exastud_get_class_students($class->id);
+	$project_teacher_students = [];
+
+	foreach ($classstudents as $classstudent) {
+		if (block_exastud_get_class_student_data($class->id, $classstudent->id, BLOCK_EXASTUD_DATA_ID_PROJECT_TEACHER)) {
+			$project_teacher_students[$classstudent->id] = $classstudent;
+		}
+	}
+
+	return $project_teacher_students;
 }

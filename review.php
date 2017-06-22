@@ -48,10 +48,11 @@ function block_exastud_print_period($courseid, $period, $type) {
 	$reviewsubjects = block_exastud_get_review_subjects($period->id);
 
 	if ($type == 'last') {
-		// filter unlocked
-		$unlocked_teachers = (array)json_decode(block_exastud_get_class_data($class->id, BLOCK_EXASTUD_DATA_ID_UNLOCKED_TEACHERS), true);
 
+		// filter unlocked
 		foreach ($reviewclasses as $key => $class) {
+			$unlocked_teachers = (array)json_decode(block_exastud_get_class_data($class->id, BLOCK_EXASTUD_DATA_ID_UNLOCKED_TEACHERS), true);
+
 			if ((isset($unlocked_teachers[g::$USER->id]) && $unlocked_teachers[g::$USER->id] > time())
 				|| (isset($unlocked_teachers[0]) && $unlocked_teachers[0] > time())
 			) {
@@ -63,6 +64,8 @@ function block_exastud_print_period($courseid, $period, $type) {
 		}
 
 		foreach ($reviewsubjects as $key => $reviewsubject) {
+			$unlocked_teachers = (array)json_decode(block_exastud_get_class_data($class->id, BLOCK_EXASTUD_DATA_ID_UNLOCKED_TEACHERS), true);
+
 			if ((isset($unlocked_teachers[g::$USER->id]) && $unlocked_teachers[g::$USER->id] > time())
 				|| (isset($unlocked_teachers[0]) && $unlocked_teachers[0] > time())
 			) {
@@ -152,6 +155,15 @@ function block_exastud_print_period($courseid, $period, $type) {
 							]), $value),
 						];
 					}
+				}
+
+				if (block_exastud_is_project_teacher($myclass, g::$USER->id)) {
+					$table->data[] = [
+						html_writer::link(new moodle_url('/blocks/exastud/review_class_project_teacher.php', [
+							'courseid' => $courseid,
+							'classid' => $myclass->id,
+						]), block_exastud_trans('de:Projektprüfung')),
+					];
 				}
 			}
 
