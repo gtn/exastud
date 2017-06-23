@@ -39,7 +39,7 @@ $categories = [
 	'projekt_grade' => [
 		'title' => 'Projektprüfung: Note',
 		'type' => 'select',
-		'values' => ['sehr gut', 'gut', 'befriedigend', 'ausreichend', 'mangelhaft', 'ungenügend'],
+		'values' => ['1' => 'sehr gut', '2' => 'gut', '3' => 'befriedigend', '4' => 'ausreichend', '5' => 'mangelhaft', '6' => 'ungenügend'],
 		// block_exastud_get_student_print_template($class, $student->id)->get_grade_options(),
 	],
 	'projekt_verbalbeurteilung' => [

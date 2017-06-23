@@ -140,18 +140,18 @@ class print_template {
 			'BP 2004/HalbjahreszeugnisRealschulabschluss an der Gemeinschaftsschule',
 			'BP 2004/HalbjahreszeugnisHauptschulabschluss an der Gemeinschaftsschule _BP alt',
 		])) {
-			return ['sgt', 'gut', 'bfr', 'ausr', 'mgh', 'ung'];
+			return ['1' => 'sgt', '2' => 'gut', '3' => 'bfr', '4' => 'ausr', '5' => 'mgh', '6' => 'ung'];
 		} elseif ($this->templateid == 'BP 2004/Halbjahresinformation Klasse 10Gemeinschaftsschule_E-Niveau_BP 2004') {
 			return [
-				'1', '1-' => '1 minus', '1-2' => '1 - 2',
-				'2+' => '2 plus', '2', '2-' => '2 minus', '2-3' => '2 - 3',
-				'3+' => '3 plus', '3', '3-' => '3 minus', '3-4' => '3 - 4',
-				'4+' => '4 plus', '4', '4-' => '4 minus', '4-5' => '4 - 5',
-				'5+' => '5 plus', '5', '5-' => '5 minus', '5-6' => '5 - 6',
-				'6+' => '6 plus', '6',
+				'1' => '1', '1-' => '1 minus', '1-2' => '1 - 2',
+				'2+' => '2 plus', '2' => '2', '2-' => '2 minus', '2-3' => '2 - 3',
+				'3+' => '3 plus', '3' => '3', '3-' => '3 minus', '3-4' => '3 - 4',
+				'4+' => '4 plus', '4' => '4', '4-' => '4 minus', '4-5' => '4 - 5',
+				'5+' => '5 plus', '5' => '5', '5-' => '5 minus', '5-6' => '5 - 6',
+				'6+' => '6 plus', '6' => '6',
 			];
 		} else {
-			return ['sehr gut', 'gut', 'befriedigend', 'ausreichend', 'mangelhaft', 'ungenügend'];
+			return ['1' => 'sehr gut', '2' => 'gut', '3' => 'befriedigend', '4' => 'ausreichend', '5' => 'mangelhaft', '6' => 'ungenügend'];
 		}
 	}
 
