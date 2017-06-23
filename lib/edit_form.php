@@ -187,7 +187,7 @@ class student_other_data_form extends moodleform {
 				$mform->addElement('header', 'header_'.$dataid, $input['title']);
 				$mform->setExpanded('header_'.$dataid);
 
-				if ($this->_customdata['modified']) {
+				if (@$this->_customdata['modified']) {
 					$mform->addElement('static', '', '', $this->_customdata['modified']);
 				}
 

@@ -226,7 +226,8 @@ class printer {
 				'gebort' => static::spacerIfEmpty(block_exastud_get_custom_profile_field_value($student->id, 'placeofbirth')),
 				'ags' => static::spacerIfEmpty(@$studentdata->ags),
 				'projekt_thema' => static::spacerIfEmpty(@$studentdata->projekt_thema),
-				'comments_short' => static::spacerIfEmpty(@$studentdata->comments_short),
+				'projekt_thema' => static::spacerIfEmpty(@$studentdata->projekt_thema),
+				'projekt_verbalbeurteilung' => static::spacerIfEmpty(@$studentdata->projekt_verbalbeurteilung),
 			];
 
 			foreach ($template->get_inputs() as $inputid => $tmp) {
@@ -403,7 +404,7 @@ class printer {
 			if ($value = @$grades[@$studentdata->projekt_grade]) {
 				// im "Beiblatt zur Projektpruefung HSA" heisst das feld projet_text3lines
 				$add_filter(function($content) use ($placeholder, $value) {
-					return preg_replace('!((projekt_thema|projekt_text3lines).*)'.$placeholder.'note!U', '${1}'.$value, $content, 1, $count);
+					return preg_replace('!(projekt_thema.*)'.$placeholder.'note!U', '${1}'.$value, $content, 1, $count);
 				});
 			}
 
@@ -671,7 +672,7 @@ class printer {
 
 			$templateProcessor->setValue("prostudent#$rowi", $rowi.'. '.fullname($student));
 			$templateProcessor->setValue("prog#$rowi", @$studentData->projekt_grade);
-			$templateProcessor->setValue("prodescription#$rowi", @$studentData->projekt_text3lines.@$studentData->projekt_thema);
+			$templateProcessor->setValue("prodescription#$rowi", @$studentData->projekt_thema);
 		}
 
 

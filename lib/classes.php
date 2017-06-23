@@ -77,8 +77,27 @@ class print_template {
 
 		if (!$bp || $bp->sourceinfo !== 'bw-bp2016') {
 			$templates['BP 2004/Zertifikat fuer Profilfach'] = 'Zertifikat für Profilfach';
-			$templates['BP 2004/Beiblatt zur Projektpruefung HSA'] = 'Beiblatt zur Projektprüfung HSA';
 		}
+
+		$templates['BP 2004/Beiblatt zur Projektpruefung HSA'] = 'Beiblatt zur Projektprüfung HSA';
+
+		return $templates;
+	}
+
+	static function get_class_other_print_templates_for_input($class) {
+		if ($class) {
+			$bp = g::$DB->get_record('block_exastudbp', ['id' => $class->bpid]);
+		} else {
+			$bp = null;
+		}
+
+		$templates = [];
+
+		if (!$bp || $bp->sourceinfo !== 'bw-bp2016') {
+			$templates['BP 2004/Zertifikat fuer Profilfach'] = 'Zertifikat für Profilfach';
+		}
+
+		// $templates['BP 2004/Beiblatt zur Projektpruefung HSA'] = 'Beiblatt zur Projektprüfung HSA';
 
 		return $templates;
 	}
@@ -209,6 +228,7 @@ class print_template {
 						'ende10' => 'am Ende der Klasse 10 die Schule.',
 					],
 				],
+				/*
 				'projekt_thema' => [
 					'title' => 'Projektprüfung: Thema',
 					'type' => 'text',
@@ -218,6 +238,7 @@ class print_template {
 					'type' => 'select',
 					'values' => $grades,
 				],
+				*/
 				'ags' => [
 					'title' => 'Teilnahme an Arbeitsgemeinschaften',
 					'type' => 'textarea',
@@ -239,6 +260,7 @@ class print_template {
 						'nach10' => 'Klasse 10 der Gemeinschaftsschule mit Erfolg abgelegt.',
 					],
 				],
+				/*
 				'projekt_thema' => [
 					'title' => 'Projektprüfung: Thema',
 					'type' => 'text',
@@ -248,6 +270,7 @@ class print_template {
 					'type' => 'select',
 					'values' => $grades,
 				],
+				*/
 				'gesamtnote_und_durchschnitt_der_gesamtleistungen' => [
 					'title' => 'Gesamtnote und Durchschnitt der Gesamtleistungen',
 					'type' => 'text',
@@ -261,6 +284,7 @@ class print_template {
 			];
 		} elseif ($this->templateid == 'BP 2004/Realschulabschlusszeugnis an der Gemeinschaftsschule BP 2004') {
 			$inputs = [
+				/*
 				'projekt_thema' => [
 					'title' => 'Projektprüfung: Thema',
 					'type' => 'text',
@@ -270,6 +294,7 @@ class print_template {
 					'type' => 'select',
 					'values' => $grades,
 				],
+				*/
 				'ags' => [
 					'title' => 'Teilnahme an Arbeitsgemeinschaften',
 					'type' => 'textarea',
@@ -291,6 +316,7 @@ class print_template {
 			];
 		} elseif ($this->templateid == 'BP 2004/Beiblatt zur Projektpruefung HSA') {
 			$inputs = [
+				/*
 				'projekt_text3lines' => [
 					'title' => 'Projektthema',
 					'type' => 'textarea',
@@ -306,6 +332,7 @@ class print_template {
 					'type' => 'select',
 					'values' => $grades,
 				],
+				*/
 			];
 		} elseif ($this->templateid == 'BP 2004/HalbjahreszeugnisRealschulabschluss an der Gemeinschaftsschule') {
 			$inputs = [

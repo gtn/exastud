@@ -39,7 +39,13 @@ $categories = [
 	'projekt_grade' => [
 		'title' => 'Projektprüfung: Note',
 		'type' => 'select',
-		'values' => [],
+		'values' => ['sehr gut', 'gut', 'befriedigend', 'ausreichend', 'mangelhaft', 'ungenügend'],
+		// block_exastud_get_student_print_template($class, $student->id)->get_grade_options(),
+	],
+	'projekt_verbalbeurteilung' => [
+		'title' => 'Verbalbeurteilung',
+		'type' => 'textarea',
+		'lines' => 5,
 	],
 ];
 $classheader = $class->title.' - '.block_exastud_trans('de:Projektprüfung');
@@ -85,7 +91,7 @@ foreach ($project_teacher_students as $classstudent) {
 
 	foreach ($categories as $dataid => $category) {
 		if (@$category['type'] == 'select') {
-			$row->cells[] = @block_exastud_get_student_print_template($class, $classstudent->id)->get_grade_options()[$data[$dataid]];
+			$row->cells[] = @$category['values'][$data[$dataid]];
 		} else {
 			$row->cells[] = !empty($data[$dataid]) ? block_exastud_text_to_html($data[$dataid]) : '';
 		}

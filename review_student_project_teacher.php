@@ -60,14 +60,20 @@ $categories = [
 	'projekt_grade' => [
 		'title' => 'Projektprüfung: Note',
 		'type' => 'select',
-		'values' => block_exastud_get_student_print_template($class, $student->id)->get_grade_options(),
+		'values' => ['sehr gut', 'gut', 'befriedigend', 'ausreichend', 'mangelhaft', 'ungenügend'],
+		// block_exastud_get_student_print_template($class, $student->id)->get_grade_options(),
+	],
+	'projekt_verbalbeurteilung' => [
+		'title' => 'Verbalbeurteilung',
+		'type' => 'textarea',
+		'lines' => 5,
 	],
 ];
 
 $classheader = $class->title.' - '.block_exastud_trans('de:Projektprüfung');
 
 $studentform = new student_other_data_form($PAGE->url, [
-	'categories' => $categories
+	'categories' => $categories,
 ]);
 
 if ($fromform = $studentform->get_data()) {

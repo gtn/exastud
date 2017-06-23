@@ -1448,7 +1448,8 @@ function block_exastud_get_project_teacher_students($class, $userid) {
 	$project_teacher_students = [];
 
 	foreach ($classstudents as $classstudent) {
-		if (block_exastud_get_class_student_data($class->id, $classstudent->id, BLOCK_EXASTUD_DATA_ID_PROJECT_TEACHER)) {
+		$project_teacher_id = block_exastud_get_class_student_data($class->id, $classstudent->id, BLOCK_EXASTUD_DATA_ID_PROJECT_TEACHER) ?: $class->userid;
+		if ($project_teacher_id == $userid) {
 			$project_teacher_students[$classstudent->id] = $classstudent;
 		}
 	}
