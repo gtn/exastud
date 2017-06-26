@@ -147,7 +147,7 @@ if ($type == 'students') {
 			block_exastud_trans('de:Ausgeschieden'),
 		]);
 
-		$available_templates = \block_exastud\print_template::get_class_available_print_templates($class);
+		$available_templates = \block_exastud\print_templates::get_class_available_print_templates($class);
 		$default_templateid = block_exastud_get_class_data($class->id, BLOCK_EXASTUD_DATA_ID_CLASS_DEFAULT_TEMPLATEID);
 		$available_templates_tmp = $available_templates;
 		$available_templates = [];

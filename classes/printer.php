@@ -558,7 +558,7 @@ class printer {
 		$temp_file = tempnam($CFG->tempdir, 'exastud');
 		$templateProcessor->saveAs($temp_file);
 
-		$filename = ($certificate_issue_date ?: date('Y-m-d'))."-".ucfirst($templateid)."-{$class->title}-{$student->lastname}-{$student->firstname}.docx";
+		$filename = ($certificate_issue_date ?: date('Y-m-d'))."-".$template->get_name()."-{$class->title}-{$student->lastname}-{$student->firstname}.docx";
 
 		return (object)[
 			'temp_file' => $temp_file,

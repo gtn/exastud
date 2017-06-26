@@ -1415,7 +1415,7 @@ function block_exastud_get_class_title($classid) {
 
 function block_exastud_get_student_print_templateid($class, $userid) {
 	$templateid = block_exastud_get_class_student_data($class->id, $userid, BLOCK_EXASTUD_DATA_ID_PRINT_TEMPLATE);
-	$available_templates = \block_exastud\print_template::get_class_available_print_templates($class);
+	$available_templates = \block_exastud\print_templates::get_class_available_print_templates($class);
 	if (isset($available_templates[$templateid])) {
 		return $templateid;
 	}
