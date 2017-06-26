@@ -473,4 +473,8 @@ class print_template {
 	function get_inputs() {
 		return print_templates::get_template_inputs($this->templateid);
 	}
+
+	function get_config() {
+		return print_templates::get_template_config($this->templateid);
+	}
 }

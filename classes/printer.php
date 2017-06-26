@@ -533,8 +533,6 @@ class printer {
 				$templateProcessor->deleteRow("topic");
 				$templateProcessor->deleteRow("descriptor");
 			}
-		} elseif ($templateid == 'grades_report') {
-
 		} else {
 			echo g::$OUTPUT->header();
 			echo block_exastud_trans(['de:Leider wurde die Dokumentvorlage "{$a}" nicht gefunden.', 'en:Template "{$a}" not found.'], $templateid);
@@ -736,6 +734,76 @@ class printer {
 
 		$filename = date('Y-m-d')."-".'Notenuebersicht'."-{$class->title}.docx";
 
+
+		require_once $CFG->dirroot.'/lib/filelib.php';
+		send_temp_file($temp_file, $filename);
+	}
+
+	static function grades_report_xlsx($class, $students) {
+		global $CFG;
+
+		\PhpOffice\PhpWord\Settings::setTempDir($CFG->tempdir);
+
+		$spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
+		$sheet = $spreadsheet->setActiveSheetIndex(0);
+
+		$class_subjects = block_exastud_get_bildungsplan_subjects($class->bpid);
+
+		$cell = 0;
+		$sheet->setCellValueByColumnAndRow($cell++, 1, 'Nr.');
+		$sheet->setCellValueByColumnAndRow($cell++, 1, 'Name');
+		foreach ($class_subjects as $subject) {
+			$sheet->setCellValueByColumnAndRow($cell++, 1, $subject->shorttitle);
+		}
+
+		$sheet->setCellValueByColumnAndRow($cell++, 1, 'Projekt Note');
+		$sheet->setCellValueByColumnAndRow($cell++, 1, 'Projekt Thema');
+		$sheet->setCellValueByColumnAndRow($cell++, 1, 'AGs');
+
+		$rowi = 1;
+		foreach ($students as $student) {
+			$rowi++;
+			$cell = 0;
+			$sheet->setCellValueByColumnAndRow($cell++, $rowi, $rowi - 1);
+			$sheet->setCellValueByColumnAndRow($cell++, $rowi, fullname($student));
+
+			foreach ($class_subjects as $subject) {
+				$subjectData = block_exastud_get_graded_review($class->id, $subject->id, $student->id);
+
+				$value = $subjectData ? @$subjectData->grade : '';
+				$sheet->setCellValueByColumnAndRow($cell++, $rowi, $value);
+			}
+
+			$studentData = block_exastud_get_class_student_data($class->id, $student->id);
+			$sheet->setCellValueByColumnAndRow($cell++, $rowi, @$studentData->projekt_grade);
+			$sheet->setCellValueByColumnAndRow($cell++, $rowi, @$studentData->projekt_thema);
+			$sheet->setCellValueByColumnAndRow($cell++, $rowi, @$studentData->ags);
+		}
+
+		/*
+		$writer = \PhpOffice\PhpSpreadsheet\IOFactory::createWriter($spreadsheet, 'HTML');
+
+		echo '<style>
+			body {
+				margin: 0 !important;
+				padding: 5px !important;
+			}
+			table.gridlines td {
+				border: 1px solid grey;
+				padding: 3px;
+				vertical-align: topf;
+			}
+		</style>';
+		$writer->save('php://output');
+		exit;
+		*/
+
+
+		$filename = date('Y-m-d')."-".'Notenuebersicht'."-{$class->title}.xlsx";
+
+		$writer = \PhpOffice\PhpSpreadsheet\IOFactory::createWriter($spreadsheet, 'Excel2007');
+		$temp_file = tempnam($CFG->tempdir, 'exastud');
+		$writer->save($temp_file);
 
 		require_once $CFG->dirroot.'/lib/filelib.php';
 		send_temp_file($temp_file, $filename);

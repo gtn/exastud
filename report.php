@@ -82,6 +82,10 @@ if ($classid = optional_param('classid', 0, PARAM_INT)) {
 			\block_exastud\printer::grades_report($class, $printStudents);
 		}
 
+		if ($printStudents && $template == 'grades_report_xlsx') {
+			\block_exastud\printer::grades_report_xlsx($class, $printStudents);
+		}
+
 		/*
 		if ($printStudents && $template == 'html_report_grades') {
 			$PAGE->set_pagelayout('embedded');
@@ -180,7 +184,7 @@ if ($classid = optional_param('classid', 0, PARAM_INT)) {
 	$templates = [];
 	$templates['html_report'] = 'Ausgabe am Bildschirm';
 	$templates['grades_report'] = 'Notenübersicht (docx)';
-	// $templates['grades_report_csv'] = 'Notenübersicht (csv)';
+	$templates['grades_report_xlsx'] = 'Notenübersicht (xlsx)';
 	$templates['Deckblatt und 1. Innenseite LEB'] = 'Deckblatt und 1. Innenseite LEB';
 
 	$templates[BLOCK_EXASTUD_DATA_ID_PRINT_TEMPLATE] = 'Zeugnis / Abgangszeugnis';

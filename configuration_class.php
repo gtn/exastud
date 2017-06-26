@@ -120,8 +120,15 @@ if ($type == 'students') {
 		echo $buttons_left;
 	} else {
 		$table = new html_table();
+		$table2 = new html_table();
+		$table3 = new html_table();
+
+		$table->size = ['1%', '15%', '15%'];
+		$table2->size = ['1%', '15%', '15%'];
+		$table3->size = ['1%', '15%', '15%'];
 
 		$table->head = [
+			'#',
 			block_exastud_get_string('lastname'),
 			block_exastud_get_string('firstname'),
 			block_exastud_trans('de:Geschlecht'),
@@ -129,19 +136,34 @@ if ($type == 'students') {
 			block_exastud_trans('de:Geburtsort'),
 		];
 
+		$table2->head = [
+			'#',
+			block_exastud_get_string('lastname'),
+			block_exastud_get_string('firstname'),
+		];
+
+		$table3->head = [
+			'#',
+			block_exastud_get_string('lastname'),
+			block_exastud_get_string('firstname'),
+		];
+
 		// $table->attributes['style'] = "width: 75%;";
 		// $table->size = ['20%', '20%', '12%', '12%', '12%', '12%', '12%'];
 
 		if ($additional_head_teachers) {
-			$table->head[] = block_exastud_trans('de:Zuständiger Klassenlehrer');
+			$table2->head[] = block_exastud_trans('de:Zuständiger Klassenlehrer');
 			$additional_head_teachers_select = array_map(function($teacher) {
 				return fullname($teacher);
 			}, $additional_head_teachers);
 		}
 
-		$table->head = array_merge($table->head, [
+		$table2->head = array_merge($table2->head, [
 			block_exastud_trans('de:Lehrkraft für Projektprüfung'),
 			block_exastud_trans('de:Zeugnisformular'),
+		]);
+
+		$table3->head = array_merge($table3->head, [
 			block_exastud_trans('de:Note im Lern&shy;entwicklungs&shy;bericht ausweisen'),
 			block_exastud_trans('de:Bildungsstandard erreicht'),
 			block_exastud_trans('de:Ausgeschieden'),
@@ -159,7 +181,10 @@ if ($type == 'students') {
 			}
 		}
 
+		$i = 0;
 		foreach ($classstudents as $classstudent) {
+			$i++;
+			//$template = block_exastud_get_student_print_template($class, $classstudent->id);
 			$userdata = block_exastud_get_class_student_data($class->id, $classstudent->id);
 
 			$print_grades = '<input name="userdatas['.$classstudent->id.'][print_grades]" type="hidden" value="0"/>'.
@@ -177,15 +202,26 @@ if ($type == 'students') {
 			$gender = block_exastud_get_custom_profile_field_value($classstudent->id, 'gender');
 
 			$row = [
+				$i,
 				$classstudent->lastname,
 				$classstudent->firstname,
 				$gender,
 				block_exastud_get_date_of_birth($classstudent->id),
 				block_exastud_get_custom_profile_field_value($classstudent->id, 'placeofbirth'),
 			];
+			$row2 = [
+				$i,
+				$classstudent->lastname,
+				$classstudent->firstname,
+			];
+			$row3 = [
+				$i,
+				$classstudent->lastname,
+				$classstudent->firstname,
+			];
 
 			if ($additional_head_teachers) {
-				$row[] = html_writer::select($additional_head_teachers_select, 'userdatas['.$classstudent->id.'][head_teacher]', @$userdata->head_teacher, fullname($USER));
+				$row2[] = html_writer::select($additional_head_teachers_select, 'userdatas['.$classstudent->id.'][head_teacher]', @$userdata->head_teacher, fullname($USER));
 			}
 
 			$project_teachers = [$class->userid => fullname($DB->get_record('user', ['id' => $class->userid]))];
@@ -201,15 +237,18 @@ if ($type == 'students') {
 				$templateid = '';
 			}
 
-			$row = array_merge($row, [
-				html_writer::select($project_teachers, 'userdatas['.$classstudent->id.'][project_teacher]', @$userdata->{BLOCK_EXASTUD_DATA_ID_PROJECT_TEACHER}, block_exastud_trans('de:keine')),
-				html_writer::select($available_templates, 'userdatas['.$classstudent->id.'][print_template]', $templateid, false),
+			$row2[] = html_writer::select($project_teachers, 'userdatas['.$classstudent->id.'][project_teacher]', @$userdata->{BLOCK_EXASTUD_DATA_ID_PROJECT_TEACHER}, block_exastud_trans('de:keine'));
+			$row2[] = html_writer::select($available_templates, 'userdatas['.$classstudent->id.'][print_template]', $templateid, false);
+
+			$row3 = array_merge($row3, [
 				$print_grades,
 				$bildungsstandard,
 				$ausgeschieden,
 			]);
 
 			$table->data[] = $row;
+			$table2->data[] = $row2;
+			$table3->data[] = $row3;
 		}
 
 		echo '<form method="post">';
@@ -217,6 +256,8 @@ if ($type == 'students') {
 		echo '<input type="hidden" name="action" value="save" />';
 
 		echo $output->table($table);
+		echo $output->table($table2);
+		echo $output->table($table3);
 
 		echo '<table style="width: 100%;"><tr><td>';
 		echo $buttons_left;

@@ -17,6 +17,7 @@ class ComposerStaticInit54c4c7a724e85092e083990914efd691
         array (
             'PhpOffice\\PhpWord\\' => 18,
             'PhpOffice\\Common\\' => 17,
+            'PhpOffice\\' => 10,
         ),
         'I' => 
         array (
@@ -44,6 +45,10 @@ class ComposerStaticInit54c4c7a724e85092e083990914efd691
         'PhpOffice\\Common\\' => 
         array (
             0 => __DIR__ . '/..' . '/phpoffice/common/src/Common',
+        ),
+        'PhpOffice\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/phpoffice',
         ),
         'Ifsnop\\' => 
         array (

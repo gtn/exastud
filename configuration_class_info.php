@@ -39,7 +39,14 @@ if (!$classid) {
 $class->classid = $class->id;
 $class->courseid = $courseid;
 
-$classform = new class_edit_form();
+if ($class->id) {
+	$templates = \block_exastud\print_templates::get_class_available_print_templates($class);
+} else {
+		$templates = \block_exastud\print_templates::get_all_default_print_templates();
+}
+
+$classform = new class_edit_form(null, ['templates' => $templates]);
+
 if ($classform->is_cancelled()) {
 	redirect('configuration_classes.php?courseid='.$courseid);
 } elseif ($classedit = $classform->get_data()) {
