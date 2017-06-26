@@ -188,7 +188,7 @@ if ($type == 'students') {
 				$row[] = html_writer::select($additional_head_teachers_select, 'userdatas['.$classstudent->id.'][head_teacher]', @$userdata->head_teacher, fullname($USER));
 			}
 
-			$project_teachers = [];
+			$project_teachers = [$class->userid => fullname($DB->get_record('user', ['id' => $class->userid]))];
 			foreach (block_exastud_get_class_teachers($classid) as $teacher) {
 				if ($teacher->id !== $class->userid) {
 					$project_teachers[$teacher->id] = fullname($teacher);
@@ -202,7 +202,7 @@ if ($type == 'students') {
 			}
 
 			$row = array_merge($row, [
-				html_writer::select($project_teachers, 'userdatas['.$classstudent->id.'][project_teacher]', @$userdata->{BLOCK_EXASTUD_DATA_ID_PROJECT_TEACHER}, fullname($USER)),
+				html_writer::select($project_teachers, 'userdatas['.$classstudent->id.'][project_teacher]', @$userdata->{BLOCK_EXASTUD_DATA_ID_PROJECT_TEACHER}, block_exastud_trans('de:keine')),
 				html_writer::select($available_templates, 'userdatas['.$classstudent->id.'][print_template]', $templateid, false),
 				$print_grades,
 				$bildungsstandard,
@@ -293,7 +293,7 @@ if ($type == 'teachers') {
 			block_exastud_set_class_data($class->id, BLOCK_EXASTUD_DATA_ID_UNLOCKED_TEACHERS, json_encode($unlocked_teachers));
 		}
 
-		$teachers = [ 0 => block_exastud_trans(['de:für alle', 'en:for all'])];
+		$teachers = [0 => block_exastud_trans(['de:für alle', 'en:for all'])];
 		foreach (array_merge($additional_head_teachers, $classteachers) as $classteacher) {
 			$teachers[$classteacher->id] = fullname($classteacher);
 		}

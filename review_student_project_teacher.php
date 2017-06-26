@@ -54,11 +54,11 @@ $actPeriod = block_exastud_check_active_period();
 
 $categories = [
 	'projekt_thema' => [
-		'title' => 'Projektprüfung: Thema',
+		'title' => 'Thema',
 		'type' => 'text',
 	],
 	'projekt_grade' => [
-		'title' => 'Projektprüfung: Note',
+		'title' => 'Note',
 		'type' => 'select',
 		'values' => ['1' => 'sehr gut', '2' => 'gut', '3' => 'befriedigend', '4' => 'ausreichend', '5' => 'mangelhaft', '6' => 'ungenügend'],
 		// block_exastud_get_student_print_template($class, $student->id)->get_grade_options(),
