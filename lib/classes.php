@@ -48,7 +48,7 @@ class print_templates {
 		return static::get_template_config($templateid)['inputs'];
 	}
 
-	static function get_template_config($templateid) {
+	static function get_all_template_configs() {
 		$grades_1_bis_6 = ['1' => '1', '2' => '2', '3' => '3', '4' => '4', '5' => '5', '6' => '6'];
 		$grades_short = ['1' => 'sgt', '2' => 'gut', '3' => 'bfr', '4' => 'ausr', '5' => 'mgh', '6' => 'ung'];
 		$grades_mit_plus_minus_bis = [
@@ -70,18 +70,9 @@ class print_templates {
 		$grades_lang = ['1' => 'sehr gut', '2' => 'gut', '3' => 'befriedigend', '4' => 'ausreichend', '5' => 'mangelhaft', '6' => 'ungenügend'];
 
 		$templates = [
-			'BP 2016/Lernentwicklungsbericht neuer BP SJ' => [
-				'name' => 'BP 2016 GMS Zeugnis SJ',
-				'grades' => $grades_1_bis_6,
-				'inputs' => [
-					'comments' => [
-						'title' => block_exastud_trans('de:Bemerkungen'),
-						'type' => 'textarea',
-					],
-				],
-			],
-			'BP 2016/Lernentwicklungsbericht neuer BP 1.HJ' => [
+			'BP 2016/GMS Zeugnis 1.HJ' => [
 				'name' => 'BP 2016 GMS Zeugnis 1.HJ',
+				'file' => 'BP 2016/Lernentwicklungsbericht neuer BP 1.HJ',
 				'grades' => $grades_mit_plus_minus_bis,
 				'inputs' => [
 					'comments' => [
@@ -90,8 +81,9 @@ class print_templates {
 					],
 				],
 			],
-			'BP 2004/Lernentwicklungsbericht alter BP SJ' => [
-				'name' => 'BP 2004 GMS Zeugnis SJ',
+			'BP 2016/GMS Zeugnis SJ' => [
+				'name' => 'BP 2016 GMS Zeugnis SJ',
+				'file' => 'BP 2016/Lernentwicklungsbericht neuer BP SJ',
 				'grades' => $grades_1_bis_6,
 				'inputs' => [
 					'comments' => [
@@ -100,8 +92,9 @@ class print_templates {
 					],
 				],
 			],
-			'BP 2004/Lernentwicklungsbericht alter BP 1.HJ' => [
-				'name' => 'BP 2004 GMS Zeugnis 1. HJ',
+			'BP 2004/GMS Zeugnis 1.HJ' => [
+				'name' => 'BP 2004 GMS Zeugnis 1.HJ',
+				'file' => 'BP 2004/Lernentwicklungsbericht alter BP 1.HJ',
 				'grades' => $grades_mit_plus_minus_bis,
 				'inputs' => [
 					'comments' => [
@@ -110,8 +103,37 @@ class print_templates {
 					],
 				],
 			],
-			'BP 2004/Jahreszeugnis Klasse 10 der Gemeinschaftsschule E-Niveau' => [
+			'BP 2004/GMS Zeugnis SJ' => [
+				'name' => 'BP 2004 GMS Zeugnis SJ',
+				'file' => 'BP 2004/Lernentwicklungsbericht alter BP SJ',
+				'grades' => $grades_1_bis_6,
+				'inputs' => [
+					'comments' => [
+						'title' => block_exastud_trans('de:Bemerkungen'),
+						'type' => 'textarea',
+					],
+				],
+			],
+			'BP 2004/GMS Klasse 10 E-Niveau 1.HJ' => [
+				'name' => 'BP 2004 GMS Klasse 10 E-Niveau 1.HJ',
+				'file' => 'BP 2004/Halbjahresinformation Klasse 10Gemeinschaftsschule_E-Niveau_BP 2004',
+				'grades' => $grades_mit_plus_minus_bis_ausgeschrieben,
+				'inputs' => [
+					'ags' => [
+						'title' => 'Teilnahme an Arbeitsgemeinschaften',
+						'type' => 'textarea',
+						'lines' => 3,
+					],
+					'comments_short' => [
+						'title' => 'Bemerkungen',
+						'type' => 'textarea',
+						'lines' => 3,
+					],
+				],
+			],
+			'BP 2004/GMS Klasse 10 E-Niveau SJ' => [
 				'name' => 'BP 2004 GMS Klasse 10 E-Niveau SJ',
+				'file' => 'BP 2004/Jahreszeugnis Klasse 10 der Gemeinschaftsschule E-Niveau',
 				'grades' => $grades_short,
 				'inputs' => [
 					'verhalten' => [
@@ -132,8 +154,9 @@ class print_templates {
 					],
 				],
 			],
-			'BP 2004/Abgangszeugnis der Gemeinschaftsschule' => [
+			'BP 2004/GMS Abgangszeugnis' => [
 				'name' => 'BP 2004 GMS Abgangszeugnis',
+				'file' => 'BP 2004/Abgangszeugnis der Gemeinschaftsschule',
 				'grades' => $grades_lang,
 				'inputs' => [
 					'wann_verlassen' => [
@@ -167,8 +190,9 @@ class print_templates {
 					],
 				],
 			],
-			'BP 2004/Abgangszeugnis der Gemeinschaftsschule HSA Kl.9 und 10' => [
+			'BP 2004/GMS Abgangszeugnis HSA Kl.9 und 10' => [
 				'name' => 'BP 2004 GMS Abgangszeugnis HSA Kl.9 und 10',
+				'file' => 'BP 2004/Abgangszeugnis der Gemeinschaftsschule HSA Kl.9 und 10',
 				'grades' => $grades_lang,
 				'inputs' => [
 					'wann_verlassen' => [
@@ -202,8 +226,26 @@ class print_templates {
 					],
 				],
 			],
-			'BP 2004/Hauptschulabschluszeugnis GMS BP 2004' => [
+			'BP 2004/GMS Hauptschulabschluss 1.HJ' => [
+				'name' => 'BP 2004 GMS Hauptschulabschluss 1.HJ',
+				'file' => 'BP 2004/HalbjahreszeugnisHauptschulabschluss an der Gemeinschaftsschule _BP alt',
+				'grades' => $grades_short,
+				'inputs' => [
+					'ags' => [
+						'title' => 'Teilnahme an Arbeitsgemeinschaften',
+						'type' => 'textarea',
+						'lines' => 3,
+					],
+					'comments_short' => [
+						'title' => 'Bemerkungen',
+						'type' => 'textarea',
+						'lines' => 3,
+					],
+				],
+			],
+			'BP 2004/GMS Hauptschulabschluss SJ' => [
 				'name' => 'BP 2004 GMS Hauptschulabschluss SJ',
+				'file' => 'BP 2004/Hauptschulabschluszeugnis GMS BP 2004',
 				'grades' => $grades_lang,
 				'inputs' => [
 					'abgelegt' => [
@@ -237,8 +279,26 @@ class print_templates {
 					],
 				],
 			],
-			'BP 2004/Realschulabschlusszeugnis an der Gemeinschaftsschule BP 2004' => [
+			'BP 2004/GMS Realschulabschluss 1.HJ' => [
+				'name' => 'BP 2004 GMS Realschulabschluss 1.HJ',
+				'file' => 'BP 2004/HalbjahreszeugnisRealschulabschluss an der Gemeinschaftsschule',
+				'grades' => $grades_short,
+				'inputs' => [
+					'ags' => [
+						'title' => 'Teilnahme an Arbeitsgemeinschaften',
+						'type' => 'textarea',
+						'lines' => 3,
+					],
+					'comments_short' => [
+						'title' => 'Bemerkungen',
+						'type' => 'textarea',
+						'lines' => 3,
+					],
+				],
+			],
+			'BP 2004/GMS Realschulabschluss SJ' => [
 				'name' => 'BP 2004 GMS Realschulabschluss SJ',
+				'file' => 'BP 2004/Realschulabschlusszeugnis an der Gemeinschaftsschule BP 2004',
 				'grades' => $grades_lang,
 				'inputs' => [
 					/*
@@ -266,6 +326,7 @@ class print_templates {
 			],
 			'BP 2004/Zertifikat fuer Profilfach' => [
 				'name' => 'Zertifikat für Profilfach',
+				'file' => 'BP 2004/Zertifikat fuer Profilfach',
 				'grades' => [],
 				'inputs' => [
 					'besondere_kompetenzen' => [
@@ -276,7 +337,8 @@ class print_templates {
 				],
 			],
 			'BP 2004/Beiblatt zur Projektpruefung HSA' => [
-				'name' => 'Beiblatt zur Projektpruefung HSA',
+				'name' => 'Beiblatt zur Projektprüfung HSA',
+				'file' => 'BP 2004/Beiblatt zur Projektpruefung HSA',
 				'grades' => $grades_lang,
 				'inputs' => [
 					/*
@@ -298,55 +360,23 @@ class print_templates {
 					*/
 				],
 			],
-			'BP 2004/HalbjahreszeugnisRealschulabschluss an der Gemeinschaftsschule' => [
-				'name' => 'BP 2004 GMS Realschulabschluss 1.HJ',
-				'grades' => $grades_short,
-				'inputs' => [
-					'ags' => [
-						'title' => 'Teilnahme an Arbeitsgemeinschaften',
-						'type' => 'textarea',
-						'lines' => 3,
-					],
-					'comments_short' => [
-						'title' => 'Bemerkungen',
-						'type' => 'textarea',
-						'lines' => 3,
-					],
-				],
+			'Anlage zum Lernentwicklungsbericht' => [
+				'name' => 'Anlage zum Lernentwicklungsbericht',
+				'file' => 'Anlage zum Lernentwicklungsbericht',
+				'inputs' => [],
 			],
-			'BP 2004/Halbjahresinformation Klasse 10Gemeinschaftsschule_E-Niveau_BP 2004' => [
-				'name' => 'BP 2004 GMS Klasse 10 E-Niveau 1.HJ',
-				'grades' => $grades_mit_plus_minus_bis_ausgeschrieben,
-				'inputs' => [
-					'ags' => [
-						'title' => 'Teilnahme an Arbeitsgemeinschaften',
-						'type' => 'textarea',
-						'lines' => 3,
-					],
-					'comments_short' => [
-						'title' => 'Bemerkungen',
-						'type' => 'textarea',
-						'lines' => 3,
-					],
-				],
-			],
-			'BP 2004/HalbjahreszeugnisHauptschulabschluss an der Gemeinschaftsschule _BP alt' => [
-				'name' => 'BP 2004 GMS Hauptschulabschluss 1.HJ',
-				'grades' => $grades_short,
-				'inputs' => [
-					'ags' => [
-						'title' => 'Teilnahme an Arbeitsgemeinschaften',
-						'type' => 'textarea',
-						'lines' => 3,
-					],
-					'comments_short' => [
-						'title' => 'Bemerkungen',
-						'type' => 'textarea',
-						'lines' => 3,
-					],
-				],
+			'Deckblatt und 1. Innenseite LEB' => [
+				'name' => 'Deckblatt und 1. Innenseite LEB',
+				'file' => 'Deckblatt und 1. Innenseite LEB',
+				'inputs' => [],
 			],
 		];
+
+		return $templates;
+	}
+
+	static function get_template_config($templateid) {
+		$templates = static::get_all_template_configs();
 
 		if (empty($templates[$templateid])) {
 			throw new moodle_exception("template '$templateid' not found");
@@ -431,20 +461,21 @@ class print_templates {
 		$templateids = [];
 
 		if (!$bp || $bp->sourceinfo !== 'bw-bp2004') {
-			$templateids[] = 'BP 2016/Lernentwicklungsbericht neuer BP 1.HJ';
-			$templateids[] = 'BP 2016/Lernentwicklungsbericht neuer BP SJ';
+			$templateids[] = 'BP 2016/GMS Zeugnis 1.HJ';
+			$templateids[] = 'BP 2016/GMS Zeugnis SJ';
+
 		}
 		if (!$bp || $bp->sourceinfo !== 'bw-bp2016') {
-			$templateids[] = 'BP 2004/Lernentwicklungsbericht alter BP 1.HJ';
-			$templateids[] = 'BP 2004/Lernentwicklungsbericht alter BP SJ';
-			$templateids[] = 'BP 2004/HalbjahreszeugnisRealschulabschluss an der Gemeinschaftsschule';
-			$templateids[] = 'BP 2004/Realschulabschlusszeugnis an der Gemeinschaftsschule BP 2004';
-			$templateids[] = 'BP 2004/Halbjahresinformation Klasse 10Gemeinschaftsschule_E-Niveau_BP 2004';
-			$templateids[] = 'BP 2004/Jahreszeugnis Klasse 10 der Gemeinschaftsschule E-Niveau';
-			$templateids[] = 'BP 2004/HalbjahreszeugnisHauptschulabschluss an der Gemeinschaftsschule _BP alt';
-			$templateids[] = 'BP 2004/Hauptschulabschluszeugnis GMS BP 2004';
-			$templateids[] = 'BP 2004/Abgangszeugnis der Gemeinschaftsschule';
-			$templateids[] = 'BP 2004/Abgangszeugnis der Gemeinschaftsschule HSA Kl.9 und 10';
+			$templateids[] = 'BP 2004/GMS Zeugnis 1.HJ';
+			$templateids[] = 'BP 2004/GMS Zeugnis SJ';
+			$templateids[] = 'BP 2004/GMS Realschulabschluss 1.HJ';
+			$templateids[] = 'BP 2004/GMS Realschulabschluss SJ';
+			$templateids[] = 'BP 2004/GMS Klasse 10 E-Niveau 1.HJ';
+			$templateids[] = 'BP 2004/GMS Klasse 10 E-Niveau SJ';
+			$templateids[] = 'BP 2004/GMS Hauptschulabschluss 1.HJ';
+			$templateids[] = 'BP 2004/GMS Hauptschulabschluss SJ';
+			$templateids[] = 'BP 2004/GMS Abgangszeugnis';
+			$templateids[] = 'BP 2004/GMS Abgangszeugnis HSA Kl.9 und 10';
 		}
 
 		return static::get_template_name_array($templateids);
@@ -452,9 +483,9 @@ class print_templates {
 
 	static function get_templateids_with_projekt_pruefung() {
 		$ids = [
-			'BP 2004/Abgangszeugnis der Gemeinschaftsschule HSA Kl.9 und 10',
-			'BP 2004/Hauptschulabschluszeugnis GMS BP 2004',
-			'BP 2004/Realschulabschlusszeugnis an der Gemeinschaftsschule BP 2004',
+			'BP 2004/GMS Abgangszeugnis HSA Kl.9 und 10',
+			'BP 2004/GMS Hauptschulabschluss SJ',
+			'BP 2004/GMS Realschulabschluss SJ',
 		];
 
 		return array_combine($ids, $ids);
@@ -490,5 +521,9 @@ class print_template {
 
 	function get_config() {
 		return print_templates::get_template_config($this->templateid);
+	}
+
+	function get_file() {
+		return __DIR__.'/../template/'.$this->get_config()['file'].'.docx';
 	}
 }

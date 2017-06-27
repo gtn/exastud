@@ -64,7 +64,7 @@ class printer {
 		}
 		*/
 
-		$templateFile = __DIR__.'/../template/'.$templateid.'.docx';
+		$templateFile = $template->get_file();
 
 		if (!file_exists($templateFile)) {
 			throw new \Exception("template $templateid not found");
@@ -110,10 +110,10 @@ class printer {
 				'geburtsdatum' => block_exastud_get_date_of_birth($student->id),
 			];
 		} elseif (in_array($templateid, [
-			'BP 2016/Lernentwicklungsbericht neuer BP 1.HJ',
-			'BP 2016/Lernentwicklungsbericht neuer BP SJ',
-			'BP 2004/Lernentwicklungsbericht alter BP 1.HJ',
-			'BP 2004/Lernentwicklungsbericht alter BP SJ',
+			'BP 2016/GMS Zeugnis 1.HJ',
+			'BP 2016/GMS Zeugnis SJ',
+			'BP 2004/GMS Zeugnis 1.HJ',
+			'BP 2004/GMS Zeugnis SJ',
 		])) {
 			$bpsubjects = block_exastud_get_bildungsplan_subjects($class->bpid);
 			$class_subjects = block_exastud_get_class_subjects($class);
@@ -198,14 +198,14 @@ class printer {
 			$dataTextReplacer['Bitte die Niveaustufe auswählen'] = 'Niveau ---';
 			$dataTextReplacer['ggf. Note'] = @$studentdata->print_grades ? 'Note ---' : '';
 		} elseif (in_array($templateid, [
-			'BP 2004/HalbjahreszeugnisRealschulabschluss an der Gemeinschaftsschule',
-			'BP 2004/Halbjahresinformation Klasse 10Gemeinschaftsschule_E-Niveau_BP 2004',
-			'BP 2004/HalbjahreszeugnisHauptschulabschluss an der Gemeinschaftsschule _BP alt',
-			'BP 2004/Jahreszeugnis Klasse 10 der Gemeinschaftsschule E-Niveau',
-			'BP 2004/Abgangszeugnis der Gemeinschaftsschule',
-			'BP 2004/Abgangszeugnis der Gemeinschaftsschule HSA Kl.9 und 10',
-			'BP 2004/Hauptschulabschluszeugnis GMS BP 2004',
-			'BP 2004/Realschulabschlusszeugnis an der Gemeinschaftsschule BP 2004',
+			'BP 2004/GMS Realschulabschluss 1.HJ',
+			'BP 2004/GMS Realschulabschluss SJ',
+			'BP 2004/GMS Klasse 10 E-Niveau 1.HJ',
+			'BP 2004/GMS Klasse 10 E-Niveau SJ',
+			'BP 2004/GMS Hauptschulabschluss 1.HJ',
+			'BP 2004/GMS Hauptschulabschluss SJ',
+			'BP 2004/GMS Abgangszeugnis',
+			'BP 2004/GMS Abgangszeugnis HSA Kl.9 und 10',
 			'BP 2004/Zertifikat fuer Profilfach',
 			'BP 2004/Beiblatt zur Projektpruefung HSA',
 		])) {
@@ -335,7 +335,7 @@ class printer {
 			}
 
 
-			if ($templateid == 'BP 2004/Abgangszeugnis der Gemeinschaftsschule') {
+			if ($templateid == 'BP 2004/GMS Abgangszeugnis') {
 				$value = static::spacerIfEmpty(@$forminputs['wann_verlassen']['values'][@$studentdata->wann_verlassen]);
 				$add_filter(function($content) use ($placeholder, $value) {
 					$ret = preg_replace('!>[^<]*am Ende[^<]*<!U', '>'.$value.'<', $content, -1, $count);
@@ -360,7 +360,7 @@ class printer {
 
 					return $ret;
 				});
-			} elseif ($templateid == 'BP 2004/Abgangszeugnis der Gemeinschaftsschule HSA Kl.9 und 10') {
+			} elseif ($templateid == 'BP 2004/GMS Abgangszeugnis HSA Kl.9 und 10') {
 				$value = static::spacerIfEmpty(@$forminputs['wann_verlassen']['values'][@$studentdata->wann_verlassen]);
 				$add_filter(function($content) use ($placeholder, $value) {
 					$ret = preg_replace('!>[^<]*am Ende[^<]*<!U', '>'.$value.'<', $content, -1, $count);
@@ -370,7 +370,7 @@ class printer {
 
 					return $ret;
 				});
-			} elseif ($templateid == 'BP 2004/Jahreszeugnis Klasse 10 der Gemeinschaftsschule E-Niveau') {
+			} elseif ($templateid == 'BP 2004/GMS Klasse 10 E-Niveau SJ') {
 				if (@$studentdata->verhalten) {
 					$value = @$forminputs['verhalten']['values'][$studentdata->verhalten];
 					$add_filter(function($content) use ($placeholder, $value) {
@@ -383,7 +383,7 @@ class printer {
 						return preg_replace('!(Mitarbeit.*)'.$placeholder.'note!U', '${1}'.$value, $content, -1, $count);
 					});
 				}
-			} elseif ($templateid == 'BP 2004/Hauptschulabschluszeugnis GMS BP 2004') {
+			} elseif ($templateid == 'BP 2004/GMS Hauptschulabschluss SJ') {
 				$data['gd'] = @$studentdata->gesamtnote_und_durchschnitt_der_gesamtleistungen;
 
 				$values = [
@@ -572,7 +572,7 @@ class printer {
 		$templateFile = __DIR__.'/../template/'.$templateid.'.docx';
 
 		if (!file_exists($templateFile)) {
-			throw new \Exception("template $templateid not found");
+			throw new \Exception("template '$templateid' not found");
 		}
 
 		\PhpOffice\PhpWord\Settings::setTempDir($CFG->tempdir);

@@ -182,18 +182,15 @@ if ($classid = optional_param('classid', 0, PARAM_INT)) {
 	$bp = $DB->get_record('block_exastudbp', ['id' => $class->bpid]);
 
 	$templates = [];
-	$templates['html_report'] = 'Ausgabe am Bildschirm';
 	$templates['grades_report'] = 'Notenübersicht (docx)';
 	$templates['grades_report_xlsx'] = 'Notenübersicht (xlsx)';
-	$templates['Deckblatt und 1. Innenseite LEB'] = 'Deckblatt und 1. Innenseite LEB';
-
 	$templates[BLOCK_EXASTUD_DATA_ID_PRINT_TEMPLATE] = 'Zeugnis / Abgangszeugnis';
-
 	if (block_exastud_is_exacomp_installed()) {
 		$templates['Anlage zum Lernentwicklungsbericht'] = 'Anlage zum Lernentwicklungsbericht';
 	}
-
+	$templates['html_report'] = 'Ausgabe am Bildschirm';
 	$templates += \block_exastud\print_templates::get_class_other_print_templates($class);
+	$templates['Deckblatt und 1. Innenseite LEB'] = 'Deckblatt und 1. Innenseite LEB';
 
 	echo $output->header('report');
 	$classheader = block_exastud_get_period($class->periodid)->description.' - '.$class->title;

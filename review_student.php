@@ -116,7 +116,7 @@ $formdata = (object)array_merge((array)$formdata, (array)$subjectData);
 
 $grade_options = $template->get_grade_options();
 if (@$formdata->grade && !isset($grade_options[$formdata->grade])) {
-	$grade_options = [$formdata->grade => $grade_options[$formdata->grade]] + $grade_options;
+	$grade_options = [$formdata->grade => $formdata->grade] + $grade_options;
 }
 
 $studentform = new student_edit_form(null, [
