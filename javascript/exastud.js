@@ -66,18 +66,6 @@ $.extend(window.block_exastud, {});
 		}).change();
 	});
 
-	$(function(){
-		var select = $('select[name=default_templateid]');
-		var current = select.val();
-		select.change(function(){
-			if (!confirm('Soll das Zeugnisformular, das für die Schüler erzeugt wird, bei allen geändert werden?')) {
-				$(this).val(current);
-			} else {
-				current = $(this).val();
-			}
-		});
-	});
-
 	// eingabe limitieren, geht z.b. nicht bei mouse paste
 	/*
 	$(function(){

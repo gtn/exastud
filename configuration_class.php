@@ -266,6 +266,23 @@ if ($type == 'students') {
 		echo '</td></tr></table>';
 
 		echo '</form>';
+
+		$templateids_with_projekt_pruefung = \block_exastud\print_templates::get_templateids_with_projekt_pruefung();
+
+		?>
+		<script>
+			var templateids_with_projekt_pruefung = <?php echo json_encode($templateids_with_projekt_pruefung); ?>;
+
+			$(document).on('change', '[name$="[print_template]"]', function(){
+				if (templateids_with_projekt_pruefung[$(this).val()]) {
+					$(this).closest('tr').find('[name$="[project_teacher]"]').prop('disabled', null);
+				} else {
+					$(this).closest('tr').find('[name$="[project_teacher]"]').prop('disabled', true).val('');
+				}
+			});
+			$('[name$="[print_template]"]').change();
+		</script>
+		<?php
 	}
 }
 

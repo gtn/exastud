@@ -424,6 +424,10 @@ class print_templates {
 			$bp = null;
 		}
 
+		return static::get_bp_available_print_templates($bp);
+	}
+
+	static function get_bp_available_print_templates($bp) {
 		$templateids = [];
 
 		if (!$bp || $bp->sourceinfo !== 'bw-bp2004') {
@@ -444,6 +448,16 @@ class print_templates {
 		}
 
 		return static::get_template_name_array($templateids);
+	}
+
+	static function get_templateids_with_projekt_pruefung() {
+		$ids = [
+			'BP 2004/Abgangszeugnis der Gemeinschaftsschule HSA Kl.9 und 10',
+			'BP 2004/Hauptschulabschluszeugnis GMS BP 2004',
+			'BP 2004/Realschulabschlusszeugnis an der Gemeinschaftsschule BP 2004',
+		];
+
+		return array_combine($ids, $ids);
 	}
 }
 

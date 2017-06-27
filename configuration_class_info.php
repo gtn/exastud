@@ -39,13 +39,7 @@ if (!$classid) {
 $class->classid = $class->id;
 $class->courseid = $courseid;
 
-if ($class->id) {
-	$templates = \block_exastud\print_templates::get_class_available_print_templates($class);
-} else {
-		$templates = \block_exastud\print_templates::get_all_default_print_templates();
-}
-
-$classform = new class_edit_form(null, ['templates' => $templates]);
+$classform = new class_edit_form();
 
 if ($classform->is_cancelled()) {
 	redirect('configuration_classes.php?courseid='.$courseid);
@@ -111,7 +105,6 @@ $PAGE->set_url($url);
 $output = block_exastud_get_renderer();
 echo $output->header(['configuration_classes', 'class_info'], ['class' => ($class && $class->id) ? $class : null]);
 
-
 if ($class && $class->id) {
 	$classform->display();
 
@@ -135,5 +128,54 @@ if ($class && $class->id) {
 
 	$classform->display();
 }
+
+if ($class->id) {
+	$templates = \block_exastud\print_templates::get_class_available_print_templates($class);
+} else {
+	$templates = \block_exastud\print_templates::get_all_default_print_templates();
+}
+
+$bps = $DB->get_records('block_exastudbp', [], 'sorting');
+$templates_by_bp = [];
+foreach ($bps as $bp) {
+	$templates_by_bp[$bp->id] = \block_exastud\print_templates::get_bp_available_print_templates($bp);
+}
+
+?>
+	<script>
+			var templates_by_bp = <?php echo json_encode($templates_by_bp); ?>;
+
+			function populate_select(name) {
+				var $input = $('input,select').filter('[name=' + name + ']');
+				var val = $input.val();
+				var $select = $('<select/>', {name: name});
+
+				$.each(templates_by_bp[$('select[name=bpid]').val()], function (id, title) {
+					$select.append($('<option/>', {
+						value: id,
+						text: title
+					}));
+				});
+
+				$input.replaceWith($select);
+				// don't use $select.val() because if the value does not exist (in chrome) the select is empty
+				$select.find('option[value="'+val+'"]').prop('selected', true);
+
+				$select.change(function () {
+					if (!confirm('Soll das Zeugnisformular, das für die Schüler erzeugt wird, bei allen geändert werden?')) {
+						$(this).val(current);
+					} else {
+						current = $(this).val();
+					}
+				});
+			}
+
+			populate_select('default_templateid');
+
+			$(document).on('change', '[name=bpid]', function () {
+				populate_select('default_templateid');
+			});
+	</script>
+<?php
 
 echo $output->footer();

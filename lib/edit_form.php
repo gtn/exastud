@@ -46,7 +46,8 @@ class class_edit_form extends moodleform {
 			g::$OUTPUT->notification(block_exastud_trans(['de:Bitte beachten Sie: Bei einer Änderung des Bildungsplans müssen alle Bewertungen erneut eingegeben werden.', 'en:']), 'notifymessage')
 		);
 
-		$mform->addElement('select', BLOCK_EXASTUD_DATA_ID_CLASS_DEFAULT_TEMPLATEID, block_exastud_trans('de:Standard Zeugnisformular').':', $this->_customdata['templates']);
+		$mform->addElement('text', BLOCK_EXASTUD_DATA_ID_CLASS_DEFAULT_TEMPLATEID, block_exastud_trans('de:Standard Zeugnisformular').':');
+		$mform->setType(BLOCK_EXASTUD_DATA_ID_CLASS_DEFAULT_TEMPLATEID, PARAM_TEXT);
 
 		$mform->addElement('static', '', '&nbsp;',
 			g::$OUTPUT->notification(block_exastud_trans(['de:Bitte beachten Sie: Bei einer Änderung des Standard Zeugnisformulars wird für alle Schüler das Zeugnisformular geändert. Bestehende Formulareinstellungen wie z.B. Agangszeugnis werden beibehalten.', 'en:']), 'notifymessage')
