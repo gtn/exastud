@@ -1456,3 +1456,31 @@ function block_exastud_get_project_teacher_students($class, $userid) {
 
 	return $project_teacher_students;
 }
+
+function block_exastud_get_user_gender($userid) {
+	$value = block_exastud_get_custom_profile_field_value($userid, 'gender');
+	if (!$value) {
+		return null;
+	} elseif ($value[0] == 'm') {
+		return 'male';
+	} else {
+		return 'female';
+	}
+}
+
+function block_exastud_student_has_projekt_pruefung($class, $userid) {
+	$templateids_with_projekt_pruefung = \block_exastud\print_templates::get_templateids_with_projekt_pruefung();
+	$templateid = block_exastud_get_student_print_templateid($class, $userid);
+
+	return in_array($templateid, $templateids_with_projekt_pruefung);
+}
+
+function block_exastud_normalize_projekt_pruefung($class) {
+	$classstudents = block_exastud_get_class_students($class->id);
+
+	foreach ($classstudents as $student) {
+		if (!block_exastud_student_has_projekt_pruefung($class, $student->id)) {
+			block_exastud_set_class_student_data($class->id, $student->id, BLOCK_EXASTUD_DATA_ID_PROJECT_TEACHER, null);
+		}
+	}
+}

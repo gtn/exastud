@@ -79,6 +79,7 @@ class block_exastud_renderer extends plugin_renderer_base {
 
 		if ($class) {
 			$tabs['configuration_classes']->subtree[] = new tabobject('students', new moodle_url('/blocks/exastud/configuration_class.php', ['courseid' => g::$COURSE->id, 'action' => 'edit', 'classid' => $class->id, 'type' => 'students']), block_exastud_get_string('students'), '', true);
+			$tabs['configuration_classes']->subtree[] = new tabobject('studentgradereports', new moodle_url('/blocks/exastud/configuration_class.php', ['courseid' => g::$COURSE->id, 'action' => 'edit', 'classid' => $class->id, 'type' => 'studentgradereports']), block_exastud_get_string('studentgradereports'), '', true);
 			$tabs['configuration_classes']->subtree[] = new tabobject('teachers', new moodle_url('/blocks/exastud/configuration_class.php', ['courseid' => g::$COURSE->id, 'action' => 'edit', 'classid' => $class->id, 'type' => 'teachers']), block_exastud_get_string('teachers'), '', true);
 			if (block_exastud_get_plugin_config('can_edit_bps_and_subjects')) {
 				$tabs['configuration_classes']->subtree[] = new tabobject('categories', new moodle_url('/blocks/exastud/configuration_class.php', ['courseid' => g::$COURSE->id, 'action' => 'edit', 'classid' => $class->id, 'type' => 'categories']), block_exastud_get_string('categories'), '', true);

@@ -59,13 +59,13 @@ if ($classform->is_cancelled()) {
 	} else {
 		$newclass->userid = $USER->id;
 		$newclass->periodid = $curPeriod->id;
-		$class->id = $DB->insert_record('block_exastudclass', $newclass);
+		$newclass->id = $DB->insert_record('block_exastudclass', $newclass);
 	}
 
-	block_exastud_set_class_data($class->id, BLOCK_EXASTUD_DATA_ID_CLASS_DEFAULT_TEMPLATEID, $classedit->{BLOCK_EXASTUD_DATA_ID_CLASS_DEFAULT_TEMPLATEID});
+	block_exastud_set_class_data($newclass->id, BLOCK_EXASTUD_DATA_ID_CLASS_DEFAULT_TEMPLATEID, $classedit->{BLOCK_EXASTUD_DATA_ID_CLASS_DEFAULT_TEMPLATEID});
 
-	// standard zeugnis zurücksetzen (wegen alter version wo es kein standard zeugnis gab)
 	if ($class->id) {
+		// standard zeugnis zurücksetzen (wegen alter version wo es kein standard zeugnis gab)
 		$new_default_templateid = $classedit->{BLOCK_EXASTUD_DATA_ID_CLASS_DEFAULT_TEMPLATEID};
 		$old_default_templateid = block_exastud_get_class_data($class->id, BLOCK_EXASTUD_DATA_ID_CLASS_DEFAULT_TEMPLATEID);
 
@@ -75,26 +75,14 @@ if ($classform->is_cancelled()) {
 				block_exastud_set_class_student_data($class->id, $student->id, BLOCK_EXASTUD_DATA_ID_PRINT_TEMPLATE, '');
 			}
 		}
-	}
 
-	/*
-	$DB->delete_records('block_exastudclassteachers', ['teacherid' => $USER->id, 'classid' => $class->id]);
-	if (!empty($classedit->mysubjectids)) {
-		foreach ($classedit->mysubjectids as $subjectid) {
-			$DB->insert_record('block_exastudclassteachers ', [
-				'teacherid' => $USER->id,
-				'classid' => $class->id,
-				'timemodified' => time(),
-				'subjectid' => $subjectid,
-			]);
-		}
+		block_exastud_normalize_projekt_pruefung($class);
 	}
-	*/
 
 	if ($class->id) {
 		redirect('configuration_class_info.php?courseid='.$courseid.'&classid='.$class->id);
 	} else {
-		redirect('configuration_class.php?courseid='.$courseid.'&classid='.$class->id);
+		redirect('configuration_class.php?courseid='.$courseid.'&classid='.$newclass->id);
 	}
 }
 

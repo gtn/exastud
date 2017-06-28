@@ -123,12 +123,16 @@ return [
 		'Project-Teachers',
 	],
 	'class_info' => [
-		'Klasse bearbeiten',
+		'Klasseneinstellungen',
 		'Edit Class',
 	],
 	'students' => [
 		'Schülerinnen und Schüler',
 		'Members',
+	],
+	'studentgradereports' => [
+		'Schülerzeugnisse',
+		'Grade Reports',
 	],
 	'no_entries_found' => [
 		'Keine Einträge gefunden',

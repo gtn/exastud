@@ -23,7 +23,7 @@ $courseid = optional_param('courseid', 1, PARAM_INT); // Course ID
 $action = optional_param('action', '', PARAM_TEXT);
 $type = optional_param('type', '', PARAM_TEXT);
 
-if ($type != 'categories' && $type != 'teachers') {
+if ($type != 'categories' && $type != 'teachers' && $type != 'studentgradereports') {
 	$type = 'students';
 }
 
@@ -57,18 +57,74 @@ echo $output->header(['configuration_classes', $type], ['class' => $class]);
 /* Print the Students */
 if ($type == 'students') {
 	$classstudents = block_exastud_get_class_students($class->id);
+
+	$buttons_left = '';
+	$buttons_left .= $output->link_button($CFG->wwwroot.'/blocks/exastud/configuration_classmembers.php?courseid='.$courseid.'&classid='.$class->id,
+		block_exastud_get_string('editclassmemberlist'));
+	$buttons_left .= $output->link_button($CFG->wwwroot.'/blocks/exastud/configuration_classmembers_courses.php?courseid='.$courseid.'&classid='.$class->id,
+		block_exastud_trans(['de:Aus Kurs hinzufügen', 'en:Add from Course']));
+
+	if (!$classstudents) {
+		echo $OUTPUT->notification(block_exastud_get_string('no_entries_found'), 'notifymessage');
+
+		echo $buttons_left;
+	} else {
+		$table = new html_table();
+
+		$table->size = ['1%', '15%', '15%'];
+
+		$table->head = [
+			'#',
+			block_exastud_get_string('lastname'),
+			block_exastud_get_string('firstname'),
+			block_exastud_trans('de:Geschlecht'),
+			block_exastud_trans('de:Geburtsdatum'),
+			block_exastud_trans('de:Geburtsort'),
+		];
+
+		$i = 0;
+		foreach ($classstudents as $classstudent) {
+			$i++;
+
+			$gender = block_exastud_get_user_gender($classstudent->id);
+			if (!$gender) {
+
+			} elseif ($gender == 'male') {
+				$gender = block_exastud_trans(['de:Männlich', 'en:male']);
+			} else {
+				$gender = block_exastud_trans(['de:Weiblich', 'en:female']);
+			}
+
+			$row = [
+				$i,
+				$classstudent->lastname,
+				$classstudent->firstname,
+				$gender,
+				block_exastud_get_date_of_birth($classstudent->id),
+				block_exastud_get_custom_profile_field_value($classstudent->id, 'placeofbirth'),
+			];
+
+			$table->data[] = $row;
+		}
+
+		echo $output->table($table);
+
+		echo $buttons_left;
+	}
+}
+
+if ($type == 'studentgradereports') {
+	$classstudents = block_exastud_get_class_students($class->id);
 	$additional_head_teachers = block_exastud_get_class_additional_head_teachers($classid);
 
 	if ($action == 'save') {
 		require_sesskey();
 
 		$userdatas = \block_exastud\param::optional_array('userdatas', [PARAM_INT => (object)[
+			'print_template' => PARAM_RAW,
 			'print_grades' => PARAM_BOOL,
 			'bildungsstandard_erreicht' => PARAM_TEXT,
 			'dropped_out' => PARAM_BOOL,
-			'head_teacher' => PARAM_INT,
-			'print_template' => PARAM_RAW,
-			'project_teacher' => PARAM_INT,
 		]]);
 
 		foreach ($classstudents as $student) {
@@ -79,10 +135,8 @@ if ($type == 'students') {
 			$current = block_exastud_get_class_student_data($class->id, $student->id);
 			$new = $userdatas[$student->id];
 
-			block_exastud_set_class_student_data($class->id, $student->id, 'print_grades', $new->print_grades);
-			block_exastud_set_class_student_data($class->id, $student->id, 'head_teacher', $new->head_teacher);
 			block_exastud_set_class_student_data($class->id, $student->id, 'print_template', $new->print_template);
-			block_exastud_set_class_student_data($class->id, $student->id, 'project_teacher', $new->project_teacher);
+			block_exastud_set_class_student_data($class->id, $student->id, 'print_grades', $new->print_grades);
 
 			if (@$current->bildungsstandard_erreicht != @$new->bildungsstandard_erreicht) {
 				// set it, if changed
@@ -105,14 +159,9 @@ if ($type == 'students') {
 				}
 			}
 		}
+
+		block_exastud_normalize_projekt_pruefung($class);
 	}
-
-	$buttons_left = '';
-	$buttons_left .= $output->link_button($CFG->wwwroot.'/blocks/exastud/configuration_classmembers.php?courseid='.$courseid.'&classid='.$class->id,
-		block_exastud_get_string('editclassmemberlist'));
-
-	$buttons_left .= $output->link_button($CFG->wwwroot.'/blocks/exastud/configuration_classmembers_courses.php?courseid='.$courseid.'&classid='.$class->id,
-		block_exastud_trans(['de:Aus Kurs hinzufügen', 'en:Add from Course']));
 
 	if (!$classstudents) {
 		echo $OUTPUT->notification(block_exastud_get_string('no_entries_found'), 'notifymessage');
@@ -120,54 +169,18 @@ if ($type == 'students') {
 		echo $buttons_left;
 	} else {
 		$table = new html_table();
-		$table2 = new html_table();
-		$table3 = new html_table();
 
 		$table->size = ['1%', '15%', '15%'];
-		$table2->size = ['1%', '15%', '15%'];
-		$table3->size = ['1%', '15%', '15%'];
 
 		$table->head = [
 			'#',
 			block_exastud_get_string('lastname'),
 			block_exastud_get_string('firstname'),
-			block_exastud_trans('de:Geschlecht'),
-			block_exastud_trans('de:Geburtsdatum'),
-			block_exastud_trans('de:Geburtsort'),
-		];
-
-		$table2->head = [
-			'#',
-			block_exastud_get_string('lastname'),
-			block_exastud_get_string('firstname'),
-		];
-
-		$table3->head = [
-			'#',
-			block_exastud_get_string('lastname'),
-			block_exastud_get_string('firstname'),
-		];
-
-		// $table->attributes['style'] = "width: 75%;";
-		// $table->size = ['20%', '20%', '12%', '12%', '12%', '12%', '12%'];
-
-		if ($additional_head_teachers) {
-			$table2->head[] = block_exastud_trans('de:Zuständiger Klassenlehrer');
-			$additional_head_teachers_select = array_map(function($teacher) {
-				return fullname($teacher);
-			}, $additional_head_teachers);
-		}
-
-		$table2->head = array_merge($table2->head, [
-			block_exastud_trans('de:Lehrkraft für Projektprüfung'),
 			block_exastud_trans('de:Zeugnisformular'),
-		]);
-
-		$table3->head = array_merge($table3->head, [
 			block_exastud_trans('de:Note im Lern&shy;entwicklungs&shy;bericht ausweisen'),
 			block_exastud_trans('de:Bildungsstandard erreicht'),
 			block_exastud_trans('de:Ausgeschieden'),
-		]);
+		];
 
 		$available_templates = \block_exastud\print_templates::get_class_available_print_templates($class);
 		$default_templateid = block_exastud_get_class_data($class->id, BLOCK_EXASTUD_DATA_ID_CLASS_DEFAULT_TEMPLATEID);
@@ -184,7 +197,6 @@ if ($type == 'students') {
 		$i = 0;
 		foreach ($classstudents as $classstudent) {
 			$i++;
-			//$template = block_exastud_get_student_print_template($class, $classstudent->id);
 			$userdata = block_exastud_get_class_student_data($class->id, $classstudent->id);
 
 			$print_grades = '<input name="userdatas['.$classstudent->id.'][print_grades]" type="hidden" value="0"/>'.
@@ -199,56 +211,23 @@ if ($type == 'students') {
 				(!empty($userdata->dropped_out) ? ' checked="checked"' : '').'/>'.
 				(!empty($userdata->dropped_out) ? userdate($userdata->dropped_out_time, block_exastud_get_string('strftimedate', 'langconfig')) : '');
 
-			$gender = block_exastud_get_custom_profile_field_value($classstudent->id, 'gender');
-
-			$row = [
-				$i,
-				$classstudent->lastname,
-				$classstudent->firstname,
-				$gender,
-				block_exastud_get_date_of_birth($classstudent->id),
-				block_exastud_get_custom_profile_field_value($classstudent->id, 'placeofbirth'),
-			];
-			$row2 = [
-				$i,
-				$classstudent->lastname,
-				$classstudent->firstname,
-			];
-			$row3 = [
-				$i,
-				$classstudent->lastname,
-				$classstudent->firstname,
-			];
-
-			if ($additional_head_teachers) {
-				$row2[] = html_writer::select($additional_head_teachers_select, 'userdatas['.$classstudent->id.'][head_teacher]', @$userdata->head_teacher, fullname($USER));
-			}
-
-			$project_teachers = [$class->userid => fullname($DB->get_record('user', ['id' => $class->userid]))];
-			foreach (block_exastud_get_class_teachers($classid) as $teacher) {
-				if ($teacher->id !== $class->userid) {
-					$project_teachers[$teacher->id] = fullname($teacher);
-				}
-			}
-			natsort($project_teachers);
-
 			$templateid = block_exastud_get_student_print_templateid($class, $classstudent->id);
 			if ($templateid == $default_templateid) {
 				$templateid = '';
 			}
 
-			$row2[] = html_writer::select($project_teachers, 'userdatas['.$classstudent->id.'][project_teacher]', @$userdata->{BLOCK_EXASTUD_DATA_ID_PROJECT_TEACHER}, block_exastud_trans('de:keine'));
-			$row2[] = html_writer::select($available_templates, 'userdatas['.$classstudent->id.'][print_template]', $templateid, false);
 
-			$row3 = array_merge($row3, [
+			$row = [
+				$i,
+				$classstudent->lastname,
+				$classstudent->firstname,
+				html_writer::select($available_templates, 'userdatas['.$classstudent->id.'][print_template]', $templateid, false),
 				$print_grades,
 				$bildungsstandard,
 				$ausgeschieden,
-			]);
+			];
 
 			$table->data[] = $row;
-			$table2->data[] = $row2;
-			$table3->data[] = $row3;
 		}
 
 		echo '<form method="post">';
@@ -256,38 +235,40 @@ if ($type == 'students') {
 		echo '<input type="hidden" name="action" value="save" />';
 
 		echo $output->table($table);
-		echo $output->table($table2);
-		echo $output->table($table3);
 
 		echo '<table style="width: 100%;"><tr><td>';
-		echo $buttons_left;
 		echo '</td><td style="text-align: right;">';
 		echo '<input type="submit" value="'.block_exastud_get_string('savechanges').'"/>';
 		echo '</td></tr></table>';
 
 		echo '</form>';
-
-		$templateids_with_projekt_pruefung = \block_exastud\print_templates::get_templateids_with_projekt_pruefung();
-
-		?>
-		<script>
-			var templateids_with_projekt_pruefung = <?php echo json_encode($templateids_with_projekt_pruefung); ?>;
-
-			$(document).on('change', '[name$="[print_template]"]', function(){
-				if (templateids_with_projekt_pruefung[$(this).val()]) {
-					$(this).closest('tr').find('[name$="[project_teacher]"]').prop('disabled', null);
-				} else {
-					$(this).closest('tr').find('[name$="[project_teacher]"]').prop('disabled', true).val('');
-				}
-			});
-			$('[name$="[print_template]"]').change();
-		</script>
-		<?php
 	}
 }
 
 /* Print the Classes */
 if ($type == 'teachers') {
+	$classstudents = block_exastud_get_class_students($class->id);
+
+	if ($action == 'save') {
+		require_sesskey();
+
+		$userdatas = \block_exastud\param::optional_array('userdatas', [PARAM_INT => (object)[
+			'head_teacher' => PARAM_INT,
+			'project_teacher' => PARAM_INT,
+		]]);
+
+		foreach ($classstudents as $student) {
+			if (!isset($userdatas[$student->id])) {
+				continue;
+			}
+
+			$new = $userdatas[$student->id];
+
+			block_exastud_set_class_student_data($class->id, $student->id, 'head_teacher', $new->head_teacher);
+			block_exastud_set_class_student_data($class->id, $student->id, 'project_teacher', $new->project_teacher);
+		}
+	}
+
 	// echo html_writer::tag("h2", block_exastud_get_string('teachers'));
 	$table = new html_table();
 
@@ -333,8 +314,76 @@ if ($type == 'teachers') {
 		echo $output->table($table);
 	}
 
+
 	echo $output->link_button($CFG->wwwroot.'/blocks/exastud/configuration_classteachers.php?courseid='.$courseid.'&classid='.$class->id,
 		block_exastud_get_string('editclassteacherlist'));
+
+	$table = new html_table();
+
+	$table->size = ['1%', '15%', '15%'];
+
+	$table->head = [
+		'#',
+		block_exastud_get_string('lastname'),
+		block_exastud_get_string('firstname'),
+	];
+
+	if ($additional_head_teachers) {
+		$table->head[] = block_exastud_trans('de:Zuständiger Klassenlehrer');
+		$additional_head_teachers_select = array_map(function($teacher) {
+			return fullname($teacher);
+		}, $additional_head_teachers);
+	}
+
+	$table->head = array_merge($table->head, [
+		block_exastud_trans('de:Lehrkraft für Projektprüfung'),
+	]);
+
+	$project_teachers = [$class->userid => fullname($DB->get_record('user', ['id' => $class->userid]))];
+	foreach (block_exastud_get_class_teachers($classid) as $teacher) {
+		if ($teacher->id !== $class->userid) {
+			$project_teachers[$teacher->id] = fullname($teacher);
+		}
+	}
+	natsort($project_teachers);
+
+	$i = 0;
+	foreach ($classstudents as $classstudent) {
+		$i++;
+		$userdata = block_exastud_get_class_student_data($class->id, $classstudent->id);
+
+		$row = [
+			$i,
+			$classstudent->lastname,
+			$classstudent->firstname,
+		];
+
+		if ($additional_head_teachers) {
+			$row[] = html_writer::select($additional_head_teachers_select, 'userdatas['.$classstudent->id.'][head_teacher]', @$userdata->head_teacher, fullname($USER));
+		}
+
+		if (block_exastud_student_has_projekt_pruefung($class, $classstudent->id)) {
+			$row[] = html_writer::select($project_teachers, 'userdatas['.$classstudent->id.'][project_teacher]', @$userdata->{BLOCK_EXASTUD_DATA_ID_PROJECT_TEACHER}, block_exastud_trans('de:keine'));
+		} else {
+			$template = block_exastud_get_student_print_template($class, $classstudent->id);
+			$row[] = block_exastud_trans(['de:Projektprüfung für Formular \'{$a}\' nicht verfügbar'], $template->get_name());
+		}
+
+		$table->data[] = $row;
+	}
+
+	echo '<form method="post">';
+	echo '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
+	echo '<input type="hidden" name="action" value="save" />';
+
+	echo $output->table($table);
+
+	echo '<table style="width: 100%;"><tr><td style="text-align: right;">';
+	echo '<input type="submit" value="'.block_exastud_get_string('savechanges').'"/>';
+	echo '</td></tr></table>';
+
+	echo '</form>';
+
 
 	if ($showUnlock) {
 		echo $output->heading2(block_exastud_trans(['de:Bewertung erneuet freigeben', 'en:Allow reviewing this class']));

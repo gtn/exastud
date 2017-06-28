@@ -51,6 +51,7 @@ $string['teachers'] = 'Teachers';
 $string['project_based_teachers'] = 'Project-Teachers';
 $string['class_info'] = 'Edit Class';
 $string['students'] = 'Members';
+$string['studentgradereports'] = 'Grade Reports';
 $string['no_entries_found'] = 'No Entries found';
 $string['project_based_students'] = 'Projects';
 $string['errorinsertingclass'] = 'Error when inserting class';
