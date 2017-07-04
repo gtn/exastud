@@ -145,9 +145,11 @@ function block_exastud_get_head_teacher_classes_owner($periodid) {
 }
 
 function block_exastud_get_head_teacher_classes_shared($periodid) {
+	/*
 	if (!block_exastud_has_global_cap(BLOCK_EXASTUD_CAP_MANAGE_CLASSES)) {
 		return [];
 	}
+	*/
 
 	$classes = g::$DB->get_records_sql("
 			SELECT c.*,
