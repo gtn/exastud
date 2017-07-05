@@ -221,7 +221,7 @@ class printer {
 				'ort' => get_config('exastud', 'school_location'),
 				'name' => $student->firstname.' '.$student->lastname,
 				'kla' => $class->title,
-				'geburt' => block_exastud_get_custom_profile_field_value($student->id, 'dateofbirth'),
+				'geburt' => static::spacerIfEmpty(block_exastud_get_custom_profile_field_value($student->id, 'dateofbirth')),
 				'certda' => $certificate_issue_date,
 				'gebort' => static::spacerIfEmpty(block_exastud_get_custom_profile_field_value($student->id, 'placeofbirth')),
 				'ags' => static::spacerIfEmpty(@$studentdata->ags),
@@ -449,6 +449,7 @@ class printer {
 			$subjects = static::get_exacomp_subjects($student->id);
 
 			$data = [
+				'periode' => block_exastud_get_active_period()->description,
 				'schule' => get_config('exastud', 'school_name'),
 				'ort' => get_config('exastud', 'school_location'),
 				'name' => $student->firstname.' '.$student->lastname,
