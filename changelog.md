@@ -3,6 +3,7 @@ v4.6.0
 * new Grade Reports for Final Grades
 * other new Reports (Abgangszeugnis, Abschlusszeugnis, Zertifikat Profilfach) 
 * New Grade Overview Report (Notenspiegel)
+* moodle3.3 update
 
 v4.5.1
 * bugfixes
