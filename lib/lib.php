@@ -450,7 +450,7 @@ function block_exastud_check_profile_fields() {
 		]);
 	}
 
-	$sort = g::$DB->get_field_sql('SELECT MAX(sortorder) FROM {user_info_field} WHERE categoryid=?', [$categoryid]);
+	$sortorder = g::$DB->get_field_sql('SELECT MAX(sortorder) FROM {user_info_field} WHERE categoryid=?', [$categoryid]);
 
 	$fields = [
 		[
@@ -459,7 +459,6 @@ function block_exastud_check_profile_fields() {
 			'description' => '',
 			'datatype' => 'text',
 			'categoryid' => $categoryid,
-			'sortorder' => $sort,
 			'locked' => 1,
 			'required' => 0,
 			'visible' => 0,
@@ -472,7 +471,6 @@ function block_exastud_check_profile_fields() {
 			'description' => '',
 			'datatype' => 'text',
 			'categoryid' => $categoryid,
-			'sortorder' => $sort,
 			'locked' => 1,
 			'required' => 0,
 			'visible' => 0,
@@ -485,7 +483,6 @@ function block_exastud_check_profile_fields() {
 			'description' => '',
 			'datatype' => 'menu',
 			'categoryid' => $categoryid,
-			'sortorder' => $sort,
 			'locked' => 1,
 			'required' => 0,
 			'visible' => 0,
@@ -504,8 +501,8 @@ function block_exastud_check_profile_fields() {
 
 			g::$DB->update_record('user_info_field', $field, ['id' => $id]);
 		} else {
-			$sort++;
-			$field['sort'] = $sort;
+			$sortorder++;
+			$field['sortorder'] = $sortorder;
 			g::$DB->insert_record('user_info_field', $field);
 		}
 	}
