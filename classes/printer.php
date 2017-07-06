@@ -48,6 +48,7 @@ class printer {
 
 		$certificate_issue_date = trim(get_config('exastud', 'certificate_issue_date'));
 		$studentdata = block_exastud_get_class_student_data($class->id, $student->id);
+		$period = block_exastud_get_period($class->periodid);
 
 		if ($templateid == BLOCK_EXASTUD_DATA_ID_PRINT_TEMPLATE) {
 			$template = block_exastud_get_student_print_template($class, $student->id);
@@ -92,14 +93,22 @@ class printer {
 		};
 
 		// for all templates: filter schuljahr
-		$add_filter(function($content) {
-			if (date('m') >= 9) {
-				$year = date('y');
+		$add_filter(function($content) use ($period) {
+			// try to get it from the period description. eg. "1st Semester 2021/2022"
+			if (preg_match('!(?<year1>[0-9]{2,4})[^0-9]{1,4}(?<year2>[0-9]{2,4})!', $period->description, $matches)) {
+				$year1 = substr($matches['year1'], -2);
+				$year2 = substr($matches['year2'], -2);
 			} else {
-				$year = date('y') - 1;
+				// use current year or last year
+				if (date('m') >= 9) {
+					$year1 = date('y');
+				} else {
+					$year2 = date('y') - 1;
+				}
+				$year2 = $year1 + 1;
 			}
 
-			return preg_replace('!([^0-9])99([^0-9].{0,3000}[^0-9])99([^0-9])!U', '${1}'.$year.'${2}'.($year + 1).'${3}', $content, 1, $count);
+			return preg_replace('!([^0-9])99([^0-9].{0,3000}[^0-9])99([^0-9])!U', '${1}'.$year1.'${2}'.$year2.'${3}', $content, 1, $count);
 		});
 
 		if ($templateid == 'Deckblatt und 1. Innenseite LEB') {
@@ -449,7 +458,7 @@ class printer {
 			$subjects = static::get_exacomp_subjects($student->id);
 
 			$data = [
-				'periode' => block_exastud_get_active_period()->description,
+				'periode' => $period->description,
 				'schule' => get_config('exastud', 'school_name'),
 				'ort' => get_config('exastud', 'school_location'),
 				'name' => $student->firstname.' '.$student->lastname,
@@ -579,9 +588,10 @@ class printer {
 		\PhpOffice\PhpWord\Settings::setTempDir($CFG->tempdir);
 		$templateProcessor = new TemplateProcessor($templateFile);
 
+		$period = block_exastud_get_period($class->periodid);
 
 		$templateProcessor->setValue('schule', get_config('exastud', 'school_name'));
-		$templateProcessor->setValue('periode', block_exastud_get_active_period()->description);
+		$templateProcessor->setValue('periode', $period->description);
 		$templateProcessor->setValue('klasse', $class->title);
 		$templateProcessor->setValue('lehrer', fullname(g::$USER));
 		$templateProcessor->setValue('datum', date('d.m.Y'));
