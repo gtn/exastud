@@ -266,6 +266,10 @@ return [
 		'Falsche Beurteilungszeitraums-ID',
 		'Invalid period id',
 	],
+	'certificate_issue_date' => [
+		'Zeugnisausgabedatum',
+		'Certificate Issue Date',
+	],
 	'noclassestoreview' => [
 		'Keine Klasse zur Beurteilung',
 		'No classes to review',

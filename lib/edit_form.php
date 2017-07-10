@@ -90,6 +90,11 @@ class period_edit_form extends moodleform {
 		$mform->setType('endtime', PARAM_INT);
 		$mform->addRule('endtime', null, 'required', null, 'server');
 
+		$mform->addElement('date_selector', 'certificate_issue_date', block_exastud_get_string('certificate_issue_date'), [
+			'optional' => true,
+		]);
+		$mform->setType('certificate_issue_date', PARAM_INT);
+
 		$mform->addElement('hidden', 'id');
 		$mform->setType('id', PARAM_INT);
 		$mform->setDefault('id', 0);

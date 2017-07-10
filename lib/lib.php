@@ -1483,3 +1483,25 @@ function block_exastud_normalize_projekt_pruefung($class) {
 		}
 	}
 }
+
+function block_exastud_format_certificate_issue_date($time) {
+	if (substr(current_language(), 0, 2) == 'de') {
+		return date('d.m.Y', $time);
+	} else {
+		return userdate($time, block_exastud_get_string('strftimedatefullshort', 'langconfig'));
+	}
+}
+
+function block_exastud_get_certificate_issue_date_timestamp($class) {
+	$period = block_exastud_get_period($class->periodid);
+
+	return @$period->certificate_issue_date ?: null;
+}
+
+function block_exastud_get_certificate_issue_date_text($class) {
+	if ($certificate_issue_date_timestamp = block_exastud_get_certificate_issue_date_timestamp($class)) {
+		return block_exastud_format_certificate_issue_date($certificate_issue_date_timestamp);
+	} else {
+		return null;
+	}
+}

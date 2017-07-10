@@ -44,10 +44,11 @@ $table->head = array(
 	block_exastud_get_string('perioddescription'),
 	block_exastud_get_string('starttime'),
 	block_exastud_get_string('endtime'),
+	block_exastud_get_string('certificate_issue_date'),
 	block_exastud_get_string('action'),
 );
 
-$table->align = array("left", "left", "left", "right");
+$table->align = array("left", "left", "left", "left", "right");
 
 $actPeriod = block_exastud_get_active_period();
 
@@ -61,13 +62,14 @@ foreach ($periods as $period) {
 		['exa-confirm' => block_exastud_get_string('delete_confirmation', null, $period->description)]
 	);
 
-	$starttime = date('d. M. Y - H:i', $period->starttime);
-	$endtime = date('d. M. Y - H:i', $period->endtime);
+	$starttime = userdate($period->starttime, block_exastud_get_string('strftimedatetime', 'langconfig'));
+	$endtime = userdate($period->endtime, block_exastud_get_string('strftimedatetime', 'langconfig'));
 
 	$table->data[] = [
 		'<a href="'.$editUrl.'">'.($actPeriod && $period->id == $actPeriod->id ? '<b>' : '').$period->description.'</a>',
 		$starttime,
 		$endtime,
+		$period->certificate_issue_date ? block_exastud_format_certificate_issue_date($period->certificate_issue_date) : '',
 		$icons,
 	];
 }

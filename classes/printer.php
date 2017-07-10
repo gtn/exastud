@@ -46,7 +46,8 @@ class printer {
 	static function report_to_temp_file($class, $student, $templateid) {
 		global $CFG;
 
-		$certificate_issue_date = trim(get_config('exastud', 'certificate_issue_date'));
+		$certificate_issue_date_text = block_exastud_get_certificate_issue_date_text($class);
+		$certificate_issue_date_timestamp = block_exastud_get_certificate_issue_date_timestamp($class);
 		$studentdata = block_exastud_get_class_student_data($class->id, $student->id);
 		$period = block_exastud_get_period($class->periodid);
 
@@ -93,20 +94,18 @@ class printer {
 		};
 
 		// for all templates: filter schuljahr
-		$add_filter(function($content) use ($period) {
-			// try to get it from the period description. eg. "1st Semester 2021/2022"
-			if (preg_match('!(?<year1>[0-9]{2,4})[^0-9]{1,4}(?<year2>[0-9]{2,4})!', $period->description, $matches)) {
-				$year1 = substr($matches['year1'], -2);
-				$year2 = substr($matches['year2'], -2);
+		$add_filter(function($content) use ($period, $certificate_issue_date_timestamp) {
+			$certificate_issue_date_timestamp = $certificate_issue_date_timestamp ?: null;
+
+			// use current year or last year
+			if (date('m', $certificate_issue_date_timestamp) >= 9) {
+				$year1 = date('y', $certificate_issue_date_timestamp);
 			} else {
-				// use current year or last year
-				if (date('m') >= 9) {
-					$year1 = date('y');
-				} else {
-					$year2 = date('y') - 1;
-				}
-				$year2 = $year1 + 1;
+				$year1 = date('y', $certificate_issue_date_timestamp) - 1;
 			}
+			$year2 = $year1 + 1;
+			$year1 = str_pad($year1, 2, '0', STR_PAD_LEFT);
+			$year2 = str_pad($year2, 2, '0', STR_PAD_LEFT);
 
 			return preg_replace('!([^0-9])99([^0-9].{0,3000}[^0-9])99([^0-9])!U', '${1}'.$year1.'${2}'.$year2.'${3}', $content, 1, $count);
 		});
@@ -133,7 +132,7 @@ class printer {
 				'ort' => get_config('exastud', 'school_location'),
 				'name' => $student->firstname.' '.$student->lastname,
 				'klasse' => $class->title,
-				'certda' => $certificate_issue_date,
+				'certda' => $certificate_issue_date_text,
 				'lern_und_sozialverhalten' => static::spacerIfEmpty($lern_soz),
 				'comments' => static::spacerIfEmpty(@$studentdata->comments),
 				'religion' => '---',
@@ -231,7 +230,7 @@ class printer {
 				'name' => $student->firstname.' '.$student->lastname,
 				'kla' => $class->title,
 				'geburt' => static::spacerIfEmpty(block_exastud_get_custom_profile_field_value($student->id, 'dateofbirth')),
-				'certda' => $certificate_issue_date,
+				'certda' => $certificate_issue_date_text,
 				'gebort' => static::spacerIfEmpty(block_exastud_get_custom_profile_field_value($student->id, 'placeofbirth')),
 				'ags' => static::spacerIfEmpty(@$studentdata->ags),
 				'projekt_thema' => static::spacerIfEmpty(@$studentdata->projekt_thema),
@@ -566,7 +565,7 @@ class printer {
 		$temp_file = tempnam($CFG->tempdir, 'exastud');
 		$templateProcessor->saveAs($temp_file);
 
-		$filename = ($certificate_issue_date ?: date('Y-m-d'))."-".$template->get_name()."-{$class->title}-{$student->lastname}-{$student->firstname}.docx";
+		$filename = ($certificate_issue_date_text ?: date('Y-m-d'))."-".$template->get_name()."-{$class->title}-{$student->lastname}-{$student->firstname}.docx";
 
 		return (object)[
 			'temp_file' => $temp_file,
@@ -1146,8 +1145,8 @@ class printer {
 		$wrapper = static::leb_wrapper_table($section);
 
 		$location = get_config('exastud', 'school_location');
-		$certificate_issue_date = trim(get_config('exastud', 'certificate_issue_date'));
-		$ort_datum = ($location ? $location.", " : '').$certificate_issue_date;
+		$certificate_issue_date_text = block_exastud_get_certificate_issue_date_text($class);
+		$ort_datum = ($location ? $location.", " : '').$certificate_issue_date_text;
 
 		$wrapper->addText('');
 		$wrapper->addText('');
@@ -1204,8 +1203,8 @@ class printer {
 		$section->addText("Lernentwicklungsgespräch(-e) Datum: _________________");
 		$section->addText('');
 		$location = get_config('exastud', 'school_location');
-		$certificate_issue_date = trim(get_config('exastud', 'certificate_issue_date'));
-		$section->addText(($location ?: "[Ort]").", den ".($certificate_issue_date ?: "______________"));
+		$certificate_issue_date_text = block_exastud_get_certificate_issue_date_text($class);
+		$section->addText(($location ?: "[Ort]").", den ".($certificate_issue_date_text ?: "______________"));
 		$section->addText('');
 		$section->addText('');
 		$section->addText('');
@@ -1245,8 +1244,8 @@ class printer {
 		$cell->addText('Schulleiterin', null, ['align' => 'center', 'spaceBefore' => 0, 'spaceAfter' => 0]);
 		* /
 
-		$certificate_issue_date = trim(get_config('exastud', 'certificate_issue_date'));
-		$filename = ($certificate_issue_date ?: date('Y-m-d'))."-Lernentwicklungsbericht-{$class->title}-{$student->lastname}-{$student->firstname}.docx";
+		$certificate_issue_date_text = block_exastud_get_certificate_issue_date_text($class);
+		$filename = ($certificate_issue_date_text ?: date('Y-m-d'))."-Lernentwicklungsbericht-{$class->title}-{$student->lastname}-{$student->firstname}.docx";
 
 		if ($outputType == 'docx_test' || optional_param('test', '', PARAM_TEXT)) {
 			// testing:

@@ -136,8 +136,8 @@ if ($classid = optional_param('classid', 0, PARAM_INT)) {
 				unlink($temp_file);
 			}
 
-			$certificate_issue_date = trim(get_config('exastud', 'certificate_issue_date'));
-			$filename = ($certificate_issue_date ?: date('Y-m-d'))."-Lernentwicklungsbericht-{$class->title}.zip";
+			$certificate_issue_date_text = block_exastud_get_certificate_issue_date_text($class);
+			$filename = ($certificate_issue_date_text ?: date('Y-m-d'))."-Lernentwicklungsbericht-{$class->title}.zip";
 
 			require_once $CFG->dirroot.'/lib/filelib.php';
 			send_temp_file($zipfilename, $filename);
