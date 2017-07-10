@@ -396,10 +396,10 @@ class printer {
 				$data['gd'] = @$studentdata->gesamtnote_und_durchschnitt_der_gesamtleistungen;
 
 				$values = [
-					'nach9' => 'hat die Hauptschulabschlussprüfung nach Klasse 9 der Gemeinschaftsschule mit Erfolg abge-legt.',
-					'nach10' => 'hat die Hauptschulabschlussprüfung nach Klasse 10 der Gemeinschaftsschule mit Erfolg abge-legt.',
+					'9' => 'hat die Hauptschulabschlussprüfung nach Klasse 9 der Gemeinschaftsschule mit Erfolg abge-legt.',
+					'10' => 'hat die Hauptschulabschlussprüfung nach Klasse 10 der Gemeinschaftsschule mit Erfolg abge-legt.',
 				];
-				$value = static::spacerIfEmpty(@$values[@$studentdata->abgelegt]);
+				$value = static::spacerIfEmpty(@$values[@$studentdata->bildungsstandard_erreicht]);
 				$add_filter(function($content) use ($placeholder, $value) {
 					$ret = preg_replace('!>[^<]*mit Erfolg[^<]*<!U', '>'.$value.'<', $content, -1, $count);
 					if (!$count) {

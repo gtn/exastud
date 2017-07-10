@@ -248,6 +248,7 @@ class print_templates {
 				'file' => 'BP 2004/Hauptschulabschluszeugnis GMS BP 2004',
 				'grades' => $grades_lang,
 				'inputs' => [
+					/*
 					'abgelegt' => [
 						'title' => 'Hat die Hauptschulabschlussprüfung nach',
 						'type' => 'select',
@@ -256,7 +257,6 @@ class print_templates {
 							'nach10' => 'Klasse 10 der Gemeinschaftsschule mit Erfolg abgelegt.',
 						],
 					],
-					/*
 					'projekt_thema' => [
 						'title' => 'Projektprüfung: Thema',
 						'type' => 'text',
