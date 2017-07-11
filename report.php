@@ -190,7 +190,6 @@ if ($classid = optional_param('classid', 0, PARAM_INT)) {
 	}
 	$templates['html_report'] = 'Ausgabe am Bildschirm';
 	$templates += \block_exastud\print_templates::get_class_other_print_templates($class);
-	$templates['Deckblatt und 1. Innenseite LEB'] = 'Deckblatt und 1. Innenseite LEB';
 
 	echo $output->header('report');
 	$classheader = block_exastud_get_period($class->periodid)->description.' - '.$class->title;

@@ -1505,3 +1505,7 @@ function block_exastud_get_certificate_issue_date_text($class) {
 		return null;
 	}
 }
+
+function block_exastud_is_bw_active() {
+	return !!block_exastud_get_plugin_config('bw_active');
+}

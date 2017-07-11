@@ -385,10 +385,6 @@ class print_templates {
 		}
 	}
 
-	static function get_all_available_print_templates() {
-		return static::_get_class_available_print_templates(null) + static::get_class_other_print_templates(null);
-	}
-
 	static function get_all_default_print_templates() {
 		return static::_get_class_available_print_templates(null);
 	}
@@ -406,11 +402,15 @@ class print_templates {
 
 		$templateids = [];
 
-		if (!$bp || $bp->sourceinfo !== 'bw-bp2016') {
-			$templateids[] = 'BP 2004/Zertifikat fuer Profilfach';
-		}
+		if (block_exastud_is_bw_active()) {
+			$templateids[] = 'Deckblatt und 1. Innenseite LEB';
 
-		$templateids[] = 'BP 2004/Beiblatt zur Projektpruefung HSA';
+			if (!$bp || $bp->sourceinfo !== 'bw-bp2016') {
+				$templateids[] = 'BP 2004/Zertifikat fuer Profilfach';
+			}
+
+			$templateids[] = 'BP 2004/Beiblatt zur Projektpruefung HSA';
+		}
 
 		return static::get_template_name_array($templateids);
 	}
@@ -463,19 +463,21 @@ class print_templates {
 		if (!$bp || $bp->sourceinfo !== 'bw-bp2004') {
 			$templateids[] = 'BP 2016/GMS Zeugnis 1.HJ';
 			$templateids[] = 'BP 2016/GMS Zeugnis SJ';
-
 		}
 		if (!$bp || $bp->sourceinfo !== 'bw-bp2016') {
 			$templateids[] = 'BP 2004/GMS Zeugnis 1.HJ';
 			$templateids[] = 'BP 2004/GMS Zeugnis SJ';
-			$templateids[] = 'BP 2004/GMS Realschulabschluss 1.HJ';
-			$templateids[] = 'BP 2004/GMS Realschulabschluss SJ';
-			$templateids[] = 'BP 2004/GMS Klasse 10 E-Niveau 1.HJ';
-			$templateids[] = 'BP 2004/GMS Klasse 10 E-Niveau SJ';
-			$templateids[] = 'BP 2004/GMS Hauptschulabschluss 1.HJ';
-			$templateids[] = 'BP 2004/GMS Hauptschulabschluss SJ';
-			$templateids[] = 'BP 2004/GMS Abgangszeugnis';
-			$templateids[] = 'BP 2004/GMS Abgangszeugnis HSA Kl.9 und 10';
+
+			if (block_exastud_is_bw_active()) {
+				$templateids[] = 'BP 2004/GMS Realschulabschluss 1.HJ';
+				$templateids[] = 'BP 2004/GMS Realschulabschluss SJ';
+				$templateids[] = 'BP 2004/GMS Klasse 10 E-Niveau 1.HJ';
+				$templateids[] = 'BP 2004/GMS Klasse 10 E-Niveau SJ';
+				$templateids[] = 'BP 2004/GMS Hauptschulabschluss 1.HJ';
+				$templateids[] = 'BP 2004/GMS Hauptschulabschluss SJ';
+				$templateids[] = 'BP 2004/GMS Abgangszeugnis';
+				$templateids[] = 'BP 2004/GMS Abgangszeugnis HSA Kl.9 und 10';
+			}
 		}
 
 		return static::get_template_name_array($templateids);

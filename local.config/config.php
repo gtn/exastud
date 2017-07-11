@@ -1,11 +1,17 @@
 <?php
 
+$force_bw_active = false;
+
+$bw_active = get_config('exastud', 'bw_active');
+
 return [
+	'bw_active' => $force_bw_active || $bw_active,
+
 	'can_edit_bps_and_subjects' => true,
 
 	'always_check_default_values' => false,
 
-	'default_bps' => [
+	'default_bps' => !$bw_active ? [] : [
 		'bp2016' => [
 			'sourceinfo' => 'bw-bp2016',
 			'title' => 'Bp 2016',
