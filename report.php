@@ -57,21 +57,49 @@ if ($classid = optional_param('classid', 0, PARAM_INT)) {
 		}
 
 		if ($printStudents && $template == 'html_report') {
+
+			$PAGE->set_pagelayout('embedded');
 			echo $output->header('report');
+
+			$classheader = block_exastud_get_period($class->periodid)->description.' - '.$class->title;
+			echo $output->heading($classheader);
 
 			foreach ($printStudents as $student) {
 				$studentdesc = $OUTPUT->user_picture($student, array("courseid" => $courseid)).' '.fullname($student);
 				echo $output->heading($studentdesc);
 
-				echo $output->print_student_report($class, $student);
+				echo $output->student_report($class, $student);
 
 				echo '<hr>';
 			}
 
-			echo $output->back_button(new moodle_url('report.php', ['courseid' => $courseid, 'classid' => $classid]));
+			// echo $output->back_button(new moodle_url('report.php', ['courseid' => $courseid, 'classid' => $classid]));
 			echo $output->footer();
 			exit;
 		}
+
+		if ($printStudents && $template == 'grades_report') {
+			\block_exastud\printer::grades_report($class, $printStudents);
+		}
+
+		if ($printStudents && $template == 'grades_report_xlsx') {
+			\block_exastud\printer::grades_report_xlsx($class, $printStudents);
+		}
+
+		/*
+		if ($printStudents && $template == 'html_report_grades') {
+			$PAGE->set_pagelayout('embedded');
+			echo $output->header('report');
+
+			$classheader = block_exastud_get_period($class->periodid)->description.' - '.$class->title;
+			echo $output->heading($classheader);
+
+			echo $output->report_grades($class, $printStudents);
+
+			echo $output->footer();
+			exit;
+		}
+		*/
 
 		if (!$printStudents) {
 			// do nothing
@@ -108,8 +136,8 @@ if ($classid = optional_param('classid', 0, PARAM_INT)) {
 				unlink($temp_file);
 			}
 
-			$certificate_issue_date = trim(get_config('exastud', 'certificate_issue_date'));
-			$filename = ($certificate_issue_date ?: date('Y-m-d'))."-Lernentwicklungsbericht-{$class->title}.zip";
+			$certificate_issue_date_text = block_exastud_get_certificate_issue_date_text($class);
+			$filename = ($certificate_issue_date_text ?: date('Y-m-d'))."-Lernentwicklungsbericht-{$class->title}.zip";
 
 			require_once $CFG->dirroot.'/lib/filelib.php';
 			send_temp_file($zipfilename, $filename);
@@ -125,13 +153,16 @@ if ($classid = optional_param('classid', 0, PARAM_INT)) {
 	$table->head[] = '';
 	$table->head[] = '';
 	$table->head[] = block_exastud_get_string('name');
+	$table->head[] = block_exastud_trans('de:Zeugnisformular');
 
-	$table->size = ['5%', '5%', '5%'];
+	$table->size = ['5%', '5%', '5%', '', '25%'];
 
 	$table->align = array();
 	$table->align[] = 'center';
 	$table->align[] = 'center';
 	$table->align[] = 'center';
+	$table->align[] = 'left';
+	$table->align[] = 'left';
 	$table->align[] = 'left';
 
 	$i = 1;
@@ -143,6 +174,7 @@ if ($classid = optional_param('classid', 0, PARAM_INT)) {
 		$data[] = $i++;
 		$data[] = $OUTPUT->user_picture($classstudent, array("courseid" => $courseid));
 		$data[] = $studentdesc;
+		$data[] = block_exastud_get_student_print_template($class, $classstudent->id)->get_name();
 
 		$table->data[] = $data;
 	}
@@ -150,36 +182,20 @@ if ($classid = optional_param('classid', 0, PARAM_INT)) {
 	$bp = $DB->get_record('block_exastudbp', ['id' => $class->bpid]);
 
 	$templates = [];
-	$templates['html_report'] = 'Ausgabe am Bildschirm';
-	$templates['Deckblatt und 1. Innenseite LEB'] = 'Deckblatt und 1. Innenseite LEB';
-
-	if ($bp->sourceinfo !== 'bw-bp2016') {
-		$templates['BP 2004/Lernentwicklungsbericht alter BP 1.HJ'] = 'Lernentwicklungsbericht alter BP 1.HJ';
-		$templates['BP 2004/Lernentwicklungsbericht alter BP SJ'] = 'Lernentwicklungsbericht alter BP SJ';
-		$templates['BP 2004/Jahreszeugnis Klasse 10 der Gemeinschaftsschule E-Niveau'] = 'Jahreszeugnis Klasse 10 der Gemeinschaftsschule E-Niveau';
-		$templates['BP 2004/Abgangszeugnis der Gemeinschaftsschule'] = 'Abgangszeugnis der Gemeinschaftsschule';
-		$templates['BP 2004/Abgangszeugnis der Gemeinschaftsschule HSA Kl.9 und 10'] = 'Abgangszeugnis der Gemeinschaftsschule HSA Kl.9 und 10';
-		/*
-		$templates['BP 2004/Hauptschulabschluszeugnis GMS BP 2004'] = 'Hauptschulabschluszeugnis GMS BP 2004';
-		$templates['BP 2004/Realschulabschlusszeugnis an der Gemeinschaftsschule BP 2004'] = 'Realschulabschlusszeugnis an der Gemeinschaftsschule BP 2004';
-		$templates['BP 2004/Zertifikat fuer Profilfach'] = 'Zertifikat für Profilfach';
-		$templates['BP 2004/Beiblatt zur Projektpruefung HSA'] = 'Beiblatt zur Projektprüfung HSA';
-		*/
-	}
-	if ($bp->sourceinfo !== 'bw-bp2004') {
-		$templates['BP 2016/Lernentwicklungsbericht neuer BP 1.HJ'] = 'Lernentwicklungsbericht neuer BP 1.HJ';
-		$templates['BP 2016/Lernentwicklungsbericht neuer BP SJ'] = 'Lernentwicklungsbericht neuer BP SJ';
-	}
-
+	$templates['grades_report'] = 'Notenübersicht (docx)';
+	$templates['grades_report_xlsx'] = 'Notenübersicht (xlsx)';
+	$templates[BLOCK_EXASTUD_DATA_ID_PRINT_TEMPLATE] = 'Zeugnis / Abgangszeugnis';
 	if (block_exastud_is_exacomp_installed()) {
 		$templates['Anlage zum Lernentwicklungsbericht'] = 'Anlage zum Lernentwicklungsbericht';
 	}
+	$templates['html_report'] = 'Ausgabe am Bildschirm';
+	$templates += \block_exastud\print_templates::get_class_other_print_templates($class);
 
 	echo $output->header('report');
 	$classheader = block_exastud_get_period($class->periodid)->description.' - '.$class->title;
 	echo $output->heading($classheader);
 
-	echo '<form method="post">';
+	echo '<form method="post" id="report" target="_blank">';
 
 	echo block_exastud_trans(['de:Vorlage', 'en:Template']).': ';
 	echo html_writer::select($templates, 'template', $template, false);

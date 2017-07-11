@@ -41,15 +41,19 @@ $PAGE->set_url($url);
 
 block_exastud_require_global_cap(BLOCK_EXASTUD_CAP_REVIEW);
 
-$class = block_exastud_get_review_class($classid, $subjectid);
+$reviewclass = block_exastud_get_review_class($classid, $subjectid);
+$class = block_exastud_get_class($classid);
 
-if (!$class) {
+if (!$reviewclass || !$class) {
 	print_error('badclass', 'block_exastud');
 }
 
 if ($DB->count_records('block_exastudclassstudents', array('studentid' => $studentid, 'classid' => $classid)) == 0) {
 	print_error('badstudent', 'block_exastud');
 }
+
+$student = $DB->get_record('user', array('id' => $studentid));
+$template = block_exastud_get_student_print_template($class, $student->id);
 
 $strstudentreview = block_exastud_get_string('reviewstudent');
 $strclassreview = block_exastud_get_string('reviewclass');
@@ -66,7 +70,7 @@ if ($lastPeriod) {
 		JOIN {block_exastudclassstudents} cs ON cs.classid=c.id 
 		JOIN {block_exastudclassteachers} ct ON ct.classid=c.id
 		WHERE c.periodid=? AND cs.studentid=? AND ct.teacherid=? AND ct.subjectid=?
-	", [$lastPeriod->id, $studentid, g::$USER->id, $subjectid]);
+	", [$lastPeriod->id, $studentid, g::$USER->id, $subjectid], IGNORE_MULTIPLE);
 } else {
 	$lastPeriodClass = null;
 }
@@ -81,23 +85,20 @@ $formdata->subjectid = $subjectid;
 $teacherid = $USER->id;
 
 
-$exacomp_grades = [];
+$exacomp_grades = '';
 if (block_exastud_is_exacomp_installed()) {
-	$title = 'Vorschläge aus Exacomp:';
-
 	if (!method_exists('\block_exacomp\api', 'get_subjects_with_grade_for_teacher_and_student')) {
-		$exacomp_grades[] = [$title, 'Please update exacomp to latest version'];
+		$exacomp_grades = 'Please update exacomp to latest version';
 	} else {
 		$subjects = \block_exacomp\api::get_subjects_with_grade_for_teacher_and_student($teacherid, $studentid);
 		if (!$subjects) {
-			$exacomp_grades[] = [$title, '---'];
-		}
-		foreach ($subjects as $subject) {
-			$exacomp_grades[] = [
-				$subject->title,
-				'Note: '.($subject->additionalinfo ?: '---').
-				' / Niveau: '.($subject->niveau ?: '---'),
-			];
+			$exacomp_grades = '---';
+		} else {
+			foreach ($subjects as $subject) {
+				$exacomp_grades .= '<b>'.$subject->title.'</b><br/>';
+				$exacomp_grades .= 'Note: '.($subject->additionalinfo ?: '---').
+					' / Niveau: '.($subject->niveau ?: '---').'<br/>';
+			}
 		}
 	}
 }
@@ -113,11 +114,16 @@ if ($reviewdata) {
 $subjectData = block_exastud_get_review($classid, $subjectid, $studentid);
 $formdata = (object)array_merge((array)$formdata, (array)$subjectData);
 
+$grade_options = $template->get_grade_options();
+if (@$formdata->grade && !isset($grade_options[$formdata->grade])) {
+	$grade_options = [$formdata->grade => $formdata->grade] + $grade_options;
+}
+
 $studentform = new student_edit_form(null, [
 	'categories' => $categories,
 	'subjectid' => $subjectid,
 	'exacomp_grades' => $exacomp_grades,
-	'old_grade' => @$formdata->grade,
+	'grade_options' => $grade_options,
 	'categories.modified' =>
 		$reviewdata
 			? block_exastud_get_renderer()->last_modified($reviewdata->teacherid, $reviewdata->timemodified)
@@ -173,14 +179,12 @@ if ($fromform = $studentform->get_data()) {
 	redirect($returnurl);
 }
 
-$classheader = $class->title.($class->subject_title ? ' - '.$class->subject_title : '');
+$classheader = $reviewclass->title.($reviewclass->subject_title ? ' - '.$reviewclass->subject_title : '').' - '.$template->get_name();
 
 echo $output->header(array('review',
 	array('name' => $classheader, 'link' => $CFG->wwwroot.'/blocks/exastud/review_class.php?courseid='.$courseid.
 		'&classid='.$classid.'&subjectid='.$subjectid),
 ), array('noheading'));
-
-$student = $DB->get_record('user', array('id' => $studentid));
 
 echo $OUTPUT->heading($classheader);
 
@@ -222,12 +226,12 @@ if ($lastPeriodClass && optional_param('action', null, PARAM_TEXT) == 'load_last
 		$formdata->review = $reviewdata->review;
 	}
 
-	if ($lastPeriodData->niveau || $lastPeriodData->grade) {
+	if (@$lastPeriodData->niveau || @$lastPeriodData->grade) {
 		$reviewText = 'Bewertung '.$lastPeriod->description.':'."\n";
-		if ($lastPeriodData->niveau) {
-			$reviewText .= 'Niveau: '.(block_exastud\global_config::get_niveau_option_title($lastPeriodData->niveau)?:$lastPeriodData->niveau)."\n";
+		if (@$lastPeriodData->niveau) {
+			$reviewText .= 'Niveau: '.(block_exastud\global_config::get_niveau_option_title($lastPeriodData->niveau) ?: $lastPeriodData->niveau)."\n";
 		}
-		if ($lastPeriodData->grade) {
+		if (@$lastPeriodData->grade) {
 			$reviewText .= 'Note: '.$lastPeriodData->grade."\n";
 		}
 

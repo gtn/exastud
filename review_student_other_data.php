@@ -45,9 +45,10 @@ $PAGE->set_url('/blocks/exastud/review_student_other_data.php', [
 
 block_exastud_require_global_cap(BLOCK_EXASTUD_CAP_REVIEW);
 
-$class = block_exastud_get_review_class($classid, BLOCK_EXASTUD_SUBJECT_ID_OTHER_DATA);
+$reviewclass = block_exastud_get_review_class($classid, BLOCK_EXASTUD_SUBJECT_ID_OTHER_DATA);
+$class = block_exastud_get_class($classid);
 
-if (!$class) {
+if (!$reviewclass || !$class) {
 	print_error('badclass', 'block_exastud');
 }
 
@@ -64,19 +65,18 @@ $actPeriod = block_exastud_check_active_period();
 
 if ($type == BLOCK_EXASTUD_DATA_ID_LERN_UND_SOZIALVERHALTEN) {
 	$categories = [
-		BLOCK_EXASTUD_DATA_ID_LERN_UND_SOZIALVERHALTEN => block_exastud_trans('de:Lern- und Sozialverhalten'),
+		BLOCK_EXASTUD_DATA_ID_LERN_UND_SOZIALVERHALTEN => [
+			'title' => block_exastud_trans('de:Lern- und Sozialverhalten'),
+		],
 	];
-	$classheader = $class->title.' - '.block_exastud_trans('de:Lern- und Sozialverhalten');
+	$classheader = $reviewclass->title.' - '.block_exastud_trans('de:Lern- und Sozialverhalten');
+} elseif ($type == BLOCK_EXASTUD_DATA_ID_PRINT_TEMPLATE) {
+	$categories = block_exastud_get_student_print_template($class, $student->id)->get_inputs();
+	$classheader = $reviewclass->title.' - '.block_exastud_trans('de:Weitere Formularfelder');
 } else {
-	$categories = [
-		/*
-		'ateliers' => block_exastud_trans('de:Ateliers'),
-		'arbeitsgemeinschaften' => block_exastud_trans('de:Arbeitsgemeinschaften'),
-		'besondere_staerken' => block_exastud_trans('de:Besondere Stärken'),
-		*/
-		'comments' => block_exastud_trans('de:Bemerkungen'),
-	];
-	$classheader = $class->title.' - '.block_exastud_trans('de:Bemerkungen');
+	$template = \block_exastud\print_template::create($type);
+	$categories = $template->get_inputs();
+	$classheader = $reviewclass->title.' - '.$template->get_name();
 }
 
 $olddata = (array)block_exastud_get_class_student_data($classid, $studentid);

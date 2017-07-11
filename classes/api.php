@@ -105,7 +105,7 @@ class api {
 		$textReviews = get_text_reviews($class, $studentid);
 		$categories = get_class_categories_for_report($studentid, $class->id);
 
-		return get_renderer()->print_student_report($categories, $textReviews);
+		return block_exastud_get_renderer()->student_report($categories, $textReviews);
 	}
 
 	static function delete_user_data($userid){

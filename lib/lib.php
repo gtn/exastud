@@ -39,6 +39,9 @@ const BLOCK_EXASTUD_CAP_REVIEW = 'review';
 
 const BLOCK_EXASTUD_DATA_ID_LERN_UND_SOZIALVERHALTEN = 'learning_and_social_behavior';
 const BLOCK_EXASTUD_DATA_ID_UNLOCKED_TEACHERS = 'unlocked_teachers';
+const BLOCK_EXASTUD_DATA_ID_PRINT_TEMPLATE = 'print_template';
+const BLOCK_EXASTUD_DATA_ID_CLASS_DEFAULT_TEMPLATEID = 'default_templateid';
+const BLOCK_EXASTUD_DATA_ID_PROJECT_TEACHER = 'project_teacher';
 
 const BLOCK_EXASTUD_SUBJECT_ID_LERN_UND_SOZIALVERHALTEN = -1;
 const BLOCK_EXASTUD_SUBJECT_ID_LERN_UND_SOZIALVERHALTEN_VORSCHLAG = -3;
@@ -142,9 +145,11 @@ function block_exastud_get_head_teacher_classes_owner($periodid) {
 }
 
 function block_exastud_get_head_teacher_classes_shared($periodid) {
+	/*
 	if (!block_exastud_has_global_cap(BLOCK_EXASTUD_CAP_MANAGE_CLASSES)) {
 		return [];
 	}
+	*/
 
 	$classes = g::$DB->get_records_sql("
 			SELECT c.*,
@@ -224,10 +229,10 @@ function block_exastud_get_class_additional_head_teachers($classid) {
 			FROM {user} u
 			JOIN {block_exastudclassteachers} ct ON ct.teacherid=u.id
 			JOIN {block_exastudclass} c ON c.id=ct.classid
-			WHERE c.id=? AND ct.subjectid = ".BLOCK_EXASTUD_SUBJECT_ID_ADDITIONAL_HEAD_TEACHER."
+			WHERE c.id=? AND ct.subjectid=?
 			AND c.userid<>u.id
 			ORDER BY u.lastname, u.firstname
-		", [$classid]);
+		", [$classid, BLOCK_EXASTUD_SUBJECT_ID_ADDITIONAL_HEAD_TEACHER]);
 
 	foreach ($classteachers as $classteacher) {
 		$classteacher->subject_title = block_exastud_get_string('additional_head_teacher');
@@ -287,7 +292,7 @@ function block_exastud_get_review_class($classid, $subjectid) {
 			JOIN {block_exastudclass} c ON ct.classid=c.id
 			LEFT JOIN {block_exastudsubjects} s ON ct.subjectid = s.id
 			WHERE ct.teacherid=? AND ct.classid=? AND ct.subjectid >= 0 AND ".($subjectid ? 's.id=?' : 's.id IS NULL')."
-		", array($USER->id, $classid, $subjectid));
+		", array($USER->id, $classid, $subjectid), IGNORE_MULTIPLE);
 	}
 }
 
@@ -445,20 +450,62 @@ function block_exastud_check_profile_fields() {
 		]);
 	}
 
-	g::$DB->insert_or_update_record('user_info_field', [
-		'name' => block_exastud_trans('de:Geburtsdatum'),
-		'datatype' => 'text',
-		'categoryid' => $categoryid,
-		'sortorder' => g::$DB->get_field_sql('SELECT MAX(sortorder) FROM {user_info_field} WHERE categoryid=?', [$categoryid]) + 1,
-		'locked' => 1,
-		'required' => 0,
-		'visible' => 0,
-		'param1' => 30,
-		'param2' => 2048,
-		'param3' => 0,
-	], [
-		'shortname' => 'dateofbirth',
-	]);
+	$sortorder = g::$DB->get_field_sql('SELECT MAX(sortorder) FROM {user_info_field} WHERE categoryid=?', [$categoryid]);
+
+	$fields = [
+		[
+			'shortname' => 'dateofbirth',
+			'name' => block_exastud_trans('de:Geburtsdatum'),
+			'description' => '',
+			'datatype' => 'text',
+			'categoryid' => $categoryid,
+			'locked' => 1,
+			'required' => 0,
+			'visible' => 0,
+			'param1' => 30,
+			'param2' => 2048,
+			'param3' => 0,
+		], [
+			'shortname' => 'placeofbirth',
+			'name' => block_exastud_trans('de:Geburtsort'),
+			'description' => '',
+			'datatype' => 'text',
+			'categoryid' => $categoryid,
+			'locked' => 1,
+			'required' => 0,
+			'visible' => 0,
+			'param1' => 30,
+			'param2' => 2048,
+			'param3' => 0,
+		], [
+			'shortname' => 'gender',
+			'name' => block_exastud_trans('de:Geschlecht'),
+			'description' => '',
+			'datatype' => 'menu',
+			'categoryid' => $categoryid,
+			'locked' => 1,
+			'required' => 0,
+			'visible' => 0,
+			// TODO: english male / famle auch berücksichtigen.
+			// => die moodle default sprach einstellung hernehmen.
+			'param1' => "\nmännlich\nweiblich",
+		],
+	];
+
+	foreach ($fields as $field) {
+		$id = g::$DB->get_field('user_info_field', 'id', ['shortname' => $field['shortname']]);
+		if ($id) {
+			// don't update those:
+			unset($field['name']);
+			unset($field['description']);
+
+			g::$DB->update_record('user_info_field', $field, ['id' => $id]);
+		} else {
+			$sortorder++;
+			$field['sortorder'] = $sortorder;
+			g::$DB->insert_record('user_info_field', $field);
+		}
+	}
 }
 
 function block_exastud_find_object_in_array_by_property($array, $key, $value) {
@@ -1363,4 +1410,102 @@ function block_exastud_get_class_title($classid) {
 	}
 
 	return $classTitle;
+}
+
+function block_exastud_get_student_print_templateid($class, $userid) {
+	$templateid = block_exastud_get_class_student_data($class->id, $userid, BLOCK_EXASTUD_DATA_ID_PRINT_TEMPLATE);
+	$available_templates = \block_exastud\print_templates::get_class_available_print_templates($class);
+	if (isset($available_templates[$templateid])) {
+		return $templateid;
+	}
+
+	$default_templateid = block_exastud_get_class_data($class->id, BLOCK_EXASTUD_DATA_ID_CLASS_DEFAULT_TEMPLATEID);
+	if (isset($available_templates[$default_templateid])) {
+		return $default_templateid;
+	}
+
+	return key($available_templates);
+}
+
+/**
+ * @param $class
+ * @param $userid
+ * @return block_exastud\print_template
+ */
+function block_exastud_get_student_print_template($class, $userid) {
+	$templateid = block_exastud_get_student_print_templateid($class, $userid);
+
+	return block_exastud\print_template::create($templateid);
+}
+
+function block_exastud_is_project_teacher($class, $userid) {
+	return !!block_exastud_get_project_teacher_students($class, $userid);
+}
+
+function block_exastud_get_project_teacher_students($class, $userid) {
+	$classstudents = block_exastud_get_class_students($class->id);
+	$project_teacher_students = [];
+
+	foreach ($classstudents as $classstudent) {
+		$project_teacher_id = block_exastud_get_class_student_data($class->id, $classstudent->id, BLOCK_EXASTUD_DATA_ID_PROJECT_TEACHER);
+		if ($project_teacher_id == $userid) {
+			$project_teacher_students[$classstudent->id] = $classstudent;
+		}
+	}
+
+	return $project_teacher_students;
+}
+
+function block_exastud_get_user_gender($userid) {
+	$value = block_exastud_get_custom_profile_field_value($userid, 'gender');
+	if (!$value) {
+		return null;
+	} elseif ($value[0] == 'm') {
+		return 'male';
+	} else {
+		return 'female';
+	}
+}
+
+function block_exastud_student_has_projekt_pruefung($class, $userid) {
+	$templateids_with_projekt_pruefung = \block_exastud\print_templates::get_templateids_with_projekt_pruefung();
+	$templateid = block_exastud_get_student_print_templateid($class, $userid);
+
+	return in_array($templateid, $templateids_with_projekt_pruefung);
+}
+
+function block_exastud_normalize_projekt_pruefung($class) {
+	$classstudents = block_exastud_get_class_students($class->id);
+
+	foreach ($classstudents as $student) {
+		if (!block_exastud_student_has_projekt_pruefung($class, $student->id)) {
+			block_exastud_set_class_student_data($class->id, $student->id, BLOCK_EXASTUD_DATA_ID_PROJECT_TEACHER, null);
+		}
+	}
+}
+
+function block_exastud_format_certificate_issue_date($time) {
+	if (substr(current_language(), 0, 2) == 'de') {
+		return date('d.m.Y', $time);
+	} else {
+		return userdate($time, block_exastud_get_string('strftimedatefullshort', 'langconfig'));
+	}
+}
+
+function block_exastud_get_certificate_issue_date_timestamp($class) {
+	$period = block_exastud_get_period($class->periodid);
+
+	return @$period->certificate_issue_date ?: null;
+}
+
+function block_exastud_get_certificate_issue_date_text($class) {
+	if ($certificate_issue_date_timestamp = block_exastud_get_certificate_issue_date_timestamp($class)) {
+		return block_exastud_format_certificate_issue_date($certificate_issue_date_timestamp);
+	} else {
+		return null;
+	}
+}
+
+function block_exastud_is_bw_active() {
+	return !!block_exastud_get_plugin_config('bw_active');
 }

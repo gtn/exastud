@@ -48,12 +48,14 @@ function block_exastud_print_period($courseid, $period, $type) {
 	$reviewsubjects = block_exastud_get_review_subjects($period->id);
 
 	if ($type == 'last') {
-		// filter unlocked
-		$unlocked_teachers = (array)json_decode(block_exastud_get_class_data($class->id, BLOCK_EXASTUD_DATA_ID_UNLOCKED_TEACHERS), true);
 
-		foreach ($reviewclasses as $key=>$class) {
+		// filter unlocked
+		foreach ($reviewclasses as $key => $class) {
+			$unlocked_teachers = (array)json_decode(block_exastud_get_class_data($class->id, BLOCK_EXASTUD_DATA_ID_UNLOCKED_TEACHERS), true);
+
 			if ((isset($unlocked_teachers[g::$USER->id]) && $unlocked_teachers[g::$USER->id] > time())
-				|| (isset($unlocked_teachers[0]) && $unlocked_teachers[0] > time())) {
+				|| (isset($unlocked_teachers[0]) && $unlocked_teachers[0] > time())
+			) {
 				// unlocked
 			} else {
 				// locked
@@ -62,8 +64,11 @@ function block_exastud_print_period($courseid, $period, $type) {
 		}
 
 		foreach ($reviewsubjects as $key => $reviewsubject) {
+			$unlocked_teachers = (array)json_decode(block_exastud_get_class_data($class->id, BLOCK_EXASTUD_DATA_ID_UNLOCKED_TEACHERS), true);
+
 			if ((isset($unlocked_teachers[g::$USER->id]) && $unlocked_teachers[g::$USER->id] > time())
-				|| (isset($unlocked_teachers[0]) && $unlocked_teachers[0] > time())) {
+				|| (isset($unlocked_teachers[0]) && $unlocked_teachers[0] > time())
+			) {
 				// unlocked
 			} else {
 				// locked
@@ -121,7 +126,7 @@ function block_exastud_print_period($courseid, $period, $type) {
 				if ($myclass->is_head_teacher) {
 					if ($table->data) {
 						// add spacer
-						$table->data[] = ['<b>Lernentwicklungsbericht:'];
+						$table->data[] = ['<b>Weitere Formulardaten:'];
 					}
 
 					$table->data[] = [
@@ -131,12 +136,33 @@ function block_exastud_print_period($courseid, $period, $type) {
 							'type' => BLOCK_EXASTUD_DATA_ID_LERN_UND_SOZIALVERHALTEN,
 						]), block_exastud_trans('de:Lern- und Sozialverhalten')),
 					];
+
 					$table->data[] = [
 						html_writer::link(new moodle_url('/blocks/exastud/review_class_other_data.php', [
 							'courseid' => $courseid,
 							'classid' => $myclass->id,
-							'type' => 'others',
-						]), block_exastud_trans('de:Bemerkungen')),
+							'type' => BLOCK_EXASTUD_DATA_ID_PRINT_TEMPLATE,
+						]), block_exastud_trans('de:Weitere Formularfelder')),
+					];
+
+					$templates = \block_exastud\print_templates::get_class_other_print_templates_for_input($class);
+					foreach ($templates as $key => $value) {
+						$table->data[] = [
+							html_writer::link(new moodle_url('/blocks/exastud/review_class_other_data.php', [
+								'courseid' => $courseid,
+								'classid' => $myclass->id,
+								'type' => $key,
+							]), $value),
+						];
+					}
+				}
+
+				if (block_exastud_is_project_teacher($myclass, g::$USER->id)) {
+					$table->data[] = [
+						html_writer::link(new moodle_url('/blocks/exastud/review_class_project_teacher.php', [
+							'courseid' => $courseid,
+							'classid' => $myclass->id,
+						]), block_exastud_trans('de:Projektprüfung')),
 					];
 				}
 			}

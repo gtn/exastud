@@ -30,9 +30,10 @@ require_login($courseid);
 
 block_exastud_require_global_cap(BLOCK_EXASTUD_CAP_REVIEW);
 
-$class = block_exastud_get_review_class($classid, $subjectid);
+$reviewclass = block_exastud_get_review_class($classid, $subjectid);
+$class = block_exastud_get_class($classid);
 
-if(!$class) {
+if (!$reviewclass || !$class) {
 	print_error("badclass","block_exastud");
 }
 
@@ -42,19 +43,19 @@ if ($action == 'hide_student') {
 	g::$DB->insert_or_update_record('block_exastudclassteastudvis', [
 		'visible' => 0,
 	], [
-		'classteacherid' => $class->classteacherid,
+		'classteacherid' => $reviewclass->classteacherid,
 		'studentid' => required_param('studentid', PARAM_INT),
 	]);
 } elseif ($action == 'show_student') {
 	g::$DB->delete_records('block_exastudclassteastudvis', [
-		'classteacherid' => $class->classteacherid,
+		'classteacherid' => $reviewclass->classteacherid,
 		'studentid' => required_param('studentid', PARAM_INT),
 	]);
 }
 
 $url = '/blocks/exastud/review_class.php';
 $PAGE->set_url($url, [ 'courseid'=>$courseid, 'classid'=>$classid, 'subjectid'=>$subjectid ]);
-$classheader = $class->title.($class->subject_title?' - '.$class->subject_title:'');
+$classheader = $reviewclass->title.($reviewclass->subject_title?' - '.$reviewclass->subject_title:'');
 
 $output = block_exastud_get_renderer();
 echo $output->header(array('review', '='.$classheader));
@@ -102,7 +103,7 @@ $hiddenclassstudents = [];
 $oddeven = false;
 foreach($classstudents as $classstudent) {
 	$visible = $DB->get_field('block_exastudclassteastudvis', 'visible', [
-		'classteacherid' => $class->classteacherid,
+		'classteacherid' => $reviewclass->classteacherid,
 		'studentid' => $classstudent->id,
 	]);
 	if ($visible === false) {
@@ -168,7 +169,9 @@ foreach($classstudents as $classstudent) {
 			$cell->text .= '<p><b>'.block_exastud_get_string('de:Niveau').':</b> '.(block_exastud\global_config::get_niveau_option_title($subjectData->niveau) ?: $subjectData->niveau).'</p>';
 		}
 		if (!empty($subjectData->grade)) {
-			$cell->text .= '<p><b>'.block_exastud_get_string('de:Note').':</b> '.$subjectData->grade.'</p>';
+			$template = block_exastud_get_student_print_template($class, $classstudent->id);
+			$value = @$template->get_grade_options()[$subjectData->grade] ?: $subjectData->grade;
+			$cell->text .= '<p><b>'.block_exastud_get_string('de:Note').':</b> '.$value.'</p>';
 		}
 
 		$cell->colspan = count($categories);

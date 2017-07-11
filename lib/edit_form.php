@@ -46,6 +46,13 @@ class class_edit_form extends moodleform {
 			g::$OUTPUT->notification(block_exastud_trans(['de:Bitte beachten Sie: Bei einer Änderung des Bildungsplans müssen alle Bewertungen erneut eingegeben werden.', 'en:']), 'notifymessage')
 		);
 
+		$mform->addElement('text', BLOCK_EXASTUD_DATA_ID_CLASS_DEFAULT_TEMPLATEID, block_exastud_trans('de:Standard Zeugnisformular').':');
+		$mform->setType(BLOCK_EXASTUD_DATA_ID_CLASS_DEFAULT_TEMPLATEID, PARAM_TEXT);
+
+		$mform->addElement('static', '', '&nbsp;',
+			g::$OUTPUT->notification(block_exastud_trans(['de:Bitte beachten Sie: Bei einer Änderung des Standard Zeugnisformulars wird für alle Schüler das Zeugnisformular geändert. Bestehende Formulareinstellungen wie z.B. Agangszeugnis werden beibehalten.', 'en:']), 'notifymessage')
+		);
+
 		/*
 		$subjects = $DB->get_records_menu('block_exastudsubjects', null, 'title', 'id, title');
 		$select = $mform->addElement('select', 'mysubjectids', block_exastud_get_string('subjects_taught_by_me'), $subjects);
@@ -82,6 +89,11 @@ class period_edit_form extends moodleform {
 		$mform->addElement('date_time_selector', 'endtime', block_exastud_get_string('endtime'));
 		$mform->setType('endtime', PARAM_INT);
 		$mform->addRule('endtime', null, 'required', null, 'server');
+
+		$mform->addElement('date_selector', 'certificate_issue_date', block_exastud_get_string('certificate_issue_date'), [
+			'optional' => true,
+		]);
+		$mform->setType('certificate_issue_date', PARAM_INT);
 
 		$mform->addElement('hidden', 'id');
 		$mform->setType('id', PARAM_INT);
@@ -162,15 +174,9 @@ class student_edit_form extends moodleform {
 
 		$mform->addElement('select', 'niveau', block_exastud_get_string('de:Niveau'), ['' => ''] + block_exastud\global_config::get_niveau_options());
 
-		$values = block_exastud\global_config::get_grade_options();
-		if ($this->_customdata['old_grade'] && !isset($values[$this->_customdata['old_grade']])) {
-			$values = [$this->_customdata['old_grade'] => $this->_customdata['old_grade']] + $values;
-		}
-		$mform->addElement('select', 'grade', block_exastud_get_string('de:Note'), ['' => ''] + $values);
+		$mform->addElement('select', 'grade', block_exastud_get_string('de:Note'), ['' => ''] + $this->_customdata['grade_options']);
 
-		foreach ($this->_customdata['exacomp_grades'] as $row) {
-			$mform->addElement('static', '', $row[0], $row[1]);
-		}
+		$mform->addElement('static', 'exacomp_grades', block_exastud_trans('de:Vorschläge aus Exacomp'), $this->_customdata['exacomp_grades']);
 
 		$this->add_action_buttons(false);
 	}
@@ -181,19 +187,34 @@ class student_other_data_form extends moodleform {
 	function definition() {
 		$mform = &$this->_form;
 
-		foreach ($this->_customdata['categories'] as $dataid => $name) {
-			$mform->addElement('header', 'header_'.$dataid, $name);
-			$mform->setExpanded('header_'.$dataid);
+		foreach ($this->_customdata['categories'] as $dataid => $input) {
+			if (empty($input['type']) || $input['type'] == 'textarea') {
+				$mform->addElement('header', 'header_'.$dataid, $input['title']);
+				$mform->setExpanded('header_'.$dataid);
 
-			if ($this->_customdata['modified']) {
-				$mform->addElement('static', '', '', $this->_customdata['modified']);
+				if (@$this->_customdata['modified']) {
+					$mform->addElement('static', '', '', $this->_customdata['modified']);
+				}
+
+				if (empty($input['lines'])) {
+					$input['lines'] = 8;
+				}
+
+				$mform->addElement('textarea', $dataid, '', ['cols' => 50, 'rows' => 10,
+					'class' => 'limit-input-length',
+					'style' => "width: 738px; height: ".($input['lines'] * 20)."px; resize: none; font-family: Arial !important; font-size: 11pt !important;",
+				]);
+				$mform->setType($dataid, PARAM_RAW);
+			} elseif ($input['type'] == 'text') {
+				$mform->addElement('text', $dataid, $input['title']);
+				$mform->setType($dataid, PARAM_RAW);
+			} elseif ($input['type'] == 'select') {
+				$mform->addElement('select', $dataid, $input['title'], ['' => ''] + $input['values']);
+				$mform->setType($dataid, PARAM_RAW);
+			} else {
+				$mform->addElement('header', 'header_'.$dataid, $input['title']);
+				$mform->setExpanded('header_'.$dataid);
 			}
-
-			$mform->addElement('textarea', $dataid, '', ['cols' => 50, 'rows' => 10,
-				'class' => 'limit-input-length',
-				'style' => "width: 738px; height: 160px; resize: none; font-family: Arial !important; font-size: 11pt !important;",
-			]);
-			$mform->setType($dataid, PARAM_RAW);
 		}
 
 		$this->add_action_buttons(false);

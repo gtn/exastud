@@ -24,14 +24,14 @@ $courseid = optional_param('courseid', 1, PARAM_INT); // Course ID
 $periodid = optional_param('periodid', 0, PARAM_INT);
 $action = optional_param('action', '', PARAM_ALPHA);
 
+$url = '/blocks/exastud/configuration_periods.php';
+$PAGE->set_url($url);
+
 require_login($courseid);
 
 block_exastud_require_global_cap(BLOCK_EXASTUD_CAP_EDIT_PERIODS);
 
-ob_start();
 $periodform = new period_edit_form();
-// bug in moodle forms lib, date_time_selector outputs utf8 bom characters
-ob_clean();
 
 //Form processing and displaying is done here
 if ($periodform->is_cancelled()) {
@@ -45,6 +45,7 @@ if ($periodform->is_cancelled()) {
 	$newperiod->description = $periodedit->description;
 	$newperiod->starttime = $periodedit->starttime;
 	$newperiod->endtime = $periodedit->endtime;
+	$newperiod->certificate_issue_date = $periodedit->certificate_issue_date;
 	
 	if(isset($periodedit->id) && ($periodedit->action == 'edit')) {
 		$newperiod->id = $periodedit->id;
@@ -87,8 +88,6 @@ else {
 
 
 
-$url = '/blocks/exastud/configuration_periods.php';
-$PAGE->set_url($url);
 $output = block_exastud_get_renderer();
 echo $output->header(array('settings', 'periods'));
 

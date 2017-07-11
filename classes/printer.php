@@ -43,22 +43,33 @@ class printer {
 		return preg_replace('![^a-z]+!', '_', strtolower(trim($name)));
 	}
 
-	static function report_to_temp_file($class, $student, $template) {
+	static function report_to_temp_file($class, $student, $templateid) {
 		global $CFG;
 
-		$certificate_issue_date = trim(get_config('exastud', 'certificate_issue_date'));
+		$certificate_issue_date_text = block_exastud_get_certificate_issue_date_text($class);
+		$certificate_issue_date_timestamp = block_exastud_get_certificate_issue_date_timestamp($class);
 		$studentdata = block_exastud_get_class_student_data($class->id, $student->id);
+		$period = block_exastud_get_period($class->periodid);
+
+		if ($templateid == BLOCK_EXASTUD_DATA_ID_PRINT_TEMPLATE) {
+			$template = block_exastud_get_student_print_template($class, $student->id);
+			$templateid = $template->get_template_id();
+		} else {
+			$template = \block_exastud\print_template::create($templateid);
+		}
+
+		$forminputs = $template->get_inputs();
 
 		/*
-		if ($template == 'leb_alter_bp_hj') {
+		if ($templateid == 'leb_alter_bp_hj') {
 			return static::leb($class, $student);
 		}
 		*/
 
-		$templateFile = __DIR__.'/../template/'.$template.'.docx';
+		$templateFile = $template->get_file();
 
 		if (!file_exists($templateFile)) {
-			throw new \Exception("template $template not found");
+			throw new \Exception("template $templateid not found");
 		}
 
 		\PhpOffice\PhpWord\Settings::setTempDir($CFG->tempdir);
@@ -67,18 +78,50 @@ class printer {
 		$data = [];
 		$dataTextReplacer = [];
 		$filters = [];
-		if ($template == 'Deckblatt und 1. Innenseite LEB') {
+
+		$add_filter = function($id, $filter = null) use (&$filters) {
+			if (is_callable($id)) {
+				$filters[] = $id;
+			} else {
+				if (!isset($filters[join(',', $id)])) {
+					$filters[join(',', $id)] = $filter;
+				}
+			}
+		};
+
+		$prepend_filter = function($filter = null) use (&$filters) {
+			$filters = array_merge([$filter], $filters);
+		};
+
+		// for all templates: filter schuljahr
+		$add_filter(function($content) use ($period, $certificate_issue_date_timestamp) {
+			$certificate_issue_date_timestamp = $certificate_issue_date_timestamp ?: null;
+
+			// use current year or last year
+			if (date('m', $certificate_issue_date_timestamp) >= 9) {
+				$year1 = date('y', $certificate_issue_date_timestamp);
+			} else {
+				$year1 = date('y', $certificate_issue_date_timestamp) - 1;
+			}
+			$year2 = $year1 + 1;
+			$year1 = str_pad($year1, 2, '0', STR_PAD_LEFT);
+			$year2 = str_pad($year2, 2, '0', STR_PAD_LEFT);
+
+			return preg_replace('!([^0-9])99([^0-9].{0,3000}[^0-9])99([^0-9])!U', '${1}'.$year1.'${2}'.$year2.'${3}', $content, 1, $count);
+		});
+
+		if ($templateid == 'Deckblatt und 1. Innenseite LEB') {
 			$data = [
 				'schule' => get_config('exastud', 'school_name'),
 				'ort' => get_config('exastud', 'school_location'),
 				'name' => $student->firstname.' '.$student->lastname,
 				'geburtsdatum' => block_exastud_get_date_of_birth($student->id),
 			];
-		} elseif (in_array($template, [
-			'BP 2016/Lernentwicklungsbericht neuer BP 1.HJ',
-			'BP 2016/Lernentwicklungsbericht neuer BP SJ',
-			'BP 2004/Lernentwicklungsbericht alter BP 1.HJ',
-			'BP 2004/Lernentwicklungsbericht alter BP SJ',
+		} elseif (in_array($templateid, [
+			'BP 2016/GMS Zeugnis 1.HJ',
+			'BP 2016/GMS Zeugnis SJ',
+			'BP 2004/GMS Zeugnis 1.HJ',
+			'BP 2004/GMS Zeugnis SJ',
 		])) {
 			$bpsubjects = block_exastud_get_bildungsplan_subjects($class->bpid);
 			$class_subjects = block_exastud_get_class_subjects($class);
@@ -89,9 +132,9 @@ class printer {
 				'ort' => get_config('exastud', 'school_location'),
 				'name' => $student->firstname.' '.$student->lastname,
 				'klasse' => $class->title,
-				'certdate' => $certificate_issue_date,
+				'certda' => $certificate_issue_date_text,
 				'lern_und_sozialverhalten' => static::spacerIfEmpty($lern_soz),
-				'bemerkungen' => static::spacerIfEmpty(@$studentdata->comments),
+				'comments' => static::spacerIfEmpty(@$studentdata->comments),
 				'religion' => '---',
 				'profilfach' => '---',
 				'wahlpflichtfach' => '---',
@@ -142,61 +185,72 @@ class printer {
 					$niveau = 'Niveau '.static::spacerIfEmpty($niveau);
 				}
 				$filters[$contentId.'_niveau'] = function($content) use ($contentId, $niveau) {
-					return preg_replace('!({'.$contentId.'}.*>)Bitte die Niveaustufe auswählen(<)!U', '$1'.$niveau.'$2', $content);
+					return preg_replace('!({'.$contentId.'}.*>)Bitte die Niveaustufe auswählen(<)!U', '${1}'.$niveau.'${2}', $content);
 				};
 
 				$grade = (@$studentdata->print_grades ? 'Note '.static::spacerIfEmpty(@$subjectData->grade) : '');
 				$filters[$contentId.'_grade'] = function($content) use ($contentId, $grade) {
-					return preg_replace('!({'.$contentId.'}.*>)ggf. Note(<)!U', '$1'.$grade.'$2', $content);
+					return preg_replace('!({'.$contentId.'}.*>)ggf. Note(<)!U', '${1}'.$grade.'${2}', $content);
 				};
 			}
 
 			// wahlpflichtfach + profilfach dropdowns
-			$filters[] = function($content) use ($wahlpflichtfach) {
-				return preg_replace('!(>)Technik(<.*{'.'wahlpflichtfach'.'})!U', '$1'.$wahlpflichtfach.'$2', $content);
-			};
-			$filters[] = function($content) use ($profilfach) {
-				return preg_replace('!(>)Spanisch(<.*{'.'profilfach'.'})!U', '$1'.$profilfach.'$2', $content);
-			};
+			$add_filter(function($content) use ($wahlpflichtfach) {
+				return preg_replace('!(>)Technik(<.*{'.'wahlpflichtfach'.'})!U', '${1}'.$wahlpflichtfach.'${2}', $content);
+			});
+			$add_filter(function($content) use ($profilfach) {
+				return preg_replace('!(>)Spanisch(<.*{'.'profilfach'.'})!U', '${1}'.$profilfach.'${2}', $content);
+			});
 
 			// nicht befüllte niveaus und noten befüllen
 			$dataTextReplacer['Bitte die Niveaustufe auswählen'] = 'Niveau ---';
 			$dataTextReplacer['ggf. Note'] = @$studentdata->print_grades ? 'Note ---' : '';
-		} elseif (in_array($template, [
-			'BP 2004/Jahreszeugnis Klasse 10 der Gemeinschaftsschule E-Niveau',
-			'BP 2004/Abgangszeugnis der Gemeinschaftsschule',
-			'BP 2004/Abgangszeugnis der Gemeinschaftsschule HSA Kl.9 und 10',
-			'BP 2004/Hauptschulabschluszeugnis GMS BP 2004',
-			'BP 2004/Realschulabschlusszeugnis an der Gemeinschaftsschule BP 2004',
+		} elseif (in_array($templateid, [
+			'BP 2004/GMS Realschulabschluss 1.HJ',
+			'BP 2004/GMS Realschulabschluss SJ',
+			'BP 2004/GMS Klasse 10 E-Niveau 1.HJ',
+			'BP 2004/GMS Klasse 10 E-Niveau SJ',
+			'BP 2004/GMS Hauptschulabschluss 1.HJ',
+			'BP 2004/GMS Hauptschulabschluss SJ',
+			'BP 2004/GMS Abgangszeugnis',
+			'BP 2004/GMS Abgangszeugnis HSA Kl.9 und 10',
 			'BP 2004/Zertifikat fuer Profilfach',
 			'BP 2004/Beiblatt zur Projektpruefung HSA',
 		])) {
 			$class_subjects = block_exastud_get_class_subjects($class);
 
-			$wahlpflichtfach = '---';
-			$profilfach = '---';
-			$religion = '---';
+			$wahlpflichtfach = static::spacerIfEmpty('');
+			$profilfach = static::spacerIfEmpty('');
+			$religion = static::spacerIfEmpty('');
 			$religion_sub = '';
 
 			$data = [
 				'schule' => get_config('exastud', 'school_name'),
+				'ort' => get_config('exastud', 'school_location'),
 				'name' => $student->firstname.' '.$student->lastname,
 				'kla' => $class->title,
-				'geburt' => block_exastud_get_custom_profile_field_value($student->id, 'dateofbirth'),
-				'certda' => $certificate_issue_date,
-				'certdate' => $certificate_issue_date,
-				'gebort' => static::spacerIfEmpty(''),
-				'teilnahme' => static::spacerIfEmpty(''),
-				'ags' => static::spacerIfEmpty(''),
-				'projekt' => static::spacerIfEmpty(''),
-				'verbalbeurteilung' => static::spacerIfEmpty(''),
-				'bemerkungen' => static::spacerIfEmpty(@$studentdata->comments),
+				'geburt' => static::spacerIfEmpty(block_exastud_get_custom_profile_field_value($student->id, 'dateofbirth')),
+				'certda' => $certificate_issue_date_text,
+				'gebort' => static::spacerIfEmpty(block_exastud_get_custom_profile_field_value($student->id, 'placeofbirth')),
+				'ags' => static::spacerIfEmpty(@$studentdata->ags),
+				'projekt_thema' => static::spacerIfEmpty(@$studentdata->projekt_thema),
+				'projekt_thema' => static::spacerIfEmpty(@$studentdata->projekt_thema),
+				'projekt_verbalbeurteilung' => static::spacerIfEmpty(@$studentdata->projekt_verbalbeurteilung),
 			];
+
+			foreach ($template->get_inputs() as $inputid => $tmp) {
+				if (!isset($data[$inputid])) {
+					$data[$inputid] = static::spacerIfEmpty(@$studentdata->{$inputid});
+				}
+			}
 
 			$placeholder = 'ph'.time();
 
-			$filters[] = function($content) use ($placeholder) {
-				$ret = preg_replace('!>\s*(sgt|sehr gut)\s*<!', '>'.$placeholder.'note<', $content, -1, $count);
+			$grades = $template->get_grade_options();
+
+			$add_filter(function($content) use ($placeholder) {
+				// im template 'BP 2004/Halbjahresinformation Klasse 10Gemeinschaftsschule_E-Niveau_BP 2004' ist der Standardwert "2 plus"
+				$ret = preg_replace('!>\s*(sgt|sehr gut|2 plus)\s*<!', '>'.$placeholder.'note<', $content, -1, $count);
 
 				/*
 				if (!$count) {
@@ -205,19 +259,25 @@ class printer {
 				*/
 
 				return $ret;
-			};
+			});
 
 			// noten
 			foreach ($class_subjects as $subject) {
 				$subjectData = block_exastud_get_graded_review($class->id, $subject->id, $student->id);
 
-				if (!$subjectData) {
+				if (!$subjectData || !@$subjectData->grade) {
 					continue;
 				}
 
 				$subject->title = preg_replace('!\s*\(.*$!', '', $subject->title);
 
 				if (in_array($subject->shorttitle, ['RALE', 'RAK', 'ETH', 'REV', 'RISL', 'RJUED', 'RRK', 'ROR', 'RSYR'])) {
+					if ($religion != static::spacerIfEmpty('')) {
+						continue;
+						// only if there is still no religion set
+						// maybe there are 2 religion gradings? ignore the 2nd one
+					}
+
 					if ($subject->shorttitle == 'ETH') {
 						$religion = 'Ethik';
 						$religion_sub = '';
@@ -226,47 +286,139 @@ class printer {
 						if ($subject->shorttitle == 'RISL') {
 							$religion_sub = 'islamisch sunnitischer Prägung';
 						} else {
-							$religion_sub = strtolower(trim(str_replace('Religionslehre', '', $subject->title)));
+							// jüdische Relgigionslehre => jüdische
+							$religion_sub = mb_strtolower(trim(str_replace('Religionslehre', '', $subject->title)));
+							// jüdische => jüdisch
+							$religion_sub = rtrim($religion_sub, 'e');
+							// jüdisch => (jüdisch)
+							$religion_sub = '('.$religion_sub.')';
 						}
 					}
+
 					$gradeSearch = 'Ethik';
+					$dropdownsBetween = 1; // 1, weil es selber auch ein dropdown ist
 				} elseif (strpos($subject->title, 'Wahlpflichtfach') === 0) {
 					$gradeSearch = 'Wahlpflicht';
 					$wahlpflichtfach = preg_replace('!^[^\s]+!', '', $subject->title);
+					// hier ist 1 dropdown dazwischen erlaubt (wahlpflichtfach name dropdown)
+					$dropdownsBetween = 1;
 				} elseif (strpos($subject->title, 'Profilfach') === 0) {
 					$gradeSearch = 'Profilfach';
 					$profilfach = preg_replace('!^[^\s]+!', '', $subject->title);
+					// hier ist 1 dropdown dazwischen erlaubt (profilfach name dropdown)
+					$dropdownsBetween = 1;
+				} elseif (in_array($subject->shorttitle, ['EWG', 'NWA'])) {
+					// hier den shorttitle suchen
+					$gradeSearch = $subject->shorttitle;
+					$dropdownsBetween = 0;
 				} else {
-					$gradeSearch = $subject->title;
+					$gradeSearch = '>'.$subject->title.'<';
+					$dropdownsBetween = 0;
 				}
 
-				$grade = @$subjectData->grade;
-				// einfach die erste zahl nehmen und dann durch text ersetzen
-
-				if ($template == 'BP 2004/Jahreszeugnis Klasse 10 der Gemeinschaftsschule E-Niveau') {
-					$grade = str_replace([
-						'1', '2', '3', '4', '5', '6',
-					], [
-						'sgt', 'gut', 'bfr', 'ausr', 'mgh', 'ung',
-					], substr($grade, 0, 1));
-				} else {
-					$grade = str_replace([
-						'1', '2', '3', '4', '5', '6',
-					], [
-						'sehr gut', 'gut', 'befriedigend', 'ausreichend', 'mangelhaft', 'ungenügend',
-					], substr($grade, 0, 1));
+				$grade = @$grades[@$subjectData->grade];
+				if (!$grade) {
+					// einfach die erste zahl nehmen und dann durch text ersetzen
+					$grade = @$grades[substr(@$subjectData->grade, 0, 1)];
 				}
 
-				$filters[] = function($content) use ($gradeSearch, $grade, $placeholder) {
-					$ret = preg_replace('!('.preg_quote($gradeSearch, '!').'.*)'.$placeholder.'note!U', '$1'.$grade, $content, -1, $count);
+				// TEST:
+				// $grade = $subject->title.' '.$grade;
+
+				$add_filter(['grade', $gradeSearch], function($content) use ($gradeSearch, $grade, $placeholder, $dropdownsBetween) {
+					if (!preg_match('!('.preg_quote($gradeSearch, '!').'.*)'.$placeholder.'note!U', $content, $matches)) {
+						// var_dump(['fach nicht gefunden', $gradeSearch]);
+						return $content;
+					}
+
+					if (substr_count($matches[0], '<w:dropDownList') > ($dropdownsBetween + 1)) {
+						// da ist noch ein anderes dropdown dazwischen => fehler
+						return $content;
+					}
+
+					$ret = preg_replace('!('.preg_quote($gradeSearch, '!').'.*)'.$placeholder.'note!U', '${1}'.$grade, $content, 1, $count);
 
 					return $ret;
-				};
+				});
+			}
+
+
+			if ($templateid == 'BP 2004/GMS Abgangszeugnis') {
+				$value = static::spacerIfEmpty(@$forminputs['wann_verlassen']['values'][@$studentdata->wann_verlassen]);
+				$add_filter(function($content) use ($placeholder, $value) {
+					$ret = preg_replace('!>[^<]*am Ende[^<]*<!U', '>'.$value.'<', $content, -1, $count);
+					if (!$count) {
+						throw new \Exception('"am Ende" not found');
+					}
+
+					return $ret;
+				});
+
+				$values = [
+					'G' => 'grundlegenden Niveau (G) beurteilt.',
+					'M' => 'mittleren Niveau (M) beurteilt.',
+					'E' => 'erweiteren Niveau (E) beurteilt.',
+				];
+				$value = static::spacerIfEmpty(@$values[@$studentdata->abgangszeugnis_niveau]);
+				$add_filter(function($content) use ($value) {
+					$ret = preg_replace('!>grundlegenden Niveau[^<]*<!U', '>'.$value.'<', $content, -1, $count);
+					if (!$count) {
+						throw new \Exception('"grundlegenden Niveau" not found');
+					}
+
+					return $ret;
+				});
+			} elseif ($templateid == 'BP 2004/GMS Abgangszeugnis HSA Kl.9 und 10') {
+				$value = static::spacerIfEmpty(@$forminputs['wann_verlassen']['values'][@$studentdata->wann_verlassen]);
+				$add_filter(function($content) use ($placeholder, $value) {
+					$ret = preg_replace('!>[^<]*am Ende[^<]*<!U', '>'.$value.'<', $content, -1, $count);
+					if (!$count) {
+						throw new \Exception('"am Ende" not found');
+					}
+
+					return $ret;
+				});
+			} elseif ($templateid == 'BP 2004/GMS Klasse 10 E-Niveau SJ') {
+				if (@$studentdata->verhalten) {
+					$value = @$forminputs['verhalten']['values'][$studentdata->verhalten];
+					$add_filter(function($content) use ($placeholder, $value) {
+						return preg_replace('!(Verhalten.*)'.$placeholder.'note!U', '${1}'.$value, $content, -1, $count);
+					});
+				}
+				if (@$studentdata->mitarbeit) {
+					$value = @$forminputs['mitarbeit']['values'][$studentdata->mitarbeit];
+					$add_filter(function($content) use ($placeholder, $value) {
+						return preg_replace('!(Mitarbeit.*)'.$placeholder.'note!U', '${1}'.$value, $content, -1, $count);
+					});
+				}
+			} elseif ($templateid == 'BP 2004/GMS Hauptschulabschluss SJ') {
+				$data['gd'] = @$studentdata->gesamtnote_und_durchschnitt_der_gesamtleistungen;
+
+				$values = [
+					'9' => 'hat die Hauptschulabschlussprüfung nach Klasse 9 der Gemeinschaftsschule mit Erfolg abge-legt.',
+					'10' => 'hat die Hauptschulabschlussprüfung nach Klasse 10 der Gemeinschaftsschule mit Erfolg abge-legt.',
+				];
+				$value = static::spacerIfEmpty(@$values[@$studentdata->bildungsstandard_erreicht]);
+				$add_filter(function($content) use ($placeholder, $value) {
+					$ret = preg_replace('!>[^<]*mit Erfolg[^<]*<!U', '>'.$value.'<', $content, -1, $count);
+					if (!$count) {
+						throw new \Exception('mit erfolg not found');
+					}
+
+					return $ret;
+				});
+			}
+
+			if ($value = @$grades[@$studentdata->projekt_grade]) {
+				// im "Beiblatt zur Projektpruefung HSA" heisst das feld projet_text3lines
+				$add_filter(function($content) use ($placeholder, $value) {
+					return preg_replace('!(projekt_thema.*)'.$placeholder.'note!U', '${1}'.$value, $content, 1, $count);
+				});
 			}
 
 			// religion + wahlpflichtfach + profilfach dropdowns
-			$filters[] = function($content) use ($religion, $religion_sub) {
-				$ret = preg_replace('!>\s*Ethik\s*<!U', '>'.$religion.'<', $content, -1, $count);
+			$add_filter(function($content) use ($religion, $religion_sub, $wahlpflichtfach, $profilfach) {
+				$content = preg_replace('!>\s*Ethik\s*<!U', '>'.$religion.'<', $content, 1, $count);
 
 				/*
 				if (!$count) {
@@ -274,10 +426,9 @@ class printer {
 				}
 				*/
 
-				return $ret;
-			};
-			$filters[] = function($content) use ($wahlpflichtfach) {
-				$ret = preg_replace('!(Wahlpflichtbereich.*>)Technik(<)!U', '$1'.$wahlpflichtfach.'$2', $content, -1, $count);
+				$content = preg_replace('!>\s*\(evangelisch\)\s*<!U', '>'.$religion_sub.'<', $content, 1, $count);
+
+				$content = preg_replace('!(Wahlpflichtbereich.*>)Technik(<)!U', '${1}'.$wahlpflichtfach.'${2}', $content, 1, $count);
 
 				/*
 				if (!$count) {
@@ -285,10 +436,7 @@ class printer {
 				}
 				*/
 
-				return $ret;
-			};
-			$filters[] = function($content) use ($profilfach) {
-				$ret = preg_replace('!(Profilfach.*>)Spanisch(<)!U', '$1'.$profilfach.'$2', $content, -1, $count);
+				$content = preg_replace('!(Profilfach.*>)Spanisch(<)!U', '${1}'.$profilfach.'${2}', $content, 1, $count);
 
 				/*
 				if (!$count) {
@@ -296,18 +444,20 @@ class printer {
 				}
 				*/
 
-				return $ret;
-			};
+				return $content;
+			});
 
-			$filters[] = function($content) use ($placeholder) {
+			// alle restlichen noten dropdowns zurücksetzen
+			$add_filter(function($content) use ($placeholder) {
 				return str_replace($placeholder.'note', '--', $content);
-			};
-		} elseif ($template == 'Anlage zum Lernentwicklungsbericht') {
+			});
+		} elseif ($templateid == 'Anlage zum Lernentwicklungsbericht') {
 			$evalopts = g::$DB->get_records('block_exastudevalopt', null, 'sorting', 'id, title, sourceinfo');
 			$categories = block_exastud_get_class_categories_for_report($student->id, $class->id);
 			$subjects = static::get_exacomp_subjects($student->id);
 
 			$data = [
+				'periode' => $period->description,
 				'schule' => get_config('exastud', 'school_name'),
 				'ort' => get_config('exastud', 'school_location'),
 				'name' => $student->firstname.' '.$student->lastname,
@@ -392,10 +542,9 @@ class printer {
 				$templateProcessor->deleteRow("topic");
 				$templateProcessor->deleteRow("descriptor");
 			}
-		} elseif ($template == 'BP 2004/Zertifikat fuer Profilfach') {
 		} else {
 			echo g::$OUTPUT->header();
-			echo block_exastud_trans(['de:Leider wurde die Dokumentvorlage "{$a}" nicht gefunden.', 'en:Template "{$a}" not found.'], $template);
+			echo block_exastud_trans(['de:Leider wurde die Dokumentvorlage "{$a}" nicht gefunden.', 'en:Template "{$a}" not found.'], $templateid);
 			echo g::$OUTPUT->footer();
 			exit;
 		}
@@ -416,12 +565,258 @@ class printer {
 		$temp_file = tempnam($CFG->tempdir, 'exastud');
 		$templateProcessor->saveAs($temp_file);
 
-		$filename = ($certificate_issue_date ?: date('Y-m-d'))."-".ucfirst($template)."-{$class->title}-{$student->lastname}-{$student->firstname}.docx";
+		$filename = ($certificate_issue_date_text ?: date('Y-m-d'))."-".$template->get_name()."-{$class->title}-{$student->lastname}-{$student->firstname}.docx";
 
 		return (object)[
 			'temp_file' => $temp_file,
 			'filename' => $filename,
 		];
+	}
+
+	static function grades_report($class, $students) {
+		global $CFG;
+
+		$templateid = 'grades_report';
+
+		$templateFile = __DIR__.'/../template/'.$templateid.'.docx';
+
+		if (!file_exists($templateFile)) {
+			throw new \Exception("template '$templateid' not found");
+		}
+
+		\PhpOffice\PhpWord\Settings::setTempDir($CFG->tempdir);
+		$templateProcessor = new TemplateProcessor($templateFile);
+
+		$period = block_exastud_get_period($class->periodid);
+
+		$templateProcessor->setValue('schule', get_config('exastud', 'school_name'));
+		$templateProcessor->setValue('periode', $period->description);
+		$templateProcessor->setValue('klasse', $class->title);
+		$templateProcessor->setValue('lehrer', fullname(g::$USER));
+		$templateProcessor->setValue('datum', date('d.m.Y'));
+
+		$class_subjects = block_exastud_get_bildungsplan_subjects($class->bpid);
+
+		// split normal and grouped subjects (page 2)
+		$normal_subjects = [];
+		$grouped_subjects = [];
+		foreach ($class_subjects as $subject) {
+			if (preg_match('!religi|ethi!i', $subject->title)) {
+				@$grouped_subjects['Religion / Ethik'][] = $subject;
+				$subject->shorttitle_stripped = $subject->shorttitle;
+			} elseif (preg_match('!^Wahlpflicht!i', $subject->title)) {
+				$subject->shorttitle_stripped = preg_replace('!^WPF\s+!i', '', $subject->shorttitle);
+				@$grouped_subjects['WPF'][] = $subject;
+			} elseif (preg_match('!^Profilfach!i', $subject->title)) {
+				$subject->shorttitle_stripped = preg_replace('!^Profil\s+!i', '', $subject->shorttitle);
+				@$grouped_subjects['Profil'][] = $subject;
+			} else {
+				$normal_subjects[] = $subject;
+			}
+		}
+
+
+		// page 1
+		foreach ($normal_subjects as $subject) {
+			$templateProcessor->setValue("s", $subject->shorttitle, 1);
+		}
+		$templateProcessor->setValue("s", '');
+
+		$templateProcessor->cloneRow('student', count($students));
+		$rowi = 0;
+		foreach ($students as $student) {
+			$rowi++;
+			$templateProcessor->setValue("student#$rowi", $rowi.'. '.fullname($student));
+
+			foreach ($normal_subjects as $subject) {
+				$subjectData = block_exastud_get_graded_review($class->id, $subject->id, $student->id);
+
+				$value = $subjectData ? $subjectData->grade : '';
+				$templateProcessor->setValue("g#$rowi", $value, 1);
+			}
+			$templateProcessor->setValue("g#$rowi", '');
+		}
+
+
+		// page 2
+		foreach ($grouped_subjects as $key => $subjects) {
+			$templateProcessor->setValue("gs", $key, 1);
+		}
+		$templateProcessor->setValue("gs", '');
+
+		$templateProcessor->cloneRow('gsstudent', count($students));
+		$rowi = 0;
+		foreach ($students as $student) {
+			$rowi++;
+			$templateProcessor->setValue("gsstudent#$rowi", $rowi.'. '.fullname($student));
+
+			foreach ($grouped_subjects as $subjects) {
+				$subjectData = null;
+
+				foreach ($subjects as $subject) {
+					$subjectData = block_exastud_get_graded_review($class->id, $subject->id, $student->id);
+
+					if ($subjectData && $subjectData->grade) {
+						break;
+					}
+				}
+
+				$value = $subjectData ? $subjectData->grade : '';
+				$templateProcessor->setValue("gsg#$rowi", $value, 1);
+				$templateProcessor->setValue("gss#$rowi", $value ? $subject->shorttitle_stripped : '', 1);
+			}
+
+			$templateProcessor->setValue("gsg#$rowi", '');
+			$templateProcessor->setValue("gss#$rowi", '');
+		}
+
+
+		// projekt
+		$templateProcessor->cloneRow('prostudent', count($students));
+		$rowi = 0;
+		foreach ($students as $student) {
+			$studentData = block_exastud_get_class_student_data($class->id, $student->id);
+			$rowi++;
+
+			$templateProcessor->setValue("prostudent#$rowi", $rowi.'. '.fullname($student));
+			$templateProcessor->setValue("prog#$rowi", @$studentData->projekt_grade);
+			$templateProcessor->setValue("prodescription#$rowi", @$studentData->projekt_thema);
+		}
+
+
+		// ags
+		$templateProcessor->cloneRow('agstudent', count($students));
+		$rowi = 0;
+		foreach ($students as $student) {
+			$studentData = block_exastud_get_class_student_data($class->id, $student->id);
+			$rowi++;
+
+			$templateProcessor->setValue("agstudent#$rowi", $rowi.'. '.fullname($student));
+			$templateProcessor->setValue("agdescription#$rowi", @$studentData->ags);
+		}
+
+
+		// page 3
+		$class_teachers = block_exastud_get_class_subject_teachers($class->id);
+		$templateProcessor->cloneRow('sshort', count($class_teachers));
+		$rowi = 0;
+		foreach ($class_teachers as $class_teacher) {
+			$rowi++;
+
+			$subject = $class_subjects[$class_teacher->subjectid];
+			$templateProcessor->setValue("sshort#$rowi", $subject->shorttitle);
+			$templateProcessor->setValue("stitle#$rowi", $subject->title);
+			$templateProcessor->setValue("steacher#$rowi", fullname($class_teacher));
+		}
+
+
+		// image
+		// disable for now
+		/*
+		if ($logo = block_exastud_get_main_logo()) {
+			$image = $logo->copy_content_to_temp();
+			$size = @getimagesize($image);
+
+			if ($size) {
+				$templateProcessor->updateFile('word/media/image1.png', $image);
+
+				$templateProcessor->applyFiltersAllParts([function($content) use ($size) {
+					return preg_replace_callback('!<wp:extent cx="(?<viewportcx>[0-9]*)" cy="(?<viewportcy>[0-9]*)".*name="Picture [12]".*cx="(?<cx>[0-9]*)" cy="(?<cy>[0-9]*)"!U', function($matches) use ($size) {
+						if ($size[0] / $size[1] > $matches['cx'] / $matches['cy']) {
+							$w = round($matches['cx']);
+							$h = round($matches['cx'] / $size[0] * $size[1]);
+						} else {
+							$w = round($matches['cy'] / $size[1] * $size[0]);
+							$h = round($matches['cy']);
+						}
+
+						return str_replace([$matches['cx'], $matches['cy'], $matches['viewportcx'], $matches['viewportcy']], [$w, $h, $w, $h], $matches[0]);
+					}, $content);
+				}]);
+			}
+		}
+		*/
+
+
+		// save as a random file in temp file
+		$temp_file = tempnam($CFG->tempdir, 'exastud');
+		$templateProcessor->saveAs($temp_file);
+
+		$filename = date('Y-m-d')."-".'Notenuebersicht'."-{$class->title}.docx";
+
+
+		require_once $CFG->dirroot.'/lib/filelib.php';
+		send_temp_file($temp_file, $filename);
+	}
+
+	static function grades_report_xlsx($class, $students) {
+		global $CFG;
+
+		\PhpOffice\PhpWord\Settings::setTempDir($CFG->tempdir);
+
+		$spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
+		$sheet = $spreadsheet->setActiveSheetIndex(0);
+
+		$class_subjects = block_exastud_get_bildungsplan_subjects($class->bpid);
+
+		$cell = 0;
+		$sheet->setCellValueByColumnAndRow($cell++, 1, 'Nr.');
+		$sheet->setCellValueByColumnAndRow($cell++, 1, 'Name');
+		foreach ($class_subjects as $subject) {
+			$sheet->setCellValueByColumnAndRow($cell++, 1, $subject->shorttitle);
+		}
+
+		$sheet->setCellValueByColumnAndRow($cell++, 1, 'Projekt Note');
+		$sheet->setCellValueByColumnAndRow($cell++, 1, 'Projekt Thema');
+		$sheet->setCellValueByColumnAndRow($cell++, 1, 'AGs');
+
+		$rowi = 1;
+		foreach ($students as $student) {
+			$rowi++;
+			$cell = 0;
+			$sheet->setCellValueByColumnAndRow($cell++, $rowi, $rowi - 1);
+			$sheet->setCellValueByColumnAndRow($cell++, $rowi, fullname($student));
+
+			foreach ($class_subjects as $subject) {
+				$subjectData = block_exastud_get_graded_review($class->id, $subject->id, $student->id);
+
+				$value = $subjectData ? @$subjectData->grade : '';
+				$sheet->setCellValueByColumnAndRow($cell++, $rowi, $value);
+			}
+
+			$studentData = block_exastud_get_class_student_data($class->id, $student->id);
+			$sheet->setCellValueByColumnAndRow($cell++, $rowi, @$studentData->projekt_grade);
+			$sheet->setCellValueByColumnAndRow($cell++, $rowi, @$studentData->projekt_thema);
+			$sheet->setCellValueByColumnAndRow($cell++, $rowi, @$studentData->ags);
+		}
+
+		/*
+		$writer = \PhpOffice\PhpSpreadsheet\IOFactory::createWriter($spreadsheet, 'HTML');
+
+		echo '<style>
+			body {
+				margin: 0 !important;
+				padding: 5px !important;
+			}
+			table.gridlines td {
+				border: 1px solid grey;
+				padding: 3px;
+				vertical-align: topf;
+			}
+		</style>';
+		$writer->save('php://output');
+		exit;
+		*/
+
+
+		$filename = date('Y-m-d')."-".'Notenuebersicht'."-{$class->title}.xlsx";
+
+		$writer = \PhpOffice\PhpSpreadsheet\IOFactory::createWriter($spreadsheet, 'Excel2007');
+		$temp_file = tempnam($CFG->tempdir, 'exastud');
+		$writer->save($temp_file);
+
+		require_once $CFG->dirroot.'/lib/filelib.php';
+		send_temp_file($temp_file, $filename);
 	}
 
 	/*
@@ -476,8 +871,8 @@ class printer {
 
 		// phpoffice doesn't know <i> and <b>
 		// it expects <strong> and <em>
-		$html = preg_replace('!(</?)b(>)!i', '$1strong$2', $html);
-		$html = preg_replace('!(</?)i(>)!i', '$1em$2', $html);
+		$html = preg_replace('!(</?)b(>)!i', '${1}strong${2}', $html);
+		$html = preg_replace('!(</?)i(>)!i', '${1}em${2}', $html);
 
 		\PhpOffice\PhpWord\Settings::setOutputEscapingEnabled(true);
 		\PhpOffice\PhpWord\Shared\Html::addHtml($element, $html);
@@ -750,8 +1145,8 @@ class printer {
 		$wrapper = static::leb_wrapper_table($section);
 
 		$location = get_config('exastud', 'school_location');
-		$certificate_issue_date = trim(get_config('exastud', 'certificate_issue_date'));
-		$ort_datum = ($location ? $location.", " : '').$certificate_issue_date;
+		$certificate_issue_date_text = block_exastud_get_certificate_issue_date_text($class);
+		$ort_datum = ($location ? $location.", " : '').$certificate_issue_date_text;
 
 		$wrapper->addText('');
 		$wrapper->addText('');
@@ -808,8 +1203,8 @@ class printer {
 		$section->addText("Lernentwicklungsgespräch(-e) Datum: _________________");
 		$section->addText('');
 		$location = get_config('exastud', 'school_location');
-		$certificate_issue_date = trim(get_config('exastud', 'certificate_issue_date'));
-		$section->addText(($location ?: "[Ort]").", den ".($certificate_issue_date ?: "______________"));
+		$certificate_issue_date_text = block_exastud_get_certificate_issue_date_text($class);
+		$section->addText(($location ?: "[Ort]").", den ".($certificate_issue_date_text ?: "______________"));
 		$section->addText('');
 		$section->addText('');
 		$section->addText('');
@@ -849,8 +1244,8 @@ class printer {
 		$cell->addText('Schulleiterin', null, ['align' => 'center', 'spaceBefore' => 0, 'spaceAfter' => 0]);
 		* /
 
-		$certificate_issue_date = trim(get_config('exastud', 'certificate_issue_date'));
-		$filename = ($certificate_issue_date ?: date('Y-m-d'))."-Lernentwicklungsbericht-{$class->title}-{$student->lastname}-{$student->firstname}.docx";
+		$certificate_issue_date_text = block_exastud_get_certificate_issue_date_text($class);
+		$filename = ($certificate_issue_date_text ?: date('Y-m-d'))."-Lernentwicklungsbericht-{$class->title}-{$student->lastname}-{$student->firstname}.docx";
 
 		if ($outputType == 'docx_test' || optional_param('test', '', PARAM_TEXT)) {
 			// testing:
@@ -954,6 +1349,14 @@ class TemplateProcessor extends \PhpOffice\PhpWord\TemplateProcessor {
 	function applyFilters($filters) {
 		foreach ($filters as $filter) {
 			$this->tempDocumentMainPart = $filter($this->tempDocumentMainPart);
+		}
+	}
+
+	function applyFiltersAllParts($filters) {
+		foreach ($filters as $filter) {
+			$this->tempDocumentHeaders = $filter($this->tempDocumentHeaders);
+			$this->tempDocumentMainPart = $filter($this->tempDocumentMainPart);
+			$this->tempDocumentFooters = $filter($this->tempDocumentFooters);
 		}
 	}
 
@@ -1151,5 +1554,9 @@ class TemplateProcessor extends \PhpOffice\PhpWord\TemplateProcessor {
 		}
 
 		return $xmlEscaper->escape($str);
+	}
+
+	function updateFile($filename, $path) {
+		return $this->zipClass->addFromString($filename, file_get_contents($path));
 	}
 }

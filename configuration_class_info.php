@@ -40,6 +40,7 @@ $class->classid = $class->id;
 $class->courseid = $courseid;
 
 $classform = new class_edit_form();
+
 if ($classform->is_cancelled()) {
 	redirect('configuration_classes.php?courseid='.$courseid);
 } elseif ($classedit = $classform->get_data()) {
@@ -58,34 +59,39 @@ if ($classform->is_cancelled()) {
 	} else {
 		$newclass->userid = $USER->id;
 		$newclass->periodid = $curPeriod->id;
-		$class->id = $DB->insert_record('block_exastudclass', $newclass);
+		$newclass->id = $DB->insert_record('block_exastudclass', $newclass);
 	}
 
-	/*
-	$DB->delete_records('block_exastudclassteachers', ['teacherid' => $USER->id, 'classid' => $class->id]);
-	if (!empty($classedit->mysubjectids)) {
-		foreach ($classedit->mysubjectids as $subjectid) {
-			$DB->insert_record('block_exastudclassteachers ', [
-				'teacherid' => $USER->id,
-				'classid' => $class->id,
-				'timemodified' => time(),
-				'subjectid' => $subjectid,
-			]);
+	block_exastud_set_class_data($newclass->id, BLOCK_EXASTUD_DATA_ID_CLASS_DEFAULT_TEMPLATEID, $classedit->{BLOCK_EXASTUD_DATA_ID_CLASS_DEFAULT_TEMPLATEID});
+
+	if ($class->id) {
+		// standard zeugnis zurücksetzen (wegen alter version wo es kein standard zeugnis gab)
+		$new_default_templateid = $classedit->{BLOCK_EXASTUD_DATA_ID_CLASS_DEFAULT_TEMPLATEID};
+		$old_default_templateid = block_exastud_get_class_data($class->id, BLOCK_EXASTUD_DATA_ID_CLASS_DEFAULT_TEMPLATEID);
+
+		foreach (block_exastud_get_class_students($class->id) as $student) {
+			$templateid = block_exastud_get_class_student_data($class->id, $student->id, BLOCK_EXASTUD_DATA_ID_PRINT_TEMPLATE);
+			if ($templateid && $templateid == $new_default_templateid || $templateid == $new_default_templateid) {
+				block_exastud_set_class_student_data($class->id, $student->id, BLOCK_EXASTUD_DATA_ID_PRINT_TEMPLATE, '');
+			}
 		}
-	}
-	*/
 
-	redirect('configuration_class.php?courseid='.$courseid.'&classid='.$class->id);
+		block_exastud_normalize_projekt_pruefung($class);
+	}
+
+	if ($class->id) {
+		redirect('configuration_class_info.php?courseid='.$courseid.'&classid='.$class->id);
+	} else {
+		redirect('configuration_class.php?courseid='.$courseid.'&classid='.$newclass->id);
+	}
 }
 
-
-$classform->set_data($class);
+$classform->set_data((array)$class + (array)block_exastud_get_class_data($class->id));
 
 $url = "/blocks/exastud/configuration_class_info.php";
 $PAGE->set_url($url);
 $output = block_exastud_get_renderer();
 echo $output->header(['configuration_classes', 'class_info'], ['class' => ($class && $class->id) ? $class : null]);
-
 
 if ($class && $class->id) {
 	$classform->display();
@@ -110,5 +116,54 @@ if ($class && $class->id) {
 
 	$classform->display();
 }
+
+if ($class->id) {
+	$templates = \block_exastud\print_templates::get_class_available_print_templates($class);
+} else {
+	$templates = \block_exastud\print_templates::get_all_default_print_templates();
+}
+
+$bps = $DB->get_records('block_exastudbp', [], 'sorting');
+$templates_by_bp = [];
+foreach ($bps as $bp) {
+	$templates_by_bp[$bp->id] = \block_exastud\print_templates::get_bp_available_print_templates($bp);
+}
+
+?>
+	<script>
+			var templates_by_bp = <?php echo json_encode($templates_by_bp); ?>;
+
+			function populate_select(name) {
+				var $input = $('input,select').filter('[name=' + name + ']');
+				var val = $input.val();
+				var $select = $('<select/>', {name: name});
+
+				$.each(templates_by_bp[$('select[name=bpid]').val()], function (id, title) {
+					$select.append($('<option/>', {
+						value: id,
+						text: title
+					}));
+				});
+
+				$input.replaceWith($select);
+				// don't use $select.val() because if the value does not exist (in chrome) the select is empty
+				$select.find('option[value="'+val+'"]').prop('selected', true);
+
+				$select.change(function () {
+					if (!confirm('Soll das Zeugnisformular, das für die Schüler erzeugt wird, bei allen geändert werden?')) {
+						$(this).val(current);
+					} else {
+						current = $(this).val();
+					}
+				});
+			}
+
+			populate_select('default_templateid');
+
+			$(document).on('change', '[name=bpid]', function () {
+				populate_select('default_templateid');
+			});
+	</script>
+<?php
 
 echo $output->footer();

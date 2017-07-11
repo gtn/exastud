@@ -27,27 +27,31 @@ require_login($courseid);
 
 block_exastud_require_global_cap(BLOCK_EXASTUD_CAP_REVIEW);
 
-$class = block_exastud_get_review_class($classid, BLOCK_EXASTUD_SUBJECT_ID_OTHER_DATA);
+$reviewclass = block_exastud_get_review_class($classid, BLOCK_EXASTUD_SUBJECT_ID_OTHER_DATA);
+$class = block_exastud_get_class($classid);
 
-if (!$class) {
+if (!$reviewclass || !$class) {
 	print_error("badclass", "block_exastud");
 }
 
 if ($type == BLOCK_EXASTUD_DATA_ID_LERN_UND_SOZIALVERHALTEN) {
 	$categories = [
-		BLOCK_EXASTUD_DATA_ID_LERN_UND_SOZIALVERHALTEN => block_exastud_trans('de:Lern- und Sozialverhalten'),
+		BLOCK_EXASTUD_DATA_ID_LERN_UND_SOZIALVERHALTEN => [
+			'title' => block_exastud_trans('de:Lern- und Sozialverhalten'),
+		],
 	];
-	$classheader = $class->title.' - '.block_exastud_trans('de:Lern- und Sozialverhalten');
-} else {
+	$classheader = $reviewclass->title.' - '.block_exastud_trans('de:Lern- und Sozialverhalten');
+} elseif ($type == BLOCK_EXASTUD_DATA_ID_PRINT_TEMPLATE) {
 	$categories = [
-		/*
-		'ateliers' => block_exastud_trans('de:Ateliers'),
-		'arbeitsgemeinschaften' => block_exastud_trans('de:Arbeitsgemeinschaften'),
-		'besondere_staerken' => block_exastud_trans('de:Besondere Stärken'),
-		*/
-		'comments' => block_exastud_trans('de:Bemerkungen'),
+		BLOCK_EXASTUD_DATA_ID_PRINT_TEMPLATE => [
+			'title' => block_exastud_trans('de:Weitere Formularfelder'),
+		],
 	];
-	$classheader = $class->title.' - '.block_exastud_trans('de:Bemerkungen');
+	$classheader = $reviewclass->title.' - '.block_exastud_trans('de:Weitere Formularfelder');
+} else {
+	$template = \block_exastud\print_template::create($type);
+	$categories = $template->get_inputs();
+	$classheader = $reviewclass->title.' - '.$template->get_name();
 }
 
 $output = block_exastud_get_renderer();
@@ -67,17 +71,17 @@ $table = new html_table();
 $table->head = array();
 $table->head[] = ''; //userpic
 $table->head[] = block_exastud_get_string('name');
-if (true) { // block_exastud_can_edit_class($class)) {
+if (true) { // block_exastud_can_edit_class($reviewclass)) {
 	$table->head[] = ''; // bewerten button
 }
 foreach ($categories as $category) {
-	$table->head[] = $category;
+	$table->head[] = $category['title'];
 }
 
 $table->align = array();
 $table->align[] = 'center';
 $table->align[] = 'left';
-if (true) { // block_exastud_can_edit_class($class)) {
+if (true) { // block_exastud_can_edit_class($reviewclass)) {
 	$table->align[] = 'center';
 }
 
@@ -91,24 +95,54 @@ foreach ($classstudents as $classstudent) {
 	$row->cells[] = $OUTPUT->user_picture($classstudent, array("courseid" => $courseid));
 	$row->cells[] = $userdesc;
 
-	// if (true) { // block_exastud_can_edit_class($class)) {
+	// if (true) { // block_exastud_can_edit_class($reviewclass)) {
 	$editUser = null;
 	if (@$data['head_teacher']) {
 		$editUser = $DB->get_record('user', array('id' => $data['head_teacher']));
 	}
 	if (!$editUser) {
-		$editUser = $DB->get_record('user', array('id' => $class->userid));
+		$editUser = $DB->get_record('user', array('id' => $reviewclass->userid));
+	}
+
+	if (@array_shift(array_keys($categories)) === BLOCK_EXASTUD_DATA_ID_PRINT_TEMPLATE) {
+		$hasInputs = !!block_exastud_get_student_print_template($class, $classstudent->id)->get_inputs();
+	} else {
+		$hasInputs = !!$categories;
 	}
 
 	if ($editUser->id !== $USER->id) {
 		$row->cells[] = block_exastud_trans(['de:Zugeteilt zu {$a}'], fullname($editUser));
+	} elseif (!$hasInputs) {
+		// no categories, or it's a default printtemplate with no inputs
+		$row->cells[] = block_exastud_trans(['de:Dieses Formular hat keine weiteren Eingabfelder'], fullname($editUser));
 	} else {
 		$row->cells[] = $output->link_button($CFG->wwwroot.'/blocks/exastud/review_student_other_data.php?courseid='.$courseid.'&classid='.$classid.'&type='.$type.'&studentid='.$classstudent->id,
 			block_exastud_get_string('edit'));
 	}
 
 	foreach ($categories as $dataid => $category) {
-		$row->cells[] = !empty($data[$dataid]) ? block_exastud_text_to_html($data[$dataid]) : '';
+		if ($dataid === BLOCK_EXASTUD_DATA_ID_PRINT_TEMPLATE) {
+			$template = block_exastud_get_student_print_template($class, $classstudent->id);
+
+			$content = '<div><b>Formular:</b> '.$template->get_name().'</div>';
+
+			foreach ($template->get_inputs() as $dataid => $form_input) {
+				if (@$form_input['type'] == 'select') {
+					$value = @$form_input['values'][$data[$dataid]];
+				} else {
+					$value = !empty($data[$dataid]) ? block_exastud_text_to_html($data[$dataid]) : '';
+				}
+
+				$content .= '<div style="padding-top: 10px; font-weight: bold;">'.$form_input['title'].'</div>';
+				$content .= '<div>'.$value.'</div>';
+			}
+
+			$row->cells[] = $content;
+		} elseif (@$category['type'] == 'select') {
+			$row->cells[] = @$category['values'][$data[$dataid]];
+		} else {
+			$row->cells[] = !empty($data[$dataid]) ? block_exastud_text_to_html($data[$dataid]) : '';
+		}
 	}
 
 	$table->data[] = $row;

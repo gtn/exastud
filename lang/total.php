@@ -123,12 +123,16 @@ return [
 		'Project-Teachers',
 	],
 	'class_info' => [
-		'Klasse bearbeiten',
+		'Klasseneinstellungen',
 		'Edit Class',
 	],
 	'students' => [
 		'Schülerinnen und Schüler',
 		'Members',
+	],
+	'studentgradereports' => [
+		'Schülerzeugnisse',
+		'Grade Reports',
 	],
 	'no_entries_found' => [
 		'Keine Einträge gefunden',
@@ -261,6 +265,10 @@ return [
 	'invalidperiodid' => [
 		'Falsche Beurteilungszeitraums-ID',
 		'Invalid period id',
+	],
+	'certificate_issue_date' => [
+		'Zeugnisausgabedatum',
+		'Certificate Issue Date',
 	],
 	'noclassestoreview' => [
 		'Keine Klasse zur Beurteilung',

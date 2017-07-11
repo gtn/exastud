@@ -27,6 +27,8 @@
 			return false;
 		}
 
+		event.preventDefault();
+
 		document.location.href = this.getAttribute('exa-url') || this.getAttribute('href');
 	});
 

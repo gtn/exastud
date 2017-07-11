@@ -45,10 +45,10 @@ $.extend(window.block_exastud, {});
 
 	$(function(){
 		$('.limit-input-length').each(function(){
-			$(this).data('limit-input-initial-scrollHeight', this.scrollHeight);
+			$(this).data('limit-input-initial-height', $(this).outerHeight());
 		})
 		.on('keypress keyup change input propertychange paste', function(e){
-			var sh = $(this).data('limit-input-initial-scrollHeight');
+			var sh = $(this).data('limit-input-initial-height');
 
 			if (this.scrollHeight > sh) {
 				$(this).css({
@@ -63,7 +63,7 @@ $.extend(window.block_exastud, {});
 				});
 				$(this).attr('maxlength', null);
 			}
-		});
+		}).change();
 	});
 
 	// eingabe limitieren, geht z.b. nicht bei mouse paste
