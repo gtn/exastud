@@ -1,6 +1,6 @@
 <?php
 
-$force_bw_active = false;
+$force_bw_active = true;
 
 $bw_active = get_config('exastud', 'bw_active');
 
@@ -41,11 +41,11 @@ bw-bp2016-bio;Biologie;Bio;1
 bw-bp2016-mu;Musik;Mu;1
 bw-bp2016-b;Bildende Kunst;BK;1
 bw-bp2016-sp;Sport;Sp;1
-bw-bp2016-wpf-aes;Wahlpflichtfach Alltagskultur, Ernähung, Soziales;WPF AES;0
+bw-bp2016-wpf-aes;Wahlpflichtfach Alltagskultur, Ernährung, Soziales;WPF AES;0
 bw-bp2016-wpf-f;Wahlpflichtfach Französisch;WPF F;0
 bw-bp2016-wpf-te;Wahlpflichtfach Technik;WPF Te;0
 bw-bp2016-profil-bk;Profilfach Bildende Kunst;Profil BK;0
-bw-bp2016-profil-f;Profilfach Fanzösisch;Profil F;0
+bw-bp2016-profil-f;Profilfach Französisch;Profil F;0
 bw-bp2016-profil-mu;Profilfach Musik;Profil Mu;0
 bw-bp2016-profil-nwt;Profilfach Naturwissenschaft und Technik;Profil NwT;0
 bw-bp2016-profil-sp;Profilfach Sport;Profil Sp;0
