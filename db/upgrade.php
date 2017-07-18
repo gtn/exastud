@@ -217,21 +217,21 @@ function xmldb_block_exastud_upgrade($oldversion = 0) {
 	}
 
 	if ($oldversion < 2016070901) {
-        // Define table block_exastudbp to be created.
-        $table = new xmldb_table('block_exastudbp');
+		// Define table block_exastudbp to be created.
+		$table = new xmldb_table('block_exastudbp');
 
-        // Adding fields to table block_exastudbp.
-        $table->add_field('id', XMLDB_TYPE_INTEGER, '18', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
-        $table->add_field('title', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null);
-        $table->add_field('sorting', XMLDB_TYPE_INTEGER, '18', null, null, null, null);
+		// Adding fields to table block_exastudbp.
+		$table->add_field('id', XMLDB_TYPE_INTEGER, '18', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+		$table->add_field('title', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null);
+		$table->add_field('sorting', XMLDB_TYPE_INTEGER, '18', null, null, null, null);
 
-        // Adding keys to table block_exastudbp.
-        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+		// Adding keys to table block_exastudbp.
+		$table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
 
-        // Conditionally launch create table for block_exastudbp.
-        if (!$dbman->table_exists($table)) {
-            $dbman->create_table($table);
-        }
+		// Conditionally launch create table for block_exastudbp.
+		if (!$dbman->table_exists($table)) {
+			$dbman->create_table($table);
+		}
 
 		// Define field bpid to be added to block_exastudsubjects.
 		$table = new xmldb_table('block_exastudsubjects');
@@ -240,15 +240,15 @@ function xmldb_block_exastud_upgrade($oldversion = 0) {
 			$dbman->add_field($table, $field);
 		}
 
-        $field = new xmldb_field('shorttitle', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null, 'title');
-        if (!$dbman->field_exists($table, $field)) {
-            $dbman->add_field($table, $field);
-        }
+		$field = new xmldb_field('shorttitle', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null, 'title');
+		if (!$dbman->field_exists($table, $field)) {
+			$dbman->add_field($table, $field);
+		}
 
-        $field = new xmldb_field('always_print', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, '0', 'shorttitle');
-        if (!$dbman->field_exists($table, $field)) {
-            $dbman->add_field($table, $field);
-        }
+		$field = new xmldb_field('always_print', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, '0', 'shorttitle');
+		if (!$dbman->field_exists($table, $field)) {
+			$dbman->add_field($table, $field);
+		}
 
 		// Define field bpid to be added to block_exastudclass.
 		$table = new xmldb_table('block_exastudclass');
@@ -259,7 +259,7 @@ function xmldb_block_exastud_upgrade($oldversion = 0) {
 			$dbman->add_field($table, $field);
 		}
 
-		if (!$DB->get_record('block_exastudbp', ['id'=>1])) {
+		if (!$DB->get_record('block_exastudbp', ['id' => 1])) {
 			$DB->execute("INSERT INTO {block_exastudbp} (id, title, sorting) VALUES (1, ?, 1)", [block_exastud_trans('de:Alte Fächer')]);
 		}
 
@@ -270,48 +270,61 @@ function xmldb_block_exastud_upgrade($oldversion = 0) {
 		upgrade_block_savepoint(true, 2016070901, 'exastud');
 	}
 
-    if ($oldversion < 2016080400) {
-        $table = new xmldb_table('block_exastudbp');
-        $field = new xmldb_field('sourceinfo', XMLDB_TYPE_TEXT, null, null, null, null, null, 'sorting');
-        if (!$dbman->field_exists($table, $field)) {
-            $dbman->add_field($table, $field);
-        }
-
-        $table = new xmldb_table('block_exastudevalopt');
-       	$field = new xmldb_field('sourceinfo', XMLDB_TYPE_TEXT, null, null, null, null, null, 'sorting');
+	if ($oldversion < 2016080400) {
+		$table = new xmldb_table('block_exastudbp');
+		$field = new xmldb_field('sourceinfo', XMLDB_TYPE_TEXT, null, null, null, null, null, 'sorting');
 		if (!$dbman->field_exists($table, $field)) {
-            $dbman->add_field($table, $field);
-        }
+			$dbman->add_field($table, $field);
+		}
 
-        $table = new xmldb_table('block_exastudsubjects');
-        $field = new xmldb_field('sourceinfo', XMLDB_TYPE_TEXT, null, null, null, null, null, 'always_print');
-        if (!$dbman->field_exists($table, $field)) {
-            $dbman->add_field($table, $field);
-        }
+		$table = new xmldb_table('block_exastudevalopt');
+		$field = new xmldb_field('sourceinfo', XMLDB_TYPE_TEXT, null, null, null, null, null, 'sorting');
+		if (!$dbman->field_exists($table, $field)) {
+			$dbman->add_field($table, $field);
+		}
 
-        $table = new xmldb_table('block_exastudcate');
-        $field = new xmldb_field('sourceinfo', XMLDB_TYPE_TEXT, null, null, null, null, null, 'sorting');
-        if (!$dbman->field_exists($table, $field)) {
-            $dbman->add_field($table, $field);
-        }
+		$table = new xmldb_table('block_exastudsubjects');
+		$field = new xmldb_field('sourceinfo', XMLDB_TYPE_TEXT, null, null, null, null, null, 'always_print');
+		if (!$dbman->field_exists($table, $field)) {
+			$dbman->add_field($table, $field);
+		}
 
-        upgrade_block_savepoint(true, 2016080400, 'exastud');
-    }
+		$table = new xmldb_table('block_exastudcate');
+		$field = new xmldb_field('sourceinfo', XMLDB_TYPE_TEXT, null, null, null, null, null, 'sorting');
+		if (!$dbman->field_exists($table, $field)) {
+			$dbman->add_field($table, $field);
+		}
 
-    if ($oldversion < 2017021303) {
+		upgrade_block_savepoint(true, 2016080400, 'exastud');
+	}
 
-        // Define field endtime to be added to block_exastudperiod.
-        $table = new xmldb_table('block_exastudperiod');
-        $field = new xmldb_field('certificate_issue_date', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0', 'description');
+	if ($oldversion < 2017021303) {
 
-        // Conditionally launch add field endtime.
-        if (!$dbman->field_exists($table, $field)) {
-            $dbman->add_field($table, $field);
-        }
+		// Define field endtime to be added to block_exastudperiod.
+		$table = new xmldb_table('block_exastudperiod');
+		$field = new xmldb_field('certificate_issue_date', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0', 'description');
 
-        // Exastud savepoint reached.
-        upgrade_block_savepoint(true, 2017021303, 'exastud');
-    }
+		// Conditionally launch add field endtime.
+		if (!$dbman->field_exists($table, $field)) {
+			$dbman->add_field($table, $field);
+		}
+
+		// Exastud savepoint reached.
+		upgrade_block_savepoint(true, 2017021303, 'exastud');
+	}
+
+	if ($oldversion < 2017071001) {
+		// fix typos
+		$subjects = $DB->get_records_select('block_exastudsubjects', "title LIKE '%Ernähung%' OR title LIKE '%Fanzösisch%'", [], '', 'id,title');
+		foreach ($subjects as $subject) {
+			$DB->update_record('block_exastudsubjects', [
+				'id' => $subject->id,
+				'title' => str_replace('Ernähung', 'Ernährung', str_replace('Fanzösisch', 'Französisch', $subject->title)),
+			]);
+		}
+
+		upgrade_block_savepoint(true, 2017071001, 'exastud');
+	}
 
 	block_exastud_insert_default_entries(true);
 	block_exastud_check_profile_fields();
