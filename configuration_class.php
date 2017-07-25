@@ -23,7 +23,7 @@ $courseid = optional_param('courseid', 1, PARAM_INT); // Course ID
 $action = optional_param('action', '', PARAM_TEXT);
 $type = optional_param('type', '', PARAM_TEXT);
 
-if ($type != 'categories' && $type != 'teachers' && $type != 'studentgradereports') {
+if ($type != 'categories' && $type != 'teachers' && $type != 'teachers_options' && $type != 'studentgradereports') {
 	$type = 'students';
 }
 
@@ -247,29 +247,9 @@ if ($type == 'studentgradereports') {
 
 /* Print the Classes */
 if ($type == 'teachers') {
-	$classstudents = block_exastud_get_class_students($class->id);
+	$classteachers = block_exastud_get_class_subject_teachers($class->id);
+	$additional_head_teachers = block_exastud_get_class_additional_head_teachers($class->id);
 
-	if ($action == 'save') {
-		require_sesskey();
-
-		$userdatas = \block_exastud\param::optional_array('userdatas', [PARAM_INT => (object)[
-			'head_teacher' => PARAM_INT,
-			'project_teacher' => PARAM_INT,
-		]]);
-
-		foreach ($classstudents as $student) {
-			if (!isset($userdatas[$student->id])) {
-				continue;
-			}
-
-			$new = $userdatas[$student->id];
-
-			block_exastud_set_class_student_data($class->id, $student->id, 'head_teacher', $new->head_teacher);
-			block_exastud_set_class_student_data($class->id, $student->id, 'project_teacher', $new->project_teacher);
-		}
-	}
-
-	// echo html_writer::tag("h2", block_exastud_get_string('teachers'));
 	$table = new html_table();
 
 	$table->head = array(
@@ -280,8 +260,6 @@ if ($type == 'teachers') {
 	$table->align = array("left", "left", "left");
 	$table->size = ['33%', '33%', '33%'];
 
-	$classteachers = block_exastud_get_class_subject_teachers($class->id);
-	$additional_head_teachers = block_exastud_get_class_additional_head_teachers($class->id);
 	// need to clone the table, else the output won't work twice
 	$table_clone = clone($table);
 
@@ -317,6 +295,32 @@ if ($type == 'teachers') {
 
 	echo $output->link_button($CFG->wwwroot.'/blocks/exastud/configuration_classteachers.php?courseid='.$courseid.'&classid='.$class->id,
 		block_exastud_get_string('editclassteacherlist'));
+}
+
+if ($type == 'teachers_options') {
+	$classstudents = block_exastud_get_class_students($class->id);
+	$classteachers = block_exastud_get_class_subject_teachers($class->id);
+	$additional_head_teachers = block_exastud_get_class_additional_head_teachers($class->id);
+
+	if ($action == 'save') {
+		require_sesskey();
+
+		$userdatas = \block_exastud\param::optional_array('userdatas', [PARAM_INT => (object)[
+			'head_teacher' => PARAM_INT,
+			'project_teacher' => PARAM_INT,
+		]]);
+
+		foreach ($classstudents as $student) {
+			if (!isset($userdatas[$student->id])) {
+				continue;
+			}
+
+			$new = $userdatas[$student->id];
+
+			block_exastud_set_class_student_data($class->id, $student->id, 'head_teacher', $new->head_teacher);
+			block_exastud_set_class_student_data($class->id, $student->id, 'project_teacher', $new->project_teacher);
+		}
+	}
 
 	$table = new html_table();
 
