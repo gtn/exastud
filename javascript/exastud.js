@@ -44,7 +44,10 @@ $.extend(window.block_exastud, {});
 	});
 
 	$(function(){
-		$('.limit-input-length').each(function(){
+		// moodle 33 applys the style to <textarea>, but moodle 33 to the surrounding div
+		var textareas = $('textarea.limit-input-length, .limit-input-length textarea');
+
+		textareas.each(function(){
 			$(this).data('limit-input-initial-height', $(this).outerHeight());
 		})
 		.on('keypress keyup change input propertychange paste', function(e){
