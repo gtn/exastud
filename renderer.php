@@ -57,9 +57,11 @@ class block_exastud_renderer extends plugin_renderer_base {
 				$tabs['settings']->subtree[] = new tabobject('bps', new moodle_url('/blocks/exastud/configuration_global.php', ['courseid' => g::$COURSE->id]).'&action=bps', block_exastud_trans("de:Bildungspläne"), '', true);
 			}
 
+			/*
 			if (block_exastud_has_global_cap(BLOCK_EXASTUD_CAP_UPLOAD_PICTURE)) {
 				$tabs['settings']->subtree[] = new tabobject('pictureupload', new moodle_url('/blocks/exastud/pictureupload.php', ['courseid' => g::$COURSE->id]), block_exastud_get_string('pictureupload'), '', true);
 			}
+			*/
 
 			if (block_exastud_has_global_cap(BLOCK_EXASTUD_CAP_ADMIN)) {
 				$tabs['settings']->subtree[] = new tabobject('backup', new moodle_url('/blocks/exastud/backup.php', ['courseid' => g::$COURSE->id]), block_exastud_get_string("backup"), '', true);
