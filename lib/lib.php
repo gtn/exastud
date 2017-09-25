@@ -1329,6 +1329,10 @@ function block_exastud_get_date_of_birth_as_timestamp($userid) {
 		return null;
 	}
 	$parts = preg_split('![^0-9]+!', $str);
+	if (count($parts) != 3) {
+		// wrong format
+		return null;
+	}
 
 	return mktime(0, 0, 0, $parts[1], $parts[0], $parts[2]);
 }

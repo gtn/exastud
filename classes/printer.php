@@ -498,10 +498,11 @@ class printer {
 					$templateProcessor->setValue("topic", $topic->title, 1);
 
 					$templateProcessor->setValue("n", $topic->teacher_eval_niveau_text, 1);
-					$templateProcessor->setValue("ne", $topic->teacher_eval_additional_grading === 0 ? 'X' : '', 1);
-					$templateProcessor->setValue("tw", $topic->teacher_eval_additional_grading === 1 ? 'X' : '', 1);
-					$templateProcessor->setValue("ue", $topic->teacher_eval_additional_grading === 2 ? 'X' : '', 1);
-					$templateProcessor->setValue("ve", $topic->teacher_eval_additional_grading === 3 ? 'X' : '', 1);
+					$grading = $studentdata->print_grades_anlage_leb ? $topic->teacher_eval_additional_grading : null;
+					$templateProcessor->setValue("ne", $grading === 0 ? 'X' : '', 1);
+					$templateProcessor->setValue("tw", $grading === 1 ? 'X' : '', 1);
+					$templateProcessor->setValue("ue", $grading === 2 ? 'X' : '', 1);
+					$templateProcessor->setValue("ve", $grading === 3 ? 'X' : '', 1);
 
 					/*
 					$gme = ['G', 'M', 'E'][$test % 3];
@@ -518,11 +519,12 @@ class printer {
 						$templateProcessor->duplicateRow("descriptor");
 						$templateProcessor->setValue("descriptor", ($descriptor->niveau_title ? $descriptor->niveau_title.': ' : '').$descriptor->title, 1);
 
+						$grading = $studentdata->print_grades_anlage_leb ? $descriptor->teacher_eval_additional_grading : null;
 						$templateProcessor->setValue("n", $descriptor->teacher_eval_niveau_text, 1);
-						$templateProcessor->setValue("ne", $descriptor->teacher_eval_additional_grading === 0 ? 'X' : '', 1);
-						$templateProcessor->setValue("tw", $descriptor->teacher_eval_additional_grading === 1 ? 'X' : '', 1);
-						$templateProcessor->setValue("ue", $descriptor->teacher_eval_additional_grading === 2 ? 'X' : '', 1);
-						$templateProcessor->setValue("ve", $descriptor->teacher_eval_additional_grading === 3 ? 'X' : '', 1);
+						$templateProcessor->setValue("ne", $grading === 0 ? 'X' : '', 1);
+						$templateProcessor->setValue("tw", $grading === 1 ? 'X' : '', 1);
+						$templateProcessor->setValue("ue", $grading === 2 ? 'X' : '', 1);
+						$templateProcessor->setValue("ve", $grading === 3 ? 'X' : '', 1);
 
 						/*
 						$gme = ['G', 'M', 'E'][$test % 3];
