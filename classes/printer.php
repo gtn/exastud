@@ -463,6 +463,7 @@ class printer {
 				'name' => $student->firstname.' '.$student->lastname,
 				'klasse' => $class->title,
 				'geburtsdatum' => block_exastud_get_date_of_birth($student->id),
+				'datum' => date('d.m.Y'),
 			];
 
 			$templateProcessor->duplicateCol('kheader', count($evalopts));
@@ -498,7 +499,7 @@ class printer {
 					$templateProcessor->setValue("topic", $topic->title, 1);
 
 					$templateProcessor->setValue("n", $topic->teacher_eval_niveau_text, 1);
-					$grading = $studentdata->print_grades_anlage_leb ? $topic->teacher_eval_additional_grading : null;
+					$grading = @$studentdata->print_grades_anlage_leb ? $topic->teacher_eval_additional_grading : null;
 					$templateProcessor->setValue("ne", $grading === 0 ? 'X' : '', 1);
 					$templateProcessor->setValue("tw", $grading === 1 ? 'X' : '', 1);
 					$templateProcessor->setValue("ue", $grading === 2 ? 'X' : '', 1);
@@ -519,7 +520,7 @@ class printer {
 						$templateProcessor->duplicateRow("descriptor");
 						$templateProcessor->setValue("descriptor", ($descriptor->niveau_title ? $descriptor->niveau_title.': ' : '').$descriptor->title, 1);
 
-						$grading = $studentdata->print_grades_anlage_leb ? $descriptor->teacher_eval_additional_grading : null;
+						$grading = @$studentdata->print_grades_anlage_leb ? $descriptor->teacher_eval_additional_grading : null;
 						$templateProcessor->setValue("n", $descriptor->teacher_eval_niveau_text, 1);
 						$templateProcessor->setValue("ne", $grading === 0 ? 'X' : '', 1);
 						$templateProcessor->setValue("tw", $grading === 1 ? 'X' : '', 1);
