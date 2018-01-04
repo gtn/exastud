@@ -151,7 +151,27 @@ class block_exastud_renderer extends plugin_renderer_base {
         }
 		$content .= '<div id="block_exastud">';
 
-		if (g::$PAGE->pagelayout != 'embedded') {
+		if (g::$PAGE->pagelayout != 'embedded' && !@$options['is_login_a2fa_timeout_page']) {
+			if (block_exastud_is_a2fa_timeout_active()) {
+				$time = time();
+
+				$returnurl = block_exastud\url::request_uri()->out_as_local_url(false);
+				$login_url = new moodle_url('/blocks/exastud/login_a2fa_timeout.php', array('courseid' => @$_REQUEST['courseid'], 'returnurl' => $returnurl));
+
+				$content .= '
+					<div style="text-align: right;">Verbleibende Zeit bis aus dem Lernentwicklungsbericht abgemeldet werden: <span id="exastud-ticker-content"></span></div>
+					<script>
+						block_exastud.timer('.BLOCK_EXASTUD_SESSION_TIMEOUT.' - 1, function(minutes, seconds){
+							$("#exastud-ticker-content").html(minutes+":"+(seconds < 10 ? "0" + seconds : seconds));
+							if (!minutes && !seconds) {
+								// console.log("expired");
+								document.location.href = '.json_encode($login_url->out(false)).';
+							}
+						});
+					</script>
+				';
+			}
+
 			if ($class && $tabtree->subtree['configuration_classes']->selected) {
 				// if (@$tabtree->subtree[$items[0]['id']]->selected && !empty($options['betweenTabRowsCallback'])) {
 				$subtree = $tabtree->subtree['configuration_classes']->subtree;

@@ -23,7 +23,7 @@ $courseid = optional_param('courseid', 1, PARAM_INT); // Course ID
 $periodid = optional_param('periodid', 0, PARAM_INT); // Period ID
 $classid = optional_param('classid', 0, PARAM_INT); // Class ID
 
-require_login($courseid);
+block_exastud_require_login($courseid);
 
 block_exastud_require_global_cap(BLOCK_EXASTUD_CAP_VIEW_REPORT);
 

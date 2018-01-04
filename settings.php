@@ -140,4 +140,5 @@ if ($ADMIN->fulltree) {
     */
     // template configurations
     //$settings->add(new block_exastud_link_to('link_to_settings_report_templates', block_exastud_get_string('report_settings_edit'), '', '', '/blocks/exastud/report_settings.php', block_exastud_get_string('report_settings_edit'), [], ['class' => 'btn btn-default', 'target' => '_blank']));
+	$settings->add(new admin_setting_configcheckbox('exastud/a2fa_timeout_active', block_exastud_trans('de:A2fa mit Timeout'), '', 0));
 }

@@ -28,7 +28,7 @@ $url = '/blocks/exastud/configuration_periods.php';
 $PAGE->set_url($url);
 $PAGE->set_pagelayout('admin'); // Needed for admin menu block
 
-require_login($courseid);
+block_exastud_require_login($courseid);
 
 block_exastud_require_global_cap(BLOCK_EXASTUD_CAP_EDIT_PERIODS);
 

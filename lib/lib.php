@@ -56,6 +56,8 @@ const BLOCK_EXASTUD_COMPETENCE_EVALUATION_TYPE_POINT = 2;
 
 const BLOCK_EXASTUD_TEMPLATE_DIR = __DIR__.'/../template';
 
+const BLOCK_EXASTUD_SESSION_TIMEOUT = 10;
+
 class block_exastud_permission_exception extends moodle_exception {
 	function __construct($errorcode = 'Not allowed', $module = '', $link = '', $a = null, $debuginfo = null) {
 		return parent::__construct($errorcode, $module, $link, $a, $debuginfo);
@@ -1643,6 +1645,38 @@ function block_exastud_get_certificate_issue_date_text($class) {
 
 function block_exastud_is_bw_active() {
 	return !!block_exastud_get_plugin_config('bw_active');
+}
+
+function block_exastud_is_a2fa_timeout_active() {
+	// TODO: check config
+
+	if (class_exists('\block_exa2fa\api')) {
+		return true;
+	} else {
+		return false;
+	}
+
+	return \block_exa2fa\api::a2fa_for_user_enabled(g::$USER->id);
+}
+
+function block_exastud_require_login($courseid, $autologinguest = true, $cm = null, $checklogin = true) {
+	require_login($courseid, $autologinguest, $cm);
+
+	if (block_exastud_is_a2fa_timeout_active() && $checklogin) {
+		global $SESSION;
+
+		if (@$SESSION->login_a2fa_time >= time() - BLOCK_EXASTUD_SESSION_TIMEOUT) {
+			// login ok
+			$SESSION->login_a2fa_time = time();
+		} else {
+			$returnurl = block_exastud\url::request_uri()->out_as_local_url(false);
+
+	        redirect(new moodle_url('/blocks/exastud/login_a2fa_timeout.php', array('courseid' => @$_REQUEST['courseid'], 'returnurl' => $returnurl)));
+	        exit;
+		}
+	}
+}
+
 }
 
 function block_exastud_is_siteadmin($userid = null) {

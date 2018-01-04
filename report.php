@@ -25,7 +25,7 @@ if (! empty($CFG->block_exastud_project_based_assessment)) {
     redirect('report_project.php?courseid=' . $courseid);
 }
 
-require_login($courseid);
+block_exastud_require_login($courseid);
 
 block_exastud_require_global_cap(BLOCK_EXASTUD_CAP_VIEW_REPORT);
 

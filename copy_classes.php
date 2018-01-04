@@ -22,7 +22,7 @@ require __DIR__.'/inc.php';
 $courseid = optional_param('courseid', 1, PARAM_INT);
 $action = optional_param('action', '', PARAM_TEXT);
 
-require_login($courseid);
+block_exastud_require_login($courseid);
 
 block_exastud_require_global_cap(BLOCK_EXASTUD_CAP_MANAGE_CLASSES);
 

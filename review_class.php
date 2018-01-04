@@ -26,7 +26,7 @@ $classid = required_param('classid', PARAM_INT);
 $subjectid = required_param('subjectid', PARAM_INT);
 $action = optional_param('action', '', PARAM_TEXT);
 
-require_login($courseid);
+block_exastud_require_login($courseid);
 
 block_exastud_require_global_cap(BLOCK_EXASTUD_CAP_REVIEW);
 

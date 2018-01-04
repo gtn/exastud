@@ -30,7 +30,7 @@ $searchtext	 = optional_param('searchtext', '', PARAM_TEXT); // search string
 $add			= optional_param('add', 0, PARAM_BOOL);
 $remove		 = optional_param('remove', 0, PARAM_BOOL);
 
-require_login($courseid);
+block_exastud_require_login($courseid);
 
 block_exastud_require_global_cap(BLOCK_EXASTUD_CAP_MANAGE_CLASSES);
 $curPeriod = block_exastud_get_active_or_next_period();
