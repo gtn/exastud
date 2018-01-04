@@ -27,7 +27,7 @@ if ($type != 'categories' && $type != 'teachers' && $type != 'teachers_options' 
 	$type = 'students';
 }
 
-require_login($courseid);
+block_exastud_require_login($courseid);
 
 block_exastud_require_global_cap(BLOCK_EXASTUD_CAP_MANAGE_CLASSES);
 

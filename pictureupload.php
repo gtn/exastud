@@ -22,7 +22,7 @@ require_once __DIR__.'/lib/picture_upload_form.php';
 
 $courseid = optional_param('courseid', 1, PARAM_INT); // Course ID
 
-require_login($courseid);
+block_exastud_require_login($courseid);
 
 block_exastud_require_global_cap(BLOCK_EXASTUD_CAP_UPLOAD_PICTURE);
 

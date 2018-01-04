@@ -23,7 +23,7 @@ use block_exastud\globals as g;
 
 $courseid = optional_param('courseid', 1, PARAM_INT);
 
-require_login($courseid);
+block_exastud_require_login($courseid);
 
 block_exastud_require_global_cap(BLOCK_EXASTUD_CAP_REVIEW);
 

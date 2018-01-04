@@ -25,7 +25,7 @@ $pdf = optional_param('pdf', false, PARAM_BOOL); // Course ID
 $detail = optional_param('detailedreport', false, PARAM_BOOL);
 $studentid = required_param('studentid', PARAM_INT); // Course ID
 $classid = optional_param('classid',0,PARAM_INT);
-require_login($courseid);
+block_exastud_require_login($courseid);
 
 block_exastud_require_global_cap(BLOCK_EXASTUD_CAP_HEAD_TEACHER);
 

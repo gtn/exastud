@@ -21,7 +21,7 @@ require __DIR__.'/inc.php';
 global $DB;
 $courseid = optional_param('courseid', 1, PARAM_INT); // Course ID
 
-require_login($courseid);
+block_exastud_require_login($courseid);
 
 block_exastud_require_global_cap(BLOCK_EXASTUD_CAP_EDIT_PERIODS);
 

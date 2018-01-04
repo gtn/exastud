@@ -26,7 +26,7 @@ $type = required_param('type', PARAM_TEXT);
 $studentid = required_param('studentid', PARAM_INT);
 $returnurl = optional_param('returnurl', null, PARAM_LOCALURL);
 
-require_login($courseid);
+block_exastud_require_login($courseid);
 
 $parenturl = new moodle_url('/blocks/exastud/review_class_other_data.php?courseid='.$courseid.'&classid='.$classid.'&type='.$type);
 if (!$returnurl) {

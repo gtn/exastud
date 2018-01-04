@@ -27,7 +27,7 @@ $action = optional_param('action', '', PARAM_ALPHA);
 $url = '/blocks/exastud/configuration_periods.php';
 $PAGE->set_url($url);
 
-require_login($courseid);
+block_exastud_require_login($courseid);
 
 block_exastud_require_global_cap(BLOCK_EXASTUD_CAP_EDIT_PERIODS);
 

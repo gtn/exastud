@@ -22,7 +22,7 @@ require __DIR__.'/inc.php';
 $courseid = optional_param('courseid', 1, PARAM_INT); // Course ID
 $classid = required_param('classid', PARAM_INT);
 
-require_login($courseid);
+block_exastud_require_login($courseid);
 
 if (!$class = block_exastud_get_class($classid)) {
 	throw new moodle_exception("badclass", "block_exastud");
