@@ -127,12 +127,25 @@ class printer {
 			$class_subjects = block_exastud_get_class_subjects($class);
 			$lern_soz = block_exastud_get_class_student_data($class->id, $student->id, BLOCK_EXASTUD_DATA_ID_LERN_UND_SOZIALVERHALTEN);
 
+			// use current year or last year
+			if (date('m', $certificate_issue_date_timestamp) >= 9) {
+				$year1 = date('Y', $certificate_issue_date_timestamp);
+			} else {
+				$year1 = date('Y', $certificate_issue_date_timestamp) - 1;
+			}
+			$year2 = $year1 + 1;
+			$year1 = str_pad($year1, 2, '0', STR_PAD_LEFT);
+			$year2 = str_pad($year2, 2, '0', STR_PAD_LEFT);
+
+			$schuljahr = $year1.'/'.$year2;
+
 			$data = [
 				'schule' => get_config('exastud', 'school_name'),
 				'ort' => get_config('exastud', 'school_location'),
 				'name' => $student->firstname.' '.$student->lastname,
 				'klasse' => $class->title,
 				'certda' => $certificate_issue_date_text,
+				'schuljahr' => $schuljahr,
 				'lern_und_sozialverhalten' => static::spacerIfEmpty($lern_soz),
 				'comments' => static::spacerIfEmpty(@$studentdata->comments),
 				'religion' => '---',
