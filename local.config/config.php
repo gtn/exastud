@@ -48,6 +48,7 @@ bw-bp2016-profil-bk;Profilfach Bildende Kunst;Profil BK;0
 bw-bp2016-profil-f;Profilfach Französisch;Profil F;0
 bw-bp2016-profil-mu;Profilfach Musik;Profil Mu;0
 bw-bp2016-profil-nwt;Profilfach Naturwissenschaft und Technik;Profil NwT;0
+bw-bp2016-profil-s;Profilfach Spanisch;Profil S;0
 bw-bp2016-profil-sp;Profilfach Sport;Profil Sp;0
 				', ";", true),
 		],
