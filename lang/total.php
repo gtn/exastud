@@ -118,6 +118,10 @@ return [
 		'Lehrkräfte',
 		'Teachers',
 	],
+	'teachers_options' => [
+		'Zuständige Lehrkraft',
+		'Teacher Options',
+	],
 	'project_based_teachers' => [
 		'Projektbeurteiler',
 		'Project-Teachers',

@@ -15,93 +15,120 @@
 // You can find the GNU General Public License at <http://www.gnu.org/licenses/>.
 //
 // This copyright notice MUST APPEAR in all copies of the script!
-
 window.block_exastud = {};
 
 $.extend(window.block_exastud, window.exacommon || {});
 
 $.extend(window.block_exastud, {});
 
-!function () {
-	function is_page(page) {
-		return !!$('body#page-blocks-exastud-' + page).length;
-	}
+! function() {
+    function is_page(page) {
+        return !!$('body#page-blocks-exastud-' + page).length;
+    }
 
-	// checkallornone logic
-	$(document).on('click', '.exa_table :checkbox[name=checkallornone]', function () {
-		var checkboxes = $(this).closest('table').find(':checkbox:not([name=checkallornone])');
-		checkboxes.prop('checked', $(this).prop('checked'));
-	});
-	$(document).on('click', '.exa_table :checkbox:not([name=checkallornone])', function () {
-		var checkboxes = $(this).closest('table').find(':checkbox:not([name=checkallornone])');
+    // checkallornone logic
+    $(document).on('click', '.exa_table :checkbox[name=checkallornone]', function() {
+        var checkboxes = $(this).closest('table').find(':checkbox:not([name=checkallornone])');
+        checkboxes.prop('checked', $(this).prop('checked'));
+    });
+    $(document).on('click', '.exa_table :checkbox:not([name=checkallornone])', function() {
+        var checkboxes = $(this).closest('table').find(':checkbox:not([name=checkallornone])');
 
-		$(this).closest('table').find(':checkbox[name=checkallornone]').prop('checked', checkboxes.filter(':not(:checked)').length == 0);
-	});
-	$(function(){
-		// check all on load
-		// trigger click twice = check+uncheck
-		$('.exa_table :checkbox[name=checkallornone]').closest('table').find(':checkbox:not([name=checkallornone]):first').click().click();
-	});
+        $(this).closest('table').find(':checkbox[name=checkallornone]').prop('checked', checkboxes.filter(':not(:checked)').length == 0);
+    });
+    $(function() {
+        // check all on load
+        // trigger click twice = check+uncheck
+        $('.exa_table :checkbox[name=checkallornone]').closest('table').find(':checkbox:not([name=checkallornone]):first').click().click();
+    });
 
-	$(function(){
-		$('.limit-input-length').each(function(){
-			$(this).data('limit-input-initial-height', $(this).outerHeight());
-		})
-		.on('keypress keyup change input propertychange paste', function(e){
-			var sh = $(this).data('limit-input-initial-height');
+    $(function() {
+        // moodle 33 applys the style to <textarea>, but moodle 33 to the surrounding div
+        var textareas = $('textarea.limit-input-length, .limit-input-length textarea');
+        textareas.each(function() {
+                $(this).data('limit-input-initial-height', $(this).outerHeight());
+            })
 
-			if (this.scrollHeight > sh) {
-				$(this).css({
-					'background-color': '#FFF0F0',
-					'color': '#D82323',
-				});
-				$(this).attr('maxlength', this.value.length-1);
-			} else {
-				$(this).css({
-					'background-color': '',
-					'color': '',
-				});
-				$(this).attr('maxlength', null);
-			}
-		}).change();
-	});
+            .on('keypress keyup change input propertychange paste', function(e) {
+                var max = 500;
+                var newText = this.value;
+                var eachLine = newText.split('\n');
+                var i = 0;
+                var extralines = 0;
+                var text = "";
 
-	// eingabe limitieren, geht z.b. nicht bei mouse paste
-	/*
-	$(function(){
-		$('.limit-input-length').each(function(){
-			$(this).data('limit-input-last-scrollHeight', this.scrollHeight);
-		})
-	});
 
-	$(document).on('keydown', '.limit-input-length', function(){
-		if (!$(this).data('limit-input')) {
-			$(this).data('limit-input', {
-				scrollHeight: this.scrollHeight,
-				value: this.value,
-			});
-		}
+                while (i < eachLine.length) {
+                    if (eachLine[i].length > 90) {
+                        extralines++;
+                    }
+                    if (eachLine[i].length > 180) {
+                        extralines++;
+                    }
+                    if (eachLine[i].length > 270) {
+                        extralines++;
+                    }
+                    if (eachLine[i].length > 360) {
+                        extralines++;
+                    }
+                    if (eachLine[i].length > 450) {
+                        extralines++;
+                    }
+                    i++;
+                }
 
-		if ($(this).data('limit-input-last-scrollHeight') && this.scrollHeight > $(this).data('limit-input-last-scrollHeight')) {
-			return false;
-		}
-	});
 
-	$(document).on('keyup', '.limit-input-length', function(){
-		var data = $(this).data('limit-input');
+                if (this.value.length == max) {
+                    e.preventDefault();
+                    $(this).css({
+                        'background-color': '#FFF0F0',
+                        'color': '#D82323',
+                    });
+                } else if (this.value.length > max) {
+                    // Maximum exceeded
+                    this.value = this.value.substring(0, max);
+                    $(this).css({
+                        'background-color': '#FFF0F0',
+                        'color': '#D82323',
+                    });
+                } else {
 
-		$(this).data('limit-input-last-scrollHeight', this.scrollHeight);
+                    $(this).css({
+                        'background-color': '',
+                        'color': '',
+                    });
+                }
+				
+				if ((eachLine.length + extralines) > 8) {
+                    text = "";
+                    e.preventDefault();
+					$(this).css({
+                        'background-color': '#FFF0F0',
+                        'color': '#D82323',
+                    });
+                    for (j = 0; j < (8 - extralines); j++) {
+                        text += eachLine[j];
+                        text += "\n";
+                    }
+					if(eachLine[j].length >= 90){
+					text += eachLine[j].substring(0, 90);
+					$(this).css({
+                        'background-color': '#FFF0F0',
+                        'color': '#D82323',
+                    });
+					}
+                    this.value = text;
 
-		if (!data) {
-			return;
-		}
+                    
+                } else {
 
-		if (this.scrollHeight > data.scrollHeight) {
-			console.log('undo');
-			this.value = data.value;
-		}
+                    $(this).css({
+                        'background-color': '',
+                        'color': '',
+                    });
+                }
+            }).change();
+    });
 
-		$(this).data('limit-input', null);
-	});
-	*/
+ 
 }();

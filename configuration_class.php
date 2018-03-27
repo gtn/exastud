@@ -23,7 +23,7 @@ $courseid = optional_param('courseid', 1, PARAM_INT); // Course ID
 $action = optional_param('action', '', PARAM_TEXT);
 $type = optional_param('type', '', PARAM_TEXT);
 
-if ($type != 'categories' && $type != 'teachers' && $type != 'studentgradereports') {
+if ($type != 'categories' && $type != 'teachers' && $type != 'teachers_options' && $type != 'studentgradereports') {
 	$type = 'students';
 }
 
@@ -123,6 +123,7 @@ if ($type == 'studentgradereports') {
 		$userdatas = \block_exastud\param::optional_array('userdatas', [PARAM_INT => (object)[
 			'print_template' => PARAM_RAW,
 			'print_grades' => PARAM_BOOL,
+			'print_grades_anlage_leb' => PARAM_BOOL,
 			'bildungsstandard_erreicht' => PARAM_TEXT,
 			'dropped_out' => PARAM_BOOL,
 		]]);
@@ -137,6 +138,7 @@ if ($type == 'studentgradereports') {
 
 			block_exastud_set_class_student_data($class->id, $student->id, 'print_template', $new->print_template);
 			block_exastud_set_class_student_data($class->id, $student->id, 'print_grades', $new->print_grades);
+			block_exastud_set_class_student_data($class->id, $student->id, 'print_grades_anlage_leb', $new->print_grades_anlage_leb);
 
 			if (@$current->bildungsstandard_erreicht != @$new->bildungsstandard_erreicht) {
 				// set it, if changed
@@ -177,7 +179,8 @@ if ($type == 'studentgradereports') {
 			block_exastud_get_string('lastname'),
 			block_exastud_get_string('firstname'),
 			block_exastud_trans('de:Zeugnisformular'),
-			block_exastud_trans('de:Note im Lern&shy;entwicklungs&shy;bericht ausweisen'),
+			block_exastud_trans('de:LEB: Note ausweisen'),
+			block_exastud_trans('de:LEB-Anlage: Note ausweisen'),
 			block_exastud_trans('de:Bildungsstandard erreicht'),
 			block_exastud_trans('de:Ausgeschieden'),
 		];
@@ -202,6 +205,9 @@ if ($type == 'studentgradereports') {
 			$print_grades = '<input name="userdatas['.$classstudent->id.'][print_grades]" type="hidden" value="0"/>'.
 				html_writer::checkbox('userdatas['.$classstudent->id.'][print_grades]', 1, @$userdata->print_grades);
 
+			$print_grades_anlage_leb = '<input name="userdatas['.$classstudent->id.'][print_grades_anlage_leb]" type="hidden" value="0"/>'.
+				html_writer::checkbox('userdatas['.$classstudent->id.'][print_grades_anlage_leb]', 1, @$userdata->print_grades_anlage_leb);
+
 			$bildungsstandard = html_writer::select(block_exastud_get_bildungsstandards(), 'userdatas['.$classstudent->id.'][bildungsstandard_erreicht]', @$userdata->bildungsstandard_erreicht, ['' => '']);
 			$bildungsstandard = $bildungsstandard.
 				(!empty($userdata->bildungsstandard_erreicht) ? ' '.userdate($userdata->bildungsstandard_erreicht_time, block_exastud_get_string('strftimedate', 'langconfig')) : '');
@@ -223,6 +229,7 @@ if ($type == 'studentgradereports') {
 				$classstudent->firstname,
 				html_writer::select($available_templates, 'userdatas['.$classstudent->id.'][print_template]', $templateid, false),
 				$print_grades,
+				$print_grades_anlage_leb,
 				$bildungsstandard,
 				$ausgeschieden,
 			];
@@ -247,29 +254,9 @@ if ($type == 'studentgradereports') {
 
 /* Print the Classes */
 if ($type == 'teachers') {
-	$classstudents = block_exastud_get_class_students($class->id);
+	$classteachers = block_exastud_get_class_subject_teachers($class->id);
+	$additional_head_teachers = block_exastud_get_class_additional_head_teachers($class->id);
 
-	if ($action == 'save') {
-		require_sesskey();
-
-		$userdatas = \block_exastud\param::optional_array('userdatas', [PARAM_INT => (object)[
-			'head_teacher' => PARAM_INT,
-			'project_teacher' => PARAM_INT,
-		]]);
-
-		foreach ($classstudents as $student) {
-			if (!isset($userdatas[$student->id])) {
-				continue;
-			}
-
-			$new = $userdatas[$student->id];
-
-			block_exastud_set_class_student_data($class->id, $student->id, 'head_teacher', $new->head_teacher);
-			block_exastud_set_class_student_data($class->id, $student->id, 'project_teacher', $new->project_teacher);
-		}
-	}
-
-	// echo html_writer::tag("h2", block_exastud_get_string('teachers'));
 	$table = new html_table();
 
 	$table->head = array(
@@ -280,8 +267,6 @@ if ($type == 'teachers') {
 	$table->align = array("left", "left", "left");
 	$table->size = ['33%', '33%', '33%'];
 
-	$classteachers = block_exastud_get_class_subject_teachers($class->id);
-	$additional_head_teachers = block_exastud_get_class_additional_head_teachers($class->id);
 	// need to clone the table, else the output won't work twice
 	$table_clone = clone($table);
 
@@ -317,6 +302,32 @@ if ($type == 'teachers') {
 
 	echo $output->link_button($CFG->wwwroot.'/blocks/exastud/configuration_classteachers.php?courseid='.$courseid.'&classid='.$class->id,
 		block_exastud_get_string('editclassteacherlist'));
+}
+
+if ($type == 'teachers_options') {
+	$classstudents = block_exastud_get_class_students($class->id);
+	$classteachers = block_exastud_get_class_subject_teachers($class->id);
+	$additional_head_teachers = block_exastud_get_class_additional_head_teachers($class->id);
+
+	if ($action == 'save') {
+		require_sesskey();
+
+		$userdatas = \block_exastud\param::optional_array('userdatas', [PARAM_INT => (object)[
+			'head_teacher' => PARAM_INT,
+			'project_teacher' => PARAM_INT,
+		]]);
+
+		foreach ($classstudents as $student) {
+			if (!isset($userdatas[$student->id])) {
+				continue;
+			}
+
+			$new = $userdatas[$student->id];
+
+			block_exastud_set_class_student_data($class->id, $student->id, 'head_teacher', $new->head_teacher);
+			block_exastud_set_class_student_data($class->id, $student->id, 'project_teacher', $new->project_teacher);
+		}
+	}
 
 	$table = new html_table();
 

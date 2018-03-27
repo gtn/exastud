@@ -127,12 +127,25 @@ class printer {
 			$class_subjects = block_exastud_get_class_subjects($class);
 			$lern_soz = block_exastud_get_class_student_data($class->id, $student->id, BLOCK_EXASTUD_DATA_ID_LERN_UND_SOZIALVERHALTEN);
 
+			// use current year or last year
+			if (date('m', $certificate_issue_date_timestamp) >= 9) {
+				$year1 = date('Y', $certificate_issue_date_timestamp);
+			} else {
+				$year1 = date('Y', $certificate_issue_date_timestamp) - 1;
+			}
+			$year2 = $year1 + 1;
+			$year1 = str_pad($year1, 2, '0', STR_PAD_LEFT);
+			$year2 = str_pad($year2, 2, '0', STR_PAD_LEFT);
+
+			$schuljahr = $year1.'/'.$year2;
+
 			$data = [
 				'schule' => get_config('exastud', 'school_name'),
 				'ort' => get_config('exastud', 'school_location'),
 				'name' => $student->firstname.' '.$student->lastname,
 				'klasse' => $class->title,
 				'certda' => $certificate_issue_date_text,
+				'schuljahr' => $schuljahr,
 				'lern_und_sozialverhalten' => static::spacerIfEmpty($lern_soz),
 				'comments' => static::spacerIfEmpty(@$studentdata->comments),
 				'religion' => '---',
@@ -463,6 +476,7 @@ class printer {
 				'name' => $student->firstname.' '.$student->lastname,
 				'klasse' => $class->title,
 				'geburtsdatum' => block_exastud_get_date_of_birth($student->id),
+				'datum' => date('d.m.Y'),
 			];
 
 			$templateProcessor->duplicateCol('kheader', count($evalopts));
@@ -498,10 +512,11 @@ class printer {
 					$templateProcessor->setValue("topic", $topic->title, 1);
 
 					$templateProcessor->setValue("n", $topic->teacher_eval_niveau_text, 1);
-					$templateProcessor->setValue("ne", $topic->teacher_eval_additional_grading === 0 ? 'X' : '', 1);
-					$templateProcessor->setValue("tw", $topic->teacher_eval_additional_grading === 1 ? 'X' : '', 1);
-					$templateProcessor->setValue("ue", $topic->teacher_eval_additional_grading === 2 ? 'X' : '', 1);
-					$templateProcessor->setValue("ve", $topic->teacher_eval_additional_grading === 3 ? 'X' : '', 1);
+					$grading = @$studentdata->print_grades_anlage_leb ? $topic->teacher_eval_additional_grading : null;
+					$templateProcessor->setValue("ne", $grading === 0 ? 'X' : '', 1);
+					$templateProcessor->setValue("tw", $grading === 1 ? 'X' : '', 1);
+					$templateProcessor->setValue("ue", $grading === 2 ? 'X' : '', 1);
+					$templateProcessor->setValue("ve", $grading === 3 ? 'X' : '', 1);
 
 					/*
 					$gme = ['G', 'M', 'E'][$test % 3];
@@ -518,11 +533,12 @@ class printer {
 						$templateProcessor->duplicateRow("descriptor");
 						$templateProcessor->setValue("descriptor", ($descriptor->niveau_title ? $descriptor->niveau_title.': ' : '').$descriptor->title, 1);
 
+						$grading = @$studentdata->print_grades_anlage_leb ? $descriptor->teacher_eval_additional_grading : null;
 						$templateProcessor->setValue("n", $descriptor->teacher_eval_niveau_text, 1);
-						$templateProcessor->setValue("ne", $descriptor->teacher_eval_additional_grading === 0 ? 'X' : '', 1);
-						$templateProcessor->setValue("tw", $descriptor->teacher_eval_additional_grading === 1 ? 'X' : '', 1);
-						$templateProcessor->setValue("ue", $descriptor->teacher_eval_additional_grading === 2 ? 'X' : '', 1);
-						$templateProcessor->setValue("ve", $descriptor->teacher_eval_additional_grading === 3 ? 'X' : '', 1);
+						$templateProcessor->setValue("ne", $grading === 0 ? 'X' : '', 1);
+						$templateProcessor->setValue("tw", $grading === 1 ? 'X' : '', 1);
+						$templateProcessor->setValue("ue", $grading === 2 ? 'X' : '', 1);
+						$templateProcessor->setValue("ve", $grading === 3 ? 'X' : '', 1);
 
 						/*
 						$gme = ['G', 'M', 'E'][$test % 3];

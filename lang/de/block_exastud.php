@@ -48,6 +48,7 @@ $string['upload_picture'] = 'Laden Sie das große Landeswappen für das Abschlus
 $string['upload_success'] = 'Das neue Logo wurde erfolgreich hochgeladen!';
 $string['availableusers'] = 'Verfügbare Benutzer';
 $string['teachers'] = 'Lehrkräfte';
+$string['teachers_options'] = 'Zuständige Lehrkraft';
 $string['project_based_teachers'] = 'Projektbeurteiler';
 $string['class_info'] = 'Klasseneinstellungen';
 $string['students'] = 'Schülerinnen und Schüler';

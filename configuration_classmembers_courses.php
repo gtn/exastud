@@ -48,6 +48,14 @@ if (!$selectedcourseid) {
 		return $user->id != $USER->id;
 	});
 
+	if (block_exastud_is_exacomp_installed()) {
+		// nur schüler anzeigen
+		$context = block_exacomp_get_context_from_courseid($selectedcourseid);
+		$users = array_filter($users, function($user) use ($USER, $context) {
+			return has_capability('block/exacomp:student', $context, $user);
+		});
+	}
+
 	$classstudents = block_exastud_get_class_students($class->id);
 }
 

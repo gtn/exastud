@@ -48,6 +48,7 @@ $string['upload_picture'] = 'You can upload a logo for a school-specific report'
 $string['upload_success'] = 'The new logo was uploaded successfully!';
 $string['availableusers'] = 'Available Users';
 $string['teachers'] = 'Teachers';
+$string['teachers_options'] = 'Teacher Options';
 $string['project_based_teachers'] = 'Project-Teachers';
 $string['class_info'] = 'Edit Class';
 $string['students'] = 'Members';
