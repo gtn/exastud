@@ -805,7 +805,7 @@ function block_exastud_has_wrong_periods($printBoxInsteadOfError = false) {
 	if ($wrongs) {
 		foreach ($wrongs as $wrong) {
 			if ($printBoxInsteadOfError) {
-				notify(block_exastud_get_string('errorstarttimebeforeendtime', null, $wrong));
+			    $OUTPUT->notification(block_exastud_get_string('errorstarttimebeforeendtime', null, $wrong));
 			} else {
 				error('errorstarttimebeforeendtime', 'block_exastud', '', $wrong);
 			}
@@ -837,7 +837,7 @@ function block_exastud_check_if_periods_overlap($printBoxInsteadOfError = false)
 				$a->period2 = $overlapPeriod->description;
 
 				if ($printBoxInsteadOfError) {
-					notify(block_exastud_get_string('periodoverlaps', null, $a));
+				    $OUTPUT->notification(block_exastud_get_string('periodoverlaps', null, $a));
 				} else {
 					print_error('periodoverlaps', 'block_exastud', '', $a);
 				}
