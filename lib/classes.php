@@ -530,7 +530,11 @@ class print_template {
 		return print_templates::get_template_config($this->templateid);
 	}
 
-	function get_file() {
-		return __DIR__.'/../template/'.$this->get_config()['file'];
+	function get_file($templateid) {
+	    if($templateid == "Abschlusszeugnis"){
+	        return __DIR__.'/../template/'.$this->get_config()['file'].'.dotx';
+	    }else{
+		  return __DIR__.'/../template/'.$this->get_config()['file'].'.docx';
+	    }
 	}
 }

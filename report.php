@@ -92,48 +92,48 @@ if ($classid = optional_param('classid', 0, PARAM_INT)) {
             \block_exastud\printer::grades_report_xlsx($class, $printStudents);
         }
         
-        if ($printStudents && $template == 'Abschlusszeugnis') {
-            if (count($printStudents) == 1) {
-                // print one student
-                $student = reset($printStudents);
-                $file = \block_exastud\printer::final_grade($class, $student, $template);
+//         if ($printStudents && $template == 'Abschlusszeugnis') {
+//             if (count($printStudents) == 1) {
+//                 // print one student
+//                 $student = reset($printStudents);
+//                 $file = \block_exastud\printer::final_grade($class, $student, $template);
                 
-                if ($content = ob_get_clean()) {
-                    throw new \Exception('there was some other output: ' . $content);
-                }
+//                 if ($content = ob_get_clean()) {
+//                     throw new \Exception('there was some other output: ' . $content);
+//                 }
                 
-                require_once $CFG->dirroot . '/lib/filelib.php';
-                send_temp_file($file->temp_file, $file->filename);
+//                 require_once $CFG->dirroot . '/lib/filelib.php';
+//                 send_temp_file($file->temp_file, $file->filename);
                 
-                exit();
-            } else {
-                $zipfilename = tempnam($CFG->tempdir, "zip");
-                $zip = new \ZipArchive();
-                $zip->open($zipfilename, \ZipArchive::OVERWRITE);
+//                 exit();
+//             } else {
+//                 $zipfilename = tempnam($CFG->tempdir, "zip");
+//                 $zip = new \ZipArchive();
+//                 $zip->open($zipfilename, \ZipArchive::OVERWRITE);
                 
-                $temp_files = [];
+//                 $temp_files = [];
                 
-                foreach ($printStudents as $student) {
-                    $file = \block_exastud\printer::final_grade($class, $student);
-                    $zip->addFile($file->temp_file, $file->filename);
-                    $temp_files[] = $file->temp_file;
-                }
+//                 foreach ($printStudents as $student) {
+//                     $file = \block_exastud\printer::final_grade($class, $student);
+//                     $zip->addFile($file->temp_file, $file->filename);
+//                     $temp_files[] = $file->temp_file;
+//                 }
                 
-                $zip->close();
+//                 $zip->close();
                 
-                // bug in zip?!? first close the zip and then we can delete the temp files
-                foreach ($temp_files as $temp_file) {
-                    unlink($temp_file);
-                }
+//                 // bug in zip?!? first close the zip and then we can delete the temp files
+//                 foreach ($temp_files as $temp_file) {
+//                     unlink($temp_file);
+//                 }
                 
-                $certificate_issue_date_text = block_exastud_get_certificate_issue_date_text($class);
-                $filename = ($certificate_issue_date_text ?: date('Y-m-d')) . "-Abschlusszeugnis-{$class->title}.zip";
+//                 $certificate_issue_date_text = block_exastud_get_certificate_issue_date_text($class);
+//                 $filename = ($certificate_issue_date_text ?: date('Y-m-d')) . "-Abschlusszeugnis-{$class->title}.zip";
                 
-                require_once $CFG->dirroot . '/lib/filelib.php';
-                send_temp_file($zipfilename, $filename);
-                exit();
-            }
-        } else {
+//                 require_once $CFG->dirroot . '/lib/filelib.php';
+//                 send_temp_file($zipfilename, $filename);
+//                 exit();
+//             }
+//       } else {
             
             /*
              * if ($printStudents && $template == 'html_report_grades') {
@@ -193,7 +193,7 @@ if ($classid = optional_param('classid', 0, PARAM_INT)) {
                 exit();
             }
         }
-    }
+    
     
     /* Print the Students */
     $table = new html_table();

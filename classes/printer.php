@@ -70,15 +70,11 @@ class printer
          * }
          */
         
-        $templateFile = $template->get_file();
-        if(temlateid == "Abschlusszeugnis"){
-            $templateFile .= ".dotx";
-        }else{
-            $templateFile .= ".docx";
-        }
+        $templateFile = $template->get_file($templateid);
+        
         // check if file does exist
         if (! file_exists($templateFile)) {
-            throw new \Exception("template $templateid not found");
+            throw new \Exception("template $templateid not asdfound");
         }
         
         \PhpOffice\PhpWord\Settings::setTempDir($CFG->tempdir);
@@ -592,6 +588,100 @@ class printer
                 $templateProcessor->deleteRow("topic");
                 $templateProcessor->deleteRow("descriptor");
             }
+        } else if($templateid == 'Abschlusszeugnis'){
+            $bpsubjects = block_exastud_get_bildungsplan_subjects($class->bpid);
+            $class_subjects = block_exastud_get_class_subjects($class);
+           // $lern_soz = block_exastud_get_class_student_data($class->id, $student->id, BLOCK_EXASTUD_DATA_ID_LERN_UND_SOZIALVERHALTEN);
+            
+            $data = [
+                'schule' => get_config('exastud', 'school_name'),
+                'name' => $student->firstname . ' ' . $student->lastname,
+                'geburtsdatum' => static::spacerIfEmpty(block_exastud_get_custom_profile_field_value($student->id, 'dateofbirth')),
+                'gebort' => static::spacerIfEmpty(block_exastud_get_custom_profile_field_value($student->id, 'placeofbirth')),
+                'projekt_thema' => static::spacerIfEmpty(@$studentdata->projekt_thema),
+                'projekt_verbalbeurteilung' => static::spacerIfEmpty(@$studentdata->projekt_verbalbeurteilung),
+                'datum' => date('d.m.Y'),
+                'klasse' => $class->title,
+                'schuljahr' => $schuljahr,
+                'religion' => '---',
+                'profilfach' => '---',
+                'wahlpflichtfach' => '---'
+            ];
+            
+            
+            // zuerst standardwerte
+            foreach ($bpsubjects as $subject) {
+                $data[static::toTemplateVarId($subject->title)] = '---';
+            }
+            
+            $wahlpflichtfach = '---';
+            $profilfach = '---';
+            
+            // danach mit richtigen werten überschreiben
+            foreach ($class_subjects as $subject) {
+                $subjectData = block_exastud_get_graded_review($class->id, $subject->id, $student->id);
+                
+                if (! $subjectData) {
+                    continue;
+                }
+                
+                $subject->title = preg_replace('!\s*\(.*$!', '', $subject->title);
+                
+                if (in_array($subject->shorttitle, [
+                    'RALE',
+                    'RAK',
+                    'ETH',
+                    'REV',
+                    'RISL',
+                    'RJUED',
+                    'RRK',
+                    'ROR',
+                    'RSYR'
+                ])) {
+                    $dataTextReplacer['Ethik (ETH)'] = $subject->title . ' (' . $subject->shorttitle . ')';
+                    $contentId = 'religion';
+                } elseif (strpos($subject->title, 'Wahlpflichtfach') === 0) {
+                    $wahlpflichtfach = preg_replace('!^[^\s]+!', '', $subject->title);
+                    $contentId = 'wahlpflichtfach';
+                } elseif (strpos($subject->title, 'Profilfach') === 0) {
+                    $profilfach = preg_replace('!^[^\s]+!', '', $subject->title);
+                    $contentId = 'profilfach';
+                } else {
+                    $contentId = static::toTemplateVarId($subject->title);
+                }
+                
+                $data[$contentId] = static::spacerIfEmpty(@$subjectData->review);
+                
+                $niveau = \block_exastud\global_config::get_niveau_option_title(@$subjectData->niveau) ?: @$subjectData->niveau;
+                if (strlen($niveau) <= 1) {
+                    // G M E
+                    $niveau = 'Niveau ' . static::spacerIfEmpty($niveau);
+                }
+                $filters[$contentId . '_niveau'] = function ($content) use ($contentId, $niveau) {
+                    return preg_replace('!({' . $contentId . '}.*>)Bitte die Niveaustufe auswählen(<)!U', '${1}' . $niveau . '${2}', $content);
+                };
+                
+                $grade = (@$studentdata->print_grades ? 'Note ' . static::spacerIfEmpty(@$subjectData->grade) : '');
+                $filters[$contentId . '_grade'] = function ($content) use ($contentId, $grade) {
+                    return preg_replace('!({' . $contentId . '}.*>)ggf. Note(<)!U', '${1}' . $grade . '${2}', $content);
+                };
+            }
+            
+            // wahlpflichtfach + profilfach dropdowns
+            $add_filter(function ($content) use ($wahlpflichtfach) {
+                return preg_replace('!(>)Technik(<.*{' . 'wahlpflichtfach' . '})!U', '${1}' . $wahlpflichtfach . '${2}', $content);
+            });
+                $add_filter(function ($content) use ($profilfach) {
+                    return preg_replace('!(>)Spanisch(<.*{' . 'profilfach' . '})!U', '${1}' . $profilfach . '${2}', $content);
+                });
+                    
+                    // nicht befüllte niveaus und noten befüllen
+                    $dataTextReplacer['Bitte die Niveaustufe auswählen'] = 'Niveau ---';
+                    $dataTextReplacer['ggf. Note'] = @$studentdata->print_grades ? 'Note ---' : '';
+            
+            
+            
+            
         } else {
             echo g::$OUTPUT->header();
             echo block_exastud_trans([
@@ -618,8 +708,11 @@ class printer
         $temp_file = tempnam($CFG->tempdir, 'exastud');
         $templateProcessor->saveAs($temp_file);
         
-        $filename = ($certificate_issue_date_text ?: date('Y-m-d')) . "-" . $template->get_name() . "-{$class->title}-{$student->lastname}-{$student->firstname}.docx";
-        
+        if($templateid == "Abschlusszeugnis"){
+        $filename = ($certificate_issue_date_text ?: date('Y-m-d')) . "-" . $template->get_name() . "-{$class->title}-{$student->lastname}-{$student->firstname}.dotx";
+        } else {
+            $filename = ($certificate_issue_date_text ?: date('Y-m-d')) . "-" . $template->get_name() . "-{$class->title}-{$student->lastname}-{$student->firstname}.docx";
+        }
         return (object) [
             'temp_file' => $temp_file,
             'filename' => $filename
