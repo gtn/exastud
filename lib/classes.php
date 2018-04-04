@@ -365,6 +365,11 @@ class print_templates {
 				'file' => 'Anlage zum Lernentwicklungsbericht',
 				'inputs' => [],
 			],
+		    'Abschlusszeugnis' => [
+		        'name' => 'Abschlusszeugnis',
+		        'file' => 'Abschlusszeugnis',
+		        'inputs' => [],
+		    ],
 			'Deckblatt und 1. Innenseite LEB' => [
 				'name' => 'Deckblatt und 1. Innenseite LEB',
 				'file' => 'Deckblatt und 1. Innenseite LEB',
@@ -526,6 +531,6 @@ class print_template {
 	}
 
 	function get_file() {
-		return __DIR__.'/../template/'.$this->get_config()['file'].'.docx';
+		return __DIR__.'/../template/'.$this->get_config()['file'];
 	}
 }
