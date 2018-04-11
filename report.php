@@ -245,7 +245,6 @@ if ($classid = optional_param('classid', 0, PARAM_INT)) {
     $templates['grades_report'] = 'Notenübersicht (docx)';
     $templates['grades_report_xlsx'] = 'Notenübersicht (xlsx)';
     $templates[BLOCK_EXASTUD_DATA_ID_PRINT_TEMPLATE] = 'Zeugnis / Abgangszeugnis';
-    $templates['Abschlusszeugnis'] = 'Abschlusszeugnis';
     if (block_exastud_is_exacomp_installed()) {
         $templates['Anlage zum Lernentwicklungsbericht'] = 'Anlage zum Lernentwicklungsbericht';
     }

@@ -368,7 +368,19 @@ class print_templates {
 		    'Abschlusszeugnis' => [
 		        'name' => 'Abschlusszeugnis',
 		        'file' => 'Abschlusszeugnis',
-		        'inputs' => [],
+		        'grades' => $grades_lang,
+		        'inputs' => [
+		            'gesamtnote_und_durchschnitt_der_gesamtleistungen' => [
+		                'title' => 'Gesamtnote und Durchschnitt der Gesamtleistungen',
+		                'type' => 'text',
+		            ],
+		            'ags' => [
+		                'title' => 'Teilnahme an Arbeitsgemeinschaften',
+		            ],
+		            'comments_short' => [
+		                'title' => 'Bemerkungen',
+		            ],
+		        ],
 		    ],
 			'Deckblatt und 1. Innenseite LEB' => [
 				'name' => 'Deckblatt und 1. Innenseite LEB',
@@ -482,6 +494,7 @@ class print_templates {
 				$templateids[] = 'BP 2004/GMS Hauptschulabschluss SJ';
 				$templateids[] = 'BP 2004/GMS Abgangszeugnis';
 				$templateids[] = 'BP 2004/GMS Abgangszeugnis HSA Kl.9 und 10';
+				$templateids[] = 'Abschlusszeugnis';
 			}
 		}
 
