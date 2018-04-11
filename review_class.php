@@ -82,6 +82,7 @@ $table->head[] = ''; //userpic
 $table->head[] = block_exastud_get_string('name');
 $table->head[] = ''; // bewerten button
 $table->head[] = ''; // bewerten button
+$table->head[] = 'Note';
 
 foreach($categories as $category)
 	$table->head[] = $category->title;
@@ -90,6 +91,7 @@ $table->align = array();
 $table->align[] = 'center';
 $table->align[] = 'left';
 
+$table->align[] = 'center';
 $table->align[] = 'center';
 $table->align[] = 'center';
 
@@ -141,6 +143,32 @@ foreach($classstudents as $classstudent) {
 
 	$row->cells[] = ($visible ? $output->link_button($CFG->wwwroot.'/blocks/exastud/review_student.php?courseid='.$courseid.'&classid='.$classid.'&subjectid='.$subjectid.'&studentid='.$classstudent->id,
 		block_exastud_trans(['de:Bewerten', 'en:Review'])) : '');
+	
+	$formdata = new stdClass();
+	$formdata = (object)array_merge((array)$formdata, (array)$subjectData);
+	$template = block_exastud_get_student_print_template($class, $classstudent->id);
+	$grade_options = $template->get_grade_options();
+	if (@$formdata->grade && !isset($grade_options[$formdata->grade])) {
+	    $grade_options = [$formdata->grade => $formdata->grade] + $grade_options;
+	}
+	if (empty($formdata->grade)) {
+	    $formdata->grade = '';
+	}
+	//$grade_form->addElement('static', 'exacomp_grades', block_exastud_trans('de:Vorschläge aus Exacomp'), $grade_options['exacomp_grades']);
+	$grade_form = '<select>';
+	if (empty($formdata->grade)) {
+	    $grade_form .= '<option selected="selected">  </option>';
+	} else {
+	    $grade_form .= '<option>  </option>';
+	}
+	foreach($grade_options as $grade_option){
+	    $grade_form .= '<option value"'. $grade_option .'">'. $grade_option .'</option>';
+	}
+	$grade_form .= '</select>';
+	
+	$row->cells[] = $grade_form;
+	   
+	
 
 	/* if (!$visible) {
 		$cell = new html_table_cell();
