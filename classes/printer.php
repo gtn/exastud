@@ -74,7 +74,7 @@ class printer
         
         // check if file does exist
         if (! file_exists($templateFile)) {
-            throw new \Exception("template $templateid not asdfound");
+            throw new \Exception("template $templateid not found");
         }
         
         \PhpOffice\PhpWord\Settings::setTempDir($CFG->tempdir);
@@ -246,7 +246,7 @@ class printer
             'BP 2004/GMS Abgangszeugnis HSA Kl.9 und 10',
             'BP 2004/Zertifikat fuer Profilfach',
             'BP 2004/Beiblatt zur Projektpruefung HSA',
-            'BP 2004/Abschlusszeugnis der Förderschule'
+            'BP 2004/GMS Abschlusszeugnis der FÃ¶rderschule'
         ])) {
             $class_subjects = block_exastud_get_class_subjects($class);
             
@@ -455,7 +455,7 @@ class printer
                     
                     return $ret;
                 });
-            } elseif ($templateid == 'Abschlusszeugnis der Förderschule') {
+            } elseif ($templateid == 'BP 2004/GMS Abschlusszeugnis der FÃ¶rderschule') {
                 $data['gd'] = static::spacerIfEmpty(@$studentdata->gesamtnote_und_durchschnitt_der_gesamtleistungen);
             }
             
@@ -619,7 +619,7 @@ class printer
         $temp_file = tempnam($CFG->tempdir, 'exastud');
         $templateProcessor->saveAs($temp_file);
         
-        if($templateid == "Abschlusszeugnis der Förderschule"){
+        if($templateid == "BP 2004/GMS Abschlusszeugnis der FÃ¶rderschule"){
         $filename = ($certificate_issue_date_text ?: date('Y-m-d')) . "-" . $template->get_name() . "-{$class->title}-{$student->lastname}-{$student->firstname}.dotx";
         } else {
             $filename = ($certificate_issue_date_text ?: date('Y-m-d')) . "-" . $template->get_name() . "-{$class->title}-{$student->lastname}-{$student->firstname}.docx";

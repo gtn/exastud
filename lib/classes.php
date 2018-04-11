@@ -365,9 +365,9 @@ class print_templates {
 				'file' => 'Anlage zum Lernentwicklungsbericht',
 				'inputs' => [],
 			],
-		    'Abschlusszeugnis der Förderschule' => [
-		        'name' => 'Abschlusszeugnis der Förderschule',
-		        'file' => 'Abschlusszeugnis der Förderschule',
+		    'BP 2004/GMS Abschlusszeugnis der FÃ¶rderschule' => [
+		        'name' => 'BP 2004 GMS Abschlusszeugnis der FÃ¶rderschule',
+		        'file' => 'BP 2004/Abschlusszeugnis der Foerderschule',
 		        'grades' => $grades_lang,
 		        'inputs' => [
 		            'gesamtnote_und_durchschnitt_der_gesamtleistungen' => [
@@ -494,7 +494,7 @@ class print_templates {
 				$templateids[] = 'BP 2004/GMS Hauptschulabschluss SJ';
 				$templateids[] = 'BP 2004/GMS Abgangszeugnis';
 				$templateids[] = 'BP 2004/GMS Abgangszeugnis HSA Kl.9 und 10';
-				$templateids[] = 'BP 2004/GMS Abschlusszeugnis der Förderschule';
+				$templateids[] = 'BP 2004/GMS Abschlusszeugnis der FÃ¶rderschule';
 			}
 		}
 
@@ -544,7 +544,7 @@ class print_template {
 	}
 
 	function get_file($templateid) {
-	    if($templateid == "Abschlusszeugnis der Förderschule"){
+	    if($templateid == "BP 2004/GMS Abschlusszeugnis der FÃ¶rderschule"){
 	        return __DIR__.'/../template/'.$this->get_config()['file'].'.dotx';
 	    }else{
 		  return __DIR__.'/../template/'.$this->get_config()['file'].'.docx';
