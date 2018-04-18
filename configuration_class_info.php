@@ -51,6 +51,9 @@ if ($classform->is_cancelled()) {
 	$newclass = new stdClass();
 	$newclass->timemodified = time();
 	$newclass->title = $classedit->title;
+	if(!$classedit->bpid){
+	    $classedit->bpid = 1;
+	}
 	$newclass->bpid = $classedit->bpid;
 
 	if ($class->id) {
