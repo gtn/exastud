@@ -46,7 +46,7 @@ class printer
         return preg_replace('![^a-z]+!', '_', strtolower(trim($name)));
     }
 
-    static function report_to_temp_file($class, $student, $templateid)
+    static function report_to_temp_file($class, $student, $templateid, $courseid)
     {
         global $CFG;
         
@@ -505,6 +505,7 @@ class printer
             $evalopts = g::$DB->get_records('block_exastudevalopt', null, 'sorting', 'id, title, sourceinfo');
             $categories = block_exastud_get_class_categories_for_report($student->id, $class->id);
             $subjects = static::get_exacomp_subjects($student->id);
+            $gradesettings = static::get_exacomp_grading_settings($courseid);
             
             $data = [
                 'periode' => $period->description,
@@ -515,6 +516,8 @@ class printer
                 'geburtsdatum' => block_exastud_get_date_of_birth($student->id),
                 'datum' => date('d.m.Y')
             ];
+            
+            
             
             $templateProcessor->duplicateCol('kheader', count($evalopts));
             foreach ($evalopts as $evalopt) {
@@ -537,21 +540,35 @@ class printer
             
             $test = 0;
             
+            
+            
             foreach ($subjects as $subject) {
                 $templateProcessor->setValue("subject", $subject->title, 1);
                 
+                
+                $templateProcessor->duplicateCol('compheader', $gradesettings);
+                for ($i = 1; $i <= $gradesettings; $i++) {
+                    $templateProcessor->setValue('compheader', $i, 1);
+                }
+                
+                
                 foreach ($subject->topics as $topic) {
+                   
+                    
                     $templateProcessor->cloneRowToEnd("topic");
                     $templateProcessor->cloneRowToEnd("descriptor");
                     
                     $templateProcessor->setValue("topic", $topic->title, 1);
                     
-                    $templateProcessor->setValue("n", $topic->teacher_eval_niveau_text, 1);
-                    $grading = @$studentdata->print_grades_anlage_leb ? $topic->teacher_eval_additional_grading : null;
-                    $templateProcessor->setValue("ne", $grading === 0 ? 'X' : '', 1);
-                    $templateProcessor->setValue("tw", $grading === 1 ? 'X' : '', 1);
-                    $templateProcessor->setValue("ue", $grading === 2 ? 'X' : '', 1);
-                    $templateProcessor->setValue("ve", $grading === 3 ? 'X' : '', 1);
+//                     $templateProcessor->duplicateCol('compheader', 1);
+//                     $templateProcessor->setValue('compheader', $topic->teacher_eval_niveau_text, 1);
+                    
+                    
+//                     $grading = @$studentdata->print_grades_anlage_leb ? $topic->teacher_eval_additional_grading : null;
+//                     $templateProcessor->setValue("ne", $grading === 0 ? 'X' : '', 1);
+//                     $templateProcessor->setValue("tw", $grading === 1 ? 'X' : '', 1);
+//                     $templateProcessor->setValue("ue", $grading === 2 ? 'X' : '', 1);
+//                     $templateProcessor->setValue("ve", $grading === 3 ? 'X' : '', 1);
                     
                     /*
                      * $gme = ['G', 'M', 'E'][$test % 3];
@@ -569,11 +586,11 @@ class printer
                         $templateProcessor->setValue("descriptor", ($descriptor->niveau_title ? $descriptor->niveau_title . ': ' : '') . $descriptor->title, 1);
                         
                         $grading = @$studentdata->print_grades_anlage_leb ? $descriptor->teacher_eval_additional_grading : null;
-                        $templateProcessor->setValue("n", $descriptor->teacher_eval_niveau_text, 1);
-                        $templateProcessor->setValue("ne", $grading === 0 ? 'X' : '', 1);
-                        $templateProcessor->setValue("tw", $grading === 1 ? 'X' : '', 1);
-                        $templateProcessor->setValue("ue", $grading === 2 ? 'X' : '', 1);
-                        $templateProcessor->setValue("ve", $grading === 3 ? 'X' : '', 1);
+//                         $templateProcessor->setValue("n", $descriptor->teacher_eval_niveau_text, 1);
+//                         $templateProcessor->setValue("ne", $grading === 0 ? 'X' : '', 1);
+//                         $templateProcessor->setValue("tw", $grading === 1 ? 'X' : '', 1);
+//                         $templateProcessor->setValue("ue", $grading === 2 ? 'X' : '', 1);
+//                         $templateProcessor->setValue("ve", $grading === 3 ? 'X' : '', 1);
                         
                         /*
                          * $gme = ['G', 'M', 'E'][$test % 3];
@@ -1329,9 +1346,22 @@ class printer
         if (! method_exists('block_exacomp\api', 'get_comp_tree_for_exastud')) {
             throw new \Exception('please update exacomp version to match exastud version number');
         }
-        
+       
         return \block_exacomp\api::get_comp_tree_for_exastud($studentid);
     }
+    
+    static function get_exacomp_grading_settings($courseid)
+    {
+        
+        if (! block_exastud_is_exacomp_installed($courseid)) {
+            throw new \Exception('exacomp is not installed');
+        }
+        //var_dump(block_exacomp_get_grading_scheme($courseid));
+        $courseid = 3;
+        return block_exacomp_get_grading_scheme($courseid);
+        
+    }
+    
 }
 
 class Slice

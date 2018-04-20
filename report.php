@@ -34,6 +34,8 @@ $output = block_exastud_get_renderer();
 $url = '/blocks/exastud/report.php';
 $PAGE->set_url($url);
 
+ob_clean();
+
 if ($classid = optional_param('classid', 0, PARAM_INT)) {
     $class = block_exastud_get_head_teacher_class($classid);
     
@@ -113,9 +115,9 @@ if ($classid = optional_param('classid', 0, PARAM_INT)) {
             } elseif (count($printStudents) == 1) {
                 // print one student
                 $student = reset($printStudents);
-                $file = \block_exastud\printer::report_to_temp_file($class, $student, $template);
+                $file = \block_exastud\printer::report_to_temp_file($class, $student, $template, $courseid);
                 
-                ob_clean();
+                
                 
                 if ($content = ob_get_clean()) {
                     throw new \Exception('there was some other output: ' . $content);
@@ -133,7 +135,7 @@ if ($classid = optional_param('classid', 0, PARAM_INT)) {
                 $temp_files = [];
                 
                 foreach ($printStudents as $student) {
-                    $file = \block_exastud\printer::report_to_temp_file($class, $student, $template);
+                    $file = \block_exastud\printer::report_to_temp_file($class, $student, $template, $courseid);
                     $zip->addFile($file->temp_file, $file->filename);
                     $temp_files[] = $file->temp_file;
                 }
@@ -225,6 +227,12 @@ if ($classid = optional_param('classid', 0, PARAM_INT)) {
     
     echo $output->table($table);
     
+    echo '<pre>hallo'.block_exacomp_get_grading_scheme(3);
+    foreach ((\block_exacomp\api::get_comp_tree_for_exastud(89)) as $subject) {
+        print_r($subject);
+    echo '<hr>';
+    }
+    
     echo '<input type="submit" value="' . block_exastud_trans([
         'de:Weiter',
         'en:Next'
@@ -262,6 +270,6 @@ if ($classid = optional_param('classid', 0, PARAM_INT)) {
         
         echo $output->table($table);
     }
-    
+
     echo $output->footer();
 }
