@@ -365,6 +365,23 @@ class print_templates {
 				'file' => 'Anlage zum Lernentwicklungsbericht',
 				'inputs' => [],
 			],
+		    'BP 2004/GMS Abschlusszeugnis der Förderschule' => [
+		        'name' => 'BP 2004 GMS Abschlusszeugnis der Förderschule',
+		        'file' => 'BP 2004/Abschlusszeugnis der Foerderschule',
+		        'grades' => $grades_lang,
+		        'inputs' => [
+		            'gesamtnote_und_durchschnitt_der_gesamtleistungen' => [
+		                'title' => 'Gesamtnote und Durchschnitt der Gesamtleistungen',
+		                'type' => 'text',
+		            ],
+		            'ags' => [
+		                'title' => 'Teilnahme an Arbeitsgemeinschaften',
+		            ],
+		            'comments_short' => [
+		                'title' => 'Bemerkungen',
+		            ],
+		        ],
+		    ],
 			'Deckblatt und 1. Innenseite LEB' => [
 				'name' => 'Deckblatt und 1. Innenseite LEB',
 				'file' => 'Deckblatt und 1. Innenseite LEB',
@@ -477,6 +494,7 @@ class print_templates {
 				$templateids[] = 'BP 2004/GMS Hauptschulabschluss SJ';
 				$templateids[] = 'BP 2004/GMS Abgangszeugnis';
 				$templateids[] = 'BP 2004/GMS Abgangszeugnis HSA Kl.9 und 10';
+				$templateids[] = 'BP 2004/GMS Abschlusszeugnis der Förderschule';
 			}
 		}
 
@@ -525,7 +543,11 @@ class print_template {
 		return print_templates::get_template_config($this->templateid);
 	}
 
-	function get_file() {
-		return __DIR__.'/../template/'.$this->get_config()['file'].'.docx';
+	function get_file($templateid) {
+	    if($templateid == "BP 2004/GMS Abschlusszeugnis der Förderschule"){
+	        return __DIR__.'/../template/'.$this->get_config()['file'].'.dotx';
+	    }else{
+		  return __DIR__.'/../template/'.$this->get_config()['file'].'.docx';
+	    }
 	}
 }
