@@ -228,17 +228,16 @@ if ($lastPeriodClass && optional_param('action', null, PARAM_TEXT) == 'load_last
 	}
 
 	if (@$lastPeriodData->niveau || @$lastPeriodData->grade) {
-		$reviewText = 'Bewertung '.$lastPeriod->description.':'."\n";
 		if (@$lastPeriodData->niveau) {
-			//$reviewText .= 'Niveau: '.(block_exastud\global_config::get_niveau_option_title($lastPeriodData->niveau) ?: $lastPeriodData->niveau)."\n";
+
 			$formdata->niveau = $lastPeriodData->niveau;
 		}
 		if (@$lastPeriodData->grade) {
-			//$reviewText .= 'Note: '.$lastPeriodData->grade."\n";
+
 			$formdata->grade = $lastPeriodData->grade;
 		}
 
-		$formdata->review = $reviewText.$formdata->review;
+
 	}
 }
 
