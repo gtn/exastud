@@ -162,9 +162,6 @@ foreach($classstudents as $classstudent) {
 	$formdata = (object)array_merge((array)$formdata, (array)$subjectData);
 	$template = block_exastud_get_student_print_template($class, $classstudent->id);
 	$grade_options = $template->get_grade_options();
-	if (@$formdata->grade && !isset($grade_options[$formdata->grade])) {
-	    $grade_options = [$formdata->grade => $formdata->grade] + $grade_options;
-	}
 	if (empty($formdata->grade)) {
 	    $formdata->grade = '';
 	}
@@ -175,7 +172,7 @@ foreach($classstudents as $classstudent) {
 	    if($formdata->grade == $k){
 	        $grade_form .= '<option selected="selected" value="'. $k .'">'. $grade_option .'</option>';
 	    }else {
-	        $grade_form .= '<option value="'. $k .'">'. $grade_option .'</option>';
+	        $grade_form .= '<option value="'.$k.'">'. $grade_option .'</option>';
 	    }
 	    
 	}

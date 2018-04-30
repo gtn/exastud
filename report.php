@@ -115,6 +115,8 @@ if ($classid = optional_param('classid', 0, PARAM_INT)) {
                 $student = reset($printStudents);
                 $file = \block_exastud\printer::report_to_temp_file($class, $student, $template);
                 
+                ob_clean();
+                
                 if ($content = ob_get_clean()) {
                     throw new \Exception('there was some other output: ' . $content);
                 }
