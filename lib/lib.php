@@ -48,7 +48,7 @@ const BLOCK_EXASTUD_SUBJECT_ID_LERN_UND_SOZIALVERHALTEN_VORSCHLAG = -3;
 const BLOCK_EXASTUD_SUBJECT_ID_OTHER_DATA = -1;
 const BLOCK_EXASTUD_SUBJECT_ID_ADDITIONAL_HEAD_TEACHER = -2;
 
-const BLOCK_EXASTUD_SESSION_TIMEOUT = 10;
+const BLOCK_EXASTUD_SESSION_TIMEOUT = 2*60;
 
 class block_exastud_permission_exception extends moodle_exception {
 	function __construct($errorcode = 'Not allowed', $module = '', $link = '', $a = null, $debuginfo = null) {
