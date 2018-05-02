@@ -101,11 +101,6 @@ $.extend(window.block_exastud, {});
 				
 				if ((eachLine.length + extralines) > 8) {
                     text = "";
-                    e.preventDefault();
-					$(this).css({
-                        'background-color': '#FFF0F0',
-                        'color': '#D82323',
-                    });
                     for (j = 0; j < (8 - extralines); j++) {
                         text += eachLine[j];
                         text += "\n";
