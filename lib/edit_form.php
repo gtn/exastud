@@ -171,9 +171,9 @@ class student_edit_form extends moodleform {
 		if ($this->_customdata['grade.modified']) {
 			$mform->addElement('static', '', '', $this->_customdata['grade.modified']);
 		}
-
+		$mform->addElement('static', 'lastPeriodNiveau', "Niveau von der letzten Periode:", get_string('lastPeriodNiveau'));
 		$mform->addElement('select', 'niveau', block_exastud_get_string('de:Niveau'), ['' => ''] + block_exastud\global_config::get_niveau_options());
-
+		$mform->addElement('static', 'lastPeriodGrade', "Note von der letzten Periode:", get_string('lastPeriodGrade'));
 		$mform->addElement('select', 'grade', block_exastud_get_string('de:Note'), ['' => ''] + $this->_customdata['grade_options']);
 
 		$mform->addElement('static', 'exacomp_grades', block_exastud_trans('de:Vorschläge aus Exacomp'), $this->_customdata['exacomp_grades']);

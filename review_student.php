@@ -203,43 +203,57 @@ $formdata->vorschlag = $DB->get_field('block_exastudreview', 'review', [
 if (empty($formdata->grade)) {
 	$formdata->grade = '';
 }
-// load from last period
-if ($lastPeriodClass && optional_param('action', null, PARAM_TEXT) == 'load_last_period_data') {
-	$lastPeriodData = (object)block_exastud_get_review($lastPeriodClass->id, $subjectid, $studentid);
-
-	$formdata->vorschlag = $DB->get_field('block_exastudreview', 'review', [
-		'studentid' => $studentid,
-		'subjectid' => BLOCK_EXASTUD_SUBJECT_ID_LERN_UND_SOZIALVERHALTEN_VORSCHLAG,
-		'periodid' => $lastPeriod->id,
-		'teacherid' => $teacherid,
-	]);
-
-	/*
-	$reviewdata = $DB->get_records('block_exastudreview', array('subjectid' => $subjectid, 'periodid' => $lastPeriod->id, 'studentid' => $studentid), 'timemodified DESC');
-	$reviewdata = reset($reviewdata);
-	*/
-	$reviewdata = $DB->get_record('block_exastudreview', array('teacherid' => $teacherid, 'subjectid' => $subjectid, 'periodid' => $lastPeriod->id, 'studentid' => $studentid));
-
-	if ($reviewdata) {
-		foreach ($categories as $category) {
-			$formdata->{$category->id.'_'.$category->source} = $DB->get_field('block_exastudreviewpos', 'value', array("categoryid" => $category->id, "reviewid" => $reviewdata->id, "categorysource" => $category->source));
-		}
-		$formdata->review = $reviewdata->review;
-	}
-
-	if (@$lastPeriodData->niveau || @$lastPeriodData->grade) {
-		if (@$lastPeriodData->niveau) {
-
-			$formdata->niveau = $lastPeriodData->niveau;
-		}
-		if (@$lastPeriodData->grade) {
-
-			$formdata->grade = $lastPeriodData->grade;
-		}
-
-
-	}
+    // load from last period
+$formdata->lastPeriodNiveau ="---";
+$formdata->lastPeriodGrade ="---";
+if ($lastPeriodClass) {
+    $lastPeriodData = (object) block_exastud_get_review($lastPeriodClass->id, $subjectid, $studentid);
+    
+    if (@$lastPeriodData->niveau || @$lastPeriodData->grade) {
+        if (@$lastPeriodData->niveau) {
+            
+            $formdata->lastPeriodNiveau = $lastPeriodData->niveau;
+        }
+        if (@$lastPeriodData->grade) {
+            
+            $formdata->lastPeriodGrade = $lastPeriodData->grade;
+        }
+    }
+    
+    if (optional_param('action', null, PARAM_TEXT) == 'load_last_period_data') {
+        
+        $formdata->vorschlag = $DB->get_field('block_exastudreview', 'review', [
+            'studentid' => $studentid,
+            'subjectid' => BLOCK_EXASTUD_SUBJECT_ID_LERN_UND_SOZIALVERHALTEN_VORSCHLAG,
+            'periodid' => $lastPeriod->id,
+            'teacherid' => $teacherid
+        ]);
+        
+        /*
+         * $reviewdata = $DB->get_records('block_exastudreview', array('subjectid' => $subjectid, 'periodid' => $lastPeriod->id, 'studentid' => $studentid), 'timemodified DESC');
+         * $reviewdata = reset($reviewdata);
+         */
+        $reviewdata = $DB->get_record('block_exastudreview', array(
+            'teacherid' => $teacherid,
+            'subjectid' => $subjectid,
+            'periodid' => $lastPeriod->id,
+            'studentid' => $studentid
+        ));
+        
+        if ($reviewdata) {
+            foreach ($categories as $category) {
+                $formdata->{$category->id . '_' . $category->source} = $DB->get_field('block_exastudreviewpos', 'value', array(
+                    "categoryid" => $category->id,
+                    "reviewid" => $reviewdata->id,
+                    "categorysource" => $category->source
+                ));
+            }
+            $formdata->review = $reviewdata->review;
+        }
+    }
 }
+
+
 
 
 if ($lastPeriodClass) {

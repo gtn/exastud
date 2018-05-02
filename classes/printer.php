@@ -46,7 +46,7 @@ class printer
         return preg_replace('![^a-z]+!', '_', strtolower(trim($name)));
     }
 
-    static function report_to_temp_file($class, $student, $templateid)
+    static function report_to_temp_file($class, $student, $templateid, $courseid)
     {
         global $CFG;
         
@@ -505,6 +505,7 @@ class printer
             $evalopts = g::$DB->get_records('block_exastudevalopt', null, 'sorting', 'id, title, sourceinfo');
             $categories = block_exastud_get_class_categories_for_report($student->id, $class->id);
             $subjects = static::get_exacomp_subjects($student->id);
+            $gradesettings = static::get_exacomp_grading_settings($courseid);
             
             $data = [
                 'periode' => $period->description,
