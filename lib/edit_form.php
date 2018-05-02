@@ -153,24 +153,29 @@ class student_edit_form extends moodleform {
 			'style' => "width: 738px; height: 160px; resize: none; font-family: Arial !important; font-size: 11pt !important;",
 		]);
 		$mform->setType('vorschlag', PARAM_RAW);
-
+		$mform->addElement('static', '', '', "Max. 8 Zeilen / 550 Zeichen");
 		$mform->addElement('header', 'review_header', block_exastud_trans("de:Fachkompetenzen"));
 		$mform->setExpanded('review_header');
 		if ($this->_customdata['review.modified']) {
 			$mform->addElement('static', '', '', $this->_customdata['review.modified']);
 		}
+		
 		$mform->addElement('textarea', 'review', '', ['cols' => 50, 'rows' => 20,
 			'class' => 'limit-input-length',
 			'style' => "width: 556px; height: 160px; resize: none; font-family: Arial !important; font-size: 11pt !important;",
 		]);
 		$mform->setType('review', PARAM_RAW);
-
+		$mform->addElement('static', 'hint', "", "Max. 8 Zeilen / 550 Zeichen");
 		$mform->addElement('header', 'grade_header', block_exastud_trans("de:Note und Niveau"));
 		$mform->setExpanded('grade_header');
 
 		if ($this->_customdata['grade.modified']) {
 			$mform->addElement('static', '', '', $this->_customdata['grade.modified']);
 		}
+// 		$niveauarray=array();
+// 		$niveauarray[] =& $mform->createElement('static', 'lastPeriodNiveau', "Niveau von der letzten Periode:", get_string('lastPeriodNiveau'));
+// 		$niveauarray[] =& $mform->createElement('select', 'niveau', block_exastud_get_string('de:Niveau'), ['' => ''] + block_exastud\global_config::get_niveau_options());
+// 		$mform->addGroup($niveauarray, 'niveauarray', "Niveau von der letzten Periode:", array(' '), false);
 		$mform->addElement('static', 'lastPeriodNiveau', "Niveau von der letzten Periode:", get_string('lastPeriodNiveau'));
 		$mform->addElement('select', 'niveau', block_exastud_get_string('de:Niveau'), ['' => ''] + block_exastud\global_config::get_niveau_options());
 		$mform->addElement('static', 'lastPeriodGrade', "Note von der letzten Periode:", get_string('lastPeriodGrade'));
@@ -205,6 +210,7 @@ class student_other_data_form extends moodleform {
 					'style' => "width: 738px; height: ".($input['lines'] * 20)."px; resize: none; font-family: Arial !important; font-size: 11pt !important;",
 				]);
 				$mform->setType($dataid, PARAM_RAW);
+				$mform->addElement('static', '', '', "Max. 8 Zeilen / 550 Zeichen");
 			} elseif ($input['type'] == 'text') {
 				$mform->addElement('text', $dataid, $input['title']);
 				$mform->setType($dataid, PARAM_RAW);

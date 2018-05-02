@@ -105,6 +105,10 @@ $.extend(window.block_exastud, {});
                         text += eachLine[j];
                         text += "\n";
                     }
+                    $(this).css({
+                        'background-color': '#FFF0F0',
+                        'color': '#D82323',
+                    });
 					if(eachLine[j].length >= 90){
 					text += eachLine[j].substring(0, 90);
 					$(this).css({
