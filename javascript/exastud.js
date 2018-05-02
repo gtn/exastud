@@ -50,7 +50,7 @@ $.extend(window.block_exastud, {});
             })
 
             .on('keypress keyup change input propertychange paste', function(e) {
-                var max = 500;
+                var max = 550;
                 var newText = this.value;
                 var eachLine = newText.split('\n');
                 var i = 0;
