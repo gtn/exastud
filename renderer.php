@@ -57,11 +57,11 @@ class block_exastud_renderer extends plugin_renderer_base {
 				$tabs['settings']->subtree[] = new tabobject('bps', new moodle_url('/blocks/exastud/configuration_global.php', ['courseid' => g::$COURSE->id]).'&action=bps', block_exastud_trans("de:Bildungspläne"), '', true);
 			}
 
-			/*
-			if (block_exastud_has_global_cap(BLOCK_EXASTUD_CAP_UPLOAD_PICTURE)) {
-				$tabs['settings']->subtree[] = new tabobject('pictureupload', new moodle_url('/blocks/exastud/pictureupload.php', ['courseid' => g::$COURSE->id]), block_exastud_get_string('pictureupload'), '', true);
+			if (!block_exastud_is_bw_active()) {
+				if (block_exastud_has_global_cap(BLOCK_EXASTUD_CAP_UPLOAD_PICTURE)) {
+					$tabs['settings']->subtree[] = new tabobject('pictureupload', new moodle_url('/blocks/exastud/pictureupload.php', ['courseid' => g::$COURSE->id]), block_exastud_get_string('pictureupload'), '', true);
+				}
 			}
-			*/
 
 			if (block_exastud_has_global_cap(BLOCK_EXASTUD_CAP_ADMIN)) {
 				$tabs['settings']->subtree[] = new tabobject('backup', new moodle_url('/blocks/exastud/backup.php', ['courseid' => g::$COURSE->id]), block_exastud_get_string("backup"), '', true);
@@ -243,7 +243,7 @@ class block_exastud_renderer extends plugin_renderer_base {
 			$output .= format_text(@$subjectData->review);
 			if (@$subjectData->niveau) {
 				$output .= '<div><b>'.block_exastud_trans('de:Niveau').':</b> ';
-				$output .= (\block_exastud\global_config::get_niveau_option_title($subjectData->niveau) ?:$subjectData->niveau).'</div>';
+				$output .= (\block_exastud\global_config::get_niveau_option_title($subjectData->niveau) ?: $subjectData->niveau).'</div>';
 			}
 			if (@$subjectData->grade) {
 				$value = @$template->get_grade_options()[$subjectData->grade] ?: $subjectData->grade;
@@ -268,9 +268,10 @@ class block_exastud_renderer extends plugin_renderer_base {
 				text-align: center;
 				width: 40px;
 			}
+
 			#result td:first-child, th:first-child {
 				text-align: left;
-				width:auto;
+				width: auto;
 			}
 
 		</style>
@@ -337,6 +338,7 @@ class block_exastud_renderer extends plugin_renderer_base {
 
 		return $content;
 	}
+
 	function heading2($text) {
 		$content = '<legend class="heading2">';
 		$content .= $text;
