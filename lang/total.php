@@ -492,6 +492,14 @@ return [
 		null,
 		'Level',
 	],
+    'de:letztes Halbjahr:' => [
+        null,
+        'last period:',
+    ],
+    'de:Max. 8 Zeilen / 550 Zeichen' => [
+        null,
+        'Max. 8 rows / 550 characters',
+    ],
 	'de:Bewertungsskala' => [
 		null,
 		'Grading',

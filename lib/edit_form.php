@@ -153,7 +153,7 @@ class student_edit_form extends moodleform {
 			'style' => "width: 738px; height: 160px; resize: none; font-family: Arial !important; font-size: 11pt !important;",
 		]);
 		$mform->setType('vorschlag', PARAM_RAW);
-		$mform->addElement('static', '', '', "Max. 8 Zeilen / 550 Zeichen");
+		$mform->addElement('static', '', '', block_exastud_trans('de:Max. 8 Zeilen / 550 Zeichen'));
 		$mform->addElement('header', 'review_header', block_exastud_trans("de:Fachkompetenzen"));
 		$mform->setExpanded('review_header');
 		if ($this->_customdata['review.modified']) {
@@ -165,21 +165,27 @@ class student_edit_form extends moodleform {
 			'style' => "width: 556px; height: 160px; resize: none; font-family: Arial !important; font-size: 11pt !important;",
 		]);
 		$mform->setType('review', PARAM_RAW);
-		$mform->addElement('static', 'hint', "", "Max. 8 Zeilen / 550 Zeichen");
+		$mform->addElement('static', 'hint', "",  block_exastud_trans('de:Max. 8 Zeilen / 550 Zeichen'));
 		$mform->addElement('header', 'grade_header', block_exastud_trans("de:Note und Niveau"));
 		$mform->setExpanded('grade_header');
 
 		if ($this->_customdata['grade.modified']) {
 			$mform->addElement('static', '', '', $this->_customdata['grade.modified']);
 		}
-// 		$niveauarray=array();
-// 		$niveauarray[] =& $mform->createElement('static', 'lastPeriodNiveau', "Niveau von der letzten Periode:", get_string('lastPeriodNiveau'));
-// 		$niveauarray[] =& $mform->createElement('select', 'niveau', block_exastud_get_string('de:Niveau'), ['' => ''] + block_exastud\global_config::get_niveau_options());
-// 		$mform->addGroup($niveauarray, 'niveauarray', "Niveau von der letzten Periode:", array(' '), false);
-		$mform->addElement('static', 'lastPeriodNiveau', "Niveau von der letzten Periode:", get_string('lastPeriodNiveau'));
-		$mform->addElement('select', 'niveau', block_exastud_get_string('de:Niveau'), ['' => ''] + block_exastud\global_config::get_niveau_options());
-		$mform->addElement('static', 'lastPeriodGrade', "Note von der letzten Periode:", get_string('lastPeriodGrade'));
-		$mform->addElement('select', 'grade', block_exastud_get_string('de:Note'), ['' => ''] + $this->_customdata['grade_options']);
+ 		$niveauarray=array();
+
+		$niveauarray[] =& $mform->createElement('select', 'niveau', block_exastud_get_string('de:Niveau'), ['' => ''] + block_exastud\global_config::get_niveau_options());
+		$niveauarray[] =& $mform->createElement('static', '', "", "");
+		$niveauarray[] =& $mform->createElement('static', 'lastPeriodNiveau', "asdf", get_string('lastPeriodNiveau'));
+		$niveauarray[] =& $mform->createElement('static', '', "", ")");
+		$mform->addGroup($niveauarray, 'niveauarray',  block_exastud_trans('de:Niveau'), array("( ", block_exastud_trans('de:letztes Halbjahr: '), ' '), false);
+		
+		$gradearray=array();
+		$gradearray[] =& $mform->createElement('select', 'grade', block_exastud_get_string('de:Note'), ['' => ''] + $this->_customdata['grade_options']);
+		$gradearray[] =& $mform->createElement('static', '', "", "");
+		$gradearray[] =& $mform->createElement('static', 'lastPeriodGrade', "", get_string('lastPeriodGrade'));
+		$gradearray[] =& $mform->createElement('static', '', "", ")");
+		$mform->addGroup($gradearray, 'gradearray', block_exastud_trans('de:Note'), array('( ',  block_exastud_trans('de:letztes Halbjahr: '), " " ), false);
 
 		$mform->addElement('static', 'exacomp_grades', block_exastud_trans('de:Vorschläge aus Exacomp'), $this->_customdata['exacomp_grades']);
 
