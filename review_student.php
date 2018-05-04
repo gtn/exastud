@@ -166,6 +166,10 @@ if ($fromform = $studentform->get_data()) {
 
 	block_exastud_set_subject_student_data($classid, $subjectid, $studentid, 'grade.modifiedby', $USER->id);
 	block_exastud_set_subject_student_data($classid, $subjectid, $studentid, 'grade.timemodified', time());
+	
+	if($formdata-lastPeriodFlag){
+	    block_exastud_set_subject_student_data($classid, $subjectid, $studentid, 'lastPeriodIsLoaded', 1);
+	}
 
 	foreach ($categories as $category) {
 		if (!isset($fromform->{$category->id.'_'.$category->source})) {
@@ -203,24 +207,23 @@ $formdata->vorschlag = $DB->get_field('block_exastudreview', 'review', [
 if (empty($formdata->grade)) {
 	$formdata->grade = '';
 }
-    // load from last period
-$formdata->lastPeriodNiveau ="---";
-$formdata->lastPeriodGrade ="---";
+   
+if(!(@$formdata->lastPeriodNiveau)){
+    $formdata->lastPeriodNiveau ="---";
+}
+if(!(@$formdata->lastPeriodGrade)){
+    $formdata->lastPeriodGrade ="---";
+}
+
+
+// load from last period
 if ($lastPeriodClass) {
     $lastPeriodData = (object) block_exastud_get_review($lastPeriodClass->id, $subjectid, $studentid);
     
-    if (@$lastPeriodData->niveau || @$lastPeriodData->grade) {
-        if (@$lastPeriodData->niveau) {
-            
-            $formdata->lastPeriodNiveau = $lastPeriodData->niveau;
-        }
-        if (@$lastPeriodData->grade) {
-            
-            $formdata->lastPeriodGrade = $lastPeriodData->grade;
-        }
-    }
     
     if (optional_param('action', null, PARAM_TEXT) == 'load_last_period_data') {
+        // set flag to show that last period is loaded
+       $formdata->lastPeriodFlag = true;
         
         $formdata->vorschlag = $DB->get_field('block_exastudreview', 'review', [
             'studentid' => $studentid,
@@ -250,6 +253,21 @@ if ($lastPeriodClass) {
             }
             $formdata->review = $reviewdata->review;
         }
+        
+        
+        if (@$lastPeriodData->niveau || @$lastPeriodData->grade) {
+            if (@$lastPeriodData->niveau) {
+                
+                $formdata->lastPeriodNiveau = $lastPeriodData->niveau;
+                block_exastud_set_subject_student_data($classid, $subjectid, $studentid, 'lastPeriodNiveau', $lastPeriodData->niveau);
+            }
+            if (@$lastPeriodData->grade) {
+                
+                $formdata->lastPeriodGrade = $lastPeriodData->grade;
+                block_exastud_set_subject_student_data($classid, $subjectid, $studentid, 'lastPeriodGrade', $lastPeriodData->grade);
+            }
+        }
+        
     }
 }
 
@@ -257,8 +275,8 @@ if ($lastPeriodClass) {
 
 
 if ($lastPeriodClass) {
-	if (optional_param('action', null, PARAM_TEXT) == 'load_last_period_data') {
-		echo '<h2>'.block_exastud_trans('de:Daten wurden geladen').'</h2>';
+	if (optional_param('action', null, PARAM_TEXT) == 'load_last_period_data' || @$formdata->lastPeriodIsLoaded) {
+		echo '<h2>'.block_exastud_trans('de:Daten der letzten Periode/Halbjahr wurden übernommen').'</h2>';
 	} else {
 		$url = block_exastud\url::request_uri();
 		$url->param('action', 'load_last_period_data');
