@@ -1,6 +1,6 @@
 <?php
 
-$force_bw_active = false;
+$force_bw_active = true;
 
 $bw_active = get_config('exastud', 'bw_active');
 
