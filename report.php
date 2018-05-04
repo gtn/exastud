@@ -34,6 +34,9 @@ $output = block_exastud_get_renderer();
 $url = '/blocks/exastud/report.php';
 $PAGE->set_url($url);
 
+
+ob_clean();
+
 if ($classid = optional_param('classid', 0, PARAM_INT)) {
     $class = block_exastud_get_head_teacher_class($classid);
     
@@ -133,7 +136,7 @@ if ($classid = optional_param('classid', 0, PARAM_INT)) {
                 $temp_files = [];
                 
                 foreach ($printStudents as $student) {
-                    $file = \block_exastud\printer::report_to_temp_file($class, $student, $template);
+                    $file = \block_exastud\printer::report_to_temp_file($class, $student, $template, $courseid);
                     $zip->addFile($file->temp_file, $file->filename);
                     $temp_files[] = $file->temp_file;
                 }

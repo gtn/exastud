@@ -40,7 +40,7 @@ if (!$reviewclass || !$class) {
 $teacherid = $USER->id;
 
 if ($action == 'update') {
-    $grades = block_exastud\param::optional_array('exastud_grade', [PARAM_INT => PARAM_INT]);
+    $grades = block_exastud\param::optional_array('exastud_grade', [PARAM_TEXT => PARAM_TEXT]);
     foreach ($grades as $studentid => $grade) {
   
         block_exastud_set_subject_student_data($classid, $subjectid, $studentid, 'grade', $grade);
@@ -169,7 +169,7 @@ foreach($classstudents as $classstudent) {
 	$grade_form = '<select name="exastud_grade['.$classstudent->id.']">';
 	$grade_form .= '<option></option>';
 	foreach($grade_options as $k => $grade_option){
-	    if($formdata->grade == $k){
+	    if($formdata->grade == (string)$k){
 	        $grade_form .= '<option selected="selected" value="'. $k .'">'. $grade_option .'</option>';
 	    }else {
 	        $grade_form .= '<option value="'.$k.'">'. $grade_option .'</option>';

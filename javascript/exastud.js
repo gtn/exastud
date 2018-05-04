@@ -50,7 +50,7 @@ $.extend(window.block_exastud, {});
             })
 
             .on('keypress keyup change input propertychange paste', function(e) {
-                var max = 500;
+                var max = 550;
                 var newText = this.value;
                 var eachLine = newText.split('\n');
                 var i = 0;
@@ -101,15 +101,14 @@ $.extend(window.block_exastud, {});
 				
 				if ((eachLine.length + extralines) > 8) {
                     text = "";
-                    e.preventDefault();
-					$(this).css({
-                        'background-color': '#FFF0F0',
-                        'color': '#D82323',
-                    });
                     for (j = 0; j < (8 - extralines); j++) {
                         text += eachLine[j];
                         text += "\n";
                     }
+                    $(this).css({
+                        'background-color': '#FFF0F0',
+                        'color': '#D82323',
+                    });
 					if(eachLine[j].length >= 90){
 					text += eachLine[j].substring(0, 90);
 					$(this).css({

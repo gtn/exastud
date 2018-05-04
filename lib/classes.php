@@ -70,6 +70,17 @@ class print_templates {
 		$grades_lang = ['1' => 'sehr gut', '2' => 'gut', '3' => 'befriedigend', '4' => 'ausreichend', '5' => 'mangelhaft', '6' => 'ungenügend'];
 
 		$templates = [
+			'default_report' => [
+				'name' => 'Standard Zeugnis',
+				'file' => 'default_report',
+				'grades' => $grades_1_bis_6,
+				'inputs' => [
+					'comments' => [
+						'title' => block_exastud_trans('de:Bemerkungen'),
+						'type' => 'textarea',
+					],
+				],
+			],
 			'BP 2016/GMS Zeugnis 1.HJ' => [
 				'name' => 'BP 2016 GMS Zeugnis 1.HJ',
 				'file' => 'BP 2016/Lernentwicklungsbericht neuer BP 1.HJ',
@@ -477,15 +488,15 @@ class print_templates {
 	static function get_bp_available_print_templates($bp) {
 		$templateids = [];
 
-		if (!$bp || $bp->sourceinfo !== 'bw-bp2004') {
-			$templateids[] = 'BP 2016/GMS Zeugnis 1.HJ';
-			$templateids[] = 'BP 2016/GMS Zeugnis SJ';
-		}
-		if (!$bp || $bp->sourceinfo !== 'bw-bp2016') {
-			$templateids[] = 'BP 2004/GMS Zeugnis 1.HJ';
-			$templateids[] = 'BP 2004/GMS Zeugnis SJ';
+		if (block_exastud_is_bw_active()) {
+			if (!$bp || $bp->sourceinfo !== 'bw-bp2004') {
+				$templateids[] = 'BP 2016/GMS Zeugnis 1.HJ';
+				$templateids[] = 'BP 2016/GMS Zeugnis SJ';
+			}
+			if (!$bp || $bp->sourceinfo !== 'bw-bp2016') {
+				$templateids[] = 'BP 2004/GMS Zeugnis 1.HJ';
+				$templateids[] = 'BP 2004/GMS Zeugnis SJ';
 
-			if (block_exastud_is_bw_active()) {
 				$templateids[] = 'BP 2004/GMS Realschulabschluss 1.HJ';
 				$templateids[] = 'BP 2004/GMS Realschulabschluss SJ';
 				$templateids[] = 'BP 2004/GMS Klasse 10 E-Niveau 1.HJ';
@@ -496,6 +507,8 @@ class print_templates {
 				$templateids[] = 'BP 2004/GMS Abgangszeugnis HSA Kl.9 und 10';
 				$templateids[] = 'BP 2004/GMS Abschlusszeugnis der Förderschule';
 			}
+		} else {
+			$templateids[] = 'default_report';
 		}
 
 		return static::get_template_name_array($templateids);
