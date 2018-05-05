@@ -326,7 +326,7 @@ function xmldb_block_exastud_upgrade($oldversion = 0) {
 		upgrade_block_savepoint(true, 2017071001, 'exastud');
 	}
 
-	block_exastud_insert_default_entries(true);
+	block_exastud_insert_default_entries();
 	block_exastud_check_profile_fields();
 
 	return $result;

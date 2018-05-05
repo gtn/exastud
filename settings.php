@@ -26,5 +26,5 @@ if ($ADMIN->fulltree) {
 	$settings->add(new admin_setting_configtext('exastud/school_location', block_exastud_trans('de:Lernentwicklungsbericht: Ort'), '', '', PARAM_TEXT));
 	$settings->add(new admin_setting_configtext('exastud/bildungsstandards', block_exastud_trans('de:Bildungsstandards'),
 		block_exastud_trans('de:Liste, mit Kommata getrennt'), '5,6,7,8,9,10', PARAM_TEXT));
-	$settings->add(new admin_setting_configcheckbox('exastud/bw_active', block_exastud_trans('de:Baden-Württemberg'), '', 0));
+	$settings->add(new admin_setting_configcheckbox('exastud/bw_active', block_exastud_trans('de:Baden-Württemberg Berichte'), '', 0));
 }
