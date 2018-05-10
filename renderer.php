@@ -89,6 +89,7 @@ class block_exastud_renderer extends plugin_renderer_base {
 			}
 
 			$tabs['configuration_classes']->subtree[] = new tabobject('class_info', new moodle_url('/blocks/exastud/configuration_class_info.php', ['courseid' => g::$COURSE->id, 'classid' => $class->id]), block_exastud_get_string('class_info'), '', true);
+			// $tabs['configuration_classes']->subtree[] = new tabobject('export_class', new moodle_url('/blocks/exastud/export_class.php', ['courseid' => g::$COURSE->id, 'classid' => $class->id]), block_exastud_get_string('export_class'), '', true);
 		}
 
 		$tabtree = new tabtree($tabs);

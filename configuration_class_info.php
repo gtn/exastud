@@ -99,6 +99,7 @@ echo $output->header(['configuration_classes', 'class_info'], ['class' => ($clas
 if ($class && $class->id) {
 	$classform->display();
 
+	echo '<br/>';
 	echo $output->heading2(block_exastud_trans('de:Klasse löschen'));
 
 	if (!block_exastud_get_class_students($class->id)) {
@@ -114,6 +115,12 @@ if ($class && $class->id) {
 	}
 
 	echo $deleteButton;
+
+	echo '<br/>';
+	echo $output->heading2(block_exastud_get_string('export_class'));
+
+	echo $output->link_button('export_class.php?courseid='.$COURSE->id.'&classid='.$class->id,
+		block_exastud_get_string('export_class'));
 } else {
 	echo $output->heading(block_exastud_trans(['de:Klasse hinzufügen', 'en:Add Class']));
 

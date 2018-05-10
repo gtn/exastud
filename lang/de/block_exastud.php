@@ -51,6 +51,7 @@ $string['teachers'] = 'Lehrkräfte';
 $string['teachers_options'] = 'Zuständige Lehrkraft';
 $string['project_based_teachers'] = 'Projektbeurteiler';
 $string['class_info'] = 'Klasseneinstellungen';
+$string['export_class'] = 'Sicherung der Klasse erstellen';
 $string['students'] = 'Schülerinnen und Schüler';
 $string['studentgradereports'] = 'Schülerzeugnisse';
 $string['no_entries_found'] = 'Keine Einträge gefunden';

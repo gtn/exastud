@@ -51,6 +51,7 @@ $string['teachers'] = 'Teachers';
 $string['teachers_options'] = 'Teacher Options';
 $string['project_based_teachers'] = 'Project-Teachers';
 $string['class_info'] = 'Edit Class';
+$string['export_class'] = 'Backup Class';
 $string['students'] = 'Members';
 $string['studentgradereports'] = 'Grade Reports';
 $string['no_entries_found'] = 'No Entries found';

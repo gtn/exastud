@@ -167,8 +167,6 @@ if ($type == 'studentgradereports') {
 
 	if (!$classstudents) {
 		echo $OUTPUT->notification(block_exastud_get_string('no_entries_found'), 'notifymessage');
-
-		echo $buttons_left;
 	} else {
 		$table = new html_table();
 

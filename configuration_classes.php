@@ -81,6 +81,9 @@ if ($lastPeriodClasses) {
 		block_exastud_trans(['de:Klasse vom vorigen Eingabezeitraum kopieren', 'en:Copy Class from last Period']));
 }
 
+echo $output->link_button($CFG->wwwroot.'/blocks/exastud/import_class.php?courseid='.$courseid,
+	block_exastud_trans(['de:Klasse von Sicherung wiederherstellen', 'en:Import Class from Backup']));
+
 /*
 if ($classes = block_exastud_get_head_teacher_classes_shared($actPeriod->id)) {
 	echo html_writer::tag("h2", block_exastud_trans('de:Mit mir geteilte Klassen'));

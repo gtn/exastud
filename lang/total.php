@@ -130,6 +130,10 @@ return [
 		'Klasseneinstellungen',
 		'Edit Class',
 	],
+	'export_class' => [
+		'Sicherung der Klasse erstellen',
+		'Backup Class',
+	],
 	'students' => [
 		'Schülerinnen und Schüler',
 		'Members',
