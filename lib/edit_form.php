@@ -176,14 +176,14 @@ class student_edit_form extends moodleform {
 
 		$niveauarray[] =& $mform->createElement('select', 'niveau', block_exastud_get_string('de:Niveau'), ['' => ''] + block_exastud\global_config::get_niveau_options());
 		$niveauarray[] =& $mform->createElement('static', '', "", "");
-		$niveauarray[] =& $mform->createElement('static', 'lastPeriodNiveau', "asdf", get_string('lastPeriodNiveau'));
+		$niveauarray[] =& $mform->createElement('static', 'lastPeriodNiveau', "asdf",'lastPeriodNiveau');
 		$niveauarray[] =& $mform->createElement('static', '', "", ")");
 		$mform->addGroup($niveauarray, 'niveauarray',  block_exastud_trans('de:Niveau'), array("( ", block_exastud_trans('de:letztes Halbjahr: '), ' '), false);
 		
 		$gradearray=array();
 		$gradearray[] =& $mform->createElement('select', 'grade', block_exastud_get_string('de:Note'), ['' => ''] + $this->_customdata['grade_options']);
 		$gradearray[] =& $mform->createElement('static', '', "", "");
-		$gradearray[] =& $mform->createElement('static', 'lastPeriodGrade', "", get_string('lastPeriodGrade'));
+		$gradearray[] =& $mform->createElement('static', 'lastPeriodGrade', "", 'lastPeriodGrade');
 		$gradearray[] =& $mform->createElement('static', '', "", ")");
 		$mform->addGroup($gradearray, 'gradearray', block_exastud_trans('de:Note'), array('( ',  block_exastud_trans('de:letztes Halbjahr: '), " " ), false);
 

@@ -496,6 +496,14 @@ return [
         null,
         'last period:',
     ],
+    'de:Eingaben von der letzten Periode/Halbjahr übernehmen' => [
+        null,
+        'load last period:',
+    ],
+    'de:Daten der letzten Periode/Halbjahr wurden übernommen' => [
+        null,
+        'last period is adapted',
+    ],
     'de:Max. 8 Zeilen / 550 Zeichen' => [
         null,
         'Max. 8 rows / 550 characters',
