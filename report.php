@@ -116,7 +116,7 @@ if ($classid = optional_param('classid', 0, PARAM_INT)) {
             } elseif (count($printStudents) == 1) {
                 // print one student
                 $student = reset($printStudents);
-                $file = \block_exastud\printer::report_to_temp_file($class, $student, $template, $courseid);
+                $file = \block_exastud\printer::report_to_temp_file($class, $student, $template);
                 
                 ob_clean();
                 
@@ -207,7 +207,7 @@ if ($classid = optional_param('classid', 0, PARAM_INT)) {
     $templates = [];
     $templates['grades_report'] = 'Notenübersicht (docx)';
     $templates['grades_report_xlsx'] = 'Notenübersicht (xlsx)';
-    $templates[BLOCK_EXASTUD_DATA_ID_PRINT_TEMPLATE] = block_exastud_is_bw_active() ? block_exastud_trans('de:Zeugnis / Abgangszeugnis') : block_exastud_trans('de:Zeugnis');
+    $templates[BLOCK_EXASTUD_DATA_ID_PRINT_TEMPLATE] = 'Zeugnis / Abgangszeugnis';
     if (block_exastud_is_exacomp_installed()) {
         $templates['Anlage zum Lernentwicklungsbericht'] = 'Anlage zum Lernentwicklungsbericht';
     }
