@@ -333,7 +333,6 @@ class printer {
 				'gebort' => static::spacerIfEmpty(block_exastud_get_custom_profile_field_value($student->id, 'placeofbirth')),
 				'ags' => static::spacerIfEmpty(@$studentdata->ags),
 				'projekt_thema' => static::spacerIfEmpty(@$studentdata->projekt_thema),
-				'projekt_thema' => static::spacerIfEmpty(@$studentdata->projekt_thema),
 				'projekt_verbalbeurteilung' => static::spacerIfEmpty(@$studentdata->projekt_verbalbeurteilung),
 				'datum' => date('d.m.Y'),
 			];

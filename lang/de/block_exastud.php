@@ -143,6 +143,7 @@ $string['de:Note'] = 'Note';
 $string['de:Niveau'] = 'Niveau';
 $string['de:letztes Halbjahr:'] = 'letztes Halbjahr:';
 $string['de:Max. 8 Zeilen / 550 Zeichen'] = 'Max. 8 Zeilen / 550 Zeichen';
+$string['de:Max. 3 Zeilen / 250 Zeichen'] = 'Max. 3 Zeilen / 250 Zeichen';
 $string['de:Bewertungsskala'] = 'Bewertungsskala';
 $string['de:Fachbezeichnungen'] = 'Fachbezeichnungen';
 $string['de:Bildungspläne'] = 'Bildungspläne';

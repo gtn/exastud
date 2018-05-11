@@ -500,6 +500,10 @@ return [
         null,
         'Max. 8 rows / 550 characters',
     ],
+    'de:Max. 3 Zeilen / 250 Zeichen' => [
+        null,
+        'Max. 3 rows / 250 characters',
+    ],
 	'de:Bewertungsskala' => [
 		null,
 		'Grading',
