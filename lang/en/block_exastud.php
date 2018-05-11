@@ -143,6 +143,7 @@ $string['de:Note'] = 'Grade';
 $string['de:Niveau'] = 'Level';
 $string['de:letztes Halbjahr:'] = 'last period:';
 $string['de:Max. 8 Zeilen / 550 Zeichen'] = 'Max. 8 rows / 550 characters';
+$string['de:Max. 3 Zeilen / 250 Zeichen'] = 'Max. 3 rows / 250 characters';
 $string['de:Bewertungsskala'] = 'Grading';
 $string['de:Fachbezeichnungen'] = 'Subjects';
 $string['de:Bildungspläne'] = 'Educational Plans';

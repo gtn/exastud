@@ -216,7 +216,12 @@ class student_other_data_form extends moodleform {
 					'style' => "width: 738px; height: ".($input['lines'] * 20)."px; resize: none; font-family: Arial !important; font-size: 11pt !important;",
 				]);
 				$mform->setType($dataid, PARAM_RAW);
-				$mform->addElement('static', '', '', "Max. 8 Zeilen / 550 Zeichen");
+				if($input['lines'] == 3){
+				    $mform->addElement('static', '', '', block_exastud_trans('de:Max. 3 Zeilen / 250 Zeichen'));
+				}else {
+				    $mform->addElement('static', '', '', block_exastud_trans('de:Max. 8 Zeilen / 550 Zeichen'));
+				}
+				
 			} elseif ($input['type'] == 'text') {
 				$mform->addElement('text', $dataid, $input['title']);
 				$mform->setType($dataid, PARAM_RAW);

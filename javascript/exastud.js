@@ -46,7 +46,7 @@ $.extend(window.block_exastud, {});
         // moodle 33 applys the style to <textarea>, but moodle 33 to the surrounding div
         var textareas = $('textarea.limit-input-length, .limit-input-length textarea');
         textareas.each(function() {
-                $(this).data('limit-input-initial-height', $(this).outerHeight());
+               // $(this).data('limit-input-initial-height', $(this).outerHeight());
             })
 
             .on('keypress keyup change input propertychange paste', function(e) {
@@ -56,6 +56,12 @@ $.extend(window.block_exastud, {});
                 var i = 0;
                 var extralines = 0;
                 var text = "";
+                var lineLimit = 8;
+                
+                if($(this).outerHeight() == 3*20){
+                	lineLimit = 3;
+                	max = 250;
+                }
 
 
                 while (i < eachLine.length) {
@@ -99,9 +105,9 @@ $.extend(window.block_exastud, {});
                     });
                 }
 				
-				if ((eachLine.length + extralines) > 8) {
+				if ((eachLine.length + extralines) > lineLimit) {
                     text = "";
-                    for (j = 0; j < (8 - extralines); j++) {
+                    for (j = 0; j < (lineLimit - extralines); j++) {
                         text += eachLine[j];
                         text += "\n";
                     }
