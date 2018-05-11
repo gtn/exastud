@@ -96,7 +96,7 @@ $table->head[] = ''; //userpic
 $table->head[] = block_exastud_get_string('name');
 $table->head[] = ''; // bewerten button
 $table->head[] = ''; // bewerten button
-$table->head[] = 'Note';
+//$table->head[] = 'Note';
 
 foreach($categories as $category)
 	$table->head[] = $category->title;
@@ -107,7 +107,7 @@ $table->align[] = 'left';
 
 $table->align[] = 'center';
 $table->align[] = 'center';
-$table->align[] = 'center';
+//$table->align[] = 'center';
 
 for($i=0;$i<=count($categories);$i++)
 	$table->align[] = 'center';
@@ -158,26 +158,26 @@ foreach($classstudents as $classstudent) {
 	$row->cells[] = ($visible ? $output->link_button($CFG->wwwroot.'/blocks/exastud/review_student.php?courseid='.$courseid.'&classid='.$classid.'&subjectid='.$subjectid.'&studentid='.$classstudent->id,
 		block_exastud_trans(['de:Bewerten', 'en:Review'])) : '');
 	
-	$formdata = new stdClass();
-	$formdata = (object)array_merge((array)$formdata, (array)$subjectData);
-	$template = block_exastud_get_student_print_template($class, $classstudent->id);
-	$grade_options = $template->get_grade_options();
-	if (empty($formdata->grade)) {
-	    $formdata->grade = '';
-	}
-	//$grade_form->addElement('static', 'exacomp_grades', block_exastud_trans('de:Vorschläge aus Exacomp'), $grade_options['exacomp_grades']);
-	$grade_form = '<select name="exastud_grade['.$classstudent->id.']">';
-	$grade_form .= '<option></option>';
-	foreach($grade_options as $k => $grade_option){
-	    if($formdata->grade == (string)$k){
-	        $grade_form .= '<option selected="selected" value="'. $k .'">'. $grade_option .'</option>';
-	    }else {
-	        $grade_form .= '<option value="'.$k.'">'. $grade_option .'</option>';
-	    }
+// 	$formdata = new stdClass();
+// 	$formdata = (object)array_merge((array)$formdata, (array)$subjectData);
+// 	$template = block_exastud_get_student_print_template($class, $classstudent->id);
+// 	$grade_options = $template->get_grade_options();
+// 	if (empty($formdata->grade)) {
+// 	    $formdata->grade = '';
+// 	}
+// 	//$grade_form->addElement('static', 'exacomp_grades', block_exastud_trans('de:Vorschläge aus Exacomp'), $grade_options['exacomp_grades']);
+// 	$grade_form = '<select name="exastud_grade['.$classstudent->id.']">';
+// 	$grade_form .= '<option></option>';
+// 	foreach($grade_options as $k => $grade_option){
+// 	    if($formdata->grade == (string)$k){
+// 	        $grade_form .= '<option selected="selected" value="'. $k .'">'. $grade_option .'</option>';
+// 	    }else {
+// 	        $grade_form .= '<option value="'.$k.'">'. $grade_option .'</option>';
+// 	    }
 	    
-	}
-	$grade_form .= '</select>';
-	$row->cells[] = $grade_form;
+// 	}
+// 	$grade_form .= '</select>';
+// 	$row->cells[] = $grade_form;
 	   
 	
 
@@ -264,7 +264,7 @@ if ($hiddenclassstudents) {
 	echo $output->table($table);
 }
 
-echo '<input type="submit" value="'.block_exastud_get_string('savechanges').'"/>';
+//echo '<input type="submit" value="'.block_exastud_get_string('savechanges').'"/>';
 echo $output->back_button(new moodle_url('review.php', ['courseid' => $courseid]));
 echo '</form>';
 echo $output->footer();
