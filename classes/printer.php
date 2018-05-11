@@ -315,6 +315,7 @@ class printer {
 			'BP 2004/Zertifikat fuer Profilfach',
 			'BP 2004/Beiblatt zur Projektpruefung HSA',
 			'BP 2004/GMS Abschlusszeugnis der Förderschule',
+		    'BP 2004/GMS Halbjahreszeugniss der Förderschule',
 		])) {
 			$class_subjects = block_exastud_get_class_subjects($class);
 
@@ -686,8 +687,8 @@ class printer {
 		// save as a random file in temp file
 		$temp_file = tempnam($CFG->tempdir, 'exastud');
 		$templateProcessor->saveAs($temp_file);
-
-		if ($templateid == "BP 2004/GMS Abschlusszeugnis der Förderschule") {
+		//change ending for dotx files
+		if ($templateid == "BP 2004/GMS Abschlusszeugnis der Förderschule" || $templateid == "BP 2004/GMS Halbjahreszeugniss der Förderschule") {
 			$filename = ($certificate_issue_date_text ?: date('Y-m-d'))."-".$template->get_name()."-{$class->title}-{$student->lastname}-{$student->firstname}.dotx";
 		} else {
 			$filename = ($certificate_issue_date_text ?: date('Y-m-d'))."-".$template->get_name()."-{$class->title}-{$student->lastname}-{$student->firstname}.docx";

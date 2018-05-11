@@ -393,6 +393,18 @@ class print_templates {
 		            ],
 		        ],
 		    ],
+		    'BP 2004/GMS Halbjahreszeugniss der Förderschule' => [
+		        'name' => 'BP 2004 GMS Halbjahreszeugniss der Förderschule',
+		        'file' => 'BP 2004/HJ zeugnis Foe',
+		        'grades' => $grades_short,
+		        'inputs' => [
+		            'ags' => [
+		                'title' => 'Teilnahme an Arbeitsgemeinschaften',
+		                'type' => 'textarea',
+		                'lines' => 3,
+		            ],
+		        ],
+		    ],
 			'Deckblatt und 1. Innenseite LEB' => [
 				'name' => 'Deckblatt und 1. Innenseite LEB',
 				'file' => 'Deckblatt und 1. Innenseite LEB',
@@ -506,6 +518,7 @@ class print_templates {
 				$templateids[] = 'BP 2004/GMS Abgangszeugnis';
 				$templateids[] = 'BP 2004/GMS Abgangszeugnis HSA Kl.9 und 10';
 				$templateids[] = 'BP 2004/GMS Abschlusszeugnis der Förderschule';
+				$templateids[] = 'BP 2004/GMS Halbjahreszeugniss der Förderschule';
 			}
 		} else {
 			$templateids[] = 'default_report';
@@ -557,7 +570,7 @@ class print_template {
 	}
 
 	function get_file($templateid) {
-	    if($templateid == "BP 2004/GMS Abschlusszeugnis der Förderschule"){
+	    if($templateid == "BP 2004/GMS Abschlusszeugnis der Förderschule" || $templateid == "BP 2004/GMS Halbjahreszeugniss der Förderschule"){
 	        return __DIR__.'/../template/'.$this->get_config()['file'].'.dotx';
 	    }else{
 		  return __DIR__.'/../template/'.$this->get_config()['file'].'.docx';
