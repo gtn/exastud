@@ -573,8 +573,7 @@ class printer {
 			$evalopts = g::$DB->get_records('block_exastudevalopt', null, 'sorting', 'id, title, sourceinfo');
 			$categories = block_exastud_get_class_categories_for_report($student->id, $class->id);
 			$subjects = static::get_exacomp_subjects($student->id);
-      //$gradesettings = static::get_exacomp_grading_settings($courseid);
-
+            
 			$data = [
 				'periode' => $period->description,
 				'schule' => get_config('exastud', 'school_name'),
@@ -605,55 +604,29 @@ class printer {
 			$templateProcessor->cloneBlock('subjectif', count($subjects), true);
 
 			$test = 0;
-
+	//		if(get_config('exacomp', 'assessment_topic_diffLevel') == 1 || get_config('exacomp', 'assessment_descriptor_diffLevel') == 1){
+			    $difflvl = get_config('exacomp', 'assessment_diffLevel_options');
+			    $templateProcessor->duplicateCol('compheader', 2);
+			    $templateProcessor->setValue("tvalue", 1, 1);
+			    $templateProcessor->setValue("tvalue", 2, 1);
+			    $templateProcessor->setValue("dvalue", 3, 1);
+			    $templateProcessor->setValue("dvalue", 4, 1);
+			   
+//			}
+			
+			
 			foreach ($subjects as $subject) {
 				$templateProcessor->setValue("subject", $subject->title, 1);
 
 				foreach ($subject->topics as $topic) {
-					$templateProcessor->cloneRowToEnd("topic");
+					$templateProcessor->cloneRowToEnd("topic");			
 					$templateProcessor->cloneRowToEnd("descriptor");
-
 					$templateProcessor->setValue("topic", $topic->title, 1);
-
-					$templateProcessor->setValue("n", $topic->teacher_eval_niveau_text, 1);
-					$grading = @$studentdata->print_grades_anlage_leb ? $topic->teacher_eval_additional_grading : null;
-					$templateProcessor->setValue("ne", $grading === 0 ? 'X' : '', 1);
-					$templateProcessor->setValue("tw", $grading === 1 ? 'X' : '', 1);
-					$templateProcessor->setValue("ue", $grading === 2 ? 'X' : '', 1);
-					$templateProcessor->setValue("ve", $grading === 3 ? 'X' : '', 1);
-
-					/*
-					 * $gme = ['G', 'M', 'E'][$test % 3];
-					 * $x = $test % 4;
-					 * $test++;
-					 * $templateProcessor->setValue("n", $gme.$test, 1);
-					 * $templateProcessor->setValue("ne", $x === 0 ? 'X' : '', 1);
-					 * $templateProcessor->setValue("tw", $x === 1 ? 'X' : '', 1);
-					 * $templateProcessor->setValue("ue", $x === 2 ? 'X' : '', 1);
-					 * $templateProcessor->setValue("ve", $x === 3 ? 'X' : '', 1);
-					 */
 
 					foreach ($topic->descriptors as $descriptor) {
 						$templateProcessor->duplicateRow("descriptor");
-						$templateProcessor->setValue("descriptor", ($descriptor->niveau_title ? $descriptor->niveau_title.': ' : '').$descriptor->title, 1);
+					//	$templateProcessor->setValue("descriptor", ($descriptor->niveau_title ? $descriptor->niveau_title.': ' : '').$descriptor->title, 1);
 
-						$grading = @$studentdata->print_grades_anlage_leb ? $descriptor->teacher_eval_additional_grading : null;
-						$templateProcessor->setValue("n", $descriptor->teacher_eval_niveau_text, 1);
-						$templateProcessor->setValue("ne", $grading === 0 ? 'X' : '', 1);
-						$templateProcessor->setValue("tw", $grading === 1 ? 'X' : '', 1);
-						$templateProcessor->setValue("ue", $grading === 2 ? 'X' : '', 1);
-						$templateProcessor->setValue("ve", $grading === 3 ? 'X' : '', 1);
-
-						/*
-						 * $gme = ['G', 'M', 'E'][$test % 3];
-						 * $x = $test % 4;
-						 * $test++;
-						 * $templateProcessor->setValue("n", $gme.$test, 1);
-						 * $templateProcessor->setValue("ne", $x === 0 ? 'X' : '', 1);
-						 * $templateProcessor->setValue("tw", $x === 1 ? 'X' : '', 1);
-						 * $templateProcessor->setValue("ue", $x === 2 ? 'X' : '', 1);
-						 * $templateProcessor->setValue("ve", $x === 3 ? 'X' : '', 1);
-						 */
 					}
 
 					$templateProcessor->deleteRow("descriptor");
@@ -662,6 +635,99 @@ class printer {
 				$templateProcessor->deleteRow("topic");
 				$templateProcessor->deleteRow("descriptor");
 			}
+		} elseif ($templateid == 'Anlage zum LernentwicklungsberichtAlt') {
+		    $evalopts = g::$DB->get_records('block_exastudevalopt', null, 'sorting', 'id, title, sourceinfo');
+		    $categories = block_exastud_get_class_categories_for_report($student->id, $class->id);
+		    $subjects = static::get_exacomp_subjects($student->id);
+		    
+		    
+		    $data = [
+		        'periode' => $period->description,
+		        'schule' => get_config('exastud', 'school_name'),
+		        'ort' => get_config('exastud', 'school_location'),
+		        'name' => $student->firstname.' '.$student->lastname,
+		        'klasse' => $class->title,
+		        'geburtsdatum' => block_exastud_get_date_of_birth($student->id),
+		        'datum' => date('d.m.Y'),
+		    ];
+		    
+		    $templateProcessor->duplicateCol('kheader', count($evalopts));
+		    foreach ($evalopts as $evalopt) {
+		        $templateProcessor->setValue('kheader', $evalopt->title, 1);
+		    }
+		    
+		    foreach ($categories as $category) {
+		        $templateProcessor->cloneRowToEnd('kriterium');
+		        $templateProcessor->setValue('kriterium', $category->title, 1);
+		        
+		        for ($i = 0; $i < count($evalopts); $i++) {
+		            $templateProcessor->setValue('kvalue', $category->average !== null && round($category->average) == $i ? 'X' : '', 1);
+		        }
+		    }
+		    $templateProcessor->deleteRow('kriterium');
+		    
+		    // subjects
+		    
+		    $templateProcessor->cloneBlock('subjectif', count($subjects), true);
+		    
+		    $test = 0;
+		    
+		    foreach ($subjects as $subject) {
+		        $templateProcessor->setValue("subject", $subject->title, 1);
+
+		        
+		        foreach ($subject->topics as $topic) {
+		            $templateProcessor->cloneRowToEnd("topic");
+		            $templateProcessor->cloneRowToEnd("descriptor");
+		            $templateProcessor->setValue("topic", $topic->title, 1);
+		            
+		            					$templateProcessor->setValue("n", $topic->teacher_eval_niveau_text, 1);
+		            					$grading = @$studentdata->print_grades_anlage_leb ? $topic->teacher_eval_additional_grading : null;
+		            					$templateProcessor->setValue("ne", $grading === 0 ? 'X' : '', 1);
+		            					$templateProcessor->setValue("tw", $grading === 1 ? 'X' : '', 1);
+		            					$templateProcessor->setValue("ue", $grading === 2 ? 'X' : '', 1);
+		            					$templateProcessor->setValue("ve", $grading === 3 ? 'X' : '', 1);
+		            
+		            /*
+		             * $gme = ['G', 'M', 'E'][$test % 3];
+		             * $x = $test % 4;
+		             * $test++;
+		             * $templateProcessor->setValue("n", $gme.$test, 1);
+		             * $templateProcessor->setValue("ne", $x === 0 ? 'X' : '', 1);
+		             * $templateProcessor->setValue("tw", $x === 1 ? 'X' : '', 1);
+		             * $templateProcessor->setValue("ue", $x === 2 ? 'X' : '', 1);
+		             * $templateProcessor->setValue("ve", $x === 3 ? 'X' : '', 1);
+		             */
+		            
+		            foreach ($topic->descriptors as $descriptor) {
+		                $templateProcessor->duplicateRow("descriptor");
+		                $templateProcessor->setValue("descriptor", ($descriptor->niveau_title ? $descriptor->niveau_title.': ' : '').$descriptor->title, 1);
+		                
+		                						$grading = @$studentdata->print_grades_anlage_leb ? $descriptor->teacher_eval_additional_grading : null;
+		                						$templateProcessor->setValue("n", $descriptor->teacher_eval_niveau_text, 1);
+		                						$templateProcessor->setValue("ne", $grading === 0 ? 'X' : '', 1);
+		                						$templateProcessor->setValue("tw", $grading === 1 ? 'X' : '', 1);
+		                						$templateProcessor->setValue("ue", $grading === 2 ? 'X' : '', 1);
+		                						$templateProcessor->setValue("ve", $grading === 3 ? 'X' : '', 1);
+		                
+		                /*
+		                 * $gme = ['G', 'M', 'E'][$test % 3];
+		                 * $x = $test % 4;
+		                 * $test++;
+		                 * $templateProcessor->setValue("n", $gme.$test, 1);
+		                 * $templateProcessor->setValue("ne", $x === 0 ? 'X' : '', 1);
+		                 * $templateProcessor->setValue("tw", $x === 1 ? 'X' : '', 1);
+		                 * $templateProcessor->setValue("ue", $x === 2 ? 'X' : '', 1);
+		                 * $templateProcessor->setValue("ve", $x === 3 ? 'X' : '', 1);
+		                 */
+		            }
+		            
+		            $templateProcessor->deleteRow("descriptor");
+		        }
+		        
+		        $templateProcessor->deleteRow("topic");
+		        $templateProcessor->deleteRow("descriptor");
+		    }
 		} else {
 			echo g::$OUTPUT->header();
 			echo block_exastud_trans([
@@ -1399,6 +1465,7 @@ class printer {
 
 		return \block_exacomp\api::get_comp_tree_for_exastud($studentid);
 	}
+	
 }
 
 class Slice {
@@ -1659,6 +1726,7 @@ class TemplateProcessor extends \PhpOffice\PhpWord\TemplateProcessor {
 
 		$splits[1] = preg_replace('!(w:w=")[0-9]+!', '${1}'.$newWidth, $splits[1]);
 		$splits[4] = preg_replace('!(w:w=")[0-9]+!', '${1}'.$newWidth, $splits[4]);
+		
 
 		$splits[2] = str_repeat($splits[2], $numberOfCols);
 		$splits[5] = str_repeat($splits[5], $numberOfCols);

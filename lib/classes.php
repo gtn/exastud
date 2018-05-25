@@ -376,6 +376,11 @@ class print_templates {
 				'file' => 'Anlage zum Lernentwicklungsbericht',
 				'inputs' => [],
 			],
+		    'Anlage zum LernentwicklungsberichtAlt' => [
+			    'name' => 'Anlage zum LernentwicklungsberichtAlt',
+			    'file' => 'Anlage zum LernentwicklungsberichtAlt',
+			    'inputs' => [],
+			],
 		    'BP 2004/GMS Abschlusszeugnis der Förderschule' => [
 		        'name' => 'BP 2004 GMS Abschlusszeugnis der Förderschule',
 		        'file' => 'BP 2004/Abschlusszeugnis der Foerderschule',

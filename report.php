@@ -210,6 +210,7 @@ if ($classid = optional_param('classid', 0, PARAM_INT)) {
     $templates[BLOCK_EXASTUD_DATA_ID_PRINT_TEMPLATE] = block_exastud_is_bw_active() ? block_exastud_trans('de:Zeugnis / Abgangszeugnis') : block_exastud_trans('de:Zeugnis');
     if (block_exastud_is_exacomp_installed()) {
         $templates['Anlage zum Lernentwicklungsbericht'] = 'Anlage zum Lernentwicklungsbericht';
+        $templates['Anlage zum LernentwicklungsberichtAlt'] = 'Anlage zum Lernentwicklungsbericht (Alt)';
     }
     $templates['html_report'] = 'Ausgabe am Bildschirm';
     $templates += \block_exastud\print_templates::get_class_other_print_templates($class);
@@ -227,6 +228,14 @@ if ($classid = optional_param('classid', 0, PARAM_INT)) {
     echo html_writer::select($templates, 'template', $template, false);
     
     echo $output->table($table);
+    
+//     echo '<pre>hallo'.block_exacomp_get_grading_scheme(3);
+//     foreach ((\block_exacomp\api::get_comp_tree_for_exastud(89)) as $subject) {
+//         print_r($subject);
+//         echo '------------------------------------------------------------------------';
+
+//         echo '<hr>';
+//     }
     
     echo '<input type="submit" value="' . block_exastud_trans([
         'de:Weiter',
