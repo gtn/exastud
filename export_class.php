@@ -31,23 +31,6 @@ $class = block_exastud_get_head_teacher_class($classid);
 
 $students = block_exastud_get_class_students($class->id);
 
-function export_table($name, $table) {
-	global $DB;
-
-	var_dump($name);
-	var_dump($DB->get_records($table));
-}
-
-function export_item($name, $data) {
-	var_dump($name);
-	var_dump($data);
-}
-
-function export_items($name, $items) {
-	var_dump($name);
-	var_dump($items);
-}
-
 $students = $DB->get_records_sql('
 	SELECT u.id, u.firstname, u.lastname, u.idnumber, u.email, cs.timemodified
 	FROM {user} u
@@ -60,7 +43,7 @@ $classteachers = $DB->get_records('block_exastudclassteachers', ['classid' => $c
 $plugininfo = core_plugin_manager::instance()->get_plugin_info('block_exastud');;
 
 $data = (object)[];
-
+$data->datatype = 'block_exastud_class_export';
 $data->dataversion = '0.1';
 $data->exporttime = time();
 $data->pluginversion = $plugininfo->versiondisk;
@@ -75,8 +58,6 @@ $data->classteachers = array_values($classteachers);
 $data->students = array_values($students);
 $data->categories = block_exastud_get_class_categories($class->id);
 
-$data->data = array_values($DB->get_records('block_exastuddata', ['classid' => $class->id]));
-
 $data->classteastudvis = [];
 foreach ($data->classteachers as $classteacher) {
 	$data->classteastudvis = array_merge($data->classteastudvis, $DB->get_records('block_exastudclassteastudvis', ['classteacherid' => $classteacher->id]));
@@ -84,6 +65,7 @@ foreach ($data->classteachers as $classteacher) {
 
 
 $teacherids = $DB->get_records_menu('block_exastudclassteachers', ['classid' => $class->id], null, 'distinct teacherid AS tmp, teacherid');
+$data->reviews = [];
 if ($students && $teacherids) { /* && $subjects */
 	$data->reviews = array_values($DB->get_records_sql('
 	SELECT r.*
@@ -92,14 +74,28 @@ if ($students && $teacherids) { /* && $subjects */
 		AND periodid=?
 		AND teacherid IN ('.join(',', $teacherids).')
 		AND (subjectid IN ('.join(',', array_merge([-999 /* dummy */], array_keys($subjects))).') or subjectid <= 0)
+		ORDER BY timemodified DESC
 	', [$class->periodid]));
 
 	foreach ($data->reviews as $review) {
+		// transfer reviews also to classdata
+		if ($review->subjectid > 0) {
+			$studentData = block_exastud_get_subject_student_data($class->id, $review->subjectid, $review->studentid);
+			if (!isset($studentData->review) && !isset($data->{'review.timemodified'})) {
+				block_exastud_set_subject_student_data($class->id, $review->subjectid, $review->studentid, 'review', trim($review->review));
+				block_exastud_set_subject_student_data($class->id, $review->subjectid, $review->studentid, 'review.modifiedby', $review->teacherid);
+				block_exastud_set_subject_student_data($class->id, $review->subjectid, $review->studentid, 'review.timemodified', $review->timemodified);
+			}
+		}
+
 		$review->pos = array_values($DB->get_records('block_exastudreviewpos', ['reviewid' => $review->id]));
 	}
 }
 
-echo json_encode($data, JSON_PRETTY_PRINT); exit;
+$data->data = array_values($DB->get_records('block_exastuddata', ['classid' => $class->id]));
+
+// TESTING:
+// echo json_encode($data, JSON_PRETTY_PRINT); exit;
 
 $file = tempnam($CFG->tempdir, "zip");
 

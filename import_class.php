@@ -20,6 +20,8 @@
 require __DIR__.'/inc.php';
 require_once __DIR__.'/lib/picture_upload_form.php';
 
+use block_exastud\globals as g;
+
 $courseid = optional_param('courseid', 1, PARAM_INT); // Course ID
 
 require_login($courseid);
@@ -28,20 +30,23 @@ block_exastud_require_global_cap(BLOCK_EXASTUD_CAP_MANAGE_CLASSES);
 $curPeriod = block_exastud_get_active_or_next_period();
 
 $url = '/blocks/exastud/import_class.php';
-$PAGE->set_url($url, [ 'courseid' => $courseid ]);
+$PAGE->set_url($url, ['courseid' => $courseid]);
 $output = block_exastud_get_renderer();
 
 echo $output->header(['configuration_classes']);
 
 
-require_once $CFG->libdir . '/formslib.php';
+require_once $CFG->libdir.'/formslib.php';
 
 class block_exastud_import_class_form extends moodleform {
-
 	function definition() {
-		$mform = & $this->_form;
+		$mform = &$this->_form;
 
 		$mform->addElement('header', 'comment', block_exastud_trans('de:Klasse Importieren'));
+
+		$mform->addElement('checkbox', 'override_reviews', block_exastud_trans("de:Bewertung importieren"), ' ');
+		// , block_exastud_trans("de:(Vorhandene Bewertungen der Lehrer für die Klassenfächer und die Schüler in der Klasse werden überschrieben)"));
+
 		$mform->addElement('filepicker', 'file', block_exastud_get_string("file"));
 		$mform->addRule('file', block_exastud_get_string('commentshouldnotbeempty'), 'required', null, 'client');
 
@@ -49,48 +54,108 @@ class block_exastud_import_class_form extends moodleform {
 	}
 }
 
+class block_exastud_import_class_form2 extends moodleform {
 
-$mform = new block_exastud_import_class_form();
-if ($mform->is_cancelled()) {
-	redirect($returnurl);
-} else if ($mform->is_submitted()) {
-	$content = $mform->get_file_content('file');
-	$data = null;
+	function definition() {
+		$mform = &$this->_form;
+
+		$mform->addElement('hidden', 'action');
+		$mform->setType('action', PARAM_TEXT);
+
+		$mform->addElement('header', 'comment', block_exastud_trans('de:Klasse Importieren'));
+
+		$mform->addElement('hidden', 'override_reviews');
+		$mform->setType('override_reviews', PARAM_INT);
+
+		$mform->addElement('hidden', 'file');
+		$mform->setType('file', PARAM_INT);
+
+		$this->add_action_buttons(false, block_exastud_trans('de:Prüfen'));
+	}
+}
+
+function block_exastud_import_class($doimport, $override_reviews, $draftitemid) {
+	global $output, $DB, $USER;
+
+	$fs = get_file_storage();
+	$usercontext = context_user::instance($USER->id);
+	$draftfiles = $fs->get_area_files($usercontext->id, 'user', 'draft', $draftitemid, 'id', false);
+
+	$file = reset($draftfiles);
+	if (!$file) {
+		echo $output->notification(block_exastud_trans('de:Keine Datei gefunden'), 'notifyerror');
+
+		return;
+	}
+
+	// $content = $mform->get_file_content('file');
+	$content = $file->get_content();
+
 	if (!$content) {
 		echo $output->notification(block_exastud_trans('de:Keine Datei ausgewählt'), 'notifyerror');
-	} else {
-		$json = gzdecode($content);
-		if (!$json) {
-			echo $output->notification(block_exastud_trans('de:Datei hat falsches Format'), 'notifyerror');
-		} else {
-			$data = json_decode($json);
-			if (!$data) {
-				echo $output->notification(block_exastud_trans('de:Datei hat falsches Format'), 'notifyerror');
-			}
+
+		return;
+	}
+
+	$json = gzdecode($content);
+	if (!$json) {
+		echo $output->notification(block_exastud_trans('de:Datei hat falsches Format'), 'notifyerror');
+
+		return;
+	}
+	$classData = json_decode($json);
+	if (!$classData) {
+		echo $output->notification(block_exastud_trans('de:Datei hat falsches Format'), 'notifyerror');
+
+		return;
+	}
+
+	if (@$classData->datatype != 'block_exastud_class_export') {
+		echo $output->notification(block_exastud_trans('de:Datei ist keine Sicherung einer Klasse'), 'notifyerror');
+
+		return;
+	} elseif (@$classData->dataversion != '0.1') {
+		echo $output->notification(block_exastud_trans('de:Das Dateiformat ist leider nicht mit dieser Version des Lernentwicklungsberichts kompatibel'), 'notifyerror');
+
+		return;
+	}
+
+
+	// import it
+	/*
+	var_dump($classData);
+	var_dump($submitted_data->override_reviews);
+	exit;
+	/* */
+
+	$class = $classData->class;
+	$class->timemodified = time();
+	$class->userid = $USER->id;
+	$class->title .= ' ('.block_exastud_trans('de:Wiederhergestellt am ').date('d.m.Y H:i').')';
+	if ($doimport) {
+		$class->id = $DB->insert_record('block_exastudclass', $classData->class);
+	}
+
+	// $classData->bp: not needed
+	// $classData->period: not needed
+	// $classData->subjects: not needed
+	// $classData->evalopt: not needed
+
+	$classteacherMapping = [];
+	$teacherids = [];
+	foreach ($classData->classteachers as $classteacher) {
+		$classteacher->classid = $class->id;
+		$taecherids[$classteacher->teacherid] = $classteacher->teacherid;
+		$subjectids[$classteacher->subjectid] = $classteacher->subjectid;
+
+		if ($doimport) {
+			$classteacherMapping[$classteacher->id] = $DB->insert_record('block_exastudclassteachers', $classteacher);
 		}
 	}
 
-	if ($data) {
-		// import it
-		var_dump($data);
-
-		$class = $data->class;
-		$class->timemodified = time();
-		$class->userid = $USER->id;
-		$class->title .= ' ('.block_exastud_trans('de:Importiert am ').date('d.m.Y H:i').')';
-		$class->id = $DB->insert_record('block_exastudclass', $data->class);
-
-		// $data->bp: not needed
-		// $data->period: not needed
-		// $data->subjects: not needed
-		// $data->evalopt: not needed
-
-		foreach ($data->classteachers as $classteacher) {
-			$classteacher->classid = $class->id;
-			$DB->insert_record('block_exastudclassteachers', $classteacher);
-		}
-
-		foreach ($data->students as $student) {
+	$studentids = [];
+	foreach ($classData->students as $student) {
+		if ($doimport) {
 			$DB->insert_record('block_exastudclassstudents', [
 				"classid" => $class->id,
 				'studentid' => $student->id,
@@ -98,7 +163,12 @@ if ($mform->is_cancelled()) {
 			]);
 		}
 
-		foreach ($data->categories as $category) {
+		$studentids[$student->id] = $student->id;
+	}
+
+
+	if ($doimport) {
+		foreach ($classData->categories as $category) {
 			$DB->insert_record('block_exastudclasscate', [
 				"classid" => $class->id,
 				'categoryid' => $category->id,
@@ -106,17 +176,117 @@ if ($mform->is_cancelled()) {
 			]);
 		}
 
-		foreach ($data->data as $data) {
+		foreach ($classData->data as $data) {
 			$data->classid = $class->id;
 			$DB->insert_record('block_exastuddata', $data);
 		}
 
-		// $data->classteastudvis: TODO
+		foreach ($classData->classteastudvis as $classteastudvis) {
+			if (!isset($classteacherMapping[$classteastudvis->classteacherid])) {
+				continue;
+			}
 
-		die('import');
+			$classteastudvis->classteacherid = $classteacherMapping[$classteastudvis->classteacherid];
+			$DB->insert_record('block_exastudclassteastudvis', $classteastudvis);
+		}
+	}
+
+	foreach ($classData->reviews as $review) {
+		if (!empty($studentids[$review->studentid]) && $review->periodid == $class->periodid && !empty($taecherids[$review->teacherid]) && (!empty($subjectids[$review->subjectid]) || $review->subjectid < 0)) {
+			// ok
+		} else {
+			continue;
+		}
+
+		$dbReview = $DB->get_record('block_exastudreview', array('teacherid' => $review->teacherid, 'subjectid' => $review->subjectid, 'periodid' => $class->periodid, 'studentid' => $review->studentid));
+
+		if ($doimport && $override_reviews) {
+			$DB->delete_records('block_exastudreview', array('id' => $dbReview->id));
+			$DB->delete_records('block_exastudreviewpos', array('reviewid' => $dbReview->id));
+			$dbReview = null;
+		}
+
+		if ($dbReview) {
+			if (!$doimport) {
+				if ($review->review != $dbReview->review || ($review->timemodified != $dbReview->timemodified && $review->subjectid > 0)) {
+					$teacher = $DB->get_record('user', ['id' => $review->teacherid]);
+
+					$subject = '';
+					if ($review->subjectid > 0) {
+						$subject = $DB->get_record('block_exastudsubjects', ['id' => $review->subjectid]);
+						if ($subject) {
+							$subject = $subject->title;
+						}
+					} elseif ($review->subjectid == BLOCK_EXASTUD_SUBJECT_ID_LERN_UND_SOZIALVERHALTEN) {
+						$subject = block_exastud_trans("de:Lern- und Sozialverhalten");
+					} elseif ($review->subjectid == BLOCK_EXASTUD_SUBJECT_ID_LERN_UND_SOZIALVERHALTEN_VORSCHLAG) {
+						$subject = block_exastud_trans("de:Lern- und Sozialverhalten: Formulierungsvorschlag für Klassenlehrkraft");
+					} else {
+						$subject = '-';
+					}
+
+					$a = (object)[
+						'type' => $subject ?: '-',
+						'teacher' => $teacher ? fullname($teacher) : '-',
+					];
+					echo $output->notification(block_exastud_trans('de:Es wird eine Bewertung überschrieben (Typ: {$a->type}, Lehrer: {$a->teacher})', $a), 'notifyerror');
+				}
+
+				/*
+				$dbReviewPoss = $DB->get_records('block_exastudreviewpos', array('reviewid' => $dbReview->id));
+				foreach ($dbReviewPoss as $dbReviewPos) {
+					var_dump($dbReviewPos);
+				}
+
+				echo 'check';
+				*/
+			}
+		} else {
+			$reviewid = g::$DB->insert_record('block_exastudreview', $review, array('teacherid' => $review->teacherid, 'subjectid' => $review->subjectid, 'periodid' => $class->periodid, 'studentid' => $review->studentid));
+
+			foreach ($review->pos as $pos) {
+				$pos->reviewid = $reviewid;
+				$DB->insert_record('block_exastudreviewpos', $pos);
+			}
+		}
+	}
+
+	if ($doimport) {
+		echo $output->notification(block_exastud_trans('de:Klasse wurde wiederhergestellt'), 'info');
+	} else {
+		echo $output->notification(block_exastud_trans('de:Klassendaten erfolgreich geprüft'), 'info');
+	}
+
+	return true;
+}
+
+if (optional_param('action', '', PARAM_TEXT) == 'import') {
+	$mform = new block_exastud_import_class_form2();
+
+	if ($submitted_data = $mform->get_data()) {
+		block_exastud_import_class(true, @$submitted_data->override_reviews, $submitted_data->file);
+
+		echo $output->footer();
+		exit;
 	}
 }
 
-$mform->display();
+$mform = new block_exastud_import_class_form();
+if ($mform->is_cancelled()) {
+	redirect($returnurl);
+} else if ($submitted_data = $mform->get_data()) {
+	if (!block_exastud_import_class(false, @$submitted_data->override_reviews, $submitted_data->file)) {
+		echo $output->footer();
+		exit;
+	}
+
+	$mform = new block_exastud_import_class_form2();
+	$submitted_data->action = 'import';
+	$mform->set_data($submitted_data);
+
+	$mform->display();
+} else {
+	$mform->display();
+}
 
 echo $output->footer();
