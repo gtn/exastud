@@ -150,9 +150,11 @@ $string['de:Max. 3 Zeilen / 250 Zeichen'] = 'Max. 3 rows / 250 characters';
 $string['de:Bewertungsskala'] = 'Grading';
 $string['de:Fachbezeichnungen'] = 'Subjects';
 $string['de:Bildungspläne'] = 'Educational Plans';
-$string['de:Lernentwicklungsbericht: Schulname'] = 'Report: Schoolname';
-$string['de:Lernentwicklungsbericht: Ort'] = 'Report: City';
-$string['de:Lernentwicklungsbericht: Zeugnisausgabedatum'] = 'Report: Date';
+$string['de:Lernentwicklungsbericht: Schulname'] = 'report: name of organization';
+$string['de:Lernentwicklungsbericht: Ort'] = 'report: city';
+$string['de:Bildungsstandards'] = 'educational standards';
+$string['de:Liste, mit Kommata getrennt'] = 'comma seperated list';
+$string['de:Lernentwicklungsbericht: Zeugnisausgabedatum'] = 'report: date';
 
 
 // === settings ===

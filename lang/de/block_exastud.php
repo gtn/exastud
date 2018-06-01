@@ -152,6 +152,8 @@ $string['de:Fachbezeichnungen'] = 'Fachbezeichnungen';
 $string['de:Bildungspläne'] = 'Bildungspläne';
 $string['de:Lernentwicklungsbericht: Schulname'] = 'Lernentwicklungsbericht: Schulname';
 $string['de:Lernentwicklungsbericht: Ort'] = 'Lernentwicklungsbericht: Ort';
+$string['de:Bildungsstandards'] = 'Bildungsstandards';
+$string['de:Liste, mit Kommata getrennt'] = 'Liste, mit Kommata getrennt';
 $string['de:Lernentwicklungsbericht: Zeugnisausgabedatum'] = 'Lernentwicklungsbericht: Zeugnisausgabedatum';
 
 

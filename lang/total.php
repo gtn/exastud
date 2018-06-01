@@ -528,18 +528,26 @@ return [
 		null,
 		'Educational Plans',
 	],
-	'de:Lernentwicklungsbericht: Schulname' => [
-		null,
-		'Report: Schoolname',
-	],
-	'de:Lernentwicklungsbericht: Ort' => [
-		null,
-		'Report: City',
-	],
-	'de:Lernentwicklungsbericht: Zeugnisausgabedatum' => [
-		null,
-		'Report: Date',
-	],
+    'de:Lernentwicklungsbericht: Schulname' => [
+        null,
+        'report: name of organization',
+    ],
+    'de:Lernentwicklungsbericht: Ort' => [
+        null,
+        'report: city',
+    ],
+    'de:Bildungsstandards' => [
+        null,
+        'educational standards',
+    ],
+    'de:Liste, mit Kommata getrennt' => [
+        null,
+        'comma seperated list',
+    ],
+    'de:Lernentwicklungsbericht: Zeugnisausgabedatum' => [
+        null,
+        'report: date',
+    ],
 
 
 	// === settings ===
