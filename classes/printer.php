@@ -607,10 +607,12 @@ class printer {
 	//		if(get_config('exacomp', 'assessment_topic_diffLevel') == 1 || get_config('exacomp', 'assessment_descriptor_diffLevel') == 1){
 			    $difflvl = get_config('exacomp', 'assessment_diffLevel_options');
 			    $templateProcessor->duplicateCol('compheader', 2);
-			    $templateProcessor->setValue("tvalue", 1, 1);
-			    $templateProcessor->setValue("tvalue", 2, 1);
-			    $templateProcessor->setValue("dvalue", 3, 1);
-			    $templateProcessor->setValue("dvalue", 4, 1);
+// 			    $templateProcessor->setValue("tvalue", 1, 1);
+// 			    $templateProcessor->setValue("tvalue", 2, 1);
+// 			    $templateProcessor->setValue("dvalue", 3, 1);
+// 			    $templateProcessor->setValue("dvalue", 4, 1);
+			    $templateProcessor->setValue("compheader", "Note", 1);
+			    $templateProcessor->setValue("compheader", "Niveau", 1);
 			   
 //			}
 			
@@ -619,14 +621,18 @@ class printer {
 				$templateProcessor->setValue("subject", $subject->title, 1);
 
 				foreach ($subject->topics as $topic) {
-					$templateProcessor->cloneRowToEnd("topic");			
+			     	$templateProcessor->cloneRowToEnd("topic");			
 					$templateProcessor->cloneRowToEnd("descriptor");
 					$templateProcessor->setValue("topic", $topic->title, 1);
+					$grading = @$studentdata->print_grades_anlage_leb ? $topic->teacher_eval_additional_grading : null;
+					$templateProcessor->setValue("tvalue", $grading, 1);
+					$templateProcessor->setValue("tvalue", null, 1);
 
 					foreach ($topic->descriptors as $descriptor) {
 						$templateProcessor->duplicateRow("descriptor");
-					//	$templateProcessor->setValue("descriptor", ($descriptor->niveau_title ? $descriptor->niveau_title.': ' : '').$descriptor->title, 1);
-
+						$templateProcessor->setValue("descriptor", ($descriptor->niveau_title ? $descriptor->niveau_title.': ' : '').$descriptor->title, 1);
+						$grading = @$studentdata->print_grades_anlage_leb ? $topic->teacher_eval_additional_grading : null;
+						$templateProcessor->setValue("dvalue", $grading, 1);
 					}
 
 					$templateProcessor->deleteRow("descriptor");
@@ -1721,6 +1727,7 @@ class TemplateProcessor extends \PhpOffice\PhpWord\TemplateProcessor {
 
 		$splits[1] = join('', $firstCol);
 		$splits[2] = str_repeat($splits[2], $numberOfCols);
+		
 
 		$splits = static::splitByTag(join('', $splits), 'tc');
 
