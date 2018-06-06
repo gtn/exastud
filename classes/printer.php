@@ -1730,13 +1730,10 @@ class TemplateProcessor extends \PhpOffice\PhpWord\TemplateProcessor {
 		
 
 		$splits = static::splitByTag(join('', $splits), 'tc');
-
-		$splits[1] = preg_replace('!(w:w=")[0-9]+!', '${1}'.$newWidth, $splits[1]);
-		$splits[4] = preg_replace('!(w:w=")[0-9]+!', '${1}'.$newWidth, $splits[4]);
-		
-
-		$splits[2] = str_repeat($splits[2], $numberOfCols);
-		$splits[5] = str_repeat($splits[5], $numberOfCols);
+		for ($i = 1; $i < count($splits); $i+=3) {
+			$splits[$i] = preg_replace('!(w:w=")[0-9]+!', '${1}'.$newWidth, $splits[$i]);
+			$splits[$i+1] = str_repeat($splits[$i+1], $numberOfCols);
+		}
 
 		$table->set(join('', $splits));
 
