@@ -97,7 +97,7 @@ function block_exastud_import_class($doimport, $override_reviews, $draftitemid) 
 		return;
 	}
 
-	$json = gzdecode($content);
+	$json = @gzdecode($content);
 	if (!$json) {
 		echo $output->notification(block_exastud_trans('de:Datei hat falsches Format'), 'notifyerror');
 
@@ -128,7 +128,9 @@ function block_exastud_import_class($doimport, $override_reviews, $draftitemid) 
 	exit;
 	/* */
 
-	$class = $classData->class;
+	echo $output->notification(block_exastud_trans('de:Klassenname: {$a}', $classData->class->title), 'info');
+
+	$class = clone $classData->class;
 	$class->timemodified = time();
 	$class->userid = $USER->id;
 	$class->title .= ' ('.block_exastud_trans('de:Wiederhergestellt am ').date('d.m.Y H:i').')';
@@ -191,68 +193,70 @@ function block_exastud_import_class($doimport, $override_reviews, $draftitemid) 
 		}
 	}
 
-	foreach ($classData->reviews as $review) {
-		if (!empty($studentids[$review->studentid]) && $review->periodid == $class->periodid && !empty($taecherids[$review->teacherid]) && (!empty($subjectids[$review->subjectid]) || $review->subjectid < 0)) {
-			// ok
-		} else {
-			continue;
-		}
+	if ($override_reviews) {
+		foreach ($classData->reviews as $review) {
+			if (!empty($studentids[$review->studentid]) && $review->periodid == $class->periodid && !empty($taecherids[$review->teacherid]) && (!empty($subjectids[$review->subjectid]) || $review->subjectid < 0)) {
+				// ok
+			} else {
+				continue;
+			}
 
-		$dbReview = $DB->get_record('block_exastudreview', array('teacherid' => $review->teacherid, 'subjectid' => $review->subjectid, 'periodid' => $class->periodid, 'studentid' => $review->studentid));
+			$dbReview = $DB->get_record('block_exastudreview', array('teacherid' => $review->teacherid, 'subjectid' => $review->subjectid, 'periodid' => $class->periodid, 'studentid' => $review->studentid));
 
-		if ($doimport && $override_reviews) {
-			$DB->delete_records('block_exastudreview', array('id' => $dbReview->id));
-			$DB->delete_records('block_exastudreviewpos', array('reviewid' => $dbReview->id));
-			$dbReview = null;
-		}
+			if ($doimport) {
+				$DB->delete_records('block_exastudreview', array('id' => $dbReview->id));
+				$DB->delete_records('block_exastudreviewpos', array('reviewid' => $dbReview->id));
+				$dbReview = null;
+			}
 
-		if ($dbReview) {
-			if (!$doimport) {
-				if ($review->review != $dbReview->review || ($review->timemodified != $dbReview->timemodified && $review->subjectid > 0)) {
-					$teacher = $DB->get_record('user', ['id' => $review->teacherid]);
+			if ($dbReview) {
+				if (!$doimport) {
+					if ($review->review != $dbReview->review || ($review->timemodified != $dbReview->timemodified && $review->subjectid > 0)) {
+						$teacher = $DB->get_record('user', ['id' => $review->teacherid]);
 
-					$subject = '';
-					if ($review->subjectid > 0) {
-						$subject = $DB->get_record('block_exastudsubjects', ['id' => $review->subjectid]);
-						if ($subject) {
-							$subject = $subject->title;
+						$subject = '';
+						if ($review->subjectid > 0) {
+							$subject = $DB->get_record('block_exastudsubjects', ['id' => $review->subjectid]);
+							if ($subject) {
+								$subject = $subject->title;
+							}
+						} elseif ($review->subjectid == BLOCK_EXASTUD_SUBJECT_ID_LERN_UND_SOZIALVERHALTEN) {
+							$subject = block_exastud_trans("de:Lern- und Sozialverhalten");
+						} elseif ($review->subjectid == BLOCK_EXASTUD_SUBJECT_ID_LERN_UND_SOZIALVERHALTEN_VORSCHLAG) {
+							$subject = block_exastud_trans("de:Lern- und Sozialverhalten: Formulierungsvorschlag für Klassenlehrkraft");
+						} else {
+							$subject = '-';
 						}
-					} elseif ($review->subjectid == BLOCK_EXASTUD_SUBJECT_ID_LERN_UND_SOZIALVERHALTEN) {
-						$subject = block_exastud_trans("de:Lern- und Sozialverhalten");
-					} elseif ($review->subjectid == BLOCK_EXASTUD_SUBJECT_ID_LERN_UND_SOZIALVERHALTEN_VORSCHLAG) {
-						$subject = block_exastud_trans("de:Lern- und Sozialverhalten: Formulierungsvorschlag für Klassenlehrkraft");
-					} else {
-						$subject = '-';
+
+						$a = (object)[
+							'type' => $subject ?: '-',
+							'teacher' => $teacher ? fullname($teacher) : '-',
+						];
+						echo $output->notification(block_exastud_trans('de:Es wird eine Bewertung überschrieben (Typ: {$a->type}, Lehrer: {$a->teacher})', $a), 'notifyerror');
 					}
 
-					$a = (object)[
-						'type' => $subject ?: '-',
-						'teacher' => $teacher ? fullname($teacher) : '-',
-					];
-					echo $output->notification(block_exastud_trans('de:Es wird eine Bewertung überschrieben (Typ: {$a->type}, Lehrer: {$a->teacher})', $a), 'notifyerror');
+					/*
+					$dbReviewPoss = $DB->get_records('block_exastudreviewpos', array('reviewid' => $dbReview->id));
+					foreach ($dbReviewPoss as $dbReviewPos) {
+						var_dump($dbReviewPos);
+					}
+
+					echo 'check';
+					*/
 				}
+			} else {
+				$reviewid = g::$DB->insert_record('block_exastudreview', $review, array('teacherid' => $review->teacherid, 'subjectid' => $review->subjectid, 'periodid' => $class->periodid, 'studentid' => $review->studentid));
 
-				/*
-				$dbReviewPoss = $DB->get_records('block_exastudreviewpos', array('reviewid' => $dbReview->id));
-				foreach ($dbReviewPoss as $dbReviewPos) {
-					var_dump($dbReviewPos);
+				foreach ($review->pos as $pos) {
+					$pos->reviewid = $reviewid;
+					$DB->insert_record('block_exastudreviewpos', $pos);
 				}
-
-				echo 'check';
-				*/
-			}
-		} else {
-			$reviewid = g::$DB->insert_record('block_exastudreview', $review, array('teacherid' => $review->teacherid, 'subjectid' => $review->subjectid, 'periodid' => $class->periodid, 'studentid' => $review->studentid));
-
-			foreach ($review->pos as $pos) {
-				$pos->reviewid = $reviewid;
-				$DB->insert_record('block_exastudreviewpos', $pos);
 			}
 		}
 	}
 
 	if ($doimport) {
-		echo $output->notification(block_exastud_trans('de:Klasse wurde wiederhergestellt'), 'info');
+		echo $output->notification(block_exastud_trans('de:Klasse wurde wiederhergestellt, neuer Name: {$a}', $class->title), 'info');
 	} else {
 		echo $output->notification(block_exastud_trans('de:Klassendaten erfolgreich geprüft'), 'info');
 	}
