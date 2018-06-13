@@ -603,19 +603,14 @@ class printer {
 
 			$templateProcessor->cloneBlock('subjectif', count($subjects), true);
 
-			$test = 0;
-	//		if(get_config('exacomp', 'assessment_topic_diffLevel') == 1 || get_config('exacomp', 'assessment_descriptor_diffLevel') == 1){
+
+			if(get_config('exacomp', 'assessment_topic_diffLevel') == 1 || get_config('exacomp', 'assessment_descriptor_diffLevel') == 1){
 			    $difflvl = get_config('exacomp', 'assessment_diffLevel_options');
 			    $templateProcessor->duplicateCol('compheader', 2);
-// 			    $templateProcessor->setValue("tvalue", 1, 1);
-// 			    $templateProcessor->setValue("tvalue", 2, 1);
-// 			    $templateProcessor->setValue("dvalue", 3, 1);
-// 			    $templateProcessor->setValue("dvalue", 4, 1);
-			    $templateProcessor->setValue("compheader", "Note", 1);
 			    $templateProcessor->setValue("compheader", "Niveau", 1);
 			   
-//			}
-			
+		    }
+		    $templateProcessor->setValue("compheader", "Note", 1);
 			
 			foreach ($subjects as $subject) {
 				$templateProcessor->setValue("subject", $subject->title, 1);
@@ -624,15 +619,21 @@ class printer {
 			     	$templateProcessor->cloneRowToEnd("topic");			
 					$templateProcessor->cloneRowToEnd("descriptor");
 					$templateProcessor->setValue("topic", $topic->title, 1);
-					$grading = @$studentdata->print_grades_anlage_leb ? $topic->teacher_eval_additional_grading : null;
+					$grading = @$studentdata->print_grades_anlage_leb ? $topic->teacher_eval_additional_grading : $topic->teacher_eval_additional_grading;
 					$templateProcessor->setValue("tvalue", $grading, 1);
-					$templateProcessor->setValue("tvalue", null, 1);
-
+					if(get_config('exacomp', 'assessment_topic_diffLevel') == 1 || get_config('exacomp', 'assessment_descriptor_diffLevel') == 1){
+					    $niveau = @$studentdata->print_grades_anlage_leb ? $topic->teacher_eval_niveau_text : $topic->teacher_eval_niveau_text;
+					$templateProcessor->setValue("tvalue", $niveau, 1);
+					}
 					foreach ($topic->descriptors as $descriptor) {
 						$templateProcessor->duplicateRow("descriptor");
 						$templateProcessor->setValue("descriptor", ($descriptor->niveau_title ? $descriptor->niveau_title.': ' : '').$descriptor->title, 1);
-						$grading = @$studentdata->print_grades_anlage_leb ? $topic->teacher_eval_additional_grading : null;
+						$grading = @$studentdata->print_grades_anlage_leb ? $descriptor->teacher_eval_additional_grading : $descriptor->teacher_eval_additional_grading;
 						$templateProcessor->setValue("dvalue", $grading, 1);
+						if(get_config('exacomp', 'assessment_topic_diffLevel') == 1 || get_config('exacomp', 'assessment_descriptor_diffLevel') == 1){
+						    $niveau = @$studentdata->print_grades_anlage_leb ? $descriptor->teacher_eval_niveau_text : $descriptor->teacher_eval_niveau_text;
+						    $templateProcessor->setValue("dvalue", $niveau, 1);
+						}
 					}
 
 					$templateProcessor->deleteRow("descriptor");
