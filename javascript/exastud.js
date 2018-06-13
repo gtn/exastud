@@ -42,14 +42,19 @@ $.extend(window.block_exastud, {});
         $('.exa_table :checkbox[name=checkallornone]').closest('table').find(':checkbox:not([name=checkallornone]):first').click().click();
     });
 
+    function disableButton(){
+    	$( '.btn, .btn-primary' ).prop( "disabled", true );
+    }
+    
+    function enableButton(){
+    	$( '.btn, .btn-primary' ).prop( "disabled", false );
+    }
+    
     $(function() {
         // moodle 33 applys the style to <textarea>, but moodle 33 to the surrounding div
         var textareas = $('textarea.limit-input-length, .limit-input-length textarea');
-        textareas.each(function() {
-               // $(this).data('limit-input-initial-height', $(this).outerHeight());
-            })
 
-            .on('keypress keyup change input propertychange paste', function(e) {
+            textareas.on('keypress keyup change input propertychange paste', function(e) {
                 var max = 550;
                 var newText = this.value;
                 var eachLine = newText.split('\n');
@@ -84,49 +89,42 @@ $.extend(window.block_exastud, {});
                 }
 
 
-                if (this.value.length == max) {
-                    e.preventDefault();
-                    $(this).css({
-                        'background-color': '#FFF0F0',
-                        'color': '#D82323',
-                    });
-                } else if (this.value.length > max) {
+//                if (this.value.length == max) {
+//                    e.preventDefault();
+//                    $(this).css({
+//                        'background-color': '#FFF0F0',
+//                        'color': '#D82323',
+//                    });
+                if (this.value.length > max) {
                     // Maximum exceeded
-                    this.value = this.value.substring(0, max);
+                	disableButton();
                     $(this).css({
                         'background-color': '#FFF0F0',
                         'color': '#D82323',
                     });
-                } else {
-
-                    $(this).css({
-                        'background-color': '',
-                        'color': '',
-                    });
-                }
-				
-				if ((eachLine.length + extralines) > lineLimit) {
-                    text = "";
-                    for (j = 0; j < (lineLimit - extralines); j++) {
-                        text += eachLine[j];
-                        text += "\n";
-                    }
+                } else if ((eachLine.length + extralines) > lineLimit) {
+//                    text = "";
+//                    for (j = 0; j < (lineLimit - extralines); j++) {
+//                        text += eachLine[j];
+//                        text += "\n";
+//                    }
+					disableButton();
                     $(this).css({
                         'background-color': '#FFF0F0',
                         'color': '#D82323',
                     });
-					if(eachLine[j].length >= 90){
-					text += eachLine[j].substring(0, 90);
-					$(this).css({
-                        'background-color': '#FFF0F0',
-                        'color': '#D82323',
-                    });
-					}
-                    this.value = text;
+//					if(eachLine[j].length >= 90){
+//					text += eachLine[j].substring(0, 90);
+//					$(this).css({
+//                        'background-color': '#FFF0F0',
+//                        'color': '#D82323',
+//                    });
+//					}
+//                    this.value = text;
 
                     
                 } else {
-
+                	enableButton();
                     $(this).css({
                         'background-color': '',
                         'color': '',
