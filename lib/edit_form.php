@@ -218,6 +218,8 @@ class student_other_data_form extends moodleform {
 				$mform->setType($dataid, PARAM_RAW);
 				if($input['lines'] == 3){
 				    $mform->addElement('static', '', '', block_exastud_trans('de:Max. 3 Zeilen / 250 Zeichen'));
+				}elseif($input['lines'] == 5){
+				    $mform->addElement('static', '', '', block_exastud_trans('de:Max. 5 Zeilen / 400 Zeichen'));
 				}else {
 				    $mform->addElement('static', '', '', block_exastud_trans('de:Max. 8 Zeilen / 550 Zeichen'));
 				}

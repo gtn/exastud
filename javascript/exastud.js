@@ -68,6 +68,9 @@ $.extend(window.block_exastud, {});
                 	max = 250;
                 }
 
+                	lineLimit = 5;
+                	max = 400;
+                }
 
                 while (i < eachLine.length) {
                     if (eachLine[i].length > 90) {
