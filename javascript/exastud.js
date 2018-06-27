@@ -68,6 +68,7 @@ $.extend(window.block_exastud, {});
                 	max = 250;
                 }
 
+                if($(this).outerHeight() > 99 && $(this).outerHeight() <111){
                 	lineLimit = 5;
                 	max = 400;
                 }
