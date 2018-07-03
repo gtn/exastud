@@ -63,14 +63,14 @@ $.extend(window.block_exastud, {});
                 var text = "";
                 var lineLimit = 8;
                 
-                if($(this).outerHeight() == 3*20){
+                if($(this).outerHeight() < 100){
                 	lineLimit = 3;
                 	max = 250;
-                }else if($(this).outerHeight() > 99 && $(this).outerHeight() <111){
+                }else if($(this).outerHeight() > 99 && $(this).outerHeight() <115){
                 	lineLimit = 5;
                 	max = 400;
                 }else{
-                	if($(this).outerWidth() == 750){
+                	if($(this).outerWidth() > 750){
 										max = 680;
 									}else{
 										max = 550;
