@@ -67,6 +67,7 @@ if ($type == BLOCK_EXASTUD_DATA_ID_LERN_UND_SOZIALVERHALTEN) {
 	$categories = [
 		BLOCK_EXASTUD_DATA_ID_LERN_UND_SOZIALVERHALTEN => [
 			'title' => block_exastud_trans('de:Lern- und Sozialverhalten'),
+			'cols' => 50,
 		],
 	];
 	$classheader = $reviewclass->title.' - '.block_exastud_trans('de:Lern- und Sozialverhalten');
