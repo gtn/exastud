@@ -150,10 +150,10 @@ class student_edit_form extends moodleform {
 		$mform->setExpanded('vorschlag_header');
 		$mform->addElement('textarea', 'vorschlag', '', ['cols' => 50, 'rows' => 5,
 			'class' => 'limit-input-length',
-			'style' => "width: 738px; height: 160px; resize: none; font-family: Arial !important; font-size: 11pt !important;",
+			'style' => "width: 750px; height: 160px; resize: none; font-family: Arial !important; font-size: 11pt !important;",
 		]);
 		$mform->setType('vorschlag', PARAM_RAW);
-		$mform->addElement('static', '', '', block_exastud_trans('de:Max. 8 Zeilen / 550 Zeichen'));
+		$mform->addElement('static', '', '', block_exastud_trans('de:Max. 8 Zeilen / 680 Zeichen'));
 		$mform->addElement('header', 'review_header', block_exastud_trans("de:Fachkompetenzen"));
 		$mform->setExpanded('review_header');
 		if ($this->_customdata['review.modified']) {
@@ -176,7 +176,7 @@ class student_edit_form extends moodleform {
 
 		$niveauarray[] =& $mform->createElement('select', 'niveau', block_exastud_get_string('de:Niveau'), ['' => ''] + block_exastud\global_config::get_niveau_options());
 		$niveauarray[] =& $mform->createElement('static', '', "", "");
-		$niveauarray[] =& $mform->createElement('static', 'lastPeriodNiveau', "asdf", block_exastud_trans('de:lastPeriodNiveau'));
+		$niveauarray[] =& $mform->createElement('static', 'lastPeriodNiveau', "", block_exastud_trans('de:lastPeriodNiveau'));
 		$niveauarray[] =& $mform->createElement('static', '', "", ")");
 		$mform->addGroup($niveauarray, 'niveauarray',  block_exastud_trans('de:Niveau'), array("( ", block_exastud_trans('de:letztes Halbjahr: '), ' '), false);
 		

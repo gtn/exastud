@@ -70,7 +70,7 @@ $.extend(window.block_exastud, {});
                 	lineLimit = 5;
                 	max = 400;
                 }else{
-                	if($(this).outerWidth() > 750){
+                	if($(this).outerWidth() > 749){
 										max = 680;
 									}else{
 										max = 550;
