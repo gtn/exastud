@@ -20,7 +20,14 @@
 defined('MOODLE_INTERNAL') || die();
 
 $plugin->component = 'block_exastud';
+<<<<<<< HEAD
 $plugin->release  = "4.6.3";
 $plugin->version   = 2018061500;
+=======
+
+$plugin->release  = "4.6.2";
+$plugin->version   = 2018062701;
+
+>>>>>>> c1b03d3... Lern und Sozialverhalten, max Zeichen 680
 $plugin->requires  = 2015051100;
 $plugin->maturity = MATURITY_ALPHA;

@@ -170,3 +170,5 @@ $string['total'] = 'total score';
 $string['project_based_total'] = 'total score';
 $string['project_based_upload_picture'] = 'You can upload a logo for a project-specific report';
 $string['project_based_errorinsertingclass'] = 'Error when inserting project';
+$string['lastPeriodGrade'] = 'LetztePeriodeBewertung';
+$string['lastPeriodNiveau'] = 'LetztePeriodeNiveau';

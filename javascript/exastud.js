@@ -66,11 +66,22 @@ $.extend(window.block_exastud, {});
                 if($(this).outerHeight() == 3*20){
                 	lineLimit = 3;
                 	max = 250;
+<<<<<<< HEAD
                 }
 
+=======
+                }else if($(this).outerHeight() > 99 && $(this).outerHeight() <111){
+>>>>>>> c1b03d3... Lern und Sozialverhalten, max Zeichen 680
                 	lineLimit = 5;
                 	max = 400;
+                }else{
+                	if($(this).outerWidth() == 750){
+										max = 680;
+									}else{
+										max = 550;
+									}
                 }
+                
 
                 while (i < eachLine.length) {
                     if (eachLine[i].length > 90) {

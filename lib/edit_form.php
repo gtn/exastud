@@ -176,14 +176,22 @@ class student_edit_form extends moodleform {
 
 		$niveauarray[] =& $mform->createElement('select', 'niveau', block_exastud_get_string('de:Niveau'), ['' => ''] + block_exastud\global_config::get_niveau_options());
 		$niveauarray[] =& $mform->createElement('static', '', "", "");
+<<<<<<< HEAD
 		$niveauarray[] =& $mform->createElement('static', 'lastPeriodNiveau', "",'lastPeriodNiveau');
+=======
+		$niveauarray[] =& $mform->createElement('static', 'lastPeriodNiveau', "asdf", block_exastud_trans('de:lastPeriodNiveau'));
+>>>>>>> c1b03d3... Lern und Sozialverhalten, max Zeichen 680
 		$niveauarray[] =& $mform->createElement('static', '', "", ")");
 		$mform->addGroup($niveauarray, 'niveauarray',  block_exastud_trans('de:Niveau'), array("( ", block_exastud_trans('de:letztes Halbjahr: '), ' '), false);
 		
 		$gradearray=array();
 		$gradearray[] =& $mform->createElement('select', 'grade', block_exastud_get_string('de:Note'), ['' => ''] + $this->_customdata['grade_options']);
 		$gradearray[] =& $mform->createElement('static', '', "", "");
+<<<<<<< HEAD
 		$gradearray[] =& $mform->createElement('static', 'lastPeriodGrade', "", 'lastPeriodGrade');
+=======
+		$gradearray[] =& $mform->createElement('static', 'lastPeriodGrade', "", block_exastud_trans('de:lastPeriodGrade'));
+>>>>>>> c1b03d3... Lern und Sozialverhalten, max Zeichen 680
 		$gradearray[] =& $mform->createElement('static', '', "", ")");
 		$mform->addGroup($gradearray, 'gradearray', block_exastud_trans('de:Note'), array('( ',  block_exastud_trans('de:letztes Halbjahr: '), " " ), false);
 
@@ -202,7 +210,7 @@ class student_other_data_form extends moodleform {
 			if (empty($input['type']) || $input['type'] == 'textarea') {
 				$mform->addElement('header', 'header_'.$dataid, $input['title']);
 				$mform->setExpanded('header_'.$dataid);
-
+				$maxchars='550';
 				if (@$this->_customdata['modified']) {
 					$mform->addElement('static', '', '', $this->_customdata['modified']);
 				}
@@ -210,10 +218,13 @@ class student_other_data_form extends moodleform {
 				if (empty($input['lines'])) {
 					$input['lines'] = 8;
 				}
+				if (empty($input['cols'])) {
+					$input['cols'] = 45;
+				}
 
-				$mform->addElement('textarea', $dataid, '', ['cols' => 50, 'rows' => 10,
+				$mform->addElement('textarea', $dataid, '', ['cols' => $input['cols'], 'rows' => 10,
 					'class' => 'limit-input-length',
-					'style' => "width: 738px; height: ".($input['lines'] * 20)."px; resize: none; font-family: Arial !important; font-size: 11pt !important;",
+					'style' => "width: ".($input['cols'] * 15)."px; height: ".($input['lines'] * 20)."px; resize: none; font-family: Arial !important; font-size: 11pt !important;",
 				]);
 				$mform->setType($dataid, PARAM_RAW);
 				if($input['lines'] == 3){
@@ -221,7 +232,11 @@ class student_other_data_form extends moodleform {
 				}elseif($input['lines'] == 5){
 				    $mform->addElement('static', '', '', block_exastud_trans('de:Max. 5 Zeilen / 400 Zeichen'));
 				}else {
-				    $mform->addElement('static', '', '', block_exastud_trans('de:Max. 8 Zeilen / 550 Zeichen'));
+					if($input['cols'] == 50){
+				    $mform->addElement('static', '', '', block_exastud_trans('de:Max. 8 Zeilen / 680 Zeichen'));
+				  }else{
+				  	$mform->addElement('static', '', '', block_exastud_trans('de:Max. 8 Zeilen / 550 Zeichen'));
+				  }
 				}
 				
 			} elseif ($input['type'] == 'text') {
