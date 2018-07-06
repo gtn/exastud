@@ -834,7 +834,7 @@ class printer {
 			foreach ($normal_subjects as $subject) {
 				$subjectData = block_exastud_get_graded_review($class->id, $subject->id, $student->id);
 
-				$value = $subjectData ? $subjectData->grade : '';
+				$value = $subjectData ? $subjectData->niveau.' '.$subjectData->grade : '';
 				$templateProcessor->setValue("g#$rowi", $value, 1);
 			}
 			$templateProcessor->setValue("g#$rowi", '');
@@ -863,7 +863,7 @@ class printer {
 					}
 				}
 
-				$value = $subjectData ? $subjectData->grade : '';
+				$value = $subjectData ? $subjectData->niveau.' '.$subjectData->grade : '';
 				$templateProcessor->setValue("gsg#$rowi", $value, 1);
 				$templateProcessor->setValue("gss#$rowi", $value ? $subject->shorttitle_stripped : '', 1);
 			}
@@ -976,7 +976,7 @@ class printer {
 			foreach ($class_subjects as $subject) {
 				$subjectData = block_exastud_get_graded_review($class->id, $subject->id, $student->id);
 
-				$value = $subjectData ? @$subjectData->grade : '';
+				$value = $subjectData ? @$subjectData->niveau.' '.$subjectData->grade : '';
 				$sheet->setCellValueByColumnAndRow($cell++, $rowi, $value);
 			}
 
