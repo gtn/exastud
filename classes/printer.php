@@ -604,16 +604,18 @@ class printer {
 			$templateProcessor->cloneBlock('subjectif', count($subjects), true);
 
 
-			if(get_config('exacomp', 'assessment_topic_diffLevel') == 1 || get_config('exacomp', 'assessment_comp_diffLevel') == 1) {
-			    $difflvl = get_config('exacomp', 'assessment_diffLevel_options');
-			    $templateProcessor->duplicateCol('compheader', 2);
-			    $templateProcessor->setValue("compheader", "Niveau", 1);
-			   
-		    }
-		    $templateProcessor->setValue("compheader", "Note", 1);
+
 			
 			foreach ($subjects as $subject) {
 				$templateProcessor->setValue("subject", $subject->title, 1);
+				
+				if(get_config('exacomp', 'assessment_topic_diffLevel') == 1 || get_config('exacomp', 'assessment_comp_diffLevel') == 1) {
+				    $difflvl = get_config('exacomp', 'assessment_diffLevel_options');
+				    $templateProcessor->duplicateCol('compheader', 2);
+				    $templateProcessor->setValue("compheader", "Niveau", 1);
+				    
+				}
+				$templateProcessor->setValue("compheader", "Note", 1);
 
 				foreach ($subject->topics as $topic) {
 			     	$templateProcessor->cloneRowToEnd("topic");			
