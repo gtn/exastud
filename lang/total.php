@@ -599,4 +599,13 @@ return [
 		null,
 		'Error when inserting project',
 	],
+
+    'html_report' => [
+        'Gesamtübersicht',
+        'Overview',
+    ],
+    'download' => [
+        'Download',
+        'Download',
+    ],
 ];

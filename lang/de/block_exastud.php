@@ -169,5 +169,5 @@ $string['delete_confirmation'] = 'Soll "{$a}" wirklich gelöscht werden?';
 // === grp3 ===
 $string['total'] = 'Gesamtpunkte';
 $string['project_based_total'] = 'Gesamtpunkte';
-$string['lastPeriodGrade'] = 'LetztePeriodeBewertung';
-$string['lastPeriodNiveau'] = 'LetztePeriodeNiveau';
+$string['html_report'] = 'Gesamtübersicht';
+$string['download'] = 'Download';

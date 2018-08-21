@@ -212,7 +212,7 @@ if ($classid = optional_param('classid', 0, PARAM_INT)) {
         $templates['Anlage zum Lernentwicklungsbericht'] = 'Anlage zum Lernentwicklungsbericht';
         $templates['Anlage zum LernentwicklungsberichtAlt'] = 'Anlage zum Lernentwicklungsbericht (Alt)';
     }
-    $templates['html_report'] = 'Ausgabe am Bildschirm';
+    $templates['html_report'] = block_exastud_get_string('html_report');
     $templates += \block_exastud\print_templates::get_class_other_print_templates($class);
     
     echo $output->header('report');
@@ -237,10 +237,7 @@ if ($classid = optional_param('classid', 0, PARAM_INT)) {
 //         echo '<hr>';
 //     }
     
-    echo '<input type="submit" value="' . block_exastud_trans([
-        'de:Weiter',
-        'en:Next'
-    ]) . '"/>';
+    echo '<input type="submit" value="' . block_exastud_get_string('download'). '"/>';
     
     echo $output->footer();
 } else {
