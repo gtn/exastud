@@ -574,6 +574,10 @@ return [
 		'Soll "{$a}" wirklich gelöscht werden?',
 		'Do you really want to delete "{$a}"?',
 	],
+	'logging' => [
+		'Logging aktivieren',
+		'Activate logging',
+	],
 
 
 	// === grp3 ===
@@ -607,5 +611,131 @@ return [
     'download' => [
         'Download',
         'Download',
+    ],
+
+    // === events ===
+    'event_classcreated_name' => [
+        'Class created',
+        'Class created'
+    ],
+    'event_classdeleted_name' => [
+        'Class deleted',
+        'Class deleted'
+    ],
+    'event_classupdated_name' => [
+        'Class updated',
+        'Class updated'
+    ],
+    'event_classmemberassigned_name' => [
+        'User assigned to class',
+        'User assigned to class'
+    ],
+    'event_classmemberunassigned_name' => [
+        'User unassigned from class',
+        'User unassigned from class'
+    ],
+    'event_classteacherassigned_name' => [
+        'Teacher assigned to class',
+        'Teacher assigned to class'
+    ],
+    'event_classteacherunassigned_name' => [
+        'Teacher unassigned from class',
+        'Teacher unassigned from class'
+    ],
+    'event_classdatachanged_name' => [
+        'Data of the class was changed',
+        'Data of the class was changed'
+    ],
+    'event_studentdatachanged_name' => [
+        'Data of the student was changed',
+        'Data of the student was changed'
+    ],
+    'event_subjectstudentdatachanged_name' => [
+        'Data of the student was changed for subject',
+        'Data of the student was changed for subject'
+    ],
+    'event_classassessmentcategory_added_name' => [
+        'Assessment category was added to class',
+        'Assessment category was added to class'
+    ],
+    'event_classassessmentcategory_deleted_name' => [
+        'Assessment category was deleted from class',
+        'Assessment category was deleted from class'
+    ],
+    'event_periodcreated_name' => [
+            'Period created',
+            'Period created'
+    ],
+    'event_perioddeleted_name' => [
+            'Period deleted',
+            'Period deleted'
+    ],
+    'event_periodupdated_name' => [
+            'Period updated',
+            'Period updated'
+    ],
+    'event_competencecreated_name' => [
+            'Competence created',
+            'Competence created'
+    ],
+    'event_competenceupdated_name' => [
+            'Competence updated',
+            'Competence updated'
+    ],
+    'event_competencedeleted_name' => [
+            'Competence deleted',
+            'Competence deleted'
+    ],
+    'event_gradingoptioncreated_name' => [
+            'Grading option created',
+            'Grading option created'
+    ],
+    'event_gradingoptionupdated_name' => [
+            'Grading option updated',
+            'Grading option updated'
+    ],
+    'event_gradingoptiondeleted_name' => [
+            'Grading option deleted',
+            'Grading option deleted'
+    ],
+    'event_educationplancreated_name' => [
+            'Education plan created',
+            'Education plan created'
+    ],
+    'event_educationplanupdated_name' => [
+            'Education plan updated',
+            'Education plan updated'
+    ],
+    'event_educationplandeleted_name' => [
+            'Education plan deleted',
+            'Education plan deleted'
+    ],
+    'event_subjectcreated_name' => [
+            'Subject created',
+            'Subject created'
+    ],
+    'event_subjectupdated_name' => [
+            'Subject updated',
+            'Subject updated'
+    ],
+    'event_subjectdeleted_name' => [
+            'Subject deleted',
+            'Subject deleted'
+    ],
+    'event_studenthidden_name' => [
+            'Student hidden',
+            'Student hidden'
+    ],
+    'event_studentshown_name' => [
+            'Student shown',
+            'Student shown'
+    ],
+    'event_studentreviewcategorychanged_name' => [
+            'Student category review changed',
+            'Student category review changed'
+    ],
+    'event_studentreviewchanged_name' => [
+            'Student review changed',
+            'Student review changed'
     ],
 ];

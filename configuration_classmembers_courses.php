@@ -63,18 +63,33 @@ if (optional_param('action', '', PARAM_TEXT) == 'add') {
 	$userids = block_exastud\param::optional_array('userids', [PARAM_INT => PARAM_BOOL]);
 
 	foreach ($userids as $userid => $add) {
+        $userData = $DB->get_record('user', ['id' => $userid]);
 		if ($add) {
-			g::$DB->insert_or_update_record('block_exastudclassstudents', [
+            $existing = $DB->get_record('block_exastudclassstudents', ['studentid' => $userid, 'classid' => $class->id]);
+            g::$DB->insert_or_update_record('block_exastudclassstudents', [
 				'timemodified' => time(),
 			], [
 				'studentid' => $userid,
 				'classid' => $class->id,
 			]);
+			// add log only if record was added, but not updated
+            if (!$existing) {
+                \block_exastud\event\classmember_assigned::log(['objectid' => $class->id,
+                        'courseid' => $courseid,
+                        'relateduserid' => $userid,
+                        'other' => ['classtitle' => $class->title,
+                                    'relatedusername' => $userData->firstname.' '.$userData->lastname]]);
+            }
 		} else {
 			$DB->delete_records('block_exastudclassstudents', [
 				'studentid' => $userid,
 				'classid' => $class->id,
 			]);
+            \block_exastud\event\classmember_unassigned::log(['objectid' => $class->id,
+                    'courseid' => $courseid,
+                    'relateduserid' => $userid,
+                    'other' => ['classtitle' => $class->title,
+                            'relatedusername' => $userData->firstname.' '.$userData->lastname]]);
 		}
 	}
 

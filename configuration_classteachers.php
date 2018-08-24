@@ -65,15 +65,36 @@ if ($frm = data_submitted()) {
 					'classid' => $class->id,
 					'subjectid' => $subjectid,
 				]);
+
+            $userData = $DB->get_record('user', ['id' => $adduser]);
+            $subjectData = $DB->get_record('block_exastudsubjects', ['id' => $subjectid]);
+            \block_exastud\event\classteacher_assigned::log(['objectid' => $class->id,
+                    'courseid' => $courseid,
+                    'relateduserid' => $adduser,
+                    'other' => ['subjectid' => $subjectid,
+                                'subjecttitle' => $subjectData->title,
+                                'classtitle' => $class->title,
+                                'relatedusername' => $userData->firstname.' '.$userData->lastname]]);
 		}
 	} else if ($remove and !empty($frm->removeselect)) {
 		foreach ($frm->removeselect as $record_id) {
 			if (!$record_id = clean_param($record_id, PARAM_INT)) {
 				continue;
 			}
-			
-			$DB->delete_records('block_exastudclassteachers', array('id'=>$record_id, 'classid'=>$class->id));
-		}
+            $existingrecord = $DB->get_record('block_exastudclassteachers', ['id' => $record_id]);
+
+            $DB->delete_records('block_exastudclassteachers', array('id'=>$record_id, 'classid'=>$class->id));
+
+            $userData = $DB->get_record('user', ['id' => $existingrecord->teacherid]);
+            $subjectData = $DB->get_record('block_exastudsubjects', ['id' => $existingrecord->subjectid]);
+            \block_exastud\event\classteacher_unassigned::log(['objectid' => $class->id,
+                    'courseid' => $courseid,
+                    'relateduserid' => $existingrecord->teacherid,
+                    'other' => ['subjectid' => $existingrecord->subjectid,
+                                'subjecttitle' => $subjectData->title,
+                                'classtitle' => $class->title,
+                                'relatedusername' => $userData->firstname.' '.$userData->lastname]]);
+            }
 	} else if ($showall) {
 		$searchtext = '';
 	}

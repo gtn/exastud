@@ -56,14 +56,31 @@ if ($frm = data_submitted()) {
 			$newuser->timemodified = time();
 			
 			$DB->insert_record('block_exastudclassstudents', $newuser);
+            $userData = $DB->get_record('user', ['id' => $newuser->studentid]);
+            \block_exastud\event\classmember_assigned::log(['objectid' => $newuser->classid,
+                                                            'courseid' => $courseid,
+                                                            'relateduserid' => $newuser->studentid,
+                                                            'other' => ['classtitle' => $class->title,
+                                                                    'relatedusername' => $userData->firstname.' '.$userData->lastname]
+                                                            ]);
 		}
 	} else if ($remove and !empty($frm->removeselect)) {
 		foreach ($frm->removeselect as $record_id) {
 			if (!$record_id = clean_param($record_id, PARAM_INT)) {
 				continue;
 			}
+			// need for getting student id
+            $relation = $DB->get_record('block_exastudclassstudents', ['id' => $record_id]);
+			$unassigneduserid = $relation->studentid;
 			
 			$DB->delete_records('block_exastudclassstudents', array('id'=>$record_id, 'classid'=>$class->id));
+
+            $userData = $DB->get_record('user', ['id' => $unassigneduserid]);
+            \block_exastud\event\classmember_unassigned::log(['objectid' => $class->id,
+                                                            'courseid' => $courseid,
+                                                            'relateduserid' => $unassigneduserid,
+                                                            'other' => ['classtitle' => $class->title,
+                                                                    'relatedusername' => $userData->firstname.' '.$userData->lastname]]);
 		}
 	} else if ($showall) {
 		$searchtext = '';

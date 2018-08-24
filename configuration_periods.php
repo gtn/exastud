@@ -49,12 +49,17 @@ if ($periodform->is_cancelled()) {
 	
 	if(isset($periodedit->id) && ($periodedit->action == 'edit')) {
 		$newperiod->id = $periodedit->id;
+        $oldPeriodData = $DB->get_record('block_exastudperiod', array('id'=>$newperiod->id));
 		
 		$DB->update_record('block_exastudperiod', $newperiod);
+        \block_exastud\event\period_updated::log(['objectid' => $newperiod->id,
+                                                    'other' => [
+                                                            'perioddata' => serialize($newperiod),
+                                                            'oldperioddata' => serialize($oldPeriodData)]]);
 	}
 	else if($periodedit->action == 'new') {
-		$DB->insert_record('block_exastudperiod', $newperiod);
-		//add_to_log($courseid, 'block_exastud', 'new', 'configuration_periods.php?courseid=' . $courseid . '&action=new', '');
+		$newid = $DB->insert_record('block_exastudperiod', $newperiod);
+        \block_exastud\event\period_created::log(['objectid' => $newid, 'other' => ['perioddata' => serialize($newperiod)]]);
 	}
 
 	redirect('periods.php?courseid=' . $courseid);
@@ -73,15 +78,16 @@ if($action == 'edit') {
 }
 else if($action == 'delete') {
 	require_sesskey();
-
+    $periodData = $DB->get_record('block_exastudperiod', array('id'=>$periodid));
 	$DB->delete_records('block_exastudperiod', array('id'=>$periodid));
+    \block_exastud\event\period_deleted::log(['objectid' => $periodid, 'other' => ['perioddata' => serialize($periodData)]]);
 	redirect('periods.php?courseid=' . $courseid);
 }
 else {
 	$period->action = 'new';
 	$period->description = '';
 	$period->starttime = time();
-	// make the deafult period one month long
+	// make the default period one month long
 	$period->endtime = mktime(0,0,0,date('m')+1, date('d'), date('Y'));
 	$period->id = 0;
 }

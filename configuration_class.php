@@ -45,8 +45,10 @@ if ($action == 'delete') {
 	if (!optional_param('confirm', false, PARAM_BOOL)) {
 		throw new moodle_exception('not confirmed');
 	}
-
+    $classData = block_exastud_get_class($class->id);
 	$DB->delete_records('block_exastudclass', ['id' => $class->id]);
+
+    \block_exastud\event\class_deleted::log(['objectid' => $class->id, 'other' => ['classtitle' => $classData->title]]);
 
 	redirect(new moodle_url('/blocks/exastud/configuration_classes.php?courseid='.$courseid));
 }

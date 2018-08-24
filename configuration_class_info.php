@@ -39,6 +39,14 @@ if (!$classid) {
 $class->classid = $class->id;
 $class->courseid = $courseid;
 
+// TODO: does it need?
+// get block_context
+//if ($courseid > 0) {
+//    $blockinstance = $DB->insert_record('block_instances', $blockinstance);
+//    $cm = get_coursemodule_from_instance('wiki', $wiki->id);
+//    $context = context_module::instance($cm->id);
+//}
+
 $classform = new class_edit_form();
 
 if ($classform->is_cancelled()) {
@@ -59,10 +67,18 @@ if ($classform->is_cancelled()) {
 	if ($class->id) {
 		$newclass->id = $class->id;
 		$DB->update_record('block_exastudclass', $newclass);
+        \block_exastud\event\class_updated::log(['objectid' => $newclass->id,
+                                                'courseid' => $courseid,
+                                                'other' => ['classtitle' => $classedit->title,
+                                                            'oldclasstitle' => $class->title]]);
 	} else {
 		$newclass->userid = $USER->id;
 		$newclass->periodid = $curPeriod->id;
 		$newclass->id = $DB->insert_record('block_exastudclass', $newclass);
+
+		\block_exastud\event\class_created::log(['objectid' => $newclass->id,
+                                                'courseid' => $courseid,
+                                                'other' => ['classtitle' => $classedit->title]]);
 	}
 
 	block_exastud_set_class_data($newclass->id, BLOCK_EXASTUD_DATA_ID_CLASS_DEFAULT_TEMPLATEID, $classedit->{BLOCK_EXASTUD_DATA_ID_CLASS_DEFAULT_TEMPLATEID});

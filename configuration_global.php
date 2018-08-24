@@ -74,16 +74,22 @@ if ($action == 'save-categories') {
 		if (isset($availablecategories[$item->id])) {
 			// update
 			$DB->update_record('block_exastudcate', $item);
-
+			// only if updated
+			if ($availablecategories[$item->id]->title != $item->title) {
+                \block_exastud\event\competence_updated::log(['objectid' => $item->id,
+                        'other' => ['title' => $item->title, 'oldtitle' => $availablecategories[$item->id]->title]]);
+            }
 			unset($todelete[$item->id]);
 		} else {
 			// insert
-			$DB->insert_record('block_exastudcate', $item);
+			$newid = $DB->insert_record('block_exastudcate', $item);
+            \block_exastud\event\competence_created::log(['objectid' => $newid, 'other' => ['title' => $item->title]]);
 		}
 	}
 
 	foreach ($todelete as $item) {
 		$DB->delete_records('block_exastudcate', array('id' => $item->id));
+        \block_exastud\event\competence_deleted::log(['objectid' => $item->id, 'other' => ['title' => $item->title]]);
 	}
 
 	echo 'ok';
@@ -116,17 +122,23 @@ if ($action == 'save-subjects') {
 		if (isset($availablesubjects[$item->id])) {
 			// update
 			$DB->update_record('block_exastudsubjects', $item);
-
+            // only if updated
+            if ($availablesubjects[$item->id]->title != $item->title) {
+                \block_exastud\event\competence_updated::log(['objectid' => $item->id,
+                        'other' => ['title' => $item->title, 'oldtitle' => $availablesubjects[$item->id]->title]]);
+            }
 			unset($todelete[$item->id]);
 		} else {
 			// insert
 			$item->bpid = $bpid;
-			$DB->insert_record('block_exastudsubjects', $item);
+			$newid = $DB->insert_record('block_exastudsubjects', $item);
+            \block_exastud\event\subject_created::log(['objectid' => $newid, 'other' => ['title' => $item->title]]);
 		}
 	}
 
 	foreach ($todelete as $item) {
 		$DB->delete_records('block_exastudsubjects', ['id' => $item->id]);
+        \block_exastud\event\subject_deleted::log(['objectid' => $item->id, 'other' => ['title' => $item->title]]);
 	}
 
 	echo 'ok';
@@ -155,16 +167,22 @@ if ($action == 'save-evalopts') {
 		if (isset($availableevalopts[$item->id])) {
 			// update
 			$DB->update_record('block_exastudevalopt', $item);
-
+            // only if updated
+            if ($availableevalopts[$item->id]->title != $item->title) {
+                \block_exastud\event\gradingoption_updated::log(['objectid' => $item->id,
+                        'other' => ['title' => $item->title, 'oldtitle' => $availableevalopts[$item->id]->title]]);
+            }
 			unset($todelete[$item->id]);
 		} else {
 			// insert
-			$DB->insert_record('block_exastudevalopt', $item);
+            $newid = $DB->insert_record('block_exastudevalopt', $item);
+            \block_exastud\event\gradingoption_created::log(['objectid' => $newid, 'other' => ['title' => $item->title]]);
 		}
 	}
 
 	foreach ($todelete as $item) {
 		$DB->delete_records('block_exastudevalopt', array('id' => $item->id));
+        \block_exastud\event\gradingoption_deleted::log(['objectid' => $item->id, 'other' => ['title' => $item->title]]);
 	}
 
 	echo 'ok';
@@ -193,11 +211,16 @@ if ($action == 'save-bps') {
 		if (isset($availablebps[$item->id])) {
 			// update
 			$DB->update_record('block_exastudbp', $item);
-
+            // only if updated
+            if ($availablebps[$item->id]->title != $item->title) {
+                \block_exastud\event\educationplan_updated::log(['objectid' => $item->id,
+                        'other' => ['title' => $item->title, 'oldtitle' => $availablebps[$item->id]->title]]);
+            }
 			unset($todelete[$item->id]);
 		} else {
 			// insert
-			$DB->insert_record('block_exastudbp', $item);
+			$newid = $DB->insert_record('block_exastudbp', $item);
+            \block_exastud\event\educationplan_created::log(['objectid' => $newid, 'other' => ['title' => $item->title]]);
 		}
 	}
 
@@ -211,6 +234,7 @@ if ($action == 'save-bps') {
 		}
 
 		$DB->delete_records('block_exastudbp', ['id' => $item->id]);
+        \block_exastud\event\educationplan_deleted::log(['objectid' => $item->id, 'other' => ['title' => $item->title]]);
 	}
 
 	echo 'ok';

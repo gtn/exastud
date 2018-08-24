@@ -163,6 +163,7 @@ $string['settings_detailed_review_body'] = 'This setting allows you to see all t
 $string['settings_project_based_assessment'] = 'Project-based assessment';
 $string['settings_project_based_assessment_body'] = 'This setting allows you to use project-based assessment instead of class-assessment';
 $string['delete_confirmation'] = 'Do you really want to delete "{$a}"?';
+$string['logging'] = 'Activate logging';
 
 
 // === grp3 ===
@@ -172,3 +173,36 @@ $string['project_based_upload_picture'] = 'You can upload a logo for a project-s
 $string['project_based_errorinsertingclass'] = 'Error when inserting project';
 $string['html_report'] = 'Overview';
 $string['download'] = 'Download';
+
+// === events ===
+$string['event_classcreated_name'] = 'Class created';
+$string['event_classdeleted_name'] = 'Class deleted';
+$string['event_classupdated_name'] = 'Class updated';
+$string['event_classmemberassigned_name'] = 'User assigned to class';
+$string['event_classmemberunassigned_name'] = 'User unassigned from class';
+$string['event_classteacherassigned_name'] = 'Teacher assigned to class';
+$string['event_classteacherunassigned_name'] = 'Teacher unassigned from class';
+$string['event_classdatachanged_name'] = 'Data of the class was changed';
+$string['event_studentdatachanged_name'] = 'Data of the student was changed';
+$string['event_subjectstudentdatachanged_name'] = 'Data of the student was changed for subject';
+$string['event_classassessmentcategory_added_name'] = 'Assessment category was added to class';
+$string['event_classassessmentcategory_deleted_name'] = 'Assessment category was deleted from class';
+$string['event_periodcreated_name'] = 'Period created';
+$string['event_perioddeleted_name'] = 'Period deleted';
+$string['event_periodupdated_name'] = 'Period updated';
+$string['event_competencecreated_name'] = 'Competence created';
+$string['event_competenceupdated_name'] = 'Competence updated';
+$string['event_competencedeleted_name'] = 'Competence deleted';
+$string['event_gradingoptioncreated_name'] = 'Grading option created';
+$string['event_gradingoptionupdated_name'] = 'Grading option updated';
+$string['event_gradingoptiondeleted_name'] = 'Grading option deleted';
+$string['event_educationplancreated_name'] = 'Education plan created';
+$string['event_educationplanupdated_name'] = 'Education plan updated';
+$string['event_educationplandeleted_name'] = 'Education plan deleted';
+$string['event_subjectcreated_name'] = 'Subject created';
+$string['event_subjectupdated_name'] = 'Subject updated';
+$string['event_subjectdeleted_name'] = 'Subject deleted';
+$string['event_studenthidden_name'] = 'Student hidden';
+$string['event_studentshown_name'] = 'Student shown';
+$string['event_studentreviewcategorychanged_name'] = 'Student category review changed';
+$string['event_studentreviewchanged_name'] = 'Student review changed';

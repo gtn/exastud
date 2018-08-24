@@ -287,7 +287,7 @@ function block_exastud_get_review_class($classid, $subjectid) {
 		return isset($classes[$classid]) ? $classes[$classid] : null;
 	} else {
 		return $DB->get_record_sql("
-			SELECT ct.id, ct.id AS classteacherid, c.title, s.title AS subject_title, c.userid
+			SELECT ct.id, ct.id AS classteacherid, c.title, s.title AS subject_title, s.id as subject_id, c.userid
 			FROM {block_exastudclassteachers} ct
 			JOIN {block_exastudclass} c ON ct.classid=c.id
 			LEFT JOIN {block_exastudsubjects} s ON ct.subjectid = s.id
@@ -420,7 +420,7 @@ function block_exastud_set_class_data($classid, $name, $value) {
 }
 
 function block_exastud_set_class_student_data($classid, $userid, $name, $value) {
-	return block_exastud_set_subject_student_data($classid, 0, $userid, $name, $value);
+    return block_exastud_set_subject_student_data($classid, 0, $userid, $name, $value);
 }
 
 function block_exastud_set_subject_student_data($classid, $subjectid, $userid, $name, $value) {
@@ -430,7 +430,7 @@ function block_exastud_set_subject_student_data($classid, $subjectid, $userid, $
 		'subjectid' => $subjectid,
 		'name' => $name,
 	];
-
+    $olddata = block_exastud_get_subject_student_data($classid, $subjectid, $userid, $name);
 	if ($value === null) {
 		g::$DB->delete_records('block_exastuddata', $conditions);
 	} else {
@@ -438,6 +438,44 @@ function block_exastud_set_subject_student_data($classid, $subjectid, $userid, $
 			'value' => $value,
 		], $conditions);
 	}
+	// logging
+    // add to log only if data was changed
+    if ($olddata != $value) {
+	    // not for time data
+        $strpos_arr = function ($haystack, $needle) {
+            if(!is_array($needle)) $needle = array($needle);
+            foreach($needle as $what) {
+                if(($pos = strpos($haystack, $what))!==false) return $pos;
+            }
+            return false;
+        };
+        if ($strpos_arr($name, ['.timemodified', '.modifiedby', '_time']) === false && !in_array($name, ['review'])) { // 'review' works in studentreview_changed event
+            $classData = block_exastud_get_class($classid);
+            $userData = g::$DB->get_record('user', ['id' => $userid]);
+            $subjectData = g::$DB->get_record('block_exastudsubjects', ['id' => $subjectid]);
+            if ($subjectid === 0 && $userid === 0) { // classes data
+                \block_exastud\event\classdata_changed::log(['objectid' => $classid,
+                        'other' => ['name' => $name,
+                                    'value' => $value,
+                                    'classtitle' => $classData->title,
+                                    'oldvalue' => $olddata]]);
+            } else if ($subjectid === 0) { // student's data
+                \block_exastud\event\studentdata_changed::log(['objectid' => $classid, 'relateduserid' => $userid,
+                        'other' => ['name' => $name,
+                                    'value' => $value,
+                                    'classtitle' => $classData->title,
+                                    'relatedusername' => $userData->firstname.' '.$userData->lastname]]);
+            } else {
+                \block_exastud\event\subjectstudentdata_changed::log(['objectid' => $classid, 'relateduserid' => $userid,
+                        'other' => ['name' => $name,
+                                    'value' => $value,
+                                    'subjectid' => $subjectid,
+                                    'subjecttitle' => $subjectData->title,
+                                    'classtitle' => $classData->title,
+                                    'relatedusername' => $userData->firstname.' '.$userData->lastname]]);
+            }
+        }
+    }
 }
 
 function block_exastud_check_profile_fields() {

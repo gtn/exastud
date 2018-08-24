@@ -17,11 +17,36 @@
 //
 // This copyright notice MUST APPEAR in all copies of the script!
 
+namespace block_exastud\event;
+
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->component = 'block_exastud';
+require_once __DIR__.'/../../inc.php';
 
-$plugin->release  = "4.6.3";
-$plugin->version   = 2018082400;
-$plugin->requires  = 2015051100;
-$plugin->maturity = MATURITY_ALPHA;
+abstract class base extends \block_exastud\event {
+
+	static function log(array $data) {
+		// check if logging is enabled and then trigger the event
+		if (!get_config('exastud', 'logging')) {
+			return null;
+		}
+
+		// moodle doesn't allow objecttable parameter in $data
+		$objecttable = null;
+		if (!empty($data['objecttable'])) {
+			$objecttable = $data['objecttable'];
+			unset($data['objecttable']);
+		}
+
+		static::prepareData($data);
+
+		$obj = static::create($data);
+
+		// set objecttable here
+		if ($objecttable) {
+			$obj->data['objecttable'] = 'mdl_block_exastudclass';
+		}
+
+		return $obj->trigger();
+	}
+}

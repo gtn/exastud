@@ -75,7 +75,10 @@ namespace block_exastud\common {
 
 	abstract class event extends \core\event\base {
 
+	    static $uName = '';
+
 		protected static function prepareData(array &$data) {
+		    global $USER;
 			if (!isset($data['contextid'])) {
 				if (!empty($data['courseid'])) {
 					$data['contextid'] = \context_course::instance($data['courseid'])->id;
@@ -83,10 +86,14 @@ namespace block_exastud\common {
 					$data['contextid'] = \context_system::instance()->id;
 				}
 			}
+            $data['other']['uName'] = $USER->firstname.' '.$USER->lastname;
+            if (!isset($data['other']['whoDid'])) {
+                $data['other']['whoDid'] = 'The user \''.$data['other']['uName'].'\' (id: '.$USER->id.')';
+            }
 		}
 
 		static function log(array $data) {
-			static::prepareData($data);
+            static::prepareData($data);
 
 			return static::create($data)->trigger();
 		}

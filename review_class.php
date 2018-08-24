@@ -51,18 +51,42 @@ if ($action == 'update') {
     redirect($_SERVER['REQUEST_URI']);
 }
 
-if ($action == 'hide_student') {
-	g::$DB->insert_or_update_record('block_exastudclassteastudvis', [
-		'visible' => 0,
-	], [
-		'classteacherid' => $reviewclass->classteacherid,
-		'studentid' => required_param('studentid', PARAM_INT),
-	]);
-} elseif ($action == 'show_student') {
-	g::$DB->delete_records('block_exastudclassteastudvis', [
-		'classteacherid' => $reviewclass->classteacherid,
-		'studentid' => required_param('studentid', PARAM_INT),
-	]);
+if ($action == 'hide_student' || $action == 'show_student') {
+    $studentid = required_param('studentid', PARAM_INT);
+    $student = $DB->get_record('user', array('id' => $studentid));
+    $existing = $DB->get_record('block_exastudclassteastudvis', [
+            'classteacherid' => $reviewclass->classteacherid,
+            'studentid' => $studentid,
+    ]);
+    if ($action == 'hide_student') {
+        g::$DB->insert_or_update_record('block_exastudclassteastudvis', [
+                'visible' => 0,
+        ], [
+                'classteacherid' => $reviewclass->classteacherid,
+                'studentid' => $studentid,
+        ]);
+        if (!$existing) { // the form used also for another actions and thay can go to the link with hide_student
+            \block_exastud\event\student_hidden::log(['objectid' => $classid,
+                    'relateduserid' => $studentid,
+                    'other' => ['classtitle' => $reviewclass->title,
+                            'subjectid' => $reviewclass->subject_id,
+                            'subjecttitle' => $reviewclass->subject_title,
+                            'studentname' => $student->firstname.' '.$student->lastname]]);
+        }
+    } else if ($action == 'show_student') {
+        g::$DB->delete_records('block_exastudclassteastudvis', [
+                'classteacherid' => $reviewclass->classteacherid,
+                'studentid' => $studentid,
+        ]);
+        if ($existing) { // the form used also for another actions and thay can go to the link with show_student
+            \block_exastud\event\student_shown::log(['objectid' => $classid,
+                    'relateduserid' => $studentid,
+                    'other' => ['classtitle' => $reviewclass->title,
+                            'subjectid' => $reviewclass->subject_id,
+                            'subjecttitle' => $reviewclass->subject_title,
+                            'studentname' => $student->firstname.' '.$student->lastname]]);
+        }
+    }
 }
 
 $url = '/blocks/exastud/review_class.php';
