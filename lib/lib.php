@@ -202,7 +202,7 @@ function block_exastud_get_classes_all($sortByPeriod = false) {
 				'normal' AS type
 			FROM {block_exastudclass} c
             LEFT JOIN {block_exastudperiod} p ON p.id = c.periodid
-			ORDER BY ".($sortByPeriod ? "p.title, p.id, " : "")." c.title");
+			ORDER BY ".($sortByPeriod ? "p.description, p.id, " : "")." c.title");
 }
 
 function block_exastud_get_class_students($classid) {

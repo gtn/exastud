@@ -70,7 +70,7 @@ if ($classform->is_cancelled()) {
 		if (block_exastud_is_siteadmin() && $classedit->userid != $class->userid) {
             $newclass->userid = $classedit->userid;
         } else {
-            $newclass->userid = $USER->id;
+            $newclass->userid = $class->userid;
         }
 		$DB->update_record('block_exastudclass', $newclass);
         \block_exastud\event\class_updated::log(['objectid' => $newclass->id,

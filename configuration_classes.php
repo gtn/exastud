@@ -89,18 +89,27 @@ echo $output->link_button($CFG->wwwroot.'/blocks/exastud/import_class.php?course
 
 
 if (block_exastud_is_siteadmin()) {
-    $allClasses = block_exastud_get_classes_all();
+    $allClasses = block_exastud_get_classes_all(true);
     echo '<br><br>'.$output->heading(block_exastud_get_string('configuration_classes_onlyadmin'));
 
     $table = new html_table();
 
     $table->head = array(block_exastud_get_string('class'));
     $table->align = array("left");
-
+    $currentperiod = 0;
     foreach ($allClasses as $class) {
-        if (!in_array($class->id, $shownClasses)) {
+        if ($currentperiod != $class->periodid) {
+            $periodData = $DB->get_record('block_exastudperiod', ['id' => $class->periodid]);
             $table->data[] = [
-                    '<a href="configuration_class.php?courseid='.$courseid.'&classid='.$class->id.'">'.$class->title.'</a>',
+                    '<strong>'.date('d F Y, h:iA', $periodData->starttime).' - '.date('d F Y, h:iA', $periodData->endtime).'</strong>: '.$periodData->description.''
+            ];
+            $currentperiod = $class->periodid;
+        }
+        if (!in_array($class->id, $shownClasses)) {
+            $ownerData = $DB->get_record('user', ['id' => $class->userid]);
+            $table->data[] = [
+                    '<a href="configuration_class.php?courseid='.$courseid.'&classid='.$class->id.'">'.$class->title.'</a><br/>'.
+                    '<small>(id: '.$class->id.') '.$ownerData->firstname.' '.$ownerData->lastname.'</small>',
             ];
         }
     }
