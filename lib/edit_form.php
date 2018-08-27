@@ -59,6 +59,15 @@ class class_edit_form extends moodleform {
 		$select->setMultiple(true);
 		*/
 
+		// change class owner (only for siteadmin
+        if (block_exastud_is_siteadmin()) {
+            $headteachers = block_exastud_get_head_teachers_all();
+            $options = array();
+            foreach ($headteachers as $teacher) {
+                $options[$teacher->id] = $teacher->lastname.' '.$teacher->firstname;
+            }
+            $mform->addElement('select', 'userid', get_string('class_owner', 'block_exastud'), $options);
+        }
 
 		$this->add_action_buttons();
 	}

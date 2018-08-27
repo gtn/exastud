@@ -78,6 +78,10 @@ return [
 		'Meine Klassen',
 		'Class Configuration',
 	],
+	'configuration_classes_onlyadmin' => [
+		'Admin access',
+		'Admin access',
+	],
 	'project_based_configuration' => [
 		'Projekt konfigurieren',
 		'Edit project',
@@ -289,6 +293,10 @@ return [
 	'class' => [
 		'Klasse',
 		'Class',
+	],
+	'class_owner' => [
+		'Class owner',
+		'Class owner',
 	],
 	'project_based_class' => [
 		'Projekt',
@@ -737,5 +745,9 @@ return [
     'event_studentreviewchanged_name' => [
             'Student review changed',
             'Student review changed'
+    ],
+    'event_classownerupdated_name' => [
+            'Class owner updated',
+            'Class owner updated'
     ],
 ];

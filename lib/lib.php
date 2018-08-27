@@ -184,8 +184,25 @@ function block_exastud_get_head_teacher_class($classid) {
 			return $classes[$classid];
 		}
 	}
+	// only for Admin access.
+    if (block_exastud_is_siteadmin()) {
+        $classes = block_exastud_get_classes_all();
+        if (isset($classes[$classid])) {
+            return $classes[$classid];
+        }
+    }
 
-	throw new moodle_exception('class not found');
+	throw new moodle_exception('class ('.$classid.') not found');
+}
+
+// get ALL classes
+function block_exastud_get_classes_all($sortByPeriod = false) {
+    return g::$DB->get_records_sql("
+			SELECT c.*,
+				'normal' AS type
+			FROM {block_exastudclass} c
+            LEFT JOIN {block_exastudperiod} p ON p.id = c.periodid
+			ORDER BY ".($sortByPeriod ? "p.title, p.id, " : "")." c.title");
 }
 
 function block_exastud_get_class_students($classid) {
@@ -1550,4 +1567,38 @@ function block_exastud_get_certificate_issue_date_text($class) {
 
 function block_exastud_is_bw_active() {
 	return !!block_exastud_get_plugin_config('bw_active');
+}
+
+function block_exastud_is_siteadmin($userid = null) {
+    global $CFG, $USER;
+
+    if ($userid === null) {
+        $userid = $USER->id;
+    }
+
+    if (!$userid) {
+        return false;
+    }
+
+    $admins = explode(',', $CFG->siteadmins);
+    $result = in_array($userid, $admins);
+    return $result;
+}
+
+function block_exastud_get_head_teachers_all() {
+    global $DB, $CFG;
+    $cohort = block_exastud_get_head_teacher_cohort();
+    $where[] = 'u.id <> :guestid';
+    $params['guestid'] = $CFG->siteguest;
+    $where[] = 'u.deleted = 0';
+    $where[] = 'u.confirmed = 1';
+    //$where[] = 'cm.cohortid = :cohortid';
+    $params['cohortid'] = $cohort->id;
+    $where = implode(' AND ', $where);
+    $sql = " SELECT u.* 
+              FROM {user} u
+              JOIN {cohort_members} cm ON (cm.userid = u.id AND cm.cohortid = :cohortid)
+              WHERE $where";
+    $headTeachers = $DB->get_records_sql($sql, $params);
+    return $headTeachers;
 }

@@ -66,6 +66,12 @@ if ($classform->is_cancelled()) {
 
 	if ($class->id) {
 		$newclass->id = $class->id;
+		// admin can change owner of class
+		if (block_exastud_is_siteadmin() && $classedit->userid != $class->userid) {
+            $newclass->userid = $classedit->userid;
+        } else {
+            $newclass->userid = $USER->id;
+        }
 		$DB->update_record('block_exastudclass', $newclass);
         \block_exastud\event\class_updated::log(['objectid' => $newclass->id,
                                                 'courseid' => $courseid,
@@ -73,6 +79,9 @@ if ($classform->is_cancelled()) {
                                                             'oldclasstitle' => $class->title]]);
 	} else {
 		$newclass->userid = $USER->id;
+        if (block_exastud_is_siteadmin() && $classedit->userid != $USER->id) {
+            $newclass->userid = $classedit->userid;
+        }
 		$newclass->periodid = $curPeriod->id;
 		$newclass->id = $DB->insert_record('block_exastudclass', $newclass);
 
@@ -80,6 +89,21 @@ if ($classform->is_cancelled()) {
                                                 'courseid' => $courseid,
                                                 'other' => ['classtitle' => $classedit->title]]);
 	}
+    // event for changing of owner. It can be for updated class and also for the new class
+    if (block_exastud_is_siteadmin() &&
+            (($class->id && $classedit->userid != $class->userid) ||
+             (!$class->id && $newclass->userid != $USER->id)) ) {
+        $newowner = $DB->get_record('user', array('id' => $classedit->userid));
+        $oldowner = $DB->get_record('user', array('id' => ($class->id ? $class->userid : $USER->id)));
+
+        \block_exastud\event\classowner_updated::log(['objectid' => $newclass->id,
+                'courseid' => $courseid,
+                'relateduserid' => $newclass->userid,
+                'other' => ['classtitle' => $classedit->title,
+                        'oldownername' => $oldowner->firstname.' '.$oldowner->lastname,
+                        'oldownerid' => ($class->id ? $class->userid : $USER->id),
+                        'ownername' => $newowner->firstname.' '.$newowner->lastname]]);
+    }
 
 	block_exastud_set_class_data($newclass->id, BLOCK_EXASTUD_DATA_ID_CLASS_DEFAULT_TEMPLATEID, $classedit->{BLOCK_EXASTUD_DATA_ID_CLASS_DEFAULT_TEMPLATEID});
 
@@ -100,7 +124,10 @@ if ($classform->is_cancelled()) {
 
 	if ($class->id) {
 		redirect('configuration_class_info.php?courseid='.$courseid.'&classid='.$class->id);
-	} else {
+	} else /*if (block_exastud_is_siteadmin() && $newclass->userid != $USER->id) {
+	    // If the siteamin addes a new class for another user - we have another behaviour. So use this code.
+
+    } else*/ {
 		redirect('configuration_class.php?courseid='.$courseid.'&classid='.$newclass->id);
 	}
 }

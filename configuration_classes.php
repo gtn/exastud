@@ -29,6 +29,7 @@ $actPeriod = block_exastud_get_active_or_next_period();
 $lastPeriod = block_exastud_get_last_period();
 $classes = block_exastud_get_head_teacher_classes_owner($actPeriod->id);
 $lastPeriodClasses = $lastPeriod ? block_exastud_get_head_teacher_classes_owner($lastPeriod->id) : [];
+$shownClasses = array(); // Which ckasses already shown on the page
 
 $url = '/blocks/exastud/configuration_classes.php';
 $PAGE->set_url($url);
@@ -51,6 +52,7 @@ if (!$classes) {
 		$table->data[] = [
 			'<a href="configuration_class.php?courseid='.$courseid.'&classid='.$class->id.'">'.$class->title.'</a>',
 		];
+        $shownClasses[] = $class->id;
 	}
 
 	echo $output->table($table);
@@ -68,6 +70,7 @@ if ($lastPeriodClasses) {
 		$table->data[] = [
 			'<a href="configuration_class.php?courseid='.$courseid.'&classid='.$class->id.'">'.$class->title.'</a>',
 		];
+        $shownClasses[] = $class->id;
 	}
 
 	echo $output->table($table);
@@ -83,6 +86,27 @@ if ($lastPeriodClasses) {
 
 echo $output->link_button($CFG->wwwroot.'/blocks/exastud/import_class.php?courseid='.$courseid,
 	block_exastud_trans(['de:Klasse von Sicherung wiederherstellen', 'en:Import Class from Backup']));
+
+
+if (block_exastud_is_siteadmin()) {
+    $allClasses = block_exastud_get_classes_all();
+    echo '<br><br>'.$output->heading(block_exastud_get_string('configuration_classes_onlyadmin'));
+
+    $table = new html_table();
+
+    $table->head = array(block_exastud_get_string('class'));
+    $table->align = array("left");
+
+    foreach ($allClasses as $class) {
+        if (!in_array($class->id, $shownClasses)) {
+            $table->data[] = [
+                    '<a href="configuration_class.php?courseid='.$courseid.'&classid='.$class->id.'">'.$class->title.'</a>',
+            ];
+        }
+    }
+
+    echo $output->table($table);
+}
 
 /*
 if ($classes = block_exastud_get_head_teacher_classes_shared($actPeriod->id)) {
