@@ -1,4 +1,8 @@
-This is the Moodle 2.0 version of this block, it will not work in Moodle 1.9 (or below)
+exastud_nextgen
+===============
+GTN-Solutions
+
+This block is for Moodle 2.9 to 3.4 versions, it will not work for versions below 2015051100
 
 * exabis student review Block - Bugs, Feature Requests, and Improvements *
 
