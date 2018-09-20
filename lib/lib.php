@@ -791,7 +791,7 @@ function block_exastud_require_global_cap($cap, $user = null) {
 		case BLOCK_EXASTUD_CAP_MANAGE_CLASSES:
 		case BLOCK_EXASTUD_CAP_HEAD_TEACHER:
 		case BLOCK_EXASTUD_CAP_VIEW_REPORT:
-			if (!block_exastud_is_head_teacher($user)) {
+			if (!block_exastud_is_head_teacher($user) && !block_exastud_is_siteadmin()) {
 				throw new block_exastud_permission_exception('no headteacher');
 			} else {
 				return;
