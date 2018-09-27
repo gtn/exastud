@@ -1,3 +1,16 @@
+v4.6.3.
+* simplified grading for final reports
+* backup and restore
+* individualized logos
+* reports for more school-types
+* compatibility for Moodle 3.5
+
+v4.6.2.
+* limit fiel-sizes for report to 500 characters and 8 lines
+* development report
+* quickgrading
+* copy function of data of previous assessment periods
+
 v4.6.1
 * none
 
