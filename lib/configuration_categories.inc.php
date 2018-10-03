@@ -47,6 +47,7 @@ defined('MOODLE_INTERNAL') || die();
 			</td>
 			<td id="buttonscell">
 			  <div id="addcontrols">
+			  	  <input name="addbasic" id="addbasic" type="submit" style="margin-bottom: 3rem" value="◄ <?php echo block_exastud_get_string('addallbasic'); ?>" title="<?php print_string('addbasic'); ?>" />
 				  <input name="add" id="add" type="submit" value="◄ <?php echo block_exastud_get_string('add'); ?>" title="<?php print_string('add'); ?>" />
 			  </div>
 				<div id="removecontrols">

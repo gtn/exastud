@@ -101,6 +101,7 @@ $string['project_based_badclass'] = 'Sie können dieses Projekt nicht beurteilen
 $string['nostudentstoreview'] = 'Keine Schüler zu beurteilen';
 $string['reviewstudent'] = 'Student review';
 $string['categories'] = 'Beurteilungskategorien';
+$string['addallbasic'] = 'Standardkategorien hinzufügen';
 $string['basiccategories'] = 'Standardkategorien';
 $string['availablecategories'] = 'Verfügbare Beurteilungskategorien';
 $string['teamplayer'] = 'Teamfähigkeit';

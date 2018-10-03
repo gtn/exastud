@@ -101,6 +101,7 @@ $string['project_based_badclass'] = 'You cannot edit this project';
 $string['nostudentstoreview'] = 'No students to review';
 $string['reviewstudent'] = 'Student review';
 $string['categories'] = 'Assessment categories';
+$string['addallbasic'] = 'add basic categories';
 $string['basiccategories'] = 'Basic categories';
 $string['availablecategories'] = 'Available assessment categories';
 $string['teamplayer'] = 'Team player';

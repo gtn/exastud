@@ -27,6 +27,7 @@ $classid = required_param('classid', PARAM_INT);
 $showall		= optional_param('showall', 0, PARAM_BOOL);
 $searchtext	 = optional_param('searchtext', '', PARAM_TEXT); // search string
 $add			= optional_param('add', 0, PARAM_BOOL);
+$addbasic			= optional_param('addbasic', 0, PARAM_BOOL);
 $remove		 = optional_param('remove', 0, PARAM_BOOL);
 
 require_login($courseid);
@@ -44,6 +45,7 @@ echo $output->header(['configuration_classes', 'categories'], ['class' => $class
 
 if ($frm = data_submitted()) {
     $availablecategoriesAll = get_availablecategories('', $class, false);
+    $availablecategories = get_availablecategories('', $class);
     $findInAvailableCats = function($id, $source, $cats) {
         $result = null;
         foreach($cats as $cat) {
@@ -93,6 +95,26 @@ if ($frm = data_submitted()) {
 		}
 	} else if ($showall) {
 		$searchtext = '';
+	}else if ($addbasic) {
+	    foreach($availablecategories as $category){
+	        if($category->source == 'exastud'){
+	            
+	            $entry = new stdClass();
+	            $entry->classid = $class->id;
+	            $entry->categoryid = $category->id;
+	            $entry->categorysource = $category->source;
+	            
+	            if (!$DB->insert_record('block_exastudclasscate', $entry)) {
+	                error('errorinsertingcategories', 'block_exastud');
+	            }
+
+	           \block_exastud\event\classassessmentcategory_added::log(['objectid' => $class->id,
+	               'other' => ['categoryid' => $category->id,
+	                   'categorysource' => $category->source,
+	                   'categorytitle' => $category->title,
+	                   'classtitle' => $class->title]]);
+	       }
+	    }
 	}
 }
 

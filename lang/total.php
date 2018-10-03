@@ -330,6 +330,10 @@ return [
 		'Beurteilungskategorien',
 		'Assessment categories',
 	],
+    'addallbasic' => [
+        'Standardkategorien hinzufügen',
+        'add basic categories',
+    ],
 	'basiccategories' => [
 		'Standardkategorien',
 		'Basic categories',
