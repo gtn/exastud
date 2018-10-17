@@ -180,15 +180,19 @@ function block_exastud_get_head_teacher_class($classid) {
 	foreach ($periods as $period) {
 		$classes = block_exastud_get_head_teacher_classes_all($period->id);
 
-		if (isset($classes[$classid])) {
-			return $classes[$classid];
-		}
+		if ($classid != '-all-') {
+            if (isset($classes[$classid])) {
+                return $classes[$classid];
+            }
+        }
 	}
 	// only for Admin access.
     if (block_exastud_is_siteadmin()) {
         $classes = block_exastud_get_classes_all();
         if (isset($classes[$classid])) {
             return $classes[$classid];
+        } else if ($classid == '-all-') {
+            return $classes;
         }
     }
 
@@ -1602,3 +1606,31 @@ function block_exastud_get_head_teachers_all() {
     $headTeachers = $DB->get_records_sql($sql, $params);
     return $headTeachers;
 }
+
+// get ALL report settings
+function block_exastud_get_reportsettings_all($sortByPlans = false) {
+    return g::$DB->get_records_sql("
+			SELECT r.*
+			FROM {block_exastudreportsettings} r
+              LEFT JOIN {block_exastudbp} p ON p.id = r.bpid
+			ORDER BY ".($sortByPlans ? "p.sorting, p.id, " : "")." r.title");
+}
+
+function block_exastud_get_report_templates($class) {
+    $templates = [];
+    $templates['grades_report'] = 'Notenübersicht (docx)';
+    $templates['grades_report_xlsx'] = 'Notenübersicht (xlsx)';
+    $templates[BLOCK_EXASTUD_DATA_ID_PRINT_TEMPLATE] = block_exastud_is_bw_active() ? block_exastud_trans('de:Zeugnis / Abgangszeugnis') : block_exastud_trans('de:Zeugnis');
+    if (block_exastud_is_exacomp_installed()) {
+        $templates['Anlage zum Lernentwicklungsbericht'] = 'Anlage zum Lernentwicklungsbericht';
+        $templates['Anlage zum LernentwicklungsberichtAlt'] = 'Anlage zum Lernentwicklungsbericht (Alt)';
+    }
+    $templates['html_report'] = block_exastud_get_string('html_report');
+    if ($class == '-all-') {
+        $templates += \block_exastud\print_templates::get_class_other_print_templates(null);
+    } else {
+        $templates += \block_exastud\print_templates::get_class_other_print_templates($class);
+    }
+    return $templates;
+}
+

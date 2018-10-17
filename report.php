@@ -204,16 +204,7 @@ if ($classid = optional_param('classid', 0, PARAM_INT)) {
         'id' => $class->bpid
     ]);
     
-    $templates = [];
-    $templates['grades_report'] = 'Notenübersicht (docx)';
-    $templates['grades_report_xlsx'] = 'Notenübersicht (xlsx)';
-    $templates[BLOCK_EXASTUD_DATA_ID_PRINT_TEMPLATE] = block_exastud_is_bw_active() ? block_exastud_trans('de:Zeugnis / Abgangszeugnis') : block_exastud_trans('de:Zeugnis');
-    if (block_exastud_is_exacomp_installed()) {
-        $templates['Anlage zum Lernentwicklungsbericht'] = 'Anlage zum Lernentwicklungsbericht';
-        $templates['Anlage zum LernentwicklungsberichtAlt'] = 'Anlage zum Lernentwicklungsbericht (Alt)';
-    }
-    $templates['html_report'] = block_exastud_get_string('html_report');
-    $templates += \block_exastud\print_templates::get_class_other_print_templates($class);
+    $templates = block_exastud_get_report_templates($class);
     
     echo $output->header('report');
     $classheader = block_exastud_get_period($class->periodid)->description . ' - ' . $class->title;
@@ -226,7 +217,7 @@ if ($classid = optional_param('classid', 0, PARAM_INT)) {
         'en:Template'
     ]) . ': ';
     echo html_writer::select($templates, 'template', $template, false);
-    
+
     echo $output->table($table);
     
 //     echo '<pre>hallo'.block_exacomp_get_grading_scheme(3);

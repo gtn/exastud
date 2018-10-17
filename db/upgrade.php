@@ -382,6 +382,46 @@ function xmldb_block_exastud_upgrade($oldversion = 0) {
 	    upgrade_block_savepoint(true, 2018071200, 'exastud');
 	}
 
+    if ($oldversion < 2018100100) {
+
+        // Define table block_exastudreportsettings to be created.
+        $table = new xmldb_table('block_exastudreportsettings');
+
+        // Adding fields to table block_exastudsubjects.
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('title', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('bpid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0',
+                'title'); // Bildungsplan – year of curriculum
+        $table->add_field('category', XMLDB_TYPE_TEXT, null, null, XMLDB_NOTNULL, null,
+                null); // category – can be a cover sheet, a comment or any other category
+        $table->add_field('template', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null); // form that the values belong to
+        $table->add_field('year', XMLDB_TYPE_TEXT, null, null, XMLDB_NOTNULL, null, null); // school year
+        $table->add_field('report_date', XMLDB_TYPE_TEXT, null, null, XMLDB_NOTNULL, null, null); // date for report card
+        $table->add_field('student_name', XMLDB_TYPE_TEXT, null, null, XMLDB_NOTNULL, null, null); // First and second name
+        $table->add_field('date_of_birth', XMLDB_TYPE_TEXT, null, null, XMLDB_NOTNULL, null, null); // date of birth
+        $table->add_field('place_of_birth', XMLDB_TYPE_TEXT, null, null, XMLDB_NOTNULL, null, null); // place of birth
+        $table->add_field('learning_group', XMLDB_TYPE_TEXT, null, null, XMLDB_NOTNULL, null, null); // learning group
+        $table->add_field('class', XMLDB_TYPE_TEXT, null, null, XMLDB_NOTNULL, null, null); // class
+        $table->add_field('focus', XMLDB_TYPE_TEXT, null, null, XMLDB_NOTNULL, null, null); // focus
+        $table->add_field('learn_social_behavior', XMLDB_TYPE_TEXT, null, null, XMLDB_NOTNULL, null,
+                null); // learning and social behavior
+        $table->add_field('subjects', XMLDB_TYPE_TEXT, null, null, XMLDB_NOTNULL, null, null); // subjects
+        $table->add_field('comments', XMLDB_TYPE_TEXT, null, null, XMLDB_NOTNULL, null, null); // comments
+        $table->add_field('subject_elective', XMLDB_TYPE_TEXT, null, null, XMLDB_NOTNULL, null, null); // elective subject
+        $table->add_field('subject_profile', XMLDB_TYPE_TEXT, null, null, XMLDB_NOTNULL, null, null); // profile subject
+        $table->add_field('assessment_project', XMLDB_TYPE_TEXT, null, null, XMLDB_NOTNULL, null, null); // project assessment
+        $table->add_field('ags', XMLDB_TYPE_TEXT, null, null, XMLDB_NOTNULL, null,
+                null); // AGs (Participation in working groups / supplementary offers)
+
+        // Adding keys to table block_exastudsubjects.
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+
+        // Conditionally launch create table for block_exastudsubjects.
+        if (!$dbman->table_exists($table)) {
+            $dbman->create_table($table);
+        }
+    }
+
 	block_exastud_insert_default_entries();
 	block_exastud_check_profile_fields();
 

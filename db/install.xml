@@ -184,5 +184,32 @@
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
       </KEYS>
     </TABLE>
+    <TABLE NAME="block_exastudreportsettings" COMMENT="block_exastudreportsettings">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true" COMMENT="id of the table, please edit me"/>
+        <FIELD NAME="title" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" COMMENT="Title of template"/>
+        <FIELD NAME="bpid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="category" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="template" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="year" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="report_date" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="student_name" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="date_of_birth" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="place_of_birth" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="learning_group" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="class" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="focus" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="learn_social_behavior" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="subjects" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="comments" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="subject_elective" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="subject_profile" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="assessment_project" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="ags" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="primary key of the table"/>
+      </KEYS>
+    </TABLE>
   </TABLES>
 </XMLDB>

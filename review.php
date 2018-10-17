@@ -129,7 +129,7 @@ function block_exastud_print_period($courseid, $period, $type) {
 						$table->data[] = ['<b>Weitere Formulardaten:'];
 					}
 
-					$table->data[] = [
+/*					$table->data[] = [
 						html_writer::link(new moodle_url('/blocks/exastud/review_class_other_data.php', [
 							'courseid' => $courseid,
 							'classid' => $myclass->id,
@@ -143,7 +143,7 @@ function block_exastud_print_period($courseid, $period, $type) {
 							'classid' => $myclass->id,
 							'type' => BLOCK_EXASTUD_DATA_ID_PRINT_TEMPLATE,
 						]), block_exastud_trans('de:Weitere Formularfelder')),
-					];
+					];*/
 
 					$templates = \block_exastud\print_templates::get_class_other_print_templates_for_input($class);
 					foreach ($templates as $key => $value) {

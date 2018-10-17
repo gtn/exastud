@@ -72,11 +72,11 @@ if ($type == BLOCK_EXASTUD_DATA_ID_LERN_UND_SOZIALVERHALTEN) {
 	];
 	$classheader = $reviewclass->title.' - '.block_exastud_trans('de:Lern- und Sozialverhalten');
 } elseif ($type == BLOCK_EXASTUD_DATA_ID_PRINT_TEMPLATE) {
-	$categories = block_exastud_get_student_print_template($class, $student->id)->get_inputs();
+	$categories = block_exastud_get_student_print_template($class, $student->id)->get_inputs($type);
 	$classheader = $reviewclass->title.' - '.block_exastud_trans('de:Weitere Formularfelder');
 } else {
 	$template = \block_exastud\print_template::create($type);
-	$categories = $template->get_inputs();
+	$categories = $template->get_inputs($type);
 	$classheader = $reviewclass->title.' - '.$template->get_name();
 }
 

@@ -1,0 +1,18 @@
+
+.exastud-template-settings-group {
+    font-size: small;
+}
+
+/* show hidden labels */
+.exastud-template-settings-group .col-form-label {
+    position: relative;
+    width: auto;
+    height: auto;
+    overflow: visible;
+    margin-left: 15px;
+}
+
+/* change additional parameters */
+.exastud-template-settings-group .form-control {
+    font-size: 0.75rem;
+}

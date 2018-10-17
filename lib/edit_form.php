@@ -228,17 +228,7 @@ class student_other_data_form extends moodleform {
 					'style' => "width: ".($input['cols'] * 15)."px; height: ".($input['lines'] * 20)."px; resize: none; font-family: Arial !important; font-size: 11pt !important;",
 				]);
 				$mform->setType($dataid, PARAM_RAW);
-				if($input['lines'] == 3){
-				    $mform->addElement('static', '', '', block_exastud_trans('de:Max. 3 Zeilen / 250 Zeichen'));
-				}elseif($input['lines'] == 5){
-				    $mform->addElement('static', '', '', block_exastud_trans('de:Max. 5 Zeilen / 400 Zeichen'));
-				}else {
-					if($input['cols'] == 50){
-				    $mform->addElement('static', '', '', block_exastud_trans('de:Max. 8 Zeilen / 680 Zeichen'));
-				  }else{
-				  	$mform->addElement('static', '', '', block_exastud_trans('de:Max. 8 Zeilen / 550 Zeichen'));
-				  }
-				}
+				$mform->addElement('static', '', '', block_exastud_trans('de:Max. '.$input['lines'].' Zeilen / '.($input['cols'] * $input['lines']).' Zeichen'));
 				
 			} elseif ($input['type'] == 'text') {
 				$mform->addElement('text', $dataid, $input['title']);
@@ -256,3 +246,160 @@ class student_other_data_form extends moodleform {
 	}
 
 }
+
+class reportsettings_edit_form extends moodleform {
+
+    protected $allSecondaryFields = array(
+            'year',
+            'report_date',
+            'student_name',
+            'date_of_birth',
+            'place_of_birth',
+            'learning_group',
+            'class',
+            'focus',
+            'learn_social_behavior',
+            'subjects',
+            'comments',
+            'subject_elective',
+            'subject_profile',
+            'assessment_project',
+            'ags',
+        );
+    protected $fieldsWithAdditionalParams = array(
+        'learn_social_behavior',
+        'subjects',
+        'comments',
+        'subject_elective',
+        'subject_profile',
+        'assessment_project',
+        'ags',
+    );
+
+    public function getAllSecondaryFields() {
+        return $this->allSecondaryFields;
+    }
+
+    public function getFieldsWithAdditionalParams() {
+        return $this->fieldsWithAdditionalParams;
+    }
+
+    function definition() {
+        $mform = $this->_form;
+
+        $mform->addElement('text', 'title', block_exastud_get_string('report_settings_setting_title'), array('size' => 50));
+        $mform->setType('title', PARAM_TEXT);
+        $mform->addRule('title', block_exastud_get_string('error'), 'required', null, 'server', false, false);
+
+        // BP
+        $bpList = g::$DB->get_records_menu('block_exastudbp', null, 'sorting', '*');
+        $mform->addElement('select', 'bpid', block_exastud_get_string('report_settings_setting_bp'), $bpList);
+        $mform->setType('bpid', PARAM_RAW);
+
+        // category
+        $mform->addElement('text', 'category', block_exastud_get_string('report_settings_setting_category'), array('size' => 50));
+        $mform->setType('category', PARAM_TEXT);
+        $mform->addRule('category', block_exastud_get_string('error'), 'required', null, 'server', false, false);
+
+        // template
+        //$class = block_exastud_get_head_teacher_class($this->_customdata['classid']);
+        $templateList = block_exastud_get_report_templates('-all-');
+        $mform->addElement('select', 'template', block_exastud_get_string('report_settings_setting_template'), $templateList);
+        $mform->setType('template', PARAM_RAW);
+
+
+
+        foreach ($this->allSecondaryFields as $field) {
+            //$mform->addElement('checkbox', $field, block_exastud_get_string('report_settings_setting_'.str_replace('_', '', $field)));
+            $mform->addElement('advcheckbox', $field, block_exastud_get_string('report_settings_setting_'.str_replace('_', '', $field)), '', null, array(0, 1));
+            if (in_array($field, $this->fieldsWithAdditionalParams)) {
+                // show with additional params
+                $tempGroup = array();
+                $input_size = 5;
+                $tempGroup[] =& $mform->createElement('text', $field.'_rows', block_exastud_get_string('report_settings_countrows_fieldtitle'), array('size' => $input_size));
+                $mform->setType($field.'_rows', PARAM_INT);
+                $tempGroup[] =& $mform->createElement('text', $field.'_count_in_row', block_exastud_get_string('report_settings_countinrow_fieldtitle'), array('size' => $input_size));
+                $mform->setType($field.'_count_in_row', PARAM_INT);
+                $tempGroup[] =& $mform->createElement('text', $field.'_maxchars', block_exastud_get_string('report_settings_maxchars_fieldtitle'), array('size' => $input_size));
+                $mform->setType($field.'_maxchars', PARAM_INT);
+                $mform->addGroup($tempGroup, $field.'_additionalinfo', '', ' ', false);
+                //$mform->disabledIf('availablefromgroup', 'availablefromenabled');
+            } else {
+                // only checkbox
+                // TODO: add something?
+            }
+        }
+
+        /*$mform->addElement('hidden', 'courseid');
+        $mform->setType('courseid', PARAM_INT);
+
+        $mform->addElement('date_time_selector', 'starttime', block_exastud_get_string('starttime'));
+        $mform->setType('starttime', PARAM_INT);
+        $mform->addRule('starttime', null, 'required', null, 'server');
+
+        $mform->addElement('date_time_selector', 'endtime', block_exastud_get_string('endtime'));
+        $mform->setType('endtime', PARAM_INT);
+        $mform->addRule('endtime', null, 'required', null, 'server');
+
+        $mform->addElement('date_selector', 'certificate_issue_date', block_exastud_get_string('certificate_issue_date'), [
+                'optional' => true,
+        ]);
+        $mform->setType('certificate_issue_date', PARAM_INT);*/
+
+/*        $mform->addElement('hidden', 'courseid');
+        $mform->setType('courseid', PARAM_INT);
+        $mform->setDefault('courseid', 0);
+
+        $mform->addElement('hidden', 'classid');
+        $mform->setType('classid', PARAM_INT);
+        $mform->setDefault('classid', 0);*/
+
+        $mform->addElement('hidden', 'id');
+        $mform->setType('id', PARAM_INT);
+        $mform->setDefault('id', 0);
+
+        $mform->addElement('hidden', 'action');
+        $mform->setType('action', PARAM_TEXT);
+        $mform->setDefault('action', 0);
+
+        $this->add_action_buttons();
+    }
+
+    public function prepare_formdata($data) {
+        $result = $data;
+        foreach ($this->allSecondaryFields as $field) {
+            $fieldData = unserialize($data->{$field});
+            $result->{$field} = $fieldData['checked'];
+            $result->{$field.'_rows'} = $fieldData['rows'];
+            $result->{$field.'_count_in_row'} = $fieldData['count_in_row'];
+            $result->{$field.'_maxchars'} = $fieldData['maxchars'];
+        }
+        return $result;
+    }
+
+    public function definition_after_data() {
+        parent::definition_after_data();
+
+        $mform =& $this->_form;
+        foreach ($this->allSecondaryFields as $field) {
+            $formelement = $group = $mform->getElement($field);
+            $formelement->_attributes['class'] = 'exastud-template-settings-param param-'.$field;
+            if (in_array($field, $this->fieldsWithAdditionalParams)) {
+                $group = $mform->getElement($field.'_additionalinfo');
+                $group->_attributes['class'] = 'exastud-template-settings-group group-'.$field;
+                $group_elements = $group->getElements();
+                foreach ($group_elements as $element) {
+                    $element->_attributes['class'] = 'exastud-template-settings-param';
+                    //echo '<pre>';
+                    //print_r($group_elements);
+                    //exit;
+                }
+                //$field_rows->attributes['class'] = "dsfsdfsdf";
+            }
+
+        }
+
+    }
+
+}
+

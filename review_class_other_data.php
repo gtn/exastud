@@ -48,12 +48,11 @@ if ($type == BLOCK_EXASTUD_DATA_ID_LERN_UND_SOZIALVERHALTEN) {
 		],
 	];
 	$classheader = $reviewclass->title.' - '.block_exastud_trans('de:Weitere Formularfelder');
-} else {
+} else { // type is id of template ecord
 	$template = \block_exastud\print_template::create($type);
-	$categories = $template->get_inputs();
+	$categories = $template->get_inputs($type);
 	$classheader = $reviewclass->title.' - '.$template->get_name();
 }
-
 $output = block_exastud_get_renderer();
 
 $url = '/blocks/exastud/review_class.php';

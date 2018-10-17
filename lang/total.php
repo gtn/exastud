@@ -494,6 +494,130 @@ return [
 		'Der Kommentar darf nicht leer sein.',
 		'You have to enter a comment.',
 	],
+    'report_settings' => [
+            'Report settings',
+            'Report settings',
+    ],
+    'report_settings_edit' => [
+            'Edit report settings',
+            'Edit report settings',
+    ],
+    'report_settings_new' => [
+            'New report settings',
+            'New report settings',
+    ],
+    'report_settings_setting_id' => [
+            '',
+            '',
+    ],
+    'report_settings_setting_title' => [
+            'Titel',
+            'Title',
+    ],
+    'report_settings_setting_bp' => [
+            'BP',
+            'Curriculum',
+    ],
+    'report_settings_setting_category' => [
+            'Kategorie',
+            'Category',
+    ],
+    'report_settings_setting_template' => [
+            'Formular',
+            'Template',
+    ],
+    'report_settings_setting_year' => [
+            'Schuljahr',
+            'School year',
+    ],
+    'report_settings_setting_reportdate' => [
+            'Zeugnisdatum',
+            'Date for report card',
+    ],
+    'report_settings_setting_studentname' => [
+            'Vor- und Zuname',
+            'First and second name',
+    ],
+    'report_settings_setting_dateofbirth' => [
+            'Geburtsdatum',
+            'Date of birth',
+    ],
+    'report_settings_setting_placeofbirth' => [
+            'Gebursort',
+            'Place of birth',
+    ],
+    'report_settings_setting_learninggroup' => [
+            'Lerngruppe',
+            'Learning group',
+    ],
+    'report_settings_setting_class' => [
+            'Klasse',
+            'Class',
+    ],
+    'report_settings_setting_focus' => [
+            'Schwerpunkt',
+            'focus',
+    ],
+    'report_settings_setting_learnsocialbehavior' => [
+            'Lern- u. Sozialverhalten',
+            'Learning and social behavior',
+    ],
+    'report_settings_setting_subjects' => [
+            'Fächer',
+            'Subjects',
+    ],
+    'report_settings_setting_comments' => [
+            'Bemerkungen',
+            'Comments',
+    ],
+    'report_settings_setting_subjectelective' => [
+            'Wahlpflichtfach',
+            'Elective subject',
+    ],
+    'report_settings_setting_subjectprofile' => [
+            'Profilfach',
+            'Profile subject',
+    ],
+    'report_settings_setting_assessmentproject' => [
+            'Projektprüfung',
+            'Project assessment',
+    ],
+    'report_settings_setting_ags' => [
+            'AGs',
+            'AGs',
+    ],
+    'report_settings_no' => [
+            'nein',
+            'no',
+    ],
+    'report_settings_yes' => [
+            'ja',
+            'yes',
+    ],
+    'report_settings_countrows' => [
+            '{$a} Zeilen',
+            '{$a} rows',
+    ],
+    'report_settings_countinrow' => [
+            'zu je {$a} Zeichen',
+            'with {$a} characters per row',
+    ],
+    'report_settings_maxchars' => [
+            '{$a} Zeichen',
+            'with a maximum of {$a} characters',
+    ],
+    'report_settings_countrows_fieldtitle' => [
+                'Zeilen',
+                'Count of rows',
+        ],
+    'report_settings_countinrow_fieldtitle' => [
+            'zu je Zeichen',
+            'Characters per row',
+    ],
+    'report_settings_maxchars_fieldtitle' => [
+            'Zeichen',
+            'Maximum of characters',
+    ],
 
 
 	'de:Fächerübergreifende Kompetenzen' => [

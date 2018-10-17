@@ -44,11 +44,59 @@ class print_templates {
 		return static::get_template_config($templateid)['grades'];
 	}
 
-	static function get_template_inputs($templateid) {
-		return static::get_template_config($templateid)['inputs'];
+	static function get_template_inputs($templateid, $type = BLOCK_EXASTUD_DATA_ID_LERN_UND_SOZIALVERHALTEN) {
+		return static::get_template_config($templateid, $type)['inputs'];
 	}
 
-	static function get_all_template_configs() {
+    static function get_all_template_configs($type = BLOCK_EXASTUD_DATA_ID_LERN_UND_SOZIALVERHALTEN) {
+	    $templates = array();
+	    $templates_temp = g::$DB->get_records('block_exastudreportsettings');
+	    foreach ($templates_temp as $tmpl) {
+	        $templates[$tmpl->id] = array(
+	                'name' => $tmpl->title,
+                    'file' => $tmpl->template,
+                    'grades' => ['1'=>'1'], // for testing
+                    'inputs' => self::get_inputs_for_template($tmpl->id, $type)
+            );
+        }
+	    return $templates;
+    }
+
+    static function get_inputs_for_template($templateid, $type = BLOCK_EXASTUD_DATA_ID_LERN_UND_SOZIALVERHALTEN) {
+        $template = g::$DB->get_record('block_exastudreportsettings', ['id' => $templateid]);
+        // TODO: how to get inputs? by category?
+        switch ($type) {
+            case BLOCK_EXASTUD_DATA_ID_LERN_UND_SOZIALVERHALTEN:
+                $fields = array('learn_social_behavior');
+                break;
+            case BLOCK_EXASTUD_DATA_ID_PRINT_TEMPLATE:
+                $fields = array();
+                break;
+            default:
+                $fields = array('learn_social_behavior', 'subjects', 'comments', 'subject_elective', 'subject_profile', 'assessment_project', 'ags');
+                break;
+        }
+        $inputs = array();
+        foreach ($fields as $field) {
+            $fieldData = unserialize($template->{$field});
+            //echo '++++';print_r($fieldData);echo '++++<br><br>';
+            if ($fieldData['checked'] == 1) {
+                $inputs[$field] = array(
+                    'title' => block_exastud_get_string('report_settings_setting_'.str_replace('_', '', $field)),
+                    'type' => 'textarea',
+                    'lines' => ($fieldData['rows'] > 0 ? $fieldData['rows'] : 8),
+                    'cols' => ($fieldData['count_in_row'] > 0 ? $fieldData['count_in_row'] : 45)
+                );
+            }
+        }
+        if (count($inputs) > 0) {
+            return $inputs;
+        } else {
+            return null;
+        }
+    }
+
+	static function _old_get_all_template_configs() {
 		$grades_1_bis_6 = ['1' => '1', '2' => '2', '3' => '3', '4' => '4', '5' => '5', '6' => '6'];
 		$grades_short = ['1' => 'sgt', '2' => 'gut', '3' => 'bfr', '4' => 'ausr', '5' => 'mgh', '6' => 'ung'];
 		$grades_mit_plus_minus_bis = [
@@ -420,8 +468,8 @@ class print_templates {
 		return $templates;
 	}
 
-	static function get_template_config($templateid) {
-		$templates = static::get_all_template_configs();
+	static function get_template_config($templateid, $type = BLOCK_EXASTUD_DATA_ID_LERN_UND_SOZIALVERHALTEN) {
+		$templates = static::get_all_template_configs($type);
 
 		if (empty($templates[$templateid])) {
 			throw new moodle_exception("template '$templateid' not found");
@@ -448,7 +496,9 @@ class print_templates {
 		$templateids = [];
 
 		if (block_exastud_is_bw_active()) {
-			$templateids[] = 'Deckblatt und 1. Innenseite LEB';
+		    // templates for "Reports" page
+            // TODO: change it to dynamic
+			$templateids[] = 1; // for testing
 
 			if (!$bp || $bp->sourceinfo !== 'bw-bp2016') {
 				$templateids[] = 'BP 2004/Zertifikat fuer Profilfach';
@@ -463,26 +513,33 @@ class print_templates {
 	static private function get_template_name_array($templateids) {
 		$templates = [];
 		foreach ($templateids as $templateid) {
-			$templates[$templateid] = static::get_template_name($templateid);
+			//$templates[$templateid] = static::get_template_name($templateid);
+			$templates[$templateid] = g::$DB->get_field('block_exastudreportsettings', 'title', ['id' => $templateid]);
 		}
 
 		return $templates;
 	}
 
 	static function get_class_other_print_templates_for_input($class) {
-		if ($class) {
+		/*if ($class) {
 			$bp = g::$DB->get_record('block_exastudbp', ['id' => $class->bpid]);
 		} else {
 			$bp = null;
-		}
+		}*/
 
 		$templateids = [];
 
-		if (!$bp || $bp->sourceinfo !== 'bw-bp2016') {
-			$templateids[] = 'BP 2004/Zertifikat fuer Profilfach';
-		}
-
-		// $templates['BP 2004/Beiblatt zur Projektpruefung HSA'] = 'Beiblatt zur Projektprüfung HSA';
+        // TODO: may be add some categorization?
+        if ($class) {
+            $tmpls = g::$DB->get_records('block_exastudreportsettings', ['bpid' => $class->bpid]);
+        } else {
+            $tmpls = g::$DB->get_records('block_exastudreportsettings');
+        }
+        foreach ($tmpls as $tmpl) {
+            if (!in_array($tmpl->id, $templateids)) {
+                $templateids[] = $tmpl->id;
+            }
+        }
 
 		return static::get_template_name_array($templateids);
 	}
@@ -502,7 +559,27 @@ class print_templates {
 		return static::get_bp_available_print_templates($bp);
 	}
 
-	static function get_bp_available_print_templates($bp) {
+    static function get_bp_available_print_templates($bp) {
+        $templateids = [];
+        if ($bp) {
+            $templates = g::$DB->get_records('block_exastudreportsettings', ['bpid' => $bp->id]);
+        } else {
+            $templates = g::$DB->get_records('block_exastudreportsettings');
+        }
+        foreach ($templates as $templ) {
+            if (!in_array($templ->id, $templateids)) {
+                $templateids[] = $templ->id;
+            }
+        }
+        return static::get_template_name_array($templateids);
+    }
+
+    /**
+     * @param $bp
+     * @return array
+     * @deprecated
+     */
+	static function _old_get_bp_available_print_templates($bp) {
 		$templateids = [];
 
 		if (block_exastud_is_bw_active()) {
@@ -566,8 +643,8 @@ class print_template {
 		return print_templates::get_template_grades($this->templateid);
 	}
 
-	function get_inputs() {
-		return print_templates::get_template_inputs($this->templateid);
+	function get_inputs($type = BLOCK_EXASTUD_DATA_ID_LERN_UND_SOZIALVERHALTEN) {
+		return print_templates::get_template_inputs($this->templateid, $type);
 	}
 
 	function get_config() {
