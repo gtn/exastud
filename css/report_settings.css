@@ -9,10 +9,36 @@
     width: auto;
     height: auto;
     overflow: visible;
+}
+
+.exastud-template-settings-param {
+    margin-right: 15px;
+}
+
+/* show hidden labels - another moodle template */
+.exastud-template-settings-group .accesshide {
+    position: relative;
+    left: 0px;
+    width: auto;
+    height: auto;
+    overflow: visible;
     margin-left: 15px;
+    margin-right: 5px;
 }
 
 /* change additional parameters */
 .exastud-template-settings-group .form-control {
     font-size: 0.75rem;
+}
+
+.exastud-template-settings-group.type-settings {
+    font-size: 0.75rem;
+}
+
+.exastud-template-settings-group.type-settings label {
+    margin-right: 15px;
+}
+
+.exastud-additional-params-block.hidden {
+    display: none;
 }

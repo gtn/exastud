@@ -173,6 +173,7 @@ $string['report_settings_maxchars'] = 'with a maximum of {$a} characters';
 $string['report_settings_countrows_fieldtitle'] = 'Count of rows';
 $string['report_settings_countinrow_fieldtitle'] = 'Characters per row';
 $string['report_settings_maxchars_fieldtitle'] = 'Maximum of characters';
+$string['report_settings_button_add_additional_param'] = 'Add a new param';
 $string['de:Fächerübergreifende Kompetenzen'] = 'Competencies';
 $string['de:Note'] = 'Grade';
 $string['de:Niveau'] = 'Level';

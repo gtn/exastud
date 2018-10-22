@@ -206,6 +206,7 @@
         <FIELD NAME="subject_profile" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
         <FIELD NAME="assessment_project" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
         <FIELD NAME="ags" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="additional_params" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="primary key of the table"/>

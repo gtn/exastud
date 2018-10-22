@@ -173,6 +173,7 @@ $string['report_settings_maxchars'] = '{$a} Zeichen';
 $string['report_settings_countrows_fieldtitle'] = 'Zeilen';
 $string['report_settings_countinrow_fieldtitle'] = 'zu je Zeichen';
 $string['report_settings_maxchars_fieldtitle'] = 'Zeichen';
+$string['report_settings_button_add_additional_param'] = 'Add a new param';
 $string['de:Fächerübergreifende Kompetenzen'] = 'Fächerübergreifende Kompetenzen';
 $string['de:Note'] = 'Note';
 $string['de:Niveau'] = 'Niveau';

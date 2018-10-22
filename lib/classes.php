@@ -64,13 +64,13 @@ class print_templates {
 
     static function get_inputs_for_template($templateid, $type = BLOCK_EXASTUD_DATA_ID_LERN_UND_SOZIALVERHALTEN) {
         $template = g::$DB->get_record('block_exastudreportsettings', ['id' => $templateid]);
-        // TODO: how to get inputs? by category?
+        // TODO: how to get inputs? by category? (social, print,...)
         switch ($type) {
             case BLOCK_EXASTUD_DATA_ID_LERN_UND_SOZIALVERHALTEN:
                 $fields = array('learn_social_behavior');
                 break;
             case BLOCK_EXASTUD_DATA_ID_PRINT_TEMPLATE:
-                $fields = array();
+                $fields = array('learn_social_behavior', 'subjects', 'comments', 'subject_elective', 'subject_profile', 'assessment_project', 'ags');
                 break;
             default:
                 $fields = array('learn_social_behavior', 'subjects', 'comments', 'subject_elective', 'subject_profile', 'assessment_project', 'ags');

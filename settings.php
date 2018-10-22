@@ -37,11 +37,11 @@ if (!class_exists('block_exastud_link_to')) {
         }
 
         public function get_setting() {
-            return null;
+            return 1;
         }
 
         public function write_setting($data) {
-            return null;
+            return 1;
         }
 
         public function output_html($data, $query = '') {

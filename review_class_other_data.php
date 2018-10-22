@@ -104,7 +104,7 @@ foreach ($classstudents as $classstudent) {
 	}
 
 	if (@array_shift(array_keys($categories)) === BLOCK_EXASTUD_DATA_ID_PRINT_TEMPLATE) {
-		$hasInputs = !!block_exastud_get_student_print_template($class, $classstudent->id)->get_inputs();
+		$hasInputs = !!block_exastud_get_student_print_template($class, $classstudent->id)->get_inputs(BLOCK_EXASTUD_DATA_ID_PRINT_TEMPLATE);
 	} else {
 		$hasInputs = !!$categories;
 	}
@@ -122,10 +122,9 @@ foreach ($classstudents as $classstudent) {
 	foreach ($categories as $dataid => $category) {
 		if ($dataid === BLOCK_EXASTUD_DATA_ID_PRINT_TEMPLATE) {
 			$template = block_exastud_get_student_print_template($class, $classstudent->id);
-
 			$content = '<div><b>Formular:</b> '.$template->get_name().'</div>';
 
-			foreach ($template->get_inputs() as $dataid => $form_input) {
+			foreach ($template->get_inputs(BLOCK_EXASTUD_DATA_ID_PRINT_TEMPLATE) as $dataid => $form_input) {
 				if (@$form_input['type'] == 'select') {
 					$value = @$form_input['values'][$data[$dataid]];
 				} else {

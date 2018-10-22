@@ -191,7 +191,7 @@ if ($type == 'studentgradereports') {
 		$available_templates = [];
 		foreach ($available_templates_tmp as $templateid => $title) {
 			if ($templateid == $default_templateid) {
-				$available_templates[''] = $title.' (Standard)';
+				$available_templates[$templateid] = $title.' (Standard)';
 			} else {
 				$available_templates[$templateid] = $title;
 			}

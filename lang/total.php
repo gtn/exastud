@@ -618,6 +618,10 @@ return [
             'Zeichen',
             'Maximum of characters',
     ],
+    'report_settings_button_add_additional_param' => [
+            'Add a new param',
+            'Add a new param',
+    ],
 
 
 	'de:Fächerübergreifende Kompetenzen' => [

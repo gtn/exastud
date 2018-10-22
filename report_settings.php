@@ -42,6 +42,7 @@ require_login(1);
 
 $url = '/blocks/exastud/report_settings.php';
 $PAGE->set_url($url);
+$reportsetting = new stdClass();
 $settingsform = new reportsettings_edit_form(null, [/*'classid' => $classid*/]);
 
 if ($action && ($settingsid > 0 || $action == 'new')) {
@@ -51,16 +52,7 @@ if ($action && ($settingsid > 0 || $action == 'new')) {
         redirect('report_settings.php');
     } else if ($settingsedit = $settingsform->get_data()) {
         require_sesskey();
-        foreach ($settingsform->getAllSecondaryFields() as $field) {
-            $element_data = array (
-                'checked' => $settingsedit->{$field},
-                'rows' => (in_array($field, $settingsform->getFieldsWithAdditionalParams()) ? $settingsedit->{$field.'_rows'} : 0),
-                'count_in_row' => (in_array($field, $settingsform->getFieldsWithAdditionalParams()) ? $settingsedit->{$field.'_count_in_row'} : 0),
-                'maxchars' => (in_array($field, $settingsform->getFieldsWithAdditionalParams()) ? $settingsedit->{$field.'_maxchars'} : 0)
-
-            );
-            $settingsedit->{$field} = serialize($element_data);
-        }
+        $settingsedit = block_exastud_report_templates_prepare_serialized_data($settingsform, $settingsedit);
         if (isset($settingsedit->id) && ($settingsedit->action == 'edit')) {
             $DB->update_record('block_exastudreportsettings', $settingsedit);
             // TODO: log event ?
@@ -69,14 +61,25 @@ if ($action && ($settingsid > 0 || $action == 'new')) {
             // TODO: log event ?
         }
         redirect('report_settings.php');
+    } else {
+        // do not validated data
+        if ($settingsform->is_submitted()) {
+            $settingsedit = $settingsform->get_submitted_data();
+            $settingsedit = block_exastud_report_templates_prepare_serialized_data($settingsform, $settingsedit);
+            $reportsetting = new stdClass();
+            $reportsetting->action = 'edit';
+            $reportsetting = $settingsform->prepare_formdata($settingsedit);
+        }
     }
 
-    $reportsetting = new stdClass();
-    if ($action == 'edit') {
+    if ($action == 'edit' && !$settingsform->is_submitted()) {
         require_sesskey();
         $reportsetting = $DB->get_record('block_exastudreportsettings', array('id' => $settingsid));
         $reportsetting->action = 'edit';
         $reportsetting = $settingsform->prepare_formdata($reportsetting);
+        //if ($reportsetting->additional_params) {
+        //    $settingsform->setAdditionalData(unserialize($reportsetting->additional_params));
+        //}
         //$reportsetting->courseid = $courseid;
         //$reportsetting->classid = $classid;
     }
@@ -87,7 +90,7 @@ if ($action && ($settingsid > 0 || $action == 'new')) {
         \block_exastud\event\period_deleted::log(['objectid' => $periodid, 'other' => ['perioddata' => serialize($periodData)]]);
         redirect('periods.php?courseid=' . $courseid);
     }*/
-    else {
+    else if (!$settingsform->is_submitted()) {
         $reportsetting->action = 'new';
         $reportsetting->id = 0;
         //$reportsetting->courseid = $courseid;
@@ -99,8 +102,9 @@ if ($action && ($settingsid > 0 || $action == 'new')) {
     echo $output->heading(block_exastud_get_string('report_settings'));
 
     echo "<br/>";
+    //echo '<pre>';print_r($reportsetting);exit;
     $settingsform->set_data($reportsetting);
-    $settingsform->display();
+    $settingsform->display(true);
 
 } else {
 
@@ -115,16 +119,17 @@ if ($action && ($settingsid > 0 || $action == 'new')) {
             'action' => 'new',
             'sesskey' => sesskey()
     ]), block_exastud_get_string('report_settings_new'), ['class' => 'btn btn-default']);
-    echo $newLink;
+    echo $newLink.'<br>';
 
     // List of settings
     $reports = block_exastud_get_reportsettings_all(true);
 
     if ($reports) {
         $table = new html_table();
+        $table->attributes['class'] .= 'exa_table small';
 
         $table->head = array(
-                block_exastud_get_string('report_settings_setting_id'),
+                '',
                 block_exastud_get_string('report_settings_setting_title'),
                 block_exastud_get_string('report_settings_setting_bp'),
                 block_exastud_get_string('report_settings_setting_category'),
@@ -144,30 +149,33 @@ if ($action && ($settingsid > 0 || $action == 'new')) {
                 block_exastud_get_string('report_settings_setting_subjectprofile'),
                 block_exastud_get_string('report_settings_setting_assessmentproject'),
                 block_exastud_get_string('report_settings_setting_ags'),
-                '',
         );
         $table->align = array("left");
         // function for getting human value of field
         $setting_marker = function($field, $value) use ($settingsform) {
             $resArr = unserialize($value);
-            if ($resArr['checked'] == 0) {
+            if (empty($resArr['checked']) || intval($resArr['checked']) == 0) {
                 return block_exastud_get_string('report_settings_no');
             } else {
                 $result = block_exastud_get_string('report_settings_yes').'<br />';
-                if (in_array($field, $settingsform->getFieldsWithAdditionalParams())) {
-                    $result .= block_exastud_get_string('report_settings_countrows', null, $resArr['rows']);
-                    $result .= '&nbsp;'.block_exastud_get_string('report_settings_countinrow', null, $resArr['count_in_row']);
-                    if ($resArr['maxchars'] > 0) {
-                        $result .= '<br />'.block_exastud_get_string('report_settings_maxchars', null, $resArr['maxchars']);
+                if (!empty($resArr['type'])) {
+                    switch ($resArr['type']) {
+                        case 'textarea':
+                            $result .= block_exastud_get_string('report_settings_countrows', null, $resArr['rows']);
+                            $result .= '&nbsp;'.block_exastud_get_string('report_settings_countinrow', null, $resArr['count_in_row']);
+                            $result .= '<br />'.block_exastud_get_string('report_settings_maxchars', null, $resArr['rows'] * $resArr['count_in_row']);
+                            $result = '<small>'.$result.'</small>';
+                            break;
+                        case 'text':
+                            $result = '<small>'.$result.' (text)</small>';
+                            break;
                     }
-                    $result = '<small>'.$result.'</small>';
                 }
                 return $result;
             }
             return '';
         };
-        //$classes = block_exastud_get_head_teacher_class('-all-');
-        $templateList = block_exastud_get_report_templates('-all-');
+        $templateList = block_exastud_get_template_files();
         foreach ($reports as $report) {
             $bpData = $DB->get_record('block_exastudbp', ['id' => $report->bpid]);
             $editLink = html_writer::link(new moodle_url('/blocks/exastud/report_settings.php', [
@@ -176,15 +184,15 @@ if ($action && ($settingsid > 0 || $action == 'new')) {
                     'action' => 'edit',
                     'id' => $report->id,
                     'sesskey' => sesskey()
-            ]), html_writer::tag("img", '', array('src' => 'pix/edit.png')));
+            ]), html_writer::tag("img", '', array('src' => 'pix/edit.png')), array('title' => 'id: '.$report->id));
             // function for call settings_marker only by name
             $call_setting_marker = function($name) use ($setting_marker, $report){
                 return $setting_marker($name, $report->{$name});
             };
             $row = array(
-                    $report->id,
+                    $editLink. ' :'.$report->id,
                     '<strong>'.$report->title.'</strong>',
-                    $bpData->title,
+                    $bpData ? $bpData->title : '',
                     $report->category,
                     array_key_exists($report->template, $templateList) ? $templateList[$report->template] : $report->template,
                     $call_setting_marker('year'),
@@ -202,14 +210,77 @@ if ($action && ($settingsid > 0 || $action == 'new')) {
                     $call_setting_marker('subject_profile'),
                     $call_setting_marker('assessment_project'),
                     $call_setting_marker('ags'),
-                    $editLink,
             );
             $table->data[] = $row;
         }
     }
 
-    echo $output->table($table);
+    if (!empty($table)) {
+        echo $output->table($table);
+    } else {
+        echo 'No any template in DB';
+    }
 }
 
+// testing import default templates
+//block_exastud_fill_reportsettingstable();
 
 echo $output->footer();
+
+function block_exastud_report_templates_prepare_serialized_data($settingsform, $settingsedit) {
+    foreach ($settingsform->getAllSecondaryFields() as $field) {
+        $element_data = array (
+                'key' => @$settingsedit->{$field.'_key'} ? $settingsedit->{$field.'_key'} : $field,
+                'title' => @$settingsedit->{$field.'_title'} ? $settingsedit->{$field.'_title'} : block_exastud_get_string('report_settings_setting_'.str_replace('_', '', $field)),
+                'checked' => $settingsedit->{$field}
+        );
+        if (!empty($settingsedit->{$field.'_type'})) {
+            $element_data['type'] = $settingsedit->{$field.'_type'};
+        } else {
+            $element_data['type'] = 'textarea';
+        }
+        if ($element_data['type'] == 'textarea') {
+            $element_data['rows'] = (isset($settingsedit->{$field.'_rows'}) && $settingsedit->{$field.'_rows'} > 0 ? $settingsedit->{$field.'_rows'} : 8);
+            $element_data['count_in_row'] = (isset($settingsedit->{$field.'_count_in_row'}) && $settingsedit->{$field.'_count_in_row'} > 0 ? $settingsedit->{$field.'_count_in_row'} : 45);
+        }
+        $settingsedit->{$field} = serialize($element_data);
+    }
+    // additional params (dynamic)
+    $additional_params_GP = optional_param_array('additional_params', '', PARAM_INT);
+    $additional_params = array();
+    if (count($additional_params_GP) > 0) {
+        $additional_params_titles = optional_param_array('additional_params_title', '', PARAM_RAW);
+        $additional_params_keys = optional_param_array('additional_params_key', '', PARAM_RAW);
+        $additional_params_types = optional_param_array('additional_params_type', '', PARAM_RAW);
+        $additional_params_rows = optional_param_array('additional_params_rows', '', PARAM_INT);
+        $additional_params_count_in_rows = optional_param_array('additional_params_count_in_row', '', PARAM_INT);
+        foreach ($additional_params_GP as $param_index => $checked) {
+            if ($param_index > -1) {
+                if ($additional_params_keys[$param_index] != '') {
+                    $additional_params[$additional_params_keys[$param_index]] = array(
+                            'key' => $additional_params_keys[$param_index],
+                            'title' => $additional_params_titles[$param_index],
+                            'checked' => '1',
+                            'type' => $additional_params_types[$param_index]
+                    );
+                    if ($additional_params[$additional_params_keys[$param_index]]['type'] == 'textarea') {
+                        $additional_params[$additional_params_keys[$param_index]]['rows'] =
+                                (isset($additional_params_rows[$param_index]) && $additional_params_rows[$param_index] > 0 ?
+                                        $additional_params_rows[$param_index] : 8);
+                        $additional_params[$additional_params_keys[$param_index]]['count_in_row'] =
+                                (isset($additional_params_count_in_rows[$param_index]) &&
+                                $additional_params_count_in_rows[$param_index] > 0 ?
+                                        $additional_params_count_in_rows[$param_index] : 45);
+                    }
+                }
+            }
+        }
+    }
+
+    if (count($additional_params) > 0) {
+        $settingsedit->additional_params = serialize($additional_params);
+    } else {
+        $settingsedit->additional_params = '';
+    }
+    return $settingsedit;
+}

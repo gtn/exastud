@@ -276,12 +276,34 @@ class reportsettings_edit_form extends moodleform {
         'ags',
     );
 
+    protected $input_types = array('textarea', 'text', 'select', 'header');
+    protected $radioattributes = array(); // html tag attributes for radiobuttons
+
+    protected $additionalData = null;
+
+    public function __construct($action = null, $customdata = null, $method = 'post', $target = '', $attributes = null,
+            $editable = true, $ajaxformdata = null) {
+        global $CFG;
+        //parent::definition_after_data();
+        require_once($CFG->dirroot.'/blocks/exastud/classes/exastud_htmltag.php');
+        MoodleQuickForm::registerElementType('exastud_htmltag', $CFG->dirroot.'/blocks/exastud/classes/exastud_htmltag.php', 'block_exastud_htmltag');
+        parent::__construct($action, $customdata, $method, $target, $attributes, $editable, $ajaxformdata);
+    }
+
     public function getAllSecondaryFields() {
         return $this->allSecondaryFields;
     }
 
     public function getFieldsWithAdditionalParams() {
         return $this->fieldsWithAdditionalParams;
+    }
+
+    public function getAdditionalData() {
+        return $this->additionalData;
+    }
+
+    public function setAdditionalData($data) {
+        $this->additionalData = $data;
     }
 
     function definition() {
@@ -293,6 +315,7 @@ class reportsettings_edit_form extends moodleform {
 
         // BP
         $bpList = g::$DB->get_records_menu('block_exastudbp', null, 'sorting', '*');
+        $bpList = array(0 => '') + $bpList;
         $mform->addElement('select', 'bpid', block_exastud_get_string('report_settings_setting_bp'), $bpList);
         $mform->setType('bpid', PARAM_RAW);
 
@@ -302,57 +325,54 @@ class reportsettings_edit_form extends moodleform {
         $mform->addRule('category', block_exastud_get_string('error'), 'required', null, 'server', false, false);
 
         // template
-        //$class = block_exastud_get_head_teacher_class($this->_customdata['classid']);
-        $templateList = block_exastud_get_report_templates('-all-');
+        //$templateList = block_exastud_get_report_templates('-all-');
+        $templateList = block_exastud_get_template_files();
         $mform->addElement('select', 'template', block_exastud_get_string('report_settings_setting_template'), $templateList);
         $mform->setType('template', PARAM_RAW);
 
 
 
         foreach ($this->allSecondaryFields as $field) {
-            //$mform->addElement('checkbox', $field, block_exastud_get_string('report_settings_setting_'.str_replace('_', '', $field)));
+            if (in_array($field, $this->fieldsWithAdditionalParams)) {
+                $mform->addElement('exastud_htmltag', '<hr />');
+            }
             $mform->addElement('advcheckbox', $field, block_exastud_get_string('report_settings_setting_'.str_replace('_', '', $field)), '', null, array(0, 1));
             if (in_array($field, $this->fieldsWithAdditionalParams)) {
                 // show with additional params
-                $tempGroup = array();
                 $input_size = 5;
+                $titleGroup = [];
+                // key: used as marker in the docx
+                $titleGroup[] = $mform->createElement('hidden', $field.'_key', $field);
+                $mform->setType($field.'_key', PARAM_RAW);
+                // title
+                $titleGroup[] = $mform->createElement('text', $field.'_title', block_exastud_trans('de: Titel'), 'size = \'45\'');
+                $mform->setType($field.'_title', PARAM_ALPHA);
+                $titleGroup[] = $mform->createElement('exastud_htmltag', '<span class="exastud-report-marker" data-for="'.$field.'">Marker: ${}</span>');
+                $mform->addGroup($titleGroup, $field.'_mainparams', '', ' ', false);
+                // type of parameter
+                $radiotype = array();
+                foreach ($this->input_types as $type) {
+                    $radiotype[] = $mform->createElement('radio', $field.'_type', '', $type, $type, $this->radioattributes);
+                }
+                $mform->addGroup($radiotype, $field.'_typeradiobuttons', '', array(' '), false);
+
+                // paramaters for textarea
+                $tempGroup = array();
                 $tempGroup[] =& $mform->createElement('text', $field.'_rows', block_exastud_get_string('report_settings_countrows_fieldtitle'), array('size' => $input_size));
                 $mform->setType($field.'_rows', PARAM_INT);
                 $tempGroup[] =& $mform->createElement('text', $field.'_count_in_row', block_exastud_get_string('report_settings_countinrow_fieldtitle'), array('size' => $input_size));
                 $mform->setType($field.'_count_in_row', PARAM_INT);
-                $tempGroup[] =& $mform->createElement('text', $field.'_maxchars', block_exastud_get_string('report_settings_maxchars_fieldtitle'), array('size' => $input_size));
-                $mform->setType($field.'_maxchars', PARAM_INT);
-                $mform->addGroup($tempGroup, $field.'_additionalinfo', '', ' ', false);
+                //$tempGroup[] =& $mform->createElement('text', $field.'_maxchars', block_exastud_get_string('report_settings_maxchars_fieldtitle'), array('size' => $input_size));
+                //$mform->setType($field.'_maxchars', PARAM_INT);
+                $mform->addGroup($tempGroup, $field.'_textareaparams', '', ' ', false);
                 //$mform->disabledIf('availablefromgroup', 'availablefromenabled');
             } else {
                 // only checkbox
                 // TODO: add something?
             }
         }
-
-        /*$mform->addElement('hidden', 'courseid');
-        $mform->setType('courseid', PARAM_INT);
-
-        $mform->addElement('date_time_selector', 'starttime', block_exastud_get_string('starttime'));
-        $mform->setType('starttime', PARAM_INT);
-        $mform->addRule('starttime', null, 'required', null, 'server');
-
-        $mform->addElement('date_time_selector', 'endtime', block_exastud_get_string('endtime'));
-        $mform->setType('endtime', PARAM_INT);
-        $mform->addRule('endtime', null, 'required', null, 'server');
-
-        $mform->addElement('date_selector', 'certificate_issue_date', block_exastud_get_string('certificate_issue_date'), [
-                'optional' => true,
-        ]);
-        $mform->setType('certificate_issue_date', PARAM_INT);*/
-
-/*        $mform->addElement('hidden', 'courseid');
-        $mform->setType('courseid', PARAM_INT);
-        $mform->setDefault('courseid', 0);
-
-        $mform->addElement('hidden', 'classid');
-        $mform->setType('classid', PARAM_INT);
-        $mform->setDefault('classid', 0);*/
+        // additional dynamic fields
+        //  ('additional_params')
 
         $mform->addElement('hidden', 'id');
         $mform->setType('id', PARAM_INT);
@@ -362,7 +382,6 @@ class reportsettings_edit_form extends moodleform {
         $mform->setType('action', PARAM_TEXT);
         $mform->setDefault('action', 0);
 
-        $this->add_action_buttons();
     }
 
     public function prepare_formdata($data) {
@@ -370,36 +389,162 @@ class reportsettings_edit_form extends moodleform {
         foreach ($this->allSecondaryFields as $field) {
             $fieldData = unserialize($data->{$field});
             $result->{$field} = $fieldData['checked'];
-            $result->{$field.'_rows'} = $fieldData['rows'];
-            $result->{$field.'_count_in_row'} = $fieldData['count_in_row'];
-            $result->{$field.'_maxchars'} = $fieldData['maxchars'];
+            $result->{$field.'_title'} = @$fieldData['title'] ? $fieldData['title'] : '';
+            $result->{$field.'_key'} = @$fieldData['key'] ? $fieldData['key'] : $field;
+            if (!empty($fieldData['type'])) {
+                $result->{$field.'_type'} = $fieldData['type'];
+            }
+            if (!empty($fieldData['rows'])) {
+                $result->{$field.'_rows'} = $fieldData['rows'];
+            }
+            if (!empty($fieldData['count_in_row'])) {
+                $result->{$field.'_count_in_row'} = $fieldData['count_in_row'];
+            }
         }
+        $result->additional_params = unserialize($data->additional_params);
         return $result;
     }
 
     public function definition_after_data() {
-        parent::definition_after_data();
+        //global $CFG;
+        //parent::definition_after_data();
+        //require_once($CFG->dirroot.'/blocks/exastud/classes/exastud_htmltag.php');
+        //MoodleQuickForm::registerElementType('exastud_htmltag', $CFG->dirroot.'/blocks/exastud/classes/exastud_htmltag.php', 'block_exastud_htmltag');
 
         $mform =& $this->_form;
+
+        $i = 0;
+        $i_from_zero = true;
+        //array_unshift($mform->_defaultValues['additional_params'], array('-1' => array())); // for empty block (template for new first record)
+        if (array_key_exists('additional_params', $mform->_defaultValues) && !$mform->_defaultValues['additional_params']) {
+            $i = -1;
+            $i_from_zero = false;
+            $mform->_defaultValues['additional_params'] = array('-1' => array());  // for empty block (template for new first record)
+        }
+        if (!empty($mform->_defaultValues['additional_params']) && count($mform->_defaultValues['additional_params']) > 0) {
+            //print_r($mform->_defaultValues['additional_params']);
+            //$count_additional = count($mform->_defaultValues['additional_params']);
+            // add additional_params to the form
+            foreach ($mform->_defaultValues['additional_params'] as $param_key => $param_settings) {
+                $main_block = array();
+                // block delimeter
+                $mform->addElement('exastud_htmltag', '<div id="exastud-additional-params-block-'.$i.'" class="exastud-additional-params-block '.($i < 0 ? 'hidden' : '').'" >');
+                $mform->addElement('exastud_htmltag', '<hr />');
+                // always 'checked'
+                $mform->addElement('hidden', 'additional_params['.$i.']', '1');
+                // title
+                $main_block[] = $mform->createElement('text', 'additional_params_title['.$i.']', block_exastud_trans('de: Titel'), 'size = \'45\'');
+                if (!empty($param_settings['title'])) {
+                    $mform->setDefault('additional_params_title['.$i.']', $param_settings['title']);
+                }
+                $mform->setType('additional_params_title', PARAM_ALPHA);
+                // key
+                $main_block[] = $mform->createElement('text', 'additional_params_key['.$i.']', ''/*block_exastud_trans('de: Key')*/, 'size = \'45\'');
+                if (!empty($param_settings['key'])) {
+                    $mform->setDefault('additional_params_key['.$i.']', $param_settings['key']);
+                }
+                $mform->setType('additional_params_key', PARAM_RAW);
+                $mform->addGroup($main_block, 'additional_params_mainparams['.$i.']', '', array(' '), false);
+                // type
+                $radiotype = array();
+                foreach ($this->input_types as $type) {
+                    $radiotype[] = $mform->createElement('radio', 'additional_params_type['.$i.']', '', $type, $type, $this->radioattributes);
+                    if (!empty($param_settings['type'])) {
+                        $mform->setDefault('additional_params_type['.$i.']', $param_settings['type']);
+                    }
+                }
+                $mform->addGroup($radiotype, 'additional_params_typeradiobuttons['.$i.']', '', array(' '), false);
+                // paramaters for textarea
+                $textareaParams = array();
+                $textareaParams[] =& $mform->createElement('text', 'additional_params_rows['.$i.']', block_exastud_get_string('report_settings_countrows_fieldtitle'), array('size' => 5));
+                $mform->setType('additional_params_rows['.$i.']', PARAM_INT);
+                if (!empty($param_settings['rows'])) {
+                    $mform->setDefault('additional_params_rows['.$i.']', $param_settings['rows']);
+                }
+                $textareaParams[] =& $mform->createElement('text', 'additional_params_count_in_row['.$i.']', block_exastud_get_string('report_settings_countinrow_fieldtitle'), array('size' => 5));
+                $mform->setType('additional_params_count_in_row['.$i.']', PARAM_INT);
+                if (!empty($param_settings['count_in_row'])) {
+                    $mform->setDefault('additional_params_count_in_row['.$i.']', $param_settings['count_in_row']);
+                }
+                $mform->addGroup($textareaParams, 'additional_params_textareaparams['.$i.']', '', ' ', false);
+
+                //$mform->addGroup($additional_block, 'group_additionalparams', '', ' ', false);
+                $mform->addElement('exastud_htmltag', '</div>');
+                $i++;
+            }
+            // options of elements
+            //$additional_block_options = array();
+            //$this->repeat_elements($additional_block, $count_additional, $additional_block_options, 'additional_params_repeat', 'additional_params', 0, null, null);
+        }
+
+        $mform->addElement('exastud_htmltag', '<script>var additional_params_last_index = '.($i - 1).';</script>');
+        $mform->addElement('button', 'add_new_param', block_exastud_get_string('report_settings_button_add_additional_param'));
+
+        $this->add_action_buttons();
+
+        // additional changing in html of elements (needs for JS)
+        $field_working = function ($field, $i = null) use ($mform) {
+            $arr = '';
+            if ($i !== null) {
+                $arr = '['.$i.']';
+            }
+
+            // main params (title, key)
+            $main_settings = $mform->getElement($field.'_mainparams'.$arr);
+            $main_settings->_attributes['class'] = 'exastud-template-settings-group group-'.$field.' main-params';
+            $main_settings_elements = $main_settings->getElements();
+            foreach ($main_settings_elements as $element) {
+                $element->_attributes['class'] = 'exastud-template-settings-param';
+            }
+            // type radiobuttons settings
+            $radio_settings = $mform->getElement($field.'_typeradiobuttons'.$arr);
+            $radio_settings->_attributes['class'] = 'exastud-template-settings-group group-'.$field.' type-settings';
+            $radio_settings_elements = $radio_settings->getElements();
+            foreach ($radio_settings_elements as $element) {
+                $element->_attributes['class'] = 'exastud-template-settings-param-type';
+                $element->_attributes['data-field'] = $field.$arr;
+            }
+            // textarea params
+            $textarea_settings = $mform->getElement($field.'_textareaparams'.$arr);
+            $addclass2 = '';
+            if ($i !== null) {
+                $addclass2 .= ' textarea-settings-'.$i;
+            }
+            $textarea_settings->_attributes['class'] = 'exastud-template-settings-group group-'.$field.' textarea-settings '.$addclass2;
+            $textarea_settings_elements = $textarea_settings->getElements();
+            foreach ($textarea_settings_elements as $element) {
+                $element->_attributes['class'] = 'exastud-template-settings-param';
+            }
+        };
+
         foreach ($this->allSecondaryFields as $field) {
             $formelement = $group = $mform->getElement($field);
             $formelement->_attributes['class'] = 'exastud-template-settings-param param-'.$field;
             if (in_array($field, $this->fieldsWithAdditionalParams)) {
-                $group = $mform->getElement($field.'_additionalinfo');
-                $group->_attributes['class'] = 'exastud-template-settings-group group-'.$field;
-                $group_elements = $group->getElements();
-                foreach ($group_elements as $element) {
-                    $element->_attributes['class'] = 'exastud-template-settings-param';
-                    //echo '<pre>';
-                    //print_r($group_elements);
-                    //exit;
+                $field_working($field, null);
+            }
+            // if here is additional params
+            if (array_key_exists('additional_params', $mform->_defaultValues) && $mform->_defaultValues['additional_params']) {
+                for ($i = ($i_from_zero ? 0 : -1); $i < count($mform->_defaultValues['additional_params']) - ($i_from_zero ? 0 : 1); $i++) {
+                    $field_working('additional_params', $i);
                 }
-                //$field_rows->attributes['class'] = "dsfsdfsdf";
             }
 
         }
 
     }
+
+/*    function validation($data, $files, $customData) {
+        $this->prepare_formdata($customData);
+        return parent::validation($data, $files);
+    }*/
+
+function display($with_custom_definition = false) {
+    if ($with_custom_definition) {
+        $this->_definition_finalized = false; // needed for form after validation
+    }
+    parent::display(); // TODO: Change the autogenerated stub
+}
 
 }
 

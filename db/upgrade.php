@@ -422,6 +422,14 @@ function xmldb_block_exastud_upgrade($oldversion = 0) {
         }
     }
 
+    if ($oldversion < 2018101900) {
+        $table = new xmldb_table('block_exastudreportsettings');
+        $field = new xmldb_field('additional_params', XMLDB_TYPE_TEXT, null, null, null, null, null);
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+    }
+
 	block_exastud_insert_default_entries();
 	block_exastud_check_profile_fields();
 

@@ -1,7 +1,7 @@
 <?php
 // This file is part of Exabis Student Review
 //
-// (c) 2016 GTN - Global Training Network GmbH <office@gtn-solutions.com>
+// (c) 2018 GTN - Global Training Network GmbH <office@gtn-solutions.com>
 //
 // Exabis Student Review is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,9 +19,17 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->component = 'block_exastud';
+require_once("HTML/QuickForm/html.php");
 
-$plugin->release  = "4.6.3";
-$plugin->version   = 2018102200;
-$plugin->requires  = 2015051100;
-$plugin->maturity = MATURITY_ALPHA;
+class block_exastud_htmltag extends HTML_QuickForm_html {
+
+    public function __construct($elementName = null, $elementLabel = null, $text = '', $attributes = null) {
+        parent::__construct($elementName, $elementLabel, $text, $attributes);
+    }
+
+    public function toHtml() {
+        return $this->_text;
+    }
+}
+
+

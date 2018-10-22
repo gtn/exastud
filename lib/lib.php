@@ -39,7 +39,7 @@ const BLOCK_EXASTUD_CAP_REVIEW = 'review';
 
 const BLOCK_EXASTUD_DATA_ID_LERN_UND_SOZIALVERHALTEN = 'learning_and_social_behavior';
 const BLOCK_EXASTUD_DATA_ID_UNLOCKED_TEACHERS = 'unlocked_teachers';
-const BLOCK_EXASTUD_DATA_ID_PRINT_TEMPLATE = 'print_template';
+const BLOCK_EXASTUD_DATA_ID_PRINT_TEMPLATE = 'print_template'; // TODO: change to id of 'block_exastudreportsettings' record?
 const BLOCK_EXASTUD_DATA_ID_CLASS_DEFAULT_TEMPLATEID = 'default_templateid';
 const BLOCK_EXASTUD_DATA_ID_PROJECT_TEACHER = 'project_teacher';
 
@@ -47,6 +47,8 @@ const BLOCK_EXASTUD_SUBJECT_ID_LERN_UND_SOZIALVERHALTEN = -1;
 const BLOCK_EXASTUD_SUBJECT_ID_LERN_UND_SOZIALVERHALTEN_VORSCHLAG = -3;
 const BLOCK_EXASTUD_SUBJECT_ID_OTHER_DATA = -1;
 const BLOCK_EXASTUD_SUBJECT_ID_ADDITIONAL_HEAD_TEACHER = -2;
+
+const BLOCK_EXASTUD_TEMPLATE_DIR = __DIR__.'/../template';
 
 class block_exastud_permission_exception extends moodle_exception {
 	function __construct($errorcode = 'Not allowed', $module = '', $link = '', $a = null, $debuginfo = null) {
@@ -1477,6 +1479,7 @@ function block_exastud_get_class_title($classid) {
 
 function block_exastud_get_student_print_templateid($class, $userid) {
 	$templateid = block_exastud_get_class_student_data($class->id, $userid, BLOCK_EXASTUD_DATA_ID_PRINT_TEMPLATE);
+	//echo '---';print_r($templateid);exit;
 	$available_templates = \block_exastud\print_templates::get_class_available_print_templates($class);
 	if (isset($available_templates[$templateid])) {
 		return $templateid;
@@ -1634,3 +1637,461 @@ function block_exastud_get_report_templates($class) {
     return $templates;
 }
 
+function block_exastud_get_template_files() {
+    $filelist = get_directory_list(BLOCK_EXASTUD_TEMPLATE_DIR);
+    // delete extensions from file
+    foreach ($filelist as $k => $file) {
+        $filelist[$k] = preg_replace('/\\.[^.\\s]{3,4}$/', '', $file);
+    }
+    $filelist = array_combine($filelist, $filelist);
+    return $filelist;
+}
+
+// Needed for install/upgrade plugin
+function block_exastud_get_default_templates() {
+    $grades_1_bis_6 = ['1' => '1', '2' => '2', '3' => '3', '4' => '4', '5' => '5', '6' => '6'];
+    $grades_short = ['1' => 'sgt', '2' => 'gut', '3' => 'bfr', '4' => 'ausr', '5' => 'mgh', '6' => 'ung'];
+    $grades_mit_plus_minus_bis = [
+            '1' => '1', '1-' => '1-', '1-2' => '1-2',
+            '2+' => '2+', '2' => '2', '2-' => '2-', '2-3' => '2-3',
+            '3+' => '3+', '3' => '3', '3-' => '3-', '3-4' => '3-4',
+            '4+' => '4+', '4' => '4', '4-' => '4-', '4-5' => '4-5',
+            '5+' => '5+', '5' => '5', '5-' => '5-', '5-6' => '5-6',
+            '6+' => '6+', '6' => '6',
+    ];
+    $grades_mit_plus_minus_bis_ausgeschrieben = [
+            '1' => '1', '1-' => '1 minus', '1-2' => '1 - 2',
+            '2+' => '2 plus', '2' => '2', '2-' => '2 minus', '2-3' => '2 - 3',
+            '3+' => '3 plus', '3' => '3', '3-' => '3 minus', '3-4' => '3 - 4',
+            '4+' => '4 plus', '4' => '4', '4-' => '4 minus', '4-5' => '4 - 5',
+            '5+' => '5 plus', '5' => '5', '5-' => '5 minus', '5-6' => '5 - 6',
+            '6+' => '6 plus', '6' => '6',
+    ];
+    $grades_lang = ['1' => 'sehr gut', '2' => 'gut', '3' => 'befriedigend', '4' => 'ausreichend', '5' => 'mangelhaft', '6' => 'ungenügend'];
+
+    $templates = [
+            'default_report' => [
+                    'id' => 1,
+                    'name' => 'Standard Zeugnis',
+                    'file' => 'default_report',
+                    'grades' => $grades_1_bis_6,
+                    'inputs' => [
+                            'comments' => [
+                                    'title' => block_exastud_trans('de:Bemerkungen'),
+                                    'type' => 'textarea',
+                            ],
+                    ],
+            ],
+            'BP 2016/GMS Zeugnis 1.HJ' => [
+                    'name' => 'BP 2016 GMS Zeugnis 1.HJ',
+                    'file' => 'BP 2016/Lernentwicklungsbericht neuer BP 1.HJ',
+                    'grades' => $grades_mit_plus_minus_bis,
+                    'inputs' => [
+                            'comments' => [
+                                    'title' => block_exastud_trans('de:Bemerkungen'),
+                                    'type' => 'textarea',
+                            ],
+                    ],
+            ],
+            'BP 2016/GMS Zeugnis SJ' => [
+                    'name' => 'BP 2016 GMS Zeugnis SJ',
+                    'file' => 'BP 2016/Lernentwicklungsbericht neuer BP SJ',
+                    'grades' => $grades_1_bis_6,
+                    'inputs' => [
+                            'comments' => [
+                                    'title' => block_exastud_trans('de:Bemerkungen'),
+                                    'type' => 'textarea',
+                            ],
+                    ],
+            ],
+            'BP 2004/GMS Zeugnis 1.HJ' => [
+                    'name' => 'BP 2004 GMS Zeugnis 1.HJ',
+                    'file' => 'BP 2004/Lernentwicklungsbericht alter BP 1.HJ',
+                    'grades' => $grades_mit_plus_minus_bis,
+                    'inputs' => [
+                            'comments' => [
+                                    'title' => block_exastud_trans('de:Bemerkungen'),
+                                    'type' => 'textarea',
+                            ],
+                    ],
+            ],
+            'BP 2004/GMS Zeugnis SJ' => [
+                    'name' => 'BP 2004 GMS Zeugnis SJ',
+                    'file' => 'BP 2004/Lernentwicklungsbericht alter BP SJ',
+                    'grades' => $grades_1_bis_6,
+                    'inputs' => [
+                            'comments' => [
+                                    'title' => block_exastud_trans('de:Bemerkungen'),
+                                    'type' => 'textarea',
+                            ],
+                    ],
+            ],
+            'BP 2004/GMS Klasse 10 E-Niveau 1.HJ' => [
+                    'name' => 'BP 2004 GMS Klasse 10 E-Niveau 1.HJ',
+                    'file' => 'BP 2004/Halbjahresinformation Klasse 10Gemeinschaftsschule_E-Niveau_BP 2004',
+                    'grades' => $grades_mit_plus_minus_bis_ausgeschrieben,
+                    'inputs' => [
+                            'ags' => [
+                                    'title' => 'Teilnahme an Arbeitsgemeinschaften',
+                                    'type' => 'textarea',
+                                    'lines' => 3,
+                            ],
+                            'comments_short' => [
+                                    'title' => 'Bemerkungen',
+                                    'type' => 'textarea',
+                                    'lines' => 3,
+                            ],
+                    ],
+            ],
+            'BP 2004/GMS Klasse 10 E-Niveau SJ' => [
+                    'name' => 'BP 2004 GMS Klasse 10 E-Niveau SJ',
+                    'file' => 'BP 2004/Jahreszeugnis Klasse 10 der Gemeinschaftsschule E-Niveau',
+                    'grades' => $grades_short,
+                    'inputs' => [
+                            'verhalten' => [
+                                    'title' => 'Verhalten',
+                                    'type' => 'select',
+                                    'values' => [1 => 'sgt', 2 => 'gut', 3 => 'bfr', 6 => 'unbfr'],
+                            ],
+                            'mitarbeit' => [
+                                    'title' => 'Mitarbeit',
+                                    'type' => 'select',
+                                    'values' => [1 => 'sgt', 2 => 'gut', 3 => 'bfr', 6 => 'unbfr'],
+                            ],
+                            'ags' => [
+                                    'title' => 'Teilnahme an Arbeitsgemeinschaften',
+                            ],
+                            'comments_short' => [
+                                    'title' => 'Bemerkungen',
+                            ],
+                    ],
+            ],
+            'BP 2004/GMS Abgangszeugnis' => [
+                    'name' => 'BP 2004 GMS Abgangszeugnis',
+                    'file' => 'BP 2004/Abgangszeugnis der Gemeinschaftsschule',
+                    'grades' => $grades_lang,
+                    'inputs' => [
+                            'wann_verlassen' => [
+                                    'title' => 'verlässt ...',
+                                    'type' => 'select',
+                                    'values' => [
+                                            'heute8' => 'heute die Klasse 8 der Schule.',
+                                            'heute9' => 'heute die Klasse 9 der Schule.',
+                                            'heute10' => 'heute die Klasse 10 der Schule.',
+                                            'during8' => 'während der Klasse 8 die Schule.',
+                                            'during9' => 'während der Klasse 9 die Schule.',
+                                            'during10' => 'während der Klasse 10 die Schule.',
+                                            'ende8' => 'am Ende der Klasse 8 die Schule.',
+                                            'ende10' => 'am Ende der Klasse 10 die Schule.',
+                                    ],
+                            ],
+                            'ags' => [
+                                    'title' => 'Teilnahme an Arbeitsgemeinschaften',
+                                    'type' => 'textarea',
+                                    'lines' => 3,
+                            ],
+                            'comments_short' => [
+                                    'title' => 'Bemerkungen',
+                                    'type' => 'textarea',
+                                    'lines' => 3,
+                            ],
+                            'abgangszeugnis_niveau' => [
+                                    'title' => 'Die Leistung wurde in allen Fächern auf dem folgenden Niveau beurteilt',
+                                    'type' => 'select',
+                                    'values' => ['G' => 'G', 'M' => 'M', 'E' => 'E'],
+                            ],
+                    ],
+            ],
+            'BP 2004/GMS Abgangszeugnis HSA Kl.9 und 10' => [
+                    'name' => 'BP 2004 GMS Abgangszeugnis HSA Kl.9 und 10',
+                    'file' => 'BP 2004/Abgangszeugnis der Gemeinschaftsschule HSA Kl.9 und 10',
+                    'grades' => $grades_lang,
+                    'inputs' => [
+                            'wann_verlassen' => [
+                                    'title' => 'verlässt ...',
+                                    'type' => 'select',
+                                    'values' => [
+                                            'ende9' => 'am Ende der Klasse 9 die Schule.',
+                                            'ende10' => 'am Ende der Klasse 10 die Schule.',
+                                    ],
+                            ],
+                        /*
+                        'projekt_thema' => [
+                            'title' => 'Projektprüfung: Thema',
+                            'type' => 'text',
+                        ],
+                        'projekt_grade' => [
+                            'title' => 'Projektprüfung: Note',
+                            'type' => 'select',
+                            'values' => $grades,
+                        ],
+                        */
+                            'ags' => [
+                                    'title' => 'Teilnahme an Arbeitsgemeinschaften',
+                                    'type' => 'textarea',
+                                    'lines' => 3,
+                            ],
+                            'comments_short' => [
+                                    'title' => 'Bemerkungen',
+                                    'type' => 'textarea',
+                                    'lines' => 3,
+                            ],
+                    ],
+            ],
+            'BP 2004/GMS Hauptschulabschluss 1.HJ' => [
+                    'name' => 'BP 2004 GMS Hauptschulabschluss 1.HJ',
+                    'file' => 'BP 2004/HalbjahreszeugnisHauptschulabschluss an der Gemeinschaftsschule _BP alt',
+                    'grades' => $grades_short,
+                    'inputs' => [
+                            'ags' => [
+                                    'title' => 'Teilnahme an Arbeitsgemeinschaften',
+                                    'type' => 'textarea',
+                                    'lines' => 3,
+                            ],
+                            'comments_short' => [
+                                    'title' => 'Bemerkungen',
+                                    'type' => 'textarea',
+                                    'lines' => 3,
+                            ],
+                    ],
+            ],
+            'BP 2004/GMS Hauptschulabschluss SJ' => [
+                    'name' => 'BP 2004 GMS Hauptschulabschluss SJ',
+                    'file' => 'BP 2004/Hauptschulabschluszeugnis GMS BP 2004',
+                    'grades' => $grades_lang,
+                    'inputs' => [
+                        /*
+                        'abgelegt' => [
+                            'title' => 'Hat die Hauptschulabschlussprüfung nach',
+                            'type' => 'select',
+                            'values' => [
+                                'nach9' => 'Klasse 9 der Gemeinschaftsschule mit Erfolg abgelegt.',
+                                'nach10' => 'Klasse 10 der Gemeinschaftsschule mit Erfolg abgelegt.',
+                            ],
+                        ],
+                        'projekt_thema' => [
+                            'title' => 'Projektprüfung: Thema',
+                            'type' => 'text',
+                        ],
+                        'projekt_grade' => [
+                            'title' => 'Projektprüfung: Note',
+                            'type' => 'select',
+                            'values' => $grades,
+                        ],
+                        */
+                            'gesamtnote_und_durchschnitt_der_gesamtleistungen' => [
+                                    'title' => 'Gesamtnote und Durchschnitt der Gesamtleistungen',
+                                    'type' => 'text',
+                            ],
+                            'ags' => [
+                                    'title' => 'Teilnahme an Arbeitsgemeinschaften',
+                            ],
+                            'comments_short' => [
+                                    'title' => 'Bemerkungen',
+                            ],
+                    ],
+            ],
+            'BP 2004/GMS Realschulabschluss 1.HJ' => [
+                    'name' => 'BP 2004 GMS Realschulabschluss 1.HJ',
+                    'file' => 'BP 2004/HalbjahreszeugnisRealschulabschluss an der Gemeinschaftsschule',
+                    'grades' => $grades_short,
+                    'inputs' => [
+                            'ags' => [
+                                    'title' => 'Teilnahme an Arbeitsgemeinschaften',
+                                    'type' => 'textarea',
+                                    'lines' => 3,
+                            ],
+                            'comments_short' => [
+                                    'title' => 'Bemerkungen',
+                                    'type' => 'textarea',
+                                    'lines' => 3,
+                            ],
+                    ],
+            ],
+            'BP 2004/GMS Realschulabschluss SJ' => [
+                    'name' => 'BP 2004 GMS Realschulabschluss SJ',
+                    'file' => 'BP 2004/Realschulabschlusszeugnis an der Gemeinschaftsschule BP 2004',
+                    'grades' => $grades_lang,
+                    'inputs' => [
+                        /*
+                        'projekt_thema' => [
+                            'title' => 'Projektprüfung: Thema',
+                            'type' => 'text',
+                        ],
+                        'projekt_grade' => [
+                            'title' => 'Projektprüfung: Note',
+                            'type' => 'select',
+                            'values' => $grades,
+                        ],
+                        */
+                            'ags' => [
+                                    'title' => 'Teilnahme an Arbeitsgemeinschaften',
+                                    'type' => 'textarea',
+                                    'lines' => 3,
+                            ],
+                            'comments_short' => [
+                                    'title' => 'Bemerkungen',
+                                    'type' => 'textarea',
+                                    'lines' => 3,
+                            ],
+                    ],
+            ],
+            'BP 2004/Zertifikat fuer Profilfach' => [
+                    'name' => 'Zertifikat für Profilfach',
+                    'file' => 'BP 2004/Zertifikat fuer Profilfach',
+                    'grades' => [],
+                    'inputs' => [
+                            'besondere_kompetenzen' => [
+                                    'title' => 'Besondere Kompetenzen in folgenden Bereichen erworben',
+                                    'type' => 'textarea',
+                                    'lines' => 13,
+                            ],
+                    ],
+            ],
+            'BP 2004/Beiblatt zur Projektpruefung HSA' => [
+                    'name' => 'Beiblatt zur Projektprüfung HSA',
+                    'file' => 'BP 2004/Beiblatt zur Projektpruefung HSA',
+                    'grades' => $grades_lang,
+                    'inputs' => [
+                        /*
+                        'projekt_text3lines' => [
+                            'title' => 'Projektthema',
+                            'type' => 'textarea',
+                            'lines' => 3,
+                        ],
+                        'projekt_verbalbeurteilung' => [
+                            'title' => 'Verbalbeurteilung',
+                            'type' => 'textarea',
+                            'lines' => 5,
+                        ],
+                        'projekt_grade' => [
+                            'title' => 'Projektprüfung: Note',
+                            'type' => 'select',
+                            'values' => $grades,
+                        ],
+                        */
+                    ],
+            ],
+            'Anlage zum Lernentwicklungsbericht' => [
+                    'name' => 'Anlage zum Lernentwicklungsbericht',
+                    'file' => 'Anlage zum Lernentwicklungsbericht',
+                    'inputs' => [],
+            ],
+            'Anlage zum LernentwicklungsberichtAlt' => [
+                    'name' => 'Anlage zum LernentwicklungsberichtAlt',
+                    'file' => 'Anlage zum LernentwicklungsberichtAlt',
+                    'inputs' => [],
+            ],
+            'BP 2004/GMS Abschlusszeugnis der Förderschule' => [
+                    'name' => 'BP 2004 GMS Abschlusszeugnis der Förderschule',
+                    'file' => 'BP 2004/Abschlusszeugnis der Foerderschule',
+                    'grades' => $grades_lang,
+                    'inputs' => [
+                            'gesamtnote_und_durchschnitt_der_gesamtleistungen' => [
+                                    'title' => 'Gesamtnote und Durchschnitt der Gesamtleistungen',
+                                    'type' => 'text',
+                            ],
+                            'ags' => [
+                                    'title' => 'Teilnahme an Arbeitsgemeinschaften',
+                            ],
+                            'comments_short' => [
+                                    'title' => 'Bemerkungen',
+                            ],
+                    ],
+            ],
+            'BP 2004/GMS Halbjahreszeugniss der Förderschule' => [
+                    'name' => 'BP 2004 GMS Halbjahreszeugniss der Förderschule',
+                    'file' => 'BP 2004/HJ zeugnis Foe',
+                    'grades' => $grades_short,
+                    'inputs' => [
+                            'ags' => [
+                                    'title' => 'Teilnahme an Arbeitsgemeinschaften',
+                                    'type' => 'textarea',
+                                    'lines' => 3,
+                            ],
+                    ],
+            ],
+            'Deckblatt und 1. Innenseite LEB' => [
+                    'name' => 'Deckblatt und 1. Innenseite LEB',
+                    'file' => 'Deckblatt und 1. Innenseite LEB',
+                    'inputs' => [],
+            ],
+    ];
+
+    return $templates;
+}
+
+function block_exastud_fill_reportsettingstable() {
+    $reporttemplates = block_exastud_get_default_templates();
+    $convertdata = function($key, $template) {
+        $data = array();
+        if (!empty($template['id']) && $template['id'] > 0) {
+            $data['id'] = $template['id'];
+        }
+        $data['title'] = $template['name'];
+        $bpid = 0;
+        $bp_bykey = explode('/', $key);
+        $bptitle = 'bw-'.strtolower(str_replace(' ', '', $bp_bykey[0]));
+        $allBPs = g::$DB->get_records('block_exastudbp');
+        foreach ($allBPs as $bp) {
+            if ($bptitle == $bp->sourceinfo) {
+                $bpid = $bp->id;
+            }
+        }
+        $data['bpid'] = $bpid;
+        $data['template'] = $template['file'];
+        $data['category'] = '';
+        $data['additional_params'] = '';
+        // default values for columns
+        $tablecolumns = array_keys(g::$DB->get_columns('block_exastudreportsettings'));
+        foreach ($tablecolumns as $column) {
+            if (!array_key_exists($column, $data)) {
+                $data[$column] = serialize(array('checked' => "0"));
+            }
+        }
+        $inputs = array();
+        if ($template['inputs'] && count($template['inputs']) > 0) {
+            foreach ($template['inputs'] as $inputname => $inputconfig) {
+                $fielddata = array(
+                        'key' => $inputname, // used in the template files
+                        'title' => @$inputconfig['title'] ? $inputconfig['title'] : '',
+                        'type' => @$inputconfig['type'] ? $inputconfig['type'] : 'textarea',
+                        'checked' => '1'
+                );
+                if ($fielddata['type'] == 'textarea' ) {
+                    $fielddata['rows'] = @$inputconfig['lines'] ? $inputconfig['lines'] : "8";
+                    $fielddata['count_in_row'] = @$inputconfig['cols'] ? $inputconfig['cols'] : "48";
+                }
+                if (!empty($inputconfig['type']) && $inputconfig['type'] == 'select' && !empty($inputconfig['values'])) {
+                    $fielddata['values'] = $inputconfig['values'];
+                }
+                if (in_array($inputname, $tablecolumns)) {
+                    // add value to concrete field
+                    $inputs[$inputname] = $fielddata;
+                } else {
+                    // add value to 'additional_params' field (dynamically fields)
+                    $inputs['additional_params'][$inputname] = $fielddata;
+                }
+            }
+            $inputs = array_map('serialize', $inputs);
+        }
+        $data = array_merge($data, $inputs);
+        return $data;
+    };
+    foreach ($reporttemplates as $key => $template) {
+        // insert only non existing records
+        if (!empty($template['id']) && $template['id'] > 0) {
+            // search by id
+            if (!g::$DB->get_record('block_exastudreportsettings', ['id' => $template['id']])) {
+                $data = $convertdata($key, $template);
+                g::$DB->insert_record('block_exastudreportsettings', $data);
+            }
+        } else if (!empty($template['name']) && !empty($template['file'])) {
+            // search by title and file
+            if (!g::$DB->get_record('block_exastudreportsettings', ['title' => $template['name'], 'template' => $template['file']])) {
+                $data = $convertdata($key, $template);
+                g::$DB->insert_record('block_exastudreportsettings', $data);
+            }
+        }
+    }
+}
