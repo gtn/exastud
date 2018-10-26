@@ -16,6 +16,9 @@
 // You can find the GNU General Public License at <http://www.gnu.org/licenses/>.
 //
 // This copyright notice MUST APPEAR in all copies of the script!
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
 
 require __DIR__.'/inc.php';
 require_once($CFG->dirroot . '/blocks/exastud/lib/edit_form.php');
@@ -149,6 +152,7 @@ if ($action && ($settingsid > 0 || $action == 'new')) {
                 block_exastud_get_string('report_settings_setting_subjectprofile'),
                 block_exastud_get_string('report_settings_setting_assessmentproject'),
                 block_exastud_get_string('report_settings_setting_ags'),
+                block_exastud_get_string('report_settings_setting_additional_params'),
         );
         $table->align = array("left");
         // function for getting human value of field
@@ -210,6 +214,7 @@ if ($action && ($settingsid > 0 || $action == 'new')) {
                     $call_setting_marker('subject_profile'),
                     $call_setting_marker('assessment_project'),
                     $call_setting_marker('ags'),
+                    block_exastud_get_reportsettings_additional_description($report)
             );
             $table->data[] = $row;
         }
@@ -227,50 +232,100 @@ if ($action && ($settingsid > 0 || $action == 'new')) {
 
 echo $output->footer();
 
+function block_exastud_get_reportsettings_additional_description($report) {
+    $data = unserialize($report->additional_params);
+    $content = '';
+    if ($data && is_array($data) && count($data) > 0) {
+        $content .= '<ul class="exastud-additional-params-shortlist">';
+        foreach ($data as $key => $reportData) {
+            $content .= '<li><strong>${'.$reportData['key'].'}:</strong> '.'<i>('.$reportData['type'].')</i> '.$reportData['title'].'</li>';
+        }
+        $content .= '</ul>';
+    }
+    return $content;
+}
+
 function block_exastud_report_templates_prepare_serialized_data($settingsform, $settingsedit) {
     foreach ($settingsform->getAllSecondaryFields() as $field) {
-        $element_data = array (
-                'key' => @$settingsedit->{$field.'_key'} ? $settingsedit->{$field.'_key'} : $field,
-                'title' => @$settingsedit->{$field.'_title'} ? $settingsedit->{$field.'_title'} : block_exastud_get_string('report_settings_setting_'.str_replace('_', '', $field)),
-                'checked' => $settingsedit->{$field}
-        );
-        if (!empty($settingsedit->{$field.'_type'})) {
-            $element_data['type'] = $settingsedit->{$field.'_type'};
+        if (in_array($field, $settingsform->getFieldsWithAdditionalParams())) {
+            $element_data = array(
+                    'key' => @$settingsedit->{$field.'_key'} ? $settingsedit->{$field.'_key'} : $field,
+                    'title' => @$settingsedit->{$field.'_title'} ? $settingsedit->{$field.'_title'} :
+                            block_exastud_get_string('report_settings_setting_'.str_replace('_', '', $field)),
+                    'checked' => $settingsedit->{$field}
+            );
+            if (!empty($settingsedit->{$field.'_type'})) {
+                $element_data['type'] = $settingsedit->{$field.'_type'};
+            } else {
+                $element_data['type'] = 'textarea';
+            }
+            switch ($element_data['type']) {
+                case 'textarea':
+                    $element_data['rows'] = (isset($settingsedit->{$field.'_rows'}) && $settingsedit->{$field.'_rows'} > 0 ?
+                            $settingsedit->{$field.'_rows'} : 8);
+                    $element_data['count_in_row'] =
+                            (isset($settingsedit->{$field.'_count_in_row'}) && $settingsedit->{$field.'_count_in_row'} > 0 ?
+                                    $settingsedit->{$field.'_count_in_row'} : 45);
+                    break;
+                case 'select':
+                    // work with GP, because mform does not know about new options
+                    $selectbox_optionskey = optional_param_array($field.'_selectboxvalues_key', '', PARAM_RAW);
+                    if (!empty($selectbox_optionskey) && count($selectbox_optionskey) > 0) {
+                        $selectbox_optionsvalue = optional_param_array($field.'_selectboxvalues_value', '', PARAM_RAW);
+                        foreach ($selectbox_optionskey as $vIndex => $key) {
+                            $element_data['values'][$key] = trim($selectbox_optionsvalue[$vIndex]);
+                        };
+                    }
+                    break;
+            }
         } else {
-            $element_data['type'] = 'textarea';
-        }
-        if ($element_data['type'] == 'textarea') {
-            $element_data['rows'] = (isset($settingsedit->{$field.'_rows'}) && $settingsedit->{$field.'_rows'} > 0 ? $settingsedit->{$field.'_rows'} : 8);
-            $element_data['count_in_row'] = (isset($settingsedit->{$field.'_count_in_row'}) && $settingsedit->{$field.'_count_in_row'} > 0 ? $settingsedit->{$field.'_count_in_row'} : 45);
+            $element_data = array(
+                    'checked' => $settingsedit->{$field}
+            );
         }
         $settingsedit->{$field} = serialize($element_data);
     }
+
     // additional params (dynamic)
-    $additional_params_GP = optional_param_array('additional_params', '', PARAM_INT);
+    $aparams_GP = optional_param_array('additional_params', '', PARAM_INT);
     $additional_params = array();
-    if (count($additional_params_GP) > 0) {
-        $additional_params_titles = optional_param_array('additional_params_title', '', PARAM_RAW);
-        $additional_params_keys = optional_param_array('additional_params_key', '', PARAM_RAW);
-        $additional_params_types = optional_param_array('additional_params_type', '', PARAM_RAW);
-        $additional_params_rows = optional_param_array('additional_params_rows', '', PARAM_INT);
-        $additional_params_count_in_rows = optional_param_array('additional_params_count_in_row', '', PARAM_INT);
-        foreach ($additional_params_GP as $param_index => $checked) {
-            if ($param_index > -1) {
-                if ($additional_params_keys[$param_index] != '') {
-                    $additional_params[$additional_params_keys[$param_index]] = array(
-                            'key' => $additional_params_keys[$param_index],
-                            'title' => $additional_params_titles[$param_index],
+    if (count($aparams_GP) > 0) {
+        $aparams_titles = optional_param_array('additional_params_title', '', PARAM_RAW);
+        $aparams_keys = optional_param_array('additional_params_key', '', PARAM_RAW);
+        $aparams_types = optional_param_array('additional_params_type', '', PARAM_RAW);
+        $aparams_rows = optional_param_array('additional_params_rows', '', PARAM_INT);
+        $aparams_count_in_rows = optional_param_array('additional_params_count_in_row', '', PARAM_INT);
+        $aparams_selectboxvalues_key = block_exastud_optional_param_array('additional_params_selectboxvalues_key', '', PARAM_RAW);
+        $aparams_selectboxvalues_value = block_exastud_optional_param_array('additional_params_selectboxvalues_value', '', PARAM_RAW);
+        foreach ($aparams_GP as $pIndex => $checked) {
+            if ($pIndex > -1) {
+                if ($aparams_keys[$pIndex] != '') {
+                    $additional_params[$aparams_keys[$pIndex]] = array(
+                            'key' => $aparams_keys[$pIndex],
+                            'title' => $aparams_titles[$pIndex],
                             'checked' => '1',
-                            'type' => $additional_params_types[$param_index]
+                            'type' => $aparams_types[$pIndex]
                     );
-                    if ($additional_params[$additional_params_keys[$param_index]]['type'] == 'textarea') {
-                        $additional_params[$additional_params_keys[$param_index]]['rows'] =
-                                (isset($additional_params_rows[$param_index]) && $additional_params_rows[$param_index] > 0 ?
-                                        $additional_params_rows[$param_index] : 8);
-                        $additional_params[$additional_params_keys[$param_index]]['count_in_row'] =
-                                (isset($additional_params_count_in_rows[$param_index]) &&
-                                $additional_params_count_in_rows[$param_index] > 0 ?
-                                        $additional_params_count_in_rows[$param_index] : 45);
+                    switch ($additional_params[$aparams_keys[$pIndex]]['type']) {
+                        case 'textarea':
+                            $additional_params[$aparams_keys[$pIndex]]['rows'] =
+                                    (isset($aparams_rows[$pIndex]) && $aparams_rows[$pIndex] > 0 ?
+                                            $aparams_rows[$pIndex] : 8);
+                            $additional_params[$aparams_keys[$pIndex]]['count_in_row'] =
+                                    (isset($aparams_count_in_rows[$pIndex]) &&
+                                    $aparams_count_in_rows[$pIndex] > 0 ?
+                                            $aparams_count_in_rows[$pIndex] : 45);
+                            break;
+                        case 'select':
+                            //echo $pIndex.'---<br>keys:<br><pre>'; print_r($aparams_selectboxvalues_key[$pIndex]); echo '</pre>'; // !!!!!!!!!! delete it
+                            //echo $pIndex.'---<br>values:<br><pre>'; print_r($aparams_selectboxvalues_value[$pIndex]); echo '</pre>'; // !!!!!!!!!! delete it
+                            if (array_key_exists($pIndex, $aparams_selectboxvalues_key) && count($aparams_selectboxvalues_key[$pIndex]) > 0) {
+                                foreach ($aparams_selectboxvalues_key[$pIndex] as $vIndex => $key) {
+                                    $additional_params[$aparams_keys[$pIndex]]['values'][$key] =
+                                            trim($aparams_selectboxvalues_value[$pIndex][$vIndex]);
+                                };
+                            }
+                            break;
                     }
                 }
             }
@@ -282,5 +337,6 @@ function block_exastud_report_templates_prepare_serialized_data($settingsform, $
     } else {
         $settingsedit->additional_params = '';
     }
+
     return $settingsedit;
 }

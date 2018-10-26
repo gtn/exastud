@@ -24,6 +24,7 @@ defined('MOODLE_INTERNAL') || die();
 require_once __DIR__.'/../inc.php';
 
 use block_exastud\globals as g;
+use function PHPSTORM_META\type;
 
 class global_config {
 	static function get_niveau_options() {
@@ -38,6 +39,19 @@ class global_config {
 class print_templates {
 	static function get_template_name($templateid) {
 		return static::get_template_config($templateid)['name'];
+	}
+
+	static function get_template_file($templateid) {
+	    global $CFG;
+	    $filename = static::get_template_config($templateid)['file'];
+	    $path = $CFG->dirroot.'/blocks/exastud/template/';
+        if (is_file($path.$filename.'.docx')) {
+            return $path.$filename.'.docx';
+        } else if (is_file($path.$filename.'.dotx')) {
+            return $path.$filename.'.dotx';
+        } else {
+            throw new \Exception("file for template '$templateid' not found");
+        }
 	}
 
 	static function get_template_grades($templateid) {
@@ -72,21 +86,63 @@ class print_templates {
             case BLOCK_EXASTUD_DATA_ID_PRINT_TEMPLATE:
                 $fields = array('learn_social_behavior', 'subjects', 'comments', 'subject_elective', 'subject_profile', 'assessment_project', 'ags');
                 break;
+            case BLOCK_EXASTUD_DATA_ID_ZERTIFIKAT_FUER_PROFILFACH:
+                $fields_temp = unserialize($template->additional_params);
+                if (!$fields_temp) {
+                    $fields = array();
+                } else {
+                    $fields = array_intersect_key($fields_temp, array_flip(array('besondere_kompetenzen')));
+                }
+                break;
+            case BLOCK_EXASTUD_DATA_ID_ADDITIONAL_INFO:
+                $fields = unserialize($template->additional_params);
+                unset($fields['besondere_kompetenzen']);
+                if (!$fields) {
+                    $fields = array();
+                }
+                break;
+            case 'all':
+                $fieldsstatic = array('learn_social_behavior', 'subjects', 'comments', 'subject_elective', 'subject_profile', 'assessment_project', 'ags');
+                $customfields = unserialize($template->additional_params);
+                if ($customfields) {
+                    $fields = array_merge($fieldsstatic, $customfields);
+                } else {
+                    $fields = $fieldsstatic;
+                }
+                break;
             default:
-                $fields = array('learn_social_behavior', 'subjects', 'comments', 'subject_elective', 'subject_profile', 'assessment_project', 'ags');
+                $fields = array();
                 break;
         }
         $inputs = array();
         foreach ($fields as $field) {
-            $fieldData = unserialize($template->{$field});
-            //echo '++++';print_r($fieldData);echo '++++<br><br>';
+            if (is_array($field)) {
+                $fieldData = $field;
+                $field = $field['key'];
+            } else if(isset($template->{$field})) {
+                $fieldData = unserialize($template->{$field});
+            } else {
+                continue;
+            }
+            
             if ($fieldData['checked'] == 1) {
                 $inputs[$field] = array(
-                    'title' => block_exastud_get_string('report_settings_setting_'.str_replace('_', '', $field)),
-                    'type' => 'textarea',
-                    'lines' => ($fieldData['rows'] > 0 ? $fieldData['rows'] : 8),
-                    'cols' => ($fieldData['count_in_row'] > 0 ? $fieldData['count_in_row'] : 45)
+                        'title' => $fieldData['title'],
+                        'type' => $fieldData['type'],
                 );
+                switch ($fieldData['type']) {
+                    case 'text':
+                        break;
+                    case 'textarea':
+                        $inputs[$field]['lines'] = ($fieldData['rows'] > 0 ? $fieldData['rows'] : 8);
+                        $inputs[$field]['cols'] = ($fieldData['count_in_row'] > 0 ? $fieldData['count_in_row'] : 45);
+                        break;
+                    case 'select':
+                        $inputs[$field]['values'] = (count($fieldData['values']) > 0 ? $fieldData['values'] : array());
+                        break;
+                    case 'header':
+                        break;
+                }
             }
         }
         if (count($inputs) > 0) {
@@ -497,14 +553,12 @@ class print_templates {
 
 		if (block_exastud_is_bw_active()) {
 		    // templates for "Reports" page
-            // TODO: change it to dynamic
-			$templateids[] = 1; // for testing
 
 			if (!$bp || $bp->sourceinfo !== 'bw-bp2016') {
-				$templateids[] = 'BP 2004/Zertifikat fuer Profilfach';
+				$templateids[] = BLOCK_EXASTUD_DATA_ID_ZERTIFIKAT_FUER_PROFILFACH; // 'BP 2004/Zertifikat fuer Profilfach';
 			}
 
-			$templateids[] = 'BP 2004/Beiblatt zur Projektpruefung HSA';
+			$templateids[] = 5; // 'BP 2004/Beiblatt zur Projektpruefung HSA';
 		}
 
 		return static::get_template_name_array($templateids);
@@ -618,6 +672,104 @@ class print_templates {
 
 		return array_combine($ids, $ids);
 	}
+	
+	static function get_marker_configurations($templateid, $type, $class, $student) {
+	    $tableData = g::$DB->get_record('block_exastudreportsettings', array('id' => $templateid));
+	    $markers = array();
+	    // checkboxes (fields of block_exastudreportsettings)
+        // fieldname => array of possible markernames (for old templates supporting)
+        $checkboxes = array(
+            'year' => array('schuljahr'),
+            'report_date' => array('datum'),
+            'student_name' => array('name'),
+            'date_of_birth' => array('geburtsdatum', 'geburt'),
+            'place_of_birth' => array('gebort'),
+            'learning_group' => array(),
+            'class' => array('klasse', 'kla'),
+            'focus' => array()
+        );
+        $valueInsert = function($field, $value) use (&$markers, $checkboxes) {
+            $markers[$field] = $value;
+            if (is_array($checkboxes[$field])) {
+                foreach ($checkboxes[$field] as $k => $oldmarker) {
+                    $markers[$oldmarker] = $value;
+                }
+            }
+        };
+        foreach (array_keys($checkboxes) as $fieldname) {
+            $fieldData = unserialize($tableData->{$fieldname});
+            if ($fieldData['checked']) {
+                $fieldValue = ' ---VAL--- '; // temporary
+                switch ($fieldname) {
+                    case 'year':
+                        // use current year or last year
+                        $certificate_issue_date_timestamp = block_exastud_get_certificate_issue_date_timestamp($class);
+                        if (date('m', $certificate_issue_date_timestamp) >= 9) {
+                            $year1 = date('Y', $certificate_issue_date_timestamp);
+                        } else {
+                            $year1 = date('Y', $certificate_issue_date_timestamp) - 1;
+                        }
+                        $year2 = $year1 + 1;
+                        $year1 = str_pad($year1, 2, '0', STR_PAD_LEFT);
+                        $year2 = str_pad($year2, 2, '0', STR_PAD_LEFT);
+                        $fieldValue = $year1.'/'.$year2;
+                        break;
+                    case 'report_date':
+                        $fieldValue = date('d.m.Y');
+                        break;
+                    case 'student_name':
+                        $fieldValue = $student->firstname.' '.$student->lastname;
+                        break;
+                    case 'date_of_birth':
+                        $fieldValue = block_exastud_get_date_of_birth($student->id);
+                        break;
+                    case 'place_of_birth':
+                        $fieldValue = block_exastud_get_custom_profile_field_value($student->id, 'placeofbirth');
+                        break;
+                    case 'learning_group':
+                        //$fieldValue = ' -- learning group -- ';
+                    case 'class':
+                        $fieldValue = $class->title;
+                        break;
+                    case 'focus':
+                        $fieldValue = ' -- focus -- ';
+                        break;
+                }
+                $valueInsert($fieldname, $fieldValue);
+            } else {
+                $valueInsert($fieldname, '');
+            }
+        }
+        // inputs
+        $inputs = static::get_template_inputs($templateid, $type);
+        // for support old markers: new => array of old
+        $oldsupport = array(
+                'learn_social_behavior' => array('lern_und_sozialverhalten'),
+                'assessment_project' => array('projekt_verbalbeurteilung'),
+                //'ags' => array('gesamtnote_und_durchschnitt_der_gesamtleistungen'),
+        );
+        $studentdata = (array)block_exastud_get_class_student_data($class->id, $student->id);
+	    foreach ($inputs as $key => $input) {
+	        if (array_key_exists($key, $studentdata)) {
+	            $val = trim($studentdata[$key]);
+                if (!trim(strip_tags($val))) {
+                    $inputValue = '---'; // spacer if empty
+                } else {
+                    $inputValue = $val;
+                }
+            } else {
+                $inputValue = ' --- ';
+            }
+            //echo '=='.$k.'==';print_r($input);echo '<br>';
+            $markers[$key] = $inputValue;
+	        if (array_key_exists($key, $oldsupport)) {
+	            foreach ($oldsupport[$key] as $oldkey) {
+                    $markers[$oldkey] = $inputValue;
+                }
+            }
+        }
+        return $markers;
+    }
 }
 
 class print_template {
@@ -651,11 +803,16 @@ class print_template {
 		return print_templates::get_template_config($this->templateid);
 	}
 
-	function get_file($templateid) {
-	    if($templateid == "BP 2004/GMS Abschlusszeugnis der Förderschule" || $templateid == "BP 2004/GMS Halbjahreszeugniss der Förderschule"){
+	function get_marker_configurations($type = BLOCK_EXASTUD_DATA_ID_LERN_UND_SOZIALVERHALTEN, $class = null, $student = null) {
+		return print_templates::get_marker_configurations($this->templateid, $type, $class, $student);
+	}
+
+	function get_file() {
+        return print_templates::get_template_file($this->templateid);
+	    /*if($templateid == "BP 2004/GMS Abschlusszeugnis der Förderschule" || $templateid == "BP 2004/GMS Halbjahreszeugniss der Förderschule"){
 	        return __DIR__.'/../template/'.$this->get_config()['file'].'.dotx';
-	    }else{
+	    } else {
 		  return __DIR__.'/../template/'.$this->get_config()['file'].'.docx';
-	    }
+	    }*/
 	}
 }

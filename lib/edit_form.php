@@ -307,6 +307,7 @@ class reportsettings_edit_form extends moodleform {
     }
 
     function definition() {
+        global $CFG;
         $mform = $this->_form;
 
         $mform->addElement('text', 'title', block_exastud_get_string('report_settings_setting_title'), array('size' => 50));
@@ -330,9 +331,8 @@ class reportsettings_edit_form extends moodleform {
         $mform->addElement('select', 'template', block_exastud_get_string('report_settings_setting_template'), $templateList);
         $mform->setType('template', PARAM_RAW);
 
-
-
         foreach ($this->allSecondaryFields as $field) {
+            $mform->addElement('exastud_htmltag', '<div id="exastud-additional-params-block-'.$field.'" class="exastud-setting-block" >');
             if (in_array($field, $this->fieldsWithAdditionalParams)) {
                 $mform->addElement('exastud_htmltag', '<hr />');
             }
@@ -365,11 +365,12 @@ class reportsettings_edit_form extends moodleform {
                 //$tempGroup[] =& $mform->createElement('text', $field.'_maxchars', block_exastud_get_string('report_settings_maxchars_fieldtitle'), array('size' => $input_size));
                 //$mform->setType($field.'_maxchars', PARAM_INT);
                 $mform->addGroup($tempGroup, $field.'_textareaparams', '', ' ', false);
-                //$mform->disabledIf('availablefromgroup', 'availablefromenabled');
+
             } else {
                 // only checkbox
                 // TODO: add something?
             }
+            $mform->addElement('exastud_htmltag', '</div>');
         }
         // additional dynamic fields
         //  ('additional_params')
@@ -400,27 +401,66 @@ class reportsettings_edit_form extends moodleform {
             if (!empty($fieldData['count_in_row'])) {
                 $result->{$field.'_count_in_row'} = $fieldData['count_in_row'];
             }
+            if (!empty($fieldData['values'])) {
+                $result->{$field.'_values'} = $fieldData['values'];
+            }
         }
         $result->additional_params = unserialize($data->additional_params);
         return $result;
     }
 
     public function definition_after_data() {
-        //global $CFG;
+        global $CFG;
         //parent::definition_after_data();
         //require_once($CFG->dirroot.'/blocks/exastud/classes/exastud_htmltag.php');
         //MoodleQuickForm::registerElementType('exastud_htmltag', $CFG->dirroot.'/blocks/exastud/classes/exastud_htmltag.php', 'block_exastud_htmltag');
 
         $mform =& $this->_form;
 
+        foreach ($this->allSecondaryFields as $field) {
+            if (in_array($field, $this->fieldsWithAdditionalParams)) {
+                // parameters for selectbox
+                //$selectboxes[$i] = array();
+                $j = 0;
+
+                //echo '<pre>';print_r($mform->_defaultValues[$field.'_values']);echo '</pre>';
+                if (empty($mform->_defaultValues[$field.'_values'])) {
+                    $mform->_defaultValues[$field.'_values'] = array('' => ' ');  // for empty block (template for new first record)
+                }
+                foreach ($mform->_defaultValues[$field.'_values'] as $sKey => $sValue) {
+                    //$selectboxes[$i][] = $j;
+                    $selectboxParams = array();
+                    $selectboxParams[] = $mform->createElement('text', $field.'_selectboxvalues_key['.$j.']', block_exastud_get_string('report_settings_selectboxkey_fieldtitle'), array('size' => 15));
+                    $mform->setType($field.'_selectboxvalues_key['.$j.']', PARAM_RAW);
+                    $mform->setDefault($field.'_selectboxvalues_key['.$j.']', $sKey);
+                    $selectboxParams[] = $mform->createElement('text', $field.'_selectboxvalues_value['.$j.']', block_exastud_get_string('report_settings_selectboxvalue_fieldtitle'), array('size' => 45));
+                    $mform->setType($field.'_selectboxvalues_value['.$j.']', PARAM_RAW);
+                    $mform->setDefault($field.'_selectboxvalues_value['.$j.']', $sValue);
+                    $selectboxParams[] = $mform->createElement('exastud_htmltag', '<img class="add_selectbox_option" data-field="'.$field.'" data-optionid="'.$j.'" src="'.$CFG->wwwroot.'/blocks/exastud/pix/add.png" title="'.block_exastud_get_string('add').'"/>');
+                    $selectboxParams[] = $mform->createElement('exastud_htmltag', '<img class="delete_selectbox_option" data-field="'.$field.'" data-optionid="'.$j.'" src="'.$CFG->wwwroot.'/blocks/exastud/pix/del.png" title="'.block_exastud_get_string('delete').'"/>');
+                    $allOptions[] = $mform->addGroup($selectboxParams, $field.'_selectboxparams['.$j.']', '', ' ', false);
+                    $mform->insertElementBefore($mform->removeElement($field.'_selectboxparams['.$j.']', false), $field.'_textareaparams');
+                    $j++;
+                }
+                $mform->addElement('exastud_htmltag', '<script>'.$field.'_last_index_for_selectbox = '.($j - 1).';</script>');
+            }
+        }
+
+        $selectboxes = array();
+
         $i = 0;
         $i_from_zero = true;
+
+        $mform->addElement('exastud_htmltag', '<script>var additional_params_last_index_for_selectbox = new Array();</script>');
+
+        //echo '<pre>';print_r($mform->_defaultValues['additional_params']);exit;
         //array_unshift($mform->_defaultValues['additional_params'], array('-1' => array())); // for empty block (template for new first record)
         if (array_key_exists('additional_params', $mform->_defaultValues) && !$mform->_defaultValues['additional_params']) {
             $i = -1;
             $i_from_zero = false;
             $mform->_defaultValues['additional_params'] = array('-1' => array());  // for empty block (template for new first record)
         }
+
         if (!empty($mform->_defaultValues['additional_params']) && count($mform->_defaultValues['additional_params']) > 0) {
             //print_r($mform->_defaultValues['additional_params']);
             //$count_additional = count($mform->_defaultValues['additional_params']);
@@ -428,10 +468,12 @@ class reportsettings_edit_form extends moodleform {
             foreach ($mform->_defaultValues['additional_params'] as $param_key => $param_settings) {
                 $main_block = array();
                 // block delimeter
-                $mform->addElement('exastud_htmltag', '<div id="exastud-additional-params-block-'.$i.'" class="exastud-additional-params-block '.($i < 0 ? 'hidden' : '').'" >');
+                $mform->addElement('exastud_htmltag', '<div id="exastud-additional-params-block-'.$i.'" class="exastud-setting-block exastud-additional-params-block '.($i < 0 ? 'hidden' : '').'" >');
                 $mform->addElement('exastud_htmltag', '<hr />');
                 // always 'checked'
                 $mform->addElement('hidden', 'additional_params['.$i.']', '1');
+                // delete button
+                $mform->addElement('exastud_htmltag', '<img class="delete_param_button" data-paramid="'.$i.'" src="'.$CFG->wwwroot.'/blocks/exastud/pix/trash.png" title="'.block_exastud_get_string('delete_parameter').'"/>');
                 // title
                 $main_block[] = $mform->createElement('text', 'additional_params_title['.$i.']', block_exastud_trans('de: Titel'), 'size = \'45\'');
                 if (!empty($param_settings['title'])) {
@@ -456,18 +498,40 @@ class reportsettings_edit_form extends moodleform {
                 $mform->addGroup($radiotype, 'additional_params_typeradiobuttons['.$i.']', '', array(' '), false);
                 // paramaters for textarea
                 $textareaParams = array();
-                $textareaParams[] =& $mform->createElement('text', 'additional_params_rows['.$i.']', block_exastud_get_string('report_settings_countrows_fieldtitle'), array('size' => 5));
+                $textareaParams[] = $mform->createElement('text', 'additional_params_rows['.$i.']', block_exastud_get_string('report_settings_countrows_fieldtitle'), array('size' => 5));
                 $mform->setType('additional_params_rows['.$i.']', PARAM_INT);
                 if (!empty($param_settings['rows'])) {
                     $mform->setDefault('additional_params_rows['.$i.']', $param_settings['rows']);
                 }
-                $textareaParams[] =& $mform->createElement('text', 'additional_params_count_in_row['.$i.']', block_exastud_get_string('report_settings_countinrow_fieldtitle'), array('size' => 5));
+                $textareaParams[] = $mform->createElement('text', 'additional_params_count_in_row['.$i.']', block_exastud_get_string('report_settings_countinrow_fieldtitle'), array('size' => 5));
                 $mform->setType('additional_params_count_in_row['.$i.']', PARAM_INT);
                 if (!empty($param_settings['count_in_row'])) {
                     $mform->setDefault('additional_params_count_in_row['.$i.']', $param_settings['count_in_row']);
                 }
                 $mform->addGroup($textareaParams, 'additional_params_textareaparams['.$i.']', '', ' ', false);
-
+                // parameters for selectbox
+                $selectboxes[$i] = array();
+                $j = 0;
+                if (empty($param_settings['values'])) {
+                    $param_settings['values'] = array('' => ' ');  // for empty block (template for new first record)
+                }
+                foreach ($param_settings['values'] as $sKey => $sValue) {
+                    $selectboxes[$i][] = $j;
+                    $selectboxParams = array();
+                    $selectboxParams[] = $mform->createElement('text', 'additional_params_selectboxvalues_key['.$i.']['.$j.']',
+                            block_exastud_get_string('report_settings_selectboxkey_fieldtitle'), array('size' => 15));
+                    $mform->setType('additional_params_selectboxvalues_key['.$i.']['.$j.']', PARAM_RAW);
+                    $mform->setDefault('additional_params_selectboxvalues_key['.$i.']['.$j.']', $sKey);
+                    $selectboxParams[] = $mform->createElement('text', 'additional_params_selectboxvalues_value['.$i.']['.$j.']',
+                            block_exastud_get_string('report_settings_selectboxvalue_fieldtitle'), array('size' => 45));
+                    $mform->setType('additional_params_selectboxvalues_value['.$i.']['.$j.']', PARAM_RAW);
+                    $mform->setDefault('additional_params_selectboxvalues_value['.$i.']['.$j.']', $sValue);
+                    $selectboxParams[] = $mform->createElement('exastud_htmltag', '<img class="add_selectbox_option" data-paramid="'.$i.'" data-optionid="'.$j.'" src="'.$CFG->wwwroot.'/blocks/exastud/pix/add.png" title="'.block_exastud_get_string('add').'"/>');
+                    $selectboxParams[] = $mform->createElement('exastud_htmltag', '<img class="delete_selectbox_option" data-paramid="'.$i.'" data-optionid="'.$j.'" src="'.$CFG->wwwroot.'/blocks/exastud/pix/del.png" title="'.block_exastud_get_string('delete').'"/>');
+                    $mform->addGroup($selectboxParams, 'additional_params_selectboxparams['.$i.']['.$j.']', '', ' ', false);
+                    $j++;
+                }
+                $mform->addElement('exastud_htmltag', '<script>additional_params_last_index_for_selectbox['.$i.'] = '.($j - 1).';</script>');
                 //$mform->addGroup($additional_block, 'group_additionalparams', '', ' ', false);
                 $mform->addElement('exastud_htmltag', '</div>');
                 $i++;
@@ -483,7 +547,7 @@ class reportsettings_edit_form extends moodleform {
         $this->add_action_buttons();
 
         // additional changing in html of elements (needs for JS)
-        $field_working = function ($field, $i = null) use ($mform) {
+        $field_working = function ($field, $i = null) use ($mform, $selectboxes) {
             $arr = '';
             if ($i !== null) {
                 $arr = '['.$i.']';
@@ -514,6 +578,46 @@ class reportsettings_edit_form extends moodleform {
             $textarea_settings_elements = $textarea_settings->getElements();
             foreach ($textarea_settings_elements as $element) {
                 $element->_attributes['class'] = 'exastud-template-settings-param';
+            }
+            // selectbox params
+            if ($i !== null) {
+                if (array_key_exists($i, $selectboxes) && count($selectboxes[$i]) > 0) {
+                    foreach ($selectboxes[$i] as $j) {
+                        $selectbox_settings = $mform->getElement($field.'_selectboxparams['.$i.']['.$j.']');
+                        $addclass3 = '';
+                        if ($i !== null) {
+                            $addclass3 .= ' selectbox-settings-'.$i.'-'.$j;
+                        }
+                        $selectbox_settings->_attributes['class'] =
+                                'exastud-template-settings-group group-'.$field.' selectbox-settings '.$addclass3;
+                        $selectbox_settings_elements = $selectbox_settings->getElements();
+                        foreach ($selectbox_settings_elements as $element) {
+                            if ($element->_type == 'text') {
+                                $element->_attributes['class'] = 'exastud-template-settings-param';
+                            }
+                        }
+                    }
+                }
+            } else {
+                for ($j = 0; $j <= 100; $j++) {
+                    if ($mform->elementExists($field.'_selectboxparams['.$j.']')) {
+                        $selectbox_settings = $mform->getElement($field.'_selectboxparams['.$j.']');
+                        $addclass3 = '';
+                        if ($i !== null) {
+                            $addclass3 .= ' selectbox-settings-'.$field;
+                        }
+                        $selectbox_settings->_attributes['class'] =
+                                'exastud-template-settings-group group-'.$field.' selectbox-settings '.$addclass3;
+                        $selectbox_settings_elements = $selectbox_settings->getElements();
+                        foreach ($selectbox_settings_elements as $element) {
+                            if ($element->_type == 'text') {
+                                $element->_attributes['class'] = 'exastud-template-settings-param';
+                            }
+                        }
+                    } else {
+                        break;
+                    }
+                }
             }
         };
 

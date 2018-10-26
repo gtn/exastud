@@ -428,9 +428,9 @@ function xmldb_block_exastud_upgrade($oldversion = 0) {
         if (!$dbman->field_exists($table, $field)) {
             $dbman->add_field($table, $field);
         }
+        block_exastud_insert_default_entries();
     }
 
-	block_exastud_insert_default_entries();
 	block_exastud_check_profile_fields();
 
 	return $result;

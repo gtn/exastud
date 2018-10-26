@@ -18,7 +18,7 @@
 (function($) {
     function additionalGroupToggle(field, for_additional) {
         if (for_additional) {
-            textareaSettingsToggle(field);
+            additionalSettingsToggle(field);
         } else {
             var checkboxSelector = ':checkbox.exastud-template-settings-param[name="' + field + '"]';
             $('.exastud-template-settings-group.group-' + field).hide();
@@ -28,40 +28,48 @@
             if ($(checkboxSelector).is(':checked')) {
                 // show group
                 $(groupSelector).show();
-                textareaSettingsToggle(field);
+                additionalSettingsToggle(field);
                 return true;
             }
         }
         $(groupSelector).hide();
     }
 
-    function textareaSettingsToggle(field) {
+    function additionalSettingsToggle(field) {
         // console.log(field);
         var isAdditional = false;
         var checkboxSelector = ':checkbox.exastud-template-settings-param[name="' + field + '"]';
-        var groupSelector = '.exastud-template-settings-group.group-' + field + '.textarea-settings';
+        var textareaGroupSelector = '.exastud-template-settings-group.group-' + field + '.textarea-settings';
+        var selectboxGroupSelector = '.exastud-template-settings-group.group-' + field + '.selectbox-settings';
         var radioButtonSelector = ':radio[name="' + field + '_type"]:checked';
         if (!$(radioButtonSelector).length) { // it is additional param
-            console.log(field);
-            var regex = /[(\d*)]/;
-            var index = field.match(regex)[1];
+            //var regex = /\[(\d*)\]/;
+            var index = field.substring(field.lastIndexOf("[") + 1, field.lastIndexOf("]"));
             radioButtonSelector = ':radio[name="additional_params_type[' + index + ']"]:checked';
             isAdditional = true;
-            groupSelector = '.exastud-template-settings-group.group-additional_params.textarea-settings.textarea-settings-'+index;
+            textareaGroupSelector = '.exastud-template-settings-group.group-additional_params.textarea-settings.textarea-settings-'+index;
+            selectboxGroupSelector = $(radioButtonSelector).closest('.exastud-setting-block').find('.exastud-template-settings-group.group-additional_params.selectbox-settings');
         }
+        // hide all groups at first
+        $(textareaGroupSelector).hide();
+        $(selectboxGroupSelector).hide();
         if (isAdditional || $(checkboxSelector).is(':checked')) {
-            console.log($(radioButtonSelector).val());
+            console.log(selectboxGroupSelector);
             if ($(radioButtonSelector).length && $(radioButtonSelector).val() == 'textarea') {
-                // show group
-                $(groupSelector).show();
+                // show textarea group
+                $(textareaGroupSelector).show();
                 return true;
             }
+            if ($(radioButtonSelector).length && $(radioButtonSelector).val() == 'select') {
+                // show selectbox group
+                $(selectboxGroupSelector).show();
+                return true;
+            }
+
         }
-        // hide group in any other case
-        $(groupSelector).hide();
     }
 
-    function cleanNewAdditionalParameterBlock(newBlock,  old_index, new_index) {
+    function cleanNewAdditionalParameterBlock(newBlock, old_index, new_index) {
         newBlock.removeClass('hidden');
         newBlock.find('*[id]').removeAttr('id');
         newBlock.find('[name]').each(function() {
@@ -73,6 +81,9 @@
             var old_name = $(this).attr('data-field');
             var new_name = old_name.replace('\[' + old_index + '\]', '\[' + new_index + '\]');
             $(this).attr('data-field', new_name);
+        })
+        newBlock.find('[data-paramid]').each(function() {
+            $(this).attr('data-paramid', new_index);
         })
         // not all tags can have data attributes, so work with classes
         newBlock.find('[class*=textarea-settings-' + old_index + ']').each(function() {
@@ -93,8 +104,29 @@
                     break;
             }
         })
+        // delete all selectbox options except first
+        newBlock.find(':input[name*="selectboxvalues_key"]:not(:first)').closest('.selectbox-settings').remove();
+        newBlock.find('.add_selectbox_option, .delete_selectbox_option').attr('data-paramid', new_index);
+        additional_params_last_index_for_selectbox[new_index] = 0;
         newBlock.append('<input type="hidden" name="additional_params[' + new_index + ']" value="1" />');
         return newBlock;
+    }
+
+    function updateOptionButtons() {
+        // options for select type
+        $('.exastud-setting-block').each(function(){
+            // $(this).find('button').addClass('small');
+            // var notLastButtons = $(this).find('button[name*="\[new\]"]:not(:last)');
+            // notLastButtons.hide();
+            $(this).find('.add_selectbox_option').show();
+            $(this).find('.add_selectbox_option:not(:last)').hide();
+            if ($(this).find('.delete_selectbox_option').length == 1) {
+                $(this).find('.delete_selectbox_option').hide(); // hide delete button if the block is only one
+            } else {
+                $(this).find('.delete_selectbox_option').show();
+            }
+
+        });
     }
 
     $(function() {
@@ -102,12 +134,12 @@
             additionalGroupToggle($(this).attr('name'), false);
         });
         $(document).on('change', '.exastud-template-settings-group.type-settings :radio', function (event) {
-            textareaSettingsToggle($(this).attr('data-field'));
+            additionalSettingsToggle($(this).attr('data-field'));
         });
 /*        $('.exastud-template-settings-group.type-settings :radio').each(function () {
             if ($(this).attr('data-field') != '') {
                 console.log($(this).attr('data-field'));
-                textareaSettingsToggle($(this).attr('data-field'));
+                additionalSettingsToggle($(this).attr('data-field'));
             }
         });*/
         $(':checkbox.exastud-template-settings-param').each(function() {
@@ -128,6 +160,73 @@
             $(this).html('${' + key + '}');
         });
 
+        updateOptionButtons();
+
+        // delete parameter
+        $(document).on('click', '.delete_param_button', function() {
+            var paramIndex = $(this).attr('data-paramid');
+            $(this).closest('.exastud-setting-block').remove();
+            $(':hidden[name="additional_params\[' + paramIndex + '\]"]').remove();
+        });
+        // delete parameter :hover
+        $(document).on({
+                mouseenter: function () {
+                    $(this).closest('.exastud-setting-block').addClass('block_hover');
+                },
+                mouseleave: function () {
+                    $(this).closest('.exastud-setting-block').removeClass('block_hover');
+                }
+        }, '.delete_param_button');
+
+        // add new selectbox option
+        $(document).on('click', '.add_selectbox_option', function (event) {
+            event.preventDefault();
+            var field = $(this).attr('data-field');
+            var paramid = $(this).attr('data-paramid');
+            var optionid = $(this).attr('data-optionid');
+            var lastOption = $(this).closest('.exastud-setting-block').find('.selectbox-settings:last')
+            var newoption = lastOption.first().clone();
+            if (field == undefined) {
+                additional_params_last_index_for_selectbox[paramid]++;
+            } else {
+                window[field + '_last_index_for_selectbox'] = window[field + '_last_index_for_selectbox'] + 1;
+            }
+            newoption.find(':input').val('');
+            newoption.find('[name*="_selectboxvalues_key"]').each(function() {
+                if (field == undefined) {
+                    var new_name = 'additional_params_selectboxvalues_key[' + paramid + '][' + additional_params_last_index_for_selectbox[paramid] + ']';
+                } else {
+                    var new_name = field + '_selectboxvalues_key[' + window[field + '_last_index_for_selectbox'] + ']';
+                }
+                $(this).attr('name', new_name);
+            })
+            newoption.find('[name*="_selectboxvalues_value"]').each(function() {
+                if (field == undefined) {
+                    var new_name = 'additional_params_selectboxvalues_value[' + paramid + '][' + additional_params_last_index_for_selectbox[paramid] + ']';
+                } else {
+                    var new_name = field + '_selectboxvalues_value[' + window[field + '_last_index_for_selectbox'] + ']';
+                }
+                $(this).attr('name', new_name);
+            })
+            newoption.insertAfter(lastOption);
+            updateOptionButtons();
+        });
+        // delete selectbox option
+        $(document).on('click', '.delete_selectbox_option', function (event) {
+            $(this).closest('.exastud-template-settings-group.selectbox-settings').remove();
+            updateOptionButtons();
+        });
+        // delete selectbox option :hover
+        $(document).on({
+            mouseenter: function () {
+                $(this).closest('.group-additional_params').addClass('block_hover');
+            },
+            mouseleave: function () {
+                $(this).closest('.group-additional_params').removeClass('block_hover');
+            }
+        }, '.delete_selectbox_option');
+
+
         // button "add a new additional parameter"
         $(document).on('click', '#id_add_new_param', function(e) {
             e.preventDefault();
@@ -138,8 +237,10 @@
             newBlock = cleanNewAdditionalParameterBlock(newBlock, additional_params_last_index, additional_params_last_index + 1);
             additional_params_last_index = additional_params_last_index + 1;
             newBlock.insertAfter($('.exastud-additional-params-block:last'));
-            lastParam.find("input:radio[name*='additional_params_type']").filter("[value="+radioSourceValue+"]").attr("checked", "checked");
-            // console.log(additional_params_last_index);
+            lastParam.find("input:radio[name*='additional_params_type']").filter("[value=" + radioSourceValue + "]").attr("checked", "checked");
+            // var field = newBlock.find('[class*="_type"]').first().attr('data-field');
+            additionalSettingsToggle('additional_params[' + additional_params_last_index + ']', true);
+            updateOptionButtons();
         });
 
     });

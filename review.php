@@ -145,7 +145,23 @@ function block_exastud_print_period($courseid, $period, $type) {
 						]), block_exastud_trans('de:Weitere Formularfelder')),
 					];
 
-					$templates = \block_exastud\print_templates::get_class_other_print_templates_for_input($class);
+					$table->data[] = [
+						html_writer::link(new moodle_url('/blocks/exastud/review_class_other_data.php', [
+							'courseid' => $courseid,
+							'classid' => $myclass->id,
+							'type' => BLOCK_EXASTUD_DATA_ID_ZERTIFIKAT_FUER_PROFILFACH,
+						]), block_exastud_trans('de:Zertifikat für Profilfach')),
+					];
+
+					$table->data[] = [
+						html_writer::link(new moodle_url('/blocks/exastud/review_class_other_data.php', [
+							'courseid' => $courseid,
+							'classid' => $myclass->id,
+							'type' => BLOCK_EXASTUD_DATA_ID_ADDITIONAL_INFO
+						]), block_exastud_trans('de:Additional data')),
+					];
+
+					/*$templates = \block_exastud\print_templates::get_class_other_print_templates_for_input($class);
 					foreach ($templates as $key => $value) {
 						$table->data[] = [
 							html_writer::link(new moodle_url('/blocks/exastud/review_class_other_data.php', [
@@ -154,7 +170,7 @@ function block_exastud_print_period($courseid, $period, $type) {
 								'type' => $key,
 							]), $value),
 						];
-					}
+					}*/
 				}
 
 				if (block_exastud_is_project_teacher($myclass, g::$USER->id)) {

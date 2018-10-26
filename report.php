@@ -228,7 +228,7 @@ if ($classid = optional_param('classid', 0, PARAM_INT)) {
 //         echo '<hr>';
 //     }
     
-    echo '<input type="submit" value="' . block_exastud_get_string('download'). '"/>';
+    echo '<input type="submit" value="' . block_exastud_get_string('download'). '" class="btn btn-info"/>';
     
     echo $output->footer();
 } else {

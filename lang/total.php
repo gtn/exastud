@@ -586,6 +586,10 @@ return [
             'AGs',
             'AGs',
     ],
+    'report_settings_setting_additional_params' => [
+            'Additional params',
+            'Additional params',
+    ],
     'report_settings_no' => [
             'nein',
             'no',
@@ -621,6 +625,26 @@ return [
     'report_settings_button_add_additional_param' => [
             'Add a new param',
             'Add a new param',
+    ],
+    'report_settings_selectboxkey_fieldtitle' => [
+            'key',
+            'key',
+    ],
+    'report_settings_selectboxvalue_fieldtitle' => [
+            'value',
+            'value',
+    ],
+    'delete_parameter' => [
+            'delete parameter',
+            'delete parameter',
+    ],
+    'delete' => [
+            'delete',
+            'delete',
+    ],
+    'add' => [
+            'add',
+            'add',
     ],
 
 

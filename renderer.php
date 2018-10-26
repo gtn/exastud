@@ -306,7 +306,8 @@ class block_exastud_renderer extends plugin_renderer_base {
 	function back_button($url) {
 		return $this->link_button(
 			block_exastud\url::create($url),
-			block_exastud_get_string('back')
+			block_exastud_get_string('back'),
+            array('class' => 'btn btn-default')
 		);
 	}
 

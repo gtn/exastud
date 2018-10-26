@@ -54,12 +54,14 @@ class printer {
 
 		if ($templateid == BLOCK_EXASTUD_DATA_ID_PRINT_TEMPLATE) {
 			$template = block_exastud_get_student_print_template($class, $student->id);
+            $forminputs = $template->get_inputs(BLOCK_EXASTUD_DATA_ID_PRINT_TEMPLATE);
+            $template_type = $templateid; // for using later
 			$templateid = $template->get_template_id();
 		} else {
 			$template = \block_exastud\print_template::create($templateid);
+            $forminputs = $template->get_inputs($templateid);
+            $template_type = $templateid; // for using later
 		}
-
-		$forminputs = $template->get_inputs();
 
 		/*
 		 * if ($templateid == 'leb_alter_bp_hj') {
@@ -67,7 +69,7 @@ class printer {
 		 * }
 		 */
 
-		$templateFile = $template->get_file($templateid);
+		$templateFile = $template->get_file();
 
 		// check if file does exist
 		if (!file_exists($templateFile)) {
@@ -114,28 +116,39 @@ class printer {
 			return preg_replace('!([^0-9])99([^0-9].{0,3000}[^0-9])99([^0-9])!U', '${1}'.$year1.'${2}'.$year2.'${3}', $content, 1, $count);
 		});
 
-		if ($templateid == 'Deckblatt und 1. Innenseite LEB') {
-			$data = [
-				'schule' => get_config('exastud', 'school_name'),
-				'ort' => get_config('exastud', 'school_location'),
-				'name' => $student->firstname.' '.$student->lastname,
-				'geburtsdatum' => block_exastud_get_date_of_birth($student->id),
-			];
-		} elseif ($templateid == 'default_report') {
-			$class_subjects = block_exastud_get_class_subjects($class);
-			$lern_soz = block_exastud_get_class_student_data($class->id, $student->id, BLOCK_EXASTUD_DATA_ID_LERN_UND_SOZIALVERHALTEN);
+		// default markers
+        $data = [
+                'periode' => $period->description,
+                'schule' => get_config('exastud', 'school_name'),
+                'ort' => get_config('exastud', 'school_location'),
+                'certda' => $certificate_issue_date_text,
+                'religion' => '---',
+                'profilfach' => '---',
+                'wahlpflichtfach' => '---',
+                'projekt_thema' => static::spacerIfEmpty(@$studentdata->projekt_thema),
+        ];
+		// preparation data from template settings
+        $marker_configurations = $template->get_marker_configurations('all', $class, $student);
+        $data = array_merge($data, $marker_configurations);
 
-			$data = [
-				'periode' => $period->description,
-				'lern_und_sozialverhalten' => static::spacerIfEmpty($lern_soz),
-				'certda' => $certificate_issue_date_text,
-				'schule' => get_config('exastud', 'school_name'),
-				'ort' => get_config('exastud', 'school_location'),
-				'name' => $student->firstname.' '.$student->lastname,
-				'geburtsdatum' => block_exastud_get_date_of_birth($student->id),
-				'klasse' => $class->title,
-				'comments' => static::spacerIfEmpty(@$studentdata->comments),
-			];
+        //echo "<pre>debug:<strong>printer.php:121</strong>\r\n"; print_r($templateid); echo '</pre>'; // !!!!!!!!!! delete it
+        //echo "<pre>debug:<strong>printer.php:121</strong>\r\n"; print_r($data); echo '</pre>'; exit; // !!!!!!!!!! delete it
+
+		if ($templateid == 1) { // default_report
+			$class_subjects = block_exastud_get_class_subjects($class);
+			//$lern_soz = block_exastud_get_class_student_data($class->id, $student->id, BLOCK_EXASTUD_DATA_ID_LERN_UND_SOZIALVERHALTEN);
+
+			//$data = [
+				//'periode' => $period->description,
+				//'lern_und_sozialverhalten' => static::spacerIfEmpty($lern_soz),
+				//'certda' => $certificate_issue_date_text,
+				//'schule' => get_config('exastud', 'school_name'),
+				//'ort' => get_config('exastud', 'school_location'),
+				//'name' => $student->firstname.' '.$student->lastname,
+				//'geburtsdatum' => block_exastud_get_date_of_birth($student->id),
+				//'klasse' => $class->title,
+				//'comments' => static::spacerIfEmpty(@$studentdata->comments),
+			//];
 
 			$cloneValues = [];
 			foreach ($class_subjects as $subject) {
@@ -192,7 +205,7 @@ class printer {
 				}
 			}
 
-		} elseif (in_array($templateid, [
+		} elseif (in_array($template->get_name(), [
 			'BP 2016/GMS Zeugnis 1.HJ',
 			'BP 2016/GMS Zeugnis SJ',
 			'BP 2004/GMS Zeugnis 1.HJ',
@@ -200,9 +213,9 @@ class printer {
 		])) {
 			$bpsubjects = block_exastud_get_bildungsplan_subjects($class->bpid);
 			$class_subjects = block_exastud_get_class_subjects($class);
-			$lern_soz = block_exastud_get_class_student_data($class->id, $student->id, BLOCK_EXASTUD_DATA_ID_LERN_UND_SOZIALVERHALTEN);
+			//$lern_soz = block_exastud_get_class_student_data($class->id, $student->id, BLOCK_EXASTUD_DATA_ID_LERN_UND_SOZIALVERHALTEN);
 
-			// use current year or last year
+			/*// use current year or last year
 			if (date('m', $certificate_issue_date_timestamp) >= 9) {
 				$year1 = date('Y', $certificate_issue_date_timestamp);
 			} else {
@@ -212,21 +225,21 @@ class printer {
 			$year1 = str_pad($year1, 2, '0', STR_PAD_LEFT);
 			$year2 = str_pad($year2, 2, '0', STR_PAD_LEFT);
 
-			$schuljahr = $year1.'/'.$year2;
+			$schuljahr = $year1.'/'.$year2;*/
 
-			$data = [
-				'schule' => get_config('exastud', 'school_name'),
-				'ort' => get_config('exastud', 'school_location'),
-				'name' => $student->firstname.' '.$student->lastname,
-				'klasse' => $class->title,
-				'certda' => $certificate_issue_date_text,
-				'schuljahr' => $schuljahr,
-				'lern_und_sozialverhalten' => static::spacerIfEmpty($lern_soz),
-				'comments' => static::spacerIfEmpty(@$studentdata->comments),
-				'religion' => '---',
-				'profilfach' => '---',
-				'wahlpflichtfach' => '---',
-			];
+			//$data = [
+				//'schule' => get_config('exastud', 'school_name'),
+				//'ort' => get_config('exastud', 'school_location'),
+				//'name' => $student->firstname.' '.$student->lastname,
+				//'klasse' => $class->title,
+				//'certda' => $certificate_issue_date_text,
+				//'schuljahr' => $schuljahr,
+				//'lern_und_sozialverhalten' => static::spacerIfEmpty($lern_soz),
+				//'comments' => static::spacerIfEmpty(@$studentdata->comments),
+				//'religion' => '---',
+				//'profilfach' => '---',
+				//'wahlpflichtfach' => '---',
+			//];
 
 			if ($dateofbirth = block_exastud_get_date_of_birth_as_timestamp($student->id)) {
 				$dataTextReplacer['dd'] = date('d', $dateofbirth);
@@ -303,7 +316,7 @@ class printer {
 			// nicht befüllte niveaus und noten befüllen
 			$dataTextReplacer['Bitte die Niveaustufe auswählen'] = 'Niveau ---';
 			$dataTextReplacer['ggf. Note'] = @$studentdata->print_grades ? 'Note ---' : '';
-		} elseif (in_array($templateid, [
+		} elseif (in_array($template->get_name(), [
 			'BP 2004/GMS Realschulabschluss 1.HJ',
 			'BP 2004/GMS Realschulabschluss SJ',
 			'BP 2004/GMS Klasse 10 E-Niveau 1.HJ',
@@ -324,26 +337,26 @@ class printer {
 			$religion = static::spacerIfEmpty('');
 			$religion_sub = '';
 
-			$data = [
-				'schule' => get_config('exastud', 'school_name'),
-				'ort' => get_config('exastud', 'school_location'),
-				'name' => $student->firstname.' '.$student->lastname,
-				'kla' => $class->title,
-				'geburt' => static::spacerIfEmpty(block_exastud_get_custom_profile_field_value($student->id, 'dateofbirth')),
-				'certda' => $certificate_issue_date_text,
-				'gebort' => static::spacerIfEmpty(block_exastud_get_custom_profile_field_value($student->id, 'placeofbirth')),
-				'ags' => static::spacerIfEmpty(@$studentdata->ags),
-				'projekt_thema' => static::spacerIfEmpty(@$studentdata->projekt_thema),
-				'projekt_verbalbeurteilung' => static::spacerIfEmpty(@$studentdata->projekt_verbalbeurteilung),
-				'datum' => date('d.m.Y'),
-			];
+			//$data = [
+				//'schule' => get_config('exastud', 'school_name'),
+				//'ort' => get_config('exastud', 'school_location'),
+				//'name' => $student->firstname.' '.$student->lastname,
+				//'kla' => $class->title,
+				//'geburt' => static::spacerIfEmpty(block_exastud_get_custom_profile_field_value($student->id, 'dateofbirth')),
+				//'certda' => $certificate_issue_date_text,
+				//'gebort' => static::spacerIfEmpty(block_exastud_get_custom_profile_field_value($student->id, 'placeofbirth')),
+				//'ags' => static::spacerIfEmpty(@$studentdata->ags),
+				//'projekt_thema' => static::spacerIfEmpty(@$studentdata->projekt_thema),
+				//'projekt_verbalbeurteilung' => static::spacerIfEmpty(@$studentdata->projekt_verbalbeurteilung),
+				//'datum' => date('d.m.Y'),
+			//];
 
 
-			foreach ($template->get_inputs() as $inputid => $tmp) {
+			/*foreach ($template->get_inputs() as $inputid => $tmp) {
 				if (!isset($data[$inputid])) {
 					$data[$inputid] = static::spacerIfEmpty(@$studentdata->{$inputid});
 				}
-			}
+			}*/
 
 			$placeholder = 'ph'.time();
 
@@ -459,7 +472,7 @@ class printer {
 				});
 			}
 
-			if ($templateid == 'BP 2004/GMS Abgangszeugnis') {
+			if ($template->get_name() == 'BP 2004/GMS Abgangszeugnis') {
 				$value = static::spacerIfEmpty(@$forminputs['wann_verlassen']['values'][@$studentdata->wann_verlassen]);
 				$add_filter(function($content) use ($placeholder, $value) {
 					$ret = preg_replace('!>[^<]*am Ende[^<]*<!U', '>'.$value.'<', $content, -1, $count);
@@ -484,7 +497,7 @@ class printer {
 
 					return $ret;
 				});
-			} elseif ($templateid == 'BP 2004/GMS Abgangszeugnis HSA Kl.9 und 10') {
+			} elseif ($template->get_name() == 'BP 2004/GMS Abgangszeugnis HSA Kl.9 und 10') {
 				$value = static::spacerIfEmpty(@$forminputs['wann_verlassen']['values'][@$studentdata->wann_verlassen]);
 				$add_filter(function($content) use ($placeholder, $value) {
 					$ret = preg_replace('!>[^<]*am Ende[^<]*<!U', '>'.$value.'<', $content, -1, $count);
@@ -494,7 +507,7 @@ class printer {
 
 					return $ret;
 				});
-			} elseif ($templateid == 'BP 2004/GMS Klasse 10 E-Niveau SJ') {
+			} elseif ($template->get_name() == 'BP 2004/GMS Klasse 10 E-Niveau SJ') {
 				if (@$studentdata->verhalten) {
 					$value = @$forminputs['verhalten']['values'][$studentdata->verhalten];
 					$add_filter(function($content) use ($placeholder, $value) {
@@ -507,8 +520,8 @@ class printer {
 						return preg_replace('!(Mitarbeit.*)'.$placeholder.'note!U', '${1}'.$value, $content, -1, $count);
 					});
 				}
-			} elseif ($templateid == 'BP 2004/GMS Hauptschulabschluss SJ') {
-				$data['gd'] = @$studentdata->gesamtnote_und_durchschnitt_der_gesamtleistungen;
+			} elseif ($template->get_name() == 'BP 2004/GMS Hauptschulabschluss SJ') {
+				//$data['gd'] = @$studentdata->gesamtnote_und_durchschnitt_der_gesamtleistungen;
 
 				$values = [
 					'9' => 'hat die Hauptschulabschlussprüfung nach Klasse 9 der Gemeinschaftsschule mit Erfolg abge-legt.',
@@ -523,8 +536,8 @@ class printer {
 
 					return $ret;
 				});
-			} elseif ($templateid == 'BP 2004/GMS Abschlusszeugnis der Förderschule') {
-				$data['gd'] = static::spacerIfEmpty(@$studentdata->gesamtnote_und_durchschnitt_der_gesamtleistungen);
+			} elseif ($template->get_name() == 'BP 2004/GMS Abschlusszeugnis der Förderschule') {
+				//$data['gd'] = static::spacerIfEmpty(@$studentdata->gesamtnote_und_durchschnitt_der_gesamtleistungen);
 			}
 
 			if ($value = @$grades[@$studentdata->projekt_grade]) {
@@ -569,20 +582,20 @@ class printer {
 			$add_filter(function($content) use ($placeholder) {
 				return str_replace($placeholder.'note', '--', $content);
 			});
-		} elseif ($templateid == 'Anlage zum Lernentwicklungsbericht') {
+		} elseif ($templateid == 2 ) { // 'Anlage zum Lernentwicklungsbericht'
 			$evalopts = g::$DB->get_records('block_exastudevalopt', null, 'sorting', 'id, title, sourceinfo');
 			$categories = block_exastud_get_class_categories_for_report($student->id, $class->id);
 			$subjects = static::get_exacomp_subjects($student->id);
-            
-			$data = [
-				'periode' => $period->description,
-				'schule' => get_config('exastud', 'school_name'),
-				'ort' => get_config('exastud', 'school_location'),
-				'name' => $student->firstname.' '.$student->lastname,
-				'klasse' => $class->title,
-				'geburtsdatum' => block_exastud_get_date_of_birth($student->id),
-				'datum' => date('d.m.Y'),
-			];
+
+			//$data = [
+				//'periode' => $period->description,
+				//'schule' => get_config('exastud', 'school_name'),
+				//'ort' => get_config('exastud', 'school_location'),
+				//'name' => $student->firstname.' '.$student->lastname,
+				//'klasse' => $class->title,
+				//'geburtsdatum' => block_exastud_get_date_of_birth($student->id),
+				//'datum' => date('d.m.Y'),
+			//];
 
 			$templateProcessor->duplicateCol('kheader', count($evalopts));
 			foreach ($evalopts as $evalopt) {
@@ -600,12 +613,8 @@ class printer {
 			$templateProcessor->deleteRow('kriterium');
 
 			// subjects
-
 			$templateProcessor->cloneBlock('subjectif', count($subjects), true);
 
-
-
-			
 			foreach ($subjects as $subject) {
 				$templateProcessor->setValue("subject", $subject->title, 1);
 				
@@ -648,21 +657,21 @@ class printer {
 				$templateProcessor->deleteRow("topic");
 				$templateProcessor->deleteRow("descriptor");
 			}
-		} elseif ($templateid == 'Anlage zum LernentwicklungsberichtAlt') {
+		} elseif ($templateid == 3) { // 'Anlage zum LernentwicklungsberichtAlt'
 		    $evalopts = g::$DB->get_records('block_exastudevalopt', null, 'sorting', 'id, title, sourceinfo');
 		    $categories = block_exastud_get_class_categories_for_report($student->id, $class->id);
 		    $subjects = static::get_exacomp_subjects($student->id);
 		    
 		    
-		    $data = [
-		        'periode' => $period->description,
-		        'schule' => get_config('exastud', 'school_name'),
-		        'ort' => get_config('exastud', 'school_location'),
-		        'name' => $student->firstname.' '.$student->lastname,
-		        'klasse' => $class->title,
-		        'geburtsdatum' => block_exastud_get_date_of_birth($student->id),
-		        'datum' => date('d.m.Y'),
-		    ];
+		    //$data = [
+		        //'periode' => $period->description,
+		        //'schule' => get_config('exastud', 'school_name'),
+		        //'ort' => get_config('exastud', 'school_location'),
+		        //'name' => $student->firstname.' '.$student->lastname,
+		        //'klasse' => $class->title,
+		        //'geburtsdatum' => block_exastud_get_date_of_birth($student->id),
+		        //'datum' => date('d.m.Y'),
+		    //];
 		    
 		    $templateProcessor->duplicateCol('kheader', count($evalopts));
 		    foreach ($evalopts as $evalopt) {
@@ -741,15 +750,18 @@ class printer {
 		        $templateProcessor->deleteRow("topic");
 		        $templateProcessor->deleteRow("descriptor");
 		    }
-		} else {
+		}
+
+		// TODO: how we can check template generation?
+		/*else {
 			echo g::$OUTPUT->header();
 			echo block_exastud_trans([
 				'de:Leider wurde die Dokumentvorlage "{$a}" nicht gefunden.',
-				'en:Template "{$a}" not found.',
+				'en:Something wrong with Template "{$a}" processing.',
 			], $templateid);
 			echo g::$OUTPUT->footer();
 			exit();
-		}
+		}*/
 
 		// zuerst filters
 		$templateProcessor->applyFilters($filters);
@@ -767,7 +779,7 @@ class printer {
 		$temp_file = tempnam($CFG->tempdir, 'exastud');
 		$templateProcessor->saveAs($temp_file);
 		//change ending for dotx files
-		if ($templateid == "BP 2004/GMS Abschlusszeugnis der Förderschule" || $templateid == "BP 2004/GMS Halbjahreszeugniss der Förderschule") {
+		if ($template->get_name() == "BP 2004/GMS Abschlusszeugnis der Förderschule" || $template->get_name() == "BP 2004/GMS Halbjahreszeugniss der Förderschule") {
 			$filename = ($certificate_issue_date_text ?: date('Y-m-d'))."-".$template->get_name()."-{$class->title}-{$student->lastname}-{$student->firstname}.dotx";
 		} else {
 			$filename = ($certificate_issue_date_text ?: date('Y-m-d'))."-".$template->get_name()."-{$class->title}-{$student->lastname}-{$student->firstname}.docx";

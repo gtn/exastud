@@ -40,8 +40,10 @@ const BLOCK_EXASTUD_CAP_REVIEW = 'review';
 const BLOCK_EXASTUD_DATA_ID_LERN_UND_SOZIALVERHALTEN = 'learning_and_social_behavior';
 const BLOCK_EXASTUD_DATA_ID_UNLOCKED_TEACHERS = 'unlocked_teachers';
 const BLOCK_EXASTUD_DATA_ID_PRINT_TEMPLATE = 'print_template'; // TODO: change to id of 'block_exastudreportsettings' record?
+const BLOCK_EXASTUD_DATA_ID_ADDITIONAL_INFO = 'additional_info';
 const BLOCK_EXASTUD_DATA_ID_CLASS_DEFAULT_TEMPLATEID = 'default_templateid';
 const BLOCK_EXASTUD_DATA_ID_PROJECT_TEACHER = 'project_teacher';
+const BLOCK_EXASTUD_DATA_ID_ZERTIFIKAT_FUER_PROFILFACH = 4;
 
 const BLOCK_EXASTUD_SUBJECT_ID_LERN_UND_SOZIALVERHALTEN = -1;
 const BLOCK_EXASTUD_SUBJECT_ID_LERN_UND_SOZIALVERHALTEN_VORSCHLAG = -3;
@@ -1625,8 +1627,8 @@ function block_exastud_get_report_templates($class) {
     $templates['grades_report_xlsx'] = 'Notenübersicht (xlsx)';
     $templates[BLOCK_EXASTUD_DATA_ID_PRINT_TEMPLATE] = block_exastud_is_bw_active() ? block_exastud_trans('de:Zeugnis / Abgangszeugnis') : block_exastud_trans('de:Zeugnis');
     if (block_exastud_is_exacomp_installed()) {
-        $templates['Anlage zum Lernentwicklungsbericht'] = 'Anlage zum Lernentwicklungsbericht';
-        $templates['Anlage zum LernentwicklungsberichtAlt'] = 'Anlage zum Lernentwicklungsbericht (Alt)';
+        $templates[2] = 'Anlage zum Lernentwicklungsbericht';
+        $templates[3] = 'Anlage zum Lernentwicklungsbericht (Alt)';
     }
     $templates['html_report'] = block_exastud_get_string('html_report');
     if ($class == '-all-') {
@@ -1650,6 +1652,7 @@ function block_exastud_get_template_files() {
 // Needed for install/upgrade plugin
 function block_exastud_get_default_templates() {
     $grades_1_bis_6 = ['1' => '1', '2' => '2', '3' => '3', '4' => '4', '5' => '5', '6' => '6'];
+    $grades_lang = ['1' => 'sehr gut', '2' => 'gut', '3' => 'befriedigend', '4' => 'ausreichend', '5' => 'mangelhaft', '6' => 'ungenügend'];
     $grades_short = ['1' => 'sgt', '2' => 'gut', '3' => 'bfr', '4' => 'ausr', '5' => 'mgh', '6' => 'ung'];
     $grades_mit_plus_minus_bis = [
             '1' => '1', '1-' => '1-', '1-2' => '1-2',
@@ -1667,7 +1670,6 @@ function block_exastud_get_default_templates() {
             '5+' => '5 plus', '5' => '5', '5-' => '5 minus', '5-6' => '5 - 6',
             '6+' => '6 plus', '6' => '6',
     ];
-    $grades_lang = ['1' => 'sehr gut', '2' => 'gut', '3' => 'befriedigend', '4' => 'ausreichend', '5' => 'mangelhaft', '6' => 'ungenügend'];
 
     $templates = [
             'default_report' => [
@@ -1680,6 +1682,56 @@ function block_exastud_get_default_templates() {
                                     'title' => block_exastud_trans('de:Bemerkungen'),
                                     'type' => 'textarea',
                             ],
+                    ],
+            ],
+            'Anlage zum Lernentwicklungsbericht' => [
+                    'id' => 2,
+                    'name' => 'Anlage zum Lernentwicklungsbericht',
+                    'file' => 'Anlage zum Lernentwicklungsbericht',
+                    'inputs' => [],
+            ],
+            'Anlage zum LernentwicklungsberichtAlt' => [
+                    'id' => 3,
+                    'name' => 'Anlage zum LernentwicklungsberichtAlt',
+                    'file' => 'Anlage zum LernentwicklungsberichtAlt',
+                    'inputs' => [],
+            ],
+            'BP 2004/Zertifikat fuer Profilfach' => [
+                    'id' => BLOCK_EXASTUD_DATA_ID_ZERTIFIKAT_FUER_PROFILFACH,
+                    'name' => 'Zertifikat für Profilfach',
+                    'file' => 'BP 2004/Zertifikat fuer Profilfach',
+                    'grades' => [],
+                    'inputs' => [
+                            'besondere_kompetenzen' => [
+                                    'title' => 'Besondere Kompetenzen in folgenden Bereichen erworben',
+                                    'type' => 'textarea',
+                                    'lines' => 13,
+                            ],
+                    ],
+            ],
+            'BP 2004/Beiblatt zur Projektpruefung HSA' => [
+                    'id' => 5,
+                    'name' => 'Beiblatt zur Projektprüfung HSA',
+                    'file' => 'BP 2004/Beiblatt zur Projektpruefung HSA',
+                    'grades' => $grades_lang,
+                    'inputs' => [
+                        /*
+                        'projekt_text3lines' => [
+                            'title' => 'Projektthema',
+                            'type' => 'textarea',
+                            'lines' => 3,
+                        ],
+                        'projekt_verbalbeurteilung' => [
+                            'title' => 'Verbalbeurteilung',
+                            'type' => 'textarea',
+                            'lines' => 5,
+                        ],
+                        'projekt_grade' => [
+                            'title' => 'Projektprüfung: Note',
+                            'type' => 'select',
+                            'values' => $grades,
+                        ],
+                        */
                     ],
             ],
             'BP 2016/GMS Zeugnis 1.HJ' => [
@@ -1936,52 +1988,6 @@ function block_exastud_get_default_templates() {
                             ],
                     ],
             ],
-            'BP 2004/Zertifikat fuer Profilfach' => [
-                    'name' => 'Zertifikat für Profilfach',
-                    'file' => 'BP 2004/Zertifikat fuer Profilfach',
-                    'grades' => [],
-                    'inputs' => [
-                            'besondere_kompetenzen' => [
-                                    'title' => 'Besondere Kompetenzen in folgenden Bereichen erworben',
-                                    'type' => 'textarea',
-                                    'lines' => 13,
-                            ],
-                    ],
-            ],
-            'BP 2004/Beiblatt zur Projektpruefung HSA' => [
-                    'name' => 'Beiblatt zur Projektprüfung HSA',
-                    'file' => 'BP 2004/Beiblatt zur Projektpruefung HSA',
-                    'grades' => $grades_lang,
-                    'inputs' => [
-                        /*
-                        'projekt_text3lines' => [
-                            'title' => 'Projektthema',
-                            'type' => 'textarea',
-                            'lines' => 3,
-                        ],
-                        'projekt_verbalbeurteilung' => [
-                            'title' => 'Verbalbeurteilung',
-                            'type' => 'textarea',
-                            'lines' => 5,
-                        ],
-                        'projekt_grade' => [
-                            'title' => 'Projektprüfung: Note',
-                            'type' => 'select',
-                            'values' => $grades,
-                        ],
-                        */
-                    ],
-            ],
-            'Anlage zum Lernentwicklungsbericht' => [
-                    'name' => 'Anlage zum Lernentwicklungsbericht',
-                    'file' => 'Anlage zum Lernentwicklungsbericht',
-                    'inputs' => [],
-            ],
-            'Anlage zum LernentwicklungsberichtAlt' => [
-                    'name' => 'Anlage zum LernentwicklungsberichtAlt',
-                    'file' => 'Anlage zum LernentwicklungsberichtAlt',
-                    'inputs' => [],
-            ],
             'BP 2004/GMS Abschlusszeugnis der Förderschule' => [
                     'name' => 'BP 2004 GMS Abschlusszeugnis der Förderschule',
                     'file' => 'BP 2004/Abschlusszeugnis der Foerderschule',
@@ -2094,4 +2100,31 @@ function block_exastud_fill_reportsettingstable() {
             }
         }
     }
+}
+
+function block_exastud_optional_param_array($parname, $default, $type) {
+    if (func_num_args() != 3 or empty($parname) or empty($type)) {
+        throw new coding_exception('optional_param_array requires $parname, $default + $type to be specified (parameter: '.$parname.')');
+    }
+    // POST has precedence.
+    if (isset($_POST[$parname])) {
+        $param = $_POST[$parname];
+    } else if (isset($_GET[$parname])) {
+        $param = $_GET[$parname];
+    } else {
+        return $default;
+    }
+    if (!is_array($param)) {
+        debugging('optional_param_array() expects array parameters only: '.$parname);
+        return $default;
+    }
+    $result = array();
+    foreach ($param as $key => $value) {
+        if (!preg_match('/^[a-z0-9_-]+$/i', $key)) {
+            debugging('Invalid key name in optional_param_array() detected: '.$key.', parameter: '.$parname);
+            continue;
+        }
+        $result[$key] = clean_param_array($value, $type, true);
+    }
+    return $result;
 }

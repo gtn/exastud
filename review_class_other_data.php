@@ -48,10 +48,24 @@ if ($type == BLOCK_EXASTUD_DATA_ID_LERN_UND_SOZIALVERHALTEN) {
 		],
 	];
 	$classheader = $reviewclass->title.' - '.block_exastud_trans('de:Weitere Formularfelder');
-} else { // type is id of template ecord
+} elseif ($type == BLOCK_EXASTUD_DATA_ID_ZERTIFIKAT_FUER_PROFILFACH) {
+	$categories = [
+            BLOCK_EXASTUD_DATA_ID_ZERTIFIKAT_FUER_PROFILFACH => [
+			'title' => block_exastud_trans('de:Zertifikat für Profilfach'),
+		],
+	];
+	$classheader = $reviewclass->title.' - '.block_exastud_trans('de:Weitere Formularfelder');
+} else {
+    // additional info - like BLOCK_EXASTUD_DATA_ID_PRINT_TEMPLATE, but used another fields
 	$template = \block_exastud\print_template::create($type);
-	$categories = $template->get_inputs($type);
-	$classheader = $reviewclass->title.' - '.$template->get_name();
+	//$categories = $template->get_inputs($type);
+	//$classheader = $reviewclass->title.' - '.$template->get_name();
+    $categories = [
+            BLOCK_EXASTUD_DATA_ID_ADDITIONAL_INFO => [
+                    'title' => block_exastud_trans('de:Additional info'),
+            ],
+    ];
+    $classheader = $reviewclass->title.' - '.block_exastud_trans('de:Additional info');
 }
 $output = block_exastud_get_renderer();
 
@@ -105,7 +119,11 @@ foreach ($classstudents as $classstudent) {
 
 	if (@array_shift(array_keys($categories)) === BLOCK_EXASTUD_DATA_ID_PRINT_TEMPLATE) {
 		$hasInputs = !!block_exastud_get_student_print_template($class, $classstudent->id)->get_inputs(BLOCK_EXASTUD_DATA_ID_PRINT_TEMPLATE);
-	} else {
+	}/* else if (@array_shift(array_keys($categories)) === BLOCK_EXASTUD_DATA_ID_ZERTIFIKAT_FUER_PROFILFACH) {
+        $hasInputs = !!block_exastud_get_student_print_template($class, $classstudent->id)->get_inputs(BLOCK_EXASTUD_DATA_ID_ZERTIFIKAT_FUER_PROFILFACH);
+    }*/ else if (@array_shift(array_keys($categories)) === BLOCK_EXASTUD_DATA_ID_ADDITIONAL_INFO) {
+        $hasInputs = !!block_exastud_get_student_print_template($class, $classstudent->id)->get_inputs(BLOCK_EXASTUD_DATA_ID_ADDITIONAL_INFO); // TODO: some another?
+    } else {
 		$hasInputs = !!$categories;
 	}
 
@@ -116,27 +134,41 @@ foreach ($classstudents as $classstudent) {
 		$row->cells[] = block_exastud_trans(['de:Dieses Formular hat keine weiteren Eingabfelder'], fullname($editUser));
 	} else {
 		$row->cells[] = $output->link_button($CFG->wwwroot.'/blocks/exastud/review_student_other_data.php?courseid='.$courseid.'&classid='.$classid.'&type='.$type.'&studentid='.$classstudent->id,
-			block_exastud_get_string('edit'));
+			block_exastud_get_string('edit'),
+            array('class' => 'btn btn-info'));
 	}
 
 	foreach ($categories as $dataid => $category) {
-		if ($dataid === BLOCK_EXASTUD_DATA_ID_PRINT_TEMPLATE) {
-			$template = block_exastud_get_student_print_template($class, $classstudent->id);
+
+		if ($dataid === BLOCK_EXASTUD_DATA_ID_PRINT_TEMPLATE
+                || $dataid === BLOCK_EXASTUD_DATA_ID_ADDITIONAL_INFO
+                || $dataid === BLOCK_EXASTUD_DATA_ID_ZERTIFIKAT_FUER_PROFILFACH) {
+		    if ($dataid === BLOCK_EXASTUD_DATA_ID_ZERTIFIKAT_FUER_PROFILFACH) {
+                $template = block_exastud\print_template::create(BLOCK_EXASTUD_DATA_ID_ZERTIFIKAT_FUER_PROFILFACH);
+            } else {
+                $template = block_exastud_get_student_print_template($class, $classstudent->id);
+            }
 			$content = '<div><b>Formular:</b> '.$template->get_name().'</div>';
+			$inputs = $template->get_inputs($dataid);
+			if ($inputs) {
+                foreach ($inputs as $dataid => $form_input) {
+                    if (@$form_input['type'] == 'select') {
+                        $value = @$form_input['values'][$data[$dataid]];
+                    } else {
+                        $value = !empty($data[$dataid]) ? block_exastud_text_to_html($data[$dataid]) : '';
+                    }
 
-			foreach ($template->get_inputs(BLOCK_EXASTUD_DATA_ID_PRINT_TEMPLATE) as $dataid => $form_input) {
-				if (@$form_input['type'] == 'select') {
-					$value = @$form_input['values'][$data[$dataid]];
-				} else {
-					$value = !empty($data[$dataid]) ? block_exastud_text_to_html($data[$dataid]) : '';
-				}
-
-				$content .= '<div style="padding-top: 10px; font-weight: bold;">'.$form_input['title'].'</div>';
-				$content .= '<div>'.$value.'</div>';
-			}
+                    $content .= '<div style="padding-top: 10px; font-weight: bold;">'.$form_input['title'].'</div>';
+                    $content .= '<div>'.$value.'</div>';
+                }
+            } /*else {
+			    $content .= '<small>'.block_exastud_trans('de:Dieses Formular hat keine weiteren Eingabfelder').'</small>';
+            }*/
 
 			$row->cells[] = $content;
-		} elseif (@$category['type'] == 'select') {
+		} /*elseif ($dataid == BLOCK_EXASTUD_DATA_ID_ADDITIONAL_INFO) {
+
+        }*/ elseif (@$category['type'] == 'select') {
 			$row->cells[] = @$category['values'][$data[$dataid]];
 		} else {
 			$row->cells[] = !empty($data[$dataid]) ? block_exastud_text_to_html($data[$dataid]) : '';

@@ -42,3 +42,23 @@
 .exastud-additional-params-block.hidden {
     display: none;
 }
+
+.add_selectbox_option,
+.delete_selectbox_option {
+    cursor: pointer;
+}
+
+.delete_param_button {
+    position: absolute;
+    right: 20px;
+    cursor: pointer;
+    z-index: 10000;
+}
+
+.block_hover {
+    background-color: #fff1f1;
+}
+
+.exastud-additional-params-shortlist {
+    list-style: none;
+}
