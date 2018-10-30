@@ -73,7 +73,7 @@ echo $output->header(['settings', 'backup']);
 echo block_exastud_trans(['de:Hier können Sie alle Tabellen des Lernentwicklungsberichts im sql-Format sichern. Das Einspielen der Sicherung führen Sie bitte mit einem Datenbank-Tool wie z.B. phpMyAdmin durch.',
 		'en:Here you can create a Database Backup as an sql File. To reimport this backup please use a Database-Tool like phpMyAdmin']).'<br/><br/>';
 
-echo $output->link_button($_SERVER['REQUEST_URI'].'&action=backup', block_exastud_trans(['de:Datenbank jetzt sichern', 'en:Backup Database now']));
+echo $output->link_button($_SERVER['REQUEST_URI'].'&action=backup', block_exastud_trans(['de:Datenbank jetzt sichern', 'en:Backup Database now']), ['class' => 'btn btn-default']);
 
 echo $output->footer();
 

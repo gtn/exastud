@@ -46,7 +46,7 @@ class class_edit_form extends moodleform {
 			g::$OUTPUT->notification(block_exastud_trans(['de:Bitte beachten Sie: Bei einer Änderung des Bildungsplans müssen alle Bewertungen erneut eingegeben werden.', 'en:']), 'notifymessage')
 		);
 
-		$mform->addElement('text', BLOCK_EXASTUD_DATA_ID_CLASS_DEFAULT_TEMPLATEID, block_exastud_trans('de:Standard Zeugnisformular').':');
+		$mform->addElement('text', BLOCK_EXASTUD_DATA_ID_CLASS_DEFAULT_TEMPLATEID, block_exastud_trans(['de:Standard Zeugnisformular', 'en: Default template']).':');
 		$mform->setType(BLOCK_EXASTUD_DATA_ID_CLASS_DEFAULT_TEMPLATEID, PARAM_TEXT);
 
 		$mform->addElement('static', '', '&nbsp;',
@@ -323,7 +323,7 @@ class reportsettings_edit_form extends moodleform {
         // category
         $mform->addElement('text', 'category', block_exastud_get_string('report_settings_setting_category'), array('size' => 50));
         $mform->setType('category', PARAM_TEXT);
-        $mform->addRule('category', block_exastud_get_string('error'), 'required', null, 'server', false, false);
+        //$mform->addRule('category', block_exastud_get_string('error'), 'required', null, 'server', false, false);
 
         // template
         //$templateList = block_exastud_get_report_templates('-all-');
@@ -352,7 +352,7 @@ class reportsettings_edit_form extends moodleform {
                 // type of parameter
                 $radiotype = array();
                 foreach ($this->input_types as $type) {
-                    $radiotype[] = $mform->createElement('radio', $field.'_type', '', $type, $type, $this->radioattributes);
+                    $radiotype[] = $mform->createElement('radio', $field.'_type', '', block_exastud_get_string('report_setting_type_'.$type), $type, $this->radioattributes);
                 }
                 $mform->addGroup($radiotype, $field.'_typeradiobuttons', '', array(' '), false);
 
@@ -490,7 +490,7 @@ class reportsettings_edit_form extends moodleform {
                 // type
                 $radiotype = array();
                 foreach ($this->input_types as $type) {
-                    $radiotype[] = $mform->createElement('radio', 'additional_params_type['.$i.']', '', $type, $type, $this->radioattributes);
+                    $radiotype[] = $mform->createElement('radio', 'additional_params_type['.$i.']', '', block_exastud_get_string('report_setting_type_'.$type), $type, $this->radioattributes);
                     if (!empty($param_settings['type'])) {
                         $mform->setDefault('additional_params_type['.$i.']', $param_settings['type']);
                     }

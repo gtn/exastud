@@ -253,15 +253,15 @@ if ($action == 'categories') {
 		<ul exa="items">
 			<li>
 				<input type="text" name="title"/>
-				<button exa="delete-button"><?php echo block_exastud_get_string('delete'); ?></button>
+				<button exa="delete-button" class="btn btn-default"><?php echo block_exastud_get_string('delete'); ?></button>
 			</li>
 		</ul>
 		<div exa="new-item">
 			<input type="text" name="title"/>
-			<input type="button" exa="new-button" value="<?php echo block_exastud_get_string('add'); ?>">
+			<input type="button" exa="new-button" class="btn btn-default" value="<?php echo block_exastud_get_string('add'); ?>">
 		</div>
 		<div exa="save">
-			<input type="button" exa="save-button" value="<?php echo block_exastud_get_string('savechanges'); ?>">
+			<input type="button" exa="save-button" class="btn btn-default" value="<?php echo block_exastud_get_string('savechanges'); ?>" class="btn btn-default">
 		</div>
 	</div>
 	<?php
@@ -310,7 +310,7 @@ if ($action == 'subjects') {
 				<input type="text" name="title"/>
 				<input type="text" name="shorttitle"/>
 				<!-- input type="checkbox" name="always_print" value="1"/ -->
-				<button exa="delete-button"><?php echo block_exastud_get_string('delete'); ?></button>
+				<button exa="delete-button" class="btn btn-default"><?php echo block_exastud_get_string('delete'); ?></button>
 			</li>
 		</ul>
 		<?php if ($canEdit) { ?>
@@ -318,12 +318,12 @@ if ($action == 'subjects') {
 			<input type="text" name="title"/>
 			<input type="text" name="shorttitle"/>
 			<!-- input type="checkbox" name="always_print" value="1"/ -->
-			<input type="button" exa="new-button" value="<?php echo block_exastud_get_string('add'); ?>">
+			<input type="button" exa="new-button" class="btn btn-default" value="<?php echo block_exastud_get_string('add'); ?>">
 		</div>
 		<?php } ?>
 		<div exa="save">
 			<?php if ($canEdit) { ?>
-			<input type="button" exa="save-button" value="<?php echo block_exastud_get_string('savechanges'); ?>">
+			<input type="button" exa="save-button" class="btn btn-default" value="<?php echo block_exastud_get_string('savechanges'); ?>">
 			<?php } ?>
 			<?php
 			echo $output->back_button($CFG->wwwroot.'/blocks/exastud/configuration_global.php?courseid='.$courseid.'&action=bps');
@@ -347,15 +347,15 @@ if ($action == 'evalopts') {
 		<ul exa="items">
 			<li>
 				<input type="text" name="title"/>
-				<button exa="delete-button"><?php echo block_exastud_get_string('delete'); ?></button>
+				<button exa="delete-button" class="btn btn-default"><?php echo block_exastud_get_string('delete'); ?></button>
 			</li>
 		</ul>
 		<div exa="new-item">
 			<input type="text" name="title"/>
-			<input type="button" exa="new-button" value="<?php echo block_exastud_get_string('add'); ?>">
+			<input type="button" exa="new-button" class="btn btn-default" value="<?php echo block_exastud_get_string('add'); ?>">
 		</div>
 		<div exa="save">
-			<input type="button" exa="save-button" value="<?php echo block_exastud_get_string('savechanges'); ?>">
+			<input type="button" exa="save-button" class="btn btn-default" value="<?php echo block_exastud_get_string('savechanges'); ?>">
 		</div>
 	</div>
 	<?php
@@ -375,16 +375,16 @@ if ($action == 'bps') {
 		<ul exa="items">
 			<li>
 				<input type="text" name="title"/>
-				<button exa="delete-button"><?php echo block_exastud_get_string('delete'); ?></button>
-				<button exa="subjects-button"><?php echo block_exastud_trans('de:Fachbezeichnungen'); ?></button>
+				<button exa="delete-button" class="btn btn-default"><?php echo block_exastud_get_string('delete'); ?></button>
+				<button exa="subjects-button" class="btn btn-default"><?php echo block_exastud_trans('de:Fachbezeichnungen'); ?></button>
 			</li>
 		</ul>
 		<div exa="new-item">
 			<input type="text" name="title"/>
-			<input type="button" exa="new-button" value="<?php echo block_exastud_get_string('add'); ?>">
+			<input type="button" exa="new-button" class="btn btn-default" value="<?php echo block_exastud_get_string('add'); ?>">
 		</div>
 		<div exa="save">
-			<input type="button" exa="save-button" value="<?php echo block_exastud_get_string('savechanges'); ?>">
+			<input type="button" exa="save-button" class="btn btn-default" value="<?php echo block_exastud_get_string('savechanges'); ?>">
 		</div>
 	</div>
 	<?php

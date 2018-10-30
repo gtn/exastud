@@ -180,7 +180,7 @@ foreach($classstudents as $classstudent) {
 	$row->cells[] = '<a style="padding-right: 15px;" href="'.$show_hide_url.'">'.$show_hide_icon.'</a>';
 
 	$row->cells[] = ($visible ? $output->link_button($CFG->wwwroot.'/blocks/exastud/review_student.php?courseid='.$courseid.'&classid='.$classid.'&subjectid='.$subjectid.'&studentid='.$classstudent->id,
-		block_exastud_trans(['de:Bewerten', 'en:Review'])) : '');
+		block_exastud_trans(['de:Bewerten', 'en:Review']), ['class' => 'btn btn-primary']) : '');
 	
 	$formdata = new stdClass();
 	$formdata = (object)array_merge((array)$formdata, (array)$subjectData);
@@ -190,7 +190,7 @@ foreach($classstudents as $classstudent) {
 	    $formdata->grade = '';
 	}
 	//$grade_form->addElement('static', 'exacomp_grades', block_exastud_trans('de:Vorschläge aus Exacomp'), $grade_options['exacomp_grades']);
-	$grade_form = '<select name="exastud_grade['.$classstudent->id.']">';
+	$grade_form = '<select name="exastud_grade['.$classstudent->id.']" class="custom-select">';
 	$grade_form .= '<option></option>';
 	foreach($grade_options as $k => $grade_option){
 	    if($formdata->grade == (string)$k){
@@ -288,7 +288,7 @@ if ($hiddenclassstudents) {
 	echo $output->table($table);
 }
 
-echo '<input type="submit" value="'.block_exastud_get_string('savechanges').'"/>';
+echo '<input type="submit" value="'.block_exastud_get_string('savechanges').'" class="btn btn-default"/>';
 echo $output->back_button(new moodle_url('review.php', ['courseid' => $courseid]));
 echo '</form>';
 echo $output->footer();

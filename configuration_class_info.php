@@ -148,12 +148,13 @@ if ($class && $class->id) {
 	if (!block_exastud_get_class_students($class->id)) {
 		$deleteButton = $output->link_button('configuration_class.php?courseid='.$COURSE->id.'&action=delete&classid='.$class->id.'&confirm=1',
 			block_exastud_get_string('delete'),
-			['exa-confirm' => block_exastud_get_string('delete_confirmation', null, $class->title)]);
+			['exa-confirm' => block_exastud_get_string('delete_confirmation', null, $class->title), 'class' => 'btn btn-default']);
 	} else {
 		$deleteButton = html_writer::empty_tag('input', [
 			'type' => 'button',
 			'onclick' => "alert(".json_encode(block_exastud_trans('de:Es können nur Klassen ohne Schüler gelöscht werden')).")",
 			'value' => block_exastud_trans('de:Klasse löschen'),
+            'class' => 'btn btn-danger'
 		]);
 	}
 
@@ -163,7 +164,7 @@ if ($class && $class->id) {
 	echo $output->heading2(block_exastud_get_string('export_class'));
 
 	echo $output->link_button('export_class.php?courseid='.$COURSE->id.'&classid='.$class->id,
-		block_exastud_get_string('export_class'));
+		block_exastud_get_string('export_class'), ['class' => 'btn btn-info']);
 } else {
 	echo $output->heading(block_exastud_trans(['de:Klasse hinzufügen', 'en:Add Class']));
 
@@ -189,7 +190,7 @@ foreach ($bps as $bp) {
 			function populate_select(name) {
 				var $input = $('input,select').filter('[name=' + name + ']');
 				var val = $input.val();
-				var $select = $('<select/>', {name: name});
+				var $select = $('<select/>', {name: name, class: 'custom-select'});
 
 				$.each(templates_by_bp[$('select[name=bpid]').val()], function (id, title) {
 					$select.append($('<option/>', {

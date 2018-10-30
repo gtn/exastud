@@ -62,9 +62,9 @@ if ($type == 'students') {
 
 	$buttons_left = '';
 	$buttons_left .= $output->link_button($CFG->wwwroot.'/blocks/exastud/configuration_classmembers.php?courseid='.$courseid.'&classid='.$class->id,
-		block_exastud_get_string('editclassmemberlist'));
+		block_exastud_get_string('editclassmemberlist'), ['class' => 'btn btn-default']);
 	$buttons_left .= $output->link_button($CFG->wwwroot.'/blocks/exastud/configuration_classmembers_courses.php?courseid='.$courseid.'&classid='.$class->id,
-		block_exastud_trans(['de:Aus Kurs hinzufügen', 'en:Add from Course']));
+		block_exastud_trans(['de:Aus Kurs hinzufügen', 'en:Add from Course']), ['class' => 'btn btn-default']);
 
 	if (!$classstudents) {
 		echo $OUTPUT->notification(block_exastud_get_string('no_entries_found'), 'notifymessage');
@@ -245,7 +245,7 @@ if ($type == 'studentgradereports') {
 
 		echo '<table style="width: 100%;"><tr><td>';
 		echo '</td><td style="text-align: right;">';
-		echo '<input type="submit" value="'.block_exastud_get_string('savechanges').'"/>';
+		echo '<input type="submit" value="'.block_exastud_get_string('savechanges').'" class="btn btn-default"/>';
 		echo '</td></tr></table>';
 
 		echo '</form>';
@@ -301,7 +301,7 @@ if ($type == 'teachers') {
 
 
 	echo $output->link_button($CFG->wwwroot.'/blocks/exastud/configuration_classteachers.php?courseid='.$courseid.'&classid='.$class->id,
-		block_exastud_get_string('editclassteacherlist'));
+		block_exastud_get_string('editclassteacherlist'), ['class' => 'btn btn-default']);
 }
 
 if ($type == 'teachers_options') {
@@ -390,7 +390,7 @@ if ($type == 'teachers_options') {
 	echo $output->table($table);
 
 	echo '<table style="width: 100%;"><tr><td style="text-align: right;">';
-	echo '<input type="submit" value="'.block_exastud_get_string('savechanges').'"/>';
+	echo '<input type="submit" value="'.block_exastud_get_string('savechanges').'" class="btn btn-default"/>';
 	echo '</td></tr></table>';
 
 	echo '</form>';

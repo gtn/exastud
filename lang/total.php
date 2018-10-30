@@ -499,12 +499,12 @@ return [
             'Report settings',
     ],
     'report_settings_edit' => [
-            'Edit report settings',
-            'Edit report settings',
+            'Berichts-Konfigurationen bearbeiten',
+            'Edit report configurations',
     ],
     'report_settings_new' => [
-            'New report settings',
-            'New report settings',
+            'Neue Berichts-Konfiguration hinzufügen',
+            'New report configuration',
     ],
     'report_settings_setting_id' => [
             '',
@@ -623,28 +623,44 @@ return [
             'Maximum of characters',
     ],
     'report_settings_button_add_additional_param' => [
-            'Add a new param',
+            'Neuen Parameter hinzufügen',
             'Add a new param',
     ],
     'report_settings_selectboxkey_fieldtitle' => [
-            'key',
-            'key',
+            'Schlüssel',
+            'Key',
     ],
     'report_settings_selectboxvalue_fieldtitle' => [
-            'value',
-            'value',
+            'Wert',
+            'Value',
     ],
     'delete_parameter' => [
             'delete parameter',
-            'delete parameter',
+            'Delete parameter',
     ],
     'delete' => [
             'delete',
-            'delete',
+            'Delete',
     ],
     'add' => [
             'add',
-            'add',
+            'Add',
+    ],
+    'report_setting_type_textarea' => [
+            'Textbereich',
+            'Textarea',
+    ],
+    'report_setting_type_text' => [
+            'Textfeld',
+            'Text',
+    ],
+    'report_setting_type_select' => [
+            'Auswahl',
+            'Select',
+    ],
+    'report_setting_type_header' => [
+            'Header',
+            'Header',
     ],
 
 

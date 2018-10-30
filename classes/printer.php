@@ -132,7 +132,6 @@ class printer {
         $data = array_merge($data, $marker_configurations);
 
         //echo "<pre>debug:<strong>printer.php:121</strong>\r\n"; print_r($templateid); echo '</pre>'; // !!!!!!!!!! delete it
-        //echo "<pre>debug:<strong>printer.php:121</strong>\r\n"; print_r($data); echo '</pre>'; exit; // !!!!!!!!!! delete it
 
 		if ($templateid == 1) { // default_report
 			$class_subjects = block_exastud_get_class_subjects($class);
@@ -814,6 +813,7 @@ class printer {
 		$templateProcessor->setValue('datum', date('d.m.Y'));
 
 		$class_subjects = block_exastud_get_bildungsplan_subjects($class->bpid);
+		
 
 		// split normal and grouped subjects (page 2)
 		$normal_subjects = [];
@@ -834,8 +834,16 @@ class printer {
 		}
 
 		// page 1
+        $columnsCount = count($normal_subjects);
+        $columnStart = 0;
+        $templateProcessor->duplicateCell('s', $columnsCount - 1);
+        $templateProcessor->duplicateCell('g', $columnsCount - 1);
+        // some incorrect result. Why?
+        //$templateProcessor->duplicateCol('s', $columnsCount - 1);
 		foreach ($normal_subjects as $subject) {
-			$templateProcessor->setValue("s", $subject->shorttitle, 1);
+            $shorttitle = $subject->shorttitle;
+		    //$shorttitle = preg_replace('/\s|\v/gm', chr(160), $shorttitle);
+			$templateProcessor->setValue("s", $shorttitle, 1);
 		}
 		$templateProcessor->setValue("s", '');
 
@@ -855,8 +863,15 @@ class printer {
 		}
 
 		// page 2
+        $columnsCount = count($grouped_subjects);
+        $columnStart = 0;
+        $templateProcessor->duplicateCell('gs', $columnsCount - 1);
+        $templateProcessor->duplicateCell('gsg', $columnsCount - 1);
+        $templateProcessor->duplicateCell('gss', $columnsCount - 1);
 		foreach ($grouped_subjects as $key => $subjects) {
-			$templateProcessor->setValue("gs", $key, 1);
+            $shorttitle = $key;
+            //$shorttitle = preg_replace('/\s|\v/gm', chr(160), $shorttitle);
+			$templateProcessor->setValue("gs", $shorttitle, 1);
 		}
 		$templateProcessor->setValue("gs", '');
 
@@ -1699,37 +1714,81 @@ class TemplateProcessor extends \PhpOffice\PhpWord\TemplateProcessor {
 		return $parts;
 	}
 
-	function rfindTagStart($tag, $offset) {
-		/*
-		 * if (!preg_match('!<w:'.$tag.'[\s>].*$!Uis', substr($this->tempDocumentMainPart, 0, $offset), $matches)) {
-		 * throw new \Exception('tagStart $tag not found');
-		 * }
-		 *
-		 * echo $offset - strlen($matches[0]);
-		 */
-		$tagStart = strrpos($this->tempDocumentMainPart, '<w:'.$tag.' ', ((strlen($this->tempDocumentMainPart) - $offset) * -1));
+    function rfindTagStart($tag, $offset, $fromContent = '')
+    {
+        /*
+         * if (!preg_match('!<w:'.$tag.'[\s>].*$!Uis', substr($this->tempDocumentMainPart, 0, $offset), $matches)) {
+         * throw new \Exception('tagStart $tag not found');
+         * }
+         *
+         * echo $offset - strlen($matches[0]);
+         */
+        if ($fromContent) {
+            $searchIn = $fromContent;
+        } else {
+            $searchIn = $this->tempDocumentMainPart;
+        }
 
-		if (!$tagStart) {
-			$tagStart = strrpos($this->tempDocumentMainPart, '<w:'.$tag.'>', ((strlen($this->tempDocumentMainPart) - $offset) * -1));
-		}
-		if (!$tagStart) {
-			throw new Exception('Can not find the start position of tag '.$tag.'.');
-		}
+        $tagStart = strrpos($searchIn, '<w:' . $tag . ' ', ((strlen($searchIn) - $offset) * - 1));
 
-		return $tagStart;
-	}
+        if (! $tagStart) {
+            $tagStart = strrpos($searchIn, '<w:' . $tag . '>', ((strlen($searchIn) - $offset) * - 1));
+        }
+        if (! $tagStart) {
+            throw new Exception('Can not find the start position of tag ' . $tag . '.');
+        }
 
-	function findTagEnd($tag, $offset) {
-		$search = '</w:'.$tag.'>';
+        return $tagStart;
+    }
 
-		return strpos($this->tempDocumentMainPart, $search, $offset) + strlen($search);
-	}
+    function findTagEnd($tag, $offset, $fromContent = '')
+    {
+        $search = '</w:' . $tag . '>';
+        if ($fromContent) {
+            $searchIn = $fromContent;
+        } else {
+            $searchIn = $this->tempDocumentMainPart;
+        }
+        return strpos($searchIn, $search, $offset) + strlen($search);
+    }
+
 
 	function slice($string, $start, $end) {
 		return new Slice($string, $start, $end);
 	}
 
-	function duplicateCol($search, $numberOfCols = 1) {
+    /**
+     * You need to do it with every row
+     * @param string $search
+     * @param int $numberOfCells
+     */
+    function duplicateCell($search, $numberOfCells = 1)
+    {
+        if ('${' !== substr($search, 0, 2) && '}' !== substr($search, - 1)) {
+            $search = '${' . $search . '}';
+        }
+
+        $tagPos = $this->tagPos($search);
+
+        $table = $this->slice($this->tempDocumentMainPart, $this->rfindTagStart('tbl', $tagPos), $this->findTagEnd('tbl', $tagPos));
+        $newTagPos = strpos($table->get(), $search);
+
+        $cellStartPos = $this->rfindTagStart('tc', $newTagPos, $table->get());
+        $cellEndPos = $this->findTagEnd('tc', $newTagPos, $table->get());
+        $cellToCopy = $this->slice($table->get(), $cellStartPos, $cellEndPos);
+
+        // add new cell after source cell
+        $resultCells = '';
+        for($i = 0; $i < $numberOfCells; $i++) {
+            $resultCells .= $cellToCopy->get();
+        }
+        $tableContent = substr_replace($table->get(), $resultCells, $cellEndPos, 0);
+
+        $table->set($tableContent);
+        $this->tempDocumentMainPart = $table->join();
+    }
+
+    function duplicateCol($search, $numberOfCols = 1) {
 		$tagPos = $this->tagPos($search);
 
 		$table = $this->slice($this->tempDocumentMainPart, $this->rfindTagStart('tbl', $tagPos), $this->findTagEnd('tbl', $tagPos));
