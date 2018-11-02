@@ -28,10 +28,12 @@ require_login($courseid);
 
 block_exastud_require_global_cap(BLOCK_EXASTUD_CAP_ADMIN);
 
-$output = block_exastud_get_renderer();
-
 $url = '/blocks/exastud/backup.php';
 $PAGE->set_url($url);
+$PAGE->set_pagelayout('admin'); // Needed for admin menu block
+
+$output = block_exastud_get_renderer();
+block_exastud_custom_breadcrumb($PAGE);
 
 if ($action == 'backup') {
 	$tables = [];
@@ -68,7 +70,7 @@ if ($action == 'backup') {
 	exit;
 }
 
-echo $output->header(['settings', 'backup']);
+echo $output->header(['backup'], ['content_title' => block_exastud_get_string('pluginname')], true/*['settings', 'backup']*/);
 
 echo block_exastud_trans(['de:Hier können Sie alle Tabellen des Lernentwicklungsberichts im sql-Format sichern. Das Einspielen der Sicherung führen Sie bitte mit einem Datenbank-Tool wie z.B. phpMyAdmin durch.',
 		'en:Here you can create a Database Backup as an sql File. To reimport this backup please use a Database-Tool like phpMyAdmin']).'<br/><br/>';

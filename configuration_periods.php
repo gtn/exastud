@@ -26,6 +26,7 @@ $action = optional_param('action', '', PARAM_ALPHA);
 
 $url = '/blocks/exastud/configuration_periods.php';
 $PAGE->set_url($url);
+$PAGE->set_pagelayout('admin'); // Needed for admin menu block
 
 require_login($courseid);
 
@@ -95,7 +96,8 @@ else {
 
 
 $output = block_exastud_get_renderer();
-echo $output->header(array('settings', 'periods'));
+block_exastud_custom_breadcrumb($PAGE);
+echo $output->header(['periods'], ['content_title' => block_exastud_get_string('pluginname')], true);
 
 echo "<br/>";
 $periodform->set_data($period);

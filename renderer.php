@@ -24,7 +24,8 @@ use block_exastud\globals as g;
 
 class block_exastud_renderer extends plugin_renderer_base {
 
-	public function header($items, $options = []) {
+	public function header($items, $options = [], $forSettings = false) {
+	    global $PAGE;
 		$items = (array)$items;
 		$strheader = block_exastud_get_string('blocktitle');
 
@@ -47,14 +48,14 @@ class block_exastud_renderer extends plugin_renderer_base {
 		*/
 
 		if (block_exastud_has_global_cap(BLOCK_EXASTUD_CAP_ADMIN)) {
-			$tabs['settings'] = new tabobject('settings', new moodle_url('/blocks/exastud/periods.php', ['courseid' => g::$COURSE->id]), block_exastud_get_string("settings"), '', true);
+			/*$tabs['settings'] = new tabobject('settings', new moodle_url('/blocks/exastud/periods.php', ['courseid' => g::$COURSE->id]), block_exastud_get_string("settings"), '', true);
 
 			$tabs['settings']->subtree[] = new tabobject('periods', new moodle_url('/blocks/exastud/periods.php', ['courseid' => g::$COURSE->id]), block_exastud_get_string("periods"), '', true);
-			$tabs['settings']->subtree[] = new tabobject('categories', new moodle_url('/blocks/exastud/configuration_global.php', ['courseid' => g::$COURSE->id]).'&action=categories', block_exastud_trans("de:Fächerübergreifende Kompetenzen"), '', true);
-			$tabs['settings']->subtree[] = new tabobject('evalopts', new moodle_url('/blocks/exastud/configuration_global.php', ['courseid' => g::$COURSE->id]).'&action=evalopts', block_exastud_trans("de:Bewertungsskala"), '', true);
+			$tabs['settings']->subtree[] = new tabobject('categories', new moodle_url('/blocks/exastud/configuration_global.php', ['courseid' => g::$COURSE->id]).'&action=categories', block_exastud_get_string("competencies"), '', true);
+			$tabs['settings']->subtree[] = new tabobject('evalopts', new moodle_url('/blocks/exastud/configuration_global.php', ['courseid' => g::$COURSE->id]).'&action=evalopts', block_exastud_get_string("grading"), '', true);
 
 			if (block_exastud_get_plugin_config('can_edit_bps_and_subjects')) {
-				$tabs['settings']->subtree[] = new tabobject('bps', new moodle_url('/blocks/exastud/configuration_global.php', ['courseid' => g::$COURSE->id]).'&action=bps', block_exastud_trans("de:Bildungspläne"), '', true);
+				$tabs['settings']->subtree[] = new tabobject('bps', new moodle_url('/blocks/exastud/configuration_global.php', ['courseid' => g::$COURSE->id]).'&action=bps', block_exastud_get_string("education_plans"), '', true);
 			}
 
 			if (!block_exastud_is_bw_active()) {
@@ -65,7 +66,7 @@ class block_exastud_renderer extends plugin_renderer_base {
 
 			if (block_exastud_has_global_cap(BLOCK_EXASTUD_CAP_ADMIN)) {
 				$tabs['settings']->subtree[] = new tabobject('backup', new moodle_url('/blocks/exastud/backup.php', ['courseid' => g::$COURSE->id]), block_exastud_get_string("backup"), '', true);
-			}
+			}*/
 
 			// syntax muss hier so sein: javascript:void ...!
 			// moodle can't use json_encode in tabobjects
@@ -74,7 +75,7 @@ class block_exastud_renderer extends plugin_renderer_base {
 				$title = block_exastud_get_string_if_exists('blocksettings') ?: block_exastud_get_string("blocksettings", 'block');
 				$tabs['blockconfig'] = new tabobject('blockconfig', 'javascript:void window.open(\''.\block_exastud\url::create('/admin/settings.php?section=blocksettingexastud')->out(false).'\');', $title, '', true);
 			}
-			$tabs['head_teachers'] = new tabobject('head_teachers', 'javascript:void window.open(\''.\block_exastud\url::create('/cohort/assign.php', ['id' => block_exastud_get_head_teacher_cohort()->id])->out(false).'\');', block_exastud_get_string('head_teachers'), '', true);
+/*			$tabs['head_teachers'] = new tabobject('head_teachers', 'javascript:void window.open(\''.\block_exastud\url::create('/cohort/assign.php', ['id' => block_exastud_get_head_teacher_cohort()->id])->out(false).'\');', block_exastud_get_string('head_teachers'), '', true);*/
 		}
 
 		$class = @$options['class'];
@@ -92,7 +93,14 @@ class block_exastud_renderer extends plugin_renderer_base {
 			// $tabs['configuration_classes']->subtree[] = new tabobject('export_class', new moodle_url('/blocks/exastud/export_class.php', ['courseid' => g::$COURSE->id, 'classid' => $class->id]), block_exastud_get_string('export_class'), '', true);
 		}
 
-		$tabtree = new tabtree($tabs);
+		if ($forSettings) {
+            //$tabtree = new tabtree($tabs['settings']->subtree);
+            $strheader = $PAGE->course->fullname;
+            $tabtree = block_exastud_menu_for_settings();
+        } else {
+            $tabtree = new tabtree($tabs);
+        }
+        //$tabtree = new tabtree($tabs);
 
 		foreach ($items as $level => $item) {
 			if (!is_array($item)) {
@@ -137,6 +145,10 @@ class block_exastud_renderer extends plugin_renderer_base {
 
 		$content = '';
 		$content .= parent::header();
+
+		if (@$options['content_title']) {
+            $content .= '<h2>'.$options['content_title'].'</h2>';
+        }
 		$content .= '<div id="block_exastud">';
 
 		if (g::$PAGE->pagelayout != 'embedded') {

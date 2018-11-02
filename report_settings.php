@@ -45,6 +45,9 @@ require_login(1);
 
 $url = '/blocks/exastud/report_settings.php';
 $PAGE->set_url($url);
+$PAGE->set_pagelayout('admin'); // Needed for admin menu block
+block_exastud_custom_breadcrumb($PAGE);
+
 $reportsetting = new stdClass();
 $settingsform = new reportsettings_edit_form(null, [/*'classid' => $classid*/]);
 
@@ -100,7 +103,7 @@ if ($action && ($settingsid > 0 || $action == 'new')) {
         //$reportsetting->classid = $classid;
     }
     $output = block_exastud_get_renderer();
-    echo $output->header('report_settings');
+    echo $output->header(['report_settings'], ['content_title' => block_exastud_get_string('pluginname')], true);
 
     echo $output->heading(block_exastud_get_string('report_settings'));
 
@@ -112,7 +115,7 @@ if ($action && ($settingsid > 0 || $action == 'new')) {
 } else {
 
     $output = block_exastud_get_renderer();
-    echo $output->header('report_settings');
+    echo $output->header(['report_settings'], ['content_title' => block_exastud_get_string('pluginname')], true);
 
     echo $output->heading(block_exastud_get_string('report_settings'));
 

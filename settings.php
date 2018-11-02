@@ -21,15 +21,48 @@ defined('MOODLE_INTERNAL') || die;
 
 require_once __DIR__.'/inc.php';
 
+if (!class_exists('block_exastud_settings_menu')) {
+    class block_exastud_settings_menu extends admin_setting {
+
+        public function __construct($name, $heading, $information) {
+            $this->nosave = true;
+            parent::__construct($name, $heading, $information, '');
+        }
+
+        public function get_setting() {
+            return true;
+        }
+
+        public function write_setting($data) {
+            return '';
+        }
+        /**
+         * Returns an HTML string
+         * @return string Returns an HTML string
+         */
+        public function output_html($data, $query='') {
+            global $OUTPUT;
+            $tabtree = block_exastud_menu_for_settings();
+            $tabobj = $tabtree->find('blockconfig');
+            $tabobj->active = true;
+            $tabobj->selected = true;
+            $menu = $OUTPUT->render($tabtree);
+            return $menu;
+        }
+    }
+}
+
 if (!class_exists('block_exastud_link_to')) {
     class block_exastud_link_to extends admin_setting {
 
+        private $link = '';
         private $linkparams = array();
         private $title = array();
         private $tagattributes = array();
 
-        public function __construct($name, $visiblename, $description, $defaultsetting, $title = '', $linkparams = array(),
-                $tagattributes = array()) {
+        public function __construct($name, $visiblename, $description, $defaultsetting, $link = '', $title = '', $linkparams = array(), $tagattributes = array()) {
+            $this->nosave = true;
+            $this->link = $link;
             $this->linkparams = $linkparams;
             $this->tagattributes = $tagattributes;
             $this->title = $title;
@@ -37,16 +70,20 @@ if (!class_exists('block_exastud_link_to')) {
         }
 
         public function get_setting() {
-            return 1;
+            return true;
         }
 
         public function write_setting($data) {
-            return 1;
+            return '';
         }
 
         public function output_html($data, $query = '') {
-            $link = html_writer::link(new moodle_url('/blocks/exastud/report_settings.php', $this->linkparams),
-                    $this->title, $this->tagattributes);
+            if ($this->link) {
+                $link = html_writer::link(new moodle_url($this->link, $this->linkparams),
+                        $this->title, $this->tagattributes);
+            } else {
+                return '';
+            }
             //$output = parent::output_html($data, $query);
             $template = format_admin_setting($this, $this->visiblename, $link,
                     $this->description, true, '', '', $query);
@@ -70,6 +107,8 @@ if (!class_exists('block_exastud_link_to')) {
 
 
 if ($ADMIN->fulltree) {
+    $settings->add(new block_exastud_settings_menu('exastud/menu', '', ''));
+
 	$settings->add(new admin_setting_configtext('exastud/school_name', block_exastud_trans('de:Lernentwicklungsbericht: Schulname'), '', '', PARAM_TEXT));
 	$settings->add(new admin_setting_configtext('exastud/school_location', block_exastud_trans('de:Lernentwicklungsbericht: Ort'), '', '', PARAM_TEXT));
 	$settings->add(new admin_setting_configtext('exastud/bildungsstandards', block_exastud_trans('de:Bildungsstandards'),
@@ -77,5 +116,21 @@ if ($ADMIN->fulltree) {
 	$settings->add(new admin_setting_configcheckbox('exastud/bw_active', block_exastud_trans('de:Baden-Württemberg Berichte'), '', 0));
 	$settings->add(new admin_setting_configcheckbox('exastud/use_exacomp_grade_verbose', block_exastud_trans('de:Exabis Kompetenzraster Notenverbalisierung verwenden'), '', 0));
     $settings->add(new admin_setting_configcheckbox('exastud/logging', block_exastud_get_string('logging'), '', 0));
-    $settings->add(new block_exastud_link_to('link_to_report_templates_settings', block_exastud_get_string('report_settings_edit'), '', '', block_exastud_get_string('report_settings_edit'), [], ['class' => 'btn btn-default', 'target' => '_blank']));
+    /*// periods
+    $settings->add(new block_exastud_link_to('link_to_settings_periods', block_exastud_get_string("periods"), '', '', '/blocks/exastud/periods.php', block_exastud_get_string('periods'), [], ['class' => 'btn btn-default']));
+    // competencies
+    $settings->add(new block_exastud_link_to('link_to_settings_competencies', block_exastud_get_string("competencies"), '', '', '//blocks/exastud/configuration_global.php', block_exastud_get_string('competencies'), ['action' => 'categories'], ['class' => 'btn btn-default']));
+    // Grading
+    $settings->add(new block_exastud_link_to('link_to_settings_grading', block_exastud_get_string("grading"), '', '', '//blocks/exastud/configuration_global.php', block_exastud_get_string('grading'), ['action' => 'evalopts'], ['class' => 'btn btn-default']));
+    // Education plans
+    $settings->add(new block_exastud_link_to('link_to_settings_bps', block_exastud_get_string("education_plans"), '', '', '//blocks/exastud/configuration_global.php', block_exastud_get_string('education_plans'), ['action' => 'bps'], ['class' => 'btn btn-default']));
+    // Logo upload
+    $settings->add(new block_exastud_link_to('link_to_settings_pictureupload', block_exastud_get_string("pictureupload"), '', '', '/blocks/exastud/pictureupload.php', block_exastud_get_string('pictureupload'), [], ['class' => 'btn btn-default']));
+    // Backup
+    $settings->add(new block_exastud_link_to('link_to_settings_backup', block_exastud_get_string("backup"), '', '', '/blocks/exastud/backup.php', block_exastud_get_string('backup'), [], ['class' => 'btn btn-default']));
+    // Head teachers
+    $settings->add(new block_exastud_link_to('link_to_settings_headteachers', block_exastud_get_string("head_teachers"), '', '', '/cohort/assign.php', block_exastud_get_string('head_teachers'), ['id' => block_exastud_get_head_teacher_cohort()->id], ['class' => 'btn btn-default']));
+    */
+    // template configurations
+    $settings->add(new block_exastud_link_to('link_to_settings_report_templates', block_exastud_get_string('report_settings_edit'), '', '', '/blocks/exastud/report_settings.php', block_exastud_get_string('report_settings_edit'), [], ['class' => 'btn btn-default', 'target' => '_blank']));
 }

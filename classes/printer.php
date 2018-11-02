@@ -840,9 +840,15 @@ class printer {
         $templateProcessor->duplicateCell('g', $columnsCount - 1);
         // some incorrect result. Why?
         //$templateProcessor->duplicateCol('s', $columnsCount - 1);
+
+        // Change orientation if count of columns > 10
+        if (count($normal_subjects) > 10) {
+            $templateProcessor->changeOrientation('L');
+        }
+
 		foreach ($normal_subjects as $subject) {
-            $shorttitle = $subject->shorttitle;
-		    //$shorttitle = preg_replace('/\s|\v/gm', chr(160), $shorttitle);
+            $shorttitle = trim($subject->shorttitle);
+            $shorttitle = preg_replace('/(^\s+|\s+$|\s+)/', mb_convert_encoding('&#160;', 'UTF-8', 'HTML-ENTITIES'), $shorttitle); // insert &nbsp to table header
 			$templateProcessor->setValue("s", $shorttitle, 1);
 		}
 		$templateProcessor->setValue("s", '');
@@ -869,8 +875,8 @@ class printer {
         $templateProcessor->duplicateCell('gsg', $columnsCount - 1);
         $templateProcessor->duplicateCell('gss', $columnsCount - 1);
 		foreach ($grouped_subjects as $key => $subjects) {
-            $shorttitle = $key;
-            //$shorttitle = preg_replace('/\s|\v/gm', chr(160), $shorttitle);
+            $shorttitle = trim($key);
+            $shorttitle = preg_replace('/(^\s+|\s+$|\s+)/', mb_convert_encoding('&#160;', 'UTF-8', 'HTML-ENTITIES'), $shorttitle); // insert &nbsp to table header
 			$templateProcessor->setValue("gs", $shorttitle, 1);
 		}
 		$templateProcessor->setValue("gs", '');
@@ -1577,6 +1583,47 @@ class TemplateProcessor extends \PhpOffice\PhpWord\TemplateProcessor {
 
 		return $ret;
 	}
+
+	function directReplace($search, $replace) {
+		$oldEscaping = \PhpOffice\PhpWord\Settings::isOutputEscapingEnabled();
+		// it's a raw value
+		\PhpOffice\PhpWord\Settings::setOutputEscapingEnabled(false);
+        $this->tempDocumentMainPart = str_replace($search, $replace, $this->tempDocumentMainPart);
+		\PhpOffice\PhpWord\Settings::setOutputEscapingEnabled($oldEscaping);
+		return true;
+	}
+
+	function changeOrientation($to = null) {
+        $parts = $this->splitByTag($this->tempDocumentMainPart, 'pgSz');
+	    $origOrient = $parts[1];
+	    if ($to) {
+            $pattern = '/(w:.?)=[\'"]([^\'"]*)/';
+            preg_match_all($pattern, $origOrient, $matches, PREG_SET_ORDER);
+            $attrs = [];
+            foreach($matches as $match){
+                $attrs[$match[1]] = $match[2];
+                //Array (
+                //      [w:w] => 12240
+                //      [w:h] => 15840
+                //)
+            };
+            if ($to == 'L' || $to == 'landscape') {
+                $width = max($attrs);
+                $height = min($attrs);
+            } else {
+                $width = min($attrs);
+                $height = max($attrs);
+            }
+            $newOrient = '<w:pgSz w:w="'.$width.'" w:h="'.$height.'"/>';
+        } else {
+	        // toggle of orientation
+            $newOrient = str_replace('w:w', 'aa:aa', $origOrient);
+            $newOrient = str_replace('w:h', 'w:w', $newOrient);
+            $newOrient = str_replace('aa:aa', 'w:h', $newOrient);
+        }
+        $this->directReplace($origOrient, $newOrient);
+        return true;
+    }
 
 	function applyFilters($filters) {
 		foreach ($filters as $filter) {

@@ -47,6 +47,13 @@ if ($action == 'delete') {
 	}
     $classData = block_exastud_get_class($class->id);
 	$DB->delete_records('block_exastudclass', ['id' => $class->id]);
+	// delete related data
+    // students
+    $DB->delete_records('block_exastudclassstudents', ['classid' => $class->id]);
+    // teachers
+    $DB->delete_records('block_exastudclassteachers', ['classid' => $class->id]);
+    // data
+    $DB->delete_records('block_exastuddata', ['classid' => $class->id]);
 
     \block_exastud\event\class_deleted::log(['objectid' => $class->id, 'other' => ['classtitle' => $classData->title]]);
 

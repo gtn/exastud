@@ -46,6 +46,7 @@
 .add_selectbox_option,
 .delete_selectbox_option {
     cursor: pointer;
+    margin-left: 7px;
 }
 
 .delete_param_button {

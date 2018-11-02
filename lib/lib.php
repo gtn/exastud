@@ -2128,3 +2128,39 @@ function block_exastud_optional_param_array($parname, $default, $type) {
     }
     return $result;
 }
+
+/**
+ * @param $page
+ * @param bool $clean
+ * @return bool
+ */
+function block_exastud_custom_breadcrumb(&$page) {
+    $navbar = $page->navbar;
+    $navbar->add(get_string('administrationsite'), new moodle_url('/admin/search.php'), navigation_node::TYPE_SYSTEM, null, 'siteadministration');
+    $navbar->add(get_string('plugins', 'admin'), new moodle_url('/admin/category.php', ['category' => 'modules']), navigation_node::TYPE_SYSTEM, null, 'plugins');
+    $navbar->add(get_string('blocks'), new moodle_url('/admin/category.php', ['category' => 'blocksettings']), navigation_node::TYPE_SYSTEM, null, 'blocks');
+    $navbar->add(block_exastud_get_string('pluginname'), new moodle_url('/admin/settings.php', ['section' => 'blocksettingexastud']), navigation_node::TYPE_SYSTEM, null, 'exastud');
+    return true;
+}
+
+function block_exastud_menu_for_settings() {
+    $tabs = [];
+    $titleMainConfig = block_exastud_get_string_if_exists('blocksettings') ?: block_exastud_get_string("blocksettings", 'block');
+    $tabs[] = new tabobject('blockconfig', new moodle_url('/admin/settings.php', ['section' => 'blocksettingexastud']), $titleMainConfig, '', true);
+    $tabs[] = new tabobject('periods', new moodle_url('/blocks/exastud/periods.php', ['courseid' => g::$COURSE->id]), block_exastud_get_string("periods"), '', true);
+    $tabs[] = new tabobject('competencies', new moodle_url('/blocks/exastud/configuration_global.php', ['courseid' => g::$COURSE->id]).'&action=categories', block_exastud_get_string("competencies"), '', true);
+    $tabs[] = new tabobject('grading', new moodle_url('/blocks/exastud/configuration_global.php', ['courseid' => g::$COURSE->id]).'&action=evalopts', block_exastud_get_string("grading"), '', true);
+    if (block_exastud_get_plugin_config('can_edit_bps_and_subjects')) {
+        $tabs[] = new tabobject('education_plans', new moodle_url('/blocks/exastud/configuration_global.php', ['courseid' => g::$COURSE->id]).'&action=bps', block_exastud_get_string("education_plans"), '', true);
+    }
+    if (!block_exastud_is_bw_active()) {
+        if (block_exastud_has_global_cap(BLOCK_EXASTUD_CAP_UPLOAD_PICTURE)) {
+            $tabs[] = new tabobject('pictureupload', new moodle_url('/blocks/exastud/pictureupload.php', ['courseid' => g::$COURSE->id]), block_exastud_get_string('pictureupload'), '', true);
+        }
+    }
+    if (block_exastud_has_global_cap(BLOCK_EXASTUD_CAP_ADMIN)) {
+        $tabs[] = new tabobject('backup', new moodle_url('/blocks/exastud/backup.php', ['courseid' => g::$COURSE->id]), block_exastud_get_string("backup"), '', true);
+    }
+    $tabs[] = new tabobject('head_teachers', 'javascript:void window.open(\''.\block_exastud\url::create('/cohort/assign.php', ['id' => block_exastud_get_head_teacher_cohort()->id])->out(false).'\');', block_exastud_get_string('head_teachers'), '', true);
+    return new tabtree($tabs);
+}

@@ -184,7 +184,7 @@ $string['report_setting_type_textarea'] = 'Textarea';
 $string['report_setting_type_text'] = 'Text';
 $string['report_setting_type_select'] = 'Select';
 $string['report_setting_type_header'] = 'Header';
-$string['de:Fächerübergreifende Kompetenzen'] = 'Competencies';
+$string['competencies'] = 'Competencies';
 $string['de:Note'] = 'Grade';
 $string['de:Niveau'] = 'Level';
 $string['de:letztes Halbjahr:'] = 'last period:';
@@ -192,14 +192,15 @@ $string['de:Eingaben von der letzten Periode/Halbjahr übernehmen'] = 'load last
 $string['de:Daten der letzten Periode/Halbjahr wurden übernommen'] = 'last period is adapted';
 $string['de:Max. 8 Zeilen / 550 Zeichen'] = 'Max. 8 rows / 550 characters';
 $string['de:Max. 3 Zeilen / 250 Zeichen'] = 'Max. 3 rows / 250 characters';
-$string['de:Bewertungsskala'] = 'Grading';
+$string['grading'] = 'Grading';
 $string['de:Fachbezeichnungen'] = 'Subjects';
-$string['de:Bildungspläne'] = 'Educational Plans';
+$string['education_plans'] = 'Educational Plans';
 $string['de:Lernentwicklungsbericht: Schulname'] = 'report: name of organization';
 $string['de:Lernentwicklungsbericht: Ort'] = 'report: city';
 $string['de:Bildungsstandards'] = 'educational standards';
 $string['de:Liste, mit Kommata getrennt'] = 'comma seperated list';
 $string['de:Lernentwicklungsbericht: Zeugnisausgabedatum'] = 'report: date';
+$string['delete_class_only_without_users'] = 'Only classes without students can be deleted';
 
 
 // === settings ===

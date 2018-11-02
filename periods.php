@@ -34,8 +34,11 @@ if (!$periods = $DB->get_records('block_exastudperiod', [], 'starttime DESC, end
 }
 $url = '/blocks/exastud/periods.php';
 $PAGE->set_url($url);
+$PAGE->set_pagelayout('admin'); // Needed for admin menu block
+
 $output = block_exastud_get_renderer();
-echo $output->header(['settings', 'periods']);
+block_exastud_custom_breadcrumb($PAGE);
+echo $output->header(['periods'], ['content_title' => block_exastud_get_string('pluginname')], true/*['settings', 'periods']*/);
 
 /* Print the periods */
 $table = new html_table();

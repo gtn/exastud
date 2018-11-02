@@ -63,6 +63,7 @@
             if ($(radioButtonSelector).length && $(radioButtonSelector).val() == 'select') {
                 // show selectbox group
                 $(selectboxGroupSelector).show();
+                updateOptionButtons();
                 return true;
             }
 
@@ -113,6 +114,34 @@
     }
 
     function updateOptionButtons() {
+        // at first add buttons after every option
+        $('.exastud-setting-block').each(function() {
+            var field = $(this).attr('data-field');
+            var options = $(this).find(':input.exastud-template-settings-param[name*="selectboxvalues_value"]'); // for clean theme
+            if (!options.length) {
+                var options = $(this).find('.exastud-template-settings-param :input[name*="selectboxvalues_value"]'); // for boost theme
+            }
+            $(this).find('.add_selectbox_option, .delete_selectbox_option').remove();
+            console.log(options);
+            options.each(function (j) {
+                if (field !== undefined) {
+                    var img_add = '<img class="add_selectbox_option" data-field="' + field + '" data-optionid="' + j + '" src="' + M.cfg.wwwroot + '/blocks/exastud/pix/add.png" title="add"/>';
+                    var img_delete = '<img class="delete_selectbox_option" data-field="' + field + '" data-optionid="' + j + '" src="' + M.cfg.wwwroot + '/blocks/exastud/pix/del.png" title="delete"/>';
+                    $(this).after(img_delete);
+                    $(this).after(img_add);
+                } else {
+                    // get index of additional param from delete button
+                    var i = $(this).closest('.exastud-setting-block').find('.delete_param_button').first().attr('data-paramid');
+                    console.log(i);
+                    if (i !== undefined) {
+                        var img_add = '<img class="add_selectbox_option" data-paramid="' + i + '" data-optionid="' + j + '" src="' + M.cfg.wwwroot + '/blocks/exastud/pix/add.png" title="add"/>';
+                        var img_delete = '<img class="delete_selectbox_option" data-paramid="' + i + '" data-optionid="' + j + '" src="' + M.cfg.wwwroot + '/blocks/exastud/pix/del.png" title="delete"/>';
+                        $(this).after(img_delete);
+                        $(this).after(img_add);
+                    }
+                }
+            });
+        });
         // options for select type
         $('.exastud-setting-block').each(function(){
             // $(this).find('button').addClass('small');
@@ -158,6 +187,20 @@
             var marker_for = $(this).attr('data-for');
             var key = $(':input[name="' + marker_for + '_key"]').val();
             $(this).html('${' + key + '}');
+            // move marker if it is "clean" theme
+            var titleInput = $(this).closest('.exastud-setting-block').find(':input[name*="_title"]').first();
+            if (titleInput.length) {
+                if (titleInput.hasClass('exastud-template-settings-param')) { // if input has this class - "clean" theme
+                    $(this).insertAfter(titleInput);
+                } else {
+                    // for "Boost" theme also we need to do:
+                    var wrapper = $(this).parent();
+                    console.log(wrapper);
+                    if (wrapper.hasClass('exastud-template-settings-group')) {
+                        $(this).unwrap();
+                    }
+                }
+            }
         });
 
         updateOptionButtons();

@@ -28,6 +28,7 @@ block_exastud_require_global_cap(BLOCK_EXASTUD_CAP_ADMIN);
 $header = block_exastud_get_string('settings');
 $url = new moodle_url('/blocks/exastud/configuration_global.php', array('courseid' => $courseid, 'action' => $action));
 $PAGE->set_url($url);
+$PAGE->set_pagelayout('admin'); // Needed for admin menu block
 $output = block_exastud_get_renderer();
 
 block_exastud_insert_default_entries();
@@ -242,8 +243,10 @@ if ($action == 'save-bps') {
 	exit;
 }
 
+block_exastud_custom_breadcrumb($PAGE);
+
 if ($action == 'categories') {
-	echo $output->header(['settings', ['id' => 'categories', 'name' => block_exastud_trans("de:Kompetenzen")]]);
+	echo $output->header(['competencies'], ['content_title' => block_exastud_get_string('pluginname')], true/*['settings', ['id' => 'categories', 'name' => block_exastud_trans("de:Kompetenzen")]]*/);
 
 	?>
 	<script>
@@ -271,7 +274,7 @@ if ($action == 'categories') {
 }
 
 if ($action == 'subjects') {
-	echo $output->header(['settings', ['id' => 'bps', 'name' => block_exastud_trans(['de:Fachbezeichnungen', 'de_at:Gegenstände'])]]);
+	echo $output->header(['education_plans'], ['content_title' => block_exastud_get_string('pluginname')], true/*['settings', ['id' => 'bps', 'name' => block_exastud_trans(['de:Fachbezeichnungen', 'de_at:Gegenstände'])]]*/);
 
 	$bp = $DB->get_record('block_exastudbp', ['id' => required_param('bpid', PARAM_INT)]);
 
@@ -337,7 +340,7 @@ if ($action == 'subjects') {
 }
 
 if ($action == 'evalopts') {
-	echo $output->header(['settings', ['id' => 'evalopts', 'name' => block_exastud_trans("de:Bewertungsskala")]]);
+	echo $output->header(['grading'], ['content_title' => block_exastud_get_string('pluginname')], true/*['settings', ['id' => 'evalopts', 'name' => block_exastud_trans("de:Bewertungsskala")]]*/);
 
 	?>
 	<script>
@@ -365,7 +368,7 @@ if ($action == 'evalopts') {
 }
 
 if ($action == 'bps') {
-	echo $output->header(['settings', ['id' => 'bps', 'name' => block_exastud_trans("de:Bildungspläne")]]);
+	echo $output->header(['education_plans'], ['content_title' => block_exastud_get_string('pluginname')], true/*['settings', ['id' => 'bps', 'name' => block_exastud_trans("de:Bildungspläne")]]*/);
 
 	?>
 	<script>

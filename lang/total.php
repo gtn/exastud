@@ -295,7 +295,7 @@ return [
 		'Class',
 	],
 	'class_owner' => [
-		'Class owner',
+		'Neue Klassenlehrkraft',
 		'Class owner',
 	],
 	'project_based_class' => [
@@ -495,7 +495,7 @@ return [
 		'You have to enter a comment.',
 	],
     'report_settings' => [
-            'Report settings',
+            'Berichtskonfiguration',
             'Report settings',
     ],
     'report_settings_edit' => [
@@ -587,7 +587,7 @@ return [
             'AGs',
     ],
     'report_settings_setting_additional_params' => [
-            'Additional params',
+            'weitere parameter',
             'Additional params',
     ],
     'report_settings_no' => [
@@ -639,7 +639,7 @@ return [
             'Delete parameter',
     ],
     'delete' => [
-            'delete',
+            'Löschen',
             'Delete',
     ],
     'add' => [
@@ -659,13 +659,13 @@ return [
             'Select',
     ],
     'report_setting_type_header' => [
-            'Header',
+            'Kopfzeile',
             'Header',
     ],
 
 
-	'de:Fächerübergreifende Kompetenzen' => [
-		null,
+	'competencies' => [
+		'Fächerübergreifende Kompetenzen',
 		'Competencies',
 	],
 	'de:Note' => [
@@ -696,16 +696,16 @@ return [
         null,
         'Max. 3 rows / 250 characters',
     ],
-	'de:Bewertungsskala' => [
-		null,
+	'grading' => [
+		'Bewertungsskala',
 		'Grading',
 	],
 	'de:Fachbezeichnungen' => [
 		null,
 		'Subjects',
 	],
-	'de:Bildungspläne' => [
-		null,
+	'education_plans' => [
+		'Bildungspläne',
 		'Educational Plans',
 	],
     'de:Lernentwicklungsbericht: Schulname' => [
@@ -727,6 +727,10 @@ return [
     'de:Lernentwicklungsbericht: Zeugnisausgabedatum' => [
         null,
         'report: date',
+    ],
+    'delete_class_only_without_users' => [
+        'Es können nur Klassen ohne Schüler gelöscht werden',
+        'Only classes without students can be deleted'
     ],
 
 

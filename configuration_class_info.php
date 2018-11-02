@@ -145,14 +145,14 @@ if ($class && $class->id) {
 	echo '<br/>';
 	echo $output->heading2(block_exastud_trans('de:Klasse löschen'));
 
-	if (!block_exastud_get_class_students($class->id)) {
+	if (!block_exastud_get_class_students($class->id) || block_exastud_is_siteadmin()) {
 		$deleteButton = $output->link_button('configuration_class.php?courseid='.$COURSE->id.'&action=delete&classid='.$class->id.'&confirm=1',
 			block_exastud_get_string('delete'),
 			['exa-confirm' => block_exastud_get_string('delete_confirmation', null, $class->title), 'class' => 'btn btn-default']);
 	} else {
 		$deleteButton = html_writer::empty_tag('input', [
 			'type' => 'button',
-			'onclick' => "alert(".json_encode(block_exastud_trans('de:Es können nur Klassen ohne Schüler gelöscht werden')).")",
+			'onclick' => "alert(".json_encode(block_exastud_get_string('delete_class_only_without_users')).")",
 			'value' => block_exastud_trans('de:Klasse löschen'),
             'class' => 'btn btn-danger'
 		]);
@@ -164,7 +164,7 @@ if ($class && $class->id) {
 	echo $output->heading2(block_exastud_get_string('export_class'));
 
 	echo $output->link_button('export_class.php?courseid='.$COURSE->id.'&classid='.$class->id,
-		block_exastud_get_string('export_class'), ['class' => 'btn btn-info']);
+		block_exastud_get_string('export_class'), ['class' => 'btn btn-default']);
 } else {
 	echo $output->heading(block_exastud_trans(['de:Klasse hinzufügen', 'en:Add Class']));
 

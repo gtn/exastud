@@ -28,9 +28,11 @@ block_exastud_require_global_cap(BLOCK_EXASTUD_CAP_UPLOAD_PICTURE);
 
 $url = '/blocks/exastud/pictureupload.php';
 $PAGE->set_url($url, [ 'courseid' => $courseid ]);
+$PAGE->set_pagelayout('admin'); // Needed for admin menu block
 $output = block_exastud_get_renderer();
 
-echo $output->header(['settings', 'pictureupload']);
+block_exastud_custom_breadcrumb($PAGE);
+echo $output->header(['pictureupload'], ['content_title' => block_exastud_get_string('pluginname')], true/*['settings', 'pictureupload']*/);
 
 $mform = new block_exastud_picture_upload_form();
 if ($mform->is_cancelled()) {

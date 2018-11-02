@@ -135,7 +135,7 @@ foreach ($classstudents as $classstudent) {
 	} else {
 		$row->cells[] = $output->link_button($CFG->wwwroot.'/blocks/exastud/review_student_other_data.php?courseid='.$courseid.'&classid='.$classid.'&type='.$type.'&studentid='.$classstudent->id,
 			block_exastud_get_string('edit'),
-            array('class' => 'btn btn-info'));
+            array('class' => 'btn btn-default'));
 	}
 
 	foreach ($categories as $dataid => $category) {

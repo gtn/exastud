@@ -79,7 +79,7 @@ class block_exastud extends block_list {
 
 		if (block_exastud_has_global_cap(BLOCK_EXASTUD_CAP_ADMIN)) {
 			$icon = '<img src="'.$output->image_url('eingabezeitraum', 'block_exastud').'" class="icon" alt="" />';
-			$this->content->items[] = '<a title="'.block_exastud_get_string('settings').'" href="'.$CFG->wwwroot.'/blocks/exastud/periods.php?courseid='.$COURSE->id.'">'.$icon.block_exastud_get_string('settings').'</a>';
+			$this->content->items[] = '<a title="'.block_exastud_get_string('settings').'" href="'.$CFG->wwwroot.'/blocks/exastud/periods.php'/*.?courseid='.$COURSE->id.*/.'">'.$icon.block_exastud_get_string('settings').'</a>';
 			$icon = '<img src="'.$output->image_url('head_teachers', 'block_exastud').'" class="icon" alt="" />';
 			$this->content->items[] = '<a title="'.block_exastud_get_string('head_teachers').'" href="'.$CFG->wwwroot.'/cohort/assign.php?id='.block_exastud_get_head_teacher_cohort()->id.'">'.$icon.block_exastud_get_string('head_teachers').'</a>';
 		}

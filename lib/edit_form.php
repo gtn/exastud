@@ -332,7 +332,7 @@ class reportsettings_edit_form extends moodleform {
         $mform->setType('template', PARAM_RAW);
 
         foreach ($this->allSecondaryFields as $field) {
-            $mform->addElement('exastud_htmltag', '<div id="exastud-additional-params-block-'.$field.'" class="exastud-setting-block" >');
+            $mform->addElement('exastud_htmltag', '<div id="exastud-additional-params-block-'.$field.'" class="exastud-setting-block" data-field="'.$field.'">');
             if (in_array($field, $this->fieldsWithAdditionalParams)) {
                 $mform->addElement('exastud_htmltag', '<hr />');
             }
@@ -341,13 +341,18 @@ class reportsettings_edit_form extends moodleform {
                 // show with additional params
                 $input_size = 5;
                 $titleGroup = [];
+                // wrapper
+                //$mform->addElement('exastud_htmltag', '<div>');
                 // key: used as marker in the docx
                 $titleGroup[] = $mform->createElement('hidden', $field.'_key', $field);
                 $mform->setType($field.'_key', PARAM_RAW);
                 // title
                 $titleGroup[] = $mform->createElement('text', $field.'_title', block_exastud_trans('de: Titel'), 'size = \'45\'');
                 $mform->setType($field.'_title', PARAM_ALPHA);
-                $titleGroup[] = $mform->createElement('exastud_htmltag', '<span class="exastud-report-marker" data-for="'.$field.'">Marker: ${}</span>');
+                $titleGroup[] = $mform->createElement('exastud_htmltag',
+                        '<div class="exastud-template-settings-group group-'.$field.' main-params">
+                            <span class="exastud-report-marker" data-for="'.$field.'">Marker: ${}</span>
+                         </div>');
                 $mform->addGroup($titleGroup, $field.'_mainparams', '', ' ', false);
                 // type of parameter
                 $radiotype = array();
@@ -366,6 +371,7 @@ class reportsettings_edit_form extends moodleform {
                 //$mform->setType($field.'_maxchars', PARAM_INT);
                 $mform->addGroup($tempGroup, $field.'_textareaparams', '', ' ', false);
 
+                //$mform->addElement('exastud_htmltag', '</div>');
             } else {
                 // only checkbox
                 // TODO: add something?
@@ -436,8 +442,11 @@ class reportsettings_edit_form extends moodleform {
                     $selectboxParams[] = $mform->createElement('text', $field.'_selectboxvalues_value['.$j.']', block_exastud_get_string('report_settings_selectboxvalue_fieldtitle'), array('size' => 45));
                     $mform->setType($field.'_selectboxvalues_value['.$j.']', PARAM_RAW);
                     $mform->setDefault($field.'_selectboxvalues_value['.$j.']', $sValue);
-                    $selectboxParams[] = $mform->createElement('exastud_htmltag', '<img class="add_selectbox_option" data-field="'.$field.'" data-optionid="'.$j.'" src="'.$CFG->wwwroot.'/blocks/exastud/pix/add.png" title="'.block_exastud_get_string('add').'"/>');
-                    $selectboxParams[] = $mform->createElement('exastud_htmltag', '<img class="delete_selectbox_option" data-field="'.$field.'" data-optionid="'.$j.'" src="'.$CFG->wwwroot.'/blocks/exastud/pix/del.png" title="'.block_exastud_get_string('delete').'"/>');
+                    // moved to JS
+                    //$selectboxParams[] = $mform->createElement('exastud_htmltag', '<div class="exastud-template-settings-group group-'.$field.' selectbox-settings">');
+                    //$selectboxParams[] = $mform->createElement('exastud_htmltag', '<img class="add_selectbox_option" data-field="'.$field.'" data-optionid="'.$j.'" src="'.$CFG->wwwroot.'/blocks/exastud/pix/add.png" title="'.block_exastud_get_string('add').'"/>');
+                    //$selectboxParams[] = $mform->createElement('exastud_htmltag', '<img class="delete_selectbox_option" data-field="'.$field.'" data-optionid="'.$j.'" src="'.$CFG->wwwroot.'/blocks/exastud/pix/del.png" title="'.block_exastud_get_string('delete').'"/>');
+                    //$selectboxParams[] = $mform->createElement('exastud_htmltag', '</div');
                     $allOptions[] = $mform->addGroup($selectboxParams, $field.'_selectboxparams['.$j.']', '', ' ', false);
                     $mform->insertElementBefore($mform->removeElement($field.'_selectboxparams['.$j.']', false), $field.'_textareaparams');
                     $j++;
@@ -526,8 +535,11 @@ class reportsettings_edit_form extends moodleform {
                             block_exastud_get_string('report_settings_selectboxvalue_fieldtitle'), array('size' => 45));
                     $mform->setType('additional_params_selectboxvalues_value['.$i.']['.$j.']', PARAM_RAW);
                     $mform->setDefault('additional_params_selectboxvalues_value['.$i.']['.$j.']', $sValue);
-                    $selectboxParams[] = $mform->createElement('exastud_htmltag', '<img class="add_selectbox_option" data-paramid="'.$i.'" data-optionid="'.$j.'" src="'.$CFG->wwwroot.'/blocks/exastud/pix/add.png" title="'.block_exastud_get_string('add').'"/>');
-                    $selectboxParams[] = $mform->createElement('exastud_htmltag', '<img class="delete_selectbox_option" data-paramid="'.$i.'" data-optionid="'.$j.'" src="'.$CFG->wwwroot.'/blocks/exastud/pix/del.png" title="'.block_exastud_get_string('delete').'"/>');
+                    // moved to JS
+                    //$selectboxParams[] = $mform->createElement('exastud_htmltag', '<div class="exastud-template-settings-group group-'.$sKey.' selectbox-settings">');
+                    //$selectboxParams[] = $mform->createElement('exastud_htmltag', '<img class="add_selectbox_option" data-paramid="'.$i.'" data-optionid="'.$j.'" src="'.$CFG->wwwroot.'/blocks/exastud/pix/add.png" title="'.block_exastud_get_string('add').'"/>');
+                    //$selectboxParams[] = $mform->createElement('exastud_htmltag', '<img class="delete_selectbox_option" data-paramid="'.$i.'" data-optionid="'.$j.'" src="'.$CFG->wwwroot.'/blocks/exastud/pix/del.png" title="'.block_exastud_get_string('delete').'"/>');
+                    //$selectboxParams[] = $mform->createElement('exastud_htmltag', '</div>');
                     $mform->addGroup($selectboxParams, 'additional_params_selectboxparams['.$i.']['.$j.']', '', ' ', false);
                     $j++;
                 }
