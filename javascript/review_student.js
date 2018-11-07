@@ -53,43 +53,46 @@
 		
 		var html = '';
 		var current_parent = null;
-		
-		html += '<table id="review-table">';
-		
-		html += '<tr><th class="category category-parent"></th>';
-		$options.each(function(tmp, option){
-			html += '<th class="evaluation-header"><b>' + option.text + '</th>';
-		});
-		html += '</tr>';
 
-		$.each(categories, function(tmp, category){
-			/*
-			if (current_parent !== category.parent) {
-				current_parent = category.parent;
-				html += '<tr><th class="category category-parent">'+(current_parent ? current_parent+':' : '') + '</th>';
-				$options.each(function(tmp, option){
-					html += '<th class="evaluation-header"><b>' + option.text + '</th>';
-				});
-				html += '</tr>';
-			}
-			*/
-			
-			html += '<tr><td class="category">'+(!current_parent ? '<b>' : '') + category.name+'</td>';
+		if ($options.length) {
 
-			// always send at least empty value
-			html += '<input type="hidden" name="'+category.input_name+'" value="" />';
-			
-			$options.each(function(tmp, option){
-				html += '<td class="evaluation-radio">';
-				html += '<input type="radio" name="'+category.input_name+'" value="'+option.value+'" ' +
-					(category.value == option.value ? 'checked="checked" ' : '') +
-					'/>';
-				html += '</td>';
-			});
-			html += '</tr>';
-		});
-		
-		html += '</table>';
+            html += '<table id="review-table">';
+
+            html += '<tr><th class="category category-parent"></th>';
+            $options.each(function (tmp, option) {
+                html += '<th class="evaluation-header"><b>' + option.text + '</th>';
+            });
+            html += '</tr>';
+
+            $.each(categories, function (tmp, category) {
+				/*
+				 if (current_parent !== category.parent) {
+				 current_parent = category.parent;
+				 html += '<tr><th class="category category-parent">'+(current_parent ? current_parent+':' : '') + '</th>';
+				 $options.each(function(tmp, option){
+				 html += '<th class="evaluation-header"><b>' + option.text + '</th>';
+				 });
+				 html += '</tr>';
+				 }
+				 */
+
+                html += '<tr><td class="category">' + (!current_parent ? '<b>' : '') + category.name + '</td>';
+
+                // always send at least empty value
+                html += '<input type="hidden" name="' + category.input_name + '" value="" />';
+
+                $options.each(function (tmp, option) {
+                    html += '<td class="evaluation-radio">';
+                    html += '<input type="radio" name="' + category.input_name + '" value="' + option.value + '" ' +
+                        (category.value == option.value ? 'checked="checked" ' : '') +
+                        '/>';
+                    html += '</td>';
+                });
+                html += '</tr>';
+            });
+
+            html += '</table>';
+        }
 
 		$fieldset.find('.fitem_fselect').remove();
 		$container.append(html);

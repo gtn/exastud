@@ -434,6 +434,12 @@ function xmldb_block_exastud_upgrade($oldversion = 0) {
         block_exastud_fill_reportsettingstable();
     }
 
+    if ($oldversion < 2018110701) {
+        $table = new xmldb_table('block_exastudreviewpos');
+        $field = new xmldb_field('value', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null);
+        $dbman->change_field_type($table, $field);
+    }
+
     block_exastud_insert_default_entries();
 	block_exastud_check_profile_fields();
 

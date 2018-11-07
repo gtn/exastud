@@ -138,9 +138,10 @@ class student_edit_form extends moodleform {
 		$mform->setType('studentid', PARAM_INT);
 		$mform->setDefault('studentid', 0);
 
+		$compeval_type = block_exastud_get_competence_eval_type();
 		$selectoptions = block_exastud_get_evaluation_options(true);
 
-		$mform->addElement('header', 'categories', block_exastud_trans("de:Fachübergreifende Kompetenzen"));
+		$mform->addElement('header', 'categories', block_exastud_get_string("interdisciplinary_competences"));
 		$mform->setExpanded('categories');
 		if ($this->_customdata['categories.modified']) {
 			$mform->addElement('static', '', '', $this->_customdata['categories.modified']);
@@ -150,9 +151,18 @@ class student_edit_form extends moodleform {
 		foreach ($categories as $category) {
 			$id = $category->id.'_'.$category->source;
 
-			$mform->addElement('select', $id, $category->title, $selectoptions);
-			$mform->setType($id, PARAM_INT);
-			$mform->setDefault($id, key($selectoptions));
+			switch ($compeval_type) {
+                case BLOCK_EXASTUD_COMPETENCE_EVALUATION_TYPE_GRADE:
+                    $mform->addElement('text', $id, $category->title);
+                    $mform->setType($id, PARAM_FLOAT);
+                    break;
+                case BLOCK_EXASTUD_COMPETENCE_EVALUATION_TYPE_TEXT:
+                case BLOCK_EXASTUD_COMPETENCE_EVALUATION_TYPE_POINT:
+                    $mform->addElement('select', $id, $category->title, $selectoptions);
+                    $mform->setType($id, PARAM_INT);
+                    $mform->setDefault($id, key($selectoptions));
+                    break;
+            }
 		}
 
 		$mform->addElement('header', 'vorschlag_header', block_exastud_trans("de:Lern- und Sozialverhalten: Formulierungsvorschlag für Klassenlehrkraft"));

@@ -143,7 +143,7 @@ $string['perioddesc'] = 'description of the period: ';
 $string['noperiods'] = 'There is no assessment-period defined yet. Please contact the administrator.';
 $string['commentshouldnotbeempty'] = 'You have to enter a comment.';
 $string['report_settings'] = 'Report settings';
-$string['report_settings_edit'] = 'Edit report configurations';
+$string['report_settings_edit'] = 'Report configurations';
 $string['report_settings_new'] = 'New report configuration';
 $string['report_settings_setting_id'] = '';
 $string['report_settings_setting_title'] = 'Title';
@@ -184,6 +184,8 @@ $string['report_setting_type_textarea'] = 'Textarea';
 $string['report_setting_type_text'] = 'Text';
 $string['report_setting_type_select'] = 'Select';
 $string['report_setting_type_header'] = 'Header';
+$string['review_table_part_subjects'] = 'Subjects';
+$string['review_table_part_additional'] = 'General';
 $string['competencies'] = 'Competencies';
 $string['de:Note'] = 'Grade';
 $string['de:Niveau'] = 'Level';
@@ -201,6 +203,7 @@ $string['de:Bildungsstandards'] = 'educational standards';
 $string['de:Liste, mit Kommata getrennt'] = 'comma seperated list';
 $string['de:Lernentwicklungsbericht: Zeugnisausgabedatum'] = 'report: date';
 $string['delete_class_only_without_users'] = 'Only classes without students can be deleted';
+$string['interdisciplinary_competences'] = 'Interdisciplinary competences';
 
 
 // === settings ===
@@ -210,6 +213,12 @@ $string['settings_project_based_assessment'] = 'Project-based assessment';
 $string['settings_project_based_assessment_body'] = 'This setting allows you to use project-based assessment instead of class-assessment';
 $string['delete_confirmation'] = 'Do you really want to delete "{$a}"?';
 $string['logging'] = 'Activate logging';
+$string['settings_competence_evaltype'] = 'Competence evaluation type';
+$string['settings_competence_evaltype_text'] = 'Text entry';
+$string['settings_competence_evaltype_grade'] = 'Grades';
+$string['settings_competence_evaltype_point'] = 'Points';
+$string['settings_competence_evalpoints_limit'] = 'Points limit';
+$string['settings_competence_evalpoints_limit_description'] = 'If exastud/competence_evaltype is Points';
 
 
 // === grp3 ===

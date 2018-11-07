@@ -36,7 +36,7 @@ if (!$returnurl) {
 
 $output = block_exastud_get_renderer();
 
-$url = '/blocks/exastud/review_student.php';
+$url = '/blocks/exastud/review_student.php?courseid='.$courseid.'&classid='.$classid.'&subjectid='.$subjectid.'&studentid='.$studentid;
 $PAGE->set_url($url);
 
 block_exastud_require_global_cap(BLOCK_EXASTUD_CAP_REVIEW);
@@ -215,14 +215,16 @@ if ($fromform = $studentform->get_data()) {
 		if (!$existing || $newvalue != $existing->value) {
 		    $subjectdata = $DB->get_record('block_exastudsubjects', ['id' => $subjectid]);
 		    $grades = block_exastud_get_evaluation_options(true);
+            $newToLog = (is_array($grades) && array_key_exists($newvalue, $grades) ? $grades[$newvalue] : $newvalue);
+            $oldToLog = (!$existing ? null : (is_array($grades) && array_key_exists($existing->value, $grades) ? $grades[$existing->value] : $existing->value));
             \block_exastud\event\studentreviewcategory_changed::log(['objectid' => $classid,
                     'relateduserid' => $studentid,
                     'other' => ['classtitle' => $reviewclass->title,
                             'subjectid' => $subjectid,
                             'subjecttitle' => $subjectdata->title,
-                            'oldgrading' => (!$existing ? null : isset($grades[$existing->value]) ? $grades[$existing->value] : null),
+                            'oldgrading' => $oldToLog,
                             'oldgradingid' => ($existing ? $existing->value : null),
-                            'grading' => $grades[$newvalue],
+                            'grading' => $newToLog,
                             'gradingid' => $newvalue,
                             'category' => $category->title,
                             'categoryid' => $category->id,

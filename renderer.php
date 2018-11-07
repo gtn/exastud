@@ -212,23 +212,48 @@ class block_exastud_renderer extends plugin_renderer_base {
 			if ($current_parent !== $category->parent) {
 				$current_parent = $category->parent;
 				$output .= '<tr><th class="category category-parent" width="25%">'.($category->parent ? $category->parent.':' : '').'</th>';
-				foreach ($category->evaluationOtions as $option) {
-					$output .= '<th class="evaluation-header" width="'.round((100 - 25) / count($category->evaluationOtions)).'%"><b>'.$option->title.'</th>';
-				}
+                switch (block_exastud_get_competence_eval_type()) {
+                    case BLOCK_EXASTUD_COMPETENCE_EVALUATION_TYPE_GRADE:
+                        foreach ($class_subjects as $subject) {
+                            $output .= '<th>'.$subject->title.'</th>';
+                        }
+                        break;
+                    case BLOCK_EXASTUD_COMPETENCE_EVALUATION_TYPE_POINT:
+                    case BLOCK_EXASTUD_COMPETENCE_EVALUATION_TYPE_TEXT:
+                        foreach ($category->evaluationOptions as $option) {
+                            $output .= '<th class="evaluation-header" width="'.round((100 - 25) / count($category->evaluationOptions)).'%"><b>'.$option->title.'</th>';
+                        }
+                        break;
+
+                }
 				$output .= '</tr>';
 			}
 
 			$output .= '<tr><td class="category">'.$category->title.'</td>';
 
-			foreach ($category->evaluationOtions as $pos_value => $option) {
-				$output .= '<td class="evaluation">';
+			switch (block_exastud_get_competence_eval_type()) {
+                case BLOCK_EXASTUD_COMPETENCE_EVALUATION_TYPE_GRADE:
+                    foreach ($class_subjects as $subject) {
+                        $output .= '<td>';
+                        $output .= $category->evaluationAverages[$subject->id]->value;
+                        /*if ($category->evaluationAverages[$subject->id]->value > 0) {
+                            $output .= ' <small>('.$category->evaluationAverages[$subject->id]->reviewers.' reviewers)<small>';
+                        }*/
+                        $output .= '</td>';
+                    }
+                    break;
+                case BLOCK_EXASTUD_COMPETENCE_EVALUATION_TYPE_POINT:
+                case BLOCK_EXASTUD_COMPETENCE_EVALUATION_TYPE_TEXT:
+                    foreach ($category->evaluationOptions as $pos_value => $option) {
+                        $output .= '<td class="evaluation">';
+                        $output .= join(', ', array_map(function($reviewer) {
+                            return $reviewer->subject_title ?: fullname($reviewer);
+                        }, $option->reviewers));
+                        $output .= '</td>';
+                    }
+                    break;
 
-				$output .= join(', ', array_map(function($reviewer) {
-					return $reviewer->subject_title ?: fullname($reviewer);
-				}, $option->reviewers));
-
-				$output .= '</td>';
-			}
+            }
 			$output .= '</tr>';
 		}
 

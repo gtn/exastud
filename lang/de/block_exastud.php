@@ -143,7 +143,7 @@ $string['perioddesc'] = 'Beschreibung des Eingabezeitraums';
 $string['noperiods'] = 'Es gibt noch keinen Eingabezeitraum. Bitte wenden Sie sich an den Administrator.';
 $string['commentshouldnotbeempty'] = 'Der Kommentar darf nicht leer sein.';
 $string['report_settings'] = 'Berichtskonfiguration';
-$string['report_settings_edit'] = 'Berichts-Konfigurationen bearbeiten';
+$string['report_settings_edit'] = 'Berichts-Konfigurationen';
 $string['report_settings_new'] = 'Neue Berichts-Konfiguration hinzufügen';
 $string['report_settings_setting_id'] = '';
 $string['report_settings_setting_title'] = 'Titel';
@@ -179,11 +179,13 @@ $string['report_settings_selectboxkey_fieldtitle'] = 'Schlüssel';
 $string['report_settings_selectboxvalue_fieldtitle'] = 'Wert';
 $string['delete_parameter'] = 'delete parameter';
 $string['delete'] = 'Löschen';
-$string['add'] = 'add';
+$string['add'] = 'Hinzufügen';
 $string['report_setting_type_textarea'] = 'Textbereich';
 $string['report_setting_type_text'] = 'Textfeld';
 $string['report_setting_type_select'] = 'Auswahl';
 $string['report_setting_type_header'] = 'Kopfzeile';
+$string['review_table_part_subjects'] = 'Eingaben als Fachlehrkraft';
+$string['review_table_part_additional'] = 'Eingaben als Klassenlehrkraft';
 $string['competencies'] = 'Fächerübergreifende Kompetenzen';
 $string['de:Note'] = 'Note';
 $string['de:Niveau'] = 'Niveau';
@@ -201,6 +203,7 @@ $string['de:Bildungsstandards'] = 'Bildungsstandards';
 $string['de:Liste, mit Kommata getrennt'] = 'Liste, mit Kommata getrennt';
 $string['de:Lernentwicklungsbericht: Zeugnisausgabedatum'] = 'Lernentwicklungsbericht: Zeugnisausgabedatum';
 $string['delete_class_only_without_users'] = 'Es können nur Klassen ohne Schüler gelöscht werden';
+$string['interdisciplinary_competences'] = 'Fachübergreifende Kompetenzen';
 
 
 // === settings ===
@@ -211,6 +214,12 @@ $string['settings_project_based_assessment_body'] = 'Diese Einstellung erlaubt e
 $string['blocksettings'] = 'Deckblattdaten';
 $string['delete_confirmation'] = 'Soll "{$a}" wirklich gelöscht werden?';
 $string['logging'] = 'Logging aktivieren';
+$string['settings_competence_evaltype'] = 'Competence evaluation type';
+$string['settings_competence_evaltype_text'] = 'Text-Eintrag';
+$string['settings_competence_evaltype_grade'] = 'Note';
+$string['settings_competence_evaltype_point'] = 'Punkte';
+$string['settings_competence_evalpoints_limit'] = 'Points limit';
+$string['settings_competence_evalpoints_limit_description'] = 'If exastud/competence_evaltype is Points';
 
 
 // === grp3 ===

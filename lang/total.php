@@ -499,8 +499,8 @@ return [
             'Report settings',
     ],
     'report_settings_edit' => [
-            'Berichts-Konfigurationen bearbeiten',
-            'Edit report configurations',
+            'Berichts-Konfigurationen',
+            'Report configurations',
     ],
     'report_settings_new' => [
             'Neue Berichts-Konfiguration hinzufügen',
@@ -643,7 +643,7 @@ return [
             'Delete',
     ],
     'add' => [
-            'add',
+            'Hinzufügen',
             'Add',
     ],
     'report_setting_type_textarea' => [
@@ -662,6 +662,16 @@ return [
             'Kopfzeile',
             'Header',
     ],
+    'review_table_part_subjects' => [
+            'Eingaben als Fachlehrkraft',
+            'Subjects',
+    ],
+
+    'review_table_part_additional' => [
+            'Eingaben als Klassenlehrkraft',
+            'General',
+    ],
+
 
 
 	'competencies' => [
@@ -732,6 +742,10 @@ return [
         'Es können nur Klassen ohne Schüler gelöscht werden',
         'Only classes without students can be deleted'
     ],
+    'interdisciplinary_competences' => [
+        'Fachübergreifende Kompetenzen',
+        'Interdisciplinary competences',
+    ],
 
 
 	// === settings ===
@@ -761,6 +775,30 @@ return [
 	'logging' => [
 		'Logging aktivieren',
 		'Activate logging',
+	],
+	'settings_competence_evaltype' => [
+		'Competence evaluation type',
+		'Competence evaluation type',
+	],
+	'settings_competence_evaltype_text' => [
+		'Text-Eintrag',
+		'Text entry',
+	],
+	'settings_competence_evaltype_grade' => [
+		'Note',
+		'Grades',
+	],
+	'settings_competence_evaltype_point' => [
+		'Punkte',
+		'Points',
+	],
+	'settings_competence_evalpoints_limit' => [
+		'Points limit',
+		'Points limit',
+	],
+	'settings_competence_evalpoints_limit_description' => [
+		'If exastud/competence_evaltype is Points',
+        'If exastud/competence_evaltype is Points',
 	],
 
 

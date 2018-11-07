@@ -50,6 +50,10 @@ const BLOCK_EXASTUD_SUBJECT_ID_LERN_UND_SOZIALVERHALTEN_VORSCHLAG = -3;
 const BLOCK_EXASTUD_SUBJECT_ID_OTHER_DATA = -1;
 const BLOCK_EXASTUD_SUBJECT_ID_ADDITIONAL_HEAD_TEACHER = -2;
 
+const BLOCK_EXASTUD_COMPETENCE_EVALUATION_TYPE_TEXT = 0;
+const BLOCK_EXASTUD_COMPETENCE_EVALUATION_TYPE_GRADE = 1;
+const BLOCK_EXASTUD_COMPETENCE_EVALUATION_TYPE_POINT = 2;
+
 const BLOCK_EXASTUD_TEMPLATE_DIR = __DIR__.'/../template';
 
 class block_exastud_permission_exception extends moodle_exception {
@@ -362,11 +366,37 @@ function block_exastud_get_reviewers_by_category_and_pos($periodid, $studentid, 
 		", [$periodid, $studentid, $categoryid, $categorysource, $pos_value]), false);
 }
 
-function block_exastud_get_class_categories_for_report($studentid, $classid) {
-	$evaluationOtions = block_exastud_get_evaluation_options();
-	$categories = block_exastud_get_class_categories($classid);
+function block_exastud_get_average_evaluation_by_category($periodid, $studentid, $categoryid, $categorysource, $averageForAllSubjects = false) {
+    $average = null;
+    $evals = g::$DB->get_records_sql('
+            SELECT DISTINCT s.id AS subject_id, AVG(pos.value) AS average, COUNT(u.id) as reviewers, s.title AS subject_title, u.id as teacher_id
+                FROM {block_exastudreview} r
+                JOIN {block_exastudreviewpos} pos ON pos.reviewid = r.id
+                JOIN {user} u ON r.teacherid = u.id
+                JOIN {block_exastudclass} c ON c.periodid = r.periodid
+                JOIN {block_exastudclassteachers} ct ON ct.classid=c.id AND ct.teacherid=r.teacherid AND ct.subjectid=r.subjectid
+                LEFT JOIN {block_exastudsubjects} s ON r.subjectid = s.id
+                WHERE c.periodid = ? AND r.studentid = ?
+                    AND pos.categoryid = ? AND pos.categorysource = ?
+                GROUP BY '.($averageForAllSubjects ? ' pos.categoryid ' :' s.id ')
+            , [$periodid, $studentid, $categoryid, $categorysource]);
+    foreach ($evals as $subjectid => $avg) {
+        $average[$subjectid] = (object) [
+                'average' => $avg->average,
+                'reviewers' => $avg->reviewers
+            ];
+    }
+	return $average;
 
-	$current_parent = null;
+}
+
+function block_exastud_get_class_categories_for_report($studentid, $classid) {
+	$evaluationOptions = block_exastud_get_evaluation_options();
+	$categories = block_exastud_get_class_categories($classid);
+    $class = block_exastud_get_class($classid);
+    $class_subjects = block_exastud_get_class_subjects($class);
+
+    $current_parent = null;
 	foreach ($categories as $category) {
 
 		$category->fulltitle = $category->title;
@@ -378,28 +408,47 @@ function block_exastud_get_class_categories_for_report($studentid, $classid) {
 			$category->title = $category->fulltitle;
 		}
 
-		$category->evaluationOtions = [];
+		$category->evaluationOptions = [];
 		$reviewPoints = 0;
 		$reviewCnt = 0;
-		$i = 0;
 
-		foreach ($evaluationOtions as $pos_value => $option) {
+		if ($evaluationOptions) {
+		    // for texts and points
+            $i = 0;
+            foreach ($evaluationOptions as $pos_value => $option) {
+                $category->evaluationOptions[$pos_value] = (object) [
+                        'value' => $pos_value,
+                        'title' => $option,
+                        'reviewers' => $reviewers =
+                                block_exastud_get_reviewers_by_category_and_pos(block_exastud_get_active_or_last_period()->id,
+                                        $studentid, $category->id, $category->source, $pos_value),
+                ];
+                $reviewPoints += count($reviewers) * $i;
+                $reviewCnt += count($reviewers);
+                $i++;
+            }
+            if ($reviewCnt) {
+                $category->average = $reviewPoints / $reviewCnt;
+            } else {
+                $category->average = null;
+            }
+        } else {
+		    // for grades
+            $i = 0;
+            $subjectaverages = block_exastud_get_average_evaluation_by_category(block_exastud_get_active_or_last_period()->id,
+                    $studentid, $category->id, $category->source);
+            foreach ($class_subjects as $subjid => $subj) {
+                $category->evaluationAverages[$subjid] = (object) [
+                        'value' => (@$subjectaverages[$subjid] ? $subjectaverages[$subjid]->average : null),
+                        'reviewers' => (@$subjectaverages[$subjid] ? $subjectaverages[$subjid]->reviewers : null),
+                ];
+                $i++;
+            }
 
-			$category->evaluationOtions[$pos_value] = (object)[
-				'value' => $pos_value,
-				'title' => $option,
-				'reviewers' => $reviewers = block_exastud_get_reviewers_by_category_and_pos(block_exastud_get_active_or_last_period()->id, $studentid, $category->id, $category->source, $pos_value),
-			];
-			$reviewPoints += count($reviewers) * $i;
-			$reviewCnt += count($reviewers);
-			$i++;
-		}
+            $category->average = block_exastud_get_average_evaluation_by_category(block_exastud_get_active_or_last_period()->id,
+                    $studentid, $category->id, $category->source, true);
+        }
 
-		if ($reviewCnt) {
-			$category->average = $reviewPoints / $reviewCnt;
-		} else {
-			$category->average = null;
-		}
 	}
 
 
@@ -1013,16 +1062,20 @@ function block_exastud_get_report($studentid, $periodid) {
 
 	$report = new stdClass();
 
-	$totalvalue = $DB->get_record_sql('SELECT sum(rp.value) as total FROM {block_exastudreview} r, {block_exastudreviewpos} rp where r.studentid = ? AND r.periodid = ? AND rp.reviewid = r.id', array($studentid, $periodid));
+	$totalvalue = $DB->get_record_sql('SELECT sum(rp.value) as total 
+                                          FROM {block_exastudreview} r, {block_exastudreviewpos} rp 
+                                          WHERE r.studentid = ? 
+                                                AND r.periodid = ? 
+                                                AND rp.reviewid = r.id', array($studentid, $periodid));
 	$report->totalvalue = $totalvalue->total;
 
 
 	$reviewcategories = $DB->get_records_sql("
-		SELECT DISTINCT rp.categoryid, rp.categorysource
-		FROM {block_exastudreview} r
-		JOIN {block_exastudreviewpos} rp ON rp.reviewid = r.id
-		WHERE r.studentid = ? AND r.periodid = ?",
-		array($studentid, $periodid));
+                SELECT DISTINCT rp.categoryid, rp.categorysource
+                    FROM {block_exastudreview} r
+                      JOIN {block_exastudreviewpos} rp ON rp.reviewid = r.id
+                    WHERE r.studentid = ? AND r.periodid = ?",
+        array($studentid, $periodid));
 
 	$report->category_averages = [];
 
@@ -1312,7 +1365,21 @@ function block_exastud_get_evaluation_options($also_empty = false) {
 		0 => block_exastud_trans('de:nicht gewählt') // empty option
 	) : array();
 
-	$options += $DB->get_records_menu('block_exastudevalopt', [], 'sorting', 'id, title');
+    $compeval_type = block_exastud_get_competence_eval_type();
+    switch($compeval_type) {
+        case BLOCK_EXASTUD_COMPETENCE_EVALUATION_TYPE_TEXT:
+            $options += $DB->get_records_menu('block_exastudevalopt', [], 'sorting', 'id, title');
+            break;
+        case BLOCK_EXASTUD_COMPETENCE_EVALUATION_TYPE_POINT:
+            $options += array_combine($r = range(1, block_exastud_get_competence_eval_typeevalpoints_limit()), $r);
+            break;
+        case BLOCK_EXASTUD_COMPETENCE_EVALUATION_TYPE_TEXT:
+            return null;
+            break;
+        default:
+            // no options
+            return null;
+    }
 
 	return $options;
 }
@@ -2162,5 +2229,15 @@ function block_exastud_menu_for_settings() {
         $tabs[] = new tabobject('backup', new moodle_url('/blocks/exastud/backup.php', ['courseid' => g::$COURSE->id]), block_exastud_get_string("backup"), '', true);
     }
     $tabs[] = new tabobject('head_teachers', 'javascript:void window.open(\''.\block_exastud\url::create('/cohort/assign.php', ['id' => block_exastud_get_head_teacher_cohort()->id])->out(false).'\');', block_exastud_get_string('head_teachers'), '', true);
+    $tabs[] = new tabobject('report_settings', new moodle_url('/blocks/exastud/report_settings.php'), block_exastud_get_string("report_settings_edit"), '', true);
     return new tabtree($tabs);
 }
+
+function block_exastud_get_competence_eval_type() {
+    return get_config('exastud', 'competence_evaltype');
+}
+
+function block_exastud_get_competence_eval_typeevalpoints_limit() {
+    return get_config('exastud', 'competence_evalpoints_limit');
+}
+

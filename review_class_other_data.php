@@ -76,7 +76,7 @@ echo $output->heading($classheader);
 
 $actPeriod = block_exastud_check_active_period();
 $classstudents = block_exastud_get_class_students($classid);
-$evaluation_options = block_exastud_get_evaluation_options();
+//$evaluation_options = block_exastud_get_evaluation_options();
 
 /* Print the Students */
 $table = new html_table();

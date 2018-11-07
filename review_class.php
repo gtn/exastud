@@ -211,10 +211,18 @@ foreach($classstudents as $classstudent) {
 		$cell->colspan = count($categories);
 		$row->cells[] = $cell;
 	} else */
-	if($report) {
+	if ($report) {
 		foreach($categories as $category) {
-			$bewertung = $DB->get_field('block_exastudreviewpos', 'value', array("categoryid"=>$category->id,"reviewid"=>$report->id,"categorysource"=>$category->source));
-			$row->cells[] = $bewertung && isset($evaluation_options[$bewertung]) ? $evaluation_options[$bewertung] : '';
+			$bewertung = $DB->get_field('block_exastudreviewpos', 'value', array("categoryid" => $category->id, "reviewid" => $report->id, "categorysource" => $category->source));
+			switch (block_exastud_get_competence_eval_type()) {
+                case BLOCK_EXASTUD_COMPETENCE_EVALUATION_TYPE_TEXT:
+                case BLOCK_EXASTUD_COMPETENCE_EVALUATION_TYPE_POINT:
+                    $row->cells[] = $bewertung && isset($evaluation_options[$bewertung]) ? $evaluation_options[$bewertung] : '';
+                    break;
+                case BLOCK_EXASTUD_COMPETENCE_EVALUATION_TYPE_GRADE:
+                    $row->cells[] = $bewertung && $bewertung > 0 ? $bewertung : '';
+                    break;
+            }
 		}
 	} else {
 		for($i=0;$i<count($categories);$i++)

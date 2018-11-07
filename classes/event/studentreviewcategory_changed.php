@@ -61,11 +61,24 @@ class studentreviewcategory_changed extends base {
         $result = $this->other['whoDid']." reviewed the student '$studentname' (id: $this->relateduserid)";
         $result .= " for class '$classtitle' (id: $this->objectid) and subject '$subjecttitle' (id: $subjectid).";
         $result .= " Category '$category' (id: $categoryid): ";
-        if ($oldgradingid) {
-            $result .= " old value is '$oldgrading' (id: $oldgradingid), new value is '$grading' (id: $gradingid)";
-        } else {
-            $result .= " value is '$grading' (id: $gradingid)";
+        switch (block_exastud_get_competence_eval_type()) {
+            case BLOCK_EXASTUD_COMPETENCE_EVALUATION_TYPE_TEXT:
+                if ($oldgradingid) {
+                    $result .= " old value is '$oldgrading' (id: $oldgradingid), new value is '$grading' (id: $gradingid)";
+                } else {
+                    $result .= " value is '$grading' (id: $gradingid)";
+                }
+                break;
+            case BLOCK_EXASTUD_COMPETENCE_EVALUATION_TYPE_POINT:
+            case BLOCK_EXASTUD_COMPETENCE_EVALUATION_TYPE_GRADE:
+                if ($oldgradingid) {
+                    $result .= " old value is '$oldgrading', new value is '$grading' ";
+                } else {
+                    $result .= " value is '$grading' ";
+                }
+                break;
         }
+
         return $result;
 
     }

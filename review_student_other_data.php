@@ -63,24 +63,28 @@ $strreview = block_exastud_get_string('review');
 
 $actPeriod = block_exastud_check_active_period();
 
-if ($type == BLOCK_EXASTUD_DATA_ID_LERN_UND_SOZIALVERHALTEN) {
-	$categories = [
-		BLOCK_EXASTUD_DATA_ID_LERN_UND_SOZIALVERHALTEN => [
-			'title' => block_exastud_trans('de:Lern- und Sozialverhalten'),
-			'cols' => 50,
-		],
-	];
-	$classheader = $reviewclass->title.' - '.block_exastud_trans('de:Lern- und Sozialverhalten');
-} elseif ($type == BLOCK_EXASTUD_DATA_ID_PRINT_TEMPLATE) {
-	$categories = block_exastud_get_student_print_template($class, $student->id)->get_inputs($type);
-	$classheader = $reviewclass->title.' - '.block_exastud_trans('de:Weitere Formularfelder');
-} elseif ($type == BLOCK_EXASTUD_DATA_ID_ADDITIONAL_INFO) {
-	$categories = block_exastud_get_student_print_template($class, $student->id)->get_inputs($type);
-	$classheader = $reviewclass->title.' - '.block_exastud_trans('de:Weitere Formularfelder');
-} else {
-	$template = \block_exastud\print_template::create($type);
-	$categories = $template->get_inputs($type);
-	$classheader = $reviewclass->title.' - '.$template->get_name();
+switch ($type) {
+    case BLOCK_EXASTUD_DATA_ID_LERN_UND_SOZIALVERHALTEN:
+        $categories = [
+            BLOCK_EXASTUD_DATA_ID_LERN_UND_SOZIALVERHALTEN => [
+                'title' => block_exastud_trans('de:Lern- und Sozialverhalten'),
+                'cols' => 50,
+            ],
+        ];
+        $classheader = $reviewclass->title.' - '.block_exastud_trans('de:Lern- und Sozialverhalten');
+        break;
+    case BLOCK_EXASTUD_DATA_ID_PRINT_TEMPLATE:
+        $categories = block_exastud_get_student_print_template($class, $student->id)->get_inputs($type);
+        $classheader = $reviewclass->title.' - '.block_exastud_trans('de:Weitere Formularfelder');
+        break;
+    case BLOCK_EXASTUD_DATA_ID_ADDITIONAL_INFO:
+        $categories = block_exastud_get_student_print_template($class, $student->id)->get_inputs($type);
+        $classheader = $reviewclass->title.' - '.block_exastud_trans('de:Weitere Formularfelder');
+        break;
+    default:
+        $template = \block_exastud\print_template::create($type);
+        $categories = $template->get_inputs($type);
+        $classheader = $reviewclass->title.' - '.$template->get_name();
 }
 
 $olddata = (array)block_exastud_get_class_student_data($classid, $studentid);

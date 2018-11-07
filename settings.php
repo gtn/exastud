@@ -116,6 +116,13 @@ if ($ADMIN->fulltree) {
 	$settings->add(new admin_setting_configcheckbox('exastud/bw_active', block_exastud_trans('de:Baden-Württemberg Berichte'), '', 0));
 	$settings->add(new admin_setting_configcheckbox('exastud/use_exacomp_grade_verbose', block_exastud_trans('de:Exabis Kompetenzraster Notenverbalisierung verwenden'), '', 0));
     $settings->add(new admin_setting_configcheckbox('exastud/logging', block_exastud_get_string('logging'), '', 0));
+    $evalTypes = [
+        BLOCK_EXASTUD_COMPETENCE_EVALUATION_TYPE_TEXT => block_exastud_get_string('settings_competence_evaltype_text'),
+        BLOCK_EXASTUD_COMPETENCE_EVALUATION_TYPE_GRADE => block_exastud_get_string('settings_competence_evaltype_grade'),
+        BLOCK_EXASTUD_COMPETENCE_EVALUATION_TYPE_POINT => block_exastud_get_string('settings_competence_evaltype_point'),
+    ];
+    $settings->add(new admin_setting_configselect('exastud/competence_evaltype', block_exastud_get_string('settings_competence_evaltype'), '', 0, $evalTypes));
+    $settings->add(new admin_setting_configtext('exastud/competence_evalpoints_limit', block_exastud_get_string('settings_competence_evalpoints_limit'), block_exastud_get_string('settings_competence_evalpoints_limit_description'), 10, PARAM_INT));
     /*// periods
     $settings->add(new block_exastud_link_to('link_to_settings_periods', block_exastud_get_string("periods"), '', '', '/blocks/exastud/periods.php', block_exastud_get_string('periods'), [], ['class' => 'btn btn-default']));
     // competencies
@@ -132,5 +139,5 @@ if ($ADMIN->fulltree) {
     $settings->add(new block_exastud_link_to('link_to_settings_headteachers', block_exastud_get_string("head_teachers"), '', '', '/cohort/assign.php', block_exastud_get_string('head_teachers'), ['id' => block_exastud_get_head_teacher_cohort()->id], ['class' => 'btn btn-default']));
     */
     // template configurations
-    $settings->add(new block_exastud_link_to('link_to_settings_report_templates', block_exastud_get_string('report_settings_edit'), '', '', '/blocks/exastud/report_settings.php', block_exastud_get_string('report_settings_edit'), [], ['class' => 'btn btn-default', 'target' => '_blank']));
+    //$settings->add(new block_exastud_link_to('link_to_settings_report_templates', block_exastud_get_string('report_settings_edit'), '', '', '/blocks/exastud/report_settings.php', block_exastud_get_string('report_settings_edit'), [], ['class' => 'btn btn-default', 'target' => '_blank']));
 }
