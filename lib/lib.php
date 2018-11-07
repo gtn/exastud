@@ -56,7 +56,7 @@ const BLOCK_EXASTUD_COMPETENCE_EVALUATION_TYPE_POINT = 2;
 
 const BLOCK_EXASTUD_TEMPLATE_DIR = __DIR__.'/../template';
 
-const BLOCK_EXASTUD_SESSION_TIMEOUT = 10;
+const BLOCK_EXASTUD_SESSION_TIMEOUT = 10*60 + 1;
 
 class block_exastud_permission_exception extends moodle_exception {
 	function __construct($errorcode = 'Not allowed', $module = '', $link = '', $a = null, $debuginfo = null) {
@@ -1675,8 +1675,6 @@ function block_exastud_require_login($courseid, $autologinguest = true, $cm = nu
 	        exit;
 		}
 	}
-}
-
 }
 
 function block_exastud_is_siteadmin($userid = null) {

@@ -33,7 +33,7 @@ if (!block_exastud_is_siteadmin()) {
 $settingsid = optional_param('id', 0, PARAM_INT);
 $action = optional_param('action', '', PARAM_TEXT);
 
-require_login(1);
+block_exastud_require_login(1);
 
 //block_exastud_require_global_cap(BLOCK_EXASTUD_CAP_MANAGE_CLASSES);
 

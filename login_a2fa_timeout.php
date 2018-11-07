@@ -59,7 +59,7 @@ echo $output->header([], ['is_login_a2fa_timeout_page' => true]);
 	Um den Lernentwicklungsbericht betreten zu können ist die erneute Eingabe Ihres A2fa Codes notwendig:<br/>
 	<input type="hidden" name="returnurl" value="<?php echo s($returnurl); ?>"/>
 	<input type="hidden" name="action" value="login"/>
-	<input type="text" name="token" size="15" value="" placeholder="A2fa Code"/><br/>
+	<input type="password" name="token" size="15" value="" placeholder="A2fa Code"/><br/>
 	<input type="submit" value="Login"/>
 </form>
 <?php

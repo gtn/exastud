@@ -159,7 +159,7 @@ class block_exastud_renderer extends plugin_renderer_base {
 				$login_url = new moodle_url('/blocks/exastud/login_a2fa_timeout.php', array('courseid' => @$_REQUEST['courseid'], 'returnurl' => $returnurl));
 
 				$content .= '
-					<div style="text-align: right;">Verbleibende Zeit bis aus dem Lernentwicklungsbericht abgemeldet werden: <span id="exastud-ticker-content"></span></div>
+					<div style="text-align: right;">Verbleibende Zeit bis Sie aus dem Lernentwicklungsbericht abgemeldet werden: <span id="exastud-ticker-content"></span></div>
 					<script>
 						block_exastud.timer('.BLOCK_EXASTUD_SESSION_TIMEOUT.' - 1, function(minutes, seconds){
 							$("#exastud-ticker-content").html(minutes+":"+(seconds < 10 ? "0" + seconds : seconds));
