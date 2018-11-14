@@ -22,13 +22,14 @@ require __DIR__.'/inc.php';
 define("MAX_USERS_PER_PAGE", 5000);
 
 
-$courseid = optional_param('courseid', 1, PARAM_INT); // Course ID
-$classid = required_param('classid', PARAM_INT);
-$showall		= optional_param('showall', 0, PARAM_BOOL);
-$searchtext	 = optional_param('searchtext', '', PARAM_TEXT); // search string
-$add			= optional_param('add', 0, PARAM_BOOL);
-$addbasic			= optional_param('addbasic', 0, PARAM_BOOL);
-$remove		 = optional_param('remove', 0, PARAM_BOOL);
+$courseid   = optional_param('courseid', 1, PARAM_INT); // Course ID
+$classid    = required_param('classid', PARAM_INT);
+$showall    = optional_param('showall', 0, PARAM_BOOL);
+$searchtext	= optional_param('searchtext', '', PARAM_TEXT); // search string
+$add		= optional_param('add', 0, PARAM_BOOL);
+$addbasic	= optional_param('addbasic', 0, PARAM_BOOL);
+$addbasicalways	= optional_param('addbasicalways', 0, PARAM_BOOL);
+$remove		= optional_param('remove', 0, PARAM_BOOL);
 
 block_exastud_require_login($courseid);
 
@@ -44,6 +45,13 @@ $output = block_exastud_get_renderer();
 echo $output->header(['configuration_classes', 'categories'], ['class' => $class]);
 
 if ($frm = data_submitted()) {
+    // if checked 'always add new basic categories'
+    if ($addbasicalways) {
+        $DB->set_field('block_exastudclass', 'always_basiccategories', 1, ['id' => $classid]);
+    } else {
+        $DB->set_field('block_exastudclass', 'always_basiccategories', 0, ['id' => $classid]);
+    }
+
     $availablecategoriesAll = get_availablecategories('', $class, false);
     $availablecategories = get_availablecategories('', $class);
     $findInAvailableCats = function($id, $source, $cats) {
@@ -95,7 +103,7 @@ if ($frm = data_submitted()) {
 		}
 	} else if ($showall) {
 		$searchtext = '';
-	}else if ($addbasic) {
+	} else if ($addbasic) {
 	    foreach($availablecategories as $category){
 	        if($category->source == 'exastud'){
 	            
@@ -174,6 +182,8 @@ function get_availablecategories($searchtext, $class, $notInClass = true) {
 $availablecategories = get_availablecategories($searchtext, $class);
 
 $classcategories = block_exastud_get_class_categories($class->id);
+// renew $addbasicalways
+$addbasicalways = $DB->get_field('block_exastudclass', 'always_basiccategories', ['id' => $classid]);
 
 echo $OUTPUT->box_start();
 $userlistType = 'configurations';

@@ -69,6 +69,13 @@ class class_edit_form extends moodleform {
             $mform->addElement('select', 'userid', get_string('class_owner', 'block_exastud'), $options);
         }
 
+        $mform->addElement('filemanager', 'class_logo', get_string('class_logo', 'block_exastud'), null,
+                array(
+                        'subdirs' => 0,
+                        'maxfiles' => 1,
+                        'accepted_types' => array('web_image'))
+        );
+
 		$this->add_action_buttons();
 	}
 
@@ -216,7 +223,7 @@ class student_other_data_form extends moodleform {
 
 	function definition() {
 		$mform = &$this->_form;
-
+        //echo "<pre>debug:<strong>edit_form.php:222</strong>\r\n"; print_r($this->_customdata['categories']); echo '</pre>'; // !!!!!!!!!! delete it
 		foreach ($this->_customdata['categories'] as $dataid => $input) {
 			if (empty($input['type']) || $input['type'] == 'textarea') {
 				$mform->addElement('header', 'header_'.$dataid, $input['title']);
@@ -246,7 +253,15 @@ class student_other_data_form extends moodleform {
 			} elseif ($input['type'] == 'select') {
 				$mform->addElement('select', $dataid, $input['title'], ['' => ''] + $input['values']);
 				$mform->setType($dataid, PARAM_RAW);
-			} else {
+			} elseif ($input['type'] == 'image') {
+                $mform->addElement('filemanager', 'images['.$dataid.']', $input['title'], null,
+                        array(
+                                'subdirs' => 0,
+                                'maxbytes' => intval($input['maxbytes']),
+                                'maxfiles' => 1,
+                                'accepted_types' => array('web_image'))
+                );
+            } else {
 				$mform->addElement('header', 'header_'.$dataid, $input['title']);
 				$mform->setExpanded('header_'.$dataid);
 			}
@@ -286,7 +301,7 @@ class reportsettings_edit_form extends moodleform {
         'ags',
     );
 
-    protected $input_types = array('textarea', 'text', 'select', 'header');
+    protected $input_types = array('textarea', 'text', 'select', 'header', 'image');
     protected $radioattributes = array(); // html tag attributes for radiobuttons
 
     protected $additionalData = null;
@@ -381,6 +396,16 @@ class reportsettings_edit_form extends moodleform {
                 //$mform->setType($field.'_maxchars', PARAM_INT);
                 $mform->addGroup($tempGroup, $field.'_textareaparams', '', ' ', false);
 
+                // params for image
+                $tempGroup = array();
+                $tempGroup[] =& $mform->createElement('text', $field.'_maxbytes', block_exastud_get_string('report_setting_type_image_maxbytes'), array('size' => 20));
+                $mform->setType($field.'_maxbytes', PARAM_INT);
+                $tempGroup[] =& $mform->createElement('text', $field.'_width', block_exastud_get_string('report_setting_type_image_width'), array('size' => 5));
+                $mform->setType($field.'_width', PARAM_INT);
+                $tempGroup[] =& $mform->createElement('text', $field.'_height', block_exastud_get_string('report_setting_type_image_height'), array('size' => 5));
+                $mform->setType($field.'_height', PARAM_INT);
+                $mform->addGroup($tempGroup, $field.'_imageparams', '', ' ', false);
+
                 //$mform->addElement('exastud_htmltag', '</div>');
             } else {
                 // only checkbox
@@ -419,6 +444,15 @@ class reportsettings_edit_form extends moodleform {
             }
             if (!empty($fieldData['values'])) {
                 $result->{$field.'_values'} = $fieldData['values'];
+            }
+            if (!empty($fieldData['maxbytes'])) {
+                $result->{$field.'_maxbytes'} = $fieldData['maxbytes'];
+            }
+            if (!empty($fieldData['width'])) {
+                $result->{$field.'_width'} = $fieldData['width'];
+            }
+            if (!empty($fieldData['height'])) {
+                $result->{$field.'_height'} = $fieldData['height'];
             }
         }
         $result->additional_params = unserialize($data->additional_params);
@@ -515,6 +549,7 @@ class reportsettings_edit_form extends moodleform {
                     }
                 }
                 $mform->addGroup($radiotype, 'additional_params_typeradiobuttons['.$i.']', '', array(' '), false);
+
                 // paramaters for textarea
                 $textareaParams = array();
                 $textareaParams[] = $mform->createElement('text', 'additional_params_rows['.$i.']', block_exastud_get_string('report_settings_countrows_fieldtitle'), array('size' => 5));
@@ -528,6 +563,7 @@ class reportsettings_edit_form extends moodleform {
                     $mform->setDefault('additional_params_count_in_row['.$i.']', $param_settings['count_in_row']);
                 }
                 $mform->addGroup($textareaParams, 'additional_params_textareaparams['.$i.']', '', ' ', false);
+
                 // parameters for selectbox
                 $selectboxes[$i] = array();
                 $j = 0;
@@ -555,6 +591,27 @@ class reportsettings_edit_form extends moodleform {
                 }
                 $mform->addElement('exastud_htmltag', '<script>additional_params_last_index_for_selectbox['.$i.'] = '.($j - 1).';</script>');
                 //$mform->addGroup($additional_block, 'group_additionalparams', '', ' ', false);
+
+                // paramaters for image
+                $imageParams = array();
+                $imageParams[] = $mform->createElement('text', 'additional_params_maxbytes['.$i.']', block_exastud_get_string('report_setting_type_image_maxbytes'), array('size' => 20));
+                $mform->setType('additional_params_maxbytes['.$i.']', PARAM_INT);
+                if (!empty($param_settings['maxbytes'])) {
+                    $mform->setDefault('additional_params_maxbytes['.$i.']', $param_settings['maxbytes']);
+                }
+                $imageParams[] = $mform->createElement('text', 'additional_params_width['.$i.']', block_exastud_get_string('report_setting_type_image_width'), array('size' => 5));
+                $mform->setType('additional_params_width['.$i.']', PARAM_INT);
+                if (!empty($param_settings['width'])) {
+                    $mform->setDefault('additional_params_width['.$i.']', $param_settings['width']);
+                }
+                $imageParams[] = $mform->createElement('text', 'additional_params_height['.$i.']', block_exastud_get_string('report_setting_type_image_height'), array('size' => 5));
+                $mform->setType('additional_params_height['.$i.']', PARAM_INT);
+                if (!empty($param_settings['height'])) {
+                    $mform->setDefault('additional_params_height['.$i.']', $param_settings['height']);
+                }
+                $mform->addGroup($imageParams, 'additional_params_imageparams['.$i.']', '', ' ', false);
+
+
                 $mform->addElement('exastud_htmltag', '</div>');
                 $i++;
             }
@@ -640,6 +697,17 @@ class reportsettings_edit_form extends moodleform {
                         break;
                     }
                 }
+            }
+            // image params
+            $image_settings = $mform->getElement($field.'_imageparams'.$arr);
+            $addclass4 = '';
+            if ($i !== null) {
+                $addclass4 .= ' image-settings-'.$i;
+            }
+            $image_settings->_attributes['class'] = 'exastud-template-settings-group group-'.$field.' image-settings '.$addclass4;
+            $image_settings_elements = $image_settings->getElements();
+            foreach ($image_settings_elements as $element) {
+                $element->_attributes['class'] = 'exastud-template-settings-param';
             }
         };
 

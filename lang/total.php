@@ -298,6 +298,10 @@ return [
 		'Neue Klassenlehrkraft',
 		'Class owner',
 	],
+	'class_logo' => [
+		'Class logo',
+		'Class logo',
+	],
 	'project_based_class' => [
 		'Projekt',
 		'Project',
@@ -332,7 +336,11 @@ return [
 	],
     'addallbasic' => [
         'Standardkategorien hinzufügen',
-        'add basic categories',
+        'Add basic categories',
+    ],
+    'addallbasicalways' => [
+        'Add all new basic categories automatically',
+        'Add all new basic categories automatically',
     ],
 	'basiccategories' => [
 		'Standardkategorien',
@@ -613,7 +621,7 @@ return [
     'report_settings_countrows_fieldtitle' => [
                 'Zeilen',
                 'Count of rows',
-        ],
+    ],
     'report_settings_countinrow_fieldtitle' => [
             'zu je Zeichen',
             'Characters per row',
@@ -661,6 +669,22 @@ return [
     'report_setting_type_header' => [
             'Kopfzeile',
             'Header',
+    ],
+    'report_setting_type_image' => [
+            'Bild (soon)',
+            'Picture (soon)',
+    ],
+    'report_setting_type_image_maxbytes' => [
+            'Max size (bytes)',
+            'Max size (bytes)',
+    ],
+    'report_setting_type_image_width' => [
+            'Width',
+            'Width',
+    ],
+    'report_setting_type_image_height' => [
+            'Height',
+            'Height',
     ],
     'review_table_part_subjects' => [
             'Eingaben als Fachlehrkraft',

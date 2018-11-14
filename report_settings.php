@@ -176,6 +176,12 @@ if ($action && ($settingsid > 0 || $action == 'new')) {
                         case 'text':
                             $result = '<small>'.$result.' (text)</small>';
                             break;
+                        case 'image':
+                            $result .= block_exastud_get_string('report_setting_type_image_maxbytes').': '.$resArr['maxbytes'];
+                            $result .= '<br />'.block_exastud_get_string('report_setting_type_image_width').': '.$resArr['width'];
+                            $result .= '&nbsp;'.block_exastud_get_string('report_setting_type_image_height').': '.$resArr['height'];
+                            $result = '<small>'.$result.'</small>';
+                            break;
                     }
                 }
                 return $result;
@@ -280,6 +286,14 @@ function block_exastud_report_templates_prepare_serialized_data($settingsform, $
                         };
                     }
                     break;
+                case 'image':
+                    $element_data['maxbytes'] = (isset($settingsedit->{$field.'_maxbytes'}) && $settingsedit->{$field.'_maxbytes'} > 0 ?
+                            $settingsedit->{$field.'_maxbytes'} : 50000);
+                    $element_data['width'] = (isset($settingsedit->{$field.'_width'}) && $settingsedit->{$field.'_width'} > 0 ?
+                            $settingsedit->{$field.'_width'} : 800);
+                    $element_data['height'] = (isset($settingsedit->{$field.'_height'}) && $settingsedit->{$field.'_height'} > 0 ?
+                            $settingsedit->{$field.'_height'} : 600);
+                    break;
             }
         } else {
             $element_data = array(
@@ -290,14 +304,17 @@ function block_exastud_report_templates_prepare_serialized_data($settingsform, $
     }
 
     // additional params (dynamic)
-    $aparams_GP = optional_param_array('additional_params', '', PARAM_INT);
+    $aparams_GP = optional_param_array('additional_params', '', PARAM_RAW);
     $additional_params = array();
-    if (count($aparams_GP) > 0) {
+    if ($aparams_GP && is_array($aparams_GP) && count($aparams_GP) > 0) {
         $aparams_titles = optional_param_array('additional_params_title', '', PARAM_RAW);
         $aparams_keys = optional_param_array('additional_params_key', '', PARAM_RAW);
         $aparams_types = optional_param_array('additional_params_type', '', PARAM_RAW);
         $aparams_rows = optional_param_array('additional_params_rows', '', PARAM_INT);
         $aparams_count_in_rows = optional_param_array('additional_params_count_in_row', '', PARAM_INT);
+        $aparams_maxbytes = optional_param_array('additional_params_maxbytes', '', PARAM_INT);
+        $aparams_width = optional_param_array('additional_params_width', '', PARAM_INT);
+        $aparams_height = optional_param_array('additional_params_height', '', PARAM_INT);
         $aparams_selectboxvalues_key = block_exastud_optional_param_array('additional_params_selectboxvalues_key', '', PARAM_RAW);
         $aparams_selectboxvalues_value = block_exastud_optional_param_array('additional_params_selectboxvalues_value', '', PARAM_RAW);
         foreach ($aparams_GP as $pIndex => $checked) {
@@ -329,6 +346,18 @@ function block_exastud_report_templates_prepare_serialized_data($settingsform, $
                                 };
                             }
                             break;
+                        case 'image':
+                            $additional_params[$aparams_keys[$pIndex]]['maxbytes'] =
+                                    (isset($aparams_maxbytes[$pIndex]) && $aparams_maxbytes[$pIndex] > 0 ?
+                                            $aparams_maxbytes[$pIndex] : 50000);
+                            $additional_params[$aparams_keys[$pIndex]]['width'] =
+                                    (isset($aparams_width[$pIndex]) && $aparams_width[$pIndex] > 0 ?
+                                            $aparams_width[$pIndex] : 800);
+                            $additional_params[$aparams_keys[$pIndex]]['height'] =
+                                    (isset($aparams_height[$pIndex]) && $aparams_height[$pIndex] > 0 ?
+                                            $aparams_height[$pIndex] : 600);
+                            break;
+
                     }
                 }
             }

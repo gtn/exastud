@@ -440,6 +440,14 @@ function xmldb_block_exastud_upgrade($oldversion = 0) {
         $dbman->change_field_type($table, $field);
     }
 
+    if ($oldversion < 2018111200) {
+        $table = new xmldb_table('block_exastudclass');
+        $field = new xmldb_field('always_basiccategories', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, '0', 'periodid');
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+    }
+
     block_exastud_insert_default_entries();
 	block_exastud_check_profile_fields();
 

@@ -142,6 +142,11 @@ class print_templates {
                         break;
                     case 'header':
                         break;
+                    case 'image':
+                        $inputs[$field]['maxbytes'] = ($fieldData['maxbytes'] > 0 ? $fieldData['maxbytes'] : 50000);
+                        $inputs[$field]['width'] = ($fieldData['width'] > 0 ? $fieldData['width'] : 800);
+                        $inputs[$field]['height'] = ($fieldData['height'] > 0 ? $fieldData['height'] : 600);
+                        break;
                 }
             }
         }
@@ -750,24 +755,30 @@ class print_templates {
         );
         $studentdata = (array)block_exastud_get_class_student_data($class->id, $student->id);
 	    foreach ($inputs as $key => $input) {
-	        if (array_key_exists($key, $studentdata)) {
-	            $val = trim($studentdata[$key]);
-                if (!trim(strip_tags($val))) {
-                    $inputValue = '---'; // spacer if empty
-                } else {
-                    $inputValue = $val;
-                }
-            } else {
-                $inputValue = ' --- ';
-            }
-            //echo '=='.$k.'==';print_r($input);echo '<br>';
-            $markers[$key] = $inputValue;
-	        if (array_key_exists($key, $oldsupport)) {
-	            foreach ($oldsupport[$key] as $oldkey) {
-                    $markers[$oldkey] = $inputValue;
-                }
+	        //echo "<pre>debug:<strong>classes.php:758</strong>\r\n"; print_r($input); echo '</pre>'; // !!!!!!!!!! delete it
+            switch ($input['type']) {
+                case 'image':
+                    break;
+                default:
+                    if (array_key_exists($key, $studentdata)) {
+                        $val = trim($studentdata[$key]);
+                        if (!trim(strip_tags($val))) {
+                            $inputValue = '---'; // spacer if empty
+                        } else {
+                            $inputValue = $val;
+                        }
+                    } else {
+                        $inputValue = ' --- ';
+                    }
+                    $markers[$key] = $inputValue;
+                    if (array_key_exists($key, $oldsupport)) {
+                        foreach ($oldsupport[$key] as $oldkey) {
+                            $markers[$oldkey] = $inputValue;
+                        }
+                    }
             }
         }
+
         return $markers;
     }
 }
@@ -815,4 +826,7 @@ class print_template {
 		  return __DIR__.'/../template/'.$this->get_config()['file'].'.docx';
 	    }*/
 	}
+
+
+
 }

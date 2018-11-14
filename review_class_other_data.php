@@ -137,7 +137,8 @@ foreach ($classstudents as $classstudent) {
 			block_exastud_get_string('edit'),
             array('class' => 'btn btn-default'));
 	}
-
+    $fs = get_file_storage();
+    $context = context_system::instance();
 	foreach ($categories as $dataid => $category) {
 
 		if ($dataid === BLOCK_EXASTUD_DATA_ID_PRINT_TEMPLATE
@@ -152,10 +153,29 @@ foreach ($classstudents as $classstudent) {
 			$inputs = $template->get_inputs($dataid);
 			if ($inputs) {
                 foreach ($inputs as $dataid => $form_input) {
-                    if (@$form_input['type'] == 'select') {
-                        $value = @$form_input['values'][$data[$dataid]];
-                    } else {
-                        $value = !empty($data[$dataid]) ? block_exastud_text_to_html($data[$dataid]) : '';
+                    switch(@$form_input['type']) {
+                        case 'select':
+                            $value = @$form_input['values'][$data[$dataid]];
+                            break;
+                        case 'image':
+                            $files = $fs->get_area_files($context->id, 'block_exastud', 'report_image_'.$dataid, $classstudent->id, 'itemid', false);
+                            $filesOut = [];
+                            foreach ($files as $file) {
+                                if ($file->get_userid() != $USER->id) {
+                                    continue;
+                                }
+                                $filename = $file->get_filename();
+                                $url = moodle_url::make_pluginfile_url($file->get_contextid(), $file->get_component(), $file->get_filearea(), $file->get_itemid(), $file->get_filepath(), $file->get_filename());
+                                $img = html_writer::img($url, $filename, ['width' => 150]);
+                                $filesOut[] = html_writer::link($url, $img, ['target' => '_blank']);
+                            }
+                            $br = ''; //html_writer::empty_tag('br');
+                            $value = implode($br, $filesOut);
+                            //$value = file_rewrite_pluginfile_urls('sss', 'pluginfile.php',
+                            //        $context->id, 'block_exastud', 'report_image_'.$dataid, $classstudent->id);
+                            break;
+                        default:
+                            $value = !empty($data[$dataid]) ? block_exastud_text_to_html($data[$dataid]) : '';
                     }
 
                     $content .= '<div style="padding-top: 10px; font-weight: bold;">'.$form_input['title'].'</div>';

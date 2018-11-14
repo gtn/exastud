@@ -99,12 +99,19 @@ $studentform = new student_other_data_form($PAGE->url, [
 ]);
 
 if ($fromform = $studentform->get_data()) {
+    $context = context_system::instance(); // TODO: which context to use?
 	foreach ($categories as $dataid => $category) {
-		block_exastud_set_class_student_data($classid, $studentid, $dataid, $fromform->{$dataid});
-		block_exastud_set_class_student_data($classid, $studentid, $dataid.'.modifiedby', $USER->id);
-		block_exastud_set_class_student_data($classid, $studentid, $dataid.'.timemodified', time());
+	    switch ($category['type']) {
+            case 'image':
+                file_save_draft_area_files($fromform->images[$dataid], $context->id, 'block_exastud', 'report_image_'.$dataid,
+                        $student->id, array('subdirs' => 0, 'maxbytes' => $category['maxbytes'], 'maxfiles' => 1));
+                break;
+            default:
+                block_exastud_set_class_student_data($classid, $studentid, $dataid, $fromform->{$dataid});
+        }
+        block_exastud_set_class_student_data($classid, $studentid, $dataid.'.modifiedby', $USER->id);
+        block_exastud_set_class_student_data($classid, $studentid, $dataid.'.timemodified', time());
 	}
-
 	redirect($returnurl);
 }
 
@@ -193,8 +200,19 @@ if ($type == BLOCK_EXASTUD_DATA_ID_LERN_UND_SOZIALVERHALTEN) {
 $formdata = $olddata;
 
 if (count($categories) > 0) {
+    $context = context_system::instance(); // TODO: which context to use?
     foreach ($categories as $dataid => $category) {
-        $formdata[$dataid] = block_exastud_html_to_text(@$formdata[$dataid]);
+        if ($category['type'] == 'image') {
+            //if (!array_key_exists('images', $formdata)) {
+            //    $formdata['images'] = array();
+            //}
+            $draftitemid = file_get_submitted_draft_itemid('report_image_'.$dataid);
+            file_prepare_draft_area($draftitemid, $context->id, 'block_exastud', 'report_image_'.$dataid, $student->id,
+                    array('subdirs' => 0, 'maxbytes' => $category['maxbytes'], 'maxfiles' => 1));
+            $formdata['images['.$dataid.']'] = $draftitemid;
+        } else {
+            $formdata[$dataid] = block_exastud_html_to_text(@$formdata[$dataid]);
+        }
     }
 }
 /*
@@ -204,6 +222,8 @@ foreach ($categories as $dataid=>$category) {
 	$formdata->{$dataid} = array('text'=>isset($studentdata[$dataid]) ? $studentdata[$dataid] : '', 'format'=>FORMAT_HTML);
 }
 */
+
+//echo "<pre>debug:<strong>review_student_other_data.php:226</strong>\r\n"; print_r($formdata); echo '</pre>'; // !!!!!!!!!! delete it
 
 $studentform->set_data($formdata);
 $studentform->display();

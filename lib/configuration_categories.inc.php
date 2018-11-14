@@ -47,7 +47,8 @@ defined('MOODLE_INTERNAL') || die();
 			</td>
 			<td id="buttonscell">
 			  <div id="addcontrols">
-			  	  <input name="addbasic" id="addbasic" type="submit" style="margin-bottom: 3rem" value="◄ <?php echo block_exastud_get_string('addallbasic'); ?>" title="<?php block_exastud_get_string('addallbasic'); ?>" />
+			  	  <input name="addbasic" id="addbasic" type="submit" value="◄ <?php echo block_exastud_get_string('addallbasic'); ?>" title="<?php block_exastud_get_string('addallbasic'); ?>" />
+                  <label for="addbasicalways" style="margin-bottom: 3rem; display: inline-block;" ><input name="addbasicalways" id="addbasicalways" type="checkbox" <?php if ($addbasicalways) { echo ' checked="checked" ';} ?> value="1" style="display: inline; width: 30px;" /><?php echo block_exastud_get_string('addallbasicalways'); ?></label>
 				  <input name="add" id="add" type="submit" value="◄ <?php echo block_exastud_get_string('add'); ?>" title="<?php print_string('add'); ?>" />
 			  </div>
 				<div id="removecontrols">

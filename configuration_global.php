@@ -68,6 +68,7 @@ if ($action == 'save-categories') {
 
 	$todelete = $availablecategories;
 	$sorting = 0;
+	$newAddToClasses = array();
 	foreach ($items as $item) {
 		$sorting++;
 		$item->sorting = $sorting;
@@ -84,14 +85,32 @@ if ($action == 'save-categories') {
 		} else {
 			// insert
 			$newid = $DB->insert_record('block_exastudcate', $item);
+            $newAddToClasses[] = $newid;
             \block_exastud\event\competence_created::log(['objectid' => $newid, 'other' => ['title' => $item->title]]);
 		}
 	}
 
 	foreach ($todelete as $item) {
+        $DB->delete_records('block_exastudclasscate', array('categoryid' => $item->id, 'categorysource' => 'exastud'));
+        $DB->delete_records('block_exastudreviewpos', array('categoryid' => $item->id, 'categorysource' => 'exastud'));
 		$DB->delete_records('block_exastudcate', array('id' => $item->id));
         \block_exastud\event\competence_deleted::log(['objectid' => $item->id, 'other' => ['title' => $item->title]]);
 	}
+
+	// update classes with checked 'always_basiccategories'
+    if (count($newAddToClasses) > 0) {
+        $updateClasses = $DB->get_records('block_exastudclass', ['always_basiccategories' => 1]);
+        foreach ($updateClasses as $cId => $class) {
+            foreach ($newAddToClasses as $catId) {
+                $newrelation = [
+                    'classid' => $class->id,
+                    'categoryid' => $catId,
+                    'categorysource' => 'exastud'
+                ];
+                $newid = $DB->insert_record('block_exastudclasscate', $newrelation);
+            }
+        }
+    }
 
 	echo 'ok';
 

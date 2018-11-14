@@ -105,6 +105,9 @@ if ($classform->is_cancelled()) {
                         'ownername' => $newowner->firstname.' '.$newowner->lastname]]);
     }
 
+    file_save_draft_area_files($classedit->class_logo, context_system::instance()->id, 'block_exastud', 'class_logo',
+            $class->id, array('subdirs' => 0, 'maxfiles' => 1));
+
 	block_exastud_set_class_data($newclass->id, BLOCK_EXASTUD_DATA_ID_CLASS_DEFAULT_TEMPLATEID, $classedit->{BLOCK_EXASTUD_DATA_ID_CLASS_DEFAULT_TEMPLATEID});
 
 	if ($class->id) {
@@ -130,7 +133,16 @@ if ($classform->is_cancelled()) {
     } else*/ {
 		redirect('configuration_class.php?courseid='.$courseid.'&classid='.$newclass->id);
 	}
+} else { // edit form opened
+    if ($class->id) {
+        $draftitemid = file_get_submitted_draft_itemid('class_logo');
+        file_prepare_draft_area($draftitemid, context_system::instance()->id, 'block_exastud', 'class_logo', $class->id,
+                array('subdirs' => 0, 'maxfiles' => 1));
+        $class->class_logo = $draftitemid;
+    }
 }
+
+
 
 $classform->set_data((array)$class + (array)block_exastud_get_class_data($class->id));
 

@@ -41,6 +41,7 @@
         var checkboxSelector = ':checkbox.exastud-template-settings-param[name="' + field + '"]';
         var textareaGroupSelector = '.exastud-template-settings-group.group-' + field + '.textarea-settings';
         var selectboxGroupSelector = '.exastud-template-settings-group.group-' + field + '.selectbox-settings';
+        var imageGroupSelector = '.exastud-template-settings-group.group-' + field + '.image-settings';
         var radioButtonSelector = ':radio[name="' + field + '_type"]:checked';
         if (!$(radioButtonSelector).length) { // it is additional param
             //var regex = /\[(\d*)\]/;
@@ -49,12 +50,15 @@
             isAdditional = true;
             textareaGroupSelector = '.exastud-template-settings-group.group-additional_params.textarea-settings.textarea-settings-'+index;
             selectboxGroupSelector = $(radioButtonSelector).closest('.exastud-setting-block').find('.exastud-template-settings-group.group-additional_params.selectbox-settings');
+            imageGroupSelector = '.exastud-template-settings-group.group-additional_params.image-settings.image-settings-'+index;
         }
         // hide all groups at first
         $(textareaGroupSelector).hide();
         $(selectboxGroupSelector).hide();
+        $(imageGroupSelector).hide();
         if (isAdditional || $(checkboxSelector).is(':checked')) {
-            console.log(selectboxGroupSelector);
+            // console.log(textareaGroupSelector);
+            // console.log(imageGroupSelector);
             if ($(radioButtonSelector).length && $(radioButtonSelector).val() == 'textarea') {
                 // show textarea group
                 $(textareaGroupSelector).show();
@@ -64,6 +68,11 @@
                 // show selectbox group
                 $(selectboxGroupSelector).show();
                 updateOptionButtons();
+                return true;
+            }
+            if ($(radioButtonSelector).length && $(radioButtonSelector).val() == 'image') {
+                // show image group
+                $(imageGroupSelector).show();
                 return true;
             }
 
@@ -90,6 +99,10 @@
         newBlock.find('[class*=textarea-settings-' + old_index + ']').each(function() {
             $(this).removeClass('textarea-settings-' + old_index);
             $(this).addClass('textarea-settings-' + new_index);
+        })
+        newBlock.find('[class*=image-settings-' + old_index + ']').each(function() {
+            $(this).removeClass('image-settings-' + old_index);
+            $(this).addClass('image-settings-' + new_index);
         })
         newBlock.find(':input').each(function () {
             switch (this.type) {

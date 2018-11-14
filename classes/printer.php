@@ -43,9 +43,8 @@ class printer {
 		return preg_replace('![^a-z]+!', '_', strtolower(trim($name)));
 	}
 
-    static function report_to_temp_file($class, $student, $templateid, $courseid)
-    {
-		global $CFG;
+    static function report_to_temp_file($class, $student, $templateid, $courseid) {
+		global $CFG, $USER;
 
 		$certificate_issue_date_text = block_exastud_get_certificate_issue_date_text($class);
 		$certificate_issue_date_timestamp = block_exastud_get_certificate_issue_date_timestamp($class);
@@ -115,6 +114,7 @@ class printer {
 
 			return preg_replace('!([^0-9])99([^0-9].{0,3000}[^0-9])99([^0-9])!U', '${1}'.$year1.'${2}'.$year2.'${3}', $content, 1, $count);
 		});
+        $fs = get_file_storage();
 
 		// default markers
         $data = [
@@ -127,9 +127,39 @@ class printer {
                 'wahlpflichtfach' => '---',
                 'projekt_thema' => static::spacerIfEmpty(@$studentdata->projekt_thema),
         ];
+        // class logo: ${class_logo}
+        if (!$templateProcessor->addImageToReport('class_logo', 'class_logo', $class->id, 1024, 768)) {
+            $dataKey['class_logo'] = ''; // no logo files
+        };
 		// preparation data from template settings
         $marker_configurations = $template->get_marker_configurations('all', $class, $student);
         $data = array_merge($data, $marker_configurations);
+        // preparation data from images
+        $inputs = print_templates::get_template_inputs($templateid, 'all');
+        if ($inputs && count($inputs) > 0) {
+            $context = \context_system::instance();
+            foreach ($inputs as $dataKey => $input) {
+                if ($input['type'] == 'image') {
+                    if (!$templateProcessor->addImageToReport($dataKey, 'report_image_'.$dataKey, $student->id, $input['width'], $input['height'], true)) {
+                        $data[$dataKey] = ''; // empty image
+                    }
+                    /*$files = $fs->get_area_files($context->id, 'block_exastud', 'report_image_'.$dataKey, $student->id, 'itemid', false);
+                    if ($files) {
+                        foreach ($files as $file) {
+                            if ($file->get_userid() != $USER->id) {
+                                continue;
+                            }
+                            $file_content = $file->get_content();
+                            $file_info = $file->get_imageinfo();
+                            $fileExt = pathinfo($file->get_filename(), PATHINFO_EXTENSION);
+                            $templateProcessor->setMarkerImages($dataKey, $file_content, $fileExt, $input['width'], $input['height'], $file_info);
+                        }
+                    } else {
+                        $data[$dataKey] = ''; // empty image
+                    }*/
+                }
+            }
+        }
 
         //echo "<pre>debug:<strong>printer.php:121</strong>\r\n"; print_r($templateid); echo '</pre>'; // !!!!!!!!!! delete it
 
@@ -776,7 +806,7 @@ class printer {
 
 		// save as a random file in temp file
 		$temp_file = tempnam($CFG->tempdir, 'exastud');
-		$templateProcessor->saveAs($temp_file);
+        $templateProcessor->saveAs($temp_file);
 		//change ending for dotx files
 		if ($template->get_name() == "BP 2004/GMS Abschlusszeugnis der Förderschule" || $template->get_name() == "BP 2004/GMS Halbjahreszeugniss der Förderschule") {
 			$filename = ($certificate_issue_date_text ?: date('Y-m-d'))."-".$template->get_name()."-{$class->title}-{$student->lastname}-{$student->firstname}.dotx";
@@ -845,6 +875,11 @@ class printer {
         if (count($normal_subjects) > 10) {
             $templateProcessor->changeOrientation('L');
         }
+
+        // class logo: ${class_logo}
+        if (!$templateProcessor->addImageToReport('class_logo', 'class_logo', $class->id, 1024, 768)) {
+            $templateProcessor->setValue("class_logo", ''); // no logo files
+        };
 
 		foreach ($normal_subjects as $subject) {
             $shorttitle = trim($subject->shorttitle);
@@ -1538,6 +1573,34 @@ class Slice {
 }
 
 class TemplateProcessor extends \PhpOffice\PhpWord\TemplateProcessor {
+    protected $_rels;
+    protected $_types;
+    protected $_countRels = 0;
+
+    public function __construct($documentTemplate){
+        parent::__construct($documentTemplate);
+        $this->_countRels = 100;
+    }
+
+    public function save()
+    {
+        //add this snippet to this function after $this->zipClass->addFromString('word/document.xml', $this->tempDocumentMainPart);
+        if ($this->_rels != "") {
+            $this->zipClass->addFromString('word/_rels/document.xml.rels', $this->_rels);
+        }
+        if ($this->_types != "") {
+            $this->zipClass->addFromString('[Content_Types].xml', $this->_types);
+        }
+        return parent::save();
+    }
+
+    function limpiarString($str) {
+        return str_replace(
+                array('&', '<', '>', "\n"),
+                array('&amp;', '&lt;', '&gt;', "\n" . '<w:br/>'),
+                $str
+        );
+    }
 
 	function getDocumentMainPart() {
 		return $this->tempDocumentMainPart;
@@ -1877,4 +1940,108 @@ class TemplateProcessor extends \PhpOffice\PhpWord\TemplateProcessor {
 	function updateFile($filename, $path) {
 		return $this->zipClass->addFromString($filename, file_get_contents($path));
 	}
+
+	function updateFileFromContent($filename, $content) {
+		return $this->zipClass->addFromString($filename, $content);
+	}
+
+    /**
+     * @param string $strKey
+     * @param string $imgContent
+     * @param string $imgExt
+     * @param int $w
+     * @param int $h
+     * @param array $imageinfo
+     * @return mixed
+     */
+    public function setMarkerImages($strKey, $imgContent = '', $imgExt = 'jpg', $w = 200, $h = 200, $imageinfo = array()) {
+        if (!$strKey || !$imgContent || !$imgExt) {
+            return false;
+        }
+
+        $strKey = '${'.$strKey.'}';
+        $relationTmpl = '<Relationship Id="RID" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/image" Target="media/IMG"/>';
+
+        $imgTmpl = '<w:pict><v:shape type="#_x0000_t75" style="width:WIDpx;height:HEIpx"><v:imagedata r:id="RID" o:title=""/></v:shape></w:pict>';
+
+        $toAdd = $toAddImg = $toAddType = '';
+        $aSearch = array('RID', 'IMG');
+        $aSearchType = array('IMG', 'EXT');
+        $countrels = $this->_countRels++;
+        $imgName = 'img' . $countrels . '.' . $imgExt;
+
+        $this->zipClass->deleteName('word/media/'.$imgName);
+        $this->zipClass->addFromString('word/media/'.$imgName, $imgContent);
+
+        $newW = $w;
+        $newH = $h;
+        if (count($imageinfo) > 0 && (array_key_exists('width', $imageinfo) || array_key_exists('height', $imageinfo))) {
+            $fileWidth = $imageinfo['width'];
+            $fileHeight = $imageinfo['height'];
+            $resized = false;
+            // size of image will changed only if file size greater than needed.
+            // if file size is less - will be used file size
+            if ($fileWidth > $w) {
+                $koef = $fileWidth / $w;
+                $newW = $w;
+                $newH = round((int)$fileHeight / $koef);
+                $fileWidth = $newW; // for use in hight checking
+                $fileHeight = $newH; // for use in hight checking
+                $resized = true;
+            }
+            if ($fileHeight > $h) {
+                $koef = $fileHeight / $h;
+                $newW = round((int)$fileWidth / $koef);
+                $newH = $h;
+                $resized = true;
+            }
+            if (!$resized) {
+                $newW = $fileWidth;
+                $newH = $fileHeight;
+            }
+        }
+
+        $typeTmpl = '<Override PartName="/word/media/'.$imgName.'" ContentType="image/EXT"/>';
+
+        $rid = 'rId' . $countrels;
+
+        $toAddImg .= str_replace(array('RID', 'WID', 'HEI'), array($rid, $newW, $newH), $imgTmpl) ;
+
+        $aReplace = array($imgName, $imgExt);
+        $toAddType .= str_replace($aSearchType, $aReplace, $typeTmpl) ;
+
+        $aReplace = array($rid, $imgName);
+        $toAdd .= str_replace($aSearch, $aReplace, $relationTmpl);
+
+        if ($this->_rels == "") {
+            $this->_rels = $this->zipClass->getFromName('word/_rels/document.xml.rels');
+            $this->_types = $this->zipClass->getFromName('[Content_Types].xml');
+        }
+
+        $this->_types = str_replace('</Types>', $toAddType, $this->_types) . '</Types>';
+        $this->_rels = str_replace('</Relationships>', $toAdd, $this->_rels) . '</Relationships>';
+
+        $this->directReplace($strKey, $toAddImg);
+        //return $toAddImg;
+    }
+
+    // Mainf function to add images to temlkate
+    public function addImageToReport($stringKey, $filearea, $modelid, $w, $h, $fileFromLoggedInUser = false) {
+        global $USER;
+        $fs = get_file_storage();
+        $files = $fs->get_area_files(\context_system::instance()->id, 'block_exastud', $filearea, $modelid, 'itemid', false);
+        if ($files) {
+            foreach ($files as $file) {
+                if ($fileFromLoggedInUser && $file->get_userid() != $USER->id) {
+                    continue;
+                }
+                $file_content = $file->get_content();
+                $file_info = $file->get_imageinfo();
+                $fileExt = pathinfo($file->get_filename(), PATHINFO_EXTENSION);
+                $this->setMarkerImages($stringKey, $file_content, $fileExt, $w, $h, $file_info);
+            }
+        }
+        return false; // empty marker
+    }
+
 }
