@@ -94,6 +94,7 @@ $string['project_based_noclassestoreview'] = 'No projects to review';
 $string['class'] = 'Class';
 $string['class_owner'] = 'Class owner';
 $string['class_logo'] = 'Class logo';
+$string['class_delete'] = 'Delete class';
 $string['project_based_class'] = 'Project';
 $string['reviewclass'] = 'Class review';
 $string['project_based_reviewclass'] = 'Project review';

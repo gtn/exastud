@@ -302,6 +302,10 @@ return [
 		'Class logo',
 		'Class logo',
 	],
+	'class_delete' => [
+		'Klasse löschen',
+		'Delete class',
+	],
 	'project_based_class' => [
 		'Projekt',
 		'Project',

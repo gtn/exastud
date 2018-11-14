@@ -25,56 +25,93 @@ block_exastud_require_login($courseid);
 
 block_exastud_require_global_cap(BLOCK_EXASTUD_CAP_MANAGE_CLASSES);
 
+$startPeriod = optional_param('startPeriod', 0, PARAM_INT);
+$countOfShownPeriods = 4;
+
 $actPeriod = block_exastud_get_active_or_next_period();
 $lastPeriod = block_exastud_get_last_period();
-$classes = block_exastud_get_head_teacher_classes_owner($actPeriod->id);
+$periods = block_exastud_get_last_periods($startPeriod, $countOfShownPeriods);
+$count_periods = count(block_exastud_get_last_periods(0, 0));
+//$classes = block_exastud_get_head_teacher_classes_owner($actPeriod->id);
 $lastPeriodClasses = $lastPeriod ? block_exastud_get_head_teacher_classes_owner($lastPeriod->id) : [];
-$shownClasses = array(); // Which ckasses already shown on the page
+$shownClasses = array(); // Which classes already shown on the page
 
-$url = '/blocks/exastud/configuration_classes.php';
+// a teacher can has or has not class in the period. So - prepare data before output
+$period_classes = array();
+$class_counts = array();
+foreach ($periods as $period) {
+    $i = 0;
+    $classes = block_exastud_get_head_teacher_classes_owner($period->id, block_exastud_is_siteadmin());
+    foreach ($classes as $cl) {
+        $period_classes[$period->id][$i] = $cl;
+        $i++;
+    }
+    if (array_key_exists($period->id, $period_classes)) {
+        $class_counts[] = count($period_classes[$period->id]);
+    } else {
+        $class_counts[] = 0;
+    }
+}
+$max_classes = max($class_counts);
+
+$url = '/blocks/exastud/configuration_classes.php?startPeriod='.$startPeriod;
 $PAGE->set_url($url);
 
 $output = block_exastud_get_renderer();
 echo $output->header('configuration_classes');
 
-/* Print the Students */
-echo $output->heading($actPeriod->description.': '.block_exastud_get_string('configuration_classes'));
+/* Print the Classes */
+// $actPeriod->description.': ';
+echo $output->heading(block_exastud_get_string('configuration_classes'));
 
-if (!$classes) {
-	echo '<div style="padding-bottom: 20px;">'.block_exastud_get_string('noclassfound').'</div>';
-} else {
-	$table = new html_table();
-
-	$table->head = array(block_exastud_get_string('class'));
-	$table->align = array("left");
-
-	foreach ($classes as $class) {
-		$table->data[] = [
-			'<a href="configuration_class.php?courseid='.$courseid.'&classid='.$class->id.'">'.$class->title.'</a>',
-		];
-        $shownClasses[] = $class->id;
-	}
-
-	echo $output->table($table);
+$tablePeriods = new html_table();
+for ($i = 0; $i <= $max_classes; $i++) {
+    $classes_row = new html_table_row();
+    if ($startPeriod > 0) {
+        $prevCell = new html_table_cell();
+        $classes_row->cells[] = $prevCell;
+    }
+    foreach ($periods as $period) {
+        if (!$tablePeriods->head || !array_key_exists($period->id, $tablePeriods->head)) {
+            $tablePeriods->head[$period->id] = $period->description;
+            $dateStart = date('d F Y', $period->starttime);
+            $dateStart = preg_replace('/\s+/', '&nbsp;', $dateStart);
+            $dateEnd = date('d F Y', $period->endtime);
+            $dateEnd = preg_replace('/\s+/', '&nbsp;', $dateEnd);
+            $tablePeriods->head[$period->id] .= '<br><small>'.$dateStart.' - '.$dateEnd.'</small>';
+        }
+        $periodCell = new html_table_cell();
+        $div = (($startPeriod + $countOfShownPeriods) < $count_periods) ? $countOfShownPeriods : ($count_periods - $startPeriod);
+        $periodCell->attributes['width'] = (100 / $div).'%';
+        if (array_key_exists($period->id, $period_classes) && array_key_exists($i, $period_classes[$period->id])) {
+            $tempClass = $period_classes[$period->id][$i];
+            $periodCell->text = '<a href="configuration_class.php?courseid='.$courseid.'&classid='.$tempClass->id.'">'.$tempClass->title.'</a>';
+            if (block_exastud_is_siteadmin() && $tempClass->userid != $USER->id) {
+                $ownerData = $DB->get_record('user', ['id' => $tempClass->userid]);
+                $periodCell->text .= '&nbsp;<small>(id: '.$tempClass->id.') '.$ownerData->firstname.' '.$ownerData->lastname.'</small>';
+            }
+        } else {
+            $periodCell->text = '';
+        }
+        $classes_row->cells[] = $periodCell;
+    }
+    if (($startPeriod + $countOfShownPeriods) < $count_periods) {
+        $nextCell = new html_table_cell();
+        $classes_row->cells[] = $nextCell;
+    }
+    $tablePeriods->data[] = $classes_row;
 }
-
-if ($lastPeriodClasses) {
-	echo $output->heading($lastPeriod->description.': '.block_exastud_get_string('configuration_classes'));
-
-	$table = new html_table();
-
-	$table->head = array(block_exastud_get_string('class'));
-	$table->align = array("left");
-
-	foreach ($lastPeriodClasses as $class) {
-		$table->data[] = [
-			'<a href="configuration_class.php?courseid='.$courseid.'&classid='.$class->id.'">'.$class->title.'</a>',
-		];
-        $shownClasses[] = $class->id;
-	}
-
-	echo $output->table($table);
+// add prev period link
+if ($startPeriod > 0) {
+    $link = \html_writer::link($CFG->wwwroot.'/blocks/exastud/configuration_classes.php?startPeriod='.($startPeriod - $countOfShownPeriods), ' << ');
+    array_unshift($tablePeriods->head, $link);
 }
+// add next period link
+if (($startPeriod + $countOfShownPeriods) < $count_periods) {
+    $link = \html_writer::link($CFG->wwwroot.'/blocks/exastud/configuration_classes.php?startPeriod='.($startPeriod + $countOfShownPeriods), ' >> ');
+    $tablePeriods->head[] = $link;
+}
+echo $output->table($tablePeriods);
 
 echo $output->link_button($CFG->wwwroot.'/blocks/exastud/configuration_class_info.php?courseid='.$courseid.'&action=add',
 	block_exastud_trans(['de:Klasse hinzufügen', 'en:Add Class']), ['class' => 'btn btn-default']);
@@ -88,7 +125,7 @@ echo $output->link_button($CFG->wwwroot.'/blocks/exastud/import_class.php?course
 	block_exastud_trans(['de:Klasse von Sicherung wiederherstellen', 'en:Import Class from Backup']), ['class' => 'btn btn-default']);
 
 
-if (block_exastud_is_siteadmin()) {
+/*if (block_exastud_is_siteadmin()) {
     $allClasses = block_exastud_get_classes_all(true);
     echo '<br><br>'.$output->heading(block_exastud_get_string('configuration_classes_onlyadmin'));
 
@@ -115,7 +152,7 @@ if (block_exastud_is_siteadmin()) {
     }
 
     echo $output->table($table);
-}
+}*/
 
 /*
 if ($classes = block_exastud_get_head_teacher_classes_shared($actPeriod->id)) {

@@ -141,17 +141,25 @@ function block_exastud_get_head_teacher_cohort() {
 	return $cohort;
 }
 
-function block_exastud_get_head_teacher_classes_owner($periodid) {
+function block_exastud_get_head_teacher_classes_owner($periodid, $forAdmin = false) {
 	if (!block_exastud_has_global_cap(BLOCK_EXASTUD_CAP_MANAGE_CLASSES)) {
 		return [];
 	}
-
-	return g::$DB->get_records_sql("
-			SELECT c.*,
-				'normal' AS type
+	if ($forAdmin) {
+        $sql = 'SELECT c.*,
+				\'normal\' AS type
 			FROM {block_exastudclass} c
-			WHERE c.userid=? AND c.periodid=?
-			ORDER BY c.title", [g::$USER->id, $periodid]);
+			WHERE c.periodid = ?
+			ORDER BY c.title';
+        return g::$DB->get_records_sql($sql, [$periodid]);
+    } else {
+        $sql = 'SELECT c.*,
+				\'normal\' AS type
+			FROM {block_exastudclass} c
+			WHERE c.userid = ? AND c.periodid = ?
+			ORDER BY c.title';
+        return g::$DB->get_records_sql($sql, [g::$USER->id, $periodid]);
+    }
 }
 
 function block_exastud_get_head_teacher_classes_shared($periodid) {
@@ -990,7 +998,18 @@ function block_exastud_get_active_or_next_period() {
 }
 
 function block_exastud_get_active_or_last_period() {
-	return g::$DB->get_record_sql('SELECT * FROM {block_exastudperiod} WHERE (starttime <= '.time().') ORDER BY endtime DESC LIMIT 1');
+    return g::$DB->get_record_sql('SELECT * FROM {block_exastudperiod} WHERE (starttime <= '.time().') ORDER BY endtime DESC LIMIT 1');
+}
+
+function block_exastud_get_last_periods($start = 0, $limit = 4) {
+    $sql = 'SELECT * FROM {block_exastudperiod} WHERE (starttime <= '.time().') ORDER BY endtime DESC ';
+    if ($limit > 0) {
+        $sql .= ' LIMIT '.$limit.' ';
+    }
+    if ($start > 0) {
+        $sql .= ' OFFSET '.$start.' ';
+    }
+    return g::$DB->get_records_sql($sql);
 }
 
 function block_exastud_get_last_period() {

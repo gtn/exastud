@@ -155,7 +155,7 @@ if ($class && $class->id) {
 	$classform->display();
 
 	echo '<br/>';
-	echo $output->heading2(block_exastud_trans('de:Klasse löschen'));
+	echo $output->heading2(block_exastud_get_string('class_delete'));
 
 	if (!block_exastud_get_class_students($class->id) || block_exastud_is_siteadmin()) {
 		$deleteButton = $output->link_button('configuration_class.php?courseid='.$COURSE->id.'&action=delete&classid='.$class->id.'&confirm=1',
@@ -165,7 +165,7 @@ if ($class && $class->id) {
 		$deleteButton = html_writer::empty_tag('input', [
 			'type' => 'button',
 			'onclick' => "alert(".json_encode(block_exastud_get_string('delete_class_only_without_users')).")",
-			'value' => block_exastud_trans('de:Klasse löschen'),
+			'value' => block_exastud_get_string('class_delete'),
             'class' => 'btn btn-danger'
 		]);
 	}

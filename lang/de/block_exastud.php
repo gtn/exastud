@@ -94,6 +94,7 @@ $string['project_based_noclassestoreview'] = 'Kein Projekt zur Beurteilung';
 $string['class'] = 'Klasse';
 $string['class_owner'] = 'Neue Klassenlehrkraft';
 $string['class_logo'] = 'Class logo';
+$string['class_delete'] = 'Klasse löschen';
 $string['project_based_class'] = 'Projekt';
 $string['reviewclass'] = 'Klassenbeurteilung';
 $string['project_based_reviewclass'] = 'Projektbeurteilung';
