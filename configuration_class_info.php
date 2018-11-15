@@ -211,7 +211,7 @@ foreach ($bps as $bp) {
 				var $input = $('input,select').filter('[name=' + name + ']');
 				var val = $input.val();
 				var $select = $('<select/>', {name: name, class: 'custom-select'});
-				$select.attr('data-exastudmessage', '<?php echo block_exastud_get_string('attantion_template_will_change'); ?>');
+				$select.attr('data-exastudmessage', '<?php echo block_exastud_get_string('attention_template_will_change'); ?>');
 
 				$.each(templates_by_bp[$('select[name=bpid]').val()], function (id, title) {
 					$select.append($('<option/>', {

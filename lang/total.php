@@ -130,11 +130,11 @@ return [
 		'Projektbeurteiler',
 		'Project-Teachers',
 	],
-    'attantion_plan_will_change' => [
+    'attention_plan_will_change' => [
         'Bitte beachten Sie: Bei einer Änderung des Bildungsplans müssen alle Bewertungen erneut eingegeben werden.',
         'Please note: If the education plan is changed, all ratings must be re-entered',
     ],
-    'attantion_template_will_change' => [
+    'attention_template_will_change' => [
         'Bitte beachten Sie: Bei einer Änderung des Standard Zeugnisformulars wird für alle Schüler das Zeugnisformular geändert. Bestehende Formulareinstellungen wie z.B. Agangszeugnis werden beibehalten.',
         'Please note: Changing the standard certificate form will change the certificate form for all students.',
     ],
