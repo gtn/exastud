@@ -1,0 +1,10 @@
+
+.additional_buttons {
+    margin-top: 25px;
+    margin-bottom: 25px;
+}
+
+.additional_buttons .btn-toRight {
+    float: right;
+}
+

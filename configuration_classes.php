@@ -90,6 +90,26 @@ for ($i = 0; $i <= $max_classes; $i++) {
                 $ownerData = $DB->get_record('user', ['id' => $tempClass->userid]);
                 $periodCell->text .= '&nbsp;<small>(id: '.$tempClass->id.') '.$ownerData->firstname.' '.$ownerData->lastname.'</small>';
             }
+            // delete buttons
+            if (block_exastud_is_siteadmin() || $tempClass->userid == $USER->id) {
+                $buttons = '';
+                $img = '<img src="'.$CFG->wwwroot.'/blocks/exastud/pix/trash.png" title="'.block_exastud_get_string('class_delete').'"/>';
+                if (!block_exastud_get_class_students($tempClass->id) || block_exastud_is_siteadmin()) {
+                    $buttons .= html_writer::link($CFG->wwwroot.'/blocks/exastud/configuration_class.php?courseid='.$courseid.'&action=delete&classid='.$tempClass->id.'&confirm=1',
+                            $img,
+                            ['exa-confirm' => block_exastud_get_string('delete_confirmation', null, $tempClass->title), 'exa-type' => 'link', 'class' => '', 'title' => block_exastud_get_string('delete')]);
+                } else {
+                    $buttons .= html_writer::link($CFG->wwwroot.'/blocks/exastud/configuration_class.php?courseid='.$courseid.'&action=to_delete&classid='.$tempClass->id.'&confirm=0&startPeriod='.$startPeriod,
+                            $img,
+                            ['title' => block_exastud_get_string('class_delete'), 'class' => '']
+                    );
+                }
+                if ($tempClass->to_delete) {
+                    $buttons .= '<img src="'.$CFG->wwwroot.'/blocks/exastud/pix/attantion.png" title="'.block_exastud_get_string('class_marked_as_todelete').'"/>';;
+                }
+
+                $periodCell->text .= '<span class="exastud-class-buttons">'.$buttons.'</span>';
+            }
         } else {
             $periodCell->text = '';
         }

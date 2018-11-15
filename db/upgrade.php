@@ -448,6 +448,14 @@ function xmldb_block_exastud_upgrade($oldversion = 0) {
         }
     }
 
+    if ($oldversion < 2018111500) {
+        $table = new xmldb_table('block_exastudclass');
+        $field = new xmldb_field('to_delete', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, '0', 'always_basiccategories');
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+    }
+
     block_exastud_insert_default_entries();
 	block_exastud_check_profile_fields();
 

@@ -199,5 +199,21 @@ $.extend(window.block_exastud, {
             }).change();
     });
 
+    $(function() {
+        $('.exastud-review-message [data-exastudmessage]').each(function () {
+            var message = $(this).attr('data-exastudmessage');
+            // add a message after selectbox
+            if (M.cfg.theme == 'boost') {
+            // if ($(this).closest('.felement').length) { // it is a Boost theme (bootstrap?)
+                $(this).closest('.felement').removeClass('col-md-9').addClass('col-md-3');
+                $(this).closest('.felement').after('<div class="col-md-6"><div role="alert" class="alert alert-info alert-block block-exastud-form-message">' + message + '</div></div>');
+            } else {
+                $(this).closest('.felement').addClass('to-table');
+                $(this).addClass('to-cell');
+                $(this).after('<div role="alert" class="alert alert-info alert-block block-exastud-form-message to-cell">' + message + '</div>');
+            }
+        });
+    });
+
  
 }();

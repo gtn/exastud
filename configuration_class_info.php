@@ -146,7 +146,7 @@ if ($classform->is_cancelled()) {
 
 $classform->set_data((array)$class + (array)block_exastud_get_class_data($class->id));
 
-$url = "/blocks/exastud/configuration_class_info.php";
+$url = "/blocks/exastud/configuration_class_info.php?courseid=".$courseid.'&classid='.$classid;
 $PAGE->set_url($url);
 $output = block_exastud_get_renderer();
 echo $output->header(['configuration_classes', 'class_info'], ['class' => ($class && $class->id) ? $class : null]);
@@ -154,29 +154,37 @@ echo $output->header(['configuration_classes', 'class_info'], ['class' => ($clas
 if ($class && $class->id) {
 	$classform->display();
 
-	echo '<br/>';
-	echo $output->heading2(block_exastud_get_string('class_delete'));
+	$buttons = '';
+    //echo '<br/>';
+    //echo $output->heading2(block_exastud_get_string('export_class'));
+
+    $buttons .= $output->link_button('export_class.php?courseid='.$COURSE->id.'&classid='.$class->id,
+            block_exastud_get_string('export_class'), ['class' => 'btn btn-default']);
+
+	//echo '<br/>';
+	//echo $output->heading2(block_exastud_get_string('class_delete'));
 
 	if (!block_exastud_get_class_students($class->id) || block_exastud_is_siteadmin()) {
-		$deleteButton = $output->link_button('configuration_class.php?courseid='.$COURSE->id.'&action=delete&classid='.$class->id.'&confirm=1',
+        $buttons .= $output->link_button('configuration_class.php?courseid='.$COURSE->id.'&action=delete&classid='.$class->id.'&confirm=1',
 			block_exastud_get_string('delete'),
-			['exa-confirm' => block_exastud_get_string('delete_confirmation', null, $class->title), 'class' => 'btn btn-default']);
+			['exa-confirm' => block_exastud_get_string('delete_confirmation', null, $class->title),
+             'class' => 'btn btn-danger btn-toRight']);
 	} else {
-		$deleteButton = html_writer::empty_tag('input', [
+        $buttons .= $output->link_button('configuration_class.php?courseid='.$courseid.'&action=to_delete&classid='.$class->id.'&confirm=0',
+                block_exastud_get_string('class_delete'),
+                ['title' => block_exastud_get_string('class_delete'),
+                 'class' => 'btn btn-danger btn-toRight']
+        );
+		/*$deleteButton = html_writer::empty_tag('input', [
 			'type' => 'button',
 			'onclick' => "alert(".json_encode(block_exastud_get_string('delete_class_only_without_users')).")",
 			'value' => block_exastud_get_string('class_delete'),
             'class' => 'btn btn-danger'
-		]);
+		]);*/
 	}
 
-	echo $deleteButton;
+    echo html_writer::div($buttons, 'additional_buttons');
 
-	echo '<br/>';
-	echo $output->heading2(block_exastud_get_string('export_class'));
-
-	echo $output->link_button('export_class.php?courseid='.$COURSE->id.'&classid='.$class->id,
-		block_exastud_get_string('export_class'), ['class' => 'btn btn-default']);
 } else {
 	echo $output->heading(block_exastud_trans(['de:Klasse hinzufügen', 'en:Add Class']));
 
@@ -203,6 +211,7 @@ foreach ($bps as $bp) {
 				var $input = $('input,select').filter('[name=' + name + ']');
 				var val = $input.val();
 				var $select = $('<select/>', {name: name, class: 'custom-select'});
+				$select.attr('data-exastudmessage', '<?php echo block_exastud_get_string('attantion_template_will_change'); ?>');
 
 				$.each(templates_by_bp[$('select[name=bpid]').val()], function (id, title) {
 					$select.append($('<option/>', {

@@ -22,6 +22,7 @@ require __DIR__.'/inc.php';
 $courseid = optional_param('courseid', 1, PARAM_INT); // Course ID
 $action = optional_param('action', '', PARAM_TEXT);
 $type = optional_param('type', '', PARAM_TEXT);
+$startPeriod = optional_param('startPeriod', 0, PARAM_INT);
 
 if ($type != 'categories' && $type != 'teachers' && $type != 'teachers_options' && $type != 'studentgradereports') {
 	$type = 'students';
@@ -61,6 +62,47 @@ if ($action == 'delete') {
 }
 
 $output = block_exastud_get_renderer();
+
+// the teacher can not delete this class, because the class has related data
+// so the teacher can mark this class to deleting by admin
+if ($action == 'to_delete') {
+    $classData = block_exastud_get_class($class->id);
+	$confirm = optional_param('confirm', false, PARAM_BOOL);
+	if ($confirm) {
+	    $unmark = optional_param('unmark', false, PARAM_BOOL);
+	    if ($unmark) {
+            $classData->to_delete = 0;
+        } else {
+            $classData->to_delete = 1;
+        }
+	    $DB->update_record('block_exastudclass', $classData);
+        redirect(new moodle_url('/blocks/exastud/configuration_classes.php?courseid='.$courseid.'&startPeriod='.$startPeriod));
+    } else {
+	    // confirmation message
+        echo $output->header(['configuration_classes']);
+        echo $OUTPUT->notification(block_exastud_get_string('force_class_to_delete'), 'notifymessage');
+        if ($classData->to_delete) {
+            echo $OUTPUT->notification(block_exastud_get_string('already_marked'), 'warning');
+            echo html_writer::link($CFG->wwwroot.'/blocks/exastud/configuration_class.php?courseid='.$courseid.
+                    '&action=to_delete&classid='.$classData->id.'&confirm=1&unmark=1startPeriod='.$startPeriod,
+                    block_exastud_get_string('unmark_to_delete_go'),
+                    ['class' => 'btn btn-info', 'title' => block_exastud_get_string('unmark_to_delete_go')]);
+        } else {
+            echo html_writer::link($CFG->wwwroot.'/blocks/exastud/configuration_class.php?courseid='.$courseid.
+                    '&action=to_delete&classid='.$classData->id.'&confirm=1&startPeriod='.$startPeriod,
+                    block_exastud_get_string('mark_to_delete_go'),
+                    ['class' => 'btn btn-danger', 'title' => block_exastud_get_string('mark_to_delete_go')]);
+        }
+        echo '&nbsp;&nbsp;&nbsp;';
+        echo html_writer::link($CFG->wwwroot.'/blocks/exastud/configuration_classes.php?courseid='.$courseid.'&startPeriod='.$startPeriod,
+                block_exastud_get_string('back'),
+                ['class' => 'btn btn-default', 'title' => block_exastud_get_string('back')]);
+
+        echo $output->footer();
+        exit;
+    }
+}
+
 echo $output->header(['configuration_classes', $type], ['class' => $class]);
 
 /* Print the Students */

@@ -40,18 +40,18 @@ class class_edit_form extends moodleform {
 		$mform->addRule('title', null, 'required', null, 'client');
 
 		$bps = g::$DB->get_records_menu('block_exastudbp', null, 'sorting', 'id, title');
-		$mform->addElement('select', 'bpid', block_exastud_trans('de:Bildungsplan').':', $bps);
+		$mform->addElement('select', 'bpid', block_exastud_get_string('class_educationplan').':', $bps, ['class' => 'exastud-review-message', 'data-exastudmessage' => block_exastud_get_string('attantion_plan_will_change')]);
 
-		$mform->addElement('static', '', '&nbsp;',
-			g::$OUTPUT->notification(block_exastud_trans(['de:Bitte beachten Sie: Bei einer Änderung des Bildungsplans müssen alle Bewertungen erneut eingegeben werden.', 'en:']), 'notifymessage')
-		);
+/*		$mform->addElement('static', '', '&nbsp;',
+			g::$OUTPUT->notification(block_exastud_get_string('attantion_plan_will_change'), 'notifymessage')
+		);*/
 
-		$mform->addElement('text', BLOCK_EXASTUD_DATA_ID_CLASS_DEFAULT_TEMPLATEID, block_exastud_trans(['de:Standard Zeugnisformular', 'en: Default template']).':');
+		$mform->addElement('text', BLOCK_EXASTUD_DATA_ID_CLASS_DEFAULT_TEMPLATEID, block_exastud_get_string('class_default_template').':', ['class' => 'exastud-review-message']);
 		$mform->setType(BLOCK_EXASTUD_DATA_ID_CLASS_DEFAULT_TEMPLATEID, PARAM_TEXT);
 
-		$mform->addElement('static', '', '&nbsp;',
-			g::$OUTPUT->notification(block_exastud_trans(['de:Bitte beachten Sie: Bei einer Änderung des Standard Zeugnisformulars wird für alle Schüler das Zeugnisformular geändert. Bestehende Formulareinstellungen wie z.B. Agangszeugnis werden beibehalten.', 'en:']), 'notifymessage')
-		);
+/*		$mform->addElement('static', '', '&nbsp;',
+			g::$OUTPUT->notification(block_exastud_get_string('attantion_template_will_change'), 'notifymessage')
+		);*/
 
 		/*
 		$subjects = $DB->get_records_menu('block_exastudsubjects', null, 'title', 'id, title');
@@ -66,10 +66,10 @@ class class_edit_form extends moodleform {
             foreach ($headteachers as $teacher) {
                 $options[$teacher->id] = $teacher->lastname.' '.$teacher->firstname;
             }
-            $mform->addElement('select', 'userid', get_string('class_owner', 'block_exastud'), $options);
+            $mform->addElement('select', 'userid', block_exastud_get_string('class_owner'), $options);
         }
 
-        $mform->addElement('filemanager', 'class_logo', get_string('class_logo', 'block_exastud'), null,
+        $mform->addElement('filemanager', 'class_logo', block_exastud_get_string('class_logo'), null,
                 array(
                         'subdirs' => 0,
                         'maxfiles' => 1,

@@ -120,3 +120,21 @@
 body[id^=page-blocks-exastud].pagelayout-embedded {
 	padding-top: 0;
 }
+
+.exastud-review-message .block-exastud-form-message {
+	display: inline-block;
+	padding: 5px;
+	/*float: right;*/
+	/*max-width: 50%;*/
+}
+
+.exastud-review-message .to-table {
+	display: table;
+}
+.exastud-review-message .to-cell {
+	display: table-cell;
+}
+
+.exastud-review-message select {
+	margin-right: 15px;
+}

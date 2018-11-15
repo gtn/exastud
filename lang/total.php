@@ -130,6 +130,14 @@ return [
 		'Projektbeurteiler',
 		'Project-Teachers',
 	],
+    'attantion_plan_will_change' => [
+        'Bitte beachten Sie: Bei einer Änderung des Bildungsplans müssen alle Bewertungen erneut eingegeben werden.',
+        'Please note: If the education plan is changed, all ratings must be re-entered',
+    ],
+    'attantion_template_will_change' => [
+        'Bitte beachten Sie: Bei einer Änderung des Standard Zeugnisformulars wird für alle Schüler das Zeugnisformular geändert. Bestehende Formulareinstellungen wie z.B. Agangszeugnis werden beibehalten.',
+        'Please note: Changing the standard certificate form will change the certificate form for all students.',
+    ],
 	'class_info' => [
 		'Klasseneinstellungen',
 		'Edit Class',
@@ -294,6 +302,14 @@ return [
 		'Klasse',
 		'Class',
 	],
+    'class_educationplan' => [
+        'Bildungsplan',
+        'Education plan'
+    ],
+    'class_default_template' => [
+        'Standard Zeugnisformular',
+        'Default template'
+    ],
 	'class_owner' => [
 		'Neue Klassenlehrkraft',
 		'Class owner',
@@ -769,6 +785,26 @@ return [
     'delete_class_only_without_users' => [
         'Es können nur Klassen ohne Schüler gelöscht werden',
         'Only classes without students can be deleted'
+    ],
+    'force_class_to_delete' => [
+        'Es können nur Klassen ohne Schüler gelöscht werden. But you can mark this class to deleting by site-admin',
+        'Only classes without students can be deleted. But you can mark this class to deleting by site-admin'
+    ],
+    'already_marked' => [
+        'This class already marked',
+        'This class already marked'
+    ],
+    'mark_to_delete_go' => [
+        'Mark to delete by admin',
+        'Mark to delete by admin'
+    ],
+    'unmark_to_delete_go' => [
+        'Unmark to delete by admin',
+        'Unmark to delete by admin'
+    ],
+    'class_marked_as_todelete' => [
+        'This class marked to delete by site-admin',
+        'This class marked to delete by site-admin',
     ],
     'interdisciplinary_competences' => [
         'Fachübergreifende Kompetenzen',
