@@ -65,7 +65,7 @@ function block_exastud_print_period($courseid, $period, $type) {
 		}
 
 		foreach ($reviewsubjects as $key => $reviewsubject) {
-			$unlocked_teachers = (array)json_decode(block_exastud_get_class_data($class->id, BLOCK_EXASTUD_DATA_ID_UNLOCKED_TEACHERS), true);
+			$unlocked_teachers = (array)json_decode(block_exastud_get_class_data($reviewsubject->classid, BLOCK_EXASTUD_DATA_ID_UNLOCKED_TEACHERS), true);
 
 			if ((isset($unlocked_teachers[g::$USER->id]) && $unlocked_teachers[g::$USER->id] > time())
 				|| (isset($unlocked_teachers[0]) && $unlocked_teachers[0] > time())

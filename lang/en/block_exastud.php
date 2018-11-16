@@ -149,6 +149,9 @@ $string['print'] = 'print';
 $string['perioddesc'] = 'description of the period: ';
 $string['noperiods'] = 'There is no assessment-period defined yet. Please contact the administrator.';
 $string['commentshouldnotbeempty'] = 'You have to enter a comment.';
+$string['report_template'] = 'Template';
+$string['report_preview'] = 'Preview';
+$string['report_select_all'] = 'Select all';
 $string['report_settings'] = 'Report settings';
 $string['report_settings_edit'] = 'Report configurations';
 $string['report_settings_new'] = 'New report configuration';
@@ -191,7 +194,7 @@ $string['report_setting_type_textarea'] = 'Textarea';
 $string['report_setting_type_text'] = 'Text';
 $string['report_setting_type_select'] = 'Select';
 $string['report_setting_type_header'] = 'Header';
-$string['report_setting_type_image'] = 'Picture (soon)';
+$string['report_setting_type_image'] = 'Picture';
 $string['report_setting_type_image_maxbytes'] = 'Max size (bytes)';
 $string['report_setting_type_image_width'] = 'Width';
 $string['report_setting_type_image_height'] = 'Height';
@@ -220,6 +223,7 @@ $string['mark_to_delete_go'] = 'Mark to delete by admin';
 $string['unmark_to_delete_go'] = 'Unmark to delete by admin';
 $string['class_marked_as_todelete'] = 'This class marked to delete by site-admin';
 $string['interdisciplinary_competences'] = 'Interdisciplinary competences';
+$string['average'] = 'Average';
 
 
 // === settings ===

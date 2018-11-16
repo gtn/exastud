@@ -809,9 +809,9 @@ class printer {
         $templateProcessor->saveAs($temp_file);
 		//change ending for dotx files
 		if ($template->get_name() == "BP 2004/GMS Abschlusszeugnis der Förderschule" || $template->get_name() == "BP 2004/GMS Halbjahreszeugniss der Förderschule") {
-			$filename = ($certificate_issue_date_text ?: date('Y-m-d'))."-".$template->get_name()."-{$class->title}-{$student->lastname}-{$student->firstname}.dotx";
+			$filename = ($certificate_issue_date_text ? preg_replace('/[\\/]/', '-', $certificate_issue_date_text) : date('Y-m-d'))."-".$template->get_name()."-{$class->title}-{$student->lastname}-{$student->firstname}.dotx";
 		} else {
-			$filename = ($certificate_issue_date_text ?: date('Y-m-d'))."-".$template->get_name()."-{$class->title}-{$student->lastname}-{$student->firstname}.docx";
+			$filename = ($certificate_issue_date_text ? preg_replace('/[\\/]/', '-', $certificate_issue_date_text) : date('Y-m-d'))."-".$template->get_name()."-{$class->title}-{$student->lastname}-{$student->firstname}.docx";
 		}
 
 		return (object)[

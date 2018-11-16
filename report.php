@@ -56,49 +56,59 @@ if ($classid = optional_param('classid', 0, PARAM_INT)) {
         echo $output->footer();
         exit();
     }
-    
-    if ($template = optional_param('template', '', PARAM_TEXT)) {
+
+    //$template = optional_param('template', '', PARAM_TEXT);
+    $templatesFromForm = optional_param_array('template', [], PARAM_TEXT);
+    if (count($templatesFromForm) > 0) {
+        $zipfilename = tempnam($CFG->tempdir, "zip");
+        $zip = new \ZipArchive();
+        $zip->open($zipfilename, \ZipArchive::OVERWRITE);
+
+        $temp_files = [];
+        $files_to_zip = [];
+
         $studentids = \block_exastud\param::optional_array('studentids', PARAM_INT);
-        
+
         $printStudents = [];
         foreach ($studentids as $studentid) {
             if (isset($classstudents[$studentid])) {
                 $printStudents[] = $classstudents[$studentid];
             }
         }
-        
-        if ($printStudents && $template == 'html_report') {
-            
-            $PAGE->set_pagelayout('embedded');
-            echo $output->header('report');
-            
-            $classheader = block_exastud_get_period($class->periodid)->description . ' - ' . $class->title;
-            echo $output->heading($classheader);
-            
-            foreach ($printStudents as $student) {
-                $studentdesc = $OUTPUT->user_picture($student, array(
-                    "courseid" => $courseid
-                )) . ' ' . fullname($student);
-                echo $output->heading($studentdesc);
-                
-                echo $output->student_report($class, $student);
-                
-                echo '<hr>';
+
+        foreach ($templatesFromForm as $template => $tempVal2) {
+
+            if ($printStudents && $template == 'html_report') {
+
+                $PAGE->set_pagelayout('embedded');
+                echo $output->header('report');
+
+                $classheader = block_exastud_get_period($class->periodid)->description.' - '.$class->title;
+                echo $output->heading($classheader);
+
+                foreach ($printStudents as $student) {
+                    $studentdesc = $OUTPUT->user_picture($student, array(
+                                    "courseid" => $courseid
+                            )).' '.fullname($student);
+                    echo $output->heading($studentdesc);
+
+                    echo $output->student_report($class, $student);
+
+                    echo '<hr>';
+                }
+
+                // echo $output->back_button(new moodle_url('report.php', ['courseid' => $courseid, 'classid' => $classid]));
+                echo $output->footer();
+                exit();
             }
-            
-            // echo $output->back_button(new moodle_url('report.php', ['courseid' => $courseid, 'classid' => $classid]));
-            echo $output->footer();
-            exit();
-        }
-        
-        if ($printStudents && $template == 'grades_report') {
-            \block_exastud\printer::grades_report($class, $printStudents);
-        }
-        
-        if ($printStudents && $template == 'grades_report_xlsx') {
-            \block_exastud\printer::grades_report_xlsx($class, $printStudents);
-        }
-        
+
+            if ($printStudents && $template == 'grades_report') {
+                \block_exastud\printer::grades_report($class, $printStudents);
+            }
+
+            if ($printStudents && $template == 'grades_report_xlsx') {
+                \block_exastud\printer::grades_report_xlsx($class, $printStudents);
+            }
 
             /*
              * if ($printStudents && $template == 'html_report_grades') {
@@ -114,52 +124,62 @@ if ($classid = optional_param('classid', 0, PARAM_INT)) {
              * exit;
              * }
              */
-            
-            if (! $printStudents) {
+
+            if (!$printStudents) {
                 // do nothing
-            } elseif (count($printStudents) == 1) {
+            } else if (count($printStudents) == 1) {
                 // print one student
                 $student = reset($printStudents);
                 $file = \block_exastud\printer::report_to_temp_file($class, $student, $template, $courseid);
-                
-                ob_clean();
-                
-                if ($content = ob_get_clean()) {
-                    throw new \Exception('there was some other output: ' . $content);
-                }
-                
-                require_once $CFG->dirroot . '/lib/filelib.php';
-                send_temp_file($file->temp_file, $file->filename);
-                
-                exit();
+                $files_to_zip[$file->temp_file] = '/'.$student->firstname.'-'.$student->lastname.'-'.$student->id.'/'.$file->filename;
+
+                //ob_clean();
+                //if ($content = ob_get_clean()) {
+                //    throw new \Exception('there was some other output: '.$content);
+                //}
+                //require_once $CFG->dirroot.'/lib/filelib.php';
+                //send_temp_file($file->temp_file, $file->filename);
+                //exit();
             } else {
-                $zipfilename = tempnam($CFG->tempdir, "zip");
-                $zip = new \ZipArchive();
-                $zip->open($zipfilename, \ZipArchive::OVERWRITE);
-                
-                $temp_files = [];
-                
+
                 foreach ($printStudents as $student) {
                     $file = \block_exastud\printer::report_to_temp_file($class, $student, $template, $courseid);
-                    $zip->addFile($file->temp_file, $file->filename);
+                    $files_to_zip[$file->temp_file] = '/'.$student->firstname.'-'.$student->lastname.'-'.$student->id.'/'.$file->filename;
+                    //$zip->addFile($file->temp_file, $files_to_zip[$file->temp_file]);
                     $temp_files[] = $file->temp_file;
                 }
-                
-                $zip->close();
-                
-                // bug in zip?!? first close the zip and then we can delete the temp files
-                foreach ($temp_files as $temp_file) {
-                    unlink($temp_file);
-                }
-                
-                $certificate_issue_date_text = block_exastud_get_certificate_issue_date_text($class);
-                $filename = ($certificate_issue_date_text ?: date('Y-m-d')) . "-Lernentwicklungsbericht-{$class->title}.zip";
-                
-                require_once $CFG->dirroot . '/lib/filelib.php';
-                send_temp_file($zipfilename, $filename);
-                exit();
+                //$certificate_issue_date_text = block_exastud_get_certificate_issue_date_text($class);
+                //$filename = ($certificate_issue_date_text ?: date('Y-m-d'))."-Lernentwicklungsbericht-{$class->title}.zip";
+
             }
         }
+
+        require_once $CFG->dirroot.'/lib/filelib.php';
+
+        if (count($files_to_zip) > 1) {
+            foreach ($files_to_zip as $tempF => $fileName) {
+                $zip->addFile($tempF, $fileName);
+            }
+        } elseif (count($files_to_zip) == 1) {
+            ob_clean();
+            if ($content = ob_get_clean()) {
+                throw new \Exception('there was some other output: '.$content);
+            }
+            send_temp_file($file->temp_file, $file->filename);
+            exit();
+        }
+
+        $zip->close();
+
+        // bug in zip?!? first close the zip and then we can delete the temp files
+        foreach ($temp_files as $temp_file) {
+            unlink($temp_file);
+        }
+
+        $newZipFilename = 'report-'.date('Y-m-d-H-i').'.zip';
+        send_temp_file($zipfilename, $newZipFilename);
+        exit();
+    }
     
     
     /* Print the Students */
@@ -216,11 +236,29 @@ if ($classid = optional_param('classid', 0, PARAM_INT)) {
     
     echo '<form method="post" id="report" target="_blank">';
     
-    echo block_exastud_trans([
-        'de:Vorlage',
-        'en:Template'
-    ]) . ': ';
-    echo html_writer::select($templates, 'template', $template, false);
+    echo block_exastud_get_string('report_template') . ': ';
+    //echo html_writer::select($templates, 'template', $template, false);
+    $templateTable = new html_table();
+    $templateTable->head[] = block_exastud_get_string('report_template') . ': '. '<span style="color:red;">(developer mode!)</span>'; //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    $templateTable->headspan = [2];
+    $templateRow = new html_table_row();
+    $firstCell = new html_table_cell();
+    $firstCell->attributes['width'] = '30%';
+    $firstCell->attributes['valign'] = 'top';
+    $firstCell->style .= 'vertical-align:top;';
+    $firstCell->text .= html_writer::checkbox('preview', '1', false, '&nbsp;'.block_exastud_get_string('report_preview'), ['class' => 'exastud-preview-checkbox']).'<br />';
+    $firstCell->text .= html_writer::checkbox('select_all', '1', false, '&nbsp;'.block_exastud_get_string('report_select_all'), ['class' => 'exastud-selectall-checkbox']);
+
+    $secondCell = new html_table_cell();
+    foreach ($templates as $key => $tmpl) {
+        $secondCell->text .= html_writer::checkbox('template['.$key.']', '1', false, '&nbsp;'.$tmpl, ['class' => 'exastud-selecttemplate-checkbox', 'data-templateid' => $key]).'<br />';
+    }
+
+    $templateRow->cells[] = $firstCell;
+    $templateRow->cells[] = $secondCell;
+
+    $templateTable->data[] = $templateRow;
+    echo $output->table($templateTable);
 
     echo $output->table($table);
     

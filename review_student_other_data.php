@@ -101,13 +101,11 @@ $studentform = new student_other_data_form($PAGE->url, [
 if ($fromform = $studentform->get_data()) {
     $context = context_system::instance(); // TODO: which context to use?
 	foreach ($categories as $dataid => $category) {
-	    switch ($category['type']) {
-            case 'image':
-                file_save_draft_area_files($fromform->images[$dataid], $context->id, 'block_exastud', 'report_image_'.$dataid,
-                        $student->id, array('subdirs' => 0, 'maxbytes' => $category['maxbytes'], 'maxfiles' => 1));
-                break;
-            default:
-                block_exastud_set_class_student_data($classid, $studentid, $dataid, $fromform->{$dataid});
+	    if (array_key_exists('type', $category) && $category['type'] == 'image') {
+            file_save_draft_area_files($fromform->images[$dataid], $context->id, 'block_exastud', 'report_image_'.$dataid,
+                    $student->id, array('subdirs' => 0, 'maxbytes' => $category['maxbytes'], 'maxfiles' => 1));
+        } else {
+            block_exastud_set_class_student_data($classid, $studentid, $dataid, $fromform->{$dataid});
         }
         block_exastud_set_class_student_data($classid, $studentid, $dataid.'.modifiedby', $USER->id);
         block_exastud_set_class_student_data($classid, $studentid, $dataid.'.timemodified', time());
@@ -124,8 +122,74 @@ echo $output->heading($classheader);
 if ($type == BLOCK_EXASTUD_DATA_ID_LERN_UND_SOZIALVERHALTEN) {
 	$user = $student;
 	$userReport = block_exastud_get_report($user->id, $actPeriod->id);
+	$userCategoryReviews = block_exastud_get_reviewers_by_category($actPeriod->id, $user->id, false);
+    $teachers = array();
+	foreach ($userCategoryReviews as $rid => $r) {
+        $tmpUser = block_exastud_get_user($rid);
+        $teachers[$rid] = fullname($tmpUser);
+    }
+    asort($teachers);
 
 	$table = new html_table();
+	$headerrow = new html_table_row();
+	$userData = new html_table_cell();
+    $userData->rowspan = 2;
+    $userData->header = true;
+    $userData->text = $OUTPUT->user_picture($user, array("courseid" => $courseid)).fullname($user);
+    $headerrow->cells[] = $userData;
+    $average = new html_table_cell();
+    $average->header = true;
+    $average->rowspan = 2;
+    $average->text = block_exastud_get_string('average');
+    $headerrow->cells[] = $average;
+    // teachers
+    foreach ($teachers as $teacherId => $teacherName) {
+        $hCell = new html_table_cell();
+        $hCell->header = true;
+        $hCell->text = $teacherName;
+        $hCell->colspan = count($userCategoryReviews[$teacherId]);
+        $headerrow->cells[] = $hCell;
+    }
+    $table->data[] = $headerrow;
+    // subjects
+    $subjectsRow = new html_table_row();
+    foreach ($teachers as $teacherId => $teacherName) {
+        foreach (array_keys($userCategoryReviews[$teacherId]) as $subjectId) {
+            $subj = new html_table_cell();
+            $subj->header = true;
+            $subj->text = $DB->get_field('block_exastudsubjects', 'title', ['id' => $subjectId]);
+            $subjectsRow->cells[] = $subj;
+        }
+    }
+    $table->data[] = $subjectsRow;
+
+    $reviewcategories = block_exastud_get_class_categories($classid);
+    foreach ($reviewcategories as $category) {
+        $row = array();
+        $categoryCell = new html_table_cell();
+        $categoryCell->text = $category->title;
+        $row[] = $categoryCell;
+        $row[] = @$userReport->category_averages[$category->source.'-'.$category->id];
+        foreach ($teachers as $teacherId => $teacherName) {
+            if (array_key_exists($teacherId, $userCategoryReviews)) {
+                foreach (array_keys($userCategoryReviews[$teacherId]) as $subjectId) {
+                    if (array_key_exists($subjectId, $userCategoryReviews[$teacherId])
+                            && array_key_exists($category->source, $userCategoryReviews[$teacherId][$subjectId])
+                            && array_key_exists($category->id, $userCategoryReviews[$teacherId][$subjectId][$category->source])) {
+                        $row[] = $userCategoryReviews[$teacherId][$subjectId][$category->source][$category->id];
+                    } else {
+                        $row[] = '';
+                    }
+                }
+            } else {
+                $row[] = '';
+            }
+        }
+        $table->data[] = $row;
+    }
+    echo $output->table($table);
+
+	/*$table = new html_table();
 
 	$reviewcategories = block_exastud_get_class_categories($classid);
 
@@ -156,7 +220,7 @@ if ($type == BLOCK_EXASTUD_DATA_ID_LERN_UND_SOZIALVERHALTEN) {
 
 	$table->data[] = $row;
 
-	echo $output->table($table);
+	echo $output->table($table);*/
 
 	$vorschlaege = [];
 	foreach (block_exastud_get_class_teachers($classid) as $class_teacher) {
@@ -202,7 +266,7 @@ $formdata = $olddata;
 if (count($categories) > 0) {
     $context = context_system::instance(); // TODO: which context to use?
     foreach ($categories as $dataid => $category) {
-        if ($category['type'] == 'image') {
+        if (array_key_exists('type', $category) && $category['type'] == 'image') {
             //if (!array_key_exists('images', $formdata)) {
             //    $formdata['images'] = array();
             //}

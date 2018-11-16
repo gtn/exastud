@@ -149,6 +149,9 @@ $string['print'] = 'Drucken';
 $string['perioddesc'] = 'Beschreibung des Eingabezeitraums';
 $string['noperiods'] = 'Es gibt noch keinen Eingabezeitraum. Bitte wenden Sie sich an den Administrator.';
 $string['commentshouldnotbeempty'] = 'Der Kommentar darf nicht leer sein.';
+$string['report_template'] = 'Vorlage';
+$string['report_preview'] = 'Bildschirmausgabe';
+$string['report_select_all'] = 'als Datei speichern';
 $string['report_settings'] = 'Berichtskonfiguration';
 $string['report_settings_edit'] = 'Berichts-Konfigurationen';
 $string['report_settings_new'] = 'Neue Berichts-Konfiguration hinzufügen';
@@ -191,7 +194,7 @@ $string['report_setting_type_textarea'] = 'Textbereich';
 $string['report_setting_type_text'] = 'Textfeld';
 $string['report_setting_type_select'] = 'Auswahl';
 $string['report_setting_type_header'] = 'Kopfzeile';
-$string['report_setting_type_image'] = 'Bild (soon)';
+$string['report_setting_type_image'] = 'Bild';
 $string['report_setting_type_image_maxbytes'] = 'Max size (bytes)';
 $string['report_setting_type_image_width'] = 'Width';
 $string['report_setting_type_image_height'] = 'Height';
@@ -220,6 +223,7 @@ $string['mark_to_delete_go'] = 'Mark to delete by admin';
 $string['unmark_to_delete_go'] = 'Unmark to delete by admin';
 $string['class_marked_as_todelete'] = 'This class marked to delete by site-admin';
 $string['interdisciplinary_competences'] = 'Fachübergreifende Kompetenzen';
+$string['average'] = 'Durchschnitt';
 
 
 // === settings ===

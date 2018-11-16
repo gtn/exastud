@@ -69,7 +69,7 @@ if ($type == BLOCK_EXASTUD_DATA_ID_LERN_UND_SOZIALVERHALTEN) {
 }
 $output = block_exastud_get_renderer();
 
-$url = '/blocks/exastud/review_class.php';
+$url = '/blocks/exastud/review_class_other_data.php';
 $PAGE->set_url($url, ['courseid' => $courseid, 'classid' => $classid, 'type' => $type]);
 echo $output->header(array('review', '='.$classheader));
 echo $output->heading($classheader);
@@ -99,6 +99,7 @@ if (true) { // block_exastud_can_edit_class($reviewclass)) {
 }
 
 foreach ($classstudents as $classstudent) {
+
 	$icons = '<img src="'.$CFG->wwwroot.'/pix/i/edit.gif" width="16" height="16" alt="'.block_exastud_get_string('edit').'" />';
 	$userdesc = fullname($classstudent);
 

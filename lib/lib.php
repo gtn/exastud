@@ -237,6 +237,14 @@ function block_exastud_get_class_students($classid) {
 		", [$classid]);
 }
 
+function block_exastud_get_user($userid) {
+	return g::$DB->get_record_sql("
+			SELECT u.*
+			FROM {user} u			
+			WHERE u.id = ?			
+		", [$userid]);
+}
+
 function block_exastud_get_class_teachers($classid) {
 	return array_merge(block_exastud_get_class_additional_head_teachers($classid), block_exastud_get_class_subject_teachers($classid));
 }
@@ -374,6 +382,58 @@ function block_exastud_get_reviewers_by_category_and_pos($periodid, $studentid, 
 			".($pos_value !== null ? "AND pos.value = ?" : "AND pos.value > 0")."
 			-- GROUP BY r.teacherid, s.id, pos.value
 		", [$periodid, $studentid, $categoryid, $categorysource, $pos_value]), false);
+}
+
+function block_exastud_get_reviewers_by_category($periodid, $studentid, $averageBySubject = true) {
+    // $averageBySubject - the teacher can make a few evaluating for a few own subjects. So - use average value by subjects
+    if ($averageBySubject) {
+        $result = array(); // [teacherid][categoryid] = value
+        $values = iterator_to_array(g::$DB->get_recordset_sql("
+			SELECT DISTINCT u.id as teacher_id, pos.categoryid AS category_id, pos.categorysource as category_source, AVG(pos.value) as value
+			FROM {block_exastudreview} r
+			JOIN {block_exastudreviewpos} pos ON pos.reviewid = r.id
+			JOIN {user} u ON r.teacherid = u.id
+			JOIN {block_exastudclass} c ON c.periodid = r.periodid
+			JOIN {block_exastudclassteachers} ct ON ct.classid = c.id AND ct.teacherid = r.teacherid AND ct.subjectid = r.subjectid
+			LEFT JOIN {block_exastudsubjects} s ON r.subjectid = s.id
+			WHERE c.periodid = ? AND r.studentid = ?							
+			GROUP BY r.teacherid, pos.categoryid, pos.categorysource
+		", [$periodid, $studentid]), false);
+        foreach ($values as $val) {
+            if (!array_key_exists($val->teacher_id, $result)) {
+                $result[$val->teacher_id] = array();
+            }
+            if (!array_key_exists($val->category_source, $result[$val->teacher_id])) {
+                $result[$val->teacher_id][$val->category_source] = array();
+            }
+            $result[$val->teacher_id][$val->category_source][$val->category_id] = $val->value;
+        }
+    } else {
+        $result = array(); // [subjectid][teacherid][categoryid] = value
+        $values = iterator_to_array(g::$DB->get_recordset_sql("
+			SELECT DISTINCT u.id as teacher_id, r.subjectid as subject_id, pos.categoryid AS category_id, pos.categorysource as category_source, pos.value as value
+			FROM {block_exastudreview} r
+			JOIN {block_exastudreviewpos} pos ON pos.reviewid = r.id
+			JOIN {user} u ON r.teacherid = u.id
+			JOIN {block_exastudclass} c ON c.periodid = r.periodid
+			JOIN {block_exastudclassteachers} ct ON ct.classid = c.id AND ct.teacherid = r.teacherid AND ct.subjectid = r.subjectid
+			LEFT JOIN {block_exastudsubjects} s ON r.subjectid = s.id
+			WHERE c.periodid = ? AND r.studentid = ?										
+		", [$periodid, $studentid]), false);
+        foreach ($values as $val) {
+            if (!array_key_exists($val->teacher_id, $result)) {
+                $result[$val->teacher_id] = array();
+            }
+            if (!array_key_exists($val->subject_id, $result[$val->teacher_id])) {
+                $result[$val->teacher_id][$val->subject_id] = array();
+            }
+            if (!array_key_exists($val->category_source, $result[$val->teacher_id][$val->subject_id])) {
+                $result[$val->teacher_id][$val->subject_id][$val->category_source] = array();
+            }
+            $result[$val->teacher_id][$val->subject_id][$val->category_source][$val->category_id] = $val->value;
+        }
+    }
+	return $result;
 }
 
 function block_exastud_get_average_evaluation_by_category($periodid, $studentid, $categoryid, $categorysource, $averageForAllSubjects = false) {
