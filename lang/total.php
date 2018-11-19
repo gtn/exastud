@@ -522,18 +522,6 @@ return [
 		'Der Kommentar darf nicht leer sein.',
 		'You have to enter a comment.',
 	],
-    'report_template' => [
-            'Vorlage',
-            'Template',
-    ],
-    'report_preview' => [
-            'Bildschirmausgabe',
-            'Preview'
-    ],
-    'report_select_all' => [
-            'als Datei speichern',
-            'Select all'
-    ],
     'report_settings' => [
             'Berichtskonfiguration',
             'Report settings',
@@ -703,8 +691,8 @@ return [
             'Header',
     ],
     'report_setting_type_image' => [
-            'Bild',
-            'Picture',
+            'Bild (soon)',
+            'Picture (soon)',
     ],
     'report_setting_type_image_maxbytes' => [
             'Max size (bytes)',
@@ -821,10 +809,6 @@ return [
     'interdisciplinary_competences' => [
         'Fachübergreifende Kompetenzen',
         'Interdisciplinary competences',
-    ],
-    'average' => [
-        'Durchschnitt',
-        'Average',
     ],
 
 
