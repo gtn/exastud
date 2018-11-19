@@ -62,10 +62,10 @@ if ($type == BLOCK_EXASTUD_DATA_ID_LERN_UND_SOZIALVERHALTEN) {
 	//$classheader = $reviewclass->title.' - '.$template->get_name();
     $categories = [
             BLOCK_EXASTUD_DATA_ID_ADDITIONAL_INFO => [
-                    'title' => block_exastud_trans('de:Additional info'),
+                    'title' => block_exastud_get_string('additional_info'),
             ],
     ];
-    $classheader = $reviewclass->title.' - '.block_exastud_trans('de:Additional info');
+    $classheader = $reviewclass->title.' - '.block_exastud_get_string('additional_info');
 }
 $output = block_exastud_get_renderer();
 

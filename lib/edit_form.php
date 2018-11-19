@@ -206,8 +206,17 @@ class student_edit_form extends moodleform {
 		$niveauarray[] =& $mform->createElement('static', '', "", ")");
 		$mform->addGroup($niveauarray, 'niveauarray',  block_exastud_trans('de:Niveau'), array("( ", block_exastud_trans('de:letztes Halbjahr: '), ' '), false);
 		
-		$gradearray=array();
-		$gradearray[] =& $mform->createElement('select', 'grade', block_exastud_get_string('de:Note'), ['' => ''] + $this->_customdata['grade_options']);
+		$gradearray = array();
+        switch (block_exastud_get_competence_eval_type()) {
+            case BLOCK_EXASTUD_COMPETENCE_EVALUATION_TYPE_TEXT:
+            case BLOCK_EXASTUD_COMPETENCE_EVALUATION_TYPE_POINT:
+                $gradearray[] =& $mform->createElement('select', 'grade', block_exastud_get_string('de:Note'), ['' => ''] + $this->_customdata['grade_options']);
+                break;
+            case BLOCK_EXASTUD_COMPETENCE_EVALUATION_TYPE_GRADE:
+                $grade = $mform->createElement('text', 'grade', block_exastud_get_string('de:Note'));
+                $mform->setType('grade', PARAM_RAW);
+                $gradearray[] =& $grade;
+        }
 		$gradearray[] =& $mform->createElement('static', '', "", "");
 		$gradearray[] =& $mform->createElement('static', 'lastPeriodGrade', "", block_exastud_trans('de:lastPeriodGrade'));
 		$gradearray[] =& $mform->createElement('static', '', "", ")");
