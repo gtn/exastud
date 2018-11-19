@@ -190,20 +190,26 @@ foreach($classstudents as $classstudent) {
 	    $formdata->grade = '';
 	}
 	//$grade_form->addElement('static', 'exacomp_grades', block_exastud_trans('de:Vorschläge aus Exacomp'), $grade_options['exacomp_grades']);
-	$grade_form = '<select name="exastud_grade['.$classstudent->id.']" class="custom-select">';
-	$grade_form .= '<option></option>';
-	foreach($grade_options as $k => $grade_option){
-	    if($formdata->grade == (string)$k){
-	        $grade_form .= '<option selected="selected" value="'. $k .'">'. $grade_option .'</option>';
-	    }else {
-	        $grade_form .= '<option value="'.$k.'">'. $grade_option .'</option>';
-	    }
-	    
-	}
-	$grade_form .= '</select>';
+    switch (block_exastud_get_competence_eval_type()) {
+        case BLOCK_EXASTUD_COMPETENCE_EVALUATION_TYPE_TEXT:
+        case BLOCK_EXASTUD_COMPETENCE_EVALUATION_TYPE_POINT:
+                $grade_form = '<select name="exastud_grade['.$classstudent->id.']" class="custom-select">';
+                //$grade_form .= '<option></option>';
+                foreach($grade_options as $k => $grade_option) {
+                    if ($formdata->grade == (string)$k) {
+                        $grade_form .= '<option selected="selected" value="'. $k .'">'. $grade_option .'</option>';
+                     }else {
+                        $grade_form .= '<option value="'.$k.'">'. $grade_option .'</option>';
+                    }
+                }
+                $grade_form .= '</select>';
+                break;
+        case BLOCK_EXASTUD_COMPETENCE_EVALUATION_TYPE_GRADE:
+                $grade_form = '<input name="exastud_grade['.$classstudent->id.']" class="" value="'.$formdata->grade.'"/>';
+                break;
+        default:
+    }
 	$row->cells[] = $grade_form;
-	   
-	
 
 	/* if (!$visible) {
 		$cell = new html_table_cell();

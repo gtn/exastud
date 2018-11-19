@@ -104,7 +104,7 @@ for ($i = 0; $i <= $max_classes; $i++) {
                             ['title' => block_exastud_get_string('class_delete'), 'class' => '']
                     );
                 }
-                if ($tempClass->to_delete) {
+                if (isset($tempClass->to_delete) && $tempClass->to_delete) {
                     $buttons .= '<img src="'.$CFG->wwwroot.'/blocks/exastud/pix/attention.png" title="'.block_exastud_get_string('class_marked_as_todelete').'"/>';;
                 }
 

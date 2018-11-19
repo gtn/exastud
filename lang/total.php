@@ -316,7 +316,7 @@ return [
 	],
 	'class_logo' => [
 		'Class logo',
-		'Class logo',
+		'Klassenlogo',
 	],
 	'class_delete' => [
 		'Klasse löschen',
@@ -359,7 +359,7 @@ return [
         'Add basic categories',
     ],
     'addallbasicalways' => [
-        'Add all new basic categories automatically',
+        'Alle neuen Standardkategorien automatisch zuordnen',
         'Add all new basic categories automatically',
     ],
 	'basiccategories' => [
@@ -722,10 +722,13 @@ return [
             'Eingaben als Fachlehrkraft',
             'Subjects',
     ],
-
     'review_table_part_additional' => [
             'Eingaben als Klassenlehrkraft',
             'General',
+    ],
+    'additional_info' => [
+            'Zusatzinformationen',
+            'Additional info'
     ],
 
 
@@ -857,8 +860,8 @@ return [
 		'Activate logging',
 	],
 	'settings_competence_evaltype' => [
-		'Competence evaluation type',
-		'Competence evaluation type',
+		'Bewertungsschema',
+		'Competence evaluation type exastud',
 	],
 	'settings_competence_evaltype_text' => [
 		'Text-Eintrag',
@@ -873,11 +876,11 @@ return [
 		'Points',
 	],
 	'settings_competence_evalpoints_limit' => [
-		'Points limit',
-		'Points limit',
+		'Höchste Punkteanzahl',
+		'Points limit exastud',
 	],
 	'settings_competence_evalpoints_limit_description' => [
-		'If exastud/competence_evaltype is Points',
+		'Wenn als Bewertungsschema "Punkte" gewählt ist.',
         'If exastud/competence_evaltype is Points',
 	],
 

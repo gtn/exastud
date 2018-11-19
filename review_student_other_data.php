@@ -101,9 +101,15 @@ $studentform = new student_other_data_form($PAGE->url, [
 if ($fromform = $studentform->get_data()) {
     $context = context_system::instance(); // TODO: which context to use?
 	foreach ($categories as $dataid => $category) {
-	    if (array_key_exists('type', $category) && $category['type'] == 'image') {
-            file_save_draft_area_files($fromform->images[$dataid], $context->id, 'block_exastud', 'report_image_'.$dataid,
-                    $student->id, array('subdirs' => 0, 'maxbytes' => $category['maxbytes'], 'maxfiles' => 1));
+	    if (array_key_exists('type', $category)) {
+            switch ($category['type']) {
+                case 'image':
+                    file_save_draft_area_files($fromform->images[$dataid], $context->id, 'block_exastud', 'report_image_'.$dataid,
+                            $student->id, array('subdirs' => 0, 'maxbytes' => $category['maxbytes'], 'maxfiles' => 1));
+                    break;
+                default:
+                    block_exastud_set_class_student_data($classid, $studentid, $dataid, $fromform->{$dataid});
+            }
         } else {
             block_exastud_set_class_student_data($classid, $studentid, $dataid, $fromform->{$dataid});
         }

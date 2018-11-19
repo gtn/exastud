@@ -69,7 +69,8 @@ class print_templates {
 	        $templates[$tmpl->id] = array(
 	                'name' => $tmpl->title,
                     'file' => $tmpl->template,
-                    'grades' => ['1'=>'1'], // for testing
+                    //'grades' => ['1'=>'1'], // for testing
+                    'grades' => block_exastud_get_evaluation_options(true), // for testing
                     'inputs' => self::get_inputs_for_template($tmpl->id, $type)
             );
         }

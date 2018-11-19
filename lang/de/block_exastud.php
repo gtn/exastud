@@ -108,7 +108,7 @@ $string['nostudentstoreview'] = 'Keine Schüler zu beurteilen';
 $string['reviewstudent'] = 'Student review';
 $string['categories'] = 'Beurteilungskategorien';
 $string['addallbasic'] = 'Standardkategorien hinzufügen';
-$string['addallbasicalways'] = 'Add all new basic categories automatically';
+$string['addallbasicalways'] = 'Alle neuen Standardkategorien automatisch zuordnen';
 $string['basiccategories'] = 'Standardkategorien';
 $string['availablecategories'] = 'Verfügbare Beurteilungskategorien';
 $string['teamplayer'] = 'Teamfähigkeit';
@@ -200,6 +200,7 @@ $string['report_setting_type_image_width'] = 'Width';
 $string['report_setting_type_image_height'] = 'Height';
 $string['review_table_part_subjects'] = 'Eingaben als Fachlehrkraft';
 $string['review_table_part_additional'] = 'Eingaben als Klassenlehrkraft';
+$string['additional_info'] = 'Zusatzinformationen';
 $string['competencies'] = 'Fächerübergreifende Kompetenzen';
 $string['de:Note'] = 'Note';
 $string['de:Niveau'] = 'Niveau';
@@ -234,12 +235,12 @@ $string['settings_project_based_assessment_body'] = 'Diese Einstellung erlaubt e
 $string['blocksettings'] = 'Deckblattdaten';
 $string['delete_confirmation'] = 'Soll "{$a}" wirklich gelöscht werden?';
 $string['logging'] = 'Logging aktivieren';
-$string['settings_competence_evaltype'] = 'Competence evaluation type';
+$string['settings_competence_evaltype'] = 'Bewertungsschema';
 $string['settings_competence_evaltype_text'] = 'Text-Eintrag';
 $string['settings_competence_evaltype_grade'] = 'Note';
 $string['settings_competence_evaltype_point'] = 'Punkte';
-$string['settings_competence_evalpoints_limit'] = 'Points limit';
-$string['settings_competence_evalpoints_limit_description'] = 'If exastud/competence_evaltype is Points';
+$string['settings_competence_evalpoints_limit'] = 'Höchste Punkteanzahl';
+$string['settings_competence_evalpoints_limit_description'] = 'Wenn als Bewertungsschema "Punkte" gewählt ist.';
 
 
 // === grp3 ===

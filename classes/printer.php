@@ -896,8 +896,15 @@ class printer {
 
 			foreach ($normal_subjects as $subject) {
 				$subjectData = block_exastud_get_graded_review($class->id, $subject->id, $student->id);
-
-				$value = $subjectData ? $subjectData->niveau.' '.$subjectData->grade : '';
+                $value = '';
+				if ($subjectData) {
+				    if (isset($subjectData->niveau)) {
+				        $value .= $subjectData->niveau.' ';
+                    }
+                    if (isset($subjectData->grade)) {
+                        $value .= $subjectData->grade;
+                    }
+                }
 				$templateProcessor->setValue("g#$rowi", $value, 1);
 			}
 			$templateProcessor->setValue("g#$rowi", '');
@@ -932,10 +939,17 @@ class printer {
 						break;
 					}
 				}
-
-				$value = $subjectData ? $subjectData->niveau.' '.$subjectData->grade : '';
+                $value = '';
+                if ($subjectData) {
+                    if (isset($subjectData->niveau)) {
+                        $value .= $subjectData->niveau.' ';
+                    }
+                    if (isset($subjectData->grade)) {
+                        $value .= $subjectData->grade;
+                    }
+                }
 				$templateProcessor->setValue("gsg#$rowi", $value, 1);
-				$templateProcessor->setValue("gss#$rowi", $value ? $subject->shorttitle_stripped : '', 1);
+				$templateProcessor->setValue("gss#$rowi", $value ? $subject->shorttitle_stripped : '', 1); // TODO: ???
 			}
 
 			$templateProcessor->setValue("gsg#$rowi", '');

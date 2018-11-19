@@ -114,10 +114,16 @@ if ($reviewdata) {
 $subjectData = block_exastud_get_review($classid, $subjectid, $studentid);
 $formdata = (object)array_merge((array)$formdata, (array)$subjectData);
 
-$grade_options = $template->get_grade_options();
-if (@$formdata->grade && !isset($grade_options[$formdata->grade])) {
-	$grade_options = [$formdata->grade => $formdata->grade] + $grade_options;
-
+switch (block_exastud_get_competence_eval_type()) {
+    case BLOCK_EXASTUD_COMPETENCE_EVALUATION_TYPE_TEXT:
+    case BLOCK_EXASTUD_COMPETENCE_EVALUATION_TYPE_POINT:
+        $grade_options = $template->get_grade_options();
+        if (@$formdata->grade && !isset($grade_options[$formdata->grade])) {
+            $grade_options = [$formdata->grade => $formdata->grade] + $grade_options;
+        }
+        break;
+    case BLOCK_EXASTUD_COMPETENCE_EVALUATION_TYPE_GRADE:
+        $grade_options = null;
 }
 // create form and add customvariables
 $studentform = new student_edit_form(null, [
@@ -149,12 +155,12 @@ if ($fromform = $studentform->get_data()) {
 		'teacherid' => $teacherid,
 	]);
 	if (!$existingReview || $existingReview->review != $fromform->review) {
-	    $subjectData = $DB->get_record('block_exastudsubjects', ['id' => $subjectid]);
+	    $subjectObjData = $DB->get_record('block_exastudsubjects', ['id' => $subjectid]);
         \block_exastud\event\studentreview_changed::log(['objectid' => $reviewclass->id,
                 'relateduserid' => $studentid,
                 'other' => ['classtitle' => $reviewclass->title,
                         'subjectid' => $subjectid,
-                        'subjecttitle' => $subjectData->title,
+                        'subjecttitle' => $subjectObjData->title,
                         'oldvalue' => ($existingReview ? $existingReview->review : null),
                         'value' => $fromform->review,
                         'studentname' =>  $student->firstname.' '.$student->lastname,
@@ -173,11 +179,12 @@ if ($fromform = $studentform->get_data()) {
 		'teacherid' => $teacherid,
 	]);
     if (!$existingReview || $existingReview->review != $fromform->vorschlag) {
+        $subjectObjData = $DB->get_record('block_exastudsubjects', ['id' => $subjectid]);
         \block_exastud\event\studentreview_changed::log(['objectid' => $reviewclass->id,
                 'relateduserid' => $studentid,
                 'other' => ['classtitle' => $reviewclass->title,
                         'subjectid' => $subjectid,
-                        'subjecttitle' => $subjectData->title,
+                        'subjecttitle' => $subjectObjData->title,
                         'oldvalue' => ($existingReview ? $existingReview->review : null),
                         'value' => $fromform->vorschlag,
                         'target' => 'Lern- und Sozialverhalten',
@@ -213,7 +220,7 @@ if ($fromform = $studentform->get_data()) {
 			["reviewid" => $newreview->id, "categoryid" => $category->id, "categorysource" => $category->source]);
 		// only if changed
 		if (!$existing || $newvalue != $existing->value) {
-		    $subjectdata = $DB->get_record('block_exastudsubjects', ['id' => $subjectid]);
+            $subjectObjData = $DB->get_record('block_exastudsubjects', ['id' => $subjectid]);
 		    $grades = block_exastud_get_evaluation_options(true);
             $newToLog = (is_array($grades) && array_key_exists($newvalue, $grades) ? $grades[$newvalue] : $newvalue);
             $oldToLog = (!$existing ? null : (is_array($grades) && array_key_exists($existing->value, $grades) ? $grades[$existing->value] : $existing->value));
@@ -221,7 +228,7 @@ if ($fromform = $studentform->get_data()) {
                     'relateduserid' => $studentid,
                     'other' => ['classtitle' => $reviewclass->title,
                             'subjectid' => $subjectid,
-                            'subjecttitle' => $subjectdata->title,
+                            'subjecttitle' => $subjectObjData->title,
                             'oldgrading' => $oldToLog,
                             'oldgradingid' => ($existing ? $existing->value : null),
                             'grading' => $newToLog,
