@@ -935,7 +935,7 @@ class printer {
 				foreach ($subjects as $subject) {
 					$subjectData = block_exastud_get_graded_review($class->id, $subject->id, $student->id);
 
-					if ($subjectData && $subjectData->grade) {
+					if ($subjectData && isset($subjectData->grade) && $subjectData->grade) {
 						break;
 					}
 				}
@@ -1025,8 +1025,13 @@ class printer {
 
 		$filename = date('Y-m-d')."-".'Notenuebersicht'."-{$class->title}.docx";
 
-		require_once $CFG->dirroot.'/lib/filelib.php';
-		send_temp_file($temp_file, $filename);
+        return (object)[
+                'temp_file' => $temp_file,
+                'filename' => $filename,
+        ];
+
+		//require_once $CFG->dirroot.'/lib/filelib.php';
+		//send_temp_file($temp_file, $filename);
 	}
 
 	static function grades_report_xlsx($class, $students) {
@@ -1059,8 +1064,16 @@ class printer {
 
 			foreach ($class_subjects as $subject) {
 				$subjectData = block_exastud_get_graded_review($class->id, $subject->id, $student->id);
+				$value = '';
+                if ($subjectData) {
+                    if (isset($subjectData->niveau)) {
+                        $value .= $subjectData->niveau;
+                    }
+                    if (isset($subjectData->grade)) {
+                        $value .= ' '.$subjectData->grade;
+                    }
+                }
 
-				$value = $subjectData ? @$subjectData->niveau.' '.$subjectData->grade : '';
 				$sheet->setCellValueByColumnAndRow($cell++, $rowi, $value);
 			}
 
@@ -1094,8 +1107,12 @@ class printer {
 		$temp_file = tempnam($CFG->tempdir, 'exastud');
 		$writer->save($temp_file);
 
-		require_once $CFG->dirroot.'/lib/filelib.php';
-		send_temp_file($temp_file, $filename);
+        return (object)[
+                'temp_file' => $temp_file,
+                'filename' => $filename,
+        ];
+		//require_once $CFG->dirroot.'/lib/filelib.php';
+		//send_temp_file($temp_file, $filename);
 	}
 
 	/*

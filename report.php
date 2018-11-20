@@ -80,34 +80,57 @@ if ($classid = optional_param('classid', 0, PARAM_INT)) {
 
             if ($printStudents && $template == 'html_report') {
 
-                $PAGE->set_pagelayout('embedded');
-                echo $output->header('report');
+                if (optional_param('preview', false, PARAM_BOOL)) {
+                    // Preview of report on html page
+                    $PAGE->set_pagelayout('embedded');
+                    echo $output->header('report');
 
-                $classheader = block_exastud_get_period($class->periodid)->description.' - '.$class->title;
-                echo $output->heading($classheader);
+                    $classheader = block_exastud_get_period($class->periodid)->description.' - '.$class->title;
+                    echo $output->heading($classheader);
 
-                foreach ($printStudents as $student) {
-                    $studentdesc = $OUTPUT->user_picture($student, array(
-                                    "courseid" => $courseid
-                            )).' '.fullname($student);
-                    echo $output->heading($studentdesc);
+                    foreach ($printStudents as $student) {
+                        $studentdesc = $OUTPUT->user_picture($student, array(
+                                        "courseid" => $courseid
+                                )).' '.fullname($student);
+                        echo $output->heading($studentdesc);
 
-                    echo $output->student_report($class, $student);
+                        echo $output->student_report($class, $student);
 
-                    echo '<hr>';
+                        echo '<hr>';
+                    }
+
+                    // echo $output->back_button(new moodle_url('report.php', ['courseid' => $courseid, 'classid' => $classid]));
+                    echo $output->footer();
+                    exit();
+                } else {
+                    // add html files to generated array
+                    foreach ($printStudents as $student) {
+                        $reportContent = '';
+                        $studentdesc = $OUTPUT->user_picture($student, array(
+                                        "courseid" => $courseid
+                                )).' '.fullname($student);
+                        $reportContent .= $output->heading($studentdesc);
+                        $reportContent .= $output->student_report($class, $student);
+                        $reportContent .= '<hr>';
+                        $reportFileName = 'html_report-'.$student->firstname.'-'.$student->lastname.'-'.$student->id.'.html';
+                        $tempFile = tempnam($CFG->tempdir, 'exastud');
+                        file_put_contents($tempFile, $reportContent);
+                        $files_to_zip[$tempFile] = '/'.$student->firstname.'-'.$student->lastname.'-'.$student->id.'/'.$reportFileName;
+                    }
                 }
-
-                // echo $output->back_button(new moodle_url('report.php', ['courseid' => $courseid, 'classid' => $classid]));
-                echo $output->footer();
-                exit();
+                continue; // go to the next template
             }
 
             if ($printStudents && $template == 'grades_report') {
-                \block_exastud\printer::grades_report($class, $printStudents);
+                $file = \block_exastud\printer::grades_report($class, $printStudents);
+                $files_to_zip[$file->temp_file] = $file->filename;
+                continue; // go to the next template
             }
 
             if ($printStudents && $template == 'grades_report_xlsx') {
-                \block_exastud\printer::grades_report_xlsx($class, $printStudents);
+                $file = \block_exastud\printer::grades_report_xlsx($class, $printStudents);
+                $files_to_zip[$file->temp_file] = $file->filename;
+                continue; // go to the next template
             }
 
             /*
@@ -165,7 +188,8 @@ if ($classid = optional_param('classid', 0, PARAM_INT)) {
             if ($content = ob_get_clean()) {
                 throw new \Exception('there was some other output: '.$content);
             }
-            send_temp_file($file->temp_file, $file->filename);
+            $temp_file = key($files_to_zip);
+            send_temp_file($temp_file, basename($files_to_zip[$temp_file]));
             exit();
         }
 
@@ -236,10 +260,10 @@ if ($classid = optional_param('classid', 0, PARAM_INT)) {
     
     echo '<form method="post" id="report" target="_blank">';
     
-    echo block_exastud_get_string('report_template') . ': ';
+    //echo block_exastud_get_string('report_template') . ': ';
     //echo html_writer::select($templates, 'template', $template, false);
     $templateTable = new html_table();
-    $templateTable->head[] = block_exastud_get_string('report_template') . ': '. '<span style="color:red;">(developer mode!)</span>'; //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    $templateTable->head[] = block_exastud_get_string('report_template') . ': ';
     $templateTable->headspan = [2];
     $templateRow = new html_table_row();
     $firstCell = new html_table_cell();
@@ -250,8 +274,10 @@ if ($classid = optional_param('classid', 0, PARAM_INT)) {
     $firstCell->text .= html_writer::checkbox('select_all', '1', false, '&nbsp;'.block_exastud_get_string('report_select_all'), ['class' => 'exastud-selectall-checkbox']);
 
     $secondCell = new html_table_cell();
+    $previewTemplates = array('html_report');
     foreach ($templates as $key => $tmpl) {
-        $secondCell->text .= html_writer::checkbox('template['.$key.']', '1', false, '&nbsp;'.$tmpl, ['class' => 'exastud-selecttemplate-checkbox', 'data-templateid' => $key]).'<br />';
+        $previewPoss = (in_array($key, $previewTemplates) ? '1' : '');
+        $secondCell->text .= html_writer::checkbox('template['.$key.']', '1', false, '&nbsp;'.$tmpl, ['class' => 'exastud-selecttemplate-checkbox', 'data-templateid' => $key, 'data-previewPossible' => $previewPoss]).'<br />';
     }
 
     $templateRow->cells[] = $firstCell;
