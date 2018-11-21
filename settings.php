@@ -59,13 +59,15 @@ if (!class_exists('block_exastud_link_to')) {
         private $linkparams = array();
         private $title = array();
         private $tagattributes = array();
+        private $keptLabel = false;
 
-        public function __construct($name, $visiblename, $description, $defaultsetting, $link = '', $title = '', $linkparams = array(), $tagattributes = array()) {
+        public function __construct($name, $visiblename, $description, $defaultsetting, $link = '', $title = '', $linkparams = array(), $tagattributes = array(), $keptLabel = false) {
             $this->nosave = true;
             $this->link = $link;
             $this->linkparams = $linkparams;
             $this->tagattributes = $tagattributes;
             $this->title = $title;
+            $this->keptLabel = $keptLabel;
             parent::__construct($name, $visiblename, $description, $defaultsetting);
         }
 
@@ -92,10 +94,32 @@ if (!class_exists('block_exastud_link_to')) {
             $doc->loadHTML(utf8_decode($template), LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD);
             $selector = new DOMXPath($doc);
             // Clean div with classes.
-            $deletedivs = array('form-label', 'form-defaultinfo');
-            foreach ($deletedivs as $deletediv) {
+            $elementsToDelete = array();
+            // label div
+            $labeldivs = array('form-label');
+            if (!$this->keptLabel) {
+                foreach ($labeldivs as $deletediv) {
+                    foreach ($selector->query('//div[contains(attribute::class, "'.$deletediv.'")]') as $e) {
+                        $e->textContent = '';
+                    }
+                }
+            } else {
+                // show label, but delete short variable name
+                $elementsToDelete[] = '//span[contains(attribute::class, "form-shortname")]';
+            }
+            // another divs
+            $infodivs = array('form-defaultinfo');
+            foreach ($infodivs as $deletediv) {
                 foreach ($selector->query('//div[contains(attribute::class, "'.$deletediv.'")]') as $e) {
                     $e->textContent = '';
+                }
+            }
+            // delete additional elements if it is added in previous code
+            if (count($elementsToDelete) > 0) {
+                foreach ($elementsToDelete as $toDel) {
+                    foreach ($selector->query($toDel) as $e) {
+                        $e->textContent = '';
+                    }
                 }
             }
             $template = $doc->saveHTML($doc->documentElement);
@@ -123,6 +147,15 @@ if ($ADMIN->fulltree) {
     ];
     $settings->add(new admin_setting_configselect('exastud/competence_evaltype', block_exastud_get_string('settings_competence_evaltype'), '', 0, $evalTypes));
     $settings->add(new admin_setting_configtext('exastud/competence_evalpoints_limit', block_exastud_get_string('settings_competence_evalpoints_limit'), block_exastud_get_string('settings_competence_evalpoints_limit_description'), 10, PARAM_INT));
+    $settings->add(new block_exastud_link_to('link_to_settings_evals',
+            block_exastud_get_string("settings_eval_setup"),
+            '',
+            '',
+            '/blocks/exastud/configuration_global.php',
+            block_exastud_get_string('settings_eval_setup_link'),
+            ['action' => 'evalopts'],
+            ['target' => '_blank'],
+            true));
     /*// periods
     $settings->add(new block_exastud_link_to('link_to_settings_periods', block_exastud_get_string("periods"), '', '', '/blocks/exastud/periods.php', block_exastud_get_string('periods'), [], ['class' => 'btn btn-default']));
     // competencies

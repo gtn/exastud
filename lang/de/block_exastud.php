@@ -241,6 +241,8 @@ $string['settings_competence_evaltype_grade'] = 'Note';
 $string['settings_competence_evaltype_point'] = 'Punkte';
 $string['settings_competence_evalpoints_limit'] = 'Höchste Punkteanzahl';
 $string['settings_competence_evalpoints_limit_description'] = 'Wenn als Bewertungsschema "Punkte" gewählt ist.';
+$string['settings_eval_setup'] = 'Bewertungsschema Texteintrag';
+$string['settings_eval_setup_link'] = 'Bewertungskategorien bearbeiten';
 
 
 // === grp3 ===

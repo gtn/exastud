@@ -883,6 +883,14 @@ return [
 		'Wenn als Bewertungsschema "Punkte" gewählt ist.',
         'If exastud/competence_evaltype is Points',
 	],
+	'settings_eval_setup' => [
+		'Bewertungsschema Texteintrag',
+        'Evaluation grade scheme',
+	],
+	'settings_eval_setup_link' => [
+		'Bewertungskategorien bearbeiten',
+        'Edit',
+	],
 
 
 	// === grp3 ===

@@ -240,6 +240,8 @@ $string['settings_competence_evaltype_grade'] = 'Grades';
 $string['settings_competence_evaltype_point'] = 'Points';
 $string['settings_competence_evalpoints_limit'] = 'Points limit exastud';
 $string['settings_competence_evalpoints_limit_description'] = 'If exastud/competence_evaltype is Points';
+$string['settings_eval_setup'] = 'Evaluation grade scheme';
+$string['settings_eval_setup_link'] = 'Edit';
 
 
 // === grp3 ===
