@@ -1726,10 +1726,8 @@ function block_exastud_is_bw_active() {
 	return !!block_exastud_get_plugin_config('bw_active');
 }
 
-function block_exastud_is_a2fa_timeout_active() {
-	// TODO: check config
-
-	if (class_exists('\block_exa2fa\api')) {
+function block_exastud_is_a2fa_timeout_active_for_user() {
+	if (block_exastud_get_plugin_config('a2fa_timeout_active') && class_exists('\block_exa2fa\api')) {
 		return true;
 	} else {
 		return false;
@@ -1741,7 +1739,7 @@ function block_exastud_is_a2fa_timeout_active() {
 function block_exastud_require_login($courseid, $autologinguest = true, $cm = null, $checklogin = true) {
 	require_login($courseid, $autologinguest, $cm);
 
-	if (block_exastud_is_a2fa_timeout_active() && $checklogin) {
+	if (block_exastud_is_a2fa_timeout_active_for_user() && $checklogin) {
 		global $SESSION;
 
 		if (@$SESSION->login_a2fa_time >= time() - BLOCK_EXASTUD_SESSION_TIMEOUT) {
