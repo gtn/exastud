@@ -1728,12 +1728,11 @@ function block_exastud_is_bw_active() {
 
 function block_exastud_is_a2fa_timeout_active_for_user() {
 	if (block_exastud_get_plugin_config('a2fa_timeout_active') && class_exists('\block_exa2fa\api')) {
-		return true;
+		return \block_exa2fa\api::a2fa_for_user_enabled(g::$USER->id);
 	} else {
 		return false;
 	}
 
-	return \block_exa2fa\api::a2fa_for_user_enabled(g::$USER->id);
 }
 
 function block_exastud_require_login($courseid, $autologinguest = true, $cm = null, $checklogin = true) {
