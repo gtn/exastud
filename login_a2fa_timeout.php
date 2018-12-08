@@ -39,7 +39,6 @@ if ($action == 'login') {
 	} else {
 		$error = 'Der eingegebene Code war leider nicht korrekt.';
 	}
-
 }
 
 $url = '/blocks/exastud/login_a2fa_timeout.php';

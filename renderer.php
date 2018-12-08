@@ -152,7 +152,7 @@ class block_exastud_renderer extends plugin_renderer_base {
 		$content .= '<div id="block_exastud">';
 
 		if (g::$PAGE->pagelayout != 'embedded' && !@$options['is_login_a2fa_timeout_page']) {
-			if (block_exastud_is_a2fa_timeout_active_for_user()) {
+			if (block_exastud_get_a2fa_requirement() == 'a2fa_timeout') {
 				$time = time();
 
 				$returnurl = block_exastud\url::request_uri()->out_as_local_url(false);

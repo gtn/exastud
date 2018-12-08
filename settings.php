@@ -173,5 +173,16 @@ if ($ADMIN->fulltree) {
     */
     // template configurations
     //$settings->add(new block_exastud_link_to('link_to_settings_report_templates', block_exastud_get_string('report_settings_edit'), '', '', '/blocks/exastud/report_settings.php', block_exastud_get_string('report_settings_edit'), [], ['class' => 'btn btn-default', 'target' => '_blank']));
-	$settings->add(new admin_setting_configcheckbox('exastud/a2fa_timeout_active', block_exastud_trans('de:A2fa mit Timeout'), '', 0));
+
+	if (block_exastud_is_a2fa_installed()) {
+		$description = '';
+	} else {
+		$description = '<span style="color: red">'.block_exastud_trans('en:Exa2fa Plugin is not installed').'</span>';
+	}
+	$a2fa_requirement = [
+		'' => block_exastud_trans('de:Deaktiviert (Keine A2fa erforderlich)'),
+		'user_a2fa' => block_exastud_trans('de:A2fa für Benutzer erforderlich (z.B. Lehrernetz)'),
+		'a2fa_timeout' => block_exastud_trans('de:A2fa für Benutzer erforderlich und erneute A2fa für LEB notwendig (z.B. päd. Netz)'),
+	];
+	$settings->add(new admin_setting_configselect('exastud/a2fa_requirement', block_exastud_trans('de:A2fa im LEB'), $description, '', $a2fa_requirement));
 }
