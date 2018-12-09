@@ -42,7 +42,7 @@ class block_exastud_import_class_form extends moodleform {
 	function definition() {
 		$mform = &$this->_form;
 
-		$mform->addElement('header', 'comment', block_exastud_trans('de:Klasse Importieren'));
+		// $mform->addElement('header', 'comment', block_exastud_trans('de:Klasse Importieren'));
 
 		$mform->addElement('checkbox', 'override_reviews', block_exastud_trans("de:Bewertung importieren"), ' ');
 		// , block_exastud_trans("de:(Vorhandene Bewertungen der Lehrer für die Klassenfächer und die Schüler in der Klasse werden überschrieben)"));
@@ -62,7 +62,7 @@ class block_exastud_import_class_form2 extends moodleform {
 		$mform->addElement('hidden', 'action');
 		$mform->setType('action', PARAM_TEXT);
 
-		$mform->addElement('header', 'comment', block_exastud_trans('de:Klasse Importieren'));
+		// $mform->addElement('header', 'comment', block_exastud_trans('de:Klasse Importieren'));
 
 		$mform->addElement('hidden', 'override_reviews');
 		$mform->setType('override_reviews', PARAM_INT);
@@ -128,14 +128,29 @@ function block_exastud_import_class($doimport, $override_reviews, $draftitemid) 
 	exit;
 	/* */
 
-	echo $output->notification(block_exastud_trans('de:Klassenname: {$a}', $classData->class->title), 'info');
-
 	$class = clone $classData->class;
 	$class->timemodified = time();
 	$class->userid = $USER->id;
-	$class->title .= ' ('.block_exastud_trans('de:Wiederhergestellt am ').date('d.m.Y H:i').')';
+
+	$existingClass = $DB->get_records_sql('SELECT * FROM {block_exastudclass} WHERE userid=? AND title=?', [$USER->id, $class->title]);
+	$existingClass = reset($existingClass);
+
+	if (!$doimport) {
+		if ($existingClass) {
+			echo $output->notification(block_exastud_trans('de:Klasse "{$a}" existiert bereits und wird überschrieben', $class->title), 'error');
+		} else {
+			echo $output->notification(block_exastud_trans('de:Klassenname: {$a}', $class->title), 'info');
+		}
+	}
+
+	// $class->title .= ' ('.block_exastud_trans('de:Wiederhergestellt am ').date('d.m.Y H:i').')';
 	if ($doimport) {
-		$class->id = $DB->insert_record('block_exastudclass', $classData->class);
+		if ($existingClass) {
+			$class->id = $existingClass->id;
+			$DB->update_record('block_exastudclass', $class);
+		} else {
+			$class->id = $DB->insert_record('block_exastudclass', $class);
+		}
 	}
 
 	// $classData->bp: not needed
@@ -143,11 +158,25 @@ function block_exastud_import_class($doimport, $override_reviews, $draftitemid) 
 	// $classData->subjects: not needed
 	// $classData->evalopt: not needed
 
+	if ($doimport) {
+		$DB->delete_records('block_exastudclassstudents', ['classid' => $class->id]);
+		// teachers
+		$DB->delete_records('block_exastudclassteachers', ['classid' => $class->id]);
+		// data
+		$DB->delete_records('block_exastuddata', ['classid' => $class->id]);
+		// classcate
+		$DB->delete_records('block_exastudclasscate', ['classid' => $class->id]);
+		// classcate
+		$DB->delete_records('block_exastudclasscate', ['classid' => $class->id]);
+
+		// TODO: block_exastudclassteastudvis
+	}
+
 	$classteacherMapping = [];
 	$teacherids = [];
 	foreach ($classData->classteachers as $classteacher) {
 		$classteacher->classid = $class->id;
-		$taecherids[$classteacher->teacherid] = $classteacher->teacherid;
+		$teacherids[$classteacher->teacherid] = $classteacher->teacherid;
 		$subjectids[$classteacher->subjectid] = $classteacher->subjectid;
 
 		if ($doimport) {
@@ -195,7 +224,7 @@ function block_exastud_import_class($doimport, $override_reviews, $draftitemid) 
 
 	if ($override_reviews) {
 		foreach ($classData->reviews as $review) {
-			if (!empty($studentids[$review->studentid]) && $review->periodid == $class->periodid && !empty($taecherids[$review->teacherid]) && (!empty($subjectids[$review->subjectid]) || $review->subjectid < 0)) {
+			if (!empty($studentids[$review->studentid]) && $review->periodid == $class->periodid && !empty($teacherids[$review->teacherid]) && (!empty($subjectids[$review->subjectid]) || $review->subjectid < 0)) {
 				// ok
 			} else {
 				continue;
@@ -256,7 +285,7 @@ function block_exastud_import_class($doimport, $override_reviews, $draftitemid) 
 	}
 
 	if ($doimport) {
-		echo $output->notification(block_exastud_trans('de:Klasse wurde wiederhergestellt, neuer Name: {$a}', $class->title), 'info');
+		echo $output->notification(block_exastud_trans('de:Klasse "{$a}" wurde wiederhergestellt', $class->title), 'info');
 	} else {
 		echo $output->notification(block_exastud_trans('de:Klassendaten erfolgreich geprüft'), 'info');
 	}
@@ -274,6 +303,8 @@ if (optional_param('action', '', PARAM_TEXT) == 'import') {
 		exit;
 	}
 }
+
+echo $output->heading(block_exastud_trans('de:Klasse Importieren'));
 
 $mform = new block_exastud_import_class_form();
 if ($mform->is_cancelled()) {

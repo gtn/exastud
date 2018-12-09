@@ -55,6 +55,10 @@ if ($action == 'delete') {
     $DB->delete_records('block_exastudclassteachers', ['classid' => $class->id]);
     // data
     $DB->delete_records('block_exastuddata', ['classid' => $class->id]);
+	// classcate
+	$DB->delete_records('block_exastudclasscate', ['classid' => $class->id]);
+
+	// TODO: block_exastudclassteastudvis
 
     \block_exastud\event\class_deleted::log(['objectid' => $class->id, 'other' => ['classtitle' => $classData->title]]);
 
