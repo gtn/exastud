@@ -38,12 +38,19 @@ block_exastud_custom_breadcrumb($PAGE);
 if ($action == 'backup') {
 	$tables = [];
 
+	// backup all exastud tables
 	preg_match_all('!<table\s.*name="(?<tables>[^"]+)"!i', file_get_contents(__DIR__.'/db/install.xml'), $matches);
 	$tables = $matches['tables'];
 
 	if (!$tables) {
 		throw new \Exception('table names not found');
 	}
+
+	// and also backup user tables
+	$tables[] = 'user';
+	$tables[] = 'user_info_category';
+	$tables[] = 'user_info_data';
+	$tables[] = 'user_info_field';
 
 	$tables = array_map(function($t) use ($CFG) {
 		return $CFG->prefix.$t;
