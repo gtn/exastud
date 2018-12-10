@@ -214,7 +214,6 @@ if ($action == 'save-bps') {
 	if (!confirm_sesskey()) {
 		die(block_exastud_get_string('badsessionkey'));
 	}
-
 	$items = block_exastud\param::required_array('items',
 		array(PARAM_INT => (object)array(
 			'id' => PARAM_INT,

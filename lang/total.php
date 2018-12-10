@@ -318,6 +318,10 @@ return [
 		'Class logo',
 		'Klassenlogo',
 	],
+	'school_logo' => [
+		'Schullogo',
+		'School logo',
+	],
 	'class_delete' => [
 		'Klasse löschen',
 		'Delete class',

@@ -127,10 +127,14 @@ class printer {
                 'wahlpflichtfach' => '---',
                 'projekt_thema' => static::spacerIfEmpty(@$studentdata->projekt_thema),
         ];
-        // class logo: ${class_logo}
-        if (!$templateProcessor->addImageToReport('class_logo', 'class_logo', $class->id, 1024, 768)) {
-            $dataKey['class_logo'] = ''; // no logo files
+        // school logo: ${school_logo}
+        if (!$templateProcessor->addImageToReport('school_logo', 'exastud', 'block_exastud_schoollogo', 0, 1024, 768)) {
+            $dataKey['school_logo'] = ''; // no logo files
         };
+        // class logo: ${class_logo}
+        //if (!$templateProcessor->addImageToReport('class_logo', 'block_exastud', 'class_logo', $class->id, 1024, 768)) {
+        //    $dataKey['class_logo'] = ''; // no logo files
+        //};
 		// preparation data from template settings
         $marker_configurations = $template->get_marker_configurations('all', $class, $student);
         $data = array_merge($data, $marker_configurations);
@@ -140,7 +144,7 @@ class printer {
             $context = \context_system::instance();
             foreach ($inputs as $dataKey => $input) {
                 if ($input['type'] == 'image') {
-                    if (!$templateProcessor->addImageToReport($dataKey, 'report_image_'.$dataKey, $student->id, $input['width'], $input['height'], true)) {
+                    if (!$templateProcessor->addImageToReport($dataKey, 'block_exastud', 'report_image_'.$dataKey, $student->id, $input['width'], $input['height'], true)) {
                         $data[$dataKey] = ''; // empty image
                     }
                     /*$files = $fs->get_area_files($context->id, 'block_exastud', 'report_image_'.$dataKey, $student->id, 'itemid', false);
@@ -876,10 +880,14 @@ class printer {
             $templateProcessor->changeOrientation('L');
         }
 
-        // class logo: ${class_logo}
-        if (!$templateProcessor->addImageToReport('class_logo', 'class_logo', $class->id, 1024, 768)) {
-            $templateProcessor->setValue("class_logo", ''); // no logo files
+        // school logo: ${school_logo}
+        if (!$templateProcessor->addImageToReport('school_logo', 'exastud', 'block_exastud_schoollogo', 0, 1024, 768)) {
+            $templateProcessor->setValue("school_logo", ''); // no logo files
         };
+         //class logo: ${class_logo}
+        //if (!$templateProcessor->addImageToReport('class_logo', 'block_exastud', 'class_logo', $class->id, 1024, 768)) {
+        //    $templateProcessor->setValue("class_logo", ''); // no logo files
+        //};
 
 		foreach ($normal_subjects as $subject) {
             $shorttitle = trim($subject->shorttitle);
@@ -2035,7 +2043,6 @@ class TemplateProcessor extends \PhpOffice\PhpWord\TemplateProcessor {
         $typeTmpl = '<Override PartName="/word/media/'.$imgName.'" ContentType="image/EXT"/>';
 
         $rid = 'rId' . $countrels;
-
         $toAddImg .= str_replace(array('RID', 'WID', 'HEI'), array($rid, $newW, $newH), $imgTmpl) ;
 
         $aReplace = array($imgName, $imgExt);
@@ -2051,17 +2058,16 @@ class TemplateProcessor extends \PhpOffice\PhpWord\TemplateProcessor {
 
         $this->_types = str_replace('</Types>', $toAddType, $this->_types) . '</Types>';
         $this->_rels = str_replace('</Relationships>', $toAdd, $this->_rels) . '</Relationships>';
-
         $this->directReplace($strKey, $toAddImg);
         //return $toAddImg;
     }
 
     // Mainf function to add images to temlkate
-    public function addImageToReport($stringKey, $filearea, $modelid, $w, $h, $fileFromLoggedInUser = false) {
+    public function addImageToReport($stringKey, $component="block_exastud", $filearea, $modelid, $w, $h, $fileFromLoggedInUser = false) {
         global $USER;
         $fs = get_file_storage();
-        $files = $fs->get_area_files(\context_system::instance()->id, 'block_exastud', $filearea, $modelid, 'itemid', false);
-        if ($files) {
+        $files = $fs->get_area_files(\context_system::instance()->id, $component, $filearea, $modelid, 'itemid', false);
+        if ($files && count($files) > 0) {
             foreach ($files as $file) {
                 if ($fileFromLoggedInUser && $file->get_userid() != $USER->id) {
                     continue;
@@ -2071,6 +2077,7 @@ class TemplateProcessor extends \PhpOffice\PhpWord\TemplateProcessor {
                 $fileExt = pathinfo($file->get_filename(), PATHINFO_EXTENSION);
                 $this->setMarkerImages($stringKey, $file_content, $fileExt, $w, $h, $file_info);
             }
+            return true;
         }
         return false; // empty marker
     }

@@ -98,6 +98,7 @@ $string['class_educationplan'] = 'Education plan';
 $string['class_default_template'] = 'Default template';
 $string['class_owner'] = 'Class owner';
 $string['class_logo'] = 'Klassenlogo';
+$string['school_logo'] = 'School logo';
 $string['class_delete'] = 'Delete class';
 $string['project_based_class'] = 'Project';
 $string['reviewclass'] = 'Class review';

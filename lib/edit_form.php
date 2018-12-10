@@ -69,12 +69,12 @@ class class_edit_form extends moodleform {
             $mform->addElement('select', 'userid', block_exastud_get_string('class_owner'), $options);
         }
 
-        $mform->addElement('filemanager', 'class_logo', block_exastud_get_string('class_logo'), null,
+/*        $mform->addElement('filemanager', 'class_logo', block_exastud_get_string('class_logo'), null,
                 array(
                         'subdirs' => 0,
                         'maxfiles' => 1,
                         'accepted_types' => array('web_image'))
-        );
+        );*/
 
 		$this->add_action_buttons();
 	}

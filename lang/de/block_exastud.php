@@ -98,6 +98,7 @@ $string['class_educationplan'] = 'Bildungsplan';
 $string['class_default_template'] = 'Standard Zeugnisformular';
 $string['class_owner'] = 'Neue Klassenlehrkraft';
 $string['class_logo'] = 'Class logo';
+$string['school_logo'] = 'Schullogo';
 $string['class_delete'] = 'Klasse löschen';
 $string['project_based_class'] = 'Projekt';
 $string['reviewclass'] = 'Klassenbeurteilung';

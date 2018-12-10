@@ -185,4 +185,14 @@ if ($ADMIN->fulltree) {
 		'a2fa_timeout' => block_exastud_trans('de:A2fa für Benutzer erforderlich und erneute A2fa für LEB notwendig (z.B. päd. Netz)'),
 	];
 	$settings->add(new admin_setting_configselect('exastud/a2fa_requirement', block_exastud_trans('de:A2fa im LEB'), $description, '', $a2fa_requirement));
+
+	$settings->add(new admin_setting_configstoredfile('exastud/school_logo',
+                            block_exastud_get_string('school_logo'),
+                            '',
+                            'block_exastud_schoollogo',
+                            0,
+                            array(
+                                    'subdirs' => 0,
+                                    'maxfiles' => 1,
+                                    'accepted_types' => array('web_image'))));
 }
