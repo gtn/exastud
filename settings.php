@@ -133,12 +133,12 @@ if (!class_exists('block_exastud_link_to')) {
 if ($ADMIN->fulltree) {
     $settings->add(new block_exastud_settings_menu('exastud/menu', '', ''));
 
-	$settings->add(new admin_setting_configtext('exastud/school_name', block_exastud_trans('de:Lernentwicklungsbericht: Schulname'), '', '', PARAM_TEXT));
-	$settings->add(new admin_setting_configtext('exastud/school_location', block_exastud_trans('de:Lernentwicklungsbericht: Ort'), '', '', PARAM_TEXT));
-	$settings->add(new admin_setting_configtext('exastud/bildungsstandards', block_exastud_trans('de:Bildungsstandards'),
-		block_exastud_trans('de:Liste, mit Kommata getrennt'), '5,6,7,8,9,10', PARAM_TEXT));
-	$settings->add(new admin_setting_configcheckbox('exastud/bw_active', block_exastud_trans('de:Baden-Württemberg Berichte'), '', 0));
-	$settings->add(new admin_setting_configcheckbox('exastud/use_exacomp_grade_verbose', block_exastud_trans('de:Exabis Kompetenzraster Notenverbalisierung verwenden'), '', 0));
+	$settings->add(new admin_setting_configtext('exastud/school_name', block_exastud_get_string('settings_shoolname'), '', '', PARAM_TEXT));
+	$settings->add(new admin_setting_configtext('exastud/school_location', block_exastud_get_string('settings_city'), '', '', PARAM_TEXT));
+	$settings->add(new admin_setting_configtext('exastud/bildungsstandards', block_exastud_get_string('settings_edustandarts'),
+		block_exastud_get_string('settings_edustandarts_description'), '5,6,7,8,9,10', PARAM_TEXT));
+	$settings->add(new admin_setting_configcheckbox('exastud/bw_active', block_exastud_get_string('settings_bw_reports'), '', 0));
+	$settings->add(new admin_setting_configcheckbox('exastud/use_exacomp_grade_verbose', block_exastud_get_string('settings_exacomp_verbeval'), '', 0));
     $settings->add(new admin_setting_configcheckbox('exastud/logging', block_exastud_get_string('logging'), '', 0));
     $evalTypes = [
         BLOCK_EXASTUD_COMPETENCE_EVALUATION_TYPE_TEXT => block_exastud_get_string('settings_competence_evaltype_text'),
@@ -195,4 +195,7 @@ if ($ADMIN->fulltree) {
                                     'subdirs' => 0,
                                     'maxfiles' => 1,
                                     'accepted_types' => array('web_image'))));
+
+    $settings->add(new admin_setting_configcheckbox('exastud/only_learnsociale_reports', block_exastud_get_string('settings_only_learnsoziale'), '', 0));
+
 }

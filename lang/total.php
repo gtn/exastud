@@ -735,7 +735,60 @@ return [
             'Additional info'
     ],
 
+    'settings_only_learnsoziale' => [
+            'nur Lern- und Sozialverhalten erfassen',
+            'use only learning and social behavior',
+    ],
+    'settings_shoolname' => [
+                'Lernentwicklungsbericht: Schulname',
+                'Learning Development Report: School Name',
+    ],
+    'settings_city' => [
+                'Lernentwicklungsbericht: Ort',
+                'Learning Development Report: City',
+    ],
+    'settings_edustandarts' => [
+                'Bildungsstandards',
+                'Education standarts',
+    ],
+    'settings_edustandarts_description' => [
+                'Liste, mit Kommata getrennt',
+                'comma seperated list',
+    ],
+    'settings_bw_reports' => [
+                'Baden-Württemberg Berichte',
+                'Baden-Württemberg reports',
+    ],
+    'settings_exacomp_verbeval' => [
+                'Exabis Kompetenzraster Notenverbalisierung verwenden',
+                'Exabis competences grid verbalise evaluation',
+    ],
 
+    'report_learn_and_sociale' => [
+            'Lern- und Sozialverhalten',
+            'Learning and social behavior',
+    ],
+    'report_other_report_fields' => [
+            'Weitere Formularfelder',
+            'Other report fields',
+    ],
+    'report_for_subjects' => [
+            'Zertifikat für Profilfach',
+            'Certificate for profile subject',
+    ],
+    'report_for_additional' => [
+            'Additional data',
+            'Additional fields',
+    ],
+    'report_report_eval' => [
+            'Projektprüfung',
+            'Project evaluations',
+    ],
+
+    'not_assigned' => [
+        'nicht zugeordnet',
+        'not assigned',
+    ],
 
 	'competencies' => [
 		'Fächerübergreifende Kompetenzen',

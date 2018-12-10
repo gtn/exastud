@@ -2389,3 +2389,7 @@ function block_exastud_get_competence_eval_typeevalpoints_limit() {
     return get_config('exastud', 'competence_evalpoints_limit');
 }
 
+function block_exastud_get_only_learnsociale_reports() {
+    return get_config('exastud', 'only_learnsociale_reports');
+}
+
