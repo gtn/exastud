@@ -198,4 +198,6 @@ if ($ADMIN->fulltree) {
 
     $settings->add(new admin_setting_configcheckbox('exastud/only_learnsociale_reports', block_exastud_get_string('settings_only_learnsoziale'), '', 0));
 
+
+	$settings->add(new admin_setting_configcheckbox('exastud/export_class_password', block_exastud_trans('de:Sicherung von Klassen mit Passwort schützen'), '', 0));
 }

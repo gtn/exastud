@@ -2393,3 +2393,69 @@ function block_exastud_get_only_learnsociale_reports() {
     return get_config('exastud', 'only_learnsociale_reports');
 }
 
+/*
+function block_exastud_encrypt_raw($value, $secret) {
+	$iv = openssl_random_pseudo_bytes(openssl_cipher_iv_length('aes-256-cbc'));
+	return base64_encode($iv).'::'.openssl_encrypt($value, 'aes-256-cbc', $secret, OPENSSL_RAW_DATA, $iv);
+}
+
+function block_exastud_decrypt_raw($encrypted, $secret) {
+	$pos = strpos($encrypted, '::');
+	if (!$pos) {
+		return;
+	}
+
+	$iv = base64_decode(substr($encrypted, 0, $pos));
+	$encrypted = substr($encrypted, $pos+2);
+	return openssl_decrypt($encrypted, 'aes-256-cbc', $secret, true, $iv);
+}
+
+function block_exastud_encrypt($value, $secret, $public_data = []) {
+	if (!is_string($value)) {
+		$value = json_encode($value, JSON_PRETTY_PRINT);
+	}
+
+	$iv = openssl_random_pseudo_bytes(openssl_cipher_iv_length('aes-256-cbc'));
+
+	$public_data = (array)$public_data;
+	$public_data['iv'] = base64_encode($iv);
+
+	return "exacrypt::"
+		.json_encode($public_data, JSON_PRETTY_PRINT)
+		."::"
+		.openssl_encrypt($value, 'aes-256-cbc', $secret, OPENSSL_RAW_DATA, $iv);
+}
+
+function block_exastud_decrypt_public_data($encrypted) {
+	if (!preg_match('!^exacrypt::(?<public_data>.*\n})::!Usm', $encrypted, $matches)) {
+		return;
+	}
+	if (!$public_data = json_decode($matches['public_data'])) {
+		return;
+	}
+
+	return $public_data;
+}
+
+function block_exastud_decrypt($encrypted, $secret) {
+	if (!preg_match('!^exacrypt::(?<public_data>.*\n})::!Usm', $encrypted, $matches)) {
+		return;
+	}
+	if (!$public_data = json_decode($matches['public_data'], true)) {
+		return;
+	}
+
+	$iv = base64_decode($public_data['iv']);
+	$encrypted = substr($encrypted, strlen($matches[0]));
+	$data = openssl_decrypt($encrypted, 'aes-256-cbc', $secret, true, $iv);
+	if (!$data) {
+		return;
+	}
+	$data = json_decode($data, true);
+	if (!$data) {
+		return;
+	}
+
+	return [$public_data, $data];
+}
+*/

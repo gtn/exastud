@@ -21,15 +21,46 @@ require __DIR__.'/inc.php';
 
 $courseid = optional_param('courseid', 1, PARAM_INT); // Course ID
 $classid = optional_param('classid', 0, PARAM_INT); // Course ID
+$secret = optional_param('secret', 0, PARAM_TEXT);
 
 block_exastud_require_login($courseid);
 
 block_exastud_require_global_cap(BLOCK_EXASTUD_CAP_MANAGE_CLASSES);
+
 $curPeriod = block_exastud_get_active_or_next_period();
 
 $class = block_exastud_get_head_teacher_class($classid);
 
 $students = block_exastud_get_class_students($class->id);
+
+function block_exastud_randomPassword() {
+    $alphabet = 'abcdefghijkmnpqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ123456789';
+    $pass = array(); //remember to declare $pass as an array
+    $alphaLength = strlen($alphabet) - 1; //put the length -1 in cache
+    for ($i = 0; $i < 8; $i++) {
+        $n = rand(0, $alphaLength);
+        $pass[] = $alphabet[$n];
+    }
+    return implode($pass); //turn the array into a string
+}
+
+if (block_exastud_get_plugin_config('export_class_password') && !$secret) {
+	$url = "/blocks/exastud/export_class.php?courseid=".$courseid.'&classid='.$classid;
+	$PAGE->set_url($url);
+
+	$output = block_exastud_get_renderer();
+	echo $output->header(['configuration_classes', 'class_info'], ['class' => $class]);
+
+	$secret = block_exastud_randomPassword();
+	echo block_exastud_trans('de:Bitte notieren Sie sich das Passwort "{$a}", bevor Sie fortfahren', $secret);
+	echo '<br/><br/>';
+
+    echo $output->link_button('export_class.php?courseid='.$COURSE->id.'&classid='.$class->id.'&secret='.$secret,
+            block_exastud_get_string('export_class'), ['class' => 'btn btn-default']);
+
+	echo $output->footer();
+	exit;
+}
 
 $students = $DB->get_records_sql('
 	SELECT u.id, u.firstname, u.lastname, u.idnumber, u.email, cs.timemodified
@@ -44,30 +75,32 @@ $plugininfo = core_plugin_manager::instance()->get_plugin_info('block_exastud');
 
 $data = (object)[];
 $data->datatype = 'block_exastud_class_export';
-$data->dataversion = '0.1';
+$data->dataversion = '0.2';
 $data->exporttime = time();
 $data->pluginversion = $plugininfo->versiondisk;
 $data->pluginrelease = $plugininfo->release;
-
 $data->class = $class;
-$data->bp = $DB->get_record('block_exastudbp', ['id' => $class->bpid]);
-$data->period = $DB->get_record('block_exastudperiod', ['id' => $class->periodid]);
-$data->subjects = array_values($subjects);
-$data->evalopt = array_values($DB->get_records('block_exastudevalopt'));
-$data->classteachers = array_values($classteachers);
-$data->students = array_values($students);
-$data->categories = block_exastud_get_class_categories($class->id);
 
-$data->classteastudvis = [];
-foreach ($data->classteachers as $classteacher) {
-	$data->classteastudvis = array_merge($data->classteastudvis, $DB->get_records('block_exastudclassteastudvis', ['classteacherid' => $classteacher->id]));
+$privateData = (object)[];
+
+$privateData->bp = $DB->get_record('block_exastudbp', ['id' => $class->bpid]);
+$privateData->period = $DB->get_record('block_exastudperiod', ['id' => $class->periodid]);
+$privateData->subjects = array_values($subjects);
+$privateData->evalopt = array_values($DB->get_records('block_exastudevalopt'));
+$privateData->classteachers = array_values($classteachers);
+$privateData->students = array_values($students);
+$privateData->categories = block_exastud_get_class_categories($class->id);
+
+$privateData->classteastudvis = [];
+foreach ($privateData->classteachers as $classteacher) {
+	$privateData->classteastudvis = array_merge($privateData->classteastudvis, $DB->get_records('block_exastudclassteastudvis', ['classteacherid' => $classteacher->id]));
 }
 
 
 $teacherids = $DB->get_records_menu('block_exastudclassteachers', ['classid' => $class->id], null, 'distinct teacherid AS tmp, teacherid');
-$data->reviews = [];
+$privateData->reviews = [];
 if ($students && $teacherids) { /* && $subjects */
-	$data->reviews = array_values($DB->get_records_sql('
+	$privateData->reviews = array_values($DB->get_records_sql('
 	SELECT r.*
 	FROM {block_exastudreview} r
 	WHERE r.studentid IN ('.join(',', array_keys($students)).')
@@ -77,11 +110,11 @@ if ($students && $teacherids) { /* && $subjects */
 		ORDER BY timemodified DESC
 	', [$class->periodid]));
 
-	foreach ($data->reviews as $review) {
+	foreach ($privateData->reviews as $review) {
 		// transfer reviews also to classdata
 		if ($review->subjectid > 0) {
 			$studentData = block_exastud_get_subject_student_data($class->id, $review->subjectid, $review->studentid);
-			if (!isset($studentData->review) && !isset($data->{'review.timemodified'})) {
+			if (!isset($studentData->review) && !isset($privateData->{'review.timemodified'})) {
 				block_exastud_set_subject_student_data($class->id, $review->subjectid, $review->studentid, 'review', trim($review->review));
 				block_exastud_set_subject_student_data($class->id, $review->subjectid, $review->studentid, 'review.modifiedby', $review->teacherid);
 				block_exastud_set_subject_student_data($class->id, $review->subjectid, $review->studentid, 'review.timemodified', $review->timemodified);
@@ -92,7 +125,7 @@ if ($students && $teacherids) { /* && $subjects */
 	}
 }
 
-$data->data = array_values($DB->get_records('block_exastuddata', ['classid' => $class->id]));
+$privateData->data = array_values($DB->get_records('block_exastuddata', ['classid' => $class->id]));
 
 // TESTING:
 // echo json_encode($data, JSON_PRETTY_PRINT); exit;
@@ -100,5 +133,14 @@ $data->data = array_values($DB->get_records('block_exastuddata', ['classid' => $
 $file = tempnam($CFG->tempdir, "zip");
 
 require_once($CFG->libdir.'/filelib.php');
+
+if (block_exastud_get_plugin_config('export_class_password')) {
+	$iv = openssl_random_pseudo_bytes(openssl_cipher_iv_length('aes-256-cbc'));
+	$data->iv = base64_encode($iv);
+	$data->encrypted = base64_encode(openssl_encrypt(json_encode($privateData), 'aes-256-cbc', $secret, OPENSSL_RAW_DATA, $iv));
+} else {
+	$data = (object)array_merge((array)$data, (array)$privateData);
+}
+
 file_put_contents($file, gzencode(json_encode($data, JSON_PRETTY_PRINT)));
 send_temp_file($file, 'backup_exastud_class_'.clean_filename($class->title).'_'.date('Y-m-d').'.gz');
