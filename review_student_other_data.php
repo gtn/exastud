@@ -69,6 +69,7 @@ switch ($type) {
             BLOCK_EXASTUD_DATA_ID_LERN_UND_SOZIALVERHALTEN => [
                 'title' => block_exastud_trans('de:Lern- und Sozialverhalten'),
                 'cols' => 50,
+                'lines' => 8,
             ],
         ];
         $classheader = $reviewclass->title.' - '.block_exastud_trans('de:Lern- und Sozialverhalten');
@@ -91,7 +92,8 @@ $olddata = (array)block_exastud_get_class_student_data($classid, $studentid);
 
 $dataid = key($categories);
 $studentform = new student_other_data_form($PAGE->url, [
-	'categories' => $categories, 'type' => $type,
+	'categories' => $categories,
+    'type' => $type,
 	'modified' =>
 		@$olddata[$dataid.'.modifiedby'] ?
 			block_exastud_get_renderer()->last_modified(@$olddata[$dataid.'.modifiedby'], @$olddata[$dataid.'.timemodified'])

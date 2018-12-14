@@ -66,11 +66,14 @@ class print_templates {
 	    $templates = array();
 	    $templates_temp = g::$DB->get_records('block_exastudreportsettings');
 	    foreach ($templates_temp as $tmpl) {
+	        $grades = array('') + array_map('trim', explode(';', $tmpl->grades));
+            $grades = array_combine($grades, $grades);
 	        $templates[$tmpl->id] = array(
 	                'name' => $tmpl->title,
                     'file' => $tmpl->template,
                     //'grades' => ['1'=>'1'], // for testing
-                    'grades' => block_exastud_get_evaluation_options(true), // for testing
+                    //'grades' => block_exastud_get_evaluation_options(true),
+                    'grades' => $grades,
                     'inputs' => self::get_inputs_for_template($tmpl->id, $type)
             );
         }
@@ -158,6 +161,10 @@ class print_templates {
         }
     }
 
+    /**
+     * @return array
+     * @deprecated
+     */
 	static function _old_get_all_template_configs() {
 		$grades_1_bis_6 = ['1' => '1', '2' => '2', '3' => '3', '4' => '4', '5' => '5', '6' => '6'];
 		$grades_short = ['1' => 'sgt', '2' => 'gut', '3' => 'bfr', '4' => 'ausr', '5' => 'mgh', '6' => 'ung'];

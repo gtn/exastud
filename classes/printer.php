@@ -127,10 +127,10 @@ class printer {
                 'wahlpflichtfach' => '---',
                 'projekt_thema' => static::spacerIfEmpty(@$studentdata->projekt_thema),
         ];
-        // school logo: ${school_logo}
-        if (!$templateProcessor->addImageToReport('school_logo', 'exastud', 'block_exastud_schoollogo', 0, 1024, 768)) {
+        // school logo: ${school_logo}  : mantis 3450 - only for grades_report
+        //if (!$templateProcessor->addImageToReport('school_logo', 'exastud', 'block_exastud_schoollogo', 0, 1024, 768)) {
             $dataKey['school_logo'] = ''; // no logo files
-        };
+        //};
         // class logo: ${class_logo}
         //if (!$templateProcessor->addImageToReport('class_logo', 'block_exastud', 'class_logo', $class->id, 1024, 768)) {
         //    $dataKey['class_logo'] = ''; // no logo files

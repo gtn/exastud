@@ -140,6 +140,7 @@ if ($action && ($settingsid > 0 || $action == 'new')) {
                 block_exastud_get_string('report_settings_setting_bp'),
                 block_exastud_get_string('report_settings_setting_category'),
                 block_exastud_get_string('report_settings_setting_template'),
+                block_exastud_get_string('report_settings_setting_grades'),
                 block_exastud_get_string('report_settings_setting_year'),
                 block_exastud_get_string('report_settings_setting_reportdate'),
                 block_exastud_get_string('report_settings_setting_studentname'),
@@ -170,7 +171,7 @@ if ($action && ($settingsid > 0 || $action == 'new')) {
                         case 'textarea':
                             $result .= block_exastud_get_string('report_settings_countrows', null, $resArr['rows']);
                             $result .= '&nbsp;'.block_exastud_get_string('report_settings_countinrow', null, $resArr['count_in_row']);
-                            $result .= '<br />'.block_exastud_get_string('report_settings_maxchars', null, $resArr['rows'] * $resArr['count_in_row']);
+                            //$result .= '<br />'.block_exastud_get_string('report_settings_maxchars', null, $resArr['rows'] * $resArr['count_in_row']);
                             $result = '<small>'.$result.'</small>';
                             break;
                         case 'text':
@@ -208,6 +209,7 @@ if ($action && ($settingsid > 0 || $action == 'new')) {
                     $bpData ? $bpData->title : '',
                     $report->category,
                     array_key_exists($report->template, $templateList) ? $templateList[$report->template] : $report->template,
+                    $report->grades,
                     $call_setting_marker('year'),
                     $call_setting_marker('report_date'),
                     $call_setting_marker('student_name'),
@@ -247,7 +249,14 @@ function block_exastud_get_reportsettings_additional_description($report) {
     if ($data && is_array($data) && count($data) > 0) {
         $content .= '<ul class="exastud-additional-params-shortlist">';
         foreach ($data as $key => $reportData) {
-            $content .= '<li><strong>${'.$reportData['key'].'}:</strong> '.'<i>('.$reportData['type'].')</i> '.$reportData['title'].'</li>';
+            $additional = '';
+            switch ($reportData['type']) {
+                case 'textarea':
+                    $additional .= ':'.block_exastud_get_string('report_settings_countrows', null, $reportData['rows']);
+                    $additional .= '&nbsp;/&nbsp;'.block_exastud_get_string('report_settings_countinrow_short', null, $reportData['count_in_row']);
+                    break;
+            }
+            $content .= '<li><strong>${'.$reportData['key'].'}:</strong> '.'<i>('.$reportData['type'].$additional.')</i> '.$reportData['title'].'</li>';
         }
         $content .= '</ul>';
     }
@@ -372,3 +381,6 @@ function block_exastud_report_templates_prepare_serialized_data($settingsform, $
 
     return $settingsedit;
 }
+
+// reset templates: for testing
+//block_exastud_fill_reportsettingstable();

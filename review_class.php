@@ -40,12 +40,17 @@ if (!$reviewclass || !$class) {
 $teacherid = $USER->id;
 
 if ($action == 'update') {
+    // Update grades
     $grades = block_exastud\param::optional_array('exastud_grade', [PARAM_TEXT => PARAM_TEXT]);
     foreach ($grades as $studentid => $grade) {
-  
         block_exastud_set_subject_student_data($classid, $subjectid, $studentid, 'grade', $grade);
         block_exastud_set_subject_student_data($classid, $subjectid, $studentid, 'grade.modifiedby', $USER->id);
         block_exastud_set_subject_student_data($classid, $subjectid, $studentid, 'grade.timemodified', time());
+    }
+    // Update niveaus
+    $niveaus_f = block_exastud\param::optional_array('exastud_niveau', [PARAM_TEXT => PARAM_TEXT]);
+    foreach ($niveaus_f as $studentid => $n) {
+        block_exastud_set_subject_student_data($classid, $subjectid, $studentid, 'niveau', $n);
     }
     
     redirect($_SERVER['REQUEST_URI']);
@@ -118,9 +123,12 @@ $table = new html_table();
 $table->head = array();
 $table->head[] = ''; //userpic
 $table->head[] = block_exastud_get_string('name');
-$table->head[] = ''; // bewerten button
-$table->head[] = ''; // bewerten button
-$table->head[] = 'Note';
+$table->head[] = '';
+$table->head[] = block_exastud_get_string('gender'); // gender column
+$table->head[] = block_exastud_trans('de:Notenerfassung / Niveau / Fach'); // bewerten button
+$table->head[] = block_exastud_trans('de:Überfachliche Beurteilungen'); // bewerten button
+$table->head[] = block_exastud_get_string('Note');
+$table->head[] = block_exastud_get_string('Niveau');
 
 foreach($categories as $category)
 	$table->head[] = $category->title;
@@ -129,6 +137,9 @@ $table->align = array();
 $table->align[] = 'center';
 $table->align[] = 'left';
 
+$table->align[] = 'center';
+$table->align[] = 'center';
+$table->align[] = 'center';
 $table->align[] = 'center';
 $table->align[] = 'center';
 $table->align[] = 'center';
@@ -141,7 +152,7 @@ $table->align[] = 'right';
 
 $hiddenclassstudents = [];
 $oddeven = false;
-foreach($classstudents as $classstudent) {
+foreach ($classstudents as $classstudent) {
 	$visible = $DB->get_field('block_exastudclassteastudvis', 'visible', [
 		'classteacherid' => $reviewclass->classteacherid,
 		'studentid' => $classstudent->id,
@@ -178,38 +189,55 @@ foreach($classstudents as $classstudent) {
 		$show_hide_icon = $OUTPUT->pix_icon('i/show', block_exastud_get_string('show'));
 	}
 	$row->cells[] = '<a style="padding-right: 15px;" href="'.$show_hide_url.'">'.$show_hide_icon.'</a>';
+	$row->cells[] = block_exastud_get_user_gender_string($classstudent->id);
 
 	$row->cells[] = ($visible ? $output->link_button($CFG->wwwroot.'/blocks/exastud/review_student.php?courseid='.$courseid.'&classid='.$classid.'&subjectid='.$subjectid.'&studentid='.$classstudent->id,
-		block_exastud_trans(['de:Bewerten', 'en:Review']), ['class' => 'btn btn-primary']) : '');
-	
+		block_exastud_get_string('review_button'), ['class' => 'btn btn-primary']) : '');
+    $row->cells[] = ($visible ? $output->link_button($CFG->wwwroot.'/blocks/exastud/review_student.php?courseid='.$courseid.'&classid='.$classid.'&subjectid='.$subjectid.'&studentid='.$classstudent->id.'&reporttype=additional',
+		block_exastud_get_string('review_button'), ['class' => 'btn btn-primary']) : '');
+
+	// Grades column
 	$formdata = new stdClass();
 	$formdata = (object)array_merge((array)$formdata, (array)$subjectData);
 	$template = block_exastud_get_student_print_template($class, $classstudent->id);
-	$grade_options = $template->get_grade_options();
+	$grade_options = array_filter($template->get_grade_options());
 	if (empty($formdata->grade)) {
 	    $formdata->grade = '';
 	}
+    if (@$formdata->grade && !array_key_exists($formdata->grade, $grade_options) && count($grade_options) > 0) {
+        $grade_options = [$formdata->grade => $formdata->grade] + $grade_options;
+    }
 	//$grade_form->addElement('static', 'exacomp_grades', block_exastud_trans('de:Vorschläge aus Exacomp'), $grade_options['exacomp_grades']);
-    switch (block_exastud_get_competence_eval_type()) {
-        case BLOCK_EXASTUD_COMPETENCE_EVALUATION_TYPE_TEXT:
-        case BLOCK_EXASTUD_COMPETENCE_EVALUATION_TYPE_POINT:
-                $grade_form = '<select name="exastud_grade['.$classstudent->id.']" class="custom-select">';
-                //$grade_form .= '<option></option>';
-                foreach($grade_options as $k => $grade_option) {
-                    if ($formdata->grade == (string)$k) {
-                        $grade_form .= '<option selected="selected" value="'. $k .'">'. $grade_option .'</option>';
-                     }else {
-                        $grade_form .= '<option value="'.$k.'">'. $grade_option .'</option>';
-                    }
-                }
-                $grade_form .= '</select>';
-                break;
-        case BLOCK_EXASTUD_COMPETENCE_EVALUATION_TYPE_GRADE:
-                $grade_form = '<input name="exastud_grade['.$classstudent->id.']" class="" value="'.$formdata->grade.'"/>';
-                break;
-        default:
+    if ($grade_options && is_array($grade_options) && count($grade_options) > 0) {
+        $grade_form = '<select name="exastud_grade['.$classstudent->id.']" class="custom-select">';
+        $grade_form .= '<option value=""></option>';
+        foreach ($grade_options as $k => $grade_option) {
+            if ($formdata->grade == (string) $k) {
+                $grade_form .= '<option selected="selected" value="'.$k.'">'.$grade_option.'</option>';
+            } else {
+                $grade_form .= '<option value="'.$k.'">'.$grade_option.'</option>';
+            }
+        }
+        $grade_form .= '</select>';
+    } else {
+        $grade_form = '<input name="exastud_grade['.$classstudent->id.']" class="form-control " value="'.$formdata->grade.'" size="5"/>';
     }
 	$row->cells[] = $grade_form;
+    // Niveau column
+    $niveaus = ['' => ''] + block_exastud\global_config::get_niveau_options();
+    if (empty($formdata->niveau)) {
+        $formdata->niveau = '';
+    }
+    $niveau_form = '<select name="exastud_niveau['.$classstudent->id.']" class="custom-select">';
+    foreach ($niveaus as $k => $niveau_option) {
+        if ($formdata->niveau == (string) $k) {
+            $niveau_form .= '<option selected="selected" value="'.$k.'">'.$niveau_option.'</option>';
+        } else {
+            $niveau_form .= '<option value="'.$k.'">'.$niveau_option.'</option>';
+        }
+    }
+    $niveau_form .= '</select>';
+	$row->cells[] = $niveau_form;
 
 	/* if (!$visible) {
 		$cell = new html_table_cell();
@@ -243,15 +271,15 @@ foreach($classstudents as $classstudent) {
 		$cell->text = '<p>'.((trim(@$subjectData->review) ? block_exastud_text_to_html(trim($subjectData->review)) : '') ?: '---').'</p>';
 
 		if (!empty($subjectData->niveau)) {
-			$cell->text .= '<p><b>'.block_exastud_get_string('de:Niveau').':</b> '.(block_exastud\global_config::get_niveau_option_title($subjectData->niveau) ?: $subjectData->niveau).'</p>';
+			$cell->text .= '<p><b>'.block_exastud_get_string('Niveau').':</b> '.(block_exastud\global_config::get_niveau_option_title($subjectData->niveau) ?: $subjectData->niveau).'</p>';
 		}
 		if (!empty($subjectData->grade)) {
 			$template = block_exastud_get_student_print_template($class, $classstudent->id);
 			$value = @$template->get_grade_options()[$subjectData->grade] ?: $subjectData->grade;
-			$cell->text .= '<p><b>'.block_exastud_get_string('de:Note').':</b> '.$value.'</p>';
+			$cell->text .= '<p><b>'.block_exastud_get_string('Note').':</b> '.$value.'</p>';
 		}
 
-		$cell->colspan = count($categories);
+		$cell->colspan = count($categories) + 4;
 		$cell->style = 'text-align: left;';
 
 		$spacerCell = new html_table_cell();

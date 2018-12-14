@@ -27,6 +27,7 @@ $classid = required_param('classid', PARAM_INT);
 $studentid = required_param('studentid', PARAM_INT);
 $subjectid = required_param('subjectid', PARAM_INT);
 $returnurl = optional_param('returnurl', null, PARAM_LOCALURL);
+$reporttype = optional_param('reporttype', '', PARAM_RAW);
 
 block_exastud_require_login($courseid);
 
@@ -114,23 +115,22 @@ if ($reviewdata) {
 $subjectData = block_exastud_get_review($classid, $subjectid, $studentid);
 $formdata = (object)array_merge((array)$formdata, (array)$subjectData);
 
-switch (block_exastud_get_competence_eval_type()) {
-    case BLOCK_EXASTUD_COMPETENCE_EVALUATION_TYPE_TEXT:
-    case BLOCK_EXASTUD_COMPETENCE_EVALUATION_TYPE_POINT:
-        $grade_options = $template->get_grade_options();
-        if (@$formdata->grade && !isset($grade_options[$formdata->grade])) {
-            $grade_options = [$formdata->grade => $formdata->grade] + $grade_options;
-        }
-        break;
-    case BLOCK_EXASTUD_COMPETENCE_EVALUATION_TYPE_GRADE:
-        $grade_options = null;
+$grade_options = array_filter($template->get_grade_options());
+if (count($grade_options) > 0) {
+    if (@$formdata->grade && count($grade_options) > 0 && !array_key_exists($formdata->grade, $grade_options)) {
+        $grade_options = [$formdata->grade => $formdata->grade] + $grade_options;
+    }
+} else {
+    $grade_options = null;
 }
 // create form and add customvariables
 $studentform = new student_edit_form(null, [
+    'template' => $template,
 	'categories' => $categories,
 	'subjectid' => $subjectid,
 	'exacomp_grades' => $exacomp_grades,
 	'grade_options' => $grade_options,
+	'reporttype' => $reporttype, // additional - show "learn and social". empty - Notenerfassung/Niveau/Fach
 	'categories.modified' =>
 		$reviewdata
 			? block_exastud_get_renderer()->last_modified($reviewdata->teacherid, $reviewdata->timemodified)
@@ -144,99 +144,105 @@ $studentform = new student_edit_form(null, [
 if ($fromform = $studentform->get_data()) {
 	$newreview = new stdClass();
 	$newreview->timemodified = time();
-	$newreview->review = $fromform->review;
-
-	$existingReview = $DB->get_record('block_exastudreview', ['studentid' => $studentid, 'subjectid' => $subjectid,
-                                                                'periodid' => $actPeriod->id, 'teacherid' => $teacherid,]);
-	$newreview = g::$DB->insert_or_update_record('block_exastudreview', $newreview, [
-		'studentid' => $studentid,
-		'subjectid' => $subjectid,
-		'periodid' => $actPeriod->id,
-		'teacherid' => $teacherid,
-	]);
-	if (!$existingReview || $existingReview->review != $fromform->review) {
-	    $subjectObjData = $DB->get_record('block_exastudsubjects', ['id' => $subjectid]);
-        \block_exastud\event\studentreview_changed::log(['objectid' => $reviewclass->id,
-                'relateduserid' => $studentid,
-                'other' => ['classtitle' => $reviewclass->title,
-                        'subjectid' => $subjectid,
-                        'subjecttitle' => $subjectObjData->title,
-                        'oldvalue' => ($existingReview ? $existingReview->review : null),
-                        'value' => $fromform->review,
-                        'studentname' =>  $student->firstname.' '.$student->lastname,
-                        'target' => 'Fachkompetenzen']]);
+	if ($reporttype == 'additional') {
+        $newreview->review = $fromform->vorschlag;
+    } else {
+        $newreview->review = $fromform->review;
     }
 
-    $existingReview = $DB->get_record('block_exastudreview', ['studentid' => $studentid, 'subjectid' => BLOCK_EXASTUD_SUBJECT_ID_LERN_UND_SOZIALVERHALTEN_VORSCHLAG,
-            'periodid' => $actPeriod->id, 'teacherid' => $teacherid,]);
-	g::$DB->insert_or_update_record('block_exastudreview', [
-		'timemodified' => time(),
-		'review' => $fromform->vorschlag,
-	], [
-		'studentid' => $studentid,
-		'subjectid' => BLOCK_EXASTUD_SUBJECT_ID_LERN_UND_SOZIALVERHALTEN_VORSCHLAG,
-		'periodid' => $actPeriod->id,
-		'teacherid' => $teacherid,
-	]);
-    if (!$existingReview || $existingReview->review != $fromform->vorschlag) {
-        $subjectObjData = $DB->get_record('block_exastudsubjects', ['id' => $subjectid]);
-        \block_exastud\event\studentreview_changed::log(['objectid' => $reviewclass->id,
-                'relateduserid' => $studentid,
-                'other' => ['classtitle' => $reviewclass->title,
-                        'subjectid' => $subjectid,
-                        'subjecttitle' => $subjectObjData->title,
-                        'oldvalue' => ($existingReview ? $existingReview->review : null),
-                        'value' => $fromform->vorschlag,
-                        'target' => 'Lern- und Sozialverhalten',
-                        'studentname' => $student->firstname.' '.$student->lastname]]);
+    switch ($reporttype) {
+        case 'additional':
+            $existingReview = $DB->get_record('block_exastudreview',
+                    ['studentid' => $studentid, 'subjectid' => BLOCK_EXASTUD_SUBJECT_ID_LERN_UND_SOZIALVERHALTEN_VORSCHLAG,
+                            'periodid' => $actPeriod->id, 'teacherid' => $teacherid,]);
+            g::$DB->insert_or_update_record('block_exastudreview', $newreview, [
+                    'studentid' => $studentid,
+                    'subjectid' => BLOCK_EXASTUD_SUBJECT_ID_LERN_UND_SOZIALVERHALTEN_VORSCHLAG,
+                    'periodid' => $actPeriod->id,
+                    'teacherid' => $teacherid,
+            ]);
+            if (!$existingReview || $existingReview->review != $fromform->vorschlag) {
+                $subjectObjData = $DB->get_record('block_exastudsubjects', ['id' => $subjectid]);
+                \block_exastud\event\studentreview_changed::log(['objectid' => $reviewclass->id,
+                        'relateduserid' => $studentid,
+                        'other' => ['classtitle' => $reviewclass->title,
+                                'subjectid' => $subjectid,
+                                'subjecttitle' => $subjectObjData->title,
+                                'oldvalue' => ($existingReview ? $existingReview->review : null),
+                                'value' => $fromform->vorschlag,
+                                'target' => 'Lern- und Sozialverhalten',
+                                'studentname' => $student->firstname.' '.$student->lastname]]);
+            }
+            break;
+        default:
+            $existingReview = $DB->get_record('block_exastudreview', ['studentid' => $studentid, 'subjectid' => $subjectid,
+                    'periodid' => $actPeriod->id, 'teacherid' => $teacherid,]);
+            $newreview = g::$DB->insert_or_update_record('block_exastudreview', $newreview, [
+                    'studentid' => $studentid,
+                    'subjectid' => $subjectid,
+                    'periodid' => $actPeriod->id,
+                    'teacherid' => $teacherid,
+            ]);
+            if (!$existingReview || $existingReview->review != $fromform->review) {
+                $subjectObjData = $DB->get_record('block_exastudsubjects', ['id' => $subjectid]);
+                \block_exastud\event\studentreview_changed::log(['objectid' => $reviewclass->id,
+                        'relateduserid' => $studentid,
+                        'other' => ['classtitle' => $reviewclass->title,
+                                'subjectid' => $subjectid,
+                                'subjecttitle' => $subjectObjData->title,
+                                'oldvalue' => ($existingReview ? $existingReview->review : null),
+                                'value' => $fromform->review,
+                                'studentname' =>  $student->firstname.' '.$student->lastname,
+                                'target' => 'Fachkompetenzen']]);
+            }
+
+            block_exastud_set_subject_student_data($classid, $subjectid, $studentid, 'review', trim($fromform->review));
+            block_exastud_set_subject_student_data($classid, $subjectid, $studentid, 'review.modifiedby', $USER->id);
+            block_exastud_set_subject_student_data($classid, $subjectid, $studentid, 'review.timemodified', time());
+
+            block_exastud_set_subject_student_data($classid, $subjectid, $studentid, 'grade', $fromform->grade);
+            block_exastud_set_subject_student_data($classid, $subjectid, $studentid, 'grade.modifiedby', $USER->id);
+            block_exastud_set_subject_student_data($classid, $subjectid, $studentid, 'grade.timemodified', time());
+
+            block_exastud_set_subject_student_data($classid, $subjectid, $studentid, 'niveau', $fromform->niveau);
+
+            foreach ($categories as $category) {
+                if (!isset($fromform->{$category->id.'_'.$category->source})) {
+                    continue;
+                }
+
+                $newvalue = $fromform->{$category->id.'_'.$category->source};
+                $existing = $DB->get_record('block_exastudreviewpos', ["reviewid" => $newreview->id,
+                        "categoryid" => $category->id,
+                        "categorysource" => $category->source] );
+                g::$DB->insert_or_update_record('block_exastudreviewpos',
+                        ["value" => $newvalue],
+                        ["reviewid" => $newreview->id, "categoryid" => $category->id, "categorysource" => $category->source]);
+                // only if changed
+                if (!$existing || $newvalue != $existing->value) {
+                    $subjectObjData = $DB->get_record('block_exastudsubjects', ['id' => $subjectid]);
+                    $grades = block_exastud_get_evaluation_options(true);
+                    $newToLog = (is_array($grades) && array_key_exists($newvalue, $grades) ? $grades[$newvalue] : $newvalue);
+                    $oldToLog = (!$existing ? null : (is_array($grades) && array_key_exists($existing->value, $grades) ? $grades[$existing->value] : $existing->value));
+                    \block_exastud\event\studentreviewcategory_changed::log(['objectid' => $classid,
+                            'relateduserid' => $studentid,
+                            'other' => ['classtitle' => $reviewclass->title,
+                                    'subjectid' => $subjectid,
+                                    'subjecttitle' => $subjectObjData->title,
+                                    'oldgrading' => $oldToLog,
+                                    'oldgradingid' => ($existing ? $existing->value : null),
+                                    'grading' => $newToLog,
+                                    'gradingid' => $newvalue,
+                                    'category' => $category->title,
+                                    'categoryid' => $category->id,
+                                    'studentname' => $student->firstname.' '.$student->lastname]]);
+                }
+            }
+
     }
-
-
-    block_exastud_set_subject_student_data($classid, $subjectid, $studentid, 'review', trim($fromform->review));
-	block_exastud_set_subject_student_data($classid, $subjectid, $studentid, 'review.modifiedby', $USER->id);
-	block_exastud_set_subject_student_data($classid, $subjectid, $studentid, 'review.timemodified', time());
-
-	block_exastud_set_subject_student_data($classid, $subjectid, $studentid, 'grade', $fromform->grade);
-	block_exastud_set_subject_student_data($classid, $subjectid, $studentid, 'niveau', $fromform->niveau);
-
-	block_exastud_set_subject_student_data($classid, $subjectid, $studentid, 'grade.modifiedby', $USER->id);
-	block_exastud_set_subject_student_data($classid, $subjectid, $studentid, 'grade.timemodified', time());
 
 	if (!empty($formdata->lastPeriodFlag)) {
 		block_exastud_set_subject_student_data($classid, $subjectid, $studentid, 'lastPeriodIsLoaded', 1);
-	}
-
-	foreach ($categories as $category) {
-		if (!isset($fromform->{$category->id.'_'.$category->source})) {
-			continue;
-		}
-
-		$newvalue = $fromform->{$category->id.'_'.$category->source};
-		$existing = $DB->get_record('block_exastudreviewpos', ["reviewid" => $newreview->id,
-                                                                "categoryid" => $category->id,
-                                                                "categorysource" => $category->source] );
-		g::$DB->insert_or_update_record('block_exastudreviewpos',
-			["value" => $newvalue],
-			["reviewid" => $newreview->id, "categoryid" => $category->id, "categorysource" => $category->source]);
-		// only if changed
-		if (!$existing || $newvalue != $existing->value) {
-            $subjectObjData = $DB->get_record('block_exastudsubjects', ['id' => $subjectid]);
-		    $grades = block_exastud_get_evaluation_options(true);
-            $newToLog = (is_array($grades) && array_key_exists($newvalue, $grades) ? $grades[$newvalue] : $newvalue);
-            $oldToLog = (!$existing ? null : (is_array($grades) && array_key_exists($existing->value, $grades) ? $grades[$existing->value] : $existing->value));
-            \block_exastud\event\studentreviewcategory_changed::log(['objectid' => $classid,
-                    'relateduserid' => $studentid,
-                    'other' => ['classtitle' => $reviewclass->title,
-                            'subjectid' => $subjectid,
-                            'subjecttitle' => $subjectObjData->title,
-                            'oldgrading' => $oldToLog,
-                            'oldgradingid' => ($existing ? $existing->value : null),
-                            'grading' => $newToLog,
-                            'gradingid' => $newvalue,
-                            'category' => $category->title,
-                            'categoryid' => $category->id,
-                            'studentname' => $student->firstname.' '.$student->lastname]]);
-        }
 	}
 
 	redirect($returnurl);

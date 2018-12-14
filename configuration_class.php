@@ -67,6 +67,13 @@ if ($action == 'delete') {
 
 $output = block_exastud_get_renderer();
 
+// redirect to edit class form if it is not a class owner, but is site admin
+if (block_exastud_is_siteadmin() && $class->userid != $USER->id) {
+    $redirecturl = new moodle_url('/blocks/exastud/configuration_class_info.php',
+            ['courseid' => $courseid, 'classid' => $class->id]);
+    redirect($redirecturl);
+}
+
 // the teacher can not delete this class, because the class has related data
 // so the teacher can mark this class to deleting by admin
 if ($action == 'to_delete') {
@@ -141,14 +148,7 @@ if ($type == 'students') {
 		foreach ($classstudents as $classstudent) {
 			$i++;
 
-			$gender = block_exastud_get_user_gender($classstudent->id);
-			if (!$gender) {
-
-			} elseif ($gender == 'male') {
-				$gender = block_exastud_trans(['de:Männlich', 'en:male']);
-			} else {
-				$gender = block_exastud_trans(['de:Weiblich', 'en:female']);
-			}
+			$gender = block_exastud_get_user_gender_string($classstudent->id);
 
 			$row = [
 				$i,

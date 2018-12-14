@@ -66,6 +66,10 @@ return [
 		'Klassenlehrkräfte',
 		'Heads of a class',
 	],
+	'new_head_teacher' => [
+		'Neue Klassenlehrkraft zuweisen',
+		'new Heads of a class',
+	],
 	'additional_head_teacher' => [
 		'Zusätzliche Klassenlehrkraft',
 		'Additional Head of a class',
@@ -75,8 +79,8 @@ return [
 		'Additional Heads of a class',
 	],
 	'configuration_classes' => [
-		'Meine Klassen',
-		'Class Configuration',
+		'Klassen',
+		'Classes',
 	],
 	'configuration_classes_onlyadmin' => [
 		'Admin access',
@@ -102,6 +106,10 @@ return [
 		'Berichte befüllen',
 		'Review',
 	],
+    'review_button' => [
+        'Bewerten',
+        'Review',
+    ],
 	'pictureupload' => [
 		'Logo Upload',
 		'Logo Upload',
@@ -570,6 +578,14 @@ return [
             'Formular',
             'Template',
     ],
+    'report_settings_setting_grades' => [
+            'Notenskala',
+            'Grades',
+    ],
+    'report_settings_setting_grades_rules' => [
+            'Delimeter \';\'',
+            'Delimeter \';\'',
+    ],
     'report_settings_setting_year' => [
             'Schuljahr',
             'School year',
@@ -649,6 +665,10 @@ return [
     'report_settings_countinrow' => [
             'zu je {$a} Zeichen',
             'with {$a} characters per row',
+    ],
+    'report_settings_countinrow_short' => [
+            'zu je {$a} Zeichen',
+            '{$a} chars ',
     ],
     'report_settings_maxchars' => [
             '{$a} Zeichen',
@@ -794,17 +814,25 @@ return [
 		'Fächerübergreifende Kompetenzen',
 		'Competencies',
 	],
-	'de:Note' => [
-		null,
+	'Note' => [
+		'Note',
 		'Grade',
 	],
-	'de:Niveau' => [
-		null,
+	'Niveau' => [
+		'Niveau',
 		'Level',
 	],
-    'de:letztes Halbjahr:' => [
-        null,
+    'last_period' => [
+        'letztes Halbjahr:',
         'last period:',
+    ],
+    'suggestions_from_exacomp' => [
+        'Vorschläge aus Exacomp',
+        'Suggestions from Exacomp',
+    ],
+    'grade_and_difflevel' => [
+        'Note und Niveau',
+        'Grad and Difficulty level'
     ],
     'de:Eingaben von der letzten Periode/Halbjahr übernehmen' => [
         null,
@@ -859,7 +887,7 @@ return [
         'Only classes without students can be deleted'
     ],
     'force_class_to_delete' => [
-        'Es können nur Klassen ohne Schüler gelöscht werden. But you can mark this class to deleting by site-admin',
+        'Es können nur Klassen ohne Schüler gelöscht werden. Klassen, die durch ein Häkchen zur Löschung freigegeben sind, können vom Administrator gelöscht werden.',
         'Only classes without students can be deleted. But you can mark this class to deleting by site-admin'
     ],
     'already_marked' => [
@@ -1112,4 +1140,14 @@ return [
             'Class owner updated',
             'Class owner updated'
     ],
+    'template_textarea_limits_error' => [
+        'Please use defined limits for textarea fields',
+        'Please use defined limits for textarea fields'
+    ],
+
+    'gender' => [
+        'Geschlecht',
+        'Gender',
+    ],
+
 ];

@@ -47,7 +47,11 @@ $class->courseid = $courseid;
 //    $context = context_module::instance($cm->id);
 //}
 
-$classform = new class_edit_form();
+$customdata = array('for_siteadmin' => false);
+if ($class->userid && $class->userid != $USER->id && block_exastud_is_siteadmin()) {
+    $customdata['for_siteadmin'] = true;
+}
+$classform = new class_edit_form(null, $customdata);
 
 if ($classform->is_cancelled()) {
 	redirect('configuration_classes.php?courseid='.$courseid);
@@ -105,8 +109,8 @@ if ($classform->is_cancelled()) {
                         'ownername' => $newowner->firstname.' '.$newowner->lastname]]);
     }
 
-    file_save_draft_area_files($classedit->class_logo, context_system::instance()->id, 'block_exastud', 'class_logo',
-            $class->id, array('subdirs' => 0, 'maxfiles' => 1));
+    /*file_save_draft_area_files($classedit->class_logo, context_system::instance()->id, 'block_exastud', 'class_logo',
+            $class->id, array('subdirs' => 0, 'maxfiles' => 1));*/
 
 	block_exastud_set_class_data($newclass->id, BLOCK_EXASTUD_DATA_ID_CLASS_DEFAULT_TEMPLATEID, $classedit->{BLOCK_EXASTUD_DATA_ID_CLASS_DEFAULT_TEMPLATEID});
 
@@ -135,10 +139,10 @@ if ($classform->is_cancelled()) {
 	}
 } else { // edit form opened
     if ($class->id) {
-        $draftitemid = file_get_submitted_draft_itemid('class_logo');
+        /*$draftitemid = file_get_submitted_draft_itemid('class_logo');
         file_prepare_draft_area($draftitemid, context_system::instance()->id, 'block_exastud', 'class_logo', $class->id,
                 array('subdirs' => 0, 'maxfiles' => 1));
-        $class->class_logo = $draftitemid;
+        $class->class_logo = $draftitemid;*/
     }
 }
 
@@ -209,6 +213,9 @@ foreach ($bps as $bp) {
 
 			function populate_select(name) {
 				var $input = $('input,select').filter('[name=' + name + ']');
+                if ($input.attr('type') == 'hidden') {
+                    return false;
+                }
 				var val = $input.val();
 				var $select = $('<select/>', {name: name, class: 'custom-select'});
 				$select.attr('data-exastudmessage', '<?php echo block_exastud_get_string('attention_template_will_change'); ?>');

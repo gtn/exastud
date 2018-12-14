@@ -39,7 +39,7 @@ class block_exastud extends block_list {
 	}
 
 	function get_content() {
-		global $CFG, $COURSE, $OUTPUT;
+		global $CFG, $COURSE, $OUTPUT, $USER;
 
 		if (!block_exastud_has_global_cap(BLOCK_EXASTUD_CAP_USE)) {
 			$this->content = '';
@@ -68,20 +68,28 @@ class block_exastud extends block_list {
 			$icon = '<img src="'.$output->image_url('klassenzuteilung', 'block_exastud').'" class="icon" alt="" />';
 			$this->content->items[] = '<a title="'.block_exastud_get_string('configuration_classes').'" href="'.$CFG->wwwroot.'/blocks/exastud/configuration_classes.php?courseid='.$COURSE->id.'">'.$icon.block_exastud_get_string('configuration_classes').'</a>';
 		}
-		if (block_exastud_get_active_period() && block_exastud_has_global_cap(BLOCK_EXASTUD_CAP_REVIEW)) {
-			$icon = '<img src="'.$output->image_url('beurteilung', 'block_exastud').'" class="icon" alt="" />';
-			$this->content->items[] = '<a title="'.block_exastud_get_string('review').'" href="'.$CFG->wwwroot.'/blocks/exastud/review.php?courseid='.$COURSE->id.'">'.$icon.block_exastud_get_string('review').'</a>';
-		}
-		if (block_exastud_get_active_or_last_period() && block_exastud_has_global_cap(BLOCK_EXASTUD_CAP_VIEW_REPORT)) {
-			$icon = '<img src="'.$output->image_url('zeugnisse', 'block_exastud').'" class="icon" alt="" />';
-			$this->content->items[] = '<a title="'.block_exastud_get_string('reports').'" href="'.$CFG->wwwroot.'/blocks/exastud/report.php?courseid='.$COURSE->id.'">'.$icon.block_exastud_get_string('reports').'</a>';
-		}
+		// show only if the user is a teacher of at least one class
+        $myclasses = block_exastud_get_teacher_classes($USER->id);
+        if (count($myclasses) > 0) {
+            if (block_exastud_get_active_period() && block_exastud_has_global_cap(BLOCK_EXASTUD_CAP_REVIEW)) {
+                $icon = '<img src="'.$output->image_url('beurteilung', 'block_exastud').'" class="icon" alt="" />';
+                $this->content->items[] = '<a title="'.block_exastud_get_string('review').'" href="'.$CFG->wwwroot.
+                        '/blocks/exastud/review.php?courseid='.$COURSE->id.'">'.$icon.block_exastud_get_string('review').'</a>';
+            }
+            if (block_exastud_get_active_or_last_period() && block_exastud_has_global_cap(BLOCK_EXASTUD_CAP_VIEW_REPORT)) {
+                $icon = '<img src="'.$output->image_url('zeugnisse', 'block_exastud').'" class="icon" alt="" />';
+                $this->content->items[] = '<a title="'.block_exastud_get_string('reports').'" href="'.$CFG->wwwroot.
+                        '/blocks/exastud/report.php?courseid='.$COURSE->id.'">'.$icon.block_exastud_get_string('reports').'</a>';
+            }
+        }
 
 		if (block_exastud_has_global_cap(BLOCK_EXASTUD_CAP_ADMIN)) {
 			$icon = '<img src="'.$output->image_url('eingabezeitraum', 'block_exastud').'" class="icon" alt="" />';
-			$this->content->items[] = '<a title="'.block_exastud_get_string('settings').'" href="'.$CFG->wwwroot.'/blocks/exastud/periods.php'/*.?courseid='.$COURSE->id.*/.'">'.$icon.block_exastud_get_string('settings').'</a>';
+			$this->content->items[] = '<a title="'.block_exastud_get_string('settings').'" href="'.$CFG->wwwroot.'/admin/settings.php?section=blocksettingexastud">'.$icon.block_exastud_get_string('settings').'</a>';
 			$icon = '<img src="'.$output->image_url('head_teachers', 'block_exastud').'" class="icon" alt="" />';
-			$this->content->items[] = '<a title="'.block_exastud_get_string('head_teachers').'" href="'.$CFG->wwwroot.'/cohort/assign.php?id='.block_exastud_get_head_teacher_cohort()->id.'">'.$icon.block_exastud_get_string('head_teachers').'</a>';
+			$this->content->items[] = '<a title="'.block_exastud_get_string('new_head_teacher').'" href="'.$CFG->wwwroot.'/cohort/assign.php?id='.block_exastud_get_head_teacher_cohort()->id.'">'.$icon.block_exastud_get_string('new_head_teacher').'</a>';
+            $icon = '<img src="'.$output->image_url('calendar', 'block_exastud').'" class="icon" alt="" />';
+            $this->content->items[] = '<a title="'.block_exastud_get_string('periods').'" href="'.$CFG->wwwroot.'/blocks/exastud/periods.php?courseid='.block_exastud_get_head_teacher_cohort()->id.'">'.$icon.block_exastud_get_string('periods').'</a>';
 		}
 
 		return $this->content;

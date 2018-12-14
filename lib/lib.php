@@ -288,6 +288,13 @@ function block_exastud_get_class_additional_head_teachers($classid) {
 	return $classteachers;
 }
 
+function block_exastud_get_teacher_classes($userid) {
+    return g::$DB->get_records_sql("
+			SELECT c.id, c.id AS record_id
+			FROM {block_exastudclass} c
+		    WHERE c.userid = ?			
+		", [$userid]);}
+
 function block_exastud_get_head_teacher_lern_und_sozialverhalten_classes() {
 	$classes = block_exastud_get_head_teacher_classes_all(block_exastud_get_active_or_next_period()->id);
 
@@ -1454,7 +1461,7 @@ function block_exastud_get_evaluation_options($also_empty = false) {
         case BLOCK_EXASTUD_COMPETENCE_EVALUATION_TYPE_POINT:
             $options += array_combine($r = range(1, block_exastud_get_competence_eval_typeevalpoints_limit()), $r);
             break;
-        case BLOCK_EXASTUD_COMPETENCE_EVALUATION_TYPE_TEXT:
+        case BLOCK_EXASTUD_COMPETENCE_EVALUATION_TYPE_GRADE:
             return null;
             break;
         default:
@@ -1683,6 +1690,18 @@ function block_exastud_get_user_gender($userid) {
 	}
 }
 
+function block_exastud_get_user_gender_string($userid) {
+    $gender = block_exastud_get_user_gender($userid);
+    if (!$gender) {
+
+    } elseif ($gender == 'male') {
+        $gender = block_exastud_trans(['de:Männlich', 'en:male']);
+    } else {
+        $gender = block_exastud_trans(['de:Weiblich', 'en:female']);
+    }
+    return $gender;
+}
+
 function block_exastud_student_has_projekt_pruefung($class, $userid) {
 	$templateids_with_projekt_pruefung = \block_exastud\print_templates::get_templateids_with_projekt_pruefung();
 	$templateid = block_exastud_get_student_print_templateid($class, $userid);
@@ -1842,8 +1861,8 @@ function block_exastud_get_report_templates($class) {
     $templates['grades_report_xlsx'] = 'Notenübersicht (xlsx)';
     $templates[BLOCK_EXASTUD_DATA_ID_PRINT_TEMPLATE] = block_exastud_is_bw_active() ? block_exastud_trans('de:Zeugnis / Abgangszeugnis') : block_exastud_trans('de:Zeugnis');
     if (block_exastud_is_exacomp_installed()) {
-        $templates[2] = 'Anlage zum Lernentwicklungsbericht';
-        $templates[3] = 'Anlage zum Lernentwicklungsbericht (Alt)';
+        $templates[2] = 'Anlage';
+        $templates[3] = 'Anlage (Alt)';
     }
     $templates['html_report'] = block_exastud_get_string('html_report');
     if ($class == '-all-') {
@@ -1899,15 +1918,15 @@ function block_exastud_get_default_templates() {
                             ],
                     ],
             ],
-            'Anlage zum Lernentwicklungsbericht' => [
+            'Anlage' => [
                     'id' => 2,
-                    'name' => 'Anlage zum Lernentwicklungsbericht',
+                    'name' => 'Anlage',
                     'file' => 'Anlage zum Lernentwicklungsbericht',
                     'inputs' => [],
             ],
-            'Anlage zum LernentwicklungsberichtAlt' => [
+            'Anlage Alt' => [
                     'id' => 3,
-                    'name' => 'Anlage zum LernentwicklungsberichtAlt',
+                    'name' => 'Anlage Alt',
                     'file' => 'Anlage zum LernentwicklungsberichtAlt',
                     'inputs' => [],
             ],
@@ -2270,6 +2289,7 @@ function block_exastud_fill_reportsettingstable() {
                 $data[$column] = serialize(array('checked' => "0"));
             }
         }
+        // Add inputs
         $inputs = array();
         if ($template['inputs'] && count($template['inputs']) > 0) {
             foreach ($template['inputs'] as $inputname => $inputconfig) {
@@ -2297,6 +2317,12 @@ function block_exastud_fill_reportsettingstable() {
             $inputs = array_map('serialize', $inputs);
         }
         $data = array_merge($data, $inputs);
+        // Add grades
+        if ($template['grades'] && count($template['grades']) > 0) {
+            $data['grades'] = implode('; ', $template['grades']);
+        } else {
+            $data['grades'] = '';
+        }
         return $data;
     };
     foreach ($reporttemplates as $key => $template) {

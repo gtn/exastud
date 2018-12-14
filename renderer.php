@@ -81,16 +81,58 @@ class block_exastud_renderer extends plugin_renderer_base {
 		$class = @$options['class'];
 
 		if ($class) {
-			$tabs['configuration_classes']->subtree[] = new tabobject('students', new moodle_url('/blocks/exastud/configuration_class.php', ['courseid' => g::$COURSE->id, 'action' => 'edit', 'classid' => $class->id, 'type' => 'students']), block_exastud_get_string('students'), '', true);
-			$tabs['configuration_classes']->subtree[] = new tabobject('studentgradereports', new moodle_url('/blocks/exastud/configuration_class.php', ['courseid' => g::$COURSE->id, 'action' => 'edit', 'classid' => $class->id, 'type' => 'studentgradereports']), block_exastud_get_string('studentgradereports'), '', true);
-			$tabs['configuration_classes']->subtree[] = new tabobject('teachers', new moodle_url('/blocks/exastud/configuration_class.php', ['courseid' => g::$COURSE->id, 'action' => 'edit', 'classid' => $class->id, 'type' => 'teachers']), block_exastud_get_string('teachers'), '', true);
-			$tabs['configuration_classes']->subtree[] = new tabobject('teachers_options', new moodle_url('/blocks/exastud/configuration_class.php', ['courseid' => g::$COURSE->id, 'action' => 'edit', 'classid' => $class->id, 'type' => 'teachers_options']), block_exastud_get_string('teachers_options'), '', true);
-			if (block_exastud_get_plugin_config('can_edit_bps_and_subjects')) {
-				$tabs['configuration_classes']->subtree[] = new tabobject('categories', new moodle_url('/blocks/exastud/configuration_class.php', ['courseid' => g::$COURSE->id, 'action' => 'edit', 'classid' => $class->id, 'type' => 'categories']), block_exastud_get_string('categories'), '', true);
-			}
-
-			$tabs['configuration_classes']->subtree[] = new tabobject('class_info', new moodle_url('/blocks/exastud/configuration_class_info.php', ['courseid' => g::$COURSE->id, 'classid' => $class->id]), block_exastud_get_string('class_info'), '', true);
-			// $tabs['configuration_classes']->subtree[] = new tabobject('export_class', new moodle_url('/blocks/exastud/export_class.php', ['courseid' => g::$COURSE->id, 'classid' => $class->id]), block_exastud_get_string('export_class'), '', true);
+		    // All tabs are visible only for class owner (teacher). For site admin - only class_info with short edit class form
+            if ($class->userid == g::$USER->id) { // only for owner
+                $tabs['configuration_classes']->subtree[] = new tabobject('students',
+                        new moodle_url('/blocks/exastud/configuration_class.php',
+                                ['courseid' => g::$COURSE->id, 'action' => 'edit', 'classid' => $class->id, 'type' => 'students']),
+                        block_exastud_get_string('students'),
+                        '',
+                        true);
+                $tabs['configuration_classes']->subtree[] = new tabobject('studentgradereports',
+                        new moodle_url('/blocks/exastud/configuration_class.php',
+                                ['courseid' => g::$COURSE->id, 'action' => 'edit', 'classid' => $class->id,
+                                        'type' => 'studentgradereports']),
+                        block_exastud_get_string('studentgradereports'),
+                        '',
+                        true);
+                $tabs['configuration_classes']->subtree[] = new tabobject('teachers',
+                        new moodle_url('/blocks/exastud/configuration_class.php',
+                                ['courseid' => g::$COURSE->id, 'action' => 'edit', 'classid' => $class->id, 'type' => 'teachers']),
+                        block_exastud_get_string('teachers'),
+                        '',
+                        true);
+                $tabs['configuration_classes']->subtree[] = new tabobject('teachers_options',
+                        new moodle_url('/blocks/exastud/configuration_class.php',
+                                ['courseid' => g::$COURSE->id, 'action' => 'edit', 'classid' => $class->id,
+                                        'type' => 'teachers_options']),
+                        block_exastud_get_string('teachers_options'),
+                        '',
+                        true);
+                if (block_exastud_get_plugin_config('can_edit_bps_and_subjects')) {
+                    $tabs['configuration_classes']->subtree[] = new tabobject('categories',
+                            new moodle_url('/blocks/exastud/configuration_class.php',
+                                    ['courseid' => g::$COURSE->id, 'action' => 'edit', 'classid' => $class->id,
+                                            'type' => 'categories']),
+                            block_exastud_get_string('categories'),
+                            '',
+                            true);
+                }
+                $tabs['configuration_classes']->subtree[] = new tabobject('class_info',
+                        new moodle_url('/blocks/exastud/configuration_class_info.php',
+                                ['courseid' => g::$COURSE->id, 'classid' => $class->id]),
+                        block_exastud_get_string('class_info'),
+                        '',
+                        true);
+                // $tabs['configuration_classes']->subtree[] = new tabobject('export_class', new moodle_url('/blocks/exastud/export_class.php', ['courseid' => g::$COURSE->id, 'classid' => $class->id]), block_exastud_get_string('export_class'), '', true);
+            } else if (is_siteadmin()) {
+                $tabs['configuration_classes']->subtree[] = new tabobject('class_info',
+                        new moodle_url('/blocks/exastud/configuration_class_info.php',
+                                ['courseid' => g::$COURSE->id, 'classid' => $class->id]),
+                        block_exastud_get_string('class_info'),
+                        '',
+                        true);
+            }
 		}
 
 		if ($forSettings) {
@@ -300,13 +342,13 @@ class block_exastud_renderer extends plugin_renderer_base {
 			$output .= '<tr><td class="ratinguser">'.$subject->title.'</td><td class="ratingtext">';
 			$output .= format_text(@$subjectData->review);
 			if (@$subjectData->niveau) {
-				$output .= '<div><b>'.block_exastud_trans('de:Niveau').':</b> ';
+				$output .= '<div><b>'.block_exastud_get_string('Niveau').':</b> ';
 				$output .= (\block_exastud\global_config::get_niveau_option_title($subjectData->niveau) ?: $subjectData->niveau).'</div>';
 			}
 			if (@$subjectData->grade) {
 				$value = @$template->get_grade_options()[$subjectData->grade] ?: $subjectData->grade;
 
-				$output .= '<div><b>'.block_exastud_trans('de:Note').':</b> '.$value.'</div>';
+				$output .= '<div><b>'.block_exastud_get_string('Note').':</b> '.$value.'</div>';
 			}
 			$output .= '</td></tr>';
 		}

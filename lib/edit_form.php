@@ -27,37 +27,54 @@ class class_edit_form extends moodleform {
 
 	function definition() {
 		$mform = &$this->_form;
+        // if it is not a class owner, but siteadmin - use hidden form fields instead of usual
 
-		$mform->addElement('hidden', 'classid');
-		$mform->setType('classid', PARAM_INT);
-		$mform->setDefault('classid', 0);
+        $mform->addElement('hidden', 'classid');
+        $mform->setType('classid', PARAM_INT);
+        $mform->setDefault('classid', 0);
 
-		$mform->addElement('hidden', 'courseid');
-		$mform->setType('courseid', PARAM_INT);
+        $mform->addElement('hidden', 'courseid');
+        $mform->setType('courseid', PARAM_INT);
 
-		$mform->addElement('text', 'title', block_exastud_get_string('class').':', array('size' => 50));
-		$mform->setType('title', PARAM_TEXT);
-		$mform->addRule('title', null, 'required', null, 'client');
+        if (!$this->_customdata['for_siteadmin']) {
+            $mform->addElement('text', 'title', block_exastud_get_string('class').':', array('size' => 50));
+        } else {
+            $mform->addElement('hidden', 'title');
+        }
+        $mform->setType('title', PARAM_TEXT);
+        $mform->addRule('title', null, 'required', null, 'client');
 
-		$bps = g::$DB->get_records_menu('block_exastudbp', null, 'sorting', 'id, title');
-		$mform->addElement('select', 'bpid', block_exastud_get_string('class_educationplan').':', $bps, ['class' => 'exastud-review-message', 'data-exastudmessage' => block_exastud_get_string('attention_plan_will_change')]);
+        $bps = g::$DB->get_records_menu('block_exastudbp', null, 'sorting', 'id, title');
+        if (!$this->_customdata['for_siteadmin']) {
+            $mform->addElement('select', 'bpid', block_exastud_get_string('class_educationplan').':', $bps,
+                    ['class' => 'exastud-review-message',
+                     'data-exastudmessage' => block_exastud_get_string('attention_plan_will_change')]);
+        } else {
+            $mform->addElement('hidden', 'bpid');
+            $mform->setType('bpid', PARAM_INT);
+        }
+        /*		$mform->addElement('static', '', '&nbsp;',
+                    g::$OUTPUT->notification(block_exastud_get_string('attention_plan_will_change'), 'notifymessage')
+                );*/
 
-/*		$mform->addElement('static', '', '&nbsp;',
-			g::$OUTPUT->notification(block_exastud_get_string('attention_plan_will_change'), 'notifymessage')
-		);*/
+        if (!$this->_customdata['for_siteadmin']) {
+            $mform->addElement('text', BLOCK_EXASTUD_DATA_ID_CLASS_DEFAULT_TEMPLATEID,
+                    block_exastud_get_string('class_default_template').':', ['class' => 'exastud-review-message']);
+        } else {
+            $mform->addElement('hidden', BLOCK_EXASTUD_DATA_ID_CLASS_DEFAULT_TEMPLATEID);
+        }
+        $mform->setType(BLOCK_EXASTUD_DATA_ID_CLASS_DEFAULT_TEMPLATEID, PARAM_TEXT);
 
-		$mform->addElement('text', BLOCK_EXASTUD_DATA_ID_CLASS_DEFAULT_TEMPLATEID, block_exastud_get_string('class_default_template').':', ['class' => 'exastud-review-message']);
-		$mform->setType(BLOCK_EXASTUD_DATA_ID_CLASS_DEFAULT_TEMPLATEID, PARAM_TEXT);
+        /*		$mform->addElement('static', '', '&nbsp;',
+                    g::$OUTPUT->notification(block_exastud_get_string('attention_template_will_change'), 'notifymessage')
+                );*/
 
-/*		$mform->addElement('static', '', '&nbsp;',
-			g::$OUTPUT->notification(block_exastud_get_string('attention_template_will_change'), 'notifymessage')
-		);*/
+        /*
+        $subjects = $DB->get_records_menu('block_exastudsubjects', null, 'title', 'id, title');
+        $select = $mform->addElement('select', 'mysubjectids', block_exastud_get_string('subjects_taught_by_me'), $subjects);
+        $select->setMultiple(true);
+        */
 
-		/*
-		$subjects = $DB->get_records_menu('block_exastudsubjects', null, 'title', 'id, title');
-		$select = $mform->addElement('select', 'mysubjectids', block_exastud_get_string('subjects_taught_by_me'), $subjects);
-		$select->setMultiple(true);
-		*/
 
 		// change class owner (only for siteadmin
         if (block_exastud_is_siteadmin()) {
@@ -145,84 +162,115 @@ class student_edit_form extends moodleform {
 		$mform->setType('studentid', PARAM_INT);
 		$mform->setDefault('studentid', 0);
 
-		$compeval_type = block_exastud_get_competence_eval_type();
-		$selectoptions = block_exastud_get_evaluation_options(true);
-
-		$mform->addElement('header', 'categories', block_exastud_get_string("interdisciplinary_competences"));
-		$mform->setExpanded('categories');
-		if ($this->_customdata['categories.modified']) {
-			$mform->addElement('static', '', '', $this->_customdata['categories.modified']);
-		}
-
-		$categories = $this->_customdata['categories'];
-		foreach ($categories as $category) {
-			$id = $category->id.'_'.$category->source;
-
-			switch ($compeval_type) {
-                case BLOCK_EXASTUD_COMPETENCE_EVALUATION_TYPE_GRADE:
-                    $mform->addElement('text', $id, $category->title);
-                    $mform->setType($id, PARAM_FLOAT);
-                    break;
-                case BLOCK_EXASTUD_COMPETENCE_EVALUATION_TYPE_TEXT:
-                case BLOCK_EXASTUD_COMPETENCE_EVALUATION_TYPE_POINT:
-                    $mform->addElement('select', $id, $category->title, $selectoptions);
-                    $mform->setType($id, PARAM_INT);
-                    $mform->setDefault($id, key($selectoptions));
-                    break;
-            }
-		}
-
-		$mform->addElement('header', 'vorschlag_header', block_exastud_trans("de:Lern- und Sozialverhalten: Formulierungsvorschlag für Klassenlehrkraft"));
-		$mform->setExpanded('vorschlag_header');
-		$mform->addElement('textarea', 'vorschlag', '', ['cols' => 50, 'rows' => 5,
-			'class' => 'limit-input-length',
-			'style' => "width: 750px; height: 160px; resize: none; font-family: Arial !important; font-size: 11pt !important;",
-		]);
-		$mform->setType('vorschlag', PARAM_RAW);
-		$mform->addElement('static', '', '', block_exastud_trans('de:Max. 8 Zeilen / 680 Zeichen'));
-		$mform->addElement('header', 'review_header', block_exastud_trans("de:Fachkompetenzen"));
-		$mform->setExpanded('review_header');
-		if ($this->_customdata['review.modified']) {
-			$mform->addElement('static', '', '', $this->_customdata['review.modified']);
-		}
-		
-		$mform->addElement('textarea', 'review', '', ['cols' => 50, 'rows' => 20,
-			'class' => 'limit-input-length',
-			'style' => "width: 556px; height: 160px; resize: none; font-family: Arial !important; font-size: 11pt !important;",
-		]);
-		$mform->setType('review', PARAM_RAW);
-		$mform->addElement('static', 'hint', "",  block_exastud_trans('de:Max. 8 Zeilen / 550 Zeichen'));
-		$mform->addElement('header', 'grade_header', block_exastud_trans("de:Note und Niveau"));
-		$mform->setExpanded('grade_header');
-
-		if ($this->_customdata['grade.modified']) {
-			$mform->addElement('static', '', '', $this->_customdata['grade.modified']);
-		}
- 		$niveauarray=array();
-
-		$niveauarray[] =& $mform->createElement('select', 'niveau', block_exastud_get_string('de:Niveau'), ['' => ''] + block_exastud\global_config::get_niveau_options());
-		$niveauarray[] =& $mform->createElement('static', '', "", "");
-		$niveauarray[] =& $mform->createElement('static', 'lastPeriodNiveau', "", block_exastud_trans('de:lastPeriodNiveau'));
-		$niveauarray[] =& $mform->createElement('static', '', "", ")");
-		$mform->addGroup($niveauarray, 'niveauarray',  block_exastud_trans('de:Niveau'), array("( ", block_exastud_trans('de:letztes Halbjahr: '), ' '), false);
-		
-		$gradearray = array();
-        switch (block_exastud_get_competence_eval_type()) {
-            case BLOCK_EXASTUD_COMPETENCE_EVALUATION_TYPE_TEXT:
-            case BLOCK_EXASTUD_COMPETENCE_EVALUATION_TYPE_POINT:
-                $gradearray[] =& $mform->createElement('select', 'grade', block_exastud_get_string('de:Note'), ['' => ''] + $this->_customdata['grade_options']);
-                break;
-            case BLOCK_EXASTUD_COMPETENCE_EVALUATION_TYPE_GRADE:
-                $grade = $mform->createElement('text', 'grade', block_exastud_get_string('de:Note'));
-                $mform->setType('grade', PARAM_RAW);
-                $gradearray[] =& $grade;
+		if ($this->_customdata['reporttype']) {
+            $mform->addElement('hidden', 'reporttype');
+            $mform->setType('reporttype', PARAM_RAW);
+            $mform->setDefault('reporttype', $this->_customdata['reporttype']);
         }
-		$gradearray[] =& $mform->createElement('static', '', "", "");
-		$gradearray[] =& $mform->createElement('static', 'lastPeriodGrade', "", block_exastud_trans('de:lastPeriodGrade'));
-		$gradearray[] =& $mform->createElement('static', '', "", ")");
-		$mform->addGroup($gradearray, 'gradearray', block_exastud_trans('de:Note'), array('( ',  block_exastud_trans('de:letztes Halbjahr: '), " " ), false);
 
-		$mform->addElement('static', 'exacomp_grades', block_exastud_trans('de:Vorschläge aus Exacomp'), $this->_customdata['exacomp_grades']);
+		switch ($this->_customdata['reporttype']) {
+            case 'additional':
+                // interdisciplinary reviews
+                $compeval_type = block_exastud_get_competence_eval_type();
+                $selectoptions = block_exastud_get_evaluation_options(true);
+
+                $mform->addElement('header', 'categories', block_exastud_get_string("interdisciplinary_competences"));
+                $mform->setExpanded('categories');
+                if ($this->_customdata['categories.modified']) {
+                    $mform->addElement('static', '', '', $this->_customdata['categories.modified']);
+                }
+
+                $categories = $this->_customdata['categories'];
+                foreach ($categories as $category) {
+                    $id = $category->id.'_'.$category->source;
+
+                    switch ($compeval_type) {
+                        case BLOCK_EXASTUD_COMPETENCE_EVALUATION_TYPE_GRADE:
+                            $mform->addElement('text', $id, $category->title);
+                            $mform->setType($id, PARAM_FLOAT);
+                            break;
+                        case BLOCK_EXASTUD_COMPETENCE_EVALUATION_TYPE_TEXT:
+                        case BLOCK_EXASTUD_COMPETENCE_EVALUATION_TYPE_POINT:
+                            $mform->addElement('select', $id, $category->title, $selectoptions);
+                            $mform->setType($id, PARAM_INT);
+                            $mform->setDefault($id, key($selectoptions));
+                            break;
+                    }
+                }
+
+                // learn and social
+                $template_inputparams = $this->_customdata['template']->get_inputs('all')['learn_social_behavior'];
+                $vorschlag_limits = array(
+                        'cols' => @$template_inputparams['cols'] ? $template_inputparams['cols'] : 50,
+                        'chars_per_row' => @$template_inputparams['cols'] ? $template_inputparams['cols'] : 80,
+                        'rows' => @$template_inputparams['lines'] ? $template_inputparams['lines'] : 8
+                );
+                $mform->addElement('header', 'vorschlag_header',
+                        block_exastud_trans("de:Lern- und Sozialverhalten: Formulierungsvorschlag für Klassenlehrkraft"));
+                $mform->setExpanded('vorschlag_header');
+                $mform->addElement('textarea', 'vorschlag', '',
+                        ['cols' => $vorschlag_limits['cols'], 'rows' => $vorschlag_limits['rows'],
+                                'class' => 'limit-input-length',
+                                'style' => "width: 750px; height: 160px; resize: none; font-family: Arial !important; font-size: 11pt !important;",
+                        ]);
+                $mform->setType('vorschlag', PARAM_RAW);
+                $mform->addElement('static', '', '',
+                        block_exastud_trans('de:Max. '.$vorschlag_limits['rows'].' Zeilen / '.$vorschlag_limits['chars_per_row'].
+                                ' Zeichen'));
+                break;
+            default:
+                // subject review
+                $template_inputparams = $this->_customdata['template']->get_inputs('all')['subjects'];
+                $subject_limits = array(
+                        'cols' => @$template_inputparams['cols'] ? $template_inputparams['cols'] : 50,
+                        'chars_per_row' => @$template_inputparams['cols'] ? $template_inputparams['cols'] : 80,
+                        'rows' => @$template_inputparams['lines'] ? $template_inputparams['lines'] : 8
+                );
+                $mform->addElement('header', 'review_header', block_exastud_trans("de:Fachkompetenzen"));
+                $mform->setExpanded('review_header');
+                if ($this->_customdata['review.modified']) {
+                    $mform->addElement('static', '', '', $this->_customdata['review.modified']);
+                }
+
+                $mform->addElement('textarea', 'review', '', ['cols' => $subject_limits['cols'], 'rows' => $subject_limits['rows'],
+                        'class' => 'limit-input-length',
+                        'style' => "width: 556px; height: 160px; resize: none; font-family: Arial !important; font-size: 11pt !important;",
+                ]);
+                $mform->setType('review', PARAM_RAW);
+                $mform->addElement('static', 'hint', "",  block_exastud_trans('de:Max. '.$subject_limits['rows'].' Zeilen / '.$subject_limits['chars_per_row'].' Zeichen'));
+
+                // grades, niveaus
+                $mform->addElement('header', 'grade_header', block_exastud_get_string("grade_and_difflevel"));
+                $mform->setExpanded('grade_header');
+                if ($this->_customdata['grade.modified']) {
+                    $mform->addElement('static', '', '', $this->_customdata['grade.modified']);
+                }
+                $niveauarray=array();
+
+                $niveauarray[] =& $mform->createElement('select', 'niveau', block_exastud_get_string('Niveau'), ['' => ''] + block_exastud\global_config::get_niveau_options());
+                $niveauarray[] =& $mform->createElement('static', '', "", "");
+                $niveauarray[] =& $mform->createElement('static', 'lastPeriodNiveau', "", block_exastud_trans('de:lastPeriodNiveau'));
+                $niveauarray[] =& $mform->createElement('static', '', "", ")");
+                $mform->addGroup($niveauarray, 'niveauarray',  block_exastud_get_string('Niveau'), array("( ", block_exastud_get_string('last_period'). ' ', ' '), false);
+
+                $gradearray = array();
+                if ($this->_customdata['grade_options'] && is_array($this->_customdata['grade_options'])) {
+                    $gradearray[] =& $mform->createElement('select', 'grade', block_exastud_get_string('Note'),
+                            ['' => ''] + $this->_customdata['grade_options']);
+                } else {
+                    $grade = $mform->createElement('text', 'grade', block_exastud_get_string('Note'));
+                    $mform->setType('grade', PARAM_RAW);
+                    $gradearray[] =& $grade;
+                }
+                $gradearray[] =& $mform->createElement('static', '', "", "");
+                $gradearray[] =& $mform->createElement('static', 'lastPeriodGrade', "", block_exastud_trans('de:lastPeriodGrade'));
+                $gradearray[] =& $mform->createElement('static', '', "", ")");
+                $mform->addGroup($gradearray, 'gradearray', block_exastud_get_string('Note'), array('( ',  block_exastud_get_string('last_period').' ', " " ), false);
+
+                $mform->addElement('static', 'exacomp_grades', block_exastud_get_string('suggestions_from_exacomp'), $this->_customdata['exacomp_grades']);
+        }
+
+
 
 		$this->add_action_buttons(false);
 	}
@@ -234,10 +282,11 @@ class student_other_data_form extends moodleform {
 		$mform = &$this->_form;
         //echo "<pre>debug:<strong>edit_form.php:222</strong>\r\n"; print_r($this->_customdata['categories']); echo '</pre>'; // !!!!!!!!!! delete it
 		foreach ($this->_customdata['categories'] as $dataid => $input) {
+		    //echo "<pre>debug:<strong>edit_form.php:267</strong>\r\n"; print_r($input); echo '</pre>'; exit; // !!!!!!!!!! delete it
 			if (empty($input['type']) || $input['type'] == 'textarea') {
 				$mform->addElement('header', 'header_'.$dataid, $input['title']);
 				$mform->setExpanded('header_'.$dataid);
-				$maxchars='550';
+				$maxchars = '550';
 				if (@$this->_customdata['modified']) {
 					$mform->addElement('static', '', '', $this->_customdata['modified']);
 				}
@@ -248,13 +297,13 @@ class student_other_data_form extends moodleform {
 				if (empty($input['cols'])) {
 					$input['cols'] = 45;
 				}
-
-				$mform->addElement('textarea', $dataid, '', ['cols' => $input['cols'], 'rows' => 10,
+				
+				$mform->addElement('textarea', $dataid, '', ['cols' => $input['cols'], 'rows' => $input['lines'],
 					'class' => 'limit-input-length',
 					'style' => "width: ".($input['cols'] * 15)."px; height: ".($input['lines'] * 20)."px; resize: none; font-family: Arial !important; font-size: 11pt !important;",
 				]);
 				$mform->setType($dataid, PARAM_RAW);
-				$mform->addElement('static', '', '', block_exastud_trans('de:Max. '.$input['lines'].' Zeilen / '.($input['cols'] * $input['lines']).' Zeichen'));
+				$mform->addElement('static', '', '', block_exastud_trans('de:Max. '.$input['lines'].' Zeilen / '.$input['cols'].' Zeichen'));
 				
 			} elseif ($input['type'] == 'text') {
 				$mform->addElement('text', $dataid, $input['title']);
@@ -278,6 +327,30 @@ class student_other_data_form extends moodleform {
 
 		$this->add_action_buttons(false);
 	}
+	
+	function validation($data, $files) {
+        $custom_errors = array();
+        // compare textareas: rows and cols must be good
+        $fields = array_keys($data);
+        $mform = $this->_form;
+        foreach ($fields as $field) {
+            $element = $mform->getElement($field);
+            if ($element->_type == 'textarea' && $data[$field] != '') {
+                $rowsfromstring = preg_split("/[\s]+/", $data[$field]);
+                if ($element->_attributes['cols'] > 0) {
+                    $maxlength = max(array_map('strlen', $rowsfromstring));
+                    if ($maxlength > $element->_attributes['cols']) {
+                        $custom_errors[$field] = block_exastud_get_string('template_textarea_limits_error');
+                    }
+                }
+                if ($element->_attributes['rows'] > 0 && count($rowsfromstring) > $element->_attributes['rows']) {
+                    $custom_errors[$field] = block_exastud_get_string('template_textarea_limits_error');
+                }
+            }
+        }
+        $parent_result = parent::validation($data, $files);
+        return $parent_result + $custom_errors;
+    }
 
 }
 
@@ -365,6 +438,10 @@ class reportsettings_edit_form extends moodleform {
         $mform->addElement('select', 'template', block_exastud_get_string('report_settings_setting_template'), $templateList);
         $mform->setType('template', PARAM_RAW);
 
+        // grades
+        $mform->addElement('textarea', 'grades', block_exastud_get_string('report_settings_setting_grades'), array('rows' => 3, 'cols' => 50));
+        $mform->setType('grades', PARAM_TEXT);
+
         foreach ($this->allSecondaryFields as $field) {
             $mform->addElement('exastud_htmltag', '<div id="exastud-additional-params-block-'.$field.'" class="exastud-setting-block" data-field="'.$field.'">');
             if (in_array($field, $this->fieldsWithAdditionalParams)) {
@@ -437,6 +514,9 @@ class reportsettings_edit_form extends moodleform {
 
     public function prepare_formdata($data) {
         $result = $data;
+        if (is_array($data->grades)) {
+            $result->grades = implode('; ', $data->grades);
+        }
         foreach ($this->allSecondaryFields as $field) {
             $fieldData = unserialize($data->{$field});
             $result->{$field} = $fieldData['checked'];
@@ -534,6 +614,7 @@ class reportsettings_edit_form extends moodleform {
                 $mform->addElement('exastud_htmltag', '<hr />');
                 // always 'checked'
                 $mform->addElement('hidden', 'additional_params['.$i.']', '1');
+                $mform->setDefault('additional_params['.$i.']', 1);
                 // delete button
                 $mform->addElement('exastud_htmltag', '<img class="delete_param_button" data-paramid="'.$i.'" src="'.$CFG->wwwroot.'/blocks/exastud/pix/trash.png" title="'.block_exastud_get_string('delete_parameter').'"/>');
                 // title
