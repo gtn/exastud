@@ -214,6 +214,7 @@ $string['settings_edustandarts'] = 'Bildungsstandards';
 $string['settings_edustandarts_description'] = 'Liste, mit Kommata getrennt';
 $string['settings_bw_reports'] = 'Baden-Württemberg Berichte';
 $string['settings_exacomp_verbeval'] = 'Exabis Kompetenzraster Notenverbalisierung verwenden';
+$string['settings_exacomp_assessment_categories'] = 'Use competence grids for assessment categories';
 $string['report_learn_and_sociale'] = 'Lern- und Sozialverhalten';
 $string['report_other_report_fields'] = 'Weitere Formularfelder';
 $string['report_for_subjects'] = 'Zertifikat für Profilfach';

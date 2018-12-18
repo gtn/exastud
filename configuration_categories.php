@@ -39,7 +39,7 @@ $curPeriod = block_exastud_get_active_or_next_period();
 $class = block_exastud_get_head_teacher_class($classid);
 
 $header = block_exastud_get_string('configcategories', null, $class->title);
-$url = '/blocks/exastud/configuration_categories.php';
+$url = '/blocks/exastud/configuration_categories.php?classid='.$classid.'&courseid'.$courseid;
 $PAGE->set_url($url);
 $output = block_exastud_get_renderer();
 echo $output->header(['configuration_classes', 'categories'], ['class' => $class]);
@@ -70,7 +70,7 @@ if ($frm = data_submitted()) {
 	if ($add and !empty($frm->addselect)) {
 		foreach ($frm->addselect as $addcat) {
 
-			$category = explode("_",$addcat);
+			$category = explode("_", $addcat);
 			$entry = new stdClass();
 			$entry->classid = $class->id;
 			$entry->categoryid = $category[0];
@@ -155,7 +155,7 @@ function get_availablecategories($searchtext, $class, $notInClass = true) {
         $availablecategory->subject_title = block_exastud_get_string('basiccategories');
     }
 
-    if (block_exastud_is_exacomp_installed()) {
+    if (block_exastud_get_exacomp_assessment_categories()) {
         $availablesubjects = $DB->get_records('block_exacompsubjects');
         foreach ($availablesubjects as $subject) {
             $sql = 'SELECT id, title FROM {block_exacomptopics} ';

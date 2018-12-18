@@ -783,6 +783,10 @@ return [
                 'Exabis Kompetenzraster Notenverbalisierung verwenden',
                 'Exabis competences grid verbalise evaluation',
     ],
+    'settings_exacomp_assessment_categories' => [
+                'Use competence grids for assessment categories',
+                'Use competence grids for assessment categories',
+    ],
 
     'report_learn_and_sociale' => [
             'Lern- und Sozialverhalten',

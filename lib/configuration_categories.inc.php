@@ -56,7 +56,7 @@ defined('MOODLE_INTERNAL') || die();
 			  	</div>
 			</td>
 			<td valign="top">
-				<p><label for="addselect"><?php print_string('availablecategories', 'block_exastud'); ?></label></p>
+				<p><label for="addselect"><?php echo block_exastud_get_string('availablecategories'); ?></label></p>
 			  <div class="userselector">
 				<select name="addselect[]" size="20" id="addselect" multiple="multiple"
 						onfocus="getElementById('assignform').add.disabled=false;
@@ -76,9 +76,9 @@ defined('MOODLE_INTERNAL') || die();
 							echo '<optgroup label="'.block_exastud_get_string('toomanytoshow').'"><option></option></optgroup>'."\n"
 								  .'<optgroup label="'.block_exastud_get_string('trysearching').'"><option></option></optgroup>'."\n";
 						} else {
-							$subject="";
+							$subject = "";
 							foreach ($availablecategories as $category) {
-								if($subject !== $category->subject_title) {
+								if ($subject !== $category->subject_title) {
 									$subject = $category->subject_title;
 									echo '<optgroup label="'.$subject.'"></optgroup>';
 								}
@@ -89,7 +89,7 @@ defined('MOODLE_INTERNAL') || die();
 						}
 					}
 
-					if ($i==0) {
+					if ($i == 0) {
 						echo '<option/>'; // empty select breaks xhtml strict
 					}
 				?>

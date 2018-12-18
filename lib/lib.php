@@ -2419,6 +2419,13 @@ function block_exastud_get_only_learnsociale_reports() {
     return get_config('exastud', 'only_learnsociale_reports');
 }
 
+function block_exastud_get_exacomp_assessment_categories() {
+    if (block_exastud_is_exacomp_installed()) {
+        return get_config('exastud', 'use_exacomp_assessment_categories');
+    }
+    return false;
+}
+
 /*
 function block_exastud_encrypt_raw($value, $secret) {
 	$iv = openssl_random_pseudo_bytes(openssl_cipher_iv_length('aes-256-cbc'));
