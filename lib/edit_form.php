@@ -169,7 +169,7 @@ class student_edit_form extends moodleform {
         }
 
 		switch ($this->_customdata['reporttype']) {
-            case 'additional':
+            case 'inter':
                 // interdisciplinary reviews
                 $compeval_type = block_exastud_get_competence_eval_type();
                 $selectoptions = block_exastud_get_evaluation_options(true);
@@ -179,11 +179,9 @@ class student_edit_form extends moodleform {
                 if ($this->_customdata['categories.modified']) {
                     $mform->addElement('static', '', '', $this->_customdata['categories.modified']);
                 }
-
                 $categories = $this->_customdata['categories'];
                 foreach ($categories as $category) {
                     $id = $category->id.'_'.$category->source;
-
                     switch ($compeval_type) {
                         case BLOCK_EXASTUD_COMPETENCE_EVALUATION_TYPE_GRADE:
                             $mform->addElement('text', $id, $category->title);
@@ -197,7 +195,8 @@ class student_edit_form extends moodleform {
                             break;
                     }
                 }
-
+                break;
+            case 'social':
                 // learn and social
                 $template_inputparams = $this->_customdata['template']->get_inputs('all')['learn_social_behavior'];
                 $vorschlag_limits = array(
