@@ -121,36 +121,42 @@ echo '<input type="hidden" name="action" value="update" />';
 $table = new html_table();
 
 $table->head = array();
-$table->head[] = ''; //userpic
-$table->head[] = block_exastud_get_string('name');
-$table->head[] = '';
-$table->head[] = block_exastud_get_string('gender'); // gender column
+$userdatacolumn = new html_table_cell();
+$table->head[] = $userdatacolumn; //userdata
+//$table->head[] = block_exastud_get_string('name');
+//$table->head[] = '';
+//$table->head[] = block_exastud_get_string('gender'); // gender column
 $table->head[] = block_exastud_get_string('report_learn_and_sociale'); // bewerten button
 if (!block_exastud_get_only_learnsociale_reports()) {
     $table->head[] = block_exastud_trans('de:Notenerfassung / Niveau / Fach'); // bewerten button
-}
-$table->head[] = block_exastud_trans('de:Überfachliche Beurteilungen'); // bewerten button
-if (!block_exastud_get_only_learnsociale_reports()) {
     $table->head[] = block_exastud_get_string('Note');
     $table->head[] = block_exastud_get_string('Niveau');
 }
-foreach($categories as $category) {
-    $table->head[] = $category->title;
+$table->head[] = block_exastud_trans('de:Überfachliche Beurteilungen'); // bewerten button
+foreach ($categories as $category) {
+    $categorycolumn = new html_table_cell();
+    if (count($categories) > 5) {
+        $categorycolumn->attributes['class'] .= ' verticalCell ';
+        $categorycolumn->text = '<div class="verticalText"><div class="verticalTextInner">'.$category->title.'</div>';
+    } else {
+        $categorycolumn->text = $category->title;
+    }
+    $table->head[] = $categorycolumn;
 }
 
 $table->align = array();
-$table->align[] = 'center';
+//$table->align[] = 'center';
 $table->align[] = 'left';
 
-$table->align[] = 'center';
-$table->align[] = 'center';
+//$table->align[] = 'center';
+//$table->align[] = 'center';
 $table->align[] = 'center';
 $table->align[] = 'center';
 $table->align[] = 'center';
 $table->align[] = 'center';
 $table->align[] = 'center';
 
-for($i=0; $i<=count($categories); $i++) {
+for($i = 0; $i <= count($categories); $i++) {
     $table->align[] = 'center';
 }
 
@@ -185,8 +191,8 @@ foreach ($classstudents as $classstudent) {
 	$subjectData = block_exastud_get_review($classid, $subjectid, $classstudent->id);
 
 	$row = new html_table_row();
-	$row->cells[] = $output->user_picture($classstudent,array("courseid"=>$courseid));
-	$row->cells[] = fullname($classstudent);
+	$userdata = '<span class="exastud-userpicture">'.$output->user_picture($classstudent, array("courseid"=>$courseid)).'</span>';
+	$userdata .= '<span class="exastud-username">'.fullname($classstudent).'</span>';
 
 	if ($visible) {
 		$show_hide_url = block_exastud\url::create($PAGE->url, [ 'action'=>'hide_student', 'studentid' => $classstudent->id]);
@@ -195,8 +201,13 @@ foreach ($classstudents as $classstudent) {
 		$show_hide_url = block_exastud\url::create($PAGE->url, [ 'action'=>'show_student', 'studentid' => $classstudent->id]);
 		$show_hide_icon = $OUTPUT->pix_icon('i/show', block_exastud_get_string('show'));
 	}
-	$row->cells[] = '<a style="padding-right: 15px;" href="'.$show_hide_url.'">'.$show_hide_icon.'</a>';
-	$row->cells[] = block_exastud_get_user_gender_string($classstudent->id);
+    $userdata .= '<span class="exastud-usergender">'.block_exastud_get_user_gender_string($classstudent->id).'</span>';
+    $userdata .= '<span class="exastud-hidebutton"><a style="padding-right: 15px;" href="'.$show_hide_url.'">'.$show_hide_icon.'</a></span>';
+    $userdatacell = new html_table_cell();
+    $userdatacell->attributes['class'] .= 'exastud-userdata-cell';
+    $userdatacell->text = '<div class="cell-content">'.$userdata.'</div>';
+    $userdatacell->rowspan = 2;
+    $row->cells[] = $userdatacell;
 
     $row->cells[] = ($visible ? $output->link_button($CFG->wwwroot.'/blocks/exastud/review_student.php?courseid='.$courseid.'&classid='.$classid.'&subjectid='.$subjectid.'&studentid='.$classstudent->id.'&reporttype=social',
             block_exastud_get_string('review_button'), ['class' => 'btn btn-primary']) : '');
@@ -206,10 +217,6 @@ foreach ($classstudents as $classstudent) {
                         '&subjectid='.$subjectid.'&studentid='.$classstudent->id,
                         block_exastud_get_string('review_button'), ['class' => 'btn btn-primary']) : '');
     }
-    $row->cells[] = ($visible ?
-            $output->link_button($CFG->wwwroot.'/blocks/exastud/review_student.php?courseid='.$courseid.'&classid='.$classid.
-                    '&subjectid='.$subjectid.'&studentid='.$classstudent->id.'&reporttype=inter',
-                    block_exastud_get_string('review_button'), ['class' => 'btn btn-primary']) : '');
 
 	// Grades column
     if (!block_exastud_get_only_learnsociale_reports()) {
@@ -256,6 +263,11 @@ foreach ($classstudents as $classstudent) {
         $niveau_form .= '</select>';
         $row->cells[] = $niveau_form;
     }
+
+    $row->cells[] = ($visible ?
+            $output->link_button($CFG->wwwroot.'/blocks/exastud/review_student.php?courseid='.$courseid.'&classid='.$classid.
+                    '&subjectid='.$subjectid.'&studentid='.$classstudent->id.'&reporttype=inter',
+                    block_exastud_get_string('review_button'), ['class' => 'btn btn-primary']) : '');
 
 	/* if (!$visible) {
 		$cell = new html_table_cell();
@@ -316,10 +328,10 @@ foreach ($classstudents as $classstudent) {
         $cell->style = 'text-align: left;';
 
         if ($cell) {
-            $spacerCell = new html_table_cell();
-            $spacerCell->colspan = 4;
+            //$spacerCell = new html_table_cell();
+            //$spacerCell->colspan = 4;
             $row = new html_table_row(array(
-                    $spacerCell, $cell
+                    /*$spacerCell, */$cell
             ));
             $row->attributes['class'] = 'oddeven'.(int)$oddeven;
             $table->data[] = $row;
