@@ -454,7 +454,7 @@ class print_templates {
 			],
 			'BP 2004/Zertifikat fuer Profilfach' => [
 				'name' => 'Zertifikat fÃ¼r Profilfach',
-				'file' => 'BP 2004/BP2004_16_Zertifikat_für_Profilfach',
+				'file' => 'BP 2004/BP2004_16_Zertifikat_fuer_Profilfach',
 				'grades' => [],
 				'inputs' => [
 					'besondere_kompetenzen' => [
@@ -466,7 +466,7 @@ class print_templates {
 			],
 			'BP 2004/Beiblatt zur Projektpruefung HSA' => [
 				'name' => 'Beiblatt zur ProjektprÃ¼fung HSA',
-				'file' => 'BP 2004/BP2004_GMS_Anlage_Projektprüfung_HS',
+				'file' => 'BP 2004/BP2004_GMS_Anlage_Projektpruefung_HS',
 				'grades' => $grades_lang,
 				'inputs' => [
 					/*

@@ -1933,7 +1933,7 @@ function block_exastud_get_default_templates() {
             'BP 2004/Zertifikat fuer Profilfach' => [
                     'id' => BLOCK_EXASTUD_DATA_ID_ZERTIFIKAT_FUER_PROFILFACH,
                     'name' => 'Zertifikat für Profilfach',
-                    'file' => 'BP 2004/Zertifikat fuer Profilfach',
+                    'file' => 'BP 2004/BP2004_16_Zertifikat_fuer_Profilfach',
                     'grades' => [],
                     'inputs' => [
                             'besondere_kompetenzen' => [
@@ -1946,7 +1946,7 @@ function block_exastud_get_default_templates() {
             'BP 2004/Beiblatt zur Projektpruefung HSA' => [
                     'id' => 5,
                     'name' => 'Beiblatt zur Projektprüfung HSA',
-                    'file' => 'BP 2004/Beiblatt zur Projektpruefung HSA',
+                    'file' => 'BP 2004/BP2004_GMS_Anlage_Projektpruefung_HS',
                     'grades' => $grades_lang,
                     'inputs' => [
                         /*
@@ -1970,7 +1970,7 @@ function block_exastud_get_default_templates() {
             ],
             'BP 2016/GMS Zeugnis 1.HJ' => [
                     'name' => 'BP 2016 GMS Zeugnis 1.HJ',
-                    'file' => 'BP 2016/Lernentwicklungsbericht neuer BP 1.HJ',
+                    'file' => 'BP 2016/BP2016_GMS_Halbjahr_Lernentwicklungsbericht',
                     'grades' => $grades_mit_plus_minus_bis,
                     'inputs' => [
                             'comments' => [
@@ -1981,7 +1981,7 @@ function block_exastud_get_default_templates() {
             ],
             'BP 2016/GMS Zeugnis SJ' => [
                     'name' => 'BP 2016 GMS Zeugnis SJ',
-                    'file' => 'BP 2016/Lernentwicklungsbericht neuer BP SJ',
+                    'file' => 'BP 2016/BP2016_Jahreszeugnis_Lernentwicklungsbericht',
                     'grades' => $grades_1_bis_6,
                     'inputs' => [
                             'comments' => [
@@ -1992,7 +1992,7 @@ function block_exastud_get_default_templates() {
             ],
             'BP 2004/GMS Zeugnis 1.HJ' => [
                     'name' => 'BP 2004 GMS Zeugnis 1.HJ',
-                    'file' => 'BP 2004/Lernentwicklungsbericht alter BP 1.HJ',
+                    'file' => 'BP 2004/BP2004_GMS_Halbjahr_Lernentwicklungsbericht',
                     'grades' => $grades_mit_plus_minus_bis,
                     'inputs' => [
                             'comments' => [
@@ -2003,7 +2003,7 @@ function block_exastud_get_default_templates() {
             ],
             'BP 2004/GMS Zeugnis SJ' => [
                     'name' => 'BP 2004 GMS Zeugnis SJ',
-                    'file' => 'BP 2004/Lernentwicklungsbericht alter BP SJ',
+                    'file' => 'BP 2004/BP2004_Jahreszeugnis_Lernentwicklungsbericht',
                     'grades' => $grades_1_bis_6,
                     'inputs' => [
                             'comments' => [
@@ -2014,7 +2014,7 @@ function block_exastud_get_default_templates() {
             ],
             'BP 2004/GMS Klasse 10 E-Niveau 1.HJ' => [
                     'name' => 'BP 2004 GMS Klasse 10 E-Niveau 1.HJ',
-                    'file' => 'BP 2004/Halbjahresinformation Klasse 10Gemeinschaftsschule_E-Niveau_BP 2004',
+                    'file' => 'BP 2004/BP2004_GMS_Halbjahr_Zeugnis_E_Niveau',
                     'grades' => $grades_mit_plus_minus_bis_ausgeschrieben,
                     'inputs' => [
                             'ags' => [
@@ -2031,7 +2031,7 @@ function block_exastud_get_default_templates() {
             ],
             'BP 2004/GMS Klasse 10 E-Niveau SJ' => [
                     'name' => 'BP 2004 GMS Klasse 10 E-Niveau SJ',
-                    'file' => 'BP 2004/Jahreszeugnis Klasse 10 der Gemeinschaftsschule E-Niveau',
+                    'file' => 'BP 2004/BP2004_Jahreszeugnis_E_Niveau',
                     'grades' => $grades_short,
                     'inputs' => [
                             'verhalten' => [
@@ -2054,7 +2054,7 @@ function block_exastud_get_default_templates() {
             ],
             'BP 2004/GMS Abgangszeugnis' => [
                     'name' => 'BP 2004 GMS Abgangszeugnis',
-                    'file' => 'BP 2004/Abgangszeugnis der Gemeinschaftsschule',
+                    'file' => 'BP 2004/BP2004_GMS_Abgangszeugnis_GMS',
                     'grades' => $grades_lang,
                     'inputs' => [
                             'wann_verlassen' => [
@@ -2090,7 +2090,7 @@ function block_exastud_get_default_templates() {
             ],
             'BP 2004/GMS Abgangszeugnis HSA Kl.9 und 10' => [
                     'name' => 'BP 2004 GMS Abgangszeugnis HSA Kl.9 und 10',
-                    'file' => 'BP 2004/Abgangszeugnis der Gemeinschaftsschule HSA Kl.9 und 10',
+                    'file' => 'BP 2004/BP2004_GMS_Abgangszeugnis_HS_9_10',
                     'grades' => $grades_lang,
                     'inputs' => [
                             'wann_verlassen' => [
@@ -2126,7 +2126,7 @@ function block_exastud_get_default_templates() {
             ],
             'BP 2004/GMS Hauptschulabschluss 1.HJ' => [
                     'name' => 'BP 2004 GMS Hauptschulabschluss 1.HJ',
-                    'file' => 'BP 2004/HalbjahreszeugnisHauptschulabschluss an der Gemeinschaftsschule _BP alt',
+                    'file' => 'BP 2004/BP2004_GMS_Halbjahr_Zeugnis_HS',
                     'grades' => $grades_short,
                     'inputs' => [
                             'ags' => [
@@ -2143,7 +2143,7 @@ function block_exastud_get_default_templates() {
             ],
             'BP 2004/GMS Hauptschulabschluss SJ' => [
                     'name' => 'BP 2004 GMS Hauptschulabschluss SJ',
-                    'file' => 'BP 2004/Hauptschulabschluszeugnis GMS BP 2004',
+                    'file' => 'BP 2004/BP2004_GMS_Abschlusszeugnis_HS',
                     'grades' => $grades_lang,
                     'inputs' => [
                         /*
@@ -2179,7 +2179,7 @@ function block_exastud_get_default_templates() {
             ],
             'BP 2004/GMS Realschulabschluss 1.HJ' => [
                     'name' => 'BP 2004 GMS Realschulabschluss 1.HJ',
-                    'file' => 'BP 2004/HalbjahreszeugnisRealschulabschluss an der Gemeinschaftsschule',
+                    'file' => 'BP 2004/BP2004_GMS_Halbjahr_Zeugnis_RS',
                     'grades' => $grades_short,
                     'inputs' => [
                             'ags' => [
@@ -2196,7 +2196,7 @@ function block_exastud_get_default_templates() {
             ],
             'BP 2004/GMS Realschulabschluss SJ' => [
                     'name' => 'BP 2004 GMS Realschulabschluss SJ',
-                    'file' => 'BP 2004/Realschulabschlusszeugnis an der Gemeinschaftsschule BP 2004',
+                    'file' => 'BP 2004/BP2004_GMS_Abschlusszeugnis_RS',
                     'grades' => $grades_lang,
                     'inputs' => [
                         /*
@@ -2224,7 +2224,7 @@ function block_exastud_get_default_templates() {
             ],
             'BP 2004/GMS Abschlusszeugnis der Förderschule' => [
                     'name' => 'BP 2004 GMS Abschlusszeugnis der Förderschule',
-                    'file' => 'BP 2004/Abschlusszeugnis der Foerderschule',
+                    'file' => 'BP 2004/BP2004_GMS_Abgangszeugnis_Foe',
                     'grades' => $grades_lang,
                     'inputs' => [
                             'gesamtnote_und_durchschnitt_der_gesamtleistungen' => [
@@ -2241,7 +2241,7 @@ function block_exastud_get_default_templates() {
             ],
             'BP 2004/GMS Halbjahreszeugniss der Förderschule' => [
                     'name' => 'BP 2004 GMS Halbjahreszeugniss der Förderschule',
-                    'file' => 'BP 2004/HJ zeugnis Foe',
+                    'file' => 'BP 2004/BP2004_GMS_Halbjahr_Zeugnis_Foe',
                     'grades' => $grades_short,
                     'inputs' => [
                             'ags' => [
@@ -2253,7 +2253,7 @@ function block_exastud_get_default_templates() {
             ],
             'Deckblatt und 1. Innenseite LEB' => [
                     'name' => 'Deckblatt und 1. Innenseite LEB',
-                    'file' => 'Deckblatt und 1. Innenseite LEB',
+                    'file' => 'Lernentwicklungsbericht_Deckblatt_und_1._Innenseite',
                     'inputs' => [],
             ],
     ];

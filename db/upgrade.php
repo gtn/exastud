@@ -22,7 +22,7 @@ require_once __DIR__.'/../inc.php';
 use block_exastud\globals as g;
 
 function xmldb_block_exastud_upgrade($oldversion = 0) {
-	global $DB;
+	global $DB, $CFG;
 	$dbman = $DB->get_manager();
 	$result = true;
 
@@ -462,6 +462,36 @@ function xmldb_block_exastud_upgrade($oldversion = 0) {
         if (!$dbman->field_exists($table, $field)) {
             $dbman->add_field($table, $field);
         }
+    }
+
+    if ($oldversion < 2018121903) {
+        // change old template files to new
+        $filestochange = array(
+            "BP 2016/Lernentwicklungsbericht neuer BP 1.HJ"     => "BP 2016/BP2016_GMS_Halbjahr_Lernentwicklungsbericht",
+            "BP 2016/Lernentwicklungsbericht neuer BP SJ"       => "BP 2016/BP2016_Jahreszeugnis_Lernentwicklungsbericht",
+            "BP 2004/Lernentwicklungsbericht alter BP 1.HJ"     => "BP 2004/BP2004_GMS_Halbjahr_Lernentwicklungsbericht",
+            "BP 2004/Lernentwicklungsbericht alter BP SJ"       => "BP 2004/BP2004_Jahreszeugnis_Lernentwicklungsbericht",
+            "BP 2004/Halbjahresinformation Klasse 10Gemeinschaftsschule_E-Niveau_BP 2004" => "BP 2004/BP2004_GMS_Halbjahr_Zeugnis_E_Niveau",
+            "BP 2004/Jahreszeugnis Klasse 10 der Gemeinschaftsschule E-Niveau" => "BP 2004/BP2004_Jahreszeugnis_E_Niveau",
+            "BP 2004/Abgangszeugnis der Gemeinschaftsschule"    => "BP 2004/BP2004_GMS_Abgangszeugnis_GMS",
+            "BP 2004/Abgangszeugnis der Gemeinschaftsschule HSA Kl.9 und 10" => "BP 2004/BP2004_GMS_Abgangszeugnis_HS_9_10",
+            "BP 2004/HalbjahreszeugnisHauptschulabschluss an der Gemeinschaftsschule _BP alt" => "BP 2004/BP2004_GMS_Halbjahr_Zeugnis_HS",
+            "BP 2004/Hauptschulabschluszeugnis GMS BP 2004"     => "BP 2004/BP2004_GMS_Abschlusszeugnis_HS",
+            "BP 2004/HalbjahreszeugnisRealschulabschluss an der Gemeinschaftsschule" => "BP 2004/BP2004_GMS_Halbjahr_Zeugnis_RS",
+            "BP 2004/Realschulabschlusszeugnis an der Gemeinschaftsschule BP 2004" => "BP 2004/BP2004_GMS_Abschlusszeugnis_RS",
+            "BP 2004/Zertifikat fuer Profilfach"                => "BP 2004/BP2004_16_Zertifikat_fuer_Profilfach",
+            "BP 2004/Beiblatt zur Projektpruefung HSA"          => "BP 2004/BP2004_GMS_Anlage_Projektpruefung_HS",
+            "BP 2004/Abschlusszeugnis der Foerderschule"        => "BP 2004/BP2004_GMS_Abgangszeugnis_Foe",
+            "BP 2004/HJ zeugnis Foe"                            => "BP 2004/BP2004_GMS_Halbjahr_Zeugnis_Foe",
+            "Deckblatt und 1. Innenseite LEB"                   => "Lernentwicklungsbericht_Deckblatt_und_1._Innenseite",
+        );
+        foreach ($filestochange as $oldname => $newfilename) {
+            $DB->execute(' UPDATE {block_exastudreportsettings} SET template = ? WHERE template = ? ',
+                    [$newfilename, $oldname]);
+            // delete real file
+            @unlink($CFG->dirroot.'/blocks/exastud/template/'.$oldname);
+        }
+        upgrade_block_savepoint(true, 2018121903, 'exastud');
     }
 
     block_exastud_insert_default_entries();
