@@ -66,7 +66,7 @@ class print_templates {
 	    $templates = array();
 	    $templates_temp = g::$DB->get_records('block_exastudreportsettings');
 	    foreach ($templates_temp as $tmpl) {
-	        $grades = array('') + array_map('trim', explode(';', $tmpl->grades));
+	        $grades = array('' => '') + array_map('trim', explode(';', $tmpl->grades));
             $grades = array_combine($grades, $grades);
 	        $templates[$tmpl->id] = array(
 	                'name' => $tmpl->title,
