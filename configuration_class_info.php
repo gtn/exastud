@@ -47,9 +47,13 @@ $class->courseid = $courseid;
 //    $context = context_module::instance($cm->id);
 //}
 
-$customdata = array('for_siteadmin' => false);
+$customdata = array('for_siteadmin' => false,
+                    'is_classowner' => false);
 if ($class->userid && $class->userid != $USER->id && block_exastud_is_siteadmin()) {
     $customdata['for_siteadmin'] = true;
+}
+if ($class->userid == $USER->id) {
+    $customdata['is_classowner'] = true;
 }
 $classform = new class_edit_form(null, $customdata);
 
@@ -70,8 +74,9 @@ if ($classform->is_cancelled()) {
 
 	if ($class->id) {
 		$newclass->id = $class->id;
-		// admin can change owner of class
-		if (block_exastud_is_siteadmin() && $classedit->userid != $class->userid) {
+		// admin and class owner can change owner of class
+		if ((block_exastud_is_siteadmin() || $class->userid == $USER->id )
+		        && $classedit->userid != $class->userid) {
             $newclass->userid = $classedit->userid;
         } else {
             $newclass->userid = $class->userid;
@@ -129,7 +134,22 @@ if ($classform->is_cancelled()) {
 		block_exastud_normalize_projekt_pruefung($class);
 	}
 
-	if ($class->id) {
+	if ($newclass->userid != $class->userid) {
+	    // owner of class was changed
+        if (block_exastud_is_siteadmin()) {
+            // it did site admin
+            redirect('configuration_class.php?courseid='.$courseid.'&classid='.$newclass->id);
+        } else if ($class->userid == $USER->id) {
+            // it did class owner. he has not access to this class from now
+            $a = new stdClass();
+            $a->classtitle = $newclass->title;
+            $a->owner = fullname(block_exastud_get_user($newclass->userid));
+            redirect('configuration_classes.php?courseid='.$courseid,
+                        block_exastud_get_string('classowner_changed_message', null, $a),
+                    null,
+                    \core\output\notification::NOTIFY_INFO);
+        }
+    } else if ($class->id) {
 		redirect('configuration_class_info.php?courseid='.$courseid.'&classid='.$class->id);
 	} else /*if (block_exastud_is_siteadmin() && $newclass->userid != $USER->id) {
 	    // If the siteamin addes a new class for another user - we have another behaviour. So use this code.

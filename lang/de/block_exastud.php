@@ -308,3 +308,6 @@ $string['event_studentreviewchanged_name'] = 'Student review changed';
 $string['event_classownerupdated_name'] = 'Class owner updated';
 $string['template_textarea_limits_error'] = 'Please use defined limits for textarea fields';
 $string['gender'] = 'Geschlecht';
+$string['it_is_my_class'] = 'My class';
+$string['classowner_changed_message'] = 'You changed the head of class "{$a->classtitle}" to {$a->owner}. So, you do not have access to edit this class from now!';
+$string['attention_owner_will_change'] = 'Please note: if you will change the head of own class - you will not have access to edit this class!';

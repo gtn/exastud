@@ -82,9 +82,8 @@ function block_exastud_print_period($courseid, $period, $type) {
 			}
 		}
 	}
-
 	foreach ($reviewsubjects as $reviewsubject) {
-		if (!isset($reviewclasses[$reviewsubject->classid])) {
+		if (!array_key_exists($reviewsubject->classid, $reviewclasses)) {
 			$reviewclasses[$reviewsubject->classid] = $reviewsubject;
 			$reviewclasses[$reviewsubject->classid]->id = $reviewsubject->classid;
 			$reviewclasses[$reviewsubject->classid]->is_head_teacher = false;
@@ -102,7 +101,6 @@ function block_exastud_print_period($courseid, $period, $type) {
 	}
 
 	echo $output->heading($period->description);
-
 	if (!$reviewclasses) {
 		echo block_exastud_get_string('noclassestoreview');
 	} else {
@@ -111,7 +109,6 @@ function block_exastud_print_period($courseid, $period, $type) {
         $table->align = array("left");
         //$table->attributes['class'] .= ' exastud-review-table';
 		foreach ($reviewclasses as $myclass) {
-
             $classHeader = new html_table_row();
             $headerCell = new html_table_cell();
             $headerCell->text = '<span class="exastud-collapse-data" data-classid="'.$myclass->id.'">
@@ -132,8 +129,8 @@ function block_exastud_print_period($courseid, $period, $type) {
 			} else {
                 $hRow = new \html_table_row();
                 //if (!block_exastud_get_only_learnsociale_reports()) {
-                    $htCell1 = new \html_table_cell(block_exastud_get_string('review_table_part_subjects'));
-                    $hRow->cells[] = $htCell1;
+                $htCell1 = new \html_table_cell(block_exastud_get_string('review_table_part_subjects'));
+                $hRow->cells[] = $htCell1;
                 //}
                 $hRow->attributes['class'] = 'exastud-part-title exastud-data-row';
                 $hRow->attributes['data-classid'] = $myclass->id;
@@ -205,16 +202,15 @@ function block_exastud_print_period($courseid, $period, $type) {
                     $dRow->attributes['class'] = 'exastud-data-row';
                     $dRow->attributes['data-classid'] = $myclass->id;
                     //if (!block_exastud_get_only_learnsociale_reports()) {
-                        $subjectsCell = new \html_table_cell();
-                        $subjectsCell->text = (isset($subjectsData[$i]) ? $subjectsData[$i] : '');
-                        $dRow->cells[] = $subjectsCell;
+                    $subjectsCell = new \html_table_cell();
+                    $subjectsCell->text = (isset($subjectsData[$i]) ? $subjectsData[$i] : '');
+                    $subjectsCell->colspan = ($myclass->is_head_teacher ? 1 : 2);
+                    $dRow->cells[] = $subjectsCell;
                     //}
                     if ($myclass->is_head_teacher) {
                         $generalCell = new \html_table_cell();
                         $generalCell->text = (isset($generaldata[$i]) ? $generaldata[$i] : '');
                         $dRow->cells[] = $generalCell;
-                    } else {
-                        //$subjectsCell->colspan = 2;
                     }
                     $table->data[] = $dRow;
                 }

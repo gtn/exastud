@@ -1153,5 +1153,17 @@ return [
         'Geschlecht',
         'Gender',
     ],
+    'it_is_my_class' => [
+        'My class',
+        'My class',
+    ],
+    'classowner_changed_message' => [
+        'You changed the head of class "{$a->classtitle}" to {$a->owner}. So, you do not have access to edit this class from now!',
+        'You changed the head of class "{$a->classtitle}" to {$a->owner}. So, you do not have access to edit this class from now!',
+    ],
+    'attention_owner_will_change' => [
+        'Please note: if you will change the head of own class - you will not have access to edit this class!',
+        'Please note: if you will change the head of own class - you will not have access to edit this class!',
+    ],
 
 ];

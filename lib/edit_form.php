@@ -76,14 +76,19 @@ class class_edit_form extends moodleform {
         */
 
 
-		// change class owner (only for siteadmin
-        if (block_exastud_is_siteadmin()) {
+		// change class owner (only for siteadmin or class owner)
+        if (block_exastud_is_siteadmin() || $this->_customdata['is_classowner']) {
             $headteachers = block_exastud_get_head_teachers_all();
             $options = array();
             foreach ($headteachers as $teacher) {
                 $options[$teacher->id] = $teacher->lastname.' '.$teacher->firstname;
             }
-            $mform->addElement('select', 'userid', block_exastud_get_string('class_owner'), $options);
+            $selectboxoptions = array('class' => 'exastud-review-message');
+            if (!block_exastud_is_siteadmin()) {
+                $selectboxoptions['data-exastudmessage'] = block_exastud_get_string('attention_owner_will_change');
+            }
+            $mform->addElement('select', 'userid', block_exastud_get_string('class_owner'), $options,
+                    $selectboxoptions);
         }
 
 /*        $mform->addElement('filemanager', 'class_logo', block_exastud_get_string('class_logo'), null,

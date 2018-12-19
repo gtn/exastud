@@ -1624,10 +1624,14 @@ function block_exastud_get_bildungsstandards() {
 }
 
 function block_exastud_get_class_title($classid) {
+    global $USER, $CFG;
 	$class = block_exastud_get_class($classid);
 
 	$classTitle = $class->title;
-	if ($head_teacher = g::$DB->get_record('user', array('id' => $class->userid))) {
+    // Mark own classes.
+    if ($class->userid == $USER->id) {
+        $classTitle .= '&nbsp;<img class="exastud-my-class" src="'.$CFG->wwwroot.'/blocks/exastud/pix/star.png" width="16" height="16" title="'.block_exastud_get_string('it_is_my_class').'" />';
+    } else if ($head_teacher = g::$DB->get_record('user', array('id' => $class->userid))) {
 		$classTitle .= ' ('.fullname($head_teacher).')';
 	}
 
