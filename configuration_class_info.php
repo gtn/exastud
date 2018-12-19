@@ -33,6 +33,7 @@ if (!$classid) {
 	$class = new stdClass();
 	$class->id = 0;
 	$class->title = '';
+	$class->userid = $USER->id; // Temporary.
 } else {
 	$class = block_exastud_get_head_teacher_class($classid);
 }
@@ -52,7 +53,7 @@ $customdata = array('for_siteadmin' => false,
 if ($class->userid && $class->userid != $USER->id && block_exastud_is_siteadmin()) {
     $customdata['for_siteadmin'] = true;
 }
-if ($class->userid == $USER->id) {
+if ($class->userid && $class->userid == $USER->id) {
     $customdata['is_classowner'] = true;
 }
 $classform = new class_edit_form(null, $customdata);
