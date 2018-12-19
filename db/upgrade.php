@@ -493,6 +493,32 @@ function xmldb_block_exastud_upgrade($oldversion = 0) {
         }
         upgrade_block_savepoint(true, 2018121903, 'exastud');
     }
+    
+    
+    if ($oldversion < 2018121905) {
+        // change old template files to new
+        $filestochange = array(
+            "RALE"  => "alev",
+            "RAK"   => "ak",
+            "ETH"   => "eth",
+            "REV"   => "ev",
+            "RISL"  => "isl",
+            "RJUED" => "jd",
+            "RRK"   => "rk",
+            "ROR"   => "orth",
+            "RSYR"  => "syr",
+        );
+        foreach ($filestochange as $oldname => $newName) {
+            $DB->execute(' UPDATE {block_exastudsubjects} SET shorttitle = ?, sourceinfo = "bw-bp2016-'. $newName .'" WHERE shorttitle = ? AND sourceinfo LIKE "bw-bp2016%"',
+                [$newName, $oldname]);
+        }
+        foreach ($filestochange as $oldname => $newName) {
+            $DB->execute(' UPDATE {block_exastudsubjects} SET shorttitle = ?, sourceinfo = "bw-bp2004-'. $newName .'" WHERE shorttitle = ? AND sourceinfo LIKE "bw-bp2004%"',
+                [$newName, $oldname]);
+        }
+
+        upgrade_block_savepoint(true, 2018121905, 'exastud');
+    }
 
     block_exastud_insert_default_entries();
 	block_exastud_check_profile_fields();

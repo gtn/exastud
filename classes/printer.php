@@ -299,17 +299,19 @@ class printer {
 				$subject->title = preg_replace('!\s*\(.*$!', '', $subject->title);
 
 				if (in_array($subject->shorttitle, [
-					'RALE',
-					'RAK',
-					'ETH',
-					'REV',
-					'RISL',
-					'RJUED',
-					'RRK',
-					'ROR',
-					'RSYR',
+					'alev',
+					'ak',
+					'eth',
+					'ev',
+					'isl',
+					'jd',
+					'rk',
+					'orth',
+					'syr',
 				])) {
-					$dataTextReplacer['Ethik (ETH)'] = $subject->title.' ('.$subject->shorttitle.')';
+				    if($subject->shorttitle != 'eth'){
+				        $dataTextReplacer['Ethik'] = 'Religionslehre ('.$subject->shorttitle.')';
+				    }
 					$contentId = 'religion';
 				} elseif (strpos($subject->title, 'Wahlpflichtfach') === 0) {
 					$wahlpflichtfach = preg_replace('!^[^\s]+!', '', $subject->title);
@@ -419,15 +421,15 @@ class printer {
 				$subject->title = preg_replace('!\s*\(.*$!', '', $subject->title);
 
 				if (in_array($subject->shorttitle, [
-					'RALE',
-					'RAK',
-					'ETH',
-					'REV',
-					'RISL',
-					'RJUED',
-					'RRK',
-					'ROR',
-					'RSYR',
+				    'alev',
+				    'ak',
+				    'eth',
+				    'ev',
+				    'isl',
+				    'jd',
+				    'rk',
+				    'orth',
+				    'syr',
 				])) {
 					if ($religion != static::spacerIfEmpty('')) {
 						continue;
@@ -435,21 +437,12 @@ class printer {
 						// maybe there are 2 religion gradings? ignore the 2nd one
 					}
 
-					if ($subject->shorttitle == 'ETH') {
+					if ($subject->shorttitle == 'eth') {
 						$religion = 'Ethik';
 						$religion_sub = '';
 					} else {
 						$religion = 'Religionslehre';
-						if ($subject->shorttitle == 'RISL') {
-							$religion_sub = 'islamisch sunnitischer Prägung';
-						} else {
-							// jüdische Relgigionslehre => jüdische
-							$religion_sub = mb_strtolower(trim(str_replace('Religionslehre', '', $subject->title)));
-							// jüdische => jüdisch
-							$religion_sub = rtrim($religion_sub, 'e');
-							// jüdisch => (jüdisch)
-							$religion_sub = '('.$religion_sub.')';
-						}
+						$religion_sub = '('.$subject->shorttitle.')';
 					}
 
 					$gradeSearch = 'Ethik';
@@ -590,7 +583,7 @@ class printer {
 				 * }
 				 */
 
-				$content = preg_replace('!>\s*\(evangelisch\)\s*<!U', '>'.$religion_sub.'<', $content, 1, $count);
+				$content = preg_replace('!>\s*\(ev\)\s*<!U', '>'.$religion_sub.'<', $content, 1, $count);
 
 				$content = preg_replace('!(Wahlpflichtbereich.*>)Technik(<)!U', '${1}'.$wahlpflichtfach.'${2}', $content, 1, $count);
 
