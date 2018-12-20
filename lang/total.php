@@ -1154,15 +1154,15 @@ return [
         'Gender',
     ],
     'it_is_my_class' => [
-        'My class',
+        'Meine Klasse',
         'My class',
     ],
     'classowner_changed_message' => [
-        'You changed the head of class "{$a->classtitle}" to {$a->owner}. So, you do not have access to edit this class from now!',
+        'Sie haben die Klassenlehrkraft für die Klasse "{$a->classtitle}" erfolgreich geänder auf {$a->owner}. ',
         'You changed the head of class "{$a->classtitle}" to {$a->owner}. So, you do not have access to edit this class from now!',
     ],
     'attention_owner_will_change' => [
-        'Please note: if you will change the head of own class - you will not have access to edit this class!',
+        'Achtung, wenn sie eine neue Klassenlehrkraft zuteilen, haben sie keine Rechte mehr diese Klasse zu bearbeiten.',
         'Please note: if you will change the head of own class - you will not have access to edit this class!',
     ],
 
