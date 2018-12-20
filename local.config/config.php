@@ -38,6 +38,7 @@ bw-bp2016-bnt;Biologie, Naturphänomene und Technik;BNT;1
 bw-bp2016-ph;Physik;Ph;1
 bw-bp2016-ch;Chemie;Ch;1
 bw-bp2016-bio;Biologie;Bio;1
+bw-bp2016-ai;Aufbaukurs Informatik;AI;1
 bw-bp2016-mu;Musik;Mu;1
 bw-bp2016-b;Bildende Kunst;BK;1
 bw-bp2016-sp;Sport;Sp;1
@@ -48,6 +49,7 @@ bw-bp2016-profil-bk;Profilfach Bildende Kunst;Profil BK;0
 bw-bp2016-profil-f;Profilfach Französisch;Profil F;0
 bw-bp2016-profil-mu;Profilfach Musik;Profil Mu;0
 bw-bp2016-profil-nwt;Profilfach Naturwissenschaft und Technik;Profil NwT;0
+bw-bp2016-profil-imp;Profilfach Informatik, Mathematik, Physik;Profil IMP;0
 bw-bp2016-profil-s;Profilfach Spanisch;Profil S;0
 bw-bp2016-profil-sp;Profilfach Sport;Profil Sp;0
 				', ";", true),

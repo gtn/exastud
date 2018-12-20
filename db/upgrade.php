@@ -496,7 +496,6 @@ function xmldb_block_exastud_upgrade($oldversion = 0) {
     
     
     if ($oldversion < 2018121905) {
-        // change old template files to new
         $filestochange = array(
             "RALE"  => "alev",
             "RAK"   => "ak",
@@ -518,6 +517,32 @@ function xmldb_block_exastud_upgrade($oldversion = 0) {
         }
 
         upgrade_block_savepoint(true, 2018121905, 'exastud');
+    }
+    
+    if ($oldversion < 2018122000) {
+        $table = new xmldb_table('block_exastudsubjects');
+        $field1 = new xmldb_field('not_relevant', XMLDB_TYPE_INTEGER, 1, null, null, null, '0');
+        $field2 = new xmldb_field('no_niveau', XMLDB_TYPE_INTEGER, 1, null, null, null, '0');
+        if (!$dbman->field_exists($table, $field1) && !$dbman->field_exists($table, $field2)) {
+            $dbman->add_field($table, $field1);
+            $dbman->add_field($table, $field2);
+        }
+        
+        $DB->execute(' UPDATE {block_exastudsubjects} SET sorting = sorting * 10');
+        
+        $DB->insert_record('block_exastudsubjects', array('bpid' => 1, 'sorting' => 215, 'title' => 'Aufbaukurs Informatik', 'shorttitle' => 'AI', 'always_print' => 1 , 'sourceinfo' => 'bw-bp2016-ai'));
+        $DB->insert_record('block_exastudsubjects', array('bpid' => 1, 'sorting' => 315, 'title' => 'Profilfach Informatik, Mathematik, Physik', 'shorttitle' => 'IMP', 'always_print' => 0 , 'sourceinfo' => 'bw-bp2016-imp'));
+        
+        $DB->execute(' UPDATE {block_exastudsubjects} SET not_relevant = 1 WHERE shorttitle = "Sp"');
+        $DB->execute(' UPDATE {block_exastudsubjects} SET no_niveau = 1 WHERE shorttitle = "Sp"');
+        
+        $DB->execute(' UPDATE {block_exastudsubjects} SET not_relevant = 1 WHERE shorttitle = "BK"');
+        $DB->execute(' UPDATE {block_exastudsubjects} SET no_niveau = 1 WHERE shorttitle = "BK"');
+        
+        $DB->execute(' UPDATE {block_exastudsubjects} SET not_relevant = 1 WHERE shorttitle = "Mu"');
+        $DB->execute(' UPDATE {block_exastudsubjects} SET no_niveau = 1 WHERE shorttitle = "Mu"');
+        
+        upgrade_block_savepoint(true, 2018122000, 'exastud');
     }
 
     block_exastud_insert_default_entries();

@@ -324,11 +324,14 @@ class printer {
 				}
 
 				$data[$contentId] = static::spacerIfEmpty(@$subjectData->review);
-
-				$niveau = \block_exastud\global_config::get_niveau_option_title(@$subjectData->niveau) ?: @$subjectData->niveau;
-				if (strlen($niveau) <= 1) {
-					// G M E
-					$niveau = 'Niveau '.static::spacerIfEmpty($niveau);
+				if($subject->no_niveau == 1){
+				    $niveau = 'Niveau G / M / E';
+				} else {
+				    $niveau = \block_exastud\global_config::get_niveau_option_title(@$subjectData->niveau) ?: @$subjectData->niveau;
+				    if (strlen($niveau) <= 1) {
+					   // G M E
+					   $niveau = 'Niveau '.static::spacerIfEmpty($niveau);
+				    }
 				}
 				$filters[$contentId.'_niveau'] = function($content) use ($contentId, $niveau) {
 					return preg_replace('!({'.$contentId.'}.*>)Bitte die Niveaustufe auswählen(<)!U', '${1}'.$niveau.'${2}', $content);
@@ -392,6 +395,8 @@ class printer {
 					$data[$inputid] = static::spacerIfEmpty(@$studentdata->{$inputid});
 				}
 			}*/
+			
+
 
 			$placeholder = 'ph'.time();
 
@@ -409,7 +414,11 @@ class printer {
 
 				return $ret;
 			});
-
+                $sum = 0.0;
+                $rsum = 0.0;
+                $scnt = 0;
+                $rcnt = 0;
+                $min = 0;
 			// noten
 			foreach ($class_subjects as $subject) {
 				$subjectData = block_exastud_get_graded_review($class->id, $subject->id, $student->id);
@@ -475,6 +484,16 @@ class printer {
 					$grade = @$grades[substr(@$subjectData->grade, 0, 1)];
 				}
 
+				// to calculate the average grade
+				    if($subject->not_relevant == 1){
+				        if($grade < $min) $min = $grade;
+				        $rsum += $grade;
+				        $rcnt++;
+				    }
+				        $sum += $grade;
+				        $scnt++;
+				    
+				
 				// TEST:
 				// $grade = $subject->title.' '.$grade;
 
@@ -496,6 +515,15 @@ class printer {
 
 					return $ret;
 				});
+			}
+			
+			$avg = $sum / scnt;
+			if($avg > 4.4){
+			    $avg = (($sum - $rsum) + $min) / (($scnt - $rcnt) + 1);
+			}
+			
+			if($template->get_name() == 'BP 2004/GMS Abschlusszeugnis der Förderschule' || $template->get_name() == 'BP 2004/GMS Hauptschulabschluss SJ'){
+			    $data['gd'] = $avg;
 			}
 
 			if ($template->get_name() == 'BP 2004/GMS Abgangszeugnis') {
