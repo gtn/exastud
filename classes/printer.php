@@ -453,7 +453,13 @@ class printer {
 						$religion = 'Religionslehre';
 						$religion_sub = '('.$subject->shorttitle.')';
 					}
-
+					if (in_array($template->get_name(), [
+					    'BP 2004/GMS Realschulabschluss 1.HJ',
+					    'BP 2004/GMS Klasse 10 E-Niveau 1.HJ',
+					    'BP 2004/GMS Halbjahreszeugniss der Förderschule',
+					])) {
+					    $religion = 'Religionslehre ('.$subject->shorttitle.')';
+					}
 					$gradeSearch = 'Ethik';
 					$dropdownsBetween = 1; // 1, weil es selber auch ein dropdown ist
 				} elseif (strpos($subject->title, 'Wahlpflichtfach') === 0) {
