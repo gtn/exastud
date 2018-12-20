@@ -133,16 +133,16 @@ if (!block_exastud_get_only_learnsociale_reports()) {
     $table->head[] = block_exastud_get_string('Niveau');
 }
 $table->head[] = block_exastud_trans('de:Überfachliche Beurteilungen'); // bewerten button
-foreach ($categories as $category) {
-    $categorycolumn = new html_table_cell();
-    if (count($categories) > 5) {
-        $categorycolumn->attributes['class'] .= ' verticalCell ';
-        $categorycolumn->text = '<div class="verticalText"><div class="verticalTextInner">'.$category->title.'</div>';
-    } else {
-        $categorycolumn->text = $category->title;
-    }
-    $table->head[] = $categorycolumn;
-}
+// foreach ($categories as $category) {
+//     $categorycolumn = new html_table_cell();
+//     if (count($categories) > 5) {
+//         $categorycolumn->attributes['class'] .= ' verticalCell ';
+//         $categorycolumn->text = '<div class="verticalText"><div class="verticalTextInner">'.$category->title.'</div>';
+//     } else {
+//         $categorycolumn->text = $category->title;
+//     }
+//     $table->head[] = $categorycolumn;
+// }
 
 $table->align = array();
 //$table->align[] = 'center';
@@ -156,9 +156,9 @@ $table->align[] = 'center';
 $table->align[] = 'center';
 $table->align[] = 'center';
 
-for($i = 0; $i <= count($categories); $i++) {
-    $table->align[] = 'center';
-}
+// for($i = 0; $i <= count($categories); $i++) {
+//     $table->align[] = 'center';
+// }
 
 $table->align[] = 'left';
 $table->align[] = 'right';
@@ -276,25 +276,25 @@ foreach ($classstudents as $classstudent) {
 		$row->cells[] = $cell;
 	} else */
 
-    if ($report) {
-        foreach ($categories as $category) {
-            $bewertung = $DB->get_field('block_exastudreviewpos', 'value',
-                    array("categoryid" => $category->id, "reviewid" => $report->id, "categorysource" => $category->source));
-            switch (block_exastud_get_competence_eval_type()) {
-                case BLOCK_EXASTUD_COMPETENCE_EVALUATION_TYPE_TEXT:
-                case BLOCK_EXASTUD_COMPETENCE_EVALUATION_TYPE_POINT:
-                    $row->cells[] = $bewertung && isset($evaluation_options[$bewertung]) ? $evaluation_options[$bewertung] : '';
-                    break;
-                case BLOCK_EXASTUD_COMPETENCE_EVALUATION_TYPE_GRADE:
-                    $row->cells[] = $bewertung && $bewertung > 0 ? $bewertung : '';
-                    break;
-            }
-        }
-    } else {
-        for ($i = 0; $i < count($categories); $i++) {
-            $row->cells[] = '';
-        }
-    }
+//     if ($report) {
+//         foreach ($categories as $category) {
+//             $bewertung = $DB->get_field('block_exastudreviewpos', 'value',
+//                     array("categoryid" => $category->id, "reviewid" => $report->id, "categorysource" => $category->source));
+//             switch (block_exastud_get_competence_eval_type()) {
+//                 case BLOCK_EXASTUD_COMPETENCE_EVALUATION_TYPE_TEXT:
+//                 case BLOCK_EXASTUD_COMPETENCE_EVALUATION_TYPE_POINT:
+//                     $row->cells[] = $bewertung && isset($evaluation_options[$bewertung]) ? $evaluation_options[$bewertung] : '';
+//                     break;
+//                 case BLOCK_EXASTUD_COMPETENCE_EVALUATION_TYPE_GRADE:
+//                     $row->cells[] = $bewertung && $bewertung > 0 ? $bewertung : '';
+//                     break;
+//             }
+//         }
+//     } else {
+//         for ($i = 0; $i < count($categories); $i++) {
+//             $row->cells[] = '';
+//         }
+//     }
 
 	$row->attributes['class'] = 'oddeven'.(int)$oddeven;
 	$table->data[] = $row;
