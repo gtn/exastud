@@ -90,7 +90,7 @@ class print_templates {
             case BLOCK_EXASTUD_DATA_ID_PRINT_TEMPLATE:
                 $fields = array('learn_social_behavior', 'subjects', 'comments', 'subject_elective', 'subject_profile', 'ags');
                 break;
-            case BLOCK_EXASTUD_DATA_ID_ZERTIFIKAT_FUER_PROFILFACH:
+            case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_16_ZERTIFIKAT_FUER_PROFILFACH:
                 $fields_temp = unserialize($template->additional_params);
                 if (!$fields_temp) {
                     $fields = array();
@@ -579,7 +579,7 @@ class print_templates {
 		    // templates for "Reports" page
 
 			if (!$bp || $bp->sourceinfo !== 'bw-bp2016') {
-				$templateids[] = BLOCK_EXASTUD_DATA_ID_ZERTIFIKAT_FUER_PROFILFACH; // 'BP 2004/Zertifikat fuer Profilfach';
+				$templateids[] = BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_16_ZERTIFIKAT_FUER_PROFILFACH; // 'BP 2004/Zertifikat fuer Profilfach';
 			}
 
 			$templateids[] = 5; // 'BP 2004/Beiblatt zur Projektpruefung HSA';

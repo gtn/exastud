@@ -43,7 +43,7 @@ const BLOCK_EXASTUD_DATA_ID_PRINT_TEMPLATE = 'print_template'; // TODO: change t
 const BLOCK_EXASTUD_DATA_ID_ADDITIONAL_INFO = 'additional_info';
 const BLOCK_EXASTUD_DATA_ID_CLASS_DEFAULT_TEMPLATEID = 'default_templateid';
 const BLOCK_EXASTUD_DATA_ID_PROJECT_TEACHER = 'project_teacher';
-const BLOCK_EXASTUD_DATA_ID_ZERTIFIKAT_FUER_PROFILFACH = 4;
+//const BLOCK_EXASTUD_DATA_ID_ZERTIFIKAT_FUER_PROFILFACH = 4;
 
 const BLOCK_EXASTUD_SUBJECT_ID_LERN_UND_SOZIALVERHALTEN = -1;
 const BLOCK_EXASTUD_SUBJECT_ID_LERN_UND_SOZIALVERHALTEN_VORSCHLAG = -3;
@@ -55,6 +55,27 @@ const BLOCK_EXASTUD_COMPETENCE_EVALUATION_TYPE_GRADE = 1;
 const BLOCK_EXASTUD_COMPETENCE_EVALUATION_TYPE_POINT = 2;
 
 const BLOCK_EXASTUD_TEMPLATE_DIR = __DIR__.'/../template';
+// these default ids are for default templates. The names of constants are from current filenames
+const BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_DEFAULT_REPORT = 1;
+const BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_ANLAGE_ZUM_LERNENTWICKLUNGSBERICHT = 2;
+const BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_ANLAGE_ZUM_LERNENTWICKLUNGSBERICHTALT = 3;
+const BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_16_ZERTIFIKAT_FUER_PROFILFACH = 4;
+const BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_ANLAGE_PROJEKTPRUEFUNG_HS  = 5;
+const BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_HALBJAHR_LERNENTWICKLUNGSBERICHT  = 6;
+const BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_JAHRESZEUGNIS_LERNENTWICKLUNGSBERICHT  = 7;
+const BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_HALBJAHR_LERNENTWICKLUNGSBERICHT  = 8;
+const BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_JAHRESZEUGNIS_LERNENTWICKLUNGSBERICHT  = 9;
+const BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_HALBJAHR_ZEUGNIS_E_NIVEAU  = 10;
+const BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_JAHRESZEUGNIS_E_NIVEAU  = 11;
+const BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_ABGANGSZEUGNIS_GMS  = 12;
+const BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_ABGANGSZEUGNIS_HS_9_10  = 13;
+const BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_HALBJAHR_ZEUGNIS_HS  = 14;
+const BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_ABSCHLUSSZEUGNIS_HS  = 15;
+const BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_HALBJAHR_ZEUGNIS_RS  = 16;
+const BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_ABSCHLUSSZEUGNIS_RS  = 17;
+const BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_ABGANGSZEUGNIS_FOE  = 18;
+const BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_HALBJAHR_ZEUGNIS_FOE  = 19;
+const BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_LERNENTWICKLUNGSBERICHT_DECKBLATT_UND_1_INNENSEITE  = 20;
 
 const BLOCK_EXASTUD_SESSION_TIMEOUT = 10*60 + 1;
 
@@ -1910,7 +1931,7 @@ function block_exastud_get_default_templates() {
 
     $templates = [
             'default_report' => [
-                    'id' => 1,
+                    'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_DEFAULT_REPORT,
                     'name' => 'Standard Zeugnis',
                     'file' => 'default_report',
                     'grades' => $grades_1_bis_6,
@@ -1922,19 +1943,19 @@ function block_exastud_get_default_templates() {
                     ],
             ],
             'Anlage' => [
-                    'id' => 2,
+                    'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_ANLAGE_ZUM_LERNENTWICKLUNGSBERICHT,
                     'name' => 'Anlage',
                     'file' => 'Anlage zum Lernentwicklungsbericht',
                     'inputs' => [],
             ],
             'Anlage Alt' => [
-                    'id' => 3,
+                    'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_ANLAGE_ZUM_LERNENTWICKLUNGSBERICHTALT,
                     'name' => 'Anlage Alt',
                     'file' => 'Anlage zum LernentwicklungsberichtAlt',
                     'inputs' => [],
             ],
             'BP 2004/Zertifikat fuer Profilfach' => [
-                    'id' => BLOCK_EXASTUD_DATA_ID_ZERTIFIKAT_FUER_PROFILFACH,
+                    'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_16_ZERTIFIKAT_FUER_PROFILFACH,
                     'name' => 'Zertifikat für Profilfach',
                     'file' => 'BP 2004/BP2004_16_Zertifikat_fuer_Profilfach',
                     'grades' => [],
@@ -1947,7 +1968,7 @@ function block_exastud_get_default_templates() {
                     ],
             ],
             'BP 2004/Beiblatt zur Projektpruefung HSA' => [
-                    'id' => 5,
+                    'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_ANLAGE_PROJEKTPRUEFUNG_HS,
                     'name' => 'Beiblatt zur Projektprüfung HSA',
                     'file' => 'BP 2004/BP2004_GMS_Anlage_Projektpruefung_HS',
                     'grades' => $grades_lang,
@@ -1972,6 +1993,7 @@ function block_exastud_get_default_templates() {
                     ],
             ],
             'BP 2016/GMS Zeugnis 1.HJ' => [
+                    'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_HALBJAHR_LERNENTWICKLUNGSBERICHT,
                     'name' => 'BP 2016 GMS Zeugnis 1.HJ',
                     'file' => 'BP 2016/BP2016_GMS_Halbjahr_Lernentwicklungsbericht',
                     'grades' => $grades_mit_plus_minus_bis,
@@ -1983,6 +2005,7 @@ function block_exastud_get_default_templates() {
                     ],
             ],
             'BP 2016/GMS Zeugnis SJ' => [
+                    'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_JAHRESZEUGNIS_LERNENTWICKLUNGSBERICHT,
                     'name' => 'BP 2016 GMS Zeugnis SJ',
                     'file' => 'BP 2016/BP2016_Jahreszeugnis_Lernentwicklungsbericht',
                     'grades' => $grades_1_bis_6,
@@ -1994,6 +2017,7 @@ function block_exastud_get_default_templates() {
                     ],
             ],
             'BP 2004/GMS Zeugnis 1.HJ' => [
+                    'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_HALBJAHR_LERNENTWICKLUNGSBERICHT,
                     'name' => 'BP 2004 GMS Zeugnis 1.HJ',
                     'file' => 'BP 2004/BP2004_GMS_Halbjahr_Lernentwicklungsbericht',
                     'grades' => $grades_mit_plus_minus_bis,
@@ -2005,6 +2029,7 @@ function block_exastud_get_default_templates() {
                     ],
             ],
             'BP 2004/GMS Zeugnis SJ' => [
+                    'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_JAHRESZEUGNIS_LERNENTWICKLUNGSBERICHT,
                     'name' => 'BP 2004 GMS Zeugnis SJ',
                     'file' => 'BP 2004/BP2004_Jahreszeugnis_Lernentwicklungsbericht',
                     'grades' => $grades_1_bis_6,
@@ -2016,6 +2041,7 @@ function block_exastud_get_default_templates() {
                     ],
             ],
             'BP 2004/GMS Klasse 10 E-Niveau 1.HJ' => [
+                    'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_HALBJAHR_ZEUGNIS_E_NIVEAU,
                     'name' => 'BP 2004 GMS Klasse 10 E-Niveau 1.HJ',
                     'file' => 'BP 2004/BP2004_GMS_Halbjahr_Zeugnis_E_Niveau',
                     'grades' => $grades_mit_plus_minus_bis_ausgeschrieben,
@@ -2033,6 +2059,7 @@ function block_exastud_get_default_templates() {
                     ],
             ],
             'BP 2004/GMS Klasse 10 E-Niveau SJ' => [
+                    'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_JAHRESZEUGNIS_E_NIVEAU,
                     'name' => 'BP 2004 GMS Klasse 10 E-Niveau SJ',
                     'file' => 'BP 2004/BP2004_Jahreszeugnis_E_Niveau',
                     'grades' => $grades_short,
@@ -2056,6 +2083,7 @@ function block_exastud_get_default_templates() {
                     ],
             ],
             'BP 2004/GMS Abgangszeugnis' => [
+                    'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_ABGANGSZEUGNIS_GMS,
                     'name' => 'BP 2004 GMS Abgangszeugnis',
                     'file' => 'BP 2004/BP2004_GMS_Abgangszeugnis_GMS',
                     'grades' => $grades_lang,
@@ -2092,6 +2120,7 @@ function block_exastud_get_default_templates() {
                     ],
             ],
             'BP 2004/GMS Abgangszeugnis HSA Kl.9 und 10' => [
+                    'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_ABGANGSZEUGNIS_HS_9_10,
                     'name' => 'BP 2004 GMS Abgangszeugnis HSA Kl.9 und 10',
                     'file' => 'BP 2004/BP2004_GMS_Abgangszeugnis_HS_9_10',
                     'grades' => $grades_lang,
@@ -2126,6 +2155,7 @@ function block_exastud_get_default_templates() {
                     ],
             ],
             'BP 2004/GMS Hauptschulabschluss 1.HJ' => [
+                    'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_HALBJAHR_ZEUGNIS_HS,
                     'name' => 'BP 2004 GMS Hauptschulabschluss 1.HJ',
                     'file' => 'BP 2004/BP2004_GMS_Halbjahr_Zeugnis_HS',
                     'grades' => $grades_short,
@@ -2143,6 +2173,7 @@ function block_exastud_get_default_templates() {
                     ],
             ],
             'BP 2004/GMS Hauptschulabschluss SJ' => [
+                    'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_ABSCHLUSSZEUGNIS_HS,
                     'name' => 'BP 2004 GMS Hauptschulabschluss SJ',
                     'file' => 'BP 2004/BP2004_GMS_Abschlusszeugnis_HS',
                     'grades' => $grades_lang,
@@ -2178,6 +2209,7 @@ function block_exastud_get_default_templates() {
                     ],
             ],
             'BP 2004/GMS Realschulabschluss 1.HJ' => [
+                    'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_HALBJAHR_ZEUGNIS_RS,
                     'name' => 'BP 2004 GMS Realschulabschluss 1.HJ',
                     'file' => 'BP 2004/BP2004_GMS_Halbjahr_Zeugnis_RS',
                     'grades' => $grades_short,
@@ -2195,6 +2227,7 @@ function block_exastud_get_default_templates() {
                     ],
             ],
             'BP 2004/GMS Realschulabschluss SJ' => [
+                    'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_ABSCHLUSSZEUGNIS_RS,
                     'name' => 'BP 2004 GMS Realschulabschluss SJ',
                     'file' => 'BP 2004/BP2004_GMS_Abschlusszeugnis_RS',
                     'grades' => $grades_lang,
@@ -2221,6 +2254,7 @@ function block_exastud_get_default_templates() {
                     ],
             ],
             'BP 2004/GMS Abschlusszeugnis der Förderschule' => [
+                    'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_ABGANGSZEUGNIS_FOE,
                     'name' => 'BP 2004 GMS Abschlusszeugnis der Förderschule',
                     'file' => 'BP 2004/BP2004_GMS_Abgangszeugnis_Foe',
                     'grades' => $grades_lang,
@@ -2238,6 +2272,7 @@ function block_exastud_get_default_templates() {
                     ],
             ],
             'BP 2004/GMS Halbjahreszeugniss der Förderschule' => [
+                    'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_HALBJAHR_ZEUGNIS_FOE,
                     'name' => 'BP 2004 GMS Halbjahreszeugniss der Förderschule',
                     'file' => 'BP 2004/BP2004_GMS_Halbjahr_Zeugnis_Foe',
                     'grades' => $grades_short,
@@ -2250,6 +2285,7 @@ function block_exastud_get_default_templates() {
                     ],
             ],
             'Deckblatt und 1. Innenseite LEB' => [
+                    'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_LERNENTWICKLUNGSBERICHT_DECKBLATT_UND_1_INNENSEITE,
                     'name' => 'Deckblatt und 1. Innenseite LEB',
                     'file' => 'Lernentwicklungsbericht_Deckblatt_und_1._Innenseite',
                     'inputs' => [],

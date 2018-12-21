@@ -168,7 +168,7 @@ class printer {
 
         //echo "<pre>debug:<strong>printer.php:121</strong>\r\n"; print_r($templateid); echo '</pre>'; // !!!!!!!!!! delete it
 
-		if ($templateid == 1) { // default_report
+		if ($templateid == BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_DEFAULT_REPORT) { // default_report
 			$class_subjects = block_exastud_get_class_subjects($class);
 			//$lern_soz = block_exastud_get_class_student_data($class->id, $student->id, BLOCK_EXASTUD_DATA_ID_LERN_UND_SOZIALVERHALTEN);
 
@@ -239,12 +239,12 @@ class printer {
 				}
 			}
 
-		} elseif (in_array($template->get_name(), [
-			'BP 2016/GMS Zeugnis 1.HJ',
-			'BP 2016/GMS Zeugnis SJ',
-			'BP 2004/GMS Zeugnis 1.HJ',
-			'BP 2004/GMS Zeugnis SJ',
-		])) {
+		} elseif (in_array($templateid, [
+                    BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_HALBJAHR_LERNENTWICKLUNGSBERICHT,
+                    BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_JAHRESZEUGNIS_LERNENTWICKLUNGSBERICHT,
+                    BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_HALBJAHR_LERNENTWICKLUNGSBERICHT,
+                    BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_JAHRESZEUGNIS_LERNENTWICKLUNGSBERICHT
+                ])) {
 			$bpsubjects = block_exastud_get_bildungsplan_subjects($class->bpid);
 			$class_subjects = block_exastud_get_class_subjects($class);
 			//$lern_soz = block_exastud_get_class_student_data($class->id, $student->id, BLOCK_EXASTUD_DATA_ID_LERN_UND_SOZIALVERHALTEN);
@@ -355,19 +355,19 @@ class printer {
 			// nicht befüllte niveaus und noten befüllen
 			$dataTextReplacer['Bitte die Niveaustufe auswählen'] = 'Niveau ---';
 			$dataTextReplacer['ggf. Note'] = @$studentdata->print_grades ? 'Note ---' : '';
-		} elseif (in_array($template->get_name(), [
-			'BP 2004/GMS Realschulabschluss 1.HJ',
-			'BP 2004/GMS Realschulabschluss SJ',
-			'BP 2004/GMS Klasse 10 E-Niveau 1.HJ',
-			'BP 2004/GMS Klasse 10 E-Niveau SJ',
-			'BP 2004/GMS Hauptschulabschluss 1.HJ',
-			'BP 2004/GMS Hauptschulabschluss SJ',
-			'BP 2004/GMS Abgangszeugnis',
-			'BP 2004/GMS Abgangszeugnis HSA Kl.9 und 10',
-			'BP 2004/Zertifikat fuer Profilfach',
-			'BP 2004/Beiblatt zur Projektpruefung HSA',
-			'BP 2004/GMS Abschlusszeugnis der Förderschule',
-		    'BP 2004/GMS Halbjahreszeugniss der Förderschule',
+		} elseif (in_array($templateid, [
+                BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_HALBJAHR_ZEUGNIS_RS,
+                BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_ABSCHLUSSZEUGNIS_RS,
+                BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_HALBJAHR_ZEUGNIS_E_NIVEAU,
+                BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_JAHRESZEUGNIS_E_NIVEAU,
+                BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_HALBJAHR_ZEUGNIS_HS,
+                BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_ABSCHLUSSZEUGNIS_HS,
+                BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_ABGANGSZEUGNIS_GMS,
+                BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_ABGANGSZEUGNIS_HS_9_10,
+                BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_16_ZERTIFIKAT_FUER_PROFILFACH,
+                BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_ANLAGE_PROJEKTPRUEFUNG_HS,
+                BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_ABGANGSZEUGNIS_FOE,
+                BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_HALBJAHR_ZEUGNIS_FOE,
 		])) {
 			$class_subjects = block_exastud_get_class_subjects($class);
 
@@ -454,10 +454,10 @@ class printer {
 						$religion = 'Religionslehre';
 						$religion_sub = '('.$subject->shorttitle.')';
 					}
-					if (in_array($template->get_name(), [
-					    'BP 2004/GMS Realschulabschluss 1.HJ',
-					    'BP 2004/GMS Klasse 10 E-Niveau 1.HJ',
-					    'BP 2004/GMS Halbjahreszeugniss der Förderschule',
+					if (in_array($templateid, [
+                            BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_HALBJAHR_ZEUGNIS_RS,
+                            BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_HALBJAHR_ZEUGNIS_E_NIVEAU,
+                            BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_HALBJAHR_ZEUGNIS_FOE,
 					])) {
 					    $religion = 'Religionslehre ('.$subject->shorttitle.')';
 					}
@@ -529,11 +529,14 @@ class printer {
 			    $avg = (($sum - $rsum) + $min) / (($scnt - $rcnt) + 1);
 			}
 			
-			if($template->get_name() == 'BP 2004/GMS Abschlusszeugnis der Förderschule' || $template->get_name() == 'BP 2004/GMS Hauptschulabschluss SJ'){
+			if (in_array($templateid, [
+                            BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_ABGANGSZEUGNIS_FOE,
+                            BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_ABSCHLUSSZEUGNIS_HS,
+                    ])) {
 			    $data['gd'] = $avg;
 			}
 
-			if ($template->get_name() == 'BP 2004/GMS Abgangszeugnis') {
+			if ($templateid == BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_ABGANGSZEUGNIS_GMS) {
 				$value = static::spacerIfEmpty(@$forminputs['wann_verlassen']['values'][@$studentdata->wann_verlassen]);
 				$add_filter(function($content) use ($placeholder, $value) {
 					$ret = preg_replace('!>[^<]*am Ende[^<]*<!U', '>'.$value.'<', $content, -1, $count);
@@ -558,7 +561,7 @@ class printer {
 
 					return $ret;
 				});
-			} elseif ($template->get_name() == 'BP 2004/GMS Abgangszeugnis HSA Kl.9 und 10') {
+			} elseif ($templateid == BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_ABGANGSZEUGNIS_HS_9_10) {
 				$value = static::spacerIfEmpty(@$forminputs['wann_verlassen']['values'][@$studentdata->wann_verlassen]);
 				$add_filter(function($content) use ($placeholder, $value) {
 					$ret = preg_replace('!>[^<]*am Ende[^<]*<!U', '>'.$value.'<', $content, -1, $count);
@@ -568,7 +571,7 @@ class printer {
 
 					return $ret;
 				});
-			} elseif ($template->get_name() == 'BP 2004/GMS Klasse 10 E-Niveau SJ') {
+			} elseif ($templateid == BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_JAHRESZEUGNIS_E_NIVEAU) {
 				if (@$studentdata->verhalten) {
 					$value = @$forminputs['verhalten']['values'][$studentdata->verhalten];
 					$add_filter(function($content) use ($placeholder, $value) {
@@ -581,7 +584,7 @@ class printer {
 						return preg_replace('!(Mitarbeit.*)'.$placeholder.'note!U', '${1}'.$value, $content, -1, $count);
 					});
 				}
-			} elseif ($template->get_name() == 'BP 2004/GMS Hauptschulabschluss SJ') {
+			} elseif ($templateid == BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_ABSCHLUSSZEUGNIS_HS) {
 				//$data['gd'] = @$studentdata->gesamtnote_und_durchschnitt_der_gesamtleistungen;
 
 				$values = [
@@ -597,7 +600,7 @@ class printer {
 
 					return $ret;
 				});
-			} elseif ($template->get_name() == 'BP 2004/GMS Abschlusszeugnis der Förderschule') {
+			} elseif ($templateid == BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_ABGANGSZEUGNIS_FOE) {
 				//$data['gd'] = static::spacerIfEmpty(@$studentdata->gesamtnote_und_durchschnitt_der_gesamtleistungen);
 			}
 
@@ -643,7 +646,7 @@ class printer {
 			$add_filter(function($content) use ($placeholder) {
 				return str_replace($placeholder.'note', '--', $content);
 			});
-		} elseif ($templateid == 2 ) { // 'Anlage zum Lernentwicklungsbericht'
+		} elseif ($templateid == BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_ANLAGE_ZUM_LERNENTWICKLUNGSBERICHT ) {
 			$evalopts = g::$DB->get_records('block_exastudevalopt', null, 'sorting', 'id, title, sourceinfo');
 			$categories = block_exastud_get_class_categories_for_report($student->id, $class->id);
 			$subjects = static::get_exacomp_subjects($student->id);
@@ -718,7 +721,7 @@ class printer {
 				$templateProcessor->deleteRow("topic");
 				$templateProcessor->deleteRow("descriptor");
 			}
-		} elseif ($templateid == 3) { // 'Anlage zum LernentwicklungsberichtAlt'
+		} elseif ($templateid == BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_ANLAGE_ZUM_LERNENTWICKLUNGSBERICHTALT) {
 		    $evalopts = g::$DB->get_records('block_exastudevalopt', null, 'sorting', 'id, title, sourceinfo');
 		    $categories = block_exastud_get_class_categories_for_report($student->id, $class->id);
 		    $subjects = static::get_exacomp_subjects($student->id);
@@ -840,7 +843,10 @@ class printer {
 		$temp_file = tempnam($CFG->tempdir, 'exastud');
         $templateProcessor->saveAs($temp_file);
 		//change ending for dotx files
-		if ($template->get_name() == "BP 2004/GMS Abschlusszeugnis der Förderschule" || $template->get_name() == "BP 2004/GMS Halbjahreszeugniss der Förderschule") {
+		if (in_array($templateid, [
+                BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_ABGANGSZEUGNIS_FOE,
+                BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_HALBJAHR_ZEUGNIS_FOE,
+        ])) {
 			$filename = ($certificate_issue_date_text ? preg_replace('/[\\/]/', '-', $certificate_issue_date_text) : date('Y-m-d'))."-".$template->get_name()."-{$class->title}-{$student->lastname}-{$student->firstname}.dotx";
 		} else {
 			$filename = ($certificate_issue_date_text ? preg_replace('/[\\/]/', '-', $certificate_issue_date_text) : date('Y-m-d'))."-".$template->get_name()."-{$class->title}-{$student->lastname}-{$student->firstname}.docx";

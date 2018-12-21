@@ -48,9 +48,9 @@ if ($type == BLOCK_EXASTUD_DATA_ID_LERN_UND_SOZIALVERHALTEN) {
 		],
 	];
 	$classheader = $reviewclass->title.' - '.block_exastud_trans('de:Weitere Formularfelder');
-} elseif ($type == BLOCK_EXASTUD_DATA_ID_ZERTIFIKAT_FUER_PROFILFACH) {
+} elseif ($type == BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_16_ZERTIFIKAT_FUER_PROFILFACH) {
 	$categories = [
-            BLOCK_EXASTUD_DATA_ID_ZERTIFIKAT_FUER_PROFILFACH => [
+            BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_16_ZERTIFIKAT_FUER_PROFILFACH => [
 			'title' => block_exastud_trans('de:Zertifikat für Profilfach'),
 		],
 	];
@@ -144,9 +144,9 @@ foreach ($classstudents as $classstudent) {
 
 		if ($dataid === BLOCK_EXASTUD_DATA_ID_PRINT_TEMPLATE
                 || $dataid === BLOCK_EXASTUD_DATA_ID_ADDITIONAL_INFO
-                || $dataid === BLOCK_EXASTUD_DATA_ID_ZERTIFIKAT_FUER_PROFILFACH) {
-		    if ($dataid === BLOCK_EXASTUD_DATA_ID_ZERTIFIKAT_FUER_PROFILFACH) {
-                $template = block_exastud\print_template::create(BLOCK_EXASTUD_DATA_ID_ZERTIFIKAT_FUER_PROFILFACH);
+                || $dataid === BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_16_ZERTIFIKAT_FUER_PROFILFACH) {
+		    if ($dataid === BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_16_ZERTIFIKAT_FUER_PROFILFACH) {
+                $template = block_exastud\print_template::create(BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_16_ZERTIFIKAT_FUER_PROFILFACH);
             } else {
                 $template = block_exastud_get_student_print_template($class, $classstudent->id);
             }

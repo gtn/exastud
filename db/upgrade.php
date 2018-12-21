@@ -554,6 +554,42 @@ function xmldb_block_exastud_upgrade($oldversion = 0) {
         upgrade_block_savepoint(true, 2018122104, 'exastud');
     }
 
+    if ($oldversion < 2018122106) {
+        // change templates IDs. More needs for developers
+        // we could add some new templates and they do not need to be changed
+        $changeto = array(
+                'default_report' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_DEFAULT_REPORT,
+                'Anlage zum Lernentwicklungsbericht' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_ANLAGE_ZUM_LERNENTWICKLUNGSBERICHT,
+                'Anlage zum LernentwicklungsberichtAlt' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_ANLAGE_ZUM_LERNENTWICKLUNGSBERICHTALT,
+                'BP 2004/BP2004_16_Zertifikat_fuer_Profilfach' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_16_ZERTIFIKAT_FUER_PROFILFACH,
+                'BP 2004/BP2004_GMS_Anlage_Projektpruefung_HS' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_ANLAGE_PROJEKTPRUEFUNG_HS ,
+                'BP 2016/BP2016_GMS_Halbjahr_Lernentwicklungsbericht' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_HALBJAHR_LERNENTWICKLUNGSBERICHT ,
+                'BP 2016/BP2016_Jahreszeugnis_Lernentwicklungsbericht' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_JAHRESZEUGNIS_LERNENTWICKLUNGSBERICHT ,
+                'BP 2004/BP2004_GMS_Halbjahr_Lernentwicklungsbericht' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_HALBJAHR_LERNENTWICKLUNGSBERICHT ,
+                'BP 2004/BP2004_Jahreszeugnis_Lernentwicklungsbericht' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_JAHRESZEUGNIS_LERNENTWICKLUNGSBERICHT ,
+                'BP 2004/BP2004_GMS_Halbjahr_Zeugnis_E_Niveau' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_HALBJAHR_ZEUGNIS_E_NIVEAU ,
+                'BP 2004/BP2004_Jahreszeugnis_E_Niveau' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_JAHRESZEUGNIS_E_NIVEAU ,
+                'BP 2004/BP2004_GMS_Abgangszeugnis_GMS' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_ABGANGSZEUGNIS_GMS ,
+                'BP 2004/BP2004_GMS_Abgangszeugnis_HS_9_10' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_ABGANGSZEUGNIS_HS_9_10 ,
+                'BP 2004/BP2004_GMS_Halbjahr_Zeugnis_HS' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_HALBJAHR_ZEUGNIS_HS ,
+                'BP 2004/BP2004_GMS_Abschlusszeugnis_HS' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_ABSCHLUSSZEUGNIS_HS ,
+                'BP 2004/BP2004_GMS_Halbjahr_Zeugnis_RS' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_HALBJAHR_ZEUGNIS_RS ,
+                'BP 2004/BP2004_GMS_Abschlusszeugnis_RS' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_ABSCHLUSSZEUGNIS_RS ,
+                'BP 2004/BP2004_GMS_Abgangszeugnis_Foe' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_ABGANGSZEUGNIS_FOE ,
+                'BP 2004/BP2004_GMS_Halbjahr_Zeugnis_Foe' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_HALBJAHR_ZEUGNIS_FOE ,
+                'Lernentwicklungsbericht_Deckblatt_und_1._Innenseite' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_LERNENTWICKLUNGSBERICHT_DECKBLATT_UND_1_INNENSEITE ,
+        );
+        $DB->execute(' UPDATE {block_exastudreportsettings} SET id = id + 200');
+        foreach ($changeto as $template => $id) {
+            // chnage only firts occurency
+            $DB->execute(' UPDATE {block_exastudreportsettings} SET id = ? WHERE template = ? LIMIT 1', [$id, $template]);
+        }
+        // return original ids if it is custom template
+        $DB->execute(' UPDATE {block_exastudreportsettings} SET id = id - 200 WHERE id > 200');
+
+        upgrade_block_savepoint(true, 2018122106, 'exastud');
+    }
+
     block_exastud_insert_default_entries();
 	block_exastud_check_profile_fields();
 
