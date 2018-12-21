@@ -154,7 +154,7 @@ if ($action && ($settingsid > 0 || $action == 'new')) {
                 block_exastud_get_string('report_settings_setting_comments'),
                 block_exastud_get_string('report_settings_setting_subjectelective'),
                 block_exastud_get_string('report_settings_setting_subjectprofile'),
-                block_exastud_get_string('report_settings_setting_assessmentproject'),
+                block_exastud_get_string('report_settings_setting_projektthema'),
                 block_exastud_get_string('report_settings_setting_ags'),
                 block_exastud_get_string('report_settings_setting_additional_params'),
         );
@@ -223,7 +223,7 @@ if ($action && ($settingsid > 0 || $action == 'new')) {
                     $call_setting_marker('comments'),
                     $call_setting_marker('subject_elective'),
                     $call_setting_marker('subject_profile'),
-                    $call_setting_marker('assessment_project'),
+                    $call_setting_marker('projekt_thema'),
                     $call_setting_marker('ags'),
                     block_exastud_get_reportsettings_additional_description($report)
             );

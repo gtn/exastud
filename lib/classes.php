@@ -88,7 +88,7 @@ class print_templates {
                 $fields = array('learn_social_behavior');
                 break;
             case BLOCK_EXASTUD_DATA_ID_PRINT_TEMPLATE:
-                $fields = array('learn_social_behavior', 'subjects', 'comments', 'subject_elective', 'subject_profile', 'assessment_project', 'ags');
+                $fields = array('learn_social_behavior', 'subjects', 'comments', 'subject_elective', 'subject_profile', 'ags');
                 break;
             case BLOCK_EXASTUD_DATA_ID_ZERTIFIKAT_FUER_PROFILFACH:
                 $fields_temp = unserialize($template->additional_params);
@@ -105,8 +105,19 @@ class print_templates {
                     $fields = array();
                 }
                 break;
+            case BLOCK_EXASTUD_DATA_ID_PROJECT_TEACHER:
+                $fieldsstatic = array('projekt_thema');
+                $keptaditional = array('projekt_grade', 'projekt_verbalbeurteilung', 'projekt_text3lines');
+                $customfields = unserialize($template->additional_params);
+                if ($customfields) {
+                    $customfields = array_intersect_key($customfields, array_flip($keptaditional));
+                    $fields = array_merge($fieldsstatic, $customfields);
+                } else {
+                    $fields = $fieldsstatic;
+                }
+                break;
             case 'all':
-                $fieldsstatic = array('learn_social_behavior', 'subjects', 'comments', 'subject_elective', 'subject_profile', 'assessment_project', 'ags');
+                $fieldsstatic = array('learn_social_behavior', 'subjects', 'comments', 'subject_elective', 'subject_profile', 'projekt_thema', 'ags');
                 $customfields = unserialize($template->additional_params);
                 if ($customfields) {
                     $fields = array_merge($fieldsstatic, $customfields);
@@ -677,12 +688,22 @@ class print_templates {
 	}
 
 	static function get_templateids_with_projekt_pruefung() {
-		$ids = [
+	    // templates with enabled 'projekt_thema'
+        $available_templates = \block_exastud\print_templates::get_all_template_configs('all');
+        $ids = array();
+        foreach ($available_templates as $tmplid => $template) {
+            if (array_key_exists('inputs', $template) && count($template['inputs']) > 0) {
+                if (array_key_exists('projekt_thema', $template['inputs'])
+                        && count($template['inputs']['projekt_thema']) > 0) {
+                    $ids[] = $tmplid;
+                }
+            }
+        }
+		/*$ids = [
 			'BP 2004/GMS Abgangszeugnis HSA Kl.9 und 10',
 			'BP 2004/GMS Hauptschulabschluss SJ',
 			'BP 2004/GMS Realschulabschluss SJ',
-		];
-
+		];*/
 		return array_combine($ids, $ids);
 	}
 	
@@ -758,12 +779,11 @@ class print_templates {
         // for support old markers: new => array of old
         $oldsupport = array(
                 'learn_social_behavior' => array('lern_und_sozialverhalten'),
-                'assessment_project' => array('projekt_verbalbeurteilung'),
+                'projekt_thema' => array('assessment_project'),
                 //'ags' => array('gesamtnote_und_durchschnitt_der_gesamtleistungen'),
         );
         $studentdata = (array)block_exastud_get_class_student_data($class->id, $student->id);
 	    foreach ($inputs as $key => $input) {
-	        //echo "<pre>debug:<strong>classes.php:758</strong>\r\n"; print_r($input); echo '</pre>'; // !!!!!!!!!! delete it
             switch ($input['type']) {
                 case 'image':
                     break;

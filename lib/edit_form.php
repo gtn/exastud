@@ -203,7 +203,12 @@ class student_edit_form extends moodleform {
                 break;
             case 'social':
                 // learn and social
-                $template_inputparams = $this->_customdata['template']->get_inputs('all')['learn_social_behavior'];
+                $inputs = $this->_customdata['template']->get_inputs('all');
+                if (array_key_exists('learn_social_behavior', $inputs)) {
+                    $template_inputparams = $inputs['learn_social_behavior'];
+                } else {
+                    $template_inputparams = array();
+                }
                 $vorschlag_limits = array(
                         'cols' => @$template_inputparams['cols'] ? $template_inputparams['cols'] : 50,
                         'chars_per_row' => @$template_inputparams['cols'] ? $template_inputparams['cols'] : 80,
@@ -224,7 +229,12 @@ class student_edit_form extends moodleform {
                 break;
             default:
                 // subject review
-                $template_inputparams = $this->_customdata['template']->get_inputs('all')['subjects'];
+                $inputs = $this->_customdata['template']->get_inputs('all');
+                if (array_key_exists('subjects', $inputs)) {
+                    $template_inputparams = $inputs['subjects'];
+                } else {
+                    $template_inputparams = array();
+                }
                 $subject_limits = array(
                         'cols' => @$template_inputparams['cols'] ? $template_inputparams['cols'] : 50,
                         'chars_per_row' => @$template_inputparams['cols'] ? $template_inputparams['cols'] : 80,
@@ -374,7 +384,7 @@ class reportsettings_edit_form extends moodleform {
             'comments',
             'subject_elective',
             'subject_profile',
-            'assessment_project',
+            'projekt_thema',
             'ags',
         );
     protected $fieldsWithAdditionalParams = array(
@@ -383,7 +393,7 @@ class reportsettings_edit_form extends moodleform {
         'comments',
         'subject_elective',
         'subject_profile',
-        'assessment_project',
+        'projekt_thema',
         'ags',
     );
 

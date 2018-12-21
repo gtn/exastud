@@ -216,12 +216,17 @@ function block_exastud_print_period($courseid, $period, $type) {
                 }
 
 				if (block_exastud_is_project_teacher($myclass, g::$USER->id)) {
-					$table->data[] = [
-						html_writer::link(new moodle_url('/blocks/exastud/review_class_project_teacher.php', [
-							'courseid' => $courseid,
-							'classid' => $myclass->id,
-						]), block_exastud_get_string('report_report_eval')),
-					];
+                    $dRow = new \html_table_row();
+                    $dRow->attributes['class'] = 'exastud-data-row';
+                    $dRow->attributes['data-classid'] = $myclass->id;
+                    $projectCell = new \html_table_cell();
+                    $projectCell->text = html_writer::link(new moodle_url('/blocks/exastud/review_class_project_teacher.php', [
+                                                                'courseid' => $courseid,
+                                                                'classid' => $myclass->id]),
+                                                            block_exastud_get_string('report_report_eval'));
+                    $projectCell->colspan = 2;
+                    $dRow->cells[] = $projectCell;
+					$table->data[] = $dRow;
 				}
 			}
 		}

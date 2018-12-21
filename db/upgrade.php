@@ -409,7 +409,7 @@ function xmldb_block_exastud_upgrade($oldversion = 0) {
         $table->add_field('comments', XMLDB_TYPE_TEXT, null, null, XMLDB_NOTNULL, null, null); // comments
         $table->add_field('subject_elective', XMLDB_TYPE_TEXT, null, null, XMLDB_NOTNULL, null, null); // elective subject
         $table->add_field('subject_profile', XMLDB_TYPE_TEXT, null, null, XMLDB_NOTNULL, null, null); // profile subject
-        $table->add_field('assessment_project', XMLDB_TYPE_TEXT, null, null, XMLDB_NOTNULL, null, null); // project assessment
+        $table->add_field('projekt_thema', XMLDB_TYPE_TEXT, null, null, XMLDB_NOTNULL, null, null); // project assessment
         $table->add_field('ags', XMLDB_TYPE_TEXT, null, null, XMLDB_NOTNULL, null,
                 null); // AGs (Participation in working groups / supplementary offers)
 
@@ -543,6 +543,15 @@ function xmldb_block_exastud_upgrade($oldversion = 0) {
         $DB->execute(' UPDATE {block_exastudsubjects} SET no_niveau = 1 WHERE shorttitle = "Mu"');
         
         upgrade_block_savepoint(true, 2018122000, 'exastud');
+    }
+
+    if ($oldversion < 2018122104) {
+        $table = new xmldb_table('block_exastudreportsettings');
+        $field = new xmldb_field('assessment_project', XMLDB_TYPE_TEXT, null, null, XMLDB_NOTNULL, null, null);
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->rename_field($table, $field, 'projekt_thema');
+        }
+        upgrade_block_savepoint(true, 2018122104, 'exastud');
     }
 
     block_exastud_insert_default_entries();

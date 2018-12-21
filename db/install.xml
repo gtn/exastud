@@ -208,7 +208,7 @@
         <FIELD NAME="comments" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
         <FIELD NAME="subject_elective" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
         <FIELD NAME="subject_profile" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
-        <FIELD NAME="assessment_project" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="projekt_thema" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
         <FIELD NAME="ags" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
         <FIELD NAME="additional_params" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
         <FIELD NAME="grades" TYPE="text" NOTNULL="false" SEQUENCE="false"/>

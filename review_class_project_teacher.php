@@ -31,7 +31,7 @@ if (!block_exastud_is_project_teacher($class, $USER->id)) {
 	throw new moodle_exception("not a project teacher");
 }
 
-$categories = [
+/*$categories = [
 	'projekt_thema' => [
 		'title' => 'Thema',
 		'type' => 'text',
@@ -47,7 +47,14 @@ $categories = [
 		'type' => 'textarea',
 		'lines' => 5,
 	],
+];*/
+
+$categories = [
+        BLOCK_EXASTUD_DATA_ID_PROJECT_TEACHER => [
+                'title' => block_exastud_trans('de:Projektprüfung'),
+        ]
 ];
+//'projekt_thema', 'projekt_grade', 'projekt_verbalbeurteilung'];
 $classheader = $class->title.' - '.block_exastud_trans('de:Projektprüfung');
 
 $output = block_exastud_get_renderer();
@@ -77,6 +84,7 @@ $table->align[] = 'left';
 $table->align[] = 'center';
 
 foreach ($project_teacher_students as $classstudent) {
+    $template = block_exastud_get_student_print_template($class, $classstudent->id);
 	$icons = '<img src="'.$CFG->wwwroot.'/pix/i/edit.gif" width="16" height="16" alt="'.block_exastud_get_string('edit').'" />';
 	$userdesc = fullname($classstudent);
 
@@ -87,14 +95,48 @@ foreach ($project_teacher_students as $classstudent) {
 	$row->cells[] = $userdesc;
 
 	$row->cells[] = $output->link_button($CFG->wwwroot.'/blocks/exastud/review_student_project_teacher.php?courseid='.$courseid.'&classid='.$classid.'&studentid='.$classstudent->id,
-		block_exastud_get_string('edit'));
+		block_exastud_get_string('edit'), ['class' => 'btn btn-default']);
 
 	foreach ($categories as $dataid => $category) {
-		if (@$category['type'] == 'select') {
+        $content = '<div><b>Formular:</b> '.$template->get_name().'</div>';
+        $inputs = $template->get_inputs($dataid);
+        if ($inputs) {
+            foreach ($inputs as $dataid => $form_input) {
+                switch (@$form_input['type']) {
+                    case 'select':
+                        $value = @$form_input['values'][$data[$dataid]];
+                        break;
+                    case 'image':
+                        $files = $fs->get_area_files($context->id, 'block_exastud', 'report_image_'.$dataid, $classstudent->id,
+                                'itemid', false);
+                        $filesOut = [];
+                        foreach ($files as $file) {
+                            if ($file->get_userid() != $USER->id) {
+                                continue;
+                            }
+                            $filename = $file->get_filename();
+                            $url = moodle_url::make_pluginfile_url($file->get_contextid(), $file->get_component(),
+                                    $file->get_filearea(), $file->get_itemid(), $file->get_filepath(), $file->get_filename());
+                            $img = html_writer::img($url, $filename, ['width' => 150]);
+                            $filesOut[] = html_writer::link($url, $img, ['target' => '_blank']);
+                        }
+                        $br = '';
+                        $value = implode($br, $filesOut);
+                        break;
+                    default:
+                        $value = !empty($data[$dataid]) ? block_exastud_text_to_html($data[$dataid]) : '';
+                }
+
+                $content .= '<div style="padding-top: 10px; font-weight: bold;">'.$form_input['title'].'</div>';
+                $content .= '<div>'.$value.'</div>';
+            }
+        }
+        $row->cells[] = $content;
+        /*if (@$category['type'] == 'select') {
 			$row->cells[] = @$category['values'][$data[$dataid]];
 		} else {
 			$row->cells[] = !empty($data[$dataid]) ? block_exastud_text_to_html($data[$dataid]) : '';
-		}
+		}*/
 	}
 
 	$table->data[] = $row;

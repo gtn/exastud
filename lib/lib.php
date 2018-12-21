@@ -1640,7 +1640,6 @@ function block_exastud_get_class_title($classid) {
 
 function block_exastud_get_student_print_templateid($class, $userid) {
 	$templateid = block_exastud_get_class_student_data($class->id, $userid, BLOCK_EXASTUD_DATA_ID_PRINT_TEMPLATE);
-	//echo '---';print_r($templateid);exit;
 	$available_templates = \block_exastud\print_templates::get_class_available_print_templates($class);
 	if (isset($available_templates[$templateid])) {
 		return $templateid;
@@ -2105,17 +2104,15 @@ function block_exastud_get_default_templates() {
                                             'ende10' => 'am Ende der Klasse 10 die Schule.',
                                     ],
                             ],
-                        /*
-                        'projekt_thema' => [
-                            'title' => 'Projektprüfung: Thema',
-                            'type' => 'text',
-                        ],
-                        'projekt_grade' => [
-                            'title' => 'Projektprüfung: Note',
-                            'type' => 'select',
-                            'values' => $grades,
-                        ],
-                        */
+                            'projekt_thema' => [
+                                'title' => 'Projektprüfung: Thema',
+                                'type' => 'text',
+                            ],
+                            'projekt_grade' => [
+                                'title' => 'Projektprüfung: Note',
+                                'type' => 'select',
+                                'values' => ['1' => 'sehr gut', '2' => 'gut', '3' => 'befriedigend', '4' => 'ausreichend', '5' => 'mangelhaft', '6' => 'ungenügend'], // TODO: is it correct grades?
+                            ],
                             'ags' => [
                                     'title' => 'Teilnahme an Arbeitsgemeinschaften',
                                     'type' => 'textarea',
@@ -2158,7 +2155,7 @@ function block_exastud_get_default_templates() {
                                 'nach9' => 'Klasse 9 der Gemeinschaftsschule mit Erfolg abgelegt.',
                                 'nach10' => 'Klasse 10 der Gemeinschaftsschule mit Erfolg abgelegt.',
                             ],
-                        ],
+                        ],*/
                         'projekt_thema' => [
                             'title' => 'Projektprüfung: Thema',
                             'type' => 'text',
@@ -2166,19 +2163,18 @@ function block_exastud_get_default_templates() {
                         'projekt_grade' => [
                             'title' => 'Projektprüfung: Note',
                             'type' => 'select',
-                            'values' => $grades,
+                            'values' => ['1' => 'sehr gut', '2' => 'gut', '3' => 'befriedigend', '4' => 'ausreichend', '5' => 'mangelhaft', '6' => 'ungenügend'], // TODO: is it correct grades?
                         ],
-                        */
-                            'gesamtnote_und_durchschnitt_der_gesamtleistungen' => [
-                                    'title' => 'Gesamtnote und Durchschnitt der Gesamtleistungen',
-                                    'type' => 'text',
-                            ],
-                            'ags' => [
-                                    'title' => 'Teilnahme an Arbeitsgemeinschaften',
-                            ],
-                            'comments_short' => [
-                                    'title' => 'Bemerkungen',
-                            ],
+                        'gesamtnote_und_durchschnitt_der_gesamtleistungen' => [
+                                'title' => 'Gesamtnote und Durchschnitt der Gesamtleistungen',
+                                'type' => 'text',
+                        ],
+                        'ags' => [
+                                'title' => 'Teilnahme an Arbeitsgemeinschaften',
+                        ],
+                        'comments_short' => [
+                                'title' => 'Bemerkungen',
+                        ],
                     ],
             ],
             'BP 2004/GMS Realschulabschluss 1.HJ' => [
@@ -2203,7 +2199,6 @@ function block_exastud_get_default_templates() {
                     'file' => 'BP 2004/BP2004_GMS_Abschlusszeugnis_RS',
                     'grades' => $grades_lang,
                     'inputs' => [
-                        /*
                         'projekt_thema' => [
                             'title' => 'Projektprüfung: Thema',
                             'type' => 'text',
@@ -2211,19 +2206,18 @@ function block_exastud_get_default_templates() {
                         'projekt_grade' => [
                             'title' => 'Projektprüfung: Note',
                             'type' => 'select',
-                            'values' => $grades,
+                            'values' => ['1' => 'sehr gut', '2' => 'gut', '3' => 'befriedigend', '4' => 'ausreichend', '5' => 'mangelhaft', '6' => 'ungenügend'], // TODO: is it correct grades?
                         ],
-                        */
-                            'ags' => [
-                                    'title' => 'Teilnahme an Arbeitsgemeinschaften',
-                                    'type' => 'textarea',
-                                    'lines' => 3,
-                            ],
-                            'comments_short' => [
-                                    'title' => 'Bemerkungen',
-                                    'type' => 'textarea',
-                                    'lines' => 3,
-                            ],
+                        'ags' => [
+                                'title' => 'Teilnahme an Arbeitsgemeinschaften',
+                                'type' => 'textarea',
+                                'lines' => 3,
+                        ],
+                        'comments_short' => [
+                                'title' => 'Bemerkungen',
+                                'type' => 'textarea',
+                                'lines' => 3,
+                        ],
                     ],
             ],
             'BP 2004/GMS Abschlusszeugnis der Förderschule' => [

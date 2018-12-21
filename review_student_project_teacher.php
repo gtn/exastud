@@ -52,7 +52,7 @@ $strreview = block_exastud_get_string('review');
 
 $actPeriod = block_exastud_check_active_period();
 
-$categories = [
+/*$categories = [
 	'projekt_thema' => [
 		'title' => 'Thema',
 		'type' => 'text',
@@ -68,7 +68,8 @@ $categories = [
 		'type' => 'textarea',
 		'lines' => 5,
 	],
-];
+];*/
+$categories = block_exastud_get_student_print_template($class, $student->id)->get_inputs(BLOCK_EXASTUD_DATA_ID_PROJECT_TEACHER);
 
 $classheader = $class->title.' - '.block_exastud_trans('de:Projektprüfung');
 

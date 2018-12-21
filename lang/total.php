@@ -638,7 +638,7 @@ return [
             'Profilfach',
             'Profile subject',
     ],
-    'report_settings_setting_assessmentproject' => [
+    'report_settings_setting_projektthema' => [
             'Projektprüfung',
             'Project assessment',
     ],
@@ -836,7 +836,7 @@ return [
     ],
     'grade_and_difflevel' => [
         'Note und Niveau',
-        'Grad and Difficulty level'
+        'Grade and Difficulty level'
     ],
     'de:Eingaben von der letzten Periode/Halbjahr übernehmen' => [
         null,

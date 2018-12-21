@@ -126,6 +126,7 @@ class printer {
                 'profilfach' => '---',
                 'wahlpflichtfach' => '---',
                 'projekt_thema' => static::spacerIfEmpty(@$studentdata->projekt_thema),
+                'projekt_verbalbeurteilung' => static::spacerIfEmpty(@$studentdata->projekt_verbalbeurteilung),
         ];
         // school logo: ${school_logo}  : mantis 3450 - only for grades_report
         //if (!$templateProcessor->addImageToReport('school_logo', 'exastud', 'block_exastud_schoollogo', 0, 1024, 768)) {

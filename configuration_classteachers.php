@@ -72,7 +72,7 @@ if ($frm = data_submitted()) {
                     'courseid' => $courseid,
                     'relateduserid' => $adduser,
                     'other' => ['subjectid' => $subjectid,
-                                'subjecttitle' => $subjectData->title,
+                                'subjecttitle' => (@$subjectData->title ? $subjectData->title : 'Additional head of class'),
                                 'classtitle' => $class->title,
                                 'relatedusername' => $userData->firstname.' '.$userData->lastname]]);
 		}
