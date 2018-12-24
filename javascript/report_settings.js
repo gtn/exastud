@@ -299,5 +299,18 @@
             updateOptionButtons();
         });
 
+        // button "select/deselect all" - reset templates to defaults
+        $(document).on('click', '#exastud-reset-template-selectall', function(e) {
+            e.preventDefault();
+            var curr = $(this).attr('data-curr');
+            if (curr == 1) {
+                $('#form-templatelist input:checkbox.template-id').prop('checked', false);
+                $(this).attr('data-curr', 0)
+            } else {
+                $('#form-templatelist input:checkbox.template-id').prop('checked', true);
+                $(this).attr('data-curr', 1)
+            }
+        });
+
     });
 })(block_exastud.jquery);

@@ -260,7 +260,6 @@ if ($type == 'studentgradereports') {
 
 			$print_grades_anlage_leb = '<input name="userdatas['.$classstudent->id.'][print_grades_anlage_leb]" type="hidden" value="0"/>'.
 				html_writer::checkbox('userdatas['.$classstudent->id.'][print_grades_anlage_leb]', 1, @$userdata->print_grades_anlage_leb);
-
 			$bildungsstandard = html_writer::select(block_exastud_get_bildungsstandards(), 'userdatas['.$classstudent->id.'][bildungsstandard_erreicht]', @$userdata->bildungsstandard_erreicht, ['' => '']);
 			$bildungsstandard = $bildungsstandard.
 				(!empty($userdata->bildungsstandard_erreicht) ? ' '.userdate($userdata->bildungsstandard_erreicht_time, block_exastud_get_string('strftimedate', 'langconfig')) : '');
@@ -271,10 +270,9 @@ if ($type == 'studentgradereports') {
 				(!empty($userdata->dropped_out) ? userdate($userdata->dropped_out_time, block_exastud_get_string('strftimedate', 'langconfig')) : '');
 
 			$templateid = block_exastud_get_student_print_templateid($class, $classstudent->id);
-			if ($templateid == $default_templateid) {
-				$templateid = '';
-			}
-
+			//if ($templateid == $default_templateid) {
+			//	$templateid = '';
+			//}
 
 			$row = [
 				$i,
@@ -421,7 +419,6 @@ if ($type == 'teachers_options') {
 			$classstudent->lastname,
 			$classstudent->firstname,
 		];
-
 		if ($additional_head_teachers) {
 			$row[] = html_writer::select($additional_head_teachers_select, 'userdatas['.$classstudent->id.'][head_teacher]', @$userdata->head_teacher, fullname($USER));
 		}

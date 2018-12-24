@@ -2295,8 +2295,23 @@ function block_exastud_get_default_templates() {
     return $templates;
 }
 
-function block_exastud_fill_reportsettingstable() {
+function block_exastud_fill_reportsettingstable($id = 0) {
     $reporttemplates = block_exastud_get_default_templates();
+    if ($id > 0) {
+        // only needed template
+        $needed = null;
+        foreach ($reporttemplates as $key => $template) {
+            if ($template['id'] == $id) {
+                $needed = array($key => $template);
+                break;
+            }
+        }
+        if ($needed) {
+            $reporttemplates = $needed;
+        } else {
+            return true; // not found any template with this id
+        } 
+    }
     $convertdata = function($key, $template) {
         $data = array();
         if (!empty($template['id']) && $template['id'] > 0) {
@@ -2325,7 +2340,7 @@ function block_exastud_fill_reportsettingstable() {
         }
         // Add inputs
         $inputs = array();
-        if ($template['inputs'] && count($template['inputs']) > 0) {
+        if (array_key_exists('inputs', $template) && count($template['inputs']) > 0) {
             foreach ($template['inputs'] as $inputname => $inputconfig) {
                 $fielddata = array(
                         'key' => $inputname, // used in the template files
@@ -2352,7 +2367,7 @@ function block_exastud_fill_reportsettingstable() {
         }
         $data = array_merge($data, $inputs);
         // Add grades
-        if ($template['grades'] && count($template['grades']) > 0) {
+        if (array_key_exists('grades', $template) && count($template['grades']) > 0) {
             $data['grades'] = implode('; ', $template['grades']);
         } else {
             $data['grades'] = '';
@@ -2365,13 +2380,15 @@ function block_exastud_fill_reportsettingstable() {
             // search by id
             if (!g::$DB->get_record('block_exastudreportsettings', ['id' => $template['id']])) {
                 $data = $convertdata($key, $template);
-                g::$DB->insert_record('block_exastudreportsettings', $data);
+                g::$DB->insert_record_raw('block_exastudreportsettings', $data, true, false, true); // Needed for kept 'id'
+                //g::$DB->insert_record('block_exastudreportsettings', $data);
             }
         } else if (!empty($template['name']) && !empty($template['file'])) {
             // search by title and file
             if (!g::$DB->get_record('block_exastudreportsettings', ['title' => $template['name'], 'template' => $template['file']])) {
                 $data = $convertdata($key, $template);
-                g::$DB->insert_record('block_exastudreportsettings', $data);
+                g::$DB->insert_record_raw('block_exastudreportsettings', $data, true, false, true);
+                //g::$DB->insert_record('block_exastudreportsettings', $data);
             }
         }
     }

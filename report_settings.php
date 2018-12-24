@@ -112,12 +112,76 @@ if ($action && ($settingsid > 0 || $action == 'new')) {
     $settingsform->set_data($reportsetting);
     $settingsform->display(true);
 
-} else {
+} else if ($action && $action == 'reset_default') {
+    // reset default templates
+    $defaulttemplates = block_exastud_get_default_templates();
+    $output = block_exastud_get_renderer();
+    if ($doit = optional_param('doit', 0, PARAM_INT)) {
+        $templateids = optional_param_array('templateid', null, PARAM_INT);
+        if ($templateids) {
+            foreach ($templateids as $tid) {
+                $DB->delete_records('block_exastudreportsettings', ['id' => $tid]);
+                block_exastud_fill_reportsettingstable($tid);
+            }
+        }
+        redirect(new moodle_url('/blocks/exastud/report_settings.php', ['sesskey' => sesskey()]));
+    }
+    echo $output->header(['report_settings'], ['content_title' => block_exastud_get_string('pluginname')], true);
+    $content = '';
+    $content .= $output->notification(block_exastud_get_string('reset_report_templates_description'), 'info');
+    $formcontent = '';
+    $formcontent .= html_writer::tag('input', '', ['type' => 'hidden', 'name' => 'doit', 'value' => 1]);
+    $formcontent .= html_writer::tag('input', '', ['type' => 'hidden', 'name' => 'action', 'value' => 'reset_default']);
+    $table = new html_table();
+    $table->head = array(
+            'id',
+            '<span class="small"><a href="#" id="exastud-reset-template-selectall" data-curr="0">'.block_exastud_get_string('report_selectdeselect_all').'</a></span>',
+            block_exastud_get_string('report_settings_setting_title'),
+            block_exastud_get_string('report_settings_setting_template')
+    );
+    $rows = array();
+    foreach ($defaulttemplates as $template) {
+        $row = new html_table_row();
+        $row->cells[] = $template['id'];
+        $addmessage = '';
+        $currenttemplate = $DB->get_record('block_exastudreportsettings', [
+                'id' => $template['id']]);
+        $row->cells[] = html_writer::checkbox('templateid[]', $template['id'], false, '', ['id' => 'template_'.$template['id'], 'class' => 'template-id']);
+        if (!$currenttemplate) {
+            $addmessage .= '<span class="exastud-additional-text">'.block_exastud_get_string('report_setting_willbe_added').'</span>';
+        } else if ($currenttemplate && $currenttemplate->title != $template['name']) {
+            $addmessage .= '<span class="exastud-additional-text">'.block_exastud_get_string('report_setting_current_title').': '.$currenttemplate->title.'</span>';
+        }
+        $row->cells[] = html_writer::tag('label', $template['name'].$addmessage, ['for' => 'template_'.$template['id']]);
+        $addmessage = '';
+        if ($currenttemplate && $currenttemplate->template != $template['file']) {
+            $addmessage .= '<span class="exastud-additional-text">'.block_exastud_get_string('report_setting_current_file').': '.$currenttemplate->template.'</span>';
+        }
+        $row->cells[] = $template['file'].$addmessage;
+        $rows[] = $row;
+    }
+    $table->data = $rows;
+    $formcontent .= html_writer::table($table);
+    $formcontent .= html_writer::link(new moodle_url('/blocks/exastud/report_settings.php', ['sesskey' => sesskey()]),
+            block_exastud_get_string('back'),
+            ['class' => 'btn btn-default']);
+    $formcontent .= '&nbsp;&nbsp;&nbsp;'.html_writer::tag('button', block_exastud_get_string('reset_report_selected_templates'), [
+        'type' => 'submit',
+        'class' => 'btn btn-danger',
+    ]);
+    $content .= html_writer::tag('form', $formcontent, [
+        'id' => 'form-templatelist',
+        'method' => 'post'
+    ]);
+    echo $content;
 
+} else {
+    // template list
     $output = block_exastud_get_renderer();
     echo $output->header(['report_settings'], ['content_title' => block_exastud_get_string('pluginname')], true);
 
     echo $output->heading(block_exastud_get_string('report_settings'));
+    $content = '';
 
     $newLink = html_writer::link(new moodle_url('/blocks/exastud/report_settings.php', [
             //'courseid' => $courseid,
@@ -125,7 +189,7 @@ if ($action && ($settingsid > 0 || $action == 'new')) {
             'action' => 'new',
             'sesskey' => sesskey()
     ]), block_exastud_get_string('report_settings_new'), ['class' => 'btn btn-default']);
-    echo $newLink.'<br>';
+    $content .= $newLink.'<br>';
 
     // List of settings
     $reports = block_exastud_get_reportsettings_all(true);
@@ -231,11 +295,20 @@ if ($action && ($settingsid > 0 || $action == 'new')) {
         }
     }
 
+    $buttons = '';
     if (!empty($table)) {
-        echo $output->table($table);
+        $content .= $output->table($table);
+        $buttons .= $newLink.'&nbsp;&nbsp;&nbsp;';
     } else {
-        echo 'No any template in DB';
+        $content .= 'No any template in DB';
     }
+    // Reset templates to default state
+    $buttons .= html_writer::link(new moodle_url('/blocks/exastud/report_settings.php', [
+            'action' => 'reset_default',
+            'sesskey' => sesskey()
+    ]), block_exastud_get_string('reset_report_templates'), ['class' => 'btn btn-danger']);
+    $content .= html_writer::div($buttons, 'buttons');
+    echo $content;
 }
 
 // testing import default templates

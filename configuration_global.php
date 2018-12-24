@@ -296,7 +296,8 @@ if ($action == 'subjects') {
 
 	$bp = $DB->get_record('block_exastudbp', ['id' => required_param('bpid', PARAM_INT)]);
 
-	$canEdit = block_exastud_can_edit_bp($bp);
+	//$canEdit = block_exastud_can_edit_bp($bp);
+    $canEdit = true; // 24.12.2018
 
 	/*
 	if (block_exastud_get_plugin_config('always_check_default_values')) {

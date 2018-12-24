@@ -63,3 +63,9 @@
 .exastud-additional-params-shortlist {
     list-style: none;
 }
+
+.exastud-additional-text {
+    display: block;
+    color: red;
+    font-size: 0.75em;
+}

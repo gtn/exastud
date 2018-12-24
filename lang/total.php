@@ -546,6 +546,10 @@ return [
             'als Datei speichern',
             'Select all'
     ],
+    'report_selectdeselect_all' => [
+            'select/deselect all',
+            'select/deselect all',
+    ],
     'report_settings' => [
             'Berichtskonfiguration',
             'Report settings',
@@ -741,6 +745,30 @@ return [
     'report_setting_type_image_height' => [
             'Height',
             'Height',
+    ],
+    'reset_report_templates' => [
+            'Reset default templates to default state',
+            'Reset default templates to default state',
+    ],
+    'reset_report_selected_templates' => [
+            'Reset selected templates to default state',
+            'Reset selected templates to default state',
+    ],
+    'reset_report_templates_description' => [
+            'Are you sure? Default templates will be reset to default state. Custom templates will not be changed',
+            'Are you sure? Default templates will be reset to default state. Custom templates will not be changed',
+    ],
+    'report_setting_current_title' => [
+            'Current title',
+            'Current title',
+    ],
+    'report_setting_current_file' => [
+            'Current template',
+            'Current template',
+    ],
+    'report_setting_willbe_added' => [
+            'Does not exist now. Will be added.',
+            'Does not exist now. Will be added.',
     ],
     'review_table_part_subjects' => [
             'Eingaben als Fachlehrkraft',
