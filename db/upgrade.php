@@ -493,32 +493,7 @@ function xmldb_block_exastud_upgrade($oldversion = 0) {
         }
         upgrade_block_savepoint(true, 2018121903, 'exastud');
     }
-    
-    
-    if ($oldversion < 2018121905) {
-        $filestochange = array(
-            "RALE"  => "alev",
-            "RAK"   => "ak",
-            "ETH"   => "eth",
-            "REV"   => "ev",
-            "RISL"  => "isl",
-            "RJUED" => "jd",
-            "RRK"   => "rk",
-            "ROR"   => "orth",
-            "RSYR"  => "syr",
-        );
-        foreach ($filestochange as $oldname => $newName) {
-            $DB->execute(' UPDATE {block_exastudsubjects} SET shorttitle = ?, sourceinfo = "bw-bp2016-'. $newName .'" WHERE shorttitle = ? AND sourceinfo LIKE "bw-bp2016%"',
-                [$newName, $oldname]);
-        }
-        foreach ($filestochange as $oldname => $newName) {
-            $DB->execute(' UPDATE {block_exastudsubjects} SET shorttitle = ?, sourceinfo = "bw-bp2004-'. $newName .'" WHERE shorttitle = ? AND sourceinfo LIKE "bw-bp2004%"',
-                [$newName, $oldname]);
-        }
 
-        upgrade_block_savepoint(true, 2018121905, 'exastud');
-    }
-    
     if ($oldversion < 2018122000) {
         $table = new xmldb_table('block_exastudsubjects');
         $field1 = new xmldb_field('not_relevant', XMLDB_TYPE_INTEGER, 1, null, null, null, '0');
@@ -588,6 +563,31 @@ function xmldb_block_exastud_upgrade($oldversion = 0) {
         $DB->execute(' UPDATE {block_exastudreportsettings} SET id = id - 200 WHERE id > 200');
 
         upgrade_block_savepoint(true, 2018122106, 'exastud');
+    }
+
+
+    if ($oldversion < 2018122500) {
+        $filestochange = array(
+                "RALE"  => "alev",
+                "RAK"   => "ak",
+                "ETH"   => "eth",
+                "REV"   => "ev",
+                "RISL"  => "isl",
+                "RJUED" => "jd",
+                "RRK"   => "rk",
+                "ROR"   => "orth",
+                "RSYR"  => "syr",
+        );
+        foreach ($filestochange as $oldname => $newName) {
+            $DB->execute(' UPDATE {block_exastudsubjects} SET shorttitle = ?, sourceinfo = "bw-bp2016-'. $newName .'" WHERE shorttitle = ? AND sourceinfo LIKE "bw-bp2016%"',
+                    [$newName, $oldname]);
+        }
+        foreach ($filestochange as $oldname => $newName) {
+            $DB->execute(' UPDATE {block_exastudsubjects} SET shorttitle = ?, sourceinfo = "bw-bp2004-'. $newName .'" WHERE shorttitle = ? AND sourceinfo LIKE "bw-bp2004%"',
+                    [$newName, $oldname]);
+        }
+
+        upgrade_block_savepoint(true, 2018122500, 'exastud');
     }
 
     block_exastud_insert_default_entries();

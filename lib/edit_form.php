@@ -220,12 +220,15 @@ class student_edit_form extends moodleform {
                 $mform->addElement('textarea', 'vorschlag', '',
                         ['cols' => $vorschlag_limits['cols'], 'rows' => $vorschlag_limits['rows'],
                                 'class' => 'limit-input-length',
+                                'data-rowscharslimit-enable' => 1,
+                                'data-rowslimit' => $vorschlag_limits['rows'],
+                                'data-charsperrowlimit' => $vorschlag_limits['chars_per_row'],
                                 'style' => "width: 750px; height: 160px; resize: none; font-family: Arial !important; font-size: 11pt !important;",
                         ]);
                 $mform->setType('vorschlag', PARAM_RAW);
                 $mform->addElement('static', '', '',
-                        block_exastud_trans('de:Max. '.$vorschlag_limits['rows'].' Zeilen / '.$vorschlag_limits['chars_per_row'].
-                                ' Zeichen'));
+                        block_exastud_trans('de:Max. <span id="max_vorschlag_rows">'.$vorschlag_limits['rows'].' Zeilen</span> / <span id="max_vorschlag_chars">'.$vorschlag_limits['chars_per_row'].
+                                ' Zeichen</span>'));
                 break;
             default:
                 // subject review
@@ -248,10 +251,15 @@ class student_edit_form extends moodleform {
 
                 $mform->addElement('textarea', 'review', '', ['cols' => $subject_limits['cols'], 'rows' => $subject_limits['rows'],
                         'class' => 'limit-input-length',
+                        'data-rowscharslimit-enable' => 1,
+                        'data-rowslimit' => $subject_limits['rows'],
+                        'data-charsperrowlimit' => $subject_limits['chars_per_row'],
                         'style' => "width: 556px; height: 160px; resize: none; font-family: Arial !important; font-size: 11pt !important;",
                 ]);
                 $mform->setType('review', PARAM_RAW);
-                $mform->addElement('static', 'hint', "",  block_exastud_trans('de:Max. '.$subject_limits['rows'].' Zeilen / '.$subject_limits['chars_per_row'].' Zeichen'));
+                $mform->addElement('static', 'hint', "",
+                        block_exastud_trans('de:Max. <span id="max_review_rows">'.$subject_limits['rows'].' Zeilen</span> / <span id="max_review_chars">'.$subject_limits['chars_per_row'].
+                                ' Zeichen</span>'));
 
                 // grades, niveaus
                 $mform->addElement('header', 'grade_header', block_exastud_get_string("grade_and_difflevel"));
@@ -311,13 +319,22 @@ class student_other_data_form extends moodleform {
 				if (empty($input['cols'])) {
 					$input['cols'] = 45;
 				}
-				
+                $textarea_limits = array(
+                        'cols' => @$input['cols'] ? $input['cols'] : 50,
+                        'chars_per_row' => @$input['cols'] ? $input['cols'] : 80,
+                        'rows' => @$input['lines'] ? $input['lines'] : 8
+                );
 				$mform->addElement('textarea', $dataid, '', ['cols' => $input['cols'], 'rows' => $input['lines'],
 					'class' => 'limit-input-length',
+                    'data-rowscharslimit-enable' => 1,
+                    'data-rowslimit' => $textarea_limits['rows'],
+                    'data-charsperrowlimit' => $textarea_limits['chars_per_row'],
 					'style' => "width: ".($input['cols'] * 15)."px; height: ".($input['lines'] * 20)."px; resize: none; font-family: Arial !important; font-size: 11pt !important;",
 				]);
 				$mform->setType($dataid, PARAM_RAW);
-				$mform->addElement('static', '', '', block_exastud_trans('de:Max. '.$input['lines'].' Zeilen / '.$input['cols'].' Zeichen'));
+				$mform->addElement('static', '', '',
+                        block_exastud_trans('de:Max. <span id="max_'.$dataid.'_rows">'.$textarea_limits['rows'].' Zeilen</span> / <span id="max_'.$dataid.'_chars">'.$textarea_limits['chars_per_row'].
+                                ' Zeichen</span>'));
 				
 			} elseif ($input['type'] == 'text') {
 				$mform->addElement('text', $dataid, $input['title']);

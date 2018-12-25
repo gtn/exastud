@@ -96,5 +96,6 @@
 
 		$fieldset.find('.fitem_fselect').remove();
 		$container.append(html);
+
 	});
 })(block_exastud.jquery);

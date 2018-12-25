@@ -215,5 +215,71 @@ $.extend(window.block_exastud, {
         });
     });
 
+    $(function () {
+
+        $(document).on('input', 'textarea[data-rowscharslimit-enable]', function (e) {
+            // for working with last correct value
+            if (!$(this).attr('correct-value')) {
+                $(this).attr('correct-value', e.target.value);
+            }
+            // for working with prev value
+            if (!$(this).attr('prev-value')) {
+                $(this).attr('prev-value', e.target.value);
+            }
+        });
+        $(document).on('input', 'textarea[data-rowscharslimit-enable]', function (e) {
+            e.preventDefault();
+            $(this).unbind(); // TODO: needed?
+            var rowsLimit = $(this).attr('data-rowslimit');
+            var charsPerRowLimit = $(this).attr('data-charsperrowlimit');
+            var currentText = e.target.value;
+            var rows = currentText.split(/\r?\n/);
+            var textareaName = $(this).attr('name');
+            var rowsLimitReached = false;
+            if (rows.length > rowsLimit) {
+                rowsLimitReached = true;
+            }
+            var charsPerRowLimitReached = false;
+            rows.forEach(function (r) {
+                if (r.length > charsPerRowLimit) {
+                    charsPerRowLimitReached = true;
+                }
+            })
+            if (charsPerRowLimitReached || rowsLimitReached) {
+                $(this).css('background-color', 'rgb(255, 240, 240)');
+                $(this).css('color', 'rgb(216, 35, 35)');
+                if (currentText.length < $(this).attr('prev-value').length) { // we are going to decrease textarea value
+                    $(this).attr('prev-value', currentText);
+                    $(this).attr('correct-value', currentText);
+                }
+                $(this).val($(this).attr('correct-value'));
+                if (rowsLimitReached) {
+                    $('#max_' + textareaName + '_rows').css('background-color', 'rgb(255, 240, 240)');
+                    $('#max_' + textareaName + '_rows').css('color', 'rgb(216, 35, 35)');
+                } else {
+                    $('#max_' + textareaName + '_rows').css('background-color', '');
+                    $('#max_' + textareaName + '_rows').css('color', '');
+                }
+                if (charsPerRowLimitReached) {
+                    $('#max_' + textareaName + '_chars').css('background-color', 'rgb(255, 240, 240)');
+                    $('#max_' + textareaName + '_chars').css('color', 'rgb(216, 35, 35)');
+                } else {
+                    $('#max_' + textareaName + '_chars').css('background-color', '');
+                    $('#max_' + textareaName + '_chars').css('color', '');
+                }
+            } else {
+                $(this).css('background-color', '');
+                $(this).css('color', '');
+                $(this).attr('correct-value', currentText);
+                $('#max_' + textareaName + '_rows').css('background-color', '');
+                $('#max_' + textareaName + '_rows').css('color', '');
+                $('#max_' + textareaName + '_chars').css('background-color', '');
+                $('#max_' + textareaName + '_chars').css('color', '');
+                $(this).attr('correct-value', currentText);
+            }
+
+
+        });
+    });
  
 }();

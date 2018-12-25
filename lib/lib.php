@@ -1973,7 +1973,6 @@ function block_exastud_get_default_templates() {
                     'file' => 'BP 2004/BP2004_GMS_Anlage_Projektpruefung_HS',
                     'grades' => $grades_lang,
                     'inputs' => [
-                        /*
                         'projekt_text3lines' => [
                             'title' => 'Projektthema',
                             'type' => 'textarea',
@@ -1987,9 +1986,8 @@ function block_exastud_get_default_templates() {
                         'projekt_grade' => [
                             'title' => 'Projektprüfung: Note',
                             'type' => 'select',
-                            'values' => $grades,
+                            'values' => ['1' => 'sehr gut', '2' => 'gut', '3' => 'befriedigend', '4' => 'ausreichend', '5' => 'mangelhaft', '6' => 'ungenügend'], // TODO: is it correct grades?
                         ],
-                        */
                     ],
             ],
             'BP 2016/GMS Zeugnis 1.HJ' => [
