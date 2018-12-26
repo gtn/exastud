@@ -251,11 +251,11 @@ class printer {
                     BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_HALBJAHR_LERNENTWICKLUNGSBERICHT,
                     BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_JAHRESZEUGNIS_LERNENTWICKLUNGSBERICHT,
                     BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_HALBJAHR_LERNENTWICKLUNGSBERICHT,
-                    BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_JAHRESZEUGNIS_LERNENTWICKLUNGSBERICHT
+                    BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_JAHRESZEUGNIS_LERNENTWICKLUNGSBERICHT,
                 ])) {
 			$bpsubjects = block_exastud_get_bildungsplan_subjects($class->bpid);
-			$class_subjects = block_exastud_get_class_subjects($class);
-			//$lern_soz = block_exastud_get_class_student_data($class->id, $student->id, BLOCK_EXASTUD_DATA_ID_LERN_UND_SOZIALVERHALTEN);
+            $class_subjects = block_exastud_get_class_subjects($class);
+            //$lern_soz = block_exastud_get_class_student_data($class->id, $student->id, BLOCK_EXASTUD_DATA_ID_LERN_UND_SOZIALVERHALTEN);
 
 			/*// use current year or last year
 			if (date('m', $certificate_issue_date_timestamp) >= 9) {
@@ -376,6 +376,8 @@ class printer {
                 BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_ANLAGE_PROJEKTPRUEFUNG_HS,
                 BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_ABGANGSZEUGNIS_FOE,
                 BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_HALBJAHR_ZEUGNIS_FOE,
+                BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_HALBJAHRESINFORNATION_KL11,
+                BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_HALBJAHRESINFORNATION_KL11,
 		])) {
 			$class_subjects = block_exastud_get_class_subjects($class);
 
@@ -531,7 +533,6 @@ class printer {
 					return $ret;
 				});
 			}
-			
 			$avg = $sum / scnt;
 			if($avg > 4.4){
 			    $avg = (($sum - $rsum) + $min) / (($scnt - $rcnt) + 1);

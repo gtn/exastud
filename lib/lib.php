@@ -2294,6 +2294,7 @@ function block_exastud_get_default_templates() {
                     'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_HALBJAHRESINFORNATION_KL11,
                     'name' => 'BP 2004 Halbjahresinfornation Kl11',
                     'file' => 'BP 2004/BP2004_GMS_Halbjahresinfornation_Kl11',
+                    'grades' => $grades_mit_plus_minus_bis_ausgeschrieben,
                     'inputs' => [
                             'ags' => [
                                     'title' => 'Teilnahme an Arbeitsgemeinschaften',
@@ -2306,6 +2307,7 @@ function block_exastud_get_default_templates() {
                     'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_HALBJAHRESINFORNATION_KL11,
                     'name' => 'BP 2016 Halbjahresinfornation Kl11',
                     'file' => 'BP 2016/BP2016_GMS_Halbjahresinfornation_Kl11',
+                    'grades' => $grades_mit_plus_minus_bis_ausgeschrieben,
                     'inputs' => [
                             'ags' => [
                                     'title' => 'Teilnahme an Arbeitsgemeinschaften',

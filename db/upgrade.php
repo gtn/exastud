@@ -431,6 +431,11 @@ function xmldb_block_exastud_upgrade($oldversion = 0) {
     }
 
     if ($oldversion < 2018103100) {
+        $table = new xmldb_table('block_exastudreportsettings');
+        $field = new xmldb_field('grades', XMLDB_TYPE_TEXT, null, null, null, null, null);
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
         block_exastud_fill_reportsettingstable();
     }
 
@@ -451,14 +456,6 @@ function xmldb_block_exastud_upgrade($oldversion = 0) {
     if ($oldversion < 2018111500) {
         $table = new xmldb_table('block_exastudclass');
         $field = new xmldb_field('to_delete', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, '0', 'always_basiccategories');
-        if (!$dbman->field_exists($table, $field)) {
-            $dbman->add_field($table, $field);
-        }
-    }
-
-    if ($oldversion < 2018121200) {
-        $table = new xmldb_table('block_exastudreportsettings');
-        $field = new xmldb_field('grades', XMLDB_TYPE_TEXT, null, null, null, null, null);
         if (!$dbman->field_exists($table, $field)) {
             $dbman->add_field($table, $field);
         }
@@ -565,7 +562,6 @@ function xmldb_block_exastud_upgrade($oldversion = 0) {
         upgrade_block_savepoint(true, 2018122106, 'exastud');
     }
 
-
     if ($oldversion < 2018122500) {
         $filestochange = array(
                 "RALE"  => "alev",
@@ -588,6 +584,12 @@ function xmldb_block_exastud_upgrade($oldversion = 0) {
         }
 
         upgrade_block_savepoint(true, 2018122500, 'exastud');
+    }
+
+    if ($oldversion < 2018122601) {
+        block_exastud_fill_reportsettingstable(BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_HALBJAHRESINFORNATION_KL11);
+        block_exastud_fill_reportsettingstable(BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_HALBJAHRESINFORNATION_KL11);
+        upgrade_block_savepoint(true, 2018122601, 'exastud');
     }
 
     block_exastud_insert_default_entries();
