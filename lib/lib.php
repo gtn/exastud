@@ -76,6 +76,8 @@ const BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_ABSCHLUSSZEUGNIS_RS  = 17;
 const BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_ABGANGSZEUGNIS_FOE  = 18;
 const BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_HALBJAHR_ZEUGNIS_FOE  = 19;
 const BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_LERNENTWICKLUNGSBERICHT_DECKBLATT_UND_1_INNENSEITE  = 20;
+const BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_HALBJAHRESINFORNATION_KL11  = 21;
+const BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_HALBJAHRESINFORNATION_KL11  = 22;
 
 const BLOCK_EXASTUD_SESSION_TIMEOUT = 10*60 + 1;
 
@@ -2287,6 +2289,30 @@ function block_exastud_get_default_templates() {
                     'name' => 'Deckblatt und 1. Innenseite LEB',
                     'file' => 'Lernentwicklungsbericht_Deckblatt_und_1._Innenseite',
                     'inputs' => [],
+            ],
+            'BP 2004/Halbjahresinfornation Kl11' => [
+                    'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_HALBJAHRESINFORNATION_KL11,
+                    'name' => 'BP 2004 Halbjahresinfornation Kl11',
+                    'file' => 'BP 2004/BP2004_GMS_Halbjahresinfornation_Kl11',
+                    'inputs' => [
+                            'ags' => [
+                                    'title' => 'Teilnahme an Arbeitsgemeinschaften',
+                                    'type' => 'textarea',
+                                    'lines' => 3,
+                            ],
+                    ],
+            ],
+            'BP 2016/Halbjahresinfornation Kl11' => [
+                    'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_HALBJAHRESINFORNATION_KL11,
+                    'name' => 'BP 2016 Halbjahresinfornation Kl11',
+                    'file' => 'BP 2016/BP2016_GMS_Halbjahresinfornation_Kl11',
+                    'inputs' => [
+                            'ags' => [
+                                    'title' => 'Teilnahme an Arbeitsgemeinschaften',
+                                    'type' => 'textarea',
+                                    'lines' => 3,
+                            ],
+                    ],
             ],
     ];
 

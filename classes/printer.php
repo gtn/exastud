@@ -114,19 +114,27 @@ class printer {
 
 			return preg_replace('!([^0-9])99([^0-9].{0,3000}[^0-9])99([^0-9])!U', '${1}'.$year1.'${2}'.$year2.'${3}', $content, 1, $count);
 		});
+        $lern_soz = block_exastud_get_class_student_data($class->id, $student->id, BLOCK_EXASTUD_DATA_ID_LERN_UND_SOZIALVERHALTEN);
         $fs = get_file_storage();
-
 		// default markers
         $data = [
                 'periode' => $period->description,
                 'schule' => get_config('exastud', 'school_name'),
                 'ort' => get_config('exastud', 'school_location'),
+                'name' => $student->firstname.' '.$student->lastname,
+                'geburtsdatum' => block_exastud_get_date_of_birth($student->id),
+                'klasse' => $class->title,
+                'kla' => $class->title,
                 'certda' => $certificate_issue_date_text,
                 'religion' => '---',
                 'profilfach' => '---',
                 'wahlpflichtfach' => '---',
                 'projekt_thema' => static::spacerIfEmpty(@$studentdata->projekt_thema),
                 'projekt_verbalbeurteilung' => static::spacerIfEmpty(@$studentdata->projekt_verbalbeurteilung),
+                'comments' => static::spacerIfEmpty(@$studentdata->comments),
+                'comments_short' => static::spacerIfEmpty(@$studentdata->comments_short),
+                'ags' => static::spacerIfEmpty(@$studentdata->ags),
+                'lern_und_sozialverhalten' => static::spacerIfEmpty($lern_soz),
         ];
         // school logo: ${school_logo}  : mantis 3450 - only for grades_report
         //if (!$templateProcessor->addImageToReport('school_logo', 'exastud', 'block_exastud_schoollogo', 0, 1024, 768)) {

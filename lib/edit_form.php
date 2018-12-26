@@ -367,7 +367,7 @@ class student_other_data_form extends moodleform {
         foreach ($fields as $field) {
             $element = $mform->getElement($field);
             if ($element->_type == 'textarea' && $data[$field] != '') {
-                $rowsfromstring = preg_split("/[\s]+/", $data[$field]);
+                $rowsfromstring = preg_split("/[\r\n]+/", $data[$field]);
                 if ($element->_attributes['cols'] > 0) {
                     $maxlength = max(array_map('strlen', $rowsfromstring));
                     if ($maxlength > $element->_attributes['cols']) {

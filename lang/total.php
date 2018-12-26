@@ -829,7 +829,7 @@ return [
             'Certificate for profile subject',
     ],
     'report_for_additional' => [
-            'Additional data',
+            'weitere Daten',
             'Additional fields',
     ],
     'report_report_eval' => [
