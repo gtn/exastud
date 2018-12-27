@@ -68,7 +68,7 @@ if ($action && ($settingsid > 0 || $action == 'new')) {
         }
         redirect('report_settings.php');
     } else {
-        // do not validated data
+        // come not validated data
         if ($settingsform->is_submitted()) {
             $settingsedit = $settingsform->get_submitted_data();
             $settingsedit = block_exastud_report_templates_prepare_serialized_data($settingsform, $settingsedit);

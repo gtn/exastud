@@ -572,7 +572,6 @@ class print_templates {
 		} else {
 			$bp = null;
 		}
-
 		$templateids = [];
 
 		if (block_exastud_is_bw_active()) {
@@ -582,19 +581,17 @@ class print_templates {
 				$templateids[] = BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_16_ZERTIFIKAT_FUER_PROFILFACH; // 'BP 2004/Zertifikat fuer Profilfach';
 			}
 
-			$templateids[] = 5; // 'BP 2004/Beiblatt zur Projektpruefung HSA';
+			$templateids[] = BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_ANLAGE_PROJEKTPRUEFUNG_HS; // 'BP 2004/Beiblatt zur Projektpruefung HSA';
 		}
-
 		return static::get_template_name_array($templateids);
 	}
 
 	static private function get_template_name_array($templateids) {
 		$templates = [];
 		foreach ($templateids as $templateid) {
-			//$templates[$templateid] = static::get_template_name($templateid);
+            //$templates[$templateid] = static::get_template_name($templateid);
 			$templates[$templateid] = g::$DB->get_field('block_exastudreportsettings', 'title', ['id' => $templateid]);
 		}
-
 		return $templates;
 	}
 

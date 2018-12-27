@@ -479,7 +479,8 @@ if ($type == 'teachers_options') {
 		echo '<div>';
 		echo html_writer::select($teachers, 'teacherid', '', false);
 		echo $output->link_button($CFG->wwwroot.'/blocks/exastud/configuration_classmembers_courses.php?courseid='.$courseid.'&classid='.$class->id,
-			block_exastud_get_string('go'));
+			block_exastud_get_string('go'),
+            ['class' => 'btn btn-default']);
 		echo '</div>';
 		echo '</form>';
 	}

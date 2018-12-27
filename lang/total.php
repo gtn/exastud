@@ -547,7 +547,7 @@ return [
             'Select all'
     ],
     'report_selectdeselect_all' => [
-            'select/deselect all',
+            'Alles aus-/abwählen',
             'select/deselect all',
     ],
     'report_settings' => [
@@ -747,19 +747,19 @@ return [
             'Height',
     ],
     'reset_report_templates' => [
-            'Reset default templates to default state',
+            'Standardvorlagen auf Originalwerte zurücksetzen',
             'Reset default templates to default state',
     ],
     'reset_report_selected_templates' => [
-            'Reset selected templates to default state',
+            'Ausgewählte Vorlagen auf Originalwerte zurücksetzen',
             'Reset selected templates to default state',
     ],
     'reset_report_templates_description' => [
-            'Are you sure? Default templates will be reset to default state. Custom templates will not be changed',
+            'Sind Sie sicher? Standardvorlagen werden auf die Originalwerte zurückgesetzt. Benutzerdefinierte Vorlagen bleiben unverändert.',
             'Are you sure? Default templates will be reset to default state. Custom templates will not be changed',
     ],
     'report_setting_current_title' => [
-            'Current title',
+            'Bisheriger Name',
             'Current title',
     ],
     'report_setting_current_file' => [
@@ -767,8 +767,12 @@ return [
             'Current template',
     ],
     'report_setting_willbe_added' => [
+            'Vorlage existiert nicht und wird hinzugefügt. Falls die Vorlage geöscht wurde kann der Administrator diese erneut hinzufügen.',
             'Does not exist now. Will be added.',
-            'Does not exist now. Will be added.',
+    ],
+    'select_student' => [
+        'Please select at least one student',
+        'Please select at least one student',
     ],
     'review_table_part_subjects' => [
             'Eingaben als Fachlehrkraft',
@@ -858,6 +862,10 @@ return [
         'letztes Halbjahr:',
         'last period:',
     ],
+    'periods_incorrect' => [
+        'You have not active period or you have more than one active periods!',
+        'You have not active period or you have more than one active periods!',
+    ],
     'suggestions_from_exacomp' => [
         'Vorschläge aus Exacomp',
         'Suggestions from Exacomp',
@@ -866,9 +874,9 @@ return [
         'Note und Niveau',
         'Grade and Difficulty level'
     ],
-    'de:Eingaben von der letzten Periode/Halbjahr übernehmen' => [
-        null,
-        'load last period:',
+    'load_last_period' => [
+        'Eingaben von der letzten Periode/Halbjahr übernehmen',
+        'load last period',
     ],
     'de:Daten der letzten Periode/Halbjahr wurden übernommen' => [
         null,

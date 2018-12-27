@@ -307,6 +307,9 @@ if ($lastPeriodClass) {
 			'periodid' => $lastPeriod->id,
 			'teacherid' => $teacherid,
 		]);
+		if (!$formdata->vorschlag) {
+            $formdata->vorschlag = ''; // if no data from last period
+        }
 
 		/*
 		 * $reviewdata = $DB->get_records('block_exastudreview', array('subjectid' => $subjectid, 'periodid' => $lastPeriod->id, 'studentid' => $studentid), 'timemodified DESC');
@@ -354,7 +357,7 @@ if ($lastPeriodClass) {
 	} else {
 		$url = block_exastud\url::request_uri();
 		$url->param('action', 'load_last_period_data');
-		echo $output->link_button($url, block_exastud_trans('de:Eingaben von der letzten Periode/Halbjahr übernehmen'));
+		echo $output->link_button($url, block_exastud_get_string('load_last_period'), ['class' => 'btn btn-default']);
 	}
 }
 

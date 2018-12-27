@@ -216,16 +216,34 @@ $.extend(window.block_exastud, {
     });
 
     $(function () {
-
-        $(document).on('input', 'textarea[data-rowscharslimit-enable]', function (e) {
+        // work with textareas (limits)
+        function updateLeftMessage(textarea) {
+            var rowsLimit = $(textarea).attr('data-rowslimit');
+            var charsPerRowLimit = $(textarea).attr('data-charsperrowlimit');
+            var currentText = $(textarea).val();
+            var rows = currentText.split(/\r?\n/);
+            var textareaName = $(textarea).attr('name');
+            var leftRows = rowsLimit - rows.length;
+            var leftChars = charsPerRowLimit;
+            rows.forEach(function (r) {
+                var lch = charsPerRowLimit - r.length;
+                if (lch < leftChars) {
+                    leftChars = lch;
+                }
+            })
+            $('#left_'+textareaName+'_rows .exastud-value').html(leftRows);
+            $('#left_'+textareaName+'_chars .exastud-value').html(leftChars);
+        };
+        $(document).find('textarea[data-rowscharslimit-enable]').each(function (e) {
             // for working with last correct value
             if (!$(this).attr('correct-value')) {
-                $(this).attr('correct-value', e.target.value);
+                $(this).attr('correct-value', $(this).val());
             }
             // for working with prev value
             if (!$(this).attr('prev-value')) {
-                $(this).attr('prev-value', e.target.value);
+                $(this).attr('prev-value', $(this).val());
             }
+            updateLeftMessage($(this));
         });
         $(document).on('input', 'textarea[data-rowscharslimit-enable]', function (e) {
             e.preventDefault();
@@ -277,8 +295,7 @@ $.extend(window.block_exastud, {
                 $('#max_' + textareaName + '_chars').css('color', '');
                 $(this).attr('correct-value', currentText);
             }
-
-
+            updateLeftMessage($(this));
         });
     });
  

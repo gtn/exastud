@@ -1078,9 +1078,8 @@ function block_exastud_get_active_period() {
 	// genau 1e periode?
 	if (count($periods) == 1) {
 		return reset($periods);
-	} else {
-		return null;
 	}
+	return null;
 }
 
 function block_exastud_get_active_or_next_period() {
@@ -2401,7 +2400,7 @@ function block_exastud_fill_reportsettingstable($id = 0) {
         return $data;
     };
     foreach ($reporttemplates as $key => $template) {
-        // insert only non existing records
+        // insert only non existing records (or if the id is from function calling)
         if (!empty($template['id']) && $template['id'] > 0) {
             // search by id
             if (!g::$DB->get_record('block_exastudreportsettings', ['id' => $template['id']])) {

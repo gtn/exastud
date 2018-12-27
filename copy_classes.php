@@ -47,6 +47,7 @@ if ($action == 'copy') {
 	$class->timemodified = time();
 	$class->periodid = $actPeriod->id;
 	$class->title = block_exastud_trans(['de:Kopie von {$a}', 'en:Copy of {$a}'], $class->title);
+	//echo "<pre>debug:<strong>copy_classes.php:50</strong>\r\n"; print_r($class); echo '</pre>'; exit; // !!!!!!!!!! delete it
 	$newId = $DB->insert_record('block_exastudclass', $class);
 
 	$DB->execute("INSERT INTO {block_exastudclassstudents} (timemodified, classid, studentid)
@@ -76,13 +77,15 @@ foreach ($lastPeriodClasses as $class) {
 	$table->data[] = [
 		$class->title,
 		$output->link_button($CFG->wwwroot.'/blocks/exastud/copy_classes.php?courseid='.$courseid.'&action=copy&classid='.$class->id,
-			block_exastud_trans(['de:Klasse kopieren', 'en:Copy Class'])),
+			block_exastud_trans(['de:Klasse kopieren', 'en:Copy Class']),
+            ['class' => 'btn btn-default']),
 	];
 }
 
 echo $output->table($table);
 
 echo $output->link_button($CFG->wwwroot.'/blocks/exastud/configuration_classes.php?courseid='.$courseid,
-	block_exastud_get_string('back'));
+	block_exastud_get_string('back'),
+    ['class' => 'btn btn-default']);
 
 echo $output->footer();

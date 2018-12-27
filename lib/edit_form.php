@@ -227,8 +227,15 @@ class student_edit_form extends moodleform {
                         ]);
                 $mform->setType('vorschlag', PARAM_RAW);
                 $mform->addElement('static', '', '',
-                        block_exastud_trans('de:Max. <span id="max_vorschlag_rows">'.$vorschlag_limits['rows'].' Zeilen</span> / <span id="max_vorschlag_chars">'.$vorschlag_limits['chars_per_row'].
-                                ' Zeichen</span>'));
+                        block_exastud_trans('de:Max. '.
+                            '<span id="max_vorschlag_rows">'.$vorschlag_limits['rows'].' Zeilen</span>'.
+                            ' / '.
+                            '<span id="max_vorschlag_chars">'.$vorschlag_limits['chars_per_row'].' Zeichen</span>'.
+                            '<span class="exastud-textarea-left-block">Left: '.
+                            '<span id="left_vorschlag_rows"><span class="exastud-value">-</span> Zeilen</span>'.
+                            ' / '.
+                            '<span id="left_vorschlag_chars"><span class="exastud-value">-</span> Zeichen</span>'.
+                            '</span>'));
                 break;
             default:
                 // subject review
@@ -258,8 +265,15 @@ class student_edit_form extends moodleform {
                 ]);
                 $mform->setType('review', PARAM_RAW);
                 $mform->addElement('static', 'hint', "",
-                        block_exastud_trans('de:Max. <span id="max_review_rows">'.$subject_limits['rows'].' Zeilen</span> / <span id="max_review_chars">'.$subject_limits['chars_per_row'].
-                                ' Zeichen</span>'));
+                        block_exastud_trans('de:Max. '.
+                                '<span id="max_review_rows">'.$subject_limits['rows'].' Zeilen</span>'.
+                                ' / '.
+                                '<span id="max_review_chars">'.$subject_limits['chars_per_row'].' Zeichen</span>'.
+                                '<span class="exastud-textarea-left-block">Left: '.
+                                '<span id="left_review_rows"><span class="exastud-value">-</span> Zeilen</span>'.
+                                ' / '.
+                                '<span id="left_review_chars"><span class="exastud-value">-</span> Zeichen</span>'.
+                                '</span>'));
 
                 // grades, niveaus
                 $mform->addElement('header', 'grade_header', block_exastud_get_string("grade_and_difflevel"));
@@ -333,9 +347,15 @@ class student_other_data_form extends moodleform {
 				]);
 				$mform->setType($dataid, PARAM_RAW);
 				$mform->addElement('static', '', '',
-                        block_exastud_trans('de:Max. <span id="max_'.$dataid.'_rows">'.$textarea_limits['rows'].' Zeilen</span> / <span id="max_'.$dataid.'_chars">'.$textarea_limits['chars_per_row'].
-                                ' Zeichen</span>'));
-				
+                        block_exastud_trans('de:Max. '.
+                                '<span id="max_'.$dataid.'_rows">'.$textarea_limits['rows'].' Zeilen</span>'.
+                                ' / '.
+                                '<span id="max_'.$dataid.'_chars">'.$textarea_limits['chars_per_row'].' Zeichen</span>'.
+                                '<span class="exastud-textarea-left-block">Left: '.
+                                '<span id="left_'.$dataid.'_rows"><span class="exastud-value">-</span> Zeilen</span>'.
+                                ' / '.
+                                '<span id="left_'.$dataid.'_chars"><span class="exastud-value">-</span> Zeichen</span>'.
+                                '</span>'));
 			} elseif ($input['type'] == 'text') {
 				$mform->addElement('text', $dataid, $input['title']);
 				$mform->setType($dataid, PARAM_RAW);
@@ -490,7 +510,7 @@ class reportsettings_edit_form extends moodleform {
                 $mform->setType($field.'_key', PARAM_RAW);
                 // title
                 $titleGroup[] = $mform->createElement('text', $field.'_title', block_exastud_trans('de: Titel'), 'size = \'45\'');
-                $mform->setType($field.'_title', PARAM_ALPHA);
+                $mform->setType($field.'_title', PARAM_TEXT);
                 $titleGroup[] = $mform->createElement('exastud_htmltag',
                         '<div class="exastud-template-settings-group group-'.$field.' main-params">
                             <span class="exastud-report-marker" data-for="'.$field.'">Marker: ${}</span>
@@ -653,7 +673,7 @@ class reportsettings_edit_form extends moodleform {
                 if (!empty($param_settings['title'])) {
                     $mform->setDefault('additional_params_title['.$i.']', $param_settings['title']);
                 }
-                $mform->setType('additional_params_title', PARAM_ALPHA);
+                $mform->setType('additional_params_title', PARAM_TEXT);
                 // key
                 $main_block[] = $mform->createElement('text', 'additional_params_key['.$i.']', ''/*block_exastud_trans('de: Key')*/, 'size = \'45\'');
                 if (!empty($param_settings['key'])) {

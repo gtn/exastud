@@ -54,6 +54,10 @@ $table->head = array(
 $table->align = array("left", "left", "left", "left", "right");
 
 $actPeriod = block_exastud_get_active_period();
+echo $output->notification(block_exastud_get_string('periods_incorrect'), 'notifyerror');
+if (!$actPeriod) { // if no any active period or more than one
+    echo $output->notification();
+}
 
 foreach ($periods as $period) {
 	$editUrl = $CFG->wwwroot.'/blocks/exastud/configuration_periods.php?courseid='.$courseid.'&periodid='.$period->id.'&sesskey='.sesskey().'&action=edit';

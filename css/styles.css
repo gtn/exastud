@@ -138,3 +138,7 @@ body[id^=page-blocks-exastud].pagelayout-embedded {
 .exastud-review-message select {
 	margin-right: 15px;
 }
+
+.exastud-textarea-left-block {
+	margin-left: 50px;
+}
