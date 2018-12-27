@@ -774,6 +774,10 @@ return [
         'Please select at least one student',
         'Please select at least one student',
     ],
+    'not_enough_data_for_report' => [
+        'Not enough data for report generation for selected students',
+        'Not enough data for report generation for selected students',
+    ],
     'review_table_part_subjects' => [
             'Eingaben als Fachlehrkraft',
             'Subjects',

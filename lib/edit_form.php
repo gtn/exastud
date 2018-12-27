@@ -231,7 +231,7 @@ class student_edit_form extends moodleform {
                             '<span id="max_vorschlag_rows">'.$vorschlag_limits['rows'].' Zeilen</span>'.
                             ' / '.
                             '<span id="max_vorschlag_chars">'.$vorschlag_limits['chars_per_row'].' Zeichen</span>'.
-                            '<span class="exastud-textarea-left-block">Left: '.
+                            '<span class="exastud-textarea-left-block">Zeichen verfügbar: '.
                             '<span id="left_vorschlag_rows"><span class="exastud-value">-</span> Zeilen</span>'.
                             ' / '.
                             '<span id="left_vorschlag_chars"><span class="exastud-value">-</span> Zeichen</span>'.
@@ -269,7 +269,7 @@ class student_edit_form extends moodleform {
                                 '<span id="max_review_rows">'.$subject_limits['rows'].' Zeilen</span>'.
                                 ' / '.
                                 '<span id="max_review_chars">'.$subject_limits['chars_per_row'].' Zeichen</span>'.
-                                '<span class="exastud-textarea-left-block">Left: '.
+                                '<span class="exastud-textarea-left-block">Zeichen verfügbar: '.
                                 '<span id="left_review_rows"><span class="exastud-value">-</span> Zeilen</span>'.
                                 ' / '.
                                 '<span id="left_review_chars"><span class="exastud-value">-</span> Zeichen</span>'.
@@ -351,7 +351,7 @@ class student_other_data_form extends moodleform {
                                 '<span id="max_'.$dataid.'_rows">'.$textarea_limits['rows'].' Zeilen</span>'.
                                 ' / '.
                                 '<span id="max_'.$dataid.'_chars">'.$textarea_limits['chars_per_row'].' Zeichen</span>'.
-                                '<span class="exastud-textarea-left-block">Left: '.
+                                '<span class="exastud-textarea-left-block">Zeichen verfügbar: '.
                                 '<span id="left_'.$dataid.'_rows"><span class="exastud-value">-</span> Zeilen</span>'.
                                 ' / '.
                                 '<span id="left_'.$dataid.'_chars"><span class="exastud-value">-</span> Zeichen</span>'.

@@ -58,6 +58,7 @@ if ($classid = optional_param('classid', 0, PARAM_INT)) {
     }
 
     $pleaseselectstudent = '';
+    $messagebeforetables = '';
     //$template = optional_param('template', '', PARAM_TEXT);
     $templatesFromForm = optional_param_array('template', [], PARAM_TEXT);
     if (count($templatesFromForm) > 0) {
@@ -157,8 +158,10 @@ if ($classid = optional_param('classid', 0, PARAM_INT)) {
                     // print one student
                     $student = reset($printStudents);
                     $file = \block_exastud\printer::report_to_temp_file($class, $student, $template, $courseid);
-                    $files_to_zip[$file->temp_file] =
-                            '/'.$student->firstname.'-'.$student->lastname.'-'.$student->id.'/'.$file->filename;
+                    if ($file) {
+                        $files_to_zip[$file->temp_file] =
+                                '/'.$student->firstname.'-'.$student->lastname.'-'.$student->id.'/'.$file->filename;
+                    }
 
                     //ob_clean();
                     //if ($content = ob_get_clean()) {
@@ -171,10 +174,12 @@ if ($classid = optional_param('classid', 0, PARAM_INT)) {
 
                     foreach ($printStudents as $student) {
                         $file = \block_exastud\printer::report_to_temp_file($class, $student, $template, $courseid);
-                        $files_to_zip[$file->temp_file] =
-                                '/'.$student->firstname.'-'.$student->lastname.'-'.$student->id.'/'.$file->filename;
-                        //$zip->addFile($file->temp_file, $files_to_zip[$file->temp_file]);
-                        $temp_files[] = $file->temp_file;
+                        if ($file) {
+                            $files_to_zip[$file->temp_file] =
+                                    '/'.$student->firstname.'-'.$student->lastname.'-'.$student->id.'/'.$file->filename;
+                            //$zip->addFile($file->temp_file, $files_to_zip[$file->temp_file]);
+                            $temp_files[] = $file->temp_file;
+                        }
                     }
                     //$certificate_issue_date_text = block_exastud_get_certificate_issue_date_text($class);
                     //$filename = ($certificate_issue_date_text ?: date('Y-m-d'))."-Lernentwicklungsbericht-{$class->title}.zip";
@@ -182,32 +187,36 @@ if ($classid = optional_param('classid', 0, PARAM_INT)) {
                 }
             }
 
-            require_once $CFG->dirroot.'/lib/filelib.php';
+            if (count($files_to_zip) > 0) {
+                require_once $CFG->dirroot.'/lib/filelib.php';
+                if (count($files_to_zip) > 1) {
+                    foreach ($files_to_zip as $tempF => $fileName) {
+                        $zip->addFile($tempF, $fileName);
+                    }
+                } else if (count($files_to_zip) == 1) {
+                    ob_clean();
+                    if ($content = ob_get_clean()) {
+                        throw new \Exception('there was some other output: '.$content);
+                    }
+                    $temp_file = key($files_to_zip);
+                    send_temp_file($temp_file, basename($files_to_zip[$temp_file]));
+                    exit();
+                }
 
-            if (count($files_to_zip) > 1) {
-                foreach ($files_to_zip as $tempF => $fileName) {
-                    $zip->addFile($tempF, $fileName);
+                $zip->close();
+
+                // bug in zip?!? first close the zip and then we can delete the temp files
+                foreach ($temp_files as $temp_file) {
+                    unlink($temp_file);
                 }
-            } else if (count($files_to_zip) == 1) {
-                ob_clean();
-                if ($content = ob_get_clean()) {
-                    throw new \Exception('there was some other output: '.$content);
-                }
-                $temp_file = key($files_to_zip);
-                send_temp_file($temp_file, basename($files_to_zip[$temp_file]));
+
+                $newZipFilename = 'report-'.date('Y-m-d-H-i').'.zip';
+                send_temp_file($zipfilename, $newZipFilename);
                 exit();
+            } else {
+                // no any file to send: different reasons
+                $messagebeforetables .= $output->notification(block_exastud_get_string('not_enough_data_for_report'), 'notifyerror');
             }
-
-            $zip->close();
-
-            // bug in zip?!? first close the zip and then we can delete the temp files
-            foreach ($temp_files as $temp_file) {
-                unlink($temp_file);
-            }
-
-            $newZipFilename = 'report-'.date('Y-m-d-H-i').'.zip';
-            send_temp_file($zipfilename, $newZipFilename);
-            exit();
         } else {
             $pleaseselectstudent .= $output->notification(block_exastud_get_string('select_student'), 'notifyerror');
         }
@@ -283,7 +292,42 @@ if ($classid = optional_param('classid', 0, PARAM_INT)) {
 
     $secondCell = new html_table_cell();
     $previewTemplates = array('html_report');
+    $addAnlage = false;
     foreach ($templates as $key => $tmpl) {
+        if (!$addAnlage && in_array($key, [
+                BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_ANLAGE_ZUM_LERNENTWICKLUNGSBERICHT,
+                BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_ANLAGE_ZUM_LERNENTWICKLUNGSBERICHTALT
+            ])) {
+            foreach ($classstudents as $classstudent) {
+                $subjects = \block_exastud\printer::get_exacomp_subjects($classstudent->id);
+                if ($subjects && count($subjects) > 0) {
+                    $addAnlage = true;
+                    break;
+                }
+            }
+            if (!$addAnlage) {
+                continue; // hide the template if any users have not any data from exacomp
+            }
+        }
+        if (in_array($key, [
+            BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_16_ZERTIFIKAT_FUER_PROFILFACH,
+            BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_ANLAGE_PROJEKTPRUEFUNG_HS, // TODO: is it correct?
+        ])) {
+            $addCurrent = false;
+            foreach ($classstudents as $classstudent) {
+                $classsubjects = block_exastud_get_class_subjects($class);
+                foreach ($classsubjects as $subject) {
+                    $subjectData = block_exastud_get_review($classid, $subject->id, $classstudent->id);
+                    if ($subjectData->grade || $subjectData->niveau || $subjectData->review) {
+                        $addCurrent = true;
+                        break 2;
+                    }
+                }
+            }
+            if (!$addCurrent) {
+                continue;
+            }
+        }
         $previewPoss = (in_array($key, $previewTemplates) ? '1' : '');
         $secondCell->text .= html_writer::checkbox('template['.$key.']',
                         '1',
@@ -297,6 +341,7 @@ if ($classid = optional_param('classid', 0, PARAM_INT)) {
     $templateRow->cells[] = $secondCell;
 
     $templateTable->data[] = $templateRow;
+    echo $messagebeforetables;
     echo $output->table($templateTable);
     echo $pleaseselectstudent;
     echo $output->table($table);

@@ -659,6 +659,10 @@ class printer {
 			$evalopts = g::$DB->get_records('block_exastudevalopt', null, 'sorting', 'id, title, sourceinfo');
 			$categories = block_exastud_get_class_categories_for_report($student->id, $class->id);
 			$subjects = static::get_exacomp_subjects($student->id);
+			if (!$subjects || count($subjects) == 0) {
+			    // no any competences in dakora/exacomp for this student. So - no report
+                return null;
+            }
 
 			//$data = [
 				//'periode' => $period->description,
@@ -691,7 +695,7 @@ class printer {
 			foreach ($subjects as $subject) {
 				$templateProcessor->setValue("subject", $subject->title, 1);
 				
-				if(get_config('exacomp', 'assessment_topic_diffLevel') == 1 || get_config('exacomp', 'assessment_comp_diffLevel') == 1) {
+				if (get_config('exacomp', 'assessment_topic_diffLevel') == 1 || get_config('exacomp', 'assessment_comp_diffLevel') == 1) {
 				    $difflvl = get_config('exacomp', 'assessment_diffLevel_options');
 				    $templateProcessor->duplicateCol('compheader', 2);
 				    $templateProcessor->setValue("compheader", "Niveau", 1);
@@ -704,10 +708,10 @@ class printer {
 					$templateProcessor->cloneRowToEnd("descriptor");
 					$templateProcessor->setValue("topic", $topic->title, 1);
 					$grading = @$studentdata->print_grades_anlage_leb ? $topic->teacher_eval_additional_grading : null;
-					if(get_config('exacomp', 'assessment_topic_diffLevel') == 1){
+					if (get_config('exacomp', 'assessment_topic_diffLevel') == 1){
 					    $niveau = @$studentdata->print_grades_anlage_leb ? $topic->teacher_eval_niveau_text : null;
-					$templateProcessor->setValue("tvalue", $niveau, 1);
-					} else if(get_config('exacomp', 'assessment_comp_diffLevel') == 1){
+					    $templateProcessor->setValue("tvalue", $niveau, 1);
+					} else if (get_config('exacomp', 'assessment_comp_diffLevel') == 1){
 					    $templateProcessor->setValue("tvalue", null, 1);
 					}
 					$templateProcessor->setValue("tvalue", $grading, 1);
@@ -734,7 +738,10 @@ class printer {
 		    $evalopts = g::$DB->get_records('block_exastudevalopt', null, 'sorting', 'id, title, sourceinfo');
 		    $categories = block_exastud_get_class_categories_for_report($student->id, $class->id);
 		    $subjects = static::get_exacomp_subjects($student->id);
-		    
+            if (!$subjects || count($subjects) == 0) {
+                // no any competences in dakora/exacomp for this student. So - no report
+                return null;
+            }
 		    
 		    //$data = [
 		        //'periode' => $period->description,

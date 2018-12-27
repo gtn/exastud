@@ -212,6 +212,7 @@ $string['report_setting_current_title'] = 'Bisheriger Name';
 $string['report_setting_current_file'] = 'Current template';
 $string['report_setting_willbe_added'] = 'Vorlage existiert nicht und wird hinzugefügt. Falls die Vorlage geöscht wurde kann der Administrator diese erneut hinzufügen.';
 $string['select_student'] = 'Please select at least one student';
+$string['not_enough_data_for_report'] = 'Not enough data for report generation for selected students';
 $string['review_table_part_subjects'] = 'Eingaben als Fachlehrkraft';
 $string['review_table_part_additional'] = 'Eingaben als Klassenlehrkraft';
 $string['additional_info'] = 'Zusatzinformationen';

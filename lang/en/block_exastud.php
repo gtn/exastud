@@ -212,6 +212,7 @@ $string['report_setting_current_title'] = 'Current title';
 $string['report_setting_current_file'] = 'Current template';
 $string['report_setting_willbe_added'] = 'Does not exist now. Will be added.';
 $string['select_student'] = 'Please select at least one student';
+$string['not_enough_data_for_report'] = 'Not enough data for report generation for selected students';
 $string['review_table_part_subjects'] = 'Subjects';
 $string['review_table_part_additional'] = 'General';
 $string['additional_info'] = 'Additional info';

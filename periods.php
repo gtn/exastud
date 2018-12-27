@@ -54,9 +54,8 @@ $table->head = array(
 $table->align = array("left", "left", "left", "left", "right");
 
 $actPeriod = block_exastud_get_active_period();
-echo $output->notification(block_exastud_get_string('periods_incorrect'), 'notifyerror');
 if (!$actPeriod) { // if no any active period or more than one
-    echo $output->notification();
+    echo $output->notification(block_exastud_get_string('periods_incorrect'), 'notifyerror');
 }
 
 foreach ($periods as $period) {

@@ -780,27 +780,29 @@ class print_templates {
                 //'ags' => array('gesamtnote_und_durchschnitt_der_gesamtleistungen'),
         );
         $studentdata = (array)block_exastud_get_class_student_data($class->id, $student->id);
-	    foreach ($inputs as $key => $input) {
-            switch ($input['type']) {
-                case 'image':
-                    break;
-                default:
-                    if (array_key_exists($key, $studentdata)) {
-                        $val = trim($studentdata[$key]);
-                        if (!trim(strip_tags($val))) {
-                            $inputValue = '---'; // spacer if empty
+        if (is_array($inputs)) {
+            foreach ($inputs as $key => $input) {
+                switch ($input['type']) {
+                    case 'image':
+                        break;
+                    default:
+                        if (array_key_exists($key, $studentdata)) {
+                            $val = trim($studentdata[$key]);
+                            if (!trim(strip_tags($val))) {
+                                $inputValue = '---'; // spacer if empty
+                            } else {
+                                $inputValue = $val;
+                            }
                         } else {
-                            $inputValue = $val;
+                            $inputValue = ' --- ';
                         }
-                    } else {
-                        $inputValue = ' --- ';
-                    }
-                    $markers[$key] = $inputValue;
-                    if (array_key_exists($key, $oldsupport)) {
-                        foreach ($oldsupport[$key] as $oldkey) {
-                            $markers[$oldkey] = $inputValue;
+                        $markers[$key] = $inputValue;
+                        if (array_key_exists($key, $oldsupport)) {
+                            foreach ($oldsupport[$key] as $oldkey) {
+                                $markers[$oldkey] = $inputValue;
+                            }
                         }
-                    }
+                }
             }
         }
 
