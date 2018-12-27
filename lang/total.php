@@ -771,7 +771,7 @@ return [
             'Does not exist now. Will be added.',
     ],
     'select_student' => [
-        'Please select at least one student',
+        'Bitte wählen Sie zumindest einen Schüler/eine Schülerin aus',
         'Please select at least one student',
     ],
     'not_enough_data_for_report' => [

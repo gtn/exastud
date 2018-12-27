@@ -65,11 +65,15 @@ $actPeriod = block_exastud_check_active_period();
 
 switch ($type) {
     case BLOCK_EXASTUD_DATA_ID_LERN_UND_SOZIALVERHALTEN:
+        $classstandarttemplate = block_exastud_get_class_data($class->id)->default_templateid;
+        $template = block_exastud_get_student_print_template($class, $studentid);
+
+        $inputs = \block_exastud\print_templates::get_template_inputs($classstandarttemplate);
         $categories = [
             BLOCK_EXASTUD_DATA_ID_LERN_UND_SOZIALVERHALTEN => [
                 'title' => block_exastud_trans('de:Lern- und Sozialverhalten'),
-                'cols' => 50,
-                'lines' => 8,
+                'cols' => @$inputs['learn_social_behavior']['cols'] ? @$inputs['learn_social_behavior']['cols'] : 50,
+                'lines' => @$inputs['learn_social_behavior']['lines'] ? @$inputs['learn_social_behavior']['lines'] : 8,
             ],
         ];
         $classheader = $reviewclass->title.' - '.block_exastud_trans('de:Lern- und Sozialverhalten');

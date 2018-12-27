@@ -103,11 +103,19 @@ class printer {
 			$certificate_issue_date_timestamp = $certificate_issue_date_timestamp ?: null;
 
 			// use current year or last year
-			if (date('m', $certificate_issue_date_timestamp) >= 9) {
-				$year1 = date('y', $certificate_issue_date_timestamp);
-			} else {
-				$year1 = date('y', $certificate_issue_date_timestamp) - 1;
-			}
+            if ($certificate_issue_date_timestamp) {
+                if (date('m', $certificate_issue_date_timestamp) >= 9) {
+                    $year1 = date('y', $certificate_issue_date_timestamp);
+                } else {
+                    $year1 = date('y', $certificate_issue_date_timestamp) - 1;
+                }
+            } else {
+                if (date('m') >= 9) {
+                    $year1 = date('y');
+                } else {
+                    $year1 = date('y') - 1;
+                }
+            }
 			$year2 = $year1 + 1;
 			$year1 = str_pad($year1, 2, '0', STR_PAD_LEFT);
 			$year2 = str_pad($year2, 2, '0', STR_PAD_LEFT);
@@ -136,6 +144,7 @@ class printer {
                 'ags' => static::spacerIfEmpty(@$studentdata->ags),
                 'lern_und_sozialverhalten' => static::spacerIfEmpty($lern_soz),
         ];
+
         // school logo: ${school_logo}  : mantis 3450 - only for grades_report
         //if (!$templateProcessor->addImageToReport('school_logo', 'exastud', 'block_exastud_schoollogo', 0, 1024, 768)) {
             $dataKey['school_logo'] = ''; // no logo files
@@ -318,7 +327,7 @@ class printer {
 					'orth',
 					'syr',
 				])) {
-				    if($subject->shorttitle != 'eth'){
+				    if ($subject->shorttitle != 'eth'){
 				        $dataTextReplacer['Ethik'] = 'Religionslehre ('.$subject->shorttitle.')';
 				    }
 					$contentId = 'religion';

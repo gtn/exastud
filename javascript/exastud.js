@@ -220,16 +220,19 @@ $.extend(window.block_exastud, {
         function updateLeftMessage(textarea) {
             var rowsLimit = $(textarea).attr('data-rowslimit');
             var charsPerRowLimit = $(textarea).attr('data-charsperrowlimit');
+            var charsLimit = rowsLimit * charsPerRowLimit;
             var currentText = $(textarea).val();
             var rows = currentText.split(/\r?\n/);
             var textareaName = $(textarea).attr('name');
             var leftRows = rowsLimit - rows.length;
-            var leftChars = charsPerRowLimit;
+            // var leftChars = charsPerRowLimit;
+            var leftChars = charsLimit;
             rows.forEach(function (r) {
-                var lch = charsPerRowLimit - r.length;
-                if (lch < leftChars) {
-                    leftChars = lch;
-                }
+                // var lch = charsPerRowLimit - r.length;
+                // if (lch < leftChars) {
+                //     leftChars = lch;
+                // }
+                leftChars -= r.length;
             })
             $('#left_'+textareaName+'_rows .exastud-value').html(leftRows);
             $('#left_'+textareaName+'_chars .exastud-value').html(leftChars);
@@ -250,6 +253,7 @@ $.extend(window.block_exastud, {
             $(this).unbind(); // TODO: needed?
             var rowsLimit = $(this).attr('data-rowslimit');
             var charsPerRowLimit = $(this).attr('data-charsperrowlimit');
+            var charsLimit = rowsLimit * charsPerRowLimit;
             var currentText = e.target.value;
             var rows = currentText.split(/\r?\n/);
             var textareaName = $(this).attr('name');
@@ -257,13 +261,19 @@ $.extend(window.block_exastud, {
             if (rows.length > rowsLimit) {
                 rowsLimitReached = true;
             }
+            var fullChars = 0;
             var charsPerRowLimitReached = false;
+            var charsLimitReached = false;
             rows.forEach(function (r) {
+                fullChars += r.length;
+                if (fullChars > charsLimit) {
+                    charsLimitReached = true;
+                }
                 if (r.length > charsPerRowLimit) {
                     charsPerRowLimitReached = true;
                 }
             })
-            if (charsPerRowLimitReached || rowsLimitReached) {
+            if (charsPerRowLimitReached || rowsLimitReached || charsLimitReached) {
                 $(this).css('background-color', 'rgb(255, 240, 240)');
                 $(this).css('color', 'rgb(216, 35, 35)');
                 if (currentText.length < $(this).attr('prev-value').length) { // we are going to decrease textarea value
