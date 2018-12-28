@@ -510,14 +510,16 @@ class printer {
 					$grade = @$grades[substr(@$subjectData->grade, 0, 1)];
 				}
 
-				// to calculate the average grade
-				    if($subject->not_relevant == 1){
-				        if($grade < $min) $min = $grade;
-				        $rsum += $grade;
-				        $rcnt++;
-				    }
-				        $sum += $grade;
-				        $scnt++;
+                // to calculate the average grade
+                if ($subject->not_relevant == 1) {
+                    if ($grade < $min) {
+                        $min = $grade;
+                    }
+                    $rsum += $grade;
+                    $rcnt++;
+                }
+                $sum += $grade;
+                $scnt++;
 				    
 				
 				// TEST:
@@ -542,8 +544,8 @@ class printer {
 					return $ret;
 				});
 			}
-			$avg = $sum / scnt;
-			if($avg > 4.4){
+			$avg = $sum / $scnt;
+			if ($avg > 4.4) {
 			    $avg = (($sum - $rsum) + $min) / (($scnt - $rcnt) + 1);
 			}
 			
