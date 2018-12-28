@@ -398,7 +398,7 @@ if ($type == 'teachers_options') {
 	}
 
 	$table->head = array_merge($table->head, [
-		block_exastud_trans('de:Lehrkraft für Projektprüfung'),
+		block_exastud_get_string('teacher_for_project'),
 	]);
 
 	$project_teachers = [$class->userid => fullname($DB->get_record('user', ['id' => $class->userid]))];

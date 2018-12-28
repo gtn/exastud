@@ -72,7 +72,8 @@ class block_exastud_renderer extends plugin_renderer_base {
 			// moodle can't use json_encode in tabobjects
 			// moodle can't use onclick in tabobjects
 			if (is_siteadmin()) {
-				$title = block_exastud_get_string_if_exists('blocksettings') ?: block_exastud_get_string("blocksettings", 'block');
+				//$title = block_exastud_get_string_if_exists('blocksettings') ?: block_exastud_get_string("blocksettings", 'block');
+				$title = block_exastud_get_string("block_settings");
 				$tabs['blockconfig'] = new tabobject('blockconfig', 'javascript:void window.open(\''.\block_exastud\url::create('/admin/settings.php?section=blocksettingexastud')->out(false).'\');', $title, '', true);
 			}
 /*			$tabs['head_teachers'] = new tabobject('head_teachers', 'javascript:void window.open(\''.\block_exastud\url::create('/cohort/assign.php', ['id' => block_exastud_get_head_teacher_cohort()->id])->out(false).'\');', block_exastud_get_string('head_teachers'), '', true);*/
@@ -327,7 +328,7 @@ class block_exastud_renderer extends plugin_renderer_base {
 		$output .= '<table id="ratingtable">';
 
 		if ($lern_soz) {
-			$output .= '<tr><td class="ratinguser">'.block_exastud_trans('de:Lern- und Sozialverhalten').'</td>
+			$output .= '<tr><td class="ratinguser">'.block_exastud_get_string('learn_and_sociale').'</td>
 				<td class="ratingtext">'.format_text($lern_soz).'</td>
 				</tr>';
 		}

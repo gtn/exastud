@@ -60,23 +60,23 @@ return [
 	// === grp2 ===
 	'head_teacher' => [
 		'Klassenlehrkraft',
-		'Head of a class',
+		'Class teacher',
 	],
 	'head_teachers' => [
 		'Klassenlehrkräfte',
-		'Heads of a class',
+		'Class teachers',
 	],
 	'new_head_teacher' => [
 		'Neue Klassenlehrkraft zuweisen',
-		'new Heads of a class',
+		'New class teachers',
 	],
 	'additional_head_teacher' => [
 		'Zusätzliche Klassenlehrkraft',
-		'Additional Head of a class',
+		'Additional class teacher',
 	],
 	'additional_head_teachers' => [
 		'Zusätzliche Klassenlehrkräfte',
-		'Additional Heads of a class',
+		'Additional class teachers',
 	],
 	'configuration_classes' => [
 		'Klassen',
@@ -152,11 +152,11 @@ return [
 	],
 	'export_class' => [
 		'Sicherung der Klasse erstellen',
-		'Backup Class',
+		'Backup assessment data of class',
 	],
 	'students' => [
 		'Schülerinnen und Schüler',
-		'Members',
+		'Students',
 	],
 	'studentgradereports' => [
 		'Schülerzeugnisse',
@@ -320,7 +320,7 @@ return [
     ],
 	'class_owner' => [
 		'Neue Klassenlehrkraft',
-		'Class owner',
+		'Current class teacher',
 	],
 	'class_logo' => [
 		'Class logo',
@@ -793,7 +793,7 @@ return [
 
     'settings_only_learnsoziale' => [
             'nur Lern- und Sozialverhalten erfassen',
-            'use only learning and social behavior',
+            'assessment of learning and social behavior only',
     ],
     'settings_shoolname' => [
                 'Lernentwicklungsbericht: Schulname',
@@ -805,7 +805,7 @@ return [
     ],
     'settings_edustandarts' => [
                 'Bildungsstandards',
-                'Education standarts',
+                'Educational standards',
     ],
     'settings_edustandarts_description' => [
                 'Liste, mit Kommata getrennt',
@@ -813,11 +813,11 @@ return [
     ],
     'settings_bw_reports' => [
                 'Baden-Württemberg Berichte',
-                'Baden-Württemberg reports',
+                'Baden-Württemberg templates for reports',
     ],
     'settings_exacomp_verbeval' => [
                 'Exabis Kompetenzraster Notenverbalisierung verwenden',
-                'Exabis competences grid verbalise evaluation',
+                'Verbalized assessment from exabis competences',
     ],
     'settings_exacomp_assessment_categories' => [
                 'Use competence grids for assessment categories',
@@ -852,7 +852,7 @@ return [
 
 	'competencies' => [
 		'Fächerübergreifende Kompetenzen',
-		'Competencies',
+		'Competences',
 	],
 	'Note' => [
 		'Note',
@@ -885,14 +885,6 @@ return [
     'de:Daten der letzten Periode/Halbjahr wurden übernommen' => [
         null,
         'last period is adapted',
-    ],
-    'de:Max. 8 Zeilen / 550 Zeichen' => [
-        null,
-        'Max. 8 rows / 550 characters',
-    ],
-    'de:Max. 3 Zeilen / 250 Zeichen' => [
-        null,
-        'Max. 3 rows / 250 characters',
     ],
 	'grading' => [
 		'Bewertungsskala',
@@ -978,7 +970,7 @@ return [
 		'This setting allows you to use project-based assessment instead of class-assessment',
 	],
 	'blocksettings' => [
-		'Deckblattdaten',
+		'Deckblattdaten'
 	],
 	'delete_confirmation' => [
 		'Soll "{$a}" wirklich gelöscht werden?',
@@ -990,7 +982,7 @@ return [
 	],
 	'settings_competence_evaltype' => [
 		'Bewertungsschema',
-		'Competence evaluation type exastud',
+		'Assessment of competences is based on',
 	],
 	'settings_competence_evaltype_text' => [
 		'Text-Eintrag',
@@ -1006,7 +998,7 @@ return [
 	],
 	'settings_competence_evalpoints_limit' => [
 		'Höchste Punkteanzahl',
-		'Points limit exastud',
+		'Maximum points for assessment type "points"',
 	],
 	'settings_competence_evalpoints_limit_description' => [
 		'Wenn als Bewertungsschema "Punkte" gewählt ist.',
@@ -1014,12 +1006,32 @@ return [
 	],
 	'settings_eval_setup' => [
 		'Bewertungsschema Texteintrag',
-        'Evaluation grade scheme',
+        'Assessment grading values',
 	],
 	'settings_eval_setup_link' => [
 		'Bewertungskategorien bearbeiten',
         'Edit',
 	],
+    'settings_a2fa_requirement' => [
+        'A2fa im LEB',
+        'Use two-factor-authentication',
+    ],
+    'settings_a2fa_requirement_description' => [
+        'Exa2fa Plugin is not installed',
+        'Exa2fa Plugin is not installed',
+    ],
+    'settings_a2fa_requirement_def' => [
+        'Deaktiviert (Keine A2fa erforderlich)',
+        'Deactivated (no two-factor-authentication required)',
+    ],
+    'settings_a2fa_requirement_user_a2fa' => [
+        'A2fa für Benutzer erforderlich (z.B. Lehrernetz)',
+        'A2fa für Benutzer erforderlich (z.B. Lehrernetz)',
+    ],
+    'settings_a2fa_requirement_a2fa_timeout' => [
+        'A2fa für Benutzer erforderlich und erneute A2fa für LEB notwendig (z.B. päd. Netz)',
+        'A2fa für Benutzer erforderlich und erneute A2fa für LEB notwendig (z.B. päd. Netz)',
+    ],
 
 
 	// === grp3 ===
@@ -1181,8 +1193,8 @@ return [
             'Student review changed'
     ],
     'event_classownerupdated_name' => [
-            'Class owner updated',
-            'Class owner updated'
+            'Class teacher updated',
+            'Class teacher updated',
     ],
     'template_textarea_limits_error' => [
         'Please use defined limits for textarea fields',
@@ -1199,11 +1211,63 @@ return [
     ],
     'classowner_changed_message' => [
         'Sie haben die Klassenlehrkraft für die Klasse "{$a->classtitle}" erfolgreich geänder auf {$a->owner}. ',
-        'You changed the head of class "{$a->classtitle}" to {$a->owner}. So, you do not have access to edit this class from now!',
+        'You changed the class teacher "{$a->classtitle}" to {$a->owner}. So, you do not have access to edit this class from now!',
     ],
     'attention_owner_will_change' => [
         'Achtung, wenn sie eine neue Klassenlehrkraft zuteilen, haben sie keine Rechte mehr diese Klasse zu bearbeiten.',
-        'Please note: if you will change the head of own class - you will not have access to edit this class!',
+        'Please note: if you will change the teacher of own class - you will not have access to edit this class!',
     ],
 
+    'backup_class_protection' => [
+        'Sicherung von Klassen mit Passwort schützen',
+        'Passwort protection for class backups'
+    ],
+    'backup_description' => [
+        'Hier können Sie alle Tabellen des Lernentwicklungsberichts im sql-Format sichern. Das Einspielen der Sicherung führen Sie bitte mit einem Datenbank-Tool wie z.B. phpMyAdmin durch.',
+        'Create a backup of assessment data as an sql file. As an admin you can import this backup using a database tool like phphMyAdmin. Backups on teacher level are possible for their individual data.'
+    ],
+    'backup_go' => [
+        'Datenbank jetzt sichern',
+        'Backup Database now',
+    ],
+    'block_settings' => [
+        'Blockeinstellungen',
+        'Settings',
+    ],
+    'teacher_subject_role' => [
+        'Fachbezeichnung / Rolle',
+        'Description of subject/role of teacher',
+    ],
+    'teacher_for_project' => [
+        'Lehrkraft für Projektprüfung',
+        'Teacher for project assessment',
+    ],
+    'textblock' => [
+        'Formulierungsvorschläge',
+        'Text block',
+    ],
+    'learn_and_sociale' => [
+            'Lern- und Sozialverhalten',
+            'Learning and social behavior',
+    ],
+    'learn_and_sociale_for_head' => [
+            'Lern- und Sozialverhalten: Formulierungsvorschlag für Klassenlehrkraft',
+            'Learning and social behavior: for class teacher',
+    ],
+    'textarea_max' => [
+            'Max.',
+            'Max.',
+    ],
+    'textarea_rows' => [
+            'Zeilen',
+            'Rows',
+    ],
+    'textarea_chars' => [
+            'Zeichen',
+            'Characters',
+    ],
+    'textarea_charsleft' => [
+            'Zeichen verfügbar',
+            'characters left',
+    ],
 ];

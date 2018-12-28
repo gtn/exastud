@@ -588,10 +588,10 @@ function xmldb_block_exastud_upgrade($oldversion = 0) {
 
     if ($oldversion < 2018122603) {
         // add a couple default templates
-        $DB->delete_records('block_exastudreportsettings', ['id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_HALBJAHRESINFORNATION_KL11]);
-        block_exastud_fill_reportsettingstable(BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_HALBJAHRESINFORNATION_KL11);
-        $DB->delete_records('block_exastudreportsettings', ['id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_HALBJAHRESINFORNATION_KL11]);
-        block_exastud_fill_reportsettingstable(BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_HALBJAHRESINFORNATION_KL11);
+        $DB->delete_records('block_exastudreportsettings', ['id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_HALBJAHRESINFORMATION_KL11]);
+        block_exastud_fill_reportsettingstable(BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_HALBJAHRESINFORMATION_KL11);
+        $DB->delete_records('block_exastudreportsettings', ['id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_HALBJAHRESINFORMATION_KL11]);
+        block_exastud_fill_reportsettingstable(BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_HALBJAHRESINFORMATION_KL11);
         upgrade_block_savepoint(true, 2018122603, 'exastud');
     }
 

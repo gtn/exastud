@@ -214,7 +214,7 @@ if ($fromform = $studentform->get_data()) {
                                 'subjecttitle' => $subjectObjData->title,
                                 'oldvalue' => ($existingReview ? $existingReview->review : null),
                                 'value' => $fromform->vorschlag,
-                                'target' => 'Lern- und Sozialverhalten',
+                                'target' => block_exastud_get_string('learn_and_sociale'),
                                 'studentname' => $student->firstname.' '.$student->lastname]]);
             }
             break;

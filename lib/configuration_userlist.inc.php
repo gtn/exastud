@@ -56,7 +56,7 @@ defined('MOODLE_INTERNAL') || die();
 							<?php
 							if ($userlistType == 'teachers') {
 								$subjects = block_exastud_get_bildungsplan_subjects($class->bpid);
-								echo '<p><label for="classteacher_subjectid">'.block_exastud_trans('de:Fachbezeichnung / Rolle').'</label><br>';
+								echo '<p><label for="classteacher_subjectid">'.block_exastud_get_string('teacher_subject_role').'</label><br>';
 								echo '<select id="classteacher_subjectid" name="classteacher_subjectid" style="max-width: 250px">';
 								// no empty option
 								// echo '<option></option>';
@@ -80,11 +80,19 @@ defined('MOODLE_INTERNAL') || die();
 								echo '</p>';
 							} ?>
 						</div>
-						<input name="add" id="add" type="submit" value="◄ <?php echo block_exastud_get_string('add'); ?>"
+						<input name="add"
+                               id="add"
+                               type="submit"
+                               class="btn btn-default"
+                               value="◄ <?php echo block_exastud_get_string('add'); ?>"
 							   title="<?php print_string('add'); ?>"/>
 					</div>
 					<div id="removecontrols">
-						<input name="remove" id="remove" type="submit" value="<?php echo block_exastud_get_string('remove'); ?> ►"
+						<input name="remove"
+                               id="remove"
+                               type="submit"
+                               class="btn btn-default"
+                               value="<?php echo block_exastud_get_string('remove'); ?> ►"
 							   title="<?php print_string('remove'); ?>"/>
 					</div>
 				</td>
@@ -135,7 +143,11 @@ defined('MOODLE_INTERNAL') || die();
 										  getElementById('assignform').previoussearch.value=1;
 										  getElementById('assignform').submit();
 									 } "/>
-					<input name="search" id="search" type="submit" value="<?php print_string('search') ?>"/>
+					<input name="search"
+                           id="search"
+                           type="submit"
+                           class="btn btn-default"
+                           value="<?php print_string('search') ?>"/>
 					<?php
 					if (!empty($searchtext)) {
 						echo '<input name="showall" id="showall" type="submit" value="'.block_exastud_get_string('showall').'" />'."\n";

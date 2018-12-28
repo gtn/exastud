@@ -71,12 +71,12 @@ switch ($type) {
         $inputs = \block_exastud\print_templates::get_template_inputs($classstandarttemplate);
         $categories = [
             BLOCK_EXASTUD_DATA_ID_LERN_UND_SOZIALVERHALTEN => [
-                'title' => block_exastud_trans('de:Lern- und Sozialverhalten'),
+                'title' => block_exastud_get_string('learn_and_sociale'),
                 'cols' => @$inputs['learn_social_behavior']['cols'] ? @$inputs['learn_social_behavior']['cols'] : 50,
                 'lines' => @$inputs['learn_social_behavior']['lines'] ? @$inputs['learn_social_behavior']['lines'] : 8,
             ],
         ];
-        $classheader = $reviewclass->title.' - '.block_exastud_trans('de:Lern- und Sozialverhalten');
+        $classheader = $reviewclass->title.' - '.block_exastud_get_string('learn_and_sociale');
         break;
     case BLOCK_EXASTUD_DATA_ID_PRINT_TEMPLATE:
         $categories = block_exastud_get_student_print_template($class, $student->id)->get_inputs($type);
@@ -257,7 +257,7 @@ if ($type == BLOCK_EXASTUD_DATA_ID_LERN_UND_SOZIALVERHALTEN) {
 		}
 	}
 
-	echo '<legend>'.block_exastud_trans("de:Formulierungsvorschläge").'</legend>';
+	echo '<legend>'.block_exastud_get_string("textblock").'</legend>';
 
 	if ($vorschlaege) {
 		foreach ($vorschlaege as $vorschlag) {

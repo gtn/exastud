@@ -72,7 +72,7 @@ if ($frm = data_submitted()) {
                     'courseid' => $courseid,
                     'relateduserid' => $adduser,
                     'other' => ['subjectid' => $subjectid,
-                                'subjecttitle' => (@$subjectData->title ? $subjectData->title : 'Additional head of class'),
+                                'subjecttitle' => (@$subjectData->title ? $subjectData->title : block_exastud_get_string('additional_head_teacher')),
                                 'classtitle' => $class->title,
                                 'relatedusername' => $userData->firstname.' '.$userData->lastname]]);
 		}

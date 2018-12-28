@@ -47,12 +47,27 @@ defined('MOODLE_INTERNAL') || die();
 			</td>
 			<td id="buttonscell">
 			  <div id="addcontrols">
-			  	  <input name="addbasic" id="addbasic" type="submit" value="◄ <?php echo block_exastud_get_string('addallbasic'); ?>" title="<?php block_exastud_get_string('addallbasic'); ?>" />
+			  	  <input name="addbasic"
+                         id="addbasic"
+                         type="submit"
+                         class = 'btn btn-default'
+                         value="◄ <?php echo block_exastud_get_string('addallbasic'); ?>"
+                         title="<?php block_exastud_get_string('addallbasic'); ?>" />
                   <label for="addbasicalways" style="margin-bottom: 3rem; display: inline-block;" ><input name="addbasicalways" id="addbasicalways" type="checkbox" <?php if ($addbasicalways) { echo ' checked="checked" ';} ?> value="1" style="display: inline; width: 30px;" /><?php echo block_exastud_get_string('addallbasicalways'); ?></label>
-				  <input name="add" id="add" type="submit" value="◄ <?php echo block_exastud_get_string('add'); ?>" title="<?php print_string('add'); ?>" />
+				  <input name="add"
+                         id="add"
+                         type="submit"
+                         class = 'btn btn-default'
+                         value="◄ <?php echo block_exastud_get_string('add'); ?>"
+                         title="<?php print_string('add'); ?>" />
 			  </div>
 				<div id="removecontrols">
-				  <input name="remove" id="remove" type="submit" value="<?php echo block_exastud_get_string('remove'); ?> ►" title="<?php print_string('remove'); ?>" />
+				  <input name="remove"
+                         id="remove"
+                         type="submit"
+                         class = 'btn btn-default'
+                         value="<?php echo block_exastud_get_string('remove'); ?> ►"
+                         title="<?php print_string('remove'); ?>" />
 			  	</div>
 			</td>
 			<td valign="top">
@@ -106,7 +121,11 @@ defined('MOODLE_INTERNAL') || die();
 										  getElementById('assignform').previoussearch.value=1;
 										  getElementById('assignform').submit();
 									 } " />
-			   <input name="search" id="search" type="submit" value="<?php print_string('search') ?>" />
+			   <input name="search"
+                      id="search"
+                      type="submit"
+                      class = 'btn btn-default'
+                      value="<?php print_string('search') ?>" />
 			   <?php
 					if (!empty($searchtext)) {
 						echo '<input name="showall" id="showall" type="submit" value="'.block_exastud_get_string('showall',null,block_exastud_get_string('categories')).'" />'."\n";

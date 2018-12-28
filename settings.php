@@ -178,14 +178,14 @@ if ($ADMIN->fulltree) {
 	if (block_exastud_is_a2fa_installed()) {
 		$description = '';
 	} else {
-		$description = '<span style="color: red">'.block_exastud_trans('en:Exa2fa Plugin is not installed').'</span>';
+		$description = '<span style="color: red">'.block_exastud_get_string('settings_a2fa_requirement_description').'</span>';
 	}
 	$a2fa_requirement = [
-		'' => block_exastud_trans('de:Deaktiviert (Keine A2fa erforderlich)'),
-		'user_a2fa' => block_exastud_trans('de:A2fa für Benutzer erforderlich (z.B. Lehrernetz)'),
-		'a2fa_timeout' => block_exastud_trans('de:A2fa für Benutzer erforderlich und erneute A2fa für LEB notwendig (z.B. päd. Netz)'),
+		'' => block_exastud_get_string('settings_a2fa_requirement_def'),
+		'user_a2fa' => block_exastud_get_string('settings_a2fa_requirement_user_a2fa'),
+		'a2fa_timeout' => block_exastud_get_string('settings_a2fa_requirement_a2fa_timeout'),
 	];
-	$settings->add(new admin_setting_configselect('exastud/a2fa_requirement', block_exastud_trans('de:A2fa im LEB'), $description, '', $a2fa_requirement));
+	$settings->add(new admin_setting_configselect('exastud/a2fa_requirement', block_exastud_get_string('settings_a2fa_requirement'), $description, '', $a2fa_requirement));
 
 	$settings->add(new admin_setting_configstoredfile('exastud/school_logo',
                             block_exastud_get_string('school_logo'),
@@ -199,6 +199,5 @@ if ($ADMIN->fulltree) {
 
     $settings->add(new admin_setting_configcheckbox('exastud/only_learnsociale_reports', block_exastud_get_string('settings_only_learnsoziale'), '', 0));
 
-
-	$settings->add(new admin_setting_configcheckbox('exastud/export_class_password', block_exastud_trans('de:Sicherung von Klassen mit Passwort schützen'), '', 0));
+	$settings->add(new admin_setting_configcheckbox('exastud/export_class_password', block_exastud_get_string('backup_class_protection'), '', 0));
 }

@@ -37,10 +37,10 @@ if (!$reviewclass || !$class) {
 if ($type == BLOCK_EXASTUD_DATA_ID_LERN_UND_SOZIALVERHALTEN) {
 	$categories = [
 		BLOCK_EXASTUD_DATA_ID_LERN_UND_SOZIALVERHALTEN => [
-			'title' => block_exastud_trans('de:Lern- und Sozialverhalten'),
+			'title' => block_exastud_get_string('learn_and_sociale'),
 		],
 	];
-	$classheader = $reviewclass->title.' - '.block_exastud_trans('de:Lern- und Sozialverhalten');
+	$classheader = $reviewclass->title.' - '.block_exastud_get_string('learn_and_sociale');
 } elseif ($type == BLOCK_EXASTUD_DATA_ID_PRINT_TEMPLATE) {
 	$categories = [
 		BLOCK_EXASTUD_DATA_ID_PRINT_TEMPLATE => [
