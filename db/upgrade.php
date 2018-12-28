@@ -595,6 +595,30 @@ function xmldb_block_exastud_upgrade($oldversion = 0) {
         upgrade_block_savepoint(true, 2018122603, 'exastud');
     }
 
+    if ($oldversion < 2018122801) {
+        // change sources
+        $DB->execute(' UPDATE {block_exastudsubjects} SET sourceinfo = \'bw-bp2004-ev\' WHERE sourceinfo = \'bw-bp2004-rev\'');
+        $DB->execute(' UPDATE {block_exastudsubjects} SET sourceinfo = \'bw-bp2016-ev\' WHERE sourceinfo = \'bw-bp2016-rev\'');
+        $DB->execute(' UPDATE {block_exastudsubjects} SET sourceinfo = \'bw-bp2016-profil-imp\' WHERE sourceinfo = \'bw-bp2016-imp\'');
+        // change default subject titles
+        $titlestochange = array(
+                'alev' => 'Religionslehre (alev)',
+                'ak' => 'Religionslehre (ak)',
+                'eth' => 'Ethik',
+                'ev' => 'Religionslehre (ev)',
+                'isl' => 'Religionslehre (isl)',
+                'jd' => 'Religionslehre (jd)',
+                'rk' => 'Religionslehre (rk)',
+                'orth' => 'Religionslehre (orth)',
+                'syr' => 'Religionslehre (syr)',
+        );
+        foreach ($titlestochange as $key => $newTitle) {
+            $DB->execute(' UPDATE {block_exastudsubjects} SET title = ? WHERE sourceinfo LIKE \'bw-bp20%-'.$key.'\'',
+                    [$newTitle]);
+        }
+        upgrade_block_savepoint(true, 2018122801, 'exastud');
+    }
+
     block_exastud_insert_default_entries();
 	block_exastud_check_profile_fields();
 

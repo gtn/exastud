@@ -18,15 +18,15 @@ return [
 			'subjects' =>
 				block_exastud_str_to_csv('
 sourceinfo;title;shorttitle;always_print
-bw-bp2016-alev;Alevitische Religionslehre;alev;0
-bw-bp2016-ak;Altkatholische Religionslehre;ak;0
+bw-bp2016-alev;Religionslehre (alev);alev;0
+bw-bp2016-ak;Religionslehre (ak);ak;0
 bw-bp2016-eth;Ethik;eth;0
-bw-bp2016-rev;Evangelische Religionslehre;rev;0
-bw-bp2016-isl;Islamische Religionslehre sunnitischer Prägung;isl;0
-bw-bp2016-jd;Jüdische Religionslehre;jd;0
-bw-bp2016-rk;Katholische Religionslehre;rk;0
-bw-bp2016-orth;Orthodoxe Religionslehre;orth;0
-bw-bp2016-syr;Syrisch-Orthodoxe Religionslehre;syr;0
+bw-bp2016-ev;Religionslehre (ev);rev;0
+bw-bp2016-isl;Religionslehre (isl);isl;0
+bw-bp2016-jd;Religionslehre (jd);jd;0
+bw-bp2016-rk;Religionslehre (rk);rk;0
+bw-bp2016-orth;Religionslehre (orth);orth;0
+bw-bp2016-syr;Religionslehre (syr);syr;0
 bw-bp2016-d;Deutsch;D;1
 bw-bp2016-e;Englisch;E;1
 bw-bp2016-m;Mathematik;M;1
@@ -60,15 +60,15 @@ bw-bp2016-profil-sp;Profilfach Sport;Profil Sp;0
 			'subjects' =>
 				block_exastud_str_to_csv('
 sourceinfo;title;shorttitle;always_print
-bw-bp2004-alev;Alevitische Religionslehre;alev;0
-bw-bp2004-ak;Altkatholische Religionslehre;ak;0
+bw-bp2004-alev;Religionslehre (alev);alev;0
+bw-bp2004-ak;Religionslehre (ak);ak;0
 bw-bp2004-eth;Ethik;eth;0
-bw-bp2004-rev;Evangelische Religionslehre;rev;0
-bw-bp2004-isl;Islamische Religionslehre sunnitischer Prägung;isl;0
-bw-bp2004-jd;Jüdische Religionslehre;jd;0
-bw-bp2004-rk;Katholische Religionslehre;rk;0
-bw-bp2004-orth;Orthodoxe Religionslehre;orth;0
-bw-bp2004-syr;Syrisch-Orthodoxe Religionslehre;syr;0
+bw-bp2004-ev;Religionslehre (ev);ev;0
+bw-bp2004-isl;Religionslehre (isl);isl;0
+bw-bp2004-jd;Religionslehre (jd);jd;0
+bw-bp2004-rk;Religionslehre (rk);rk;0
+bw-bp2004-orth;Religionslehre (orth);orth;0
+bw-bp2004-syr;Religionslehre (syr);syr;0
 bw-bp2004-d;Deutsch;D;1
 bw-bp2004-m;Mathematik;M;1
 bw-bp2004-e;Englisch;E;1
