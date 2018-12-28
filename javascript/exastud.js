@@ -308,5 +308,20 @@ $.extend(window.block_exastud, {
             updateLeftMessage($(this));
         });
     });
+
+    $(function() {
+        function updateLinkBySelectedTeacher(e) {
+            if ($('#exastud_link_to_class_teacher').length) {
+                $('#exastud_link_to_class_teacher').attr('href', function(i, a){
+                    console.log(e.val());
+                    return a.replace( /(id=)[0-9]+/ig, '$1' + e.val() );
+                });
+            }
+        }
+        updateLinkBySelectedTeacher($('select#id_userid'));
+        $(document).on('change', 'select#id_userid', function() {
+            updateLinkBySelectedTeacher($(this));
+        });
+    });
  
 }();

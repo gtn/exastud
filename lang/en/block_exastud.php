@@ -338,3 +338,4 @@ $string['textarea_max'] = 'Max.';
 $string['textarea_rows'] = 'Rows';
 $string['textarea_chars'] = 'Characters';
 $string['textarea_charsleft'] = 'characters left';
+$string['attention_send_message_to_classteacher'] = 'Do not forget to <a id="exastud_link_to_class_teacher" href="{$a->messagehref}" target="_blank">send a message</a> to the new class teacher about his new class';

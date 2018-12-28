@@ -1270,4 +1270,8 @@ return [
             'Zeichen verfügbar',
             'characters left',
     ],
+    'attention_send_message_to_classteacher' => [
+        'Do not forget to <a id="exastud_link_to_class_teacher" href="{$a->messagehref}" target="_blank">send a message</a> to the new class teacher about his new class',
+        'Do not forget to <a id="exastud_link_to_class_teacher" href="{$a->messagehref}" target="_blank">send a message</a> to the new class teacher about his new class',
+    ],
 ];

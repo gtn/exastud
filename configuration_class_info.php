@@ -145,8 +145,12 @@ if ($classform->is_cancelled()) {
             $a = new stdClass();
             $a->classtitle = $newclass->title;
             $a->owner = fullname(block_exastud_get_user($newclass->userid));
+            $message = block_exastud_get_string('classowner_changed_message', null, $a);
+            $link = new moodle_url('/message/index.php', ['id' => '0']);
+            $a->messagehref = $link->out();
+            $message .= ($message ? '<br />' : '').block_exastud_get_string('attention_send_message_to_classteacher', null, $a);
             redirect('configuration_classes.php?courseid='.$courseid,
-                        block_exastud_get_string('classowner_changed_message', null, $a),
+                    $message,
                     null,
                     \core\output\notification::NOTIFY_INFO);
         }

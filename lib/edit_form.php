@@ -46,7 +46,10 @@ class class_edit_form extends moodleform {
 
         $bps = g::$DB->get_records_menu('block_exastudbp', null, 'sorting', 'id, title');
         if (!$this->_customdata['for_siteadmin']) {
-            $mform->addElement('select', 'bpid', block_exastud_get_string('class_educationplan').':', $bps,
+            $mform->addElement('select',
+                    'bpid',
+                    block_exastud_get_string('class_educationplan').':',
+                    $bps,
                     ['class' => 'exastud-review-message',
                      'data-exastudmessage' => block_exastud_get_string('attention_plan_will_change')]);
         } else {
@@ -84,10 +87,18 @@ class class_edit_form extends moodleform {
                 $options[$teacher->id] = $teacher->lastname.' '.$teacher->firstname;
             }
             $selectboxoptions = array('class' => 'exastud-review-message');
+            $link = new moodle_url('/message/index.php', ['id' => '0']);
+            $a = new stdClass();
+            $a->messagehref = $link->out();
+            $selectboxoptions['data-exastudmessage'] = '';
             if (!block_exastud_is_siteadmin()) {
-                $selectboxoptions['data-exastudmessage'] = block_exastud_get_string('attention_owner_will_change');
+                $selectboxoptions['data-exastudmessage'] .= block_exastud_get_string('attention_owner_will_change');
             }
-            $mform->addElement('select', 'userid', block_exastud_get_string('class_owner'), $options,
+            $selectboxoptions['data-exastudmessage'] .= ($selectboxoptions['data-exastudmessage'] ? '<br>' : '').block_exastud_get_string('attention_send_message_to_classteacher', null, $a);
+            $mform->addElement('select',
+                    'userid',
+                    block_exastud_get_string('class_owner'),
+                    $options,
                     $selectboxoptions);
         }
 
