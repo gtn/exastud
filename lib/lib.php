@@ -312,11 +312,18 @@ function block_exastud_get_class_additional_head_teachers($classid) {
 }
 
 function block_exastud_get_teacher_classes($userid) {
-    return g::$DB->get_records_sql("
-			SELECT c.id, c.id AS record_id
+    $ownclasses = g::$DB->get_records_sql("
+			SELECT DISTINCT c.id, c.id AS record_id
 			FROM {block_exastudclass} c
 		    WHERE c.userid = ?			
-		", [$userid]);}
+		", [$userid]);
+    $classesforteaching = g::$DB->get_records_sql("
+			SELECT DISTINCT c.id, c.id AS record_id
+			FROM {block_exastudclassteachers} c
+		    WHERE c.teacherid = ?			
+		", [$userid]);
+    return array_merge($ownclasses, $classesforteaching);
+}
 
 function block_exastud_get_head_teacher_lern_und_sozialverhalten_classes() {
 	$classes = block_exastud_get_head_teacher_classes_all(block_exastud_get_active_or_next_period()->id);
