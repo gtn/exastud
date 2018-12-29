@@ -1271,7 +1271,11 @@ return [
             'characters left',
     ],
     'attention_send_message_to_classteacher' => [
+        'Bitte <a id="exastud_link_to_class_teacher" href="{$a->messagehref}" target="_blank">benachrichtigen</a> Sie die neue Klassenlehrkraft über die Neuzuteilung.',
         'Do not forget to <a id="exastud_link_to_class_teacher" href="{$a->messagehref}" target="_blank">send a message</a> to the new class teacher about his new class',
-        'Do not forget to <a id="exastud_link_to_class_teacher" href="{$a->messagehref}" target="_blank">send a message</a> to the new class teacher about his new class',
+    ],
+    'attention_admin_cannot_be_classteacher' => [
+        'You are site admin. You must not use this account for manage own classes. Use especially \'class teacher\' account for that!',
+        'You are site admin. You must not use this account for manage own classes. Use especially \'class teacher\' account for that!',
     ],
 ];

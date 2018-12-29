@@ -339,3 +339,4 @@ $string['textarea_rows'] = 'Rows';
 $string['textarea_chars'] = 'Characters';
 $string['textarea_charsleft'] = 'characters left';
 $string['attention_send_message_to_classteacher'] = 'Do not forget to <a id="exastud_link_to_class_teacher" href="{$a->messagehref}" target="_blank">send a message</a> to the new class teacher about his new class';
+$string['attention_admin_cannot_be_classteacher'] = 'You are site admin. You must not use this account for manage own classes. Use especially \'class teacher\' account for that!';

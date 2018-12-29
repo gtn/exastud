@@ -31,6 +31,7 @@ class block_exastud_renderer extends plugin_renderer_base {
 
 		$last_item_name = '';
 		$tabs = array();
+        $activeItem = null;
 
 		if (block_exastud_get_active_or_next_period() && block_exastud_has_global_cap(BLOCK_EXASTUD_CAP_MANAGE_CLASSES)) {
 			$tabs['configuration_classes'] = new tabobject('configuration_classes', new moodle_url('/blocks/exastud/configuration_classes.php', ['courseid' => g::$COURSE->id]), block_exastud_get_string('configuration_classes'), '', true);
@@ -163,11 +164,12 @@ class block_exastud_renderer extends plugin_renderer_base {
 					$item['name'] = @block_exastud_get_string($item['id']);
 				}
 			}
-
+            $activeItem = @$item['id'];
 			if (!empty($item['id']) && $tabobj = $tabtree->find($item['id'])) {
 				// overwrite active and selected
 				$tabobj->active = true;
 				$tabobj->selected = true;
+
 				if (empty($item['link']) && $tabobj->link) {
 					$item['link'] = $tabobj->link;
 				}
@@ -192,7 +194,8 @@ class block_exastud_renderer extends plugin_renderer_base {
 		if (@$options['content_title']) {
             $content .= '<h2>'.$options['content_title'].'</h2>';
         }
-		$content .= '<div id="block_exastud">';
+
+        $content .= '<div id="block_exastud">';
 
 		if (g::$PAGE->pagelayout != 'embedded' && !@$options['is_login_a2fa_timeout_page']) {
 			if (block_exastud_get_a2fa_requirement() == 'a2fa_timeout') {
@@ -229,6 +232,11 @@ class block_exastud_renderer extends plugin_renderer_base {
 				$content .= $this->render($tabtree);
 			}
 		}
+        // message to site admin
+        if (is_siteadmin() && ($class || in_array($activeItem, ['configuration_classes', 'review', 'report']))) {
+            $output = block_exastud_get_renderer();
+            $content .= $output->notification(block_exastud_get_string('attention_admin_cannot_be_classteacher'), 'error');
+        }
 
 		return $content;
 	}
