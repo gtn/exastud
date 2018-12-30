@@ -1278,4 +1278,16 @@ return [
         'Klassen können nur als Klassenlehrkraft erstellt werden. Bitte loggen Sie sich als Klassenlehrkraft ein, um eine Klasse zu erstellen.',
         'Classes can only be defined in a class teacher role. Please log in as a class teacher to define a class.',
     ],
+    'subject_category' => [
+        'Kategorie',
+        'Category'
+    ],
+    'subject_category_m' => [
+        'maßgebliches Fach',
+        'relevant Subject'
+    ],
+    'subject_category_b' => [
+        'beste Note of "Fächer"',
+        'best grade'
+    ],
 ];

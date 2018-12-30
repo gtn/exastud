@@ -36,6 +36,10 @@
 	margin-right: 140px;
 	margin-left: 10px;
 }
+#exa-list input[name=not_relevant] {
+	margin-right: 40px;
+	margin-left: 10px;
+}
 
 #exa-list li.ui-state-disabled, #exa-list li.ui-state-disabled input:not(button) {
 	cursor: not-allowed !important;
@@ -69,10 +73,13 @@
 }
 #exa-list div.header [for-field=title]{
 	margin: 0 0 0 5px;
-	width: 410px;
+	width: 400px;
 }
 #exa-list div.header [for-field=shorttitle]{
-	width: 170px;
+	width: 160px;
+}
+#exa-list div.header [for-field=not_relevant] {
+	margin-left: 0px;
 }
 #exa-list div.header [for-field=always_print]{
 }

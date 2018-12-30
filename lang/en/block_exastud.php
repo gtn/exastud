@@ -340,3 +340,6 @@ $string['textarea_chars'] = 'Characters';
 $string['textarea_charsleft'] = 'characters left';
 $string['attention_send_message_to_classteacher'] = 'Do not forget to <a id="exastud_link_to_class_teacher" href="{$a->messagehref}" target="_blank">send a message</a> to the new class teacher about his new class';
 $string['attention_admin_cannot_be_classteacher'] = 'Classes can only be defined in a class teacher role. Please log in as a class teacher to define a class.';
+$string['subject_category'] = 'Category';
+$string['subject_category_m'] = 'relevant Subject';
+$string['subject_category_b'] = 'best grade';

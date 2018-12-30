@@ -241,7 +241,7 @@ class student_edit_form extends moodleform {
                         block_exastud_get_string('textarea_max').
                             '<span id="max_vorschlag_rows">'.$vorschlag_limits['rows'].' '.block_exastud_get_string('textarea_rows').'</span>'.
                             ' / '.
-                            '<span id="max_vorschlag_chars">'.($vorschlag_limits['rows'] * $vorschlag_limits['chars_per_row']).' '.block_exastud_get_string('textarea_chars').'</span>'.
+                            '<span id="max_vorschlag_chars">'.(/*$vorschlag_limits['rows'] * */$vorschlag_limits['chars_per_row']).' '.block_exastud_get_string('textarea_chars').'</span>'.
                             '<span class="exastud-textarea-left-block">'.block_exastud_get_string('textarea_charsleft').': '.
                             '<span id="left_vorschlag_rows"><span class="exastud-value">-</span> '.block_exastud_get_string('textarea_rows').'</span>'.
                             ' / '.
@@ -279,7 +279,7 @@ class student_edit_form extends moodleform {
                         block_exastud_get_string('textarea_max').
                                 '<span id="max_review_rows">'.$subject_limits['rows'].' '.block_exastud_get_string('textarea_rows').'</span>'.
                                 ' / '.
-                                '<span id="max_review_chars">'.($subject_limits['rows'] * $subject_limits['chars_per_row']).' '.block_exastud_get_string('textarea_chars').'</span>'.
+                                '<span id="max_review_chars">'.(/*$subject_limits['rows'] * */$subject_limits['chars_per_row']).' '.block_exastud_get_string('textarea_chars').'</span>'.
                                 '<span class="exastud-textarea-left-block">'.block_exastud_get_string('textarea_charsleft').': '.
                                 '<span id="left_review_rows"><span class="exastud-value">-</span> '.block_exastud_get_string('textarea_rows').'</span>'.
                                 ' / '.
@@ -362,7 +362,7 @@ class student_other_data_form extends moodleform {
                         block_exastud_get_string('textarea_max').
                                 '<span id="max_'.$dataid.'_rows">'.$textarea_limits['rows'].' '.block_exastud_get_string('textarea_rows').'</span>'.
                                 ' / '.
-                                '<span id="max_'.$dataid.'_chars">'.($textarea_limits['rows'] * $textarea_limits['chars_per_row']).' '.block_exastud_get_string('textarea_chars').'</span>'.
+                                '<span id="max_'.$dataid.'_chars">'.(/*$textarea_limits['rows'] * */$textarea_limits['chars_per_row']).' '.block_exastud_get_string('textarea_chars').'</span>'.
                                 '<span class="exastud-textarea-left-block">'.block_exastud_get_string('textarea_charsleft').': '.
                                 '<span id="left_'.$dataid.'_rows"><span class="exastud-value">-</span> '.block_exastud_get_string('textarea_rows').'</span>'.
                                 ' / '.
