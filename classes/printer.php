@@ -156,6 +156,7 @@ class printer {
 		// preparation data from template settings
         $marker_configurations = $template->get_marker_configurations('all', $class, $student);
         $data = array_merge($data, $marker_configurations);
+
         // preparation data from images
         $inputs = print_templates::get_template_inputs($templateid, 'all');
         if ($inputs && count($inputs) > 0) {
@@ -341,8 +342,8 @@ class printer {
 					$contentId = static::toTemplateVarId($subject->title);
 				}
 
-				$data[$contentId] = static::spacerIfEmpty(@$subjectData->review);
-				if($subject->no_niveau == 1){
+				$data[$contentId] = block_exastud_cropStringByInputLimitsFromTemplate(static::spacerIfEmpty(@$subjectData->review), $templateid, 'subjects');
+				if ($subject->no_niveau == 1){
 				    $niveau = 'Niveau G / M / E';
 				} else {
 				    $niveau = \block_exastud\global_config::get_niveau_option_title(@$subjectData->niveau) ?: @$subjectData->niveau;
@@ -1646,7 +1647,7 @@ class printer {
 
 		return \block_exacomp\api::get_comp_tree_for_exastud($studentid);
 	}
-	
+
 }
 
 class Slice {

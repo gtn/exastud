@@ -820,7 +820,7 @@ return [
                 'Verbalized assessment from exabis competences',
     ],
     'settings_exacomp_assessment_categories' => [
-                'Use competence grids for assessment categories',
+                'Kompetenzraster für Beurteilungskategorien verwenden',
                 'Use competence grids for assessment categories',
     ],
 
@@ -1013,7 +1013,7 @@ return [
         'Edit',
 	],
     'settings_a2fa_requirement' => [
-        'A2fa im LEB',
+        'Zwei-Faktoren-Authentifizierung im Lernentwicklungsbericht aktivieren',
         'Use two-factor-authentication',
     ],
     'settings_a2fa_requirement_description' => [
@@ -1275,7 +1275,7 @@ return [
         'Do not forget to <a id="exastud_link_to_class_teacher" href="{$a->messagehref}" target="_blank">send a message</a> to the new class teacher about his new class',
     ],
     'attention_admin_cannot_be_classteacher' => [
-        'You are site admin. You must not use this account for manage own classes. Use especially \'class teacher\' account for that!',
-        'You are site admin. You must not use this account for manage own classes. Use especially \'class teacher\' account for that!',
+        'Klassen können nur als Klassenlehrkraft erstellt werden. Bitte loggen Sie sich als Klassenlehrkraft ein, um eine Klasse zu erstellen.',
+        'Classes can only be defined in a class teacher role. Please log in as a class teacher to define a class.',
     ],
 ];

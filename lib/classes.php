@@ -792,6 +792,10 @@ class print_templates {
                                 $inputValue = '---'; // spacer if empty
                             } else {
                                 $inputValue = $val;
+                                // crop for input limits
+                                if ($input['type'] == 'textarea') {
+                                    $inputValue = block_exastud_cropStringByInputLimitsFromTemplate($inputValue, $templateid, $key);
+                                }
                             }
                         } else {
                             $inputValue = ' --- ';

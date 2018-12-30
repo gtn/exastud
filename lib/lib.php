@@ -1595,7 +1595,6 @@ function block_exastud_get_date_of_birth($userid) {
 
 function block_exastud_get_review($classid, $subjectid, $studentid) {
 	$data = block_exastud_get_subject_student_data($classid, $subjectid, $studentid);
-
 	if (!isset($data->review)) {
 		// always fill review property
 		$data->review = null;
@@ -2507,6 +2506,32 @@ function block_exastud_get_exacomp_assessment_categories() {
         return get_config('exastud', 'use_exacomp_assessment_categories');
     }
     return false;
+}
+
+function block_exastud_cropStringByInputLimitsFromTemplate($string, $templateid, $inputName, $defaultCharsPerRow = 80, $defaultRows = 8) {
+    $tempSubjectContent = $string;
+    $tempContentRows = array();
+    $inputs = \block_exastud\print_templates::get_template_inputs($templateid, 'all');
+    if ($inputs && count($inputs) > 0 && array_key_exists($inputName, $inputs) && count($inputs[$inputName]) > 0) {
+        $template_inputparams = $inputs[$inputName];
+    } else {
+        $template_inputparams = array();
+    }
+    $chars_per_row = @$template_inputparams['cols'] ? $template_inputparams['cols'] : $defaultCharsPerRow;
+    $rows = @$template_inputparams['lines'] ? $template_inputparams['lines'] : $defaultRows;
+    // crop content via input limits
+    $line = strtok($tempSubjectContent, "\r\n");
+    $i = 0;
+    while ($line !== false) {
+        $i++;
+        if ($i > $rows) {
+            $line = false;
+        } else {
+            $tempContentRows[] = trim(substr($line, 0, $chars_per_row));
+            $line = strtok("\r\n");
+        }
+    }
+    return implode("\r\n", $tempContentRows);
 }
 
 /*
