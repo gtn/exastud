@@ -36,7 +36,7 @@
 	margin-right: 140px;
 	margin-left: 10px;
 }
-#exa-list input[name=not_relevant] {
+#exa-list input[name=relevant] {
 	margin-right: 40px;
 	margin-left: 10px;
 }
@@ -78,7 +78,7 @@
 #exa-list div.header [for-field=shorttitle]{
 	width: 160px;
 }
-#exa-list div.header [for-field=not_relevant] {
+#exa-list div.header [for-field=relevant] {
 	margin-left: 0px;
 }
 #exa-list div.header [for-field=always_print]{
