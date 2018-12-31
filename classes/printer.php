@@ -871,14 +871,14 @@ class printer {
 		$temp_file = tempnam($CFG->tempdir, 'exastud');
         $templateProcessor->saveAs($temp_file);
 		//change ending for dotx files
-		if (in_array($templateid, [
+		/*if (in_array($templateid, [
                 BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_ABGANGSZEUGNIS_FOE,
                 BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_HALBJAHR_ZEUGNIS_FOE,
         ])) {
 			$filename = ($certificate_issue_date_text ? preg_replace('/[\\/]/', '-', $certificate_issue_date_text) : date('Y-m-d'))."-".$template->get_name()."-{$class->title}-{$student->lastname}-{$student->firstname}.dotx";
-		} else {
+		} else {*/
 			$filename = ($certificate_issue_date_text ? preg_replace('/[\\/]/', '-', $certificate_issue_date_text) : date('Y-m-d'))."-".$template->get_name()."-{$class->title}-{$student->lastname}-{$student->firstname}.docx";
-		}
+		//}
 
 		return (object)[
 			'temp_file' => $temp_file,
@@ -1724,12 +1724,23 @@ class TemplateProcessor extends \PhpOffice\PhpWord\TemplateProcessor {
 
 	function setValue($search, $replace, $limit = self::MAXIMUM_REPLACEMENTS_DEFAULT) {
 		$replace = $this->escape($replace);
+		// if the marker ${marker} is in the some element (form, taxtblock,...) he is inserting in something like w:val="${marker}"
+        // and we does not need to replace linebreaks.
+        // check at least one marker in the val=""
+        //$tempDocumentMainPart = $this->getDocumentMainPart();
+        //$tempDocumentMainPart = preg_replace('/<(.*)val="(.*)\${'.$search.'}(.*)"(.*)>/', '<${1}val="${2}\${'.$search.'--}${3}"${4}>', $tempDocumentMainPart); // TODO: check this!!
+        //$this->setDocumentMainPart($tempDocumentMainPart);
+        //echo "<pre>debug:<strong>printer.php:1731</strong>\r\n"; print_r($this->tempDocumentMainPart); echo '</pre>'; exit; // !!!!!!!!!! delete it
+        //} else {
+        //    $replaceNL = true;
+        //}
+
 		$replace = str_replace([
 			"\r",
 			"\n",
 		], [
 			'',
-			'</w:t><w:br/><w:t>',
+            '</w:t><w:br/><w:t>',
 		], $replace);
 
 		return $this->setValueRaw($search, $replace, $limit);

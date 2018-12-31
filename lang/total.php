@@ -543,7 +543,7 @@ return [
             'Preview'
     ],
     'report_select_all' => [
-            'als Datei speichern',
+            'Alles markieren',
             'Select all'
     ],
     'report_selectdeselect_all' => [
@@ -607,7 +607,7 @@ return [
             'Date of birth',
     ],
     'report_settings_setting_placeofbirth' => [
-            'Gebursort',
+            'Geburtsort',
             'Place of birth',
     ],
     'report_settings_setting_learninggroup' => [

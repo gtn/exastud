@@ -322,7 +322,12 @@ function block_exastud_get_teacher_classes($userid) {
 			FROM {block_exastudclassteachers} c
 		    WHERE c.teacherid = ?			
 		", [$userid]);
-    return array_merge($ownclasses, $classesforteaching);
+    $classesforprojects = g::$DB->get_records_sql("
+			SELECT DISTINCT d.classid, d.classid AS record_id
+			FROM {block_exastuddata} d
+		    WHERE d.value = ? AND d.name = 'project_teacher' AND d.subjectid = 0
+		", [$userid]);
+    return array_merge($ownclasses, $classesforteaching, $classesforprojects);
 }
 
 function block_exastud_get_head_teacher_lern_und_sozialverhalten_classes() {
@@ -1941,8 +1946,22 @@ function block_exastud_get_default_templates() {
                     'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_DEFAULT_REPORT,
                     'name' => 'Standard Zeugnis',
                     'file' => 'default_report',
+                    'year' => '1',
+                    'report_date' => '1',
+                    'student_name' => '1',
+                    'date_of_birth' => '1',
+                    'place_of_birth' => '1',
+                    'learning_group' => '1',
+                    'class' => '1',
+                    'focus' => '1',
                     'grades' => $grades_1_bis_6,
                     'inputs' => [
+                            'learn_social_behavior' => [
+                                    'title' => block_exastud_get_string('learn_and_sociale'),
+                                    'type' => 'textarea',
+                                    'lines' => 8,
+                                    'cols' => 90,
+                            ],
                             'comments' => [
                                     'title' => block_exastud_trans('de:Bemerkungen'),
                                     'type' => 'textarea',
@@ -1953,18 +1972,43 @@ function block_exastud_get_default_templates() {
                     'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_ANLAGE_ZUM_LERNENTWICKLUNGSBERICHT,
                     'name' => 'Anlage',
                     'file' => 'Anlage zum Lernentwicklungsbericht',
-                    'inputs' => [],
+                    'year' => '1',
+                    'report_date' => '1',
+                    'student_name' => '1',
+                    'date_of_birth' => '1',
+                    'place_of_birth' => '1',
+                    'learning_group' => '1',
+                    'class' => '1',
+                    'focus' => '1',
+                    'inputs' => [
+                    ],
             ],
             'Anlage Alt' => [
                     'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_ANLAGE_ZUM_LERNENTWICKLUNGSBERICHTALT,
                     'name' => 'Anlage Alt',
                     'file' => 'Anlage zum LernentwicklungsberichtAlt',
+                    'year' => '1',
+                    'report_date' => '1',
+                    'student_name' => '1',
+                    'date_of_birth' => '1',
+                    'place_of_birth' => '1',
+                    'learning_group' => '1',
+                    'class' => '1',
+                    'focus' => '1',
                     'inputs' => [],
             ],
             'BP 2004/Zertifikat fuer Profilfach' => [
                     'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_16_ZERTIFIKAT_FUER_PROFILFACH,
                     'name' => 'Zertifikat für Profilfach',
                     'file' => 'BP 2004/BP2004_16_Zertifikat_fuer_Profilfach',
+                    'year' => '1',
+                    'report_date' => '1',
+                    'student_name' => '1',
+                    'date_of_birth' => '1',
+                    'place_of_birth' => '1',
+                    'learning_group' => '1',
+                    'class' => '1',
+                    'focus' => '1',
                     'grades' => [],
                     'inputs' => [
                             'besondere_kompetenzen' => [
@@ -1978,8 +2022,20 @@ function block_exastud_get_default_templates() {
                     'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_ANLAGE_PROJEKTPRUEFUNG_HS,
                     'name' => 'Beiblatt zur Projektprüfung HSA',
                     'file' => 'BP 2004/BP2004_GMS_Anlage_Projektpruefung_HS',
+                    'year' => '1',
+                    'report_date' => '1',
+                    'student_name' => '1',
+                    'date_of_birth' => '1',
+                    'place_of_birth' => '1',
+                    'learning_group' => '1',
+                    'class' => '1',
+                    'focus' => '1',
                     'grades' => $grades_lang,
                     'inputs' => [
+                        'projekt_thema' => [
+                                'title' => 'Projektprüfung: Thema',
+                                'type' => 'text',
+                        ],
                         'projekt_text3lines' => [
                             'title' => 'Projektthema',
                             'type' => 'textarea',
@@ -2001,8 +2057,22 @@ function block_exastud_get_default_templates() {
                     'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_HALBJAHR_LERNENTWICKLUNGSBERICHT,
                     'name' => 'BP 2016 GMS Zeugnis 1.HJ',
                     'file' => 'BP 2016/BP2016_GMS_Halbjahr_Lernentwicklungsbericht',
+                    'year' => '1',
+                    'report_date' => '1',
+                    'student_name' => '1',
+                    'date_of_birth' => '1',
+                    'place_of_birth' => '1',
+                    'learning_group' => '1',
+                    'class' => '1',
+                    'focus' => '1',
                     'grades' => $grades_mit_plus_minus_bis,
                     'inputs' => [
+                            'learn_social_behavior' => [
+                                    'title' => block_exastud_get_string('learn_and_sociale'),
+                                    'type' => 'textarea',
+                                    'lines' => 8,
+                                    'cols' => 90,
+                            ],
                             'comments' => [
                                     'title' => block_exastud_trans('de:Bemerkungen'),
                                     'type' => 'textarea',
@@ -2013,8 +2083,22 @@ function block_exastud_get_default_templates() {
                     'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_JAHRESZEUGNIS_LERNENTWICKLUNGSBERICHT,
                     'name' => 'BP 2016 GMS Zeugnis SJ',
                     'file' => 'BP 2016/BP2016_Jahreszeugnis_Lernentwicklungsbericht',
+                    'year' => '1',
+                    'report_date' => '1',
+                    'student_name' => '1',
+                    'date_of_birth' => '1',
+                    'place_of_birth' => '1',
+                    'learning_group' => '1',
+                    'class' => '1',
+                    'focus' => '1',
                     'grades' => $grades_1_bis_6,
                     'inputs' => [
+                            'learn_social_behavior' => [
+                                    'title' => block_exastud_get_string('learn_and_sociale'),
+                                    'type' => 'textarea',
+                                    'lines' => 8,
+                                    'cols' => 90,
+                            ],
                             'comments' => [
                                     'title' => block_exastud_trans('de:Bemerkungen'),
                                     'type' => 'textarea',
@@ -2025,8 +2109,22 @@ function block_exastud_get_default_templates() {
                     'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_HALBJAHR_LERNENTWICKLUNGSBERICHT,
                     'name' => 'BP 2004 GMS Zeugnis 1.HJ',
                     'file' => 'BP 2004/BP2004_GMS_Halbjahr_Lernentwicklungsbericht',
+                    'year' => '1',
+                    'report_date' => '1',
+                    'student_name' => '1',
+                    'date_of_birth' => '1',
+                    'place_of_birth' => '1',
+                    'learning_group' => '1',
+                    'class' => '1',
+                    'focus' => '1',
                     'grades' => $grades_mit_plus_minus_bis,
                     'inputs' => [
+                            'learn_social_behavior' => [
+                                'title' => block_exastud_get_string('learn_and_sociale'),
+                                'type' => 'textarea',
+                                'lines' => 8,
+                                'cols' => 90,
+                            ],
                             'comments' => [
                                     'title' => block_exastud_trans('de:Bemerkungen'),
                                     'type' => 'textarea',
@@ -2037,8 +2135,22 @@ function block_exastud_get_default_templates() {
                     'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_JAHRESZEUGNIS_LERNENTWICKLUNGSBERICHT,
                     'name' => 'BP 2004 GMS Zeugnis SJ',
                     'file' => 'BP 2004/BP2004_Jahreszeugnis_Lernentwicklungsbericht',
+                    'year' => '1',
+                    'report_date' => '1',
+                    'student_name' => '1',
+                    'date_of_birth' => '1',
+                    'place_of_birth' => '1',
+                    'learning_group' => '1',
+                    'class' => '1',
+                    'focus' => '1',
                     'grades' => $grades_1_bis_6,
                     'inputs' => [
+                            'learn_social_behavior' => [
+                                    'title' => block_exastud_get_string('learn_and_sociale'),
+                                    'type' => 'textarea',
+                                    'lines' => 8,
+                                    'cols' => 90,
+                            ],
                             'comments' => [
                                     'title' => block_exastud_trans('de:Bemerkungen'),
                                     'type' => 'textarea',
@@ -2049,6 +2161,14 @@ function block_exastud_get_default_templates() {
                     'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_HALBJAHR_ZEUGNIS_E_NIVEAU,
                     'name' => 'BP 2004 GMS Klasse 10 E-Niveau 1.HJ',
                     'file' => 'BP 2004/BP2004_GMS_Halbjahr_Zeugnis_E_Niveau',
+                    'year' => '1',
+                    'report_date' => '1',
+                    'student_name' => '1',
+                    'date_of_birth' => '1',
+                    'place_of_birth' => '1',
+                    'learning_group' => '1',
+                    'class' => '1',
+                    'focus' => '1',
                     'grades' => $grades_mit_plus_minus_bis_ausgeschrieben,
                     'inputs' => [
                             'ags' => [
@@ -2067,6 +2187,14 @@ function block_exastud_get_default_templates() {
                     'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_JAHRESZEUGNIS_E_NIVEAU,
                     'name' => 'BP 2004 GMS Klasse 10 E-Niveau SJ',
                     'file' => 'BP 2004/BP2004_Jahreszeugnis_E_Niveau',
+                    'year' => '1',
+                    'report_date' => '1',
+                    'student_name' => '1',
+                    'date_of_birth' => '1',
+                    'place_of_birth' => '1',
+                    'learning_group' => '1',
+                    'class' => '1',
+                    'focus' => '1',
                     'grades' => $grades_short,
                     'inputs' => [
                             'verhalten' => [
@@ -2091,6 +2219,14 @@ function block_exastud_get_default_templates() {
                     'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_ABGANGSZEUGNIS_GMS,
                     'name' => 'BP 2004 GMS Abgangszeugnis',
                     'file' => 'BP 2004/BP2004_GMS_Abgangszeugnis_GMS',
+                    'year' => '1',
+                    'report_date' => '1',
+                    'student_name' => '1',
+                    'date_of_birth' => '1',
+                    'place_of_birth' => '1',
+                    'learning_group' => '1',
+                    'class' => '1',
+                    'focus' => '1',
                     'grades' => $grades_lang,
                     'inputs' => [
                             'wann_verlassen' => [
@@ -2128,6 +2264,14 @@ function block_exastud_get_default_templates() {
                     'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_ABGANGSZEUGNIS_HS_9_10,
                     'name' => 'BP 2004 GMS Abgangszeugnis HSA Kl.9 und 10',
                     'file' => 'BP 2004/BP2004_GMS_Abgangszeugnis_HS_9_10',
+                    'year' => '1',
+                    'report_date' => '1',
+                    'student_name' => '1',
+                    'date_of_birth' => '1',
+                    'place_of_birth' => '1',
+                    'learning_group' => '1',
+                    'class' => '1',
+                    'focus' => '1',
                     'grades' => $grades_lang,
                     'inputs' => [
                             'wann_verlassen' => [
@@ -2163,6 +2307,14 @@ function block_exastud_get_default_templates() {
                     'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_HALBJAHR_ZEUGNIS_HS,
                     'name' => 'BP 2004 GMS Hauptschulabschluss 1.HJ',
                     'file' => 'BP 2004/BP2004_GMS_Halbjahr_Zeugnis_HS',
+                    'year' => '1',
+                    'report_date' => '1',
+                    'student_name' => '1',
+                    'date_of_birth' => '1',
+                    'place_of_birth' => '1',
+                    'learning_group' => '1',
+                    'class' => '1',
+                    'focus' => '1',
                     'grades' => $grades_short,
                     'inputs' => [
                             'ags' => [
@@ -2181,6 +2333,14 @@ function block_exastud_get_default_templates() {
                     'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_ABSCHLUSSZEUGNIS_HS,
                     'name' => 'BP 2004 GMS Hauptschulabschluss SJ',
                     'file' => 'BP 2004/BP2004_GMS_Abschlusszeugnis_HS',
+                    'year' => '1',
+                    'report_date' => '1',
+                    'student_name' => '1',
+                    'date_of_birth' => '1',
+                    'place_of_birth' => '1',
+                    'learning_group' => '1',
+                    'class' => '1',
+                    'focus' => '1',
                     'grades' => $grades_lang,
                     'inputs' => [
                         /*
@@ -2217,6 +2377,14 @@ function block_exastud_get_default_templates() {
                     'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_HALBJAHR_ZEUGNIS_RS,
                     'name' => 'BP 2004 GMS Realschulabschluss 1.HJ',
                     'file' => 'BP 2004/BP2004_GMS_Halbjahr_Zeugnis_RS',
+                    'year' => '1',
+                    'report_date' => '1',
+                    'student_name' => '1',
+                    'date_of_birth' => '1',
+                    'place_of_birth' => '1',
+                    'learning_group' => '1',
+                    'class' => '1',
+                    'focus' => '1',
                     'grades' => $grades_short,
                     'inputs' => [
                             'ags' => [
@@ -2235,6 +2403,14 @@ function block_exastud_get_default_templates() {
                     'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_ABSCHLUSSZEUGNIS_RS,
                     'name' => 'BP 2004 GMS Realschulabschluss SJ',
                     'file' => 'BP 2004/BP2004_GMS_Abschlusszeugnis_RS',
+                    'year' => '1',
+                    'report_date' => '1',
+                    'student_name' => '1',
+                    'date_of_birth' => '1',
+                    'place_of_birth' => '1',
+                    'learning_group' => '1',
+                    'class' => '1',
+                    'focus' => '1',
                     'grades' => $grades_lang,
                     'inputs' => [
                         'projekt_thema' => [
@@ -2262,6 +2438,14 @@ function block_exastud_get_default_templates() {
                     'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_ABGANGSZEUGNIS_FOE,
                     'name' => 'BP 2004 GMS Abschlusszeugnis der Förderschule',
                     'file' => 'BP 2004/BP2004_GMS_Abgangszeugnis_Foe',
+                    'year' => '1',
+                    'report_date' => '1',
+                    'student_name' => '1',
+                    'date_of_birth' => '1',
+                    'place_of_birth' => '1',
+                    'learning_group' => '1',
+                    'class' => '1',
+                    'focus' => '1',
                     'grades' => $grades_lang,
                     'inputs' => [
                             'gesamtnote_und_durchschnitt_der_gesamtleistungen' => [
@@ -2274,12 +2458,29 @@ function block_exastud_get_default_templates() {
                             'comments_short' => [
                                     'title' => 'Bemerkungen',
                             ],
+                            'projekt_thema' => [
+                                    'title' => 'Projektprüfung: Thema',
+                                    'type' => 'text',
+                            ],
+                            'projekt_verbalbeurteilung' => [
+                                    'title' => 'Verbalbeurteilung',
+                                    'type' => 'textarea',
+                                    'lines' => 5,
+                            ],
                     ],
             ],
             'BP 2004/GMS Halbjahreszeugniss der Förderschule' => [
                     'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_HALBJAHR_ZEUGNIS_FOE,
                     'name' => 'BP 2004 GMS Halbjahreszeugniss der Förderschule',
                     'file' => 'BP 2004/BP2004_GMS_Halbjahr_Zeugnis_Foe',
+                    'year' => '1',
+                    'report_date' => '1',
+                    'student_name' => '1',
+                    'date_of_birth' => '1',
+                    'place_of_birth' => '1',
+                    'learning_group' => '1',
+                    'class' => '1',
+                    'focus' => '1',
                     'grades' => $grades_short,
                     'inputs' => [
                             'ags' => [
@@ -2293,16 +2494,37 @@ function block_exastud_get_default_templates() {
                     'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_LERNENTWICKLUNGSBERICHT_DECKBLATT_UND_1_INNENSEITE,
                     'name' => 'Deckblatt und 1. Innenseite LEB',
                     'file' => 'Lernentwicklungsbericht_Deckblatt_und_1._Innenseite',
+                    'year' => '1',
+                    'report_date' => '1',
+                    'student_name' => '1',
+                    'date_of_birth' => '1',
+                    'place_of_birth' => '1',
+                    'learning_group' => '1',
+                    'class' => '1',
+                    'focus' => '1',
                     'inputs' => [],
             ],
             'BP 2004/Halbjahresinformation Kl11' => [
                     'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_HALBJAHRESINFORMATION_KL11,
                     'name' => 'BP 2004 Halbjahresinformation Kl11',
                     'file' => 'BP 2004/BP2004_GMS_Halbjahresinformation_Kl11',
+                    'year' => '1',
+                    'report_date' => '1',
+                    'student_name' => '1',
+                    'date_of_birth' => '1',
+                    'place_of_birth' => '1',
+                    'learning_group' => '1',
+                    'class' => '1',
+                    'focus' => '1',
                     'grades' => $grades_mit_plus_minus_bis_ausgeschrieben,
                     'inputs' => [
                             'ags' => [
                                     'title' => 'Teilnahme an Arbeitsgemeinschaften',
+                                    'type' => 'textarea',
+                                    'lines' => 3,
+                            ],
+                            'comments_short' => [
+                                    'title' => 'Bemerkungen',
                                     'type' => 'textarea',
                                     'lines' => 3,
                             ],
@@ -2312,10 +2534,23 @@ function block_exastud_get_default_templates() {
                     'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_HALBJAHRESINFORMATION_KL11,
                     'name' => 'BP 2016 Halbjahresinformation Kl11',
                     'file' => 'BP 2016/BP2016_GMS_Halbjahresinformation_Kl11',
+                    'year' => '1',
+                    'report_date' => '1',
+                    'student_name' => '1',
+                    'date_of_birth' => '1',
+                    'place_of_birth' => '1',
+                    'learning_group' => '1',
+                    'class' => '1',
+                    'focus' => '1',
                     'grades' => $grades_mit_plus_minus_bis_ausgeschrieben,
                     'inputs' => [
                             'ags' => [
                                     'title' => 'Teilnahme an Arbeitsgemeinschaften',
+                                    'type' => 'textarea',
+                                    'lines' => 3,
+                            ],
+                            'comments_short' => [
+                                    'title' => 'Bemerkungen',
                                     'type' => 'textarea',
                                     'lines' => 3,
                             ],
@@ -2360,6 +2595,13 @@ function block_exastud_fill_reportsettingstable($id = 0) {
         }
         $data['bpid'] = $bpid;
         $data['template'] = $template['file'];
+        $checkboxes = array('year', 'report_date', 'report_date', 'student_name',
+                'date_of_birth', 'place_of_birth', 'learning_group', 'class', 'focus');
+        foreach ($checkboxes as $f) {
+            if (array_key_exists($f, $template)) {
+                $data[$f] = serialize(array('checked' => "".$template[$f]));
+            }
+        }
         $data['category'] = '';
         $data['additional_params'] = '';
         // default values for columns
