@@ -17,6 +17,13 @@
 // This copyright notice MUST APPEAR in all copies of the script!
 (function($) {
     function additionalGroupToggle(field, for_additional) {
+        // if no any checked radio - set 'textarea' default
+        if ($(':radio[name="' + field + '_type"]').length) {
+            if (!$(':radio[name="' + field + '_type"]:checked').length) {
+                $('#id_' + field + '_type_textarea').prop('checked', true);
+            }
+        }
+
         if (for_additional) {
             additionalSettingsToggle(field);
         } else {
@@ -135,7 +142,7 @@
                 var options = $(this).find('.exastud-template-settings-param :input[name*="selectboxvalues_value"]'); // for boost theme
             }
             $(this).find('.add_selectbox_option, .delete_selectbox_option').remove();
-            console.log(options);
+            // console.log(options);
             options.each(function (j) {
                 if (field !== undefined) {
                     var img_add = '<img class="add_selectbox_option" data-field="' + field + '" data-optionid="' + j + '" src="' + M.cfg.wwwroot + '/blocks/exastud/pix/add.png" title="add"/>';
@@ -145,7 +152,7 @@
                 } else {
                     // get index of additional param from delete button
                     var i = $(this).closest('.exastud-setting-block').find('.delete_param_button').first().attr('data-paramid');
-                    console.log(i);
+                    // console.log(i);
                     if (i !== undefined) {
                         var img_add = '<img class="add_selectbox_option" data-paramid="' + i + '" data-optionid="' + j + '" src="' + M.cfg.wwwroot + '/blocks/exastud/pix/add.png" title="add"/>';
                         var img_delete = '<img class="delete_selectbox_option" data-paramid="' + i + '" data-optionid="' + j + '" src="' + M.cfg.wwwroot + '/blocks/exastud/pix/del.png" title="delete"/>';
@@ -208,7 +215,7 @@
                 } else {
                     // for "Boost" theme also we need to do:
                     var wrapper = $(this).parent();
-                    console.log(wrapper);
+                    // console.log(wrapper);
                     if (wrapper.hasClass('exastud-template-settings-group')) {
                         $(this).unwrap();
                     }

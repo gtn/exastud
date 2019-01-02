@@ -786,6 +786,9 @@ class print_templates {
                     case 'image':
                         break;
                     default:
+                        if ($key == 'learn_social_behavior' && !$studentdata['learn_social_behavior']) {
+                            $studentdata['learn_social_behavior'] = $studentdata['learning_and_social_behavior'];
+                        }
                         if (array_key_exists($key, $studentdata)) {
                             $val = trim($studentdata[$key]);
                             if (!trim(strip_tags($val))) {
@@ -809,7 +812,6 @@ class print_templates {
                 }
             }
         }
-
         return $markers;
     }
 }

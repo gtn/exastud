@@ -1046,7 +1046,11 @@ class printer {
 			$rowi++;
 
 			$templateProcessor->setValue("agstudent#$rowi", $rowi.'. '.fullname($student));
-			$templateProcessor->setValue("agdescription#$rowi", @$studentData->ags);
+			// crop ags by limits. Limits are got from class template
+            $template = block_exastud_get_student_print_template($class, $student->id);
+            $templateid = $template->get_template_id();
+            $ags = block_exastud_cropStringByInputLimitsFromTemplate(@$studentData->ags, $templateid, 'ags');
+			$templateProcessor->setValue("agdescription#$rowi", $ags);
 		}
 
 		// page 3
