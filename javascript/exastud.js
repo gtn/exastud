@@ -99,18 +99,19 @@ $.extend(window.block_exastud, {
         $('.exa_table :checkbox[name=checkallornone]').closest('table').find(':checkbox:not([name=checkallornone]):first').click().click();
     });
 
-    function disableButton(){
+    function disableButton() {
     	$( '.btn, .btn-primary' ).prop( "disabled", true );
     }
     
-    function enableButton(){
+    function enableButton() {
     	$( '.btn, .btn-primary' ).prop( "disabled", false );
     }
-    
+
+    /* deprecated ? */
     $(function() {
         // moodle 33 applys the style to <textarea>, but moodle 33 to the surrounding div
         var textareas = $('textarea.limit-input-length, .limit-input-length textarea');
-
+            return true;
             textareas.on('keypress keyup change input propertychange paste', function(e) {
                 var max = 550;
                 var newText = this.value;
@@ -216,6 +217,23 @@ $.extend(window.block_exastud, {
     });
 
     $(function () {
+
+        function getCursorPosition(el) {
+            var el = el[0];
+            var pos = 0;
+            if ('selectionStart' in el) {
+                pos = el.selectionStart;
+            } else if('selection' in document) {
+                el.focus();
+                var Sel = document.selection.createRange();
+                var SelLength = document.selection.createRange().text.length;
+                Sel.moveStart('character', -el.value.length);
+                pos = Sel.text.length - SelLength;
+            }
+            return pos;
+        }
+
+
         // work with textareas (limits)
         function updateLeftMessage(textarea) {
             var rowsLimit = $(textarea).attr('data-rowslimit');
@@ -248,15 +266,34 @@ $.extend(window.block_exastud, {
             }
             updateLeftMessage($(this));
         });
-        $(document).on('input', 'textarea[data-rowscharslimit-enable]', function (e) {
-            e.preventDefault();
-            $(this).unbind(); // TODO: needed?
-            var rowsLimit = $(this).attr('data-rowslimit');
-            var charsPerRowLimit = $(this).attr('data-charsperrowlimit');
+
+        function updateTextareaWithLimits(e, textarea) {
+            if (e) {
+                var currentText = e.target.value;
+            } else {
+                var currentText = textarea.val();
+            }
+            // var currentText = textarea.val();
+            var itIsPaste = false;
+            if (e && e.originalEvent.type == 'paste') { // if content is paste from clipboard
+                itIsPaste = true;
+                var clipboardVal = e.originalEvent.clipboardData.getData('text');
+                var cursorPos = getCursorPosition(textarea);
+                if (cursorPos >= currentText.length) {
+                    cursorPos = currentText.length;
+                }
+            }
+
+            var rowsLimit = textarea.attr('data-rowslimit');
+            var charsPerRowLimit = textarea.attr('data-charsperrowlimit');
             var charsLimit = rowsLimit * charsPerRowLimit;
-            var currentText = e.target.value;
+            if (itIsPaste) {
+                currentText = currentText.slice(0, cursorPos) + clipboardVal + currentText.slice(cursorPos);
+                textarea.attr('prev-value', currentText);
+                textarea.attr('correct-value', currentText);
+            }
             var rows = currentText.split(/\r?\n/);
-            var textareaName = $(this).attr('name');
+            var textareaName = textarea.attr('name');
             var rowsLimitReached = false;
             if (rows.length > rowsLimit) {
                 rowsLimitReached = true;
@@ -274,13 +311,16 @@ $.extend(window.block_exastud, {
                 }
             })
             if (charsPerRowLimitReached || rowsLimitReached || charsLimitReached) {
-                $(this).css('background-color', 'rgb(255, 240, 240)');
-                $(this).css('color', 'rgb(216, 35, 35)');
-                if (currentText.length < $(this).attr('prev-value').length) { // we are going to decrease textarea value
-                    $(this).attr('prev-value', currentText);
-                    $(this).attr('correct-value', currentText);
+                textarea.css('background-color', 'rgb(255, 240, 240)');
+                textarea.css('color', 'rgb(216, 35, 35)');
+                /*if (itIsPaste) { // or it is from clipboard
+                    // textarea.attr('prev-value', currentText);
+                    // textarea.attr('correct-value', currentText);
+                } else*/ if (currentText.length < textarea.attr('prev-value').length) { // we are going to decrease textarea value
+                    textarea.attr('prev-value', currentText);
+                    textarea.attr('correct-value', currentText);
                 }
-                $(this).val($(this).attr('correct-value'));
+                textarea.val(textarea.attr('correct-value'));
                 if (rowsLimitReached) {
                     $('#max_' + textareaName + '_rows').css('background-color', 'rgb(255, 240, 240)');
                     $('#max_' + textareaName + '_rows').css('color', 'rgb(216, 35, 35)');
@@ -295,18 +335,33 @@ $.extend(window.block_exastud, {
                     $('#max_' + textareaName + '_chars').css('background-color', '');
                     $('#max_' + textareaName + '_chars').css('color', '');
                 }
+                disableButton();
             } else {
-                $(this).css('background-color', '');
-                $(this).css('color', '');
-                $(this).attr('correct-value', currentText);
+                textarea.css('background-color', '');
+                textarea.css('color', '');
+                textarea.attr('correct-value', currentText);
                 $('#max_' + textareaName + '_rows').css('background-color', '');
                 $('#max_' + textareaName + '_rows').css('color', '');
                 $('#max_' + textareaName + '_chars').css('background-color', '');
                 $('#max_' + textareaName + '_chars').css('color', '');
-                $(this).attr('correct-value', currentText);
+                textarea.val(currentText); // need for 'paste' event
+                enableButton();
             }
-            updateLeftMessage($(this));
+            updateLeftMessage(textarea);
+        }
+
+        // $(document).on('paste input', 'textarea[data-rowscharslimit-enable]', function (e) {
+        $(document).on('paste input', 'textarea[data-rowscharslimit-enable]', function (e) {
+            e.preventDefault();
+            $(this).unbind(); // TODO: needed?
+            updateTextareaWithLimits(e, $(this));
+            return true;
         });
+
+        $(document).find('textarea[data-rowscharslimit-enable]').each(function () {
+            updateTextareaWithLimits(null, $(this));
+        });
+
     });
 
     $(function() {
