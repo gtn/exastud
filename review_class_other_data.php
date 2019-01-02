@@ -120,9 +120,9 @@ foreach ($classstudents as $classstudent) {
 
 	if (@array_shift(array_keys($categories)) === BLOCK_EXASTUD_DATA_ID_PRINT_TEMPLATE) {
 		$hasInputs = !!block_exastud_get_student_print_template($class, $classstudent->id)->get_inputs(BLOCK_EXASTUD_DATA_ID_PRINT_TEMPLATE);
-	}/* else if (@array_shift(array_keys($categories)) === BLOCK_EXASTUD_DATA_ID_ZERTIFIKAT_FUER_PROFILFACH) {
-        $hasInputs = !!block_exastud_get_student_print_template($class, $classstudent->id)->get_inputs(BLOCK_EXASTUD_DATA_ID_ZERTIFIKAT_FUER_PROFILFACH);
-    }*/ else if (@array_shift(array_keys($categories)) === BLOCK_EXASTUD_DATA_ID_ADDITIONAL_INFO) {
+	} else if (@array_shift(array_keys($categories)) === BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_16_ZERTIFIKAT_FUER_PROFILFACH) {
+        $hasInputs = !!block_exastud_get_student_print_template($class, $classstudent->id)->get_inputs(BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_16_ZERTIFIKAT_FUER_PROFILFACH);
+    } else if (@array_shift(array_keys($categories)) === BLOCK_EXASTUD_DATA_ID_ADDITIONAL_INFO) {
         $hasInputs = !!block_exastud_get_student_print_template($class, $classstudent->id)->get_inputs(BLOCK_EXASTUD_DATA_ID_ADDITIONAL_INFO); // TODO: some another?
     } else {
 		$hasInputs = !!$categories;
@@ -130,7 +130,7 @@ foreach ($classstudents as $classstudent) {
 
 	if ($editUser->id !== $USER->id) {
 		$row->cells[] = block_exastud_trans(['de:Zugeteilt zu {$a}'], fullname($editUser));
-	} elseif (!$hasInputs) {
+	} else if (!$hasInputs) {
 		// no categories, or it's a default printtemplate with no inputs
 		$row->cells[] = block_exastud_trans(['de:Dieses Formular hat keine weiteren Eingabfelder'], fullname($editUser));
 	} else {
