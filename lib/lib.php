@@ -2033,24 +2033,24 @@ function block_exastud_get_default_templates() {
                     'grades' => $grades_lang,
                     'inputs' => [
                         'projekt_thema' => [
-                                'title' => 'Projektprüfung: Thema',
+                                'title' => 'Thema',
                                 'type' => 'text',
                         ],
+                        'projekt_grade' => [
+                                'title' => 'Note',
+                                'type' => 'select',
+                                'values' => ['1' => 'sehr gut', '2' => 'gut', '3' => 'befriedigend', '4' => 'ausreichend', '5' => 'mangelhaft', '6' => 'ungenügend'], // TODO: is it correct grades?
+                        ],/*
                         'projekt_text3lines' => [
                             'title' => 'Projektthema',
                             'type' => 'textarea',
                             'lines' => 3,
-                        ],
+                        ],*/
                         'projekt_verbalbeurteilung' => [
                             'title' => 'Verbalbeurteilung',
                             'type' => 'textarea',
                             'lines' => 5,
-                        ],
-                        'projekt_grade' => [
-                            'title' => 'Projektprüfung: Note',
-                            'type' => 'select',
-                            'values' => ['1' => 'sehr gut', '2' => 'gut', '3' => 'befriedigend', '4' => 'ausreichend', '5' => 'mangelhaft', '6' => 'ungenügend'], // TODO: is it correct grades?
-                        ],
+                        ]
                     ],
             ],
             'BP 2016/GMS Zeugnis 1.HJ' => [
@@ -2283,13 +2283,18 @@ function block_exastud_get_default_templates() {
                                     ],
                             ],
                             'projekt_thema' => [
-                                'title' => 'Projektprüfung: Thema',
+                                'title' => 'Thema',
                                 'type' => 'text',
                             ],
                             'projekt_grade' => [
-                                'title' => 'Projektprüfung: Note',
+                                'title' => 'Note',
                                 'type' => 'select',
                                 'values' => ['1' => 'sehr gut', '2' => 'gut', '3' => 'befriedigend', '4' => 'ausreichend', '5' => 'mangelhaft', '6' => 'ungenügend'], // TODO: is it correct grades?
+                            ],
+                            'projekt_verbalbeurteilung' => [
+                                    'title' => 'Verbalbeurteilung',
+                                    'type' => 'textarea',
+                                    'lines' => 5,
                             ],
                             'ags' => [
                                     'title' => 'Teilnahme an Arbeitsgemeinschaften',
@@ -2353,13 +2358,18 @@ function block_exastud_get_default_templates() {
                             ],
                         ],*/
                         'projekt_thema' => [
-                            'title' => 'Projektprüfung: Thema',
+                            'title' => 'Thema',
                             'type' => 'text',
                         ],
                         'projekt_grade' => [
-                            'title' => 'Projektprüfung: Note',
+                            'title' => 'Note',
                             'type' => 'select',
                             'values' => ['1' => 'sehr gut', '2' => 'gut', '3' => 'befriedigend', '4' => 'ausreichend', '5' => 'mangelhaft', '6' => 'ungenügend'], // TODO: is it correct grades?
+                        ],
+                        'projekt_verbalbeurteilung' => [
+                                'title' => 'Verbalbeurteilung',
+                                'type' => 'textarea',
+                                'lines' => 5,
                         ],
                         'gesamtnote_und_durchschnitt_der_gesamtleistungen' => [
                                 'title' => 'Gesamtnote und Durchschnitt der Gesamtleistungen',
@@ -2414,13 +2424,18 @@ function block_exastud_get_default_templates() {
                     'grades' => $grades_lang,
                     'inputs' => [
                         'projekt_thema' => [
-                            'title' => 'Projektprüfung: Thema',
+                            'title' => 'Thema',
                             'type' => 'text',
                         ],
                         'projekt_grade' => [
-                            'title' => 'Projektprüfung: Note',
+                            'title' => 'Note',
                             'type' => 'select',
                             'values' => ['1' => 'sehr gut', '2' => 'gut', '3' => 'befriedigend', '4' => 'ausreichend', '5' => 'mangelhaft', '6' => 'ungenügend'], // TODO: is it correct grades?
+                        ],
+                        'projekt_verbalbeurteilung' => [
+                                'title' => 'Verbalbeurteilung',
+                                'type' => 'textarea',
+                                'lines' => 5,
                         ],
                         'ags' => [
                                 'title' => 'Teilnahme an Arbeitsgemeinschaften',
@@ -2459,8 +2474,13 @@ function block_exastud_get_default_templates() {
                                     'title' => 'Bemerkungen',
                             ],
                             'projekt_thema' => [
-                                    'title' => 'Projektprüfung: Thema',
+                                    'title' => 'Thema',
                                     'type' => 'text',
+                            ],
+                            'projekt_grade' => [
+                                    'title' => 'Note',
+                                    'type' => 'select',
+                                    'values' => ['1' => 'sehr gut', '2' => 'gut', '3' => 'befriedigend', '4' => 'ausreichend', '5' => 'mangelhaft', '6' => 'ungenügend'], // TODO: is it correct grades?
                             ],
                             'projekt_verbalbeurteilung' => [
                                     'title' => 'Verbalbeurteilung',
