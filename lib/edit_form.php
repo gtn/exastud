@@ -221,7 +221,7 @@ class student_edit_form extends moodleform {
                     $template_inputparams = array();
                 }
                 $vorschlag_limits = array(
-                        'cols' => @$template_inputparams['cols'] ? $template_inputparams['cols'] : 50,
+                        'cols' => (@$template_inputparams['cols'] && @$template_inputparams['cols'] <= 80) ? $template_inputparams['cols'] : 50,
                         'chars_per_row' => @$template_inputparams['cols'] ? $template_inputparams['cols'] : 80,
                         'rows' => @$template_inputparams['lines'] ? $template_inputparams['lines'] : 8
                 );
@@ -257,7 +257,7 @@ class student_edit_form extends moodleform {
                     $template_inputparams = array();
                 }
                 $subject_limits = array(
-                        'cols' => @$template_inputparams['cols'] ? $template_inputparams['cols'] : 50,
+                        'cols' => (@$template_inputparams['cols'] && @$template_inputparams['cols'] <= 80) ? $template_inputparams['cols'] : 50,
                         'chars_per_row' => @$template_inputparams['cols'] ? $template_inputparams['cols'] : 80,
                         'rows' => @$template_inputparams['lines'] ? $template_inputparams['lines'] : 8
                 );
@@ -346,7 +346,7 @@ class student_other_data_form extends moodleform {
 				}
 
                 $textarea_limits = array(
-                        'cols' => @$input['cols'] ? $input['cols'] : 50,
+                        'cols' => (@$input['cols'] && @$input['cols'] <= 80) ? $input['cols'] : 50,
                         'chars_per_row' => @$input['cols'] ? $input['cols'] : 80,
                         'rows' => @$input['lines'] ? $input['lines'] : 8
                 );

@@ -72,7 +72,7 @@ switch ($type) {
         $categories = [
             BLOCK_EXASTUD_DATA_ID_LERN_UND_SOZIALVERHALTEN => [
                 'title' => block_exastud_get_string('learn_and_sociale'),
-                'cols' => @$inputs['learn_social_behavior']['cols'] ? @$inputs['learn_social_behavior']['cols'] : 50,
+                'cols' => (@$inputs['learn_social_behavior']['cols'] && @$inputs['learn_social_behavior']['cols'] <= 80) ? @$inputs['learn_social_behavior']['cols'] : 50,
                 'lines' => @$inputs['learn_social_behavior']['lines'] ? @$inputs['learn_social_behavior']['lines'] : 8,
             ],
         ];
