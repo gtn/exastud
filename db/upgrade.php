@@ -618,6 +618,11 @@ function xmldb_block_exastud_upgrade($oldversion = 0) {
         }
         upgrade_block_savepoint(true, 2018122801, 'exastud');
     }
+    
+    if ($oldversion < 2019010301) {
+        $DB->execute(' UPDATE {block_exastudsubjects} SET shorttitle = \'ABK-Inf\' WHERE sourceinfo = \'bw-bp2016-ai\'');
+        upgrade_block_savepoint(true, 2019010301, 'exastud');
+    }
 
     block_exastud_insert_default_entries();
 	block_exastud_check_profile_fields();
