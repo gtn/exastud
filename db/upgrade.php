@@ -412,6 +412,7 @@ function xmldb_block_exastud_upgrade($oldversion = 0) {
         $table->add_field('projekt_thema', XMLDB_TYPE_TEXT, null, null, XMLDB_NOTNULL, null, null); // project assessment
         $table->add_field('ags', XMLDB_TYPE_TEXT, null, null, XMLDB_NOTNULL, null,
                 null); // AGs (Participation in working groups / supplementary offers)
+        $table->add_field('grades', XMLDB_TYPE_TEXT, null, null, XMLDB_NOTNULL, null, null); // grades
 
         // Adding keys to table block_exastudsubjects.
         $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
@@ -425,6 +426,10 @@ function xmldb_block_exastud_upgrade($oldversion = 0) {
     if ($oldversion < 2018101900) {
         $table = new xmldb_table('block_exastudreportsettings');
         $field = new xmldb_field('additional_params', XMLDB_TYPE_TEXT, null, null, null, null, null);
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+        $field = new xmldb_field('grades', XMLDB_TYPE_TEXT, null, null, null, null, null);
         if (!$dbman->field_exists($table, $field)) {
             $dbman->add_field($table, $field);
         }
