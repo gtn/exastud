@@ -361,7 +361,7 @@ class printer {
 					return preg_replace('!({'.$contentId.'}.*>)ggf. Note(<)!U', '${1}'.$grade.'${2}', $content);
 				};
 			}
-
+            
 			// wahlpflichtfach + profilfach dropdowns
 			$add_filter(function($content) use ($wahlpflichtfach) {
 				return preg_replace('!(>)Technik(<.*{'.'wahlpflichtfach'.'})!U', '${1}'.$wahlpflichtfach.'${2}', $content);
