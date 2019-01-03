@@ -2011,7 +2011,7 @@ function block_exastud_get_default_templates() {
                                     'title' => 'Besondere Kompetenzen in folgenden Bereichen erworben',
                                     'type' => 'textarea',
                                     'lines' => 13,
-                                    'cols' => 79,
+                                    'cols' => 80,
                             ],
                     ],
             ],
@@ -2032,7 +2032,7 @@ function block_exastud_get_default_templates() {
                                 'title' => 'Thema',
                                 'type' => 'textarea',
                                 'lines' => 3,
-                                'cols' => 81
+                                'cols' => 80
                         ],
                         'projekt_grade' => [
                                 'title' => 'Note',
@@ -2048,7 +2048,7 @@ function block_exastud_get_default_templates() {
                             'title' => 'Verbalbeurteilung',
                             'type' => 'textarea',
                             'lines' => 5,
-                            'cols' => 81,
+                            'cols' => 80,
                         ]
                     ],
             ],
@@ -2068,7 +2068,7 @@ function block_exastud_get_default_templates() {
                             'learn_social_behavior' => [
                                     'title' => block_exastud_get_string('learn_and_sociale'),
                                     'type' => 'textarea',
-                                    'lines' => 7,
+                                    'lines' => 8,
                                     'cols' => 90,
                             ],
                             'comments' => [
@@ -2080,19 +2080,19 @@ function block_exastud_get_default_templates() {
                             'subjects' => [
                                     'title' => 'Fächer',
                                     'type' => 'textarea',
-                                    'lines' => 7,
-                                    'cols' => 67,
+                                    'lines' => 8,
+                                    'cols' => 68,
                             ],
                             'subject_elective' => [ // Wahlpflicht-bereich ?
                                     'title' => 'Wahlpflicht-bereich',
                                     'type' => 'textarea',
-                                    'lines' => 7,
+                                    'lines' => 8,
                                     'cols' => 68,
                             ],
                             'subject_profile' => [ // Profil-fach ?
                                     'title' => 'Profil-fach',
                                     'type' => 'textarea',
-                                    'lines' => 7,
+                                    'lines' => 8,
                                     'cols' => 68,
                             ],
                     ],
@@ -2159,31 +2159,31 @@ function block_exastud_get_default_templates() {
                                 'title' => block_exastud_get_string('learn_and_sociale'),
                                 'type' => 'textarea',
                                 'lines' => 7,
-                                'cols' => 80,
+                                'cols' => 90,
                             ],
                             'comments' => [
                                     'title' => block_exastud_trans('de:Bemerkungen'),
                                     'type' => 'textarea',
                                     'lines' => 7,
-                                    'cols' => 80,
+                                    'cols' => 90,
                             ],
                             'subjects' => [
                                     'title' => 'Fächer',
                                     'type' => 'textarea',
                                     'lines' => 7,
-                                    'cols' => 60,
+                                    'cols' => 68,
                             ],
                             'subject_elective' => [ // Wahlpflicht-bereich ?
                                     'title' => 'Wahlpflicht-bereich',
                                     'type' => 'textarea',
                                     'lines' => 7,
-                                    'cols' => 60,
+                                    'cols' => 68,
                             ],
                             'subject_profile' => [ // Profil-fach ?
                                     'title' => 'Profil-fach',
                                     'type' => 'textarea',
                                     'lines' => 7,
-                                    'cols' => 60,
+                                    'cols' => 68,
                             ],
                     ],
             ],
@@ -2204,31 +2204,31 @@ function block_exastud_get_default_templates() {
                                     'title' => block_exastud_get_string('learn_and_sociale'),
                                     'type' => 'textarea',
                                     'lines' => 7,
-                                    'cols' => 80,
+                                    'cols' => 90,
                             ],
                             'comments' => [
                                     'title' => block_exastud_trans('de:Bemerkungen'),
                                     'type' => 'textarea',
                                     'lines' => 7,
-                                    'cols' => 82,
+                                    'cols' => 90,
                             ],
                             'subjects' => [
                                     'title' => 'Fächer',
                                     'type' => 'textarea',
                                     'lines' => 7,
-                                    'cols' => 61,
+                                    'cols' => 68,
                             ],
                             'subject_elective' => [ // Wahlpflicht-bereich ?
                                     'title' => 'Wahlpflicht-bereich',
                                     'type' => 'textarea',
                                     'lines' => 7,
-                                    'cols' => 61,
+                                    'cols' => 68,
                             ],
                             'subject_profile' => [ // Profil-fach ?
                                     'title' => 'Profil-fach',
                                     'type' => 'textarea',
                                     'lines' => 7,
-                                    'cols' => 61,
+                                    'cols' => 68,
                             ],
                     ],
             ],
@@ -2255,7 +2255,7 @@ function block_exastud_get_default_templates() {
                                     'title' => 'Bemerkungen',
                                     'type' => 'textarea',
                                     'lines' => 4,
-                                    'cols' => 89,
+                                    'cols' => 90,
                             ],
                     ],
             ],
@@ -2286,13 +2286,13 @@ function block_exastud_get_default_templates() {
                                     'title' => 'Teilnahme an Arbeitsgemeinschaften',
                                     'type' => 'textarea',
                                     'lines' => 3,
-                                    'cols' => 89,
+                                    'cols' => 90,
                             ],
                             'comments_short' => [
                                     'title' => 'Bemerkungen',
                                     'type' => 'textarea',
                                     'lines' => 3,
-                                    'cols' => 89,
+                                    'cols' => 90,
                             ],
                     ],
             ],
@@ -2327,13 +2327,13 @@ function block_exastud_get_default_templates() {
                                     'title' => 'Teilnahme an Arbeitsgemeinschaften',
                                     'type' => 'textarea',
                                     'lines' => 2,
-                                    'cols' => 74,
+                                    'cols' => 80,
                             ],
                             'comments_short' => [
                                     'title' => 'Bemerkungen',
                                     'type' => 'textarea',
                                     'lines' => 2,
-                                    'cols' => 81,
+                                    'cols' => 80,
                             ],
                             'abgangszeugnis_niveau' => [
                                     'title' => 'Die Leistung wurde in allen Fächern auf dem folgenden Niveau beurteilt',
@@ -2365,30 +2365,32 @@ function block_exastud_get_default_templates() {
                             ],
                             'projekt_thema' => [
                                 'title' => 'Thema',
-                                'type' => 'text',
+                                'type' => 'textarea',
+                                'lines' => 2,
+                                'cols' => 60,
                             ],
                             'projekt_grade' => [
                                 'title' => 'Note',
                                 'type' => 'select',
                                 'values' => ['1' => 'sehr gut', '2' => 'gut', '3' => 'befriedigend', '4' => 'ausreichend', '5' => 'mangelhaft', '6' => 'ungenügend'], // TODO: is it correct grades?
-                            ],
+                            ],/*
                             'projekt_verbalbeurteilung' => [
                                     'title' => 'Verbalbeurteilung',
                                     'type' => 'textarea',
                                     'lines' => 2,
-                                    'cols' => 54,
-                            ],
+                                    'cols' => 60,
+                            ],*/
                             'ags' => [
                                     'title' => 'Teilnahme an Arbeitsgemeinschaften',
                                     'type' => 'textarea',
                                     'lines' => 2,
-                                    'cols' => 74,
+                                    'cols' => 80,
                             ],
                             'comments_short' => [
                                     'title' => 'Bemerkungen',
                                     'type' => 'textarea',
                                     'lines' => 2,
-                                    'cols' => 81,
+                                    'cols' => 80,
                             ],
                     ],
             ],
@@ -2409,13 +2411,13 @@ function block_exastud_get_default_templates() {
                                     'title' => 'Teilnahme an Arbeitsgemeinschaften',
                                     'type' => 'textarea',
                                     'lines' => 3,
-                                    'cols' => 81,
+                                    'cols' => 80,
                             ],
                             'comments_short' => [
                                     'title' => 'Bemerkungen',
                                     'type' => 'textarea',
                                     'lines' => 3,
-                                    'cols' => 81,
+                                    'cols' => 80,
                             ],
                     ],
             ],
@@ -2443,19 +2445,21 @@ function block_exastud_get_default_templates() {
                         ],*/
                         'projekt_thema' => [
                             'title' => 'Thema',
-                            'type' => 'text',
+                            'type' => 'textarea',
+                            'lines' => 2,
+                            'cols' => 60,
                         ],
                         'projekt_grade' => [
                             'title' => 'Note',
                             'type' => 'select',
                             'values' => ['1' => 'sehr gut', '2' => 'gut', '3' => 'befriedigend', '4' => 'ausreichend', '5' => 'mangelhaft', '6' => 'ungenügend'], // TODO: is it correct grades?
-                        ],
+                        ],/*
                         'projekt_verbalbeurteilung' => [
                                 'title' => 'Verbalbeurteilung',
                                 'type' => 'textarea',
                                 'lines' => 2,
-                                'cols' => 59,
-                        ],/*
+                                'cols' => 60,
+                        ],*//*
                         'gesamtnote_und_durchschnitt_der_gesamtleistungen' => [
                                 'title' => 'Gesamtnote und Durchschnitt der Gesamtleistungen',
                                 'type' => 'text',
@@ -2463,13 +2467,13 @@ function block_exastud_get_default_templates() {
                         'ags' => [
                                 'title' => 'Teilnahme an Arbeitsgemeinschaften',
                                 'lines' => 3,
-                                'cols' => 89,
+                                'cols' => 80,
                         ],
                         'comments_short' => [
                                 'title' => 'Bemerkungen',
                                 'type' => 'textarea',
                                 'lines' => 3,
-                                'cols' => 89,
+                                'cols' => 90,
                         ],
                     ],
             ],
@@ -2490,13 +2494,13 @@ function block_exastud_get_default_templates() {
                                     'title' => 'Teilnahme an Arbeitsgemeinschaften',
                                     'type' => 'textarea',
                                     'lines' => 3,
-                                    'cols' => 89,
+                                    'cols' => 80,
                             ],
                             'comments_short' => [
                                     'title' => 'Bemerkungen',
                                     'type' => 'textarea',
                                     'lines' => 3,
-                                    'cols' => 89,
+                                    'cols' => 80,
                             ],
                     ],
             ],
@@ -2515,30 +2519,32 @@ function block_exastud_get_default_templates() {
                     'inputs' => [
                         'projekt_thema' => [
                             'title' => 'Thema',
-                            'type' => 'text',
+                            'type' => 'textarea',
+                            'lines' => 3,
+                            'cols' => 65,
                         ],
                         'projekt_grade' => [
                             'title' => 'Note',
                             'type' => 'select',
                             'values' => ['1' => 'sehr gut', '2' => 'gut', '3' => 'befriedigend', '4' => 'ausreichend', '5' => 'mangelhaft', '6' => 'ungenügend'], // TODO: is it correct grades?
-                        ],
+                        ],/*
                         'projekt_verbalbeurteilung' => [
                                 'title' => 'Verbalbeurteilung',
                                 'type' => 'textarea',
                                 'lines' => 3,
                                 'cols' => 65,
-                        ],
+                        ],*/
                         'ags' => [
                                 'title' => 'Teilnahme an Arbeitsgemeinschaften',
                                 'type' => 'textarea',
                                 'lines' => 3,
-                                'cols' => 91,
+                                'cols' => 80,
                         ],
                         'comments_short' => [
                                 'title' => 'Bemerkungen',
                                 'type' => 'textarea',
                                 'lines' => 3,
-                                'cols' => 91,
+                                'cols' => 80,
                         ],
                     ],
             ],
@@ -2568,29 +2574,31 @@ function block_exastud_get_default_templates() {
                                     'title' => 'Teilnahme an Arbeitsgemeinschaften',
                                     'type' => 'textarea',
                                     'lines' => 2,
-                                    'cols' => 89,
+                                    'cols' => 80,
                             ],
                             'comments_short' => [
                                     'title' => 'Bemerkungen',
                                     'type' => 'textarea',
-                                    'lines' => 3,
-                                    'cols' => 81,
+                                    'lines' => 2,
+                                    'cols' => 80,
                             ],
                             'projekt_thema' => [
                                     'title' => 'Thema',
-                                    'type' => 'text',
+                                    'type' => 'textarea',
+                                    'lines' => 2,
+                                    'cols' => 60,
                             ],
                             'projekt_grade' => [
                                     'title' => 'Note',
                                     'type' => 'select',
                                     'values' => ['1' => 'sehr gut', '2' => 'gut', '3' => 'befriedigend', '4' => 'ausreichend', '5' => 'mangelhaft', '6' => 'ungenügend'], // TODO: is it correct grades?
-                            ],
+                            ],/*
                             'projekt_verbalbeurteilung' => [
                                     'title' => 'Verbalbeurteilung',
                                     'type' => 'textarea',
                                     'lines' => 2,
-                                    'cols' => 59,
-                            ],
+                                    'cols' => 60,
+                            ],*/
                     ],
             ],
             'BP 2004/GMS Halbjahreszeugniss der Förderschule' => [
@@ -2610,13 +2618,13 @@ function block_exastud_get_default_templates() {
                                     'title' => 'Teilnahme an Arbeitsgemeinschaften',
                                     'type' => 'textarea',
                                     'lines' => 4,
-                                    'cols' => 81,
+                                    'cols' => 80,
                             ],
                             'comments_short' => [
                                     'title' => 'Bemerkungen',
                                     'type' => 'textarea',
                                     'lines' => 3,
-                                    'cols' => 81,
+                                    'cols' => 80,
                             ],
                     ],
             ],
@@ -2656,7 +2664,7 @@ function block_exastud_get_default_templates() {
                                     'title' => 'Bemerkungen',
                                     'type' => 'textarea',
                                     'lines' => 5,
-                                    'cols' => 89,
+                                    'cols' => 90,
                             ],
                     ],
             ],
@@ -2682,8 +2690,8 @@ function block_exastud_get_default_templates() {
                             'comments_short' => [
                                     'title' => 'Bemerkungen',
                                     'type' => 'textarea',
-                                    'lines' => 3,
-                                    'cols' => 89,
+                                    'lines' => 5,
+                                    'cols' => 90,
                             ],
                     ],
             ],
