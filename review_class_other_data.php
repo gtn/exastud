@@ -128,7 +128,7 @@ foreach ($classstudents as $classstudent) {
 		$hasInputs = !!$categories;
 	}
 
-	if ($editUser->id !== $USER->id) {
+	if ($editUser->id !== $USER->id && $type == BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_16_ZERTIFIKAT_FUER_PROFILFACH) {
 		$row->cells[] = block_exastud_trans(['de:Zugeteilt zu {$a}'], fullname($editUser));
 	} else if (!$hasInputs) {
 		// no categories, or it's a default printtemplate with no inputs

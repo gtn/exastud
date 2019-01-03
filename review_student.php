@@ -104,11 +104,19 @@ if (block_exastud_is_exacomp_installed()) {
 	}
 }
 
-$reviewdata = $DB->get_record('block_exastudreview', array('teacherid' => $teacherid, 'subjectid' => $subjectid, 'periodid' => $actPeriod->id, 'studentid' => $studentid));
+$reviewdata = $DB->get_record('block_exastudreview',
+                                array('teacherid' => $teacherid,
+                                        'subjectid' => $subjectid,
+                                        'periodid' => $actPeriod->id,
+                                        'studentid' => $studentid));
 
 if ($reviewdata) {
 	foreach ($categories as $category) {
-		$formdata->{$category->id.'_'.$category->source} = $DB->get_field('block_exastudreviewpos', 'value', array("categoryid" => $category->id, "reviewid" => $reviewdata->id, "categorysource" => $category->source));
+		$formdata->{$category->id.'_'.$category->source} = $DB->get_field('block_exastudreviewpos',
+                                                                            'value',
+                                                                            array("categoryid" => $category->id,
+                                                                                    "reviewid" => $reviewdata->id,
+                                                                                    "categorysource" => $category->source));
 	}
 }
 

@@ -88,7 +88,7 @@ class print_templates {
                 $fields = array('learn_social_behavior');
                 break;
             case BLOCK_EXASTUD_DATA_ID_PRINT_TEMPLATE:
-                $fields = array('learn_social_behavior', 'subjects', 'comments', 'subject_elective', 'subject_profile', 'ags');
+                $fields = array('comments', /*'subjects', 'subject_elective', 'subject_profile',*/ 'ags');
                 break;
             case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_16_ZERTIFIKAT_FUER_PROFILFACH:
                 $fields_temp = unserialize($template->additional_params);
