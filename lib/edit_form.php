@@ -375,7 +375,7 @@ class student_other_data_form extends moodleform {
                                 '<span class="exastud-textarea-left-block">'.block_exastud_get_string('textarea_charsleft').': '.
                                 '<span id="left_'.$dataid.'_rows"><span class="exastud-value">-</span> '.block_exastud_get_string('textarea_rows').'</span>'.
                                 ' / '.
-                                '<span id="left_'.$dataid.'_chars"><span class="exastud-value">-</span> '.block_exastud_get_string('textarea_rows').'</span>'.
+                                '<span id="left_'.$dataid.'_chars"><span class="exastud-value">-</span> '.block_exastud_get_string('textarea_chars').'</span>'.
                                 '</span>');
 			} elseif ($input['type'] == 'text') {
 				$mform->addElement('text', $dataid, $input['title']);

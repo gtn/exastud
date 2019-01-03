@@ -301,15 +301,43 @@ $.extend(window.block_exastud, {
             var fullChars = 0;
             var charsPerRowLimitReached = false;
             var charsLimitReached = false;
-            rows.forEach(function (r) {
-                fullChars += r.length;
+            var charsPerRowLineI = 0; // in which line is charsLimit reached
+            var positionOfCharsPerRowsLimit = 0; // in which positions is charsLimit reached. for whole text (not one line)
+            rows.forEach(function (r, i) {
+                var clearString = r.replace('\r?\n', ''); // string without new lines
+                fullChars += clearString.length;
                 if (fullChars > charsLimit) {
                     charsLimitReached = true;
                 }
-                if (r.length > charsPerRowLimit) {
+                if (clearString.length > charsPerRowLimit) {
                     charsPerRowLimitReached = true;
+                    positionOfCharsPerRowsLimit = fullChars - (1 - i);
                 }
+                // fullChars = fullChars + 1; // new line
             })
+            // console.log('charsPerRowLimitReached:' + charsPerRowLimitReached);
+            // console.log('limit pos:' + positionOfCharsPerRowsLimit);
+            // console.log('rowsLimitReached:' + rowsLimitReached);
+            // console.log('charsLimitReached:' + charsLimitReached);
+            // console.log('fullChars:' + fullChars);
+            if (e && charsPerRowLimitReached) {
+                // go to the next line if it is limit of chars per row
+                // var cursorPos = getCursorPosition(textarea);
+                // console.log('strip on this postions: '+positionOfCharsPerRowsLimit);
+                if (!rowsLimitReached) {
+                    var newrowscount = rows.length + 1;
+                    if (newrowscount <= rowsLimit) {
+                        var currentText = textarea.val().substring(0, positionOfCharsPerRowsLimit) + '\r' + textarea.val().substring(positionOfCharsPerRowsLimit);
+                        textarea.attr('correct-value', currentText);
+                        // console.log(currentText);
+                        textarea.val(currentText);
+                        charsPerRowLimitReached = false; // charsPerRowLimitReached is ok again
+                    } else {
+                        rowsLimitReached = true;
+                    }
+                }
+                // return updateTextareaWithLimits(null, textarea);
+            }
             if (charsPerRowLimitReached || rowsLimitReached || charsLimitReached) {
                 textarea.css('background-color', 'rgb(255, 240, 240)');
                 textarea.css('color', 'rgb(216, 35, 35)');
