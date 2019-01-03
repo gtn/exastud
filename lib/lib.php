@@ -1953,7 +1953,6 @@ function block_exastud_get_default_templates() {
                     'place_of_birth' => '1',
                     'learning_group' => '1',
                     'class' => '1',
-                    'focus' => '1',
                     'grades' => $grades_1_bis_6,
                     'inputs' => [
                             'learn_social_behavior' => [
@@ -1979,7 +1978,6 @@ function block_exastud_get_default_templates() {
                     'place_of_birth' => '1',
                     'learning_group' => '1',
                     'class' => '1',
-                    'focus' => '1',
                     'inputs' => [
                     ],
             ],
@@ -1994,7 +1992,6 @@ function block_exastud_get_default_templates() {
                     'place_of_birth' => '1',
                     'learning_group' => '1',
                     'class' => '1',
-                    'focus' => '1',
                     'inputs' => [],
             ],
             'BP 2004/Zertifikat fuer Profilfach' => [
@@ -2008,7 +2005,6 @@ function block_exastud_get_default_templates() {
                     'place_of_birth' => '1',
                     'learning_group' => '1',
                     'class' => '1',
-                    'focus' => '1',
                     'grades' => [],
                     'inputs' => [
                             'besondere_kompetenzen' => [
@@ -2029,12 +2025,13 @@ function block_exastud_get_default_templates() {
                     'place_of_birth' => '1',
                     'learning_group' => '1',
                     'class' => '1',
-                    'focus' => '1',
                     'grades' => $grades_lang,
                     'inputs' => [
                         'projekt_thema' => [
                                 'title' => 'Thema',
-                                'type' => 'text',
+                                'type' => 'textarea',
+                                'lines' => 3,
+                                'cols' => 81
                         ],
                         'projekt_grade' => [
                                 'title' => 'Note',
@@ -2050,6 +2047,7 @@ function block_exastud_get_default_templates() {
                             'title' => 'Verbalbeurteilung',
                             'type' => 'textarea',
                             'lines' => 5,
+                            'cols' => 81,
                         ]
                     ],
             ],
@@ -2064,7 +2062,6 @@ function block_exastud_get_default_templates() {
                     'place_of_birth' => '1',
                     'learning_group' => '1',
                     'class' => '1',
-                    'focus' => '1',
                     'grades' => $grades_mit_plus_minus_bis,
                     'inputs' => [
                             'learn_social_behavior' => [
@@ -2090,7 +2087,6 @@ function block_exastud_get_default_templates() {
                     'place_of_birth' => '1',
                     'learning_group' => '1',
                     'class' => '1',
-                    'focus' => '1',
                     'grades' => $grades_1_bis_6,
                     'inputs' => [
                             'learn_social_behavior' => [
@@ -2116,7 +2112,6 @@ function block_exastud_get_default_templates() {
                     'place_of_birth' => '1',
                     'learning_group' => '1',
                     'class' => '1',
-                    'focus' => '1',
                     'grades' => $grades_mit_plus_minus_bis,
                     'inputs' => [
                             'learn_social_behavior' => [
@@ -2128,6 +2123,8 @@ function block_exastud_get_default_templates() {
                             'comments' => [
                                     'title' => block_exastud_trans('de:Bemerkungen'),
                                     'type' => 'textarea',
+                                    'lines' => 7,
+                                    'cols' => 80,
                             ],
                     ],
             ],
@@ -2142,7 +2139,6 @@ function block_exastud_get_default_templates() {
                     'place_of_birth' => '1',
                     'learning_group' => '1',
                     'class' => '1',
-                    'focus' => '1',
                     'grades' => $grades_1_bis_6,
                     'inputs' => [
                             'learn_social_behavior' => [
@@ -2168,7 +2164,6 @@ function block_exastud_get_default_templates() {
                     'place_of_birth' => '1',
                     'learning_group' => '1',
                     'class' => '1',
-                    'focus' => '1',
                     'grades' => $grades_mit_plus_minus_bis_ausgeschrieben,
                     'inputs' => [
                             'ags' => [
@@ -2194,7 +2189,6 @@ function block_exastud_get_default_templates() {
                     'place_of_birth' => '1',
                     'learning_group' => '1',
                     'class' => '1',
-                    'focus' => '1',
                     'grades' => $grades_short,
                     'inputs' => [
                             'verhalten' => [
@@ -2226,7 +2220,6 @@ function block_exastud_get_default_templates() {
                     'place_of_birth' => '1',
                     'learning_group' => '1',
                     'class' => '1',
-                    'focus' => '1',
                     'grades' => $grades_lang,
                     'inputs' => [
                             'wann_verlassen' => [
@@ -2246,12 +2239,14 @@ function block_exastud_get_default_templates() {
                             'ags' => [
                                     'title' => 'Teilnahme an Arbeitsgemeinschaften',
                                     'type' => 'textarea',
-                                    'lines' => 3,
+                                    'lines' => 2,
+                                    'cols' => 74,
                             ],
                             'comments_short' => [
                                     'title' => 'Bemerkungen',
                                     'type' => 'textarea',
-                                    'lines' => 3,
+                                    'lines' => 2,
+                                    'cols' => 81,
                             ],
                             'abgangszeugnis_niveau' => [
                                     'title' => 'Die Leistung wurde in allen Fächern auf dem folgenden Niveau beurteilt',
@@ -2271,7 +2266,6 @@ function block_exastud_get_default_templates() {
                     'place_of_birth' => '1',
                     'learning_group' => '1',
                     'class' => '1',
-                    'focus' => '1',
                     'grades' => $grades_lang,
                     'inputs' => [
                             'wann_verlassen' => [
@@ -2294,17 +2288,20 @@ function block_exastud_get_default_templates() {
                             'projekt_verbalbeurteilung' => [
                                     'title' => 'Verbalbeurteilung',
                                     'type' => 'textarea',
-                                    'lines' => 5,
+                                    'lines' => 2,
+                                    'cols' => 54,
                             ],
                             'ags' => [
                                     'title' => 'Teilnahme an Arbeitsgemeinschaften',
                                     'type' => 'textarea',
-                                    'lines' => 3,
+                                    'lines' => 2,
+                                    'cols' => 74,
                             ],
                             'comments_short' => [
                                     'title' => 'Bemerkungen',
                                     'type' => 'textarea',
-                                    'lines' => 3,
+                                    'lines' => 2,
+                                    'cols' => 81,
                             ],
                     ],
             ],
@@ -2319,7 +2316,6 @@ function block_exastud_get_default_templates() {
                     'place_of_birth' => '1',
                     'learning_group' => '1',
                     'class' => '1',
-                    'focus' => '1',
                     'grades' => $grades_short,
                     'inputs' => [
                             'ags' => [
@@ -2345,7 +2341,6 @@ function block_exastud_get_default_templates() {
                     'place_of_birth' => '1',
                     'learning_group' => '1',
                     'class' => '1',
-                    'focus' => '1',
                     'grades' => $grades_lang,
                     'inputs' => [
                         /*
@@ -2369,17 +2364,23 @@ function block_exastud_get_default_templates() {
                         'projekt_verbalbeurteilung' => [
                                 'title' => 'Verbalbeurteilung',
                                 'type' => 'textarea',
-                                'lines' => 5,
-                        ],
+                                'lines' => 2,
+                                'cols' => 59,
+                        ],/*
                         'gesamtnote_und_durchschnitt_der_gesamtleistungen' => [
                                 'title' => 'Gesamtnote und Durchschnitt der Gesamtleistungen',
                                 'type' => 'text',
-                        ],
+                        ],*/
                         'ags' => [
                                 'title' => 'Teilnahme an Arbeitsgemeinschaften',
+                                'lines' => 3,
+                                'cols' => 89,
                         ],
                         'comments_short' => [
                                 'title' => 'Bemerkungen',
+                                'type' => 'textarea',
+                                'lines' => 3,
+                                'cols' => 89,
                         ],
                     ],
             ],
@@ -2394,7 +2395,6 @@ function block_exastud_get_default_templates() {
                     'place_of_birth' => '1',
                     'learning_group' => '1',
                     'class' => '1',
-                    'focus' => '1',
                     'grades' => $grades_short,
                     'inputs' => [
                             'ags' => [
@@ -2420,7 +2420,6 @@ function block_exastud_get_default_templates() {
                     'place_of_birth' => '1',
                     'learning_group' => '1',
                     'class' => '1',
-                    'focus' => '1',
                     'grades' => $grades_lang,
                     'inputs' => [
                         'projekt_thema' => [
@@ -2435,17 +2434,20 @@ function block_exastud_get_default_templates() {
                         'projekt_verbalbeurteilung' => [
                                 'title' => 'Verbalbeurteilung',
                                 'type' => 'textarea',
-                                'lines' => 5,
+                                'lines' => 3,
+                                'cols' => 65,
                         ],
                         'ags' => [
                                 'title' => 'Teilnahme an Arbeitsgemeinschaften',
                                 'type' => 'textarea',
                                 'lines' => 3,
+                                'cols' => 91,
                         ],
                         'comments_short' => [
                                 'title' => 'Bemerkungen',
                                 'type' => 'textarea',
                                 'lines' => 3,
+                                'cols' => 91,
                         ],
                     ],
             ],
@@ -2460,18 +2462,28 @@ function block_exastud_get_default_templates() {
                     'place_of_birth' => '1',
                     'learning_group' => '1',
                     'class' => '1',
-                    'focus' => '1',
                     'grades' => $grades_lang,
                     'inputs' => [
+                            'focus' => [
+                                    'title' => 'Schwerpunkt',
+                                    'type' => 'select',
+                                    'values' => ['lernen' => 'lernen', 'geistige Enwicklung' => 'geistige Enwicklung'],
+                            ],/*
                             'gesamtnote_und_durchschnitt_der_gesamtleistungen' => [
                                     'title' => 'Gesamtnote und Durchschnitt der Gesamtleistungen',
                                     'type' => 'text',
-                            ],
+                            ],*/
                             'ags' => [
                                     'title' => 'Teilnahme an Arbeitsgemeinschaften',
+                                    'type' => 'textarea',
+                                    'lines' => 2,
+                                    'cols' => 89,
                             ],
                             'comments_short' => [
                                     'title' => 'Bemerkungen',
+                                    'type' => 'textarea',
+                                    'lines' => 3,
+                                    'cols' => 81,
                             ],
                             'projekt_thema' => [
                                     'title' => 'Thema',
@@ -2485,7 +2497,8 @@ function block_exastud_get_default_templates() {
                             'projekt_verbalbeurteilung' => [
                                     'title' => 'Verbalbeurteilung',
                                     'type' => 'textarea',
-                                    'lines' => 5,
+                                    'lines' => 2,
+                                    'cols' => 59,
                             ],
                     ],
             ],
@@ -2500,7 +2513,6 @@ function block_exastud_get_default_templates() {
                     'place_of_birth' => '1',
                     'learning_group' => '1',
                     'class' => '1',
-                    'focus' => '1',
                     'grades' => $grades_short,
                     'inputs' => [
                             'ags' => [
@@ -2521,7 +2533,6 @@ function block_exastud_get_default_templates() {
                     'place_of_birth' => '1',
                     'learning_group' => '1',
                     'class' => '1',
-                    'focus' => '1',
                     'inputs' => [],
             ],
             'BP 2004/Halbjahresinformation Kl11' => [
@@ -2535,7 +2546,6 @@ function block_exastud_get_default_templates() {
                     'place_of_birth' => '1',
                     'learning_group' => '1',
                     'class' => '1',
-                    'focus' => '1',
                     'grades' => $grades_mit_plus_minus_bis_ausgeschrieben,
                     'inputs' => [
                             'ags' => [
@@ -2561,7 +2571,6 @@ function block_exastud_get_default_templates() {
                     'place_of_birth' => '1',
                     'learning_group' => '1',
                     'class' => '1',
-                    'focus' => '1',
                     'grades' => $grades_mit_plus_minus_bis_ausgeschrieben,
                     'inputs' => [
                             'ags' => [

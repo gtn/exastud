@@ -427,7 +427,7 @@ class reportsettings_edit_form extends moodleform {
             'place_of_birth',
             'learning_group',
             'class',
-            'focus',
+            //'focus',
             'learn_social_behavior',
             'subjects',
             'comments',
@@ -437,6 +437,7 @@ class reportsettings_edit_form extends moodleform {
             'ags',
         );
     protected $fieldsWithAdditionalParams = array(
+        'focus',
         'learn_social_behavior',
         'subjects',
         'comments',
