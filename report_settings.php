@@ -50,11 +50,57 @@ block_exastud_require_login(1);
 //$lastPeriodClasses = $lastPeriod ? block_exastud_get_head_teacher_classes_owner($lastPeriod->id) : [];
 //$shownClasses = array(); // Which ckasses already shown on the page
 
-$url = '/blocks/exastud/report_settings.php';
+$url = '/blocks/exastud/report_settings.php'.($tokenparam ? '?token='.$tokenparam : '');
 $PAGE->set_url($url);
 $PAGE->set_pagelayout('admin'); // Needed for admin menu block
 block_exastud_custom_breadcrumb($PAGE);
 
+$showfulltable = false;
+
+// filter form
+$filterform = new report_settings_filter_form(null, ['for_reseting' => ($action == 'reset_default' ? 1 : 0)]);
+$filterdata = new stdClass();
+if ($filterform->is_cancelled()) {
+    $SESSION->reports_filter = null;
+    $params = array();
+    if ($tokenparam) {
+        $params['token'] = $tokenparam;
+    }
+    if ($action) {
+        $params['action'] = $action;
+    }
+    redirect(new moodle_url('/blocks/exastud/report_settings.php', $params));
+} else if ($newfilter = $filterform->get_data()) {
+    if (!empty($newfilter->gofilter)) {
+        $SESSION->reports_filter = serialize($newfilter);
+    }
+    if (!empty($newfilter->clearfilter)) {
+        $SESSION->reports_filter = null;
+    }
+    $params = array();
+    if ($tokenparam) {
+        $params['token'] = $tokenparam;
+    }
+    if ($action) {
+        $params['action'] = $action;
+    }
+    redirect(new moodle_url('/blocks/exastud/report_settings.php', $params));
+}
+if (!empty($SESSION->reports_filter)) {
+    $filterdata = unserialize($SESSION->reports_filter);
+    if (!empty($filterdata->showfulltable) && $filterdata->showfulltable) {
+        $showfulltable = true;
+    }
+}
+if ($tokenparam) {
+    $filterdata->token = $tokenparam;
+}
+if ($action) {
+    $filterdata->action = $action;
+}
+$filterform->set_data($filterdata);
+
+// report settings form
 $reportsetting = new stdClass();
 $settingsform = new reportsettings_edit_form(null, [/*'classid' => $classid*/]);
 
@@ -118,7 +164,7 @@ if ($action && ($settingsid > 0 || $action == 'new')) {
     if ($tokenparam) {
         $reportsetting->token = $tokenparam;
     }
-    //echo '<pre>';print_r($reportsetting);exit;
+    
     $settingsform->set_data($reportsetting);
     $settingsform->display(true);
 
@@ -138,6 +184,13 @@ if ($action && ($settingsid > 0 || $action == 'new')) {
     }
     echo $output->header(['report_settings'], ['content_title' => block_exastud_get_string('pluginname')], true);
     $content = '';
+    // add filter form
+    $content .= $filterform->display();
+    $filter = array();
+    if (!empty($SESSION->reports_filter)) {
+        $filter = (array)unserialize($SESSION->reports_filter);
+    }
+
     $content .= $output->notification(block_exastud_get_string('reset_report_templates_description'), 'info');
     $formcontent = '';
     $formcontent .= html_writer::tag('input', '', ['type' => 'hidden', 'name' => 'doit', 'value' => 1]);
@@ -154,11 +207,44 @@ if ($action && ($settingsid > 0 || $action == 'new')) {
     );
     $rows = array();
     foreach ($defaulttemplates as $template) {
+        $currenttemplate = $DB->get_record('block_exastudreportsettings', ['id' => $template['id']]);
+        // filter template - filter by CURRENT parameters (not default)
+        if (count($filter) > 0) {
+            foreach ($filter as $f => $value) {
+                switch ($f) {
+                    case 'search':
+                        if (trim($value) != '') {
+                            if (strpos($currenttemplate->title, trim($value)) === false) {
+                                continue 3;
+                            }
+                        }
+                        break;
+                    case 'bpid':
+                        if (is_numeric($value) && $value >= 0) {
+                            if ($currenttemplate->bpid != $value) {
+                                continue 3;
+                            }
+                        }
+                        break;
+                    case 'category':
+                        if ($value == '--notselected--') {
+                            // no filter
+                        } else if (trim($value) == '') {
+                            if ($currenttemplate->category != '') {
+                                continue 3;
+                            }
+                        } else {
+                            if ($currenttemplate->category != trim($value)) {
+                                continue 3;
+                            }
+                        }
+                        break;
+                }
+            }
+        }
         $row = new html_table_row();
         $row->cells[] = $template['id'];
         $addmessage = '';
-        $currenttemplate = $DB->get_record('block_exastudreportsettings', [
-                'id' => $template['id']]);
         $row->cells[] = html_writer::checkbox('templateid[]', $template['id'], false, '', ['id' => 'template_'.$template['id'], 'class' => 'template-id']);
         if (!$currenttemplate) {
             $addmessage .= '<span class="exastud-additional-text">'.block_exastud_get_string('report_setting_willbe_added').'</span>';
@@ -175,7 +261,7 @@ if ($action && ($settingsid > 0 || $action == 'new')) {
     }
     $table->data = $rows;
     $formcontent .= html_writer::table($table);
-    $formcontent .= html_writer::link(new moodle_url('/blocks/exastud/report_settings.php', ['sesskey' => sesskey()]),
+    $formcontent .= html_writer::link(new moodle_url('/blocks/exastud/report_settings.php', ['sesskey' => sesskey(), 'token' => ($tokenparam ? $tokenparam : '')]),
             block_exastud_get_string('back'),
             ['class' => 'btn btn-default']);
     $formcontent .= '&nbsp;&nbsp;&nbsp;'.html_writer::tag('button', block_exastud_get_string('reset_report_selected_templates'), [
@@ -196,6 +282,9 @@ if ($action && ($settingsid > 0 || $action == 'new')) {
     echo $output->heading(block_exastud_get_string('report_settings'));
     $content = '';
 
+    // add filter form
+    $content .= $filterform->display();
+
     $params = [
             'action' => 'new',
             'sesskey' => sesskey()
@@ -208,7 +297,11 @@ if ($action && ($settingsid > 0 || $action == 'new')) {
     $content .= $newLink.'<br>';
 
     // List of settings
-    $reports = block_exastud_get_reportsettings_all(true);
+    $filter = array();
+    if (!empty($SESSION->reports_filter)) {
+        $filter = (array)unserialize($SESSION->reports_filter);
+    }
+    $reports = block_exastud_get_reportsettings_all(true, $filter);
 
     if ($reports) {
         $table = new html_table();
@@ -219,25 +312,29 @@ if ($action && ($settingsid > 0 || $action == 'new')) {
                 block_exastud_get_string('report_settings_setting_title'),
                 block_exastud_get_string('report_settings_setting_bp'),
                 block_exastud_get_string('report_settings_setting_category'),
-                block_exastud_get_string('report_settings_setting_template'),
-                block_exastud_get_string('report_settings_setting_grades'),
-                block_exastud_get_string('report_settings_setting_year'),
-                block_exastud_get_string('report_settings_setting_reportdate'),
-                block_exastud_get_string('report_settings_setting_studentname'),
-                block_exastud_get_string('report_settings_setting_dateofbirth'),
-                block_exastud_get_string('report_settings_setting_placeofbirth'),
-                block_exastud_get_string('report_settings_setting_learninggroup'),
-                block_exastud_get_string('report_settings_setting_class'),
-                block_exastud_get_string('report_settings_setting_focus'),
-                block_exastud_get_string('report_settings_setting_learnsocialbehavior'),
-                block_exastud_get_string('report_settings_setting_subjects'),
-                block_exastud_get_string('report_settings_setting_comments'),
-                block_exastud_get_string('report_settings_setting_subjectelective'),
-                block_exastud_get_string('report_settings_setting_subjectprofile'),
-                block_exastud_get_string('report_settings_setting_projektthema'),
-                block_exastud_get_string('report_settings_setting_ags'),
-                block_exastud_get_string('report_settings_setting_additional_params'),
+                block_exastud_get_string('report_settings_setting_template')
         );
+        if ($showfulltable) {
+            $table->head = array_merge($table->head, array(
+                    block_exastud_get_string('report_settings_setting_grades'),
+                    block_exastud_get_string('report_settings_setting_year'),
+                    block_exastud_get_string('report_settings_setting_reportdate'),
+                    block_exastud_get_string('report_settings_setting_studentname'),
+                    block_exastud_get_string('report_settings_setting_dateofbirth'),
+                    block_exastud_get_string('report_settings_setting_placeofbirth'),
+                    block_exastud_get_string('report_settings_setting_learninggroup'),
+                    block_exastud_get_string('report_settings_setting_class'),
+                    block_exastud_get_string('report_settings_setting_focus'),
+                    block_exastud_get_string('report_settings_setting_learnsocialbehavior'),
+                    block_exastud_get_string('report_settings_setting_subjects'),
+                    block_exastud_get_string('report_settings_setting_comments'),
+                    block_exastud_get_string('report_settings_setting_subjectelective'),
+                    block_exastud_get_string('report_settings_setting_subjectprofile'),
+                    block_exastud_get_string('report_settings_setting_projektthema'),
+                    block_exastud_get_string('report_settings_setting_ags'),
+                    block_exastud_get_string('report_settings_setting_additional_params'),
+            ));
+        }
         $table->align = array("left");
         // function for getting human value of field
         $setting_marker = function($field, $value) use ($settingsform) {
@@ -291,25 +388,29 @@ if ($action && ($settingsid > 0 || $action == 'new')) {
                     '<strong>'.$report->title.'</strong>',
                     $bpData ? $bpData->title : '',
                     $report->category,
-                    array_key_exists($report->template, $templateList) ? $templateList[$report->template] : $report->template,
-                    $report->grades,
-                    $call_setting_marker('year'),
-                    $call_setting_marker('report_date'),
-                    $call_setting_marker('student_name'),
-                    $call_setting_marker('date_of_birth'),
-                    $call_setting_marker('place_of_birth'),
-                    $call_setting_marker('learning_group'),
-                    $call_setting_marker('class'),
-                    $call_setting_marker('focus'),
-                    $call_setting_marker('learn_social_behavior'),
-                    $call_setting_marker('subjects'),
-                    $call_setting_marker('comments'),
-                    $call_setting_marker('subject_elective'),
-                    $call_setting_marker('subject_profile'),
-                    $call_setting_marker('projekt_thema'),
-                    $call_setting_marker('ags'),
-                    block_exastud_get_reportsettings_additional_description($report)
-            );
+                    array_key_exists($report->template, $templateList) ? $templateList[$report->template] : $report->template,);
+            if ($showfulltable) {
+                $row = array_merge($row, array(
+                        $report->grades,
+                        $call_setting_marker('year'),
+                        $call_setting_marker('report_date'),
+                        $call_setting_marker('student_name'),
+                        $call_setting_marker('date_of_birth'),
+                        $call_setting_marker('place_of_birth'),
+                        $call_setting_marker('learning_group'),
+                        $call_setting_marker('class'),
+                        $call_setting_marker('focus'),
+                        $call_setting_marker('learn_social_behavior'),
+                        $call_setting_marker('subjects'),
+                        $call_setting_marker('comments'),
+                        $call_setting_marker('subject_elective'),
+                        $call_setting_marker('subject_profile'),
+                        $call_setting_marker('projekt_thema'),
+                        $call_setting_marker('ags'),
+                        block_exastud_get_reportsettings_additional_description($report)
+                ));
+            }
+
             $table->data[] = $row;
         }
     }
@@ -318,20 +419,21 @@ if ($action && ($settingsid > 0 || $action == 'new')) {
     if (!empty($table)) {
         $content .= $output->table($table);
         $buttons .= $newLink.'&nbsp;&nbsp;&nbsp;';
+        // Reset templates to default state
+        $params = [
+                'action' => 'reset_default',
+                'sesskey' => sesskey()
+        ];
+        if ($tokenparam) {
+            $params['token'] = $tokenparam;
+        }
+        $buttons .= html_writer::link(new moodle_url('/blocks/exastud/report_settings.php', $params),
+                block_exastud_get_string('reset_report_templates'), ['class' => 'btn btn-danger']);
+        $content .= html_writer::div($buttons, 'buttons');
     } else {
-        $content .= 'No any template in DB';
+        $content .= block_exastud_get_string('not_found_report');
     }
-    // Reset templates to default state
-    $params = [
-            'action' => 'reset_default',
-            'sesskey' => sesskey()
-    ];
-    if ($tokenparam) {
-        $params['token'] = $tokenparam;
-    }
-    $buttons .= html_writer::link(new moodle_url('/blocks/exastud/report_settings.php', $params),
-                                    block_exastud_get_string('reset_report_templates'), ['class' => 'btn btn-danger']);
-    $content .= html_writer::div($buttons, 'buttons');
+
     echo $content;
 }
 

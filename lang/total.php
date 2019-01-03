@@ -1290,4 +1290,40 @@ return [
         'beste Note of "Fächer"',
         'best grade'
     ],
+    'filter_fieldset' => [
+        'Filter',
+        'Filter',
+    ],
+    'filter_search' => [
+        'Title search',
+        'Title search',
+    ],
+    'filter_bp' => [
+        'BP',
+        'Curriculum',
+    ],
+    'filter_empty' => [
+        'keine',
+        'empty',
+    ],
+    'filter_category' => [
+        'Kategorie',
+        'Category',
+    ],
+    'filter_button' => [
+        'Filter',
+        'Filter',
+    ],
+    'clear_filter' => [
+        'Clear filters',
+        'Clear filters',
+    ],
+    'not_found_report' => [
+        'No any report found',
+        'No any report found',
+    ],
+    'filter_show_fulltable' => [
+        'Show full table',
+        'Show full table',
+    ],
 ];

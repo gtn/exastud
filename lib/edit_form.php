@@ -914,36 +914,44 @@ class report_settings_filter_form extends moodleform {
     function definition() {
         $mform = $this->_form;
 
-        $mform->addElement('text', 'description', block_exastud_get_string('perioddesc'), array('size' => 50));
-        $mform->setType('description', PARAM_TEXT);
-        $mform->addRule('description', block_exastud_get_string('error'), 'required', null, 'server', false, false);
+        $mform->addElement('header', 'filter', block_exastud_get_string('filter_fieldset'));
 
+        $mform->addElement('text', 'search', block_exastud_get_string('filter_search').':', array('size' => 50));
+        $mform->setType('search', PARAM_TEXT);
+        // BPs
+        $bps = g::$DB->get_records_menu('block_exastudbp', null, 'sorting', 'id, title');
+        // add empty
+        $bps = ['' => '', '0' => block_exastud_get_string('filter_empty')] + $bps;
+        $mform->addElement('select',
+                'bpid',
+                block_exastud_get_string('filter_bp').':',
+                $bps);
+        // Categories
+        $categories = g::$DB->get_records_sql_menu(' SELECT DISTINCT category, category as value FROM {block_exastudreportsettings} WHERE category != \'\'');
+        // add empty
+        $categories = ['--notselected--' => '', '' => block_exastud_get_string('filter_empty')] + $categories;
+        $mform->addElement('select',
+                'category',
+                block_exastud_get_string('filter_category').':',
+                $categories);
 
-        $mform->addElement('hidden', 'courseid');
-        $mform->setType('courseid', PARAM_INT);
-
-        $mform->addElement('date_time_selector', 'starttime', block_exastud_get_string('starttime'));
-        $mform->setType('starttime', PARAM_INT);
-        $mform->addRule('starttime', null, 'required', null, 'server');
-
-        $mform->addElement('date_time_selector', 'endtime', block_exastud_get_string('endtime'));
-        $mform->setType('endtime', PARAM_INT);
-        $mform->addRule('endtime', null, 'required', null, 'server');
-
-        $mform->addElement('date_selector', 'certificate_issue_date', block_exastud_get_string('certificate_issue_date'), [
-                'optional' => true,
-        ]);
-        $mform->setType('certificate_issue_date', PARAM_INT);
-
-        $mform->addElement('hidden', 'id');
-        $mform->setType('id', PARAM_INT);
-        $mform->setDefault('id', 0);
-
+        $mform->addElement('hidden', 'token');
+        $mform->setType('token', PARAM_INT);
         $mform->addElement('hidden', 'action');
         $mform->setType('action', PARAM_TEXT);
-        $mform->setDefault('action', 0);
 
-        $this->add_action_buttons();
+        // checkbox: show full table
+        if (!$this->_customdata['for_reseting']) {
+            $mform->addElement('checkbox', 'showfulltable', block_exastud_get_string('filter_show_fulltable'));
+        }
+
+        $buttons = array();
+        $buttons[] = $mform->createElement('submit', 'gofilter', block_exastud_get_string('filter_button'));
+        $buttons[] = $mform->createElement('submit', 'clearfilter', block_exastud_get_string('clear_filter'));
+        $mform->addGroup($buttons, 'buttons', '', array(' '), false);
+
+        $mform->setExpanded('filter');
+        $mform->closeHeaderBefore('filter');
     }
 
 }

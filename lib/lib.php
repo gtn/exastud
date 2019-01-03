@@ -1883,12 +1883,44 @@ function block_exastud_get_head_teachers_all() {
 }
 
 // get ALL report settings
-function block_exastud_get_reportsettings_all($sortByPlans = false) {
-    return g::$DB->get_records_sql("
-			SELECT r.*
-			FROM {block_exastudreportsettings} r
-              LEFT JOIN {block_exastudbp} p ON p.id = r.bpid
-			ORDER BY ".($sortByPlans ? "p.sorting, p.id, " : "")." r.title");
+function block_exastud_get_reportsettings_all($sortByPlans = false, $filter = array()) {
+    $where = '';
+    if (count($filter) > 0) {
+        $wherearr = array();
+        foreach ($filter as $f => $value) {
+            switch ($f) {
+                case 'search':
+                    if (trim($value) != '') {
+                        $wherearr[] = ' r.title LIKE \'%'.trim($value).'%\' ';
+                    }
+                    break;
+                case 'bpid':
+                    if (is_numeric($value) && $value >= 0 ) {
+                        $wherearr[] = ' r.bpid = '.intval($value).' ';
+                    }
+                    break;
+                case 'category':
+                    if ($value == '--notselected--') {
+                        // no filter
+                    } else if (trim($value) != '') {
+                        $wherearr[] = ' r.category = \''.trim($value).'\' ';
+                    } else {
+                        // filter by empty
+                        $wherearr[] = ' r.category = \'\' ';
+                    }
+                    break;
+            }
+        }
+        if (count($wherearr) > 0) {
+            $where = implode(' AND ', $wherearr);
+        }
+    }
+    $sql = 'SELECT r.* 
+                  FROM {block_exastudreportsettings} r
+                  LEFT JOIN {block_exastudbp} p ON p.id = r.bpid
+                  '.($where ? ' WHERE '.$where.' ' : ' ').'
+			      ORDER BY '.($sortByPlans ? 'p.sorting, p.id, ' : '').' r.title';
+    return g::$DB->get_records_sql($sql);
 }
 
 function block_exastud_get_report_templates($class) {
