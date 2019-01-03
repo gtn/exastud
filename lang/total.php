@@ -143,7 +143,7 @@ return [
         'Please note: If the education plan is changed, all ratings must be re-entered',
     ],
     'attention_template_will_change' => [
-        'Bitte beachten Sie: Bei einer Änderung des Standard Zeugnisformulars wird für alle Schüler das Zeugnisformular geändert. Bestehende Formulareinstellungen wie z.B. Agangszeugnis werden beibehalten.',
+        'Bitte beachten Sie: Bei einer Änderung des Standard Zeugnisformulars wird für alle Schüler das Zeugnisformular geändert. Bestehende Formulareinstellungen wie z.B. Abgangszeugnis werden beibehalten.',
         'Please note: Changing the standard certificate form will change the certificate form for all students.',
     ],
 	'class_info' => [
@@ -651,7 +651,7 @@ return [
             'AGs',
     ],
     'report_settings_setting_additional_params' => [
-            'weitere parameter',
+            'weitere Parameter',
             'Additional params',
     ],
     'report_settings_no' => [
@@ -703,7 +703,7 @@ return [
             'Value',
     ],
     'delete_parameter' => [
-            'delete parameter',
+            'Parameter löschen',
             'Delete parameter',
     ],
     'delete' => [
@@ -739,11 +739,11 @@ return [
             'Max size (bytes)',
     ],
     'report_setting_type_image_width' => [
-            'Width',
+            'Breite',
             'Width',
     ],
     'report_setting_type_image_height' => [
-            'Height',
+            'Höhe',
             'Height',
     ],
     'reset_report_templates' => [
@@ -767,7 +767,7 @@ return [
             'Current template',
     ],
     'report_setting_willbe_added' => [
-            'Vorlage existiert nicht und wird hinzugefügt. Falls die Vorlage geöscht wurde kann der Administrator diese erneut hinzufügen.',
+            'Vorlage existiert nicht und wird hinzugefügt. Falls die Vorlage gelöscht wurde kann der Administrator diese erneut hinzufügen.',
             'Does not exist now. Will be added.',
     ],
     'select_student' => [
