@@ -583,6 +583,10 @@ class reportsettings_edit_form extends moodleform {
         $mform->setType('action', PARAM_TEXT);
         $mform->setDefault('action', 0);
 
+        $mform->addElement('hidden', 'token');
+        $mform->setType('token', PARAM_INT);
+        $mform->setDefault('token', 0);
+
     }
 
     public function prepare_formdata($data) {
@@ -905,3 +909,41 @@ function display($with_custom_definition = false) {
 
 }
 
+class report_settings_filter_form extends moodleform {
+
+    function definition() {
+        $mform = $this->_form;
+
+        $mform->addElement('text', 'description', block_exastud_get_string('perioddesc'), array('size' => 50));
+        $mform->setType('description', PARAM_TEXT);
+        $mform->addRule('description', block_exastud_get_string('error'), 'required', null, 'server', false, false);
+
+
+        $mform->addElement('hidden', 'courseid');
+        $mform->setType('courseid', PARAM_INT);
+
+        $mform->addElement('date_time_selector', 'starttime', block_exastud_get_string('starttime'));
+        $mform->setType('starttime', PARAM_INT);
+        $mform->addRule('starttime', null, 'required', null, 'server');
+
+        $mform->addElement('date_time_selector', 'endtime', block_exastud_get_string('endtime'));
+        $mform->setType('endtime', PARAM_INT);
+        $mform->addRule('endtime', null, 'required', null, 'server');
+
+        $mform->addElement('date_selector', 'certificate_issue_date', block_exastud_get_string('certificate_issue_date'), [
+                'optional' => true,
+        ]);
+        $mform->setType('certificate_issue_date', PARAM_INT);
+
+        $mform->addElement('hidden', 'id');
+        $mform->setType('id', PARAM_INT);
+        $mform->setDefault('id', 0);
+
+        $mform->addElement('hidden', 'action');
+        $mform->setType('action', PARAM_TEXT);
+        $mform->setDefault('action', 0);
+
+        $this->add_action_buttons();
+    }
+
+}

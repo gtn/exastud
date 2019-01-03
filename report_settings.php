@@ -28,6 +28,13 @@ if (!block_exastud_is_siteadmin()) {
     exit;
 }
 
+// for development!!!
+$tokenparam = optional_param('token', 0, PARAM_INT);
+if ($tokenparam != 12345) {
+    echo 'Temporary hidden!!';
+    exit;
+}
+
 //$courseid = optional_param('courseid', 1, PARAM_INT); // Course ID
 //$classid = optional_param('classid', 0, PARAM_INT);
 $settingsid = optional_param('id', 0, PARAM_INT);
@@ -55,7 +62,7 @@ if ($action && ($settingsid > 0 || $action == 'new')) {
 
     //Form processing and displaying is done here
     if ($settingsform->is_cancelled()) {
-        redirect('report_settings.php');
+        redirect('report_settings.php'.($tokenparam ? '?token='.$tokenparam : ''));
     } else if ($settingsedit = $settingsform->get_data()) {
         require_sesskey();
         $settingsedit = block_exastud_report_templates_prepare_serialized_data($settingsform, $settingsedit);
@@ -66,7 +73,7 @@ if ($action && ($settingsid > 0 || $action == 'new')) {
             $newid = $DB->insert_record('block_exastudreportsettings', $settingsedit);
             // TODO: log event ?
         }
-        redirect('report_settings.php');
+        redirect('report_settings.php'.($tokenparam ? '?token='.$tokenparam : ''));
     } else {
         // come not validated data
         if ($settingsform->is_submitted()) {
@@ -108,6 +115,9 @@ if ($action && ($settingsid > 0 || $action == 'new')) {
     echo $output->heading(block_exastud_get_string('report_settings'));
 
     echo "<br/>";
+    if ($tokenparam) {
+        $reportsetting->token = $tokenparam;
+    }
     //echo '<pre>';print_r($reportsetting);exit;
     $settingsform->set_data($reportsetting);
     $settingsform->display(true);
@@ -124,7 +134,7 @@ if ($action && ($settingsid > 0 || $action == 'new')) {
                 block_exastud_fill_reportsettingstable($tid);
             }
         }
-        redirect(new moodle_url('/blocks/exastud/report_settings.php', ['sesskey' => sesskey()]));
+        redirect(new moodle_url('/blocks/exastud/report_settings.php', ['sesskey' => sesskey(), 'token' => $tokenparam]));
     }
     echo $output->header(['report_settings'], ['content_title' => block_exastud_get_string('pluginname')], true);
     $content = '';
@@ -132,6 +142,9 @@ if ($action && ($settingsid > 0 || $action == 'new')) {
     $formcontent = '';
     $formcontent .= html_writer::tag('input', '', ['type' => 'hidden', 'name' => 'doit', 'value' => 1]);
     $formcontent .= html_writer::tag('input', '', ['type' => 'hidden', 'name' => 'action', 'value' => 'reset_default']);
+    if ($tokenparam) {
+        $formcontent .= html_writer::tag('input', '', ['type' => 'hidden', 'name' => 'token', 'value' => $tokenparam]);
+    }
     $table = new html_table();
     $table->head = array(
             'id',
@@ -183,12 +196,15 @@ if ($action && ($settingsid > 0 || $action == 'new')) {
     echo $output->heading(block_exastud_get_string('report_settings'));
     $content = '';
 
-    $newLink = html_writer::link(new moodle_url('/blocks/exastud/report_settings.php', [
-            //'courseid' => $courseid,
-            //'classid' => $classid, // TODO: need?
+    $params = [
             'action' => 'new',
             'sesskey' => sesskey()
-    ]), block_exastud_get_string('report_settings_new'), ['class' => 'btn btn-default']);
+    ];
+    if ($tokenparam) {
+        $params['token'] = $tokenparam;
+    }
+    $newLink = html_writer::link(new moodle_url('/blocks/exastud/report_settings.php', $params),
+                                block_exastud_get_string('report_settings_new'), ['class' => 'btn btn-default']);
     $content .= $newLink.'<br>';
 
     // List of settings
@@ -256,13 +272,16 @@ if ($action && ($settingsid > 0 || $action == 'new')) {
         $templateList = block_exastud_get_template_files();
         foreach ($reports as $report) {
             $bpData = $DB->get_record('block_exastudbp', ['id' => $report->bpid]);
-            $editLink = html_writer::link(new moodle_url('/blocks/exastud/report_settings.php', [
-                    //'courseid' => $courseid,
-                    //'classid' => $classid, // TODO: need?
+            $params = [
                     'action' => 'edit',
                     'id' => $report->id,
                     'sesskey' => sesskey()
-            ]), html_writer::tag("img", '', array('src' => 'pix/edit.png')), array('title' => 'id: '.$report->id));
+            ];
+            if ($tokenparam) {
+                $params['token'] = $tokenparam;
+            }
+            $editLink = html_writer::link(new moodle_url('/blocks/exastud/report_settings.php', $params),
+                                            html_writer::tag("img", '', array('src' => 'pix/edit.png')), array('title' => 'id: '.$report->id));
             // function for call settings_marker only by name
             $call_setting_marker = function($name) use ($setting_marker, $report){
                 return $setting_marker($name, $report->{$name});
@@ -303,10 +322,15 @@ if ($action && ($settingsid > 0 || $action == 'new')) {
         $content .= 'No any template in DB';
     }
     // Reset templates to default state
-    $buttons .= html_writer::link(new moodle_url('/blocks/exastud/report_settings.php', [
+    $params = [
             'action' => 'reset_default',
             'sesskey' => sesskey()
-    ]), block_exastud_get_string('reset_report_templates'), ['class' => 'btn btn-danger']);
+    ];
+    if ($tokenparam) {
+        $params['token'] = $tokenparam;
+    }
+    $buttons .= html_writer::link(new moodle_url('/blocks/exastud/report_settings.php', $params),
+                                    block_exastud_get_string('reset_report_templates'), ['class' => 'btn btn-danger']);
     $content .= html_writer::div($buttons, 'buttons');
     echo $content;
 }

@@ -139,7 +139,7 @@ if ($ADMIN->fulltree) {
 		block_exastud_get_string('settings_edustandarts_description'), '5,6,7,8,9,10', PARAM_TEXT));
 	$settings->add(new admin_setting_configcheckbox('exastud/bw_active', block_exastud_get_string('settings_bw_reports'), '', 0));
 	$settings->add(new admin_setting_configcheckbox('exastud/use_exacomp_grade_verbose', block_exastud_get_string('settings_exacomp_verbeval'), '', 0));
-	$settings->add(new admin_setting_configcheckbox('exastud/use_exacomp_assessment_categories', block_exastud_get_string('settings_exacomp_assessment_categories'), '', 1));
+	$settings->add(new admin_setting_configcheckbox('exastud/use_exacomp_assessment_categories', block_exastud_get_string('settings_exacomp_assessment_categories'), '', 0));
     $settings->add(new admin_setting_configcheckbox('exastud/logging', block_exastud_get_string('logging'), '', 0));
     $evalTypes = [
         BLOCK_EXASTUD_COMPETENCE_EVALUATION_TYPE_TEXT => block_exastud_get_string('settings_competence_evaltype_text'),
