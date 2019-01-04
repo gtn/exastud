@@ -71,6 +71,19 @@ $actPeriod = block_exastud_check_active_period();
 ];*/
 $categories = block_exastud_get_student_print_template($class, $student->id)->get_inputs(BLOCK_EXASTUD_DATA_ID_PROJECT_TEACHER);
 
+// use limits from BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_ANLAGE_PROJEKTPRUEFUNG_HS
+if (@$categories['projekt_verbalbeurteilung']['lines'] == 999 || @$categories['projekt_verbalbeurteilung']['cols'] == 999) {
+    $standardTemplateInputs = \block_exastud\print_templates::get_inputs_for_template(BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_ANLAGE_PROJEKTPRUEFUNG_HS, BLOCK_EXASTUD_DATA_ID_PROJECT_TEACHER);
+    if (array_key_exists('projekt_verbalbeurteilung', $standardTemplateInputs)) {
+        if ($categories['projekt_verbalbeurteilung']['lines'] == 999) {
+            $categories['projekt_verbalbeurteilung']['lines'] = $standardTemplateInputs['projekt_verbalbeurteilung']['lines'];
+        }
+        if ($categories['projekt_verbalbeurteilung']['cols'] == 999) {
+            $categories['projekt_verbalbeurteilung']['cols'] = $standardTemplateInputs['projekt_verbalbeurteilung']['cols'];
+        }
+    }
+}
+
 $classheader = $class->title.' - '.block_exastud_trans('de:Projektprüfung');
 
 $studentform = new student_other_data_form($PAGE->url, [

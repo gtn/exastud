@@ -1996,6 +1996,8 @@ function block_exastud_get_default_templates() {
                             'comments' => [
                                     'title' => block_exastud_trans('de:Bemerkungen'),
                                     'type' => 'textarea',
+                                    'lines' => 7,
+                                    'cols' => 80,
                             ],
                     ],
             ],
@@ -2207,19 +2209,19 @@ function block_exastud_get_default_templates() {
                             'subjects' => [
                                     'title' => 'Fächer',
                                     'type' => 'textarea',
-                                    'lines' => 7,
+                                    'lines' => 8,
                                     'cols' => 68,
                             ],
                             'subject_elective' => [ // Wahlpflicht-bereich ?
                                     'title' => 'Wahlpflicht-bereich',
                                     'type' => 'textarea',
-                                    'lines' => 7,
+                                    'lines' => 8,
                                     'cols' => 68,
                             ],
                             'subject_profile' => [ // Profil-fach ?
                                     'title' => 'Profil-fach',
                                     'type' => 'textarea',
-                                    'lines' => 7,
+                                    'lines' => 8,
                                     'cols' => 68,
                             ],
                     ],
@@ -2252,19 +2254,19 @@ function block_exastud_get_default_templates() {
                             'subjects' => [
                                     'title' => 'Fächer',
                                     'type' => 'textarea',
-                                    'lines' => 7,
+                                    'lines' => 8,
                                     'cols' => 68,
                             ],
                             'subject_elective' => [ // Wahlpflicht-bereich ?
                                     'title' => 'Wahlpflicht-bereich',
                                     'type' => 'textarea',
-                                    'lines' => 7,
+                                    'lines' => 8,
                                     'cols' => 68,
                             ],
                             'subject_profile' => [ // Profil-fach ?
                                     'title' => 'Profil-fach',
                                     'type' => 'textarea',
-                                    'lines' => 7,
+                                    'lines' => 8,
                                     'cols' => 68,
                             ],
                     ],
@@ -2293,6 +2295,10 @@ function block_exastud_get_default_templates() {
                                     'type' => 'textarea',
                                     'lines' => 4,
                                     'cols' => 90,
+                            ],
+                            'subject_profile' => [
+                                    'title' => 'Profil-fach',
+                                    'type' => 'textarea',
                             ],
                     ],
             ],
@@ -2330,6 +2336,10 @@ function block_exastud_get_default_templates() {
                                     'type' => 'textarea',
                                     'lines' => 3,
                                     'cols' => 90,
+                            ],
+                            'subject_profile' => [
+                                    'title' => 'Profil-fach',
+                                    'type' => 'textarea',
                             ],
                     ],
             ],
@@ -2377,6 +2387,10 @@ function block_exastud_get_default_templates() {
                                     'type' => 'select',
                                     'values' => ['G' => 'G', 'M' => 'M', 'E' => 'E'],
                             ],
+                            'subject_profile' => [
+                                    'title' => 'Profil-fach',
+                                    'type' => 'textarea',
+                            ],
                     ],
             ],
             'BP 2004/GMS Abgangszeugnis HSA Kl.9 und 10' => [
@@ -2415,13 +2429,11 @@ function block_exastud_get_default_templates() {
                                             'ausreichend' => 'ausreichend',
                                             'mangelhaft' => 'mangelhaft',
                                             'ungenügend' => 'ungenügend'],
-                            ],/*
+                            ],
                             'projekt_verbalbeurteilung' => [
                                     'title' => 'Verbalbeurteilung',
                                     'type' => 'textarea',
-                                    'lines' => 2,
-                                    'cols' => 60,
-                            ],*/
+                            ],
                             'ags' => [
                                     'title' => 'Teilnahme an Arbeitsgemeinschaften',
                                     'type' => 'textarea',
@@ -2433,6 +2445,10 @@ function block_exastud_get_default_templates() {
                                     'type' => 'textarea',
                                     'lines' => 2,
                                     'cols' => 80,
+                            ],
+                            'subject_profile' => [
+                                    'title' => 'Profil-fach',
+                                    'type' => 'textarea',
                             ],
                     ],
             ],
@@ -2460,6 +2476,10 @@ function block_exastud_get_default_templates() {
                                     'type' => 'textarea',
                                     'lines' => 3,
                                     'cols' => 80,
+                            ],
+                            'subject_profile' => [
+                                    'title' => 'Profil-fach',
+                                    'type' => 'textarea',
                             ],
                     ],
             ],
@@ -2500,13 +2520,12 @@ function block_exastud_get_default_templates() {
                                     'ausreichend' => 'ausreichend',
                                     'mangelhaft' => 'mangelhaft',
                                     'ungenügend' => 'ungenügend'],
-                        ],/*
+                        ],
                         'projekt_verbalbeurteilung' => [
-                                'title' => 'Verbalbeurteilung',
-                                'type' => 'textarea',
-                                'lines' => 2,
-                                'cols' => 60,
-                        ],*//*
+                                    'title' => 'Verbalbeurteilung',
+                                    'type' => 'textarea',
+                        ],
+                        /*
                         'gesamtnote_und_durchschnitt_der_gesamtleistungen' => [
                                 'title' => 'Gesamtnote und Durchschnitt der Gesamtleistungen',
                                 'type' => 'text',
@@ -2521,6 +2540,10 @@ function block_exastud_get_default_templates() {
                                 'type' => 'textarea',
                                 'lines' => 3,
                                 'cols' => 90,
+                        ],
+                        'subject_profile' => [
+                                'title' => 'Profil-fach',
+                                'type' => 'textarea',
                         ],
                     ],
             ],
@@ -2548,6 +2571,10 @@ function block_exastud_get_default_templates() {
                                     'type' => 'textarea',
                                     'lines' => 3,
                                     'cols' => 80,
+                            ],
+                            'subject_profile' => [
+                                    'title' => 'Profil-fach',
+                                    'type' => 'textarea',
                             ],
                     ],
             ],
@@ -2579,13 +2606,11 @@ function block_exastud_get_default_templates() {
                                     'ausreichend' => 'ausreichend',
                                     'mangelhaft' => 'mangelhaft',
                                     'ungenügend' => 'ungenügend'],
-                        ],/*
+                        ],
                         'projekt_verbalbeurteilung' => [
                                 'title' => 'Verbalbeurteilung',
                                 'type' => 'textarea',
-                                'lines' => 3,
-                                'cols' => 65,
-                        ],*/
+                        ],
                         'ags' => [
                                 'title' => 'Teilnahme an Arbeitsgemeinschaften',
                                 'type' => 'textarea',
@@ -2597,6 +2622,10 @@ function block_exastud_get_default_templates() {
                                 'type' => 'textarea',
                                 'lines' => 3,
                                 'cols' => 80,
+                        ],
+                        'subject_profile' => [
+                                'title' => 'Profil-fach',
+                                'type' => 'textarea',
                         ],
                     ],
             ],
@@ -2649,13 +2678,15 @@ function block_exastud_get_default_templates() {
                                             'ausreichend' => 'ausreichend',
                                             'mangelhaft' => 'mangelhaft',
                                             'ungenügend' => 'ungenügend'],
-                            ],/*
+                            ],
                             'projekt_verbalbeurteilung' => [
                                     'title' => 'Verbalbeurteilung',
                                     'type' => 'textarea',
-                                    'lines' => 2,
-                                    'cols' => 60,
-                            ],*/
+                            ],
+                            'subject_profile' => [
+                                    'title' => 'Profil-fach',
+                                    'type' => 'textarea',
+                            ],
                     ],
             ],
             'BP 2004/GMS Halbjahreszeugniss der Förderschule' => [
@@ -2682,6 +2713,10 @@ function block_exastud_get_default_templates() {
                                     'type' => 'textarea',
                                     'lines' => 3,
                                     'cols' => 80,
+                            ],
+                            'subject_profile' => [
+                                    'title' => 'Profil-fach',
+                                    'type' => 'textarea',
                             ],
                     ],
             ],
@@ -2723,6 +2758,10 @@ function block_exastud_get_default_templates() {
                                     'lines' => 5,
                                     'cols' => 90,
                             ],
+                            'subject_profile' => [
+                                    'title' => 'Profil-fach',
+                                    'type' => 'textarea',
+                            ],
                     ],
             ],
             'BP 2016/Halbjahresinformation Kl11' => [
@@ -2749,6 +2788,10 @@ function block_exastud_get_default_templates() {
                                     'type' => 'textarea',
                                     'lines' => 5,
                                     'cols' => 90,
+                            ],
+                            'subject_profile' => [
+                                    'title' => 'Profil-fach',
+                                    'type' => 'textarea',
                             ],
                     ],
             ],
@@ -2818,8 +2861,8 @@ function block_exastud_fill_reportsettingstable($id = 0) {
                         'checked' => '1'
                 );
                 if ($fielddata['type'] == 'textarea' ) {
-                    $fielddata['rows'] = @$inputconfig['lines'] ? $inputconfig['lines'] : "8";
-                    $fielddata['count_in_row'] = @$inputconfig['cols'] ? $inputconfig['cols'] : "48";
+                    $fielddata['rows'] = @$inputconfig['lines'] ? $inputconfig['lines'] : "999"; // 999 - will be used calculated value later
+                    $fielddata['count_in_row'] = @$inputconfig['cols'] ? $inputconfig['cols'] : "999";
                 }
                 if (!empty($inputconfig['type']) && $inputconfig['type'] == 'select' && !empty($inputconfig['values'])) {
                     $fielddata['values'] = $inputconfig['values'];

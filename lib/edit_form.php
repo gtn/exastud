@@ -261,6 +261,18 @@ class student_edit_form extends moodleform {
                     $template_inputparams = $inputs['subject_elective'];
                 } elseif (strpos($subjectObjData->title, 'Profilfach') === 0 && array_key_exists('subject_profile', $inputs)) {
                     $template_inputparams = $inputs['subject_profile'];
+                    // if this $template_inputparams has not limits - use limits from BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_16_ZERTIFIKAT_FUER_PROFILFACH
+                    if ($template_inputparams['lines'] == 999 || $template_inputparams['cols'] == 999) {
+                        $standardTemplateInputs = \block_exastud\print_templates::get_inputs_for_template(BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_16_ZERTIFIKAT_FUER_PROFILFACH, BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_16_ZERTIFIKAT_FUER_PROFILFACH);
+                        if (array_key_exists('besondere_kompetenzen', $standardTemplateInputs)) {
+                            if ($template_inputparams['lines'] == 999) {
+                                $template_inputparams['lines'] = $standardTemplateInputs['besondere_kompetenzen']['lines'];
+                            }
+                            if ($template_inputparams['cols'] == 999) {
+                                $template_inputparams['cols'] = $standardTemplateInputs['besondere_kompetenzen']['cols'];
+                            }
+                        }
+                    }
                 }
                 if (count($template_inputparams) == 0 && array_key_exists('subjects', $inputs)) {
                     $template_inputparams = $inputs['subjects'];
