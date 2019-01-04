@@ -353,3 +353,6 @@ $string['clear_filter'] = 'Clear filters';
 $string['not_found_report'] = 'No any report found';
 $string['filter_show_fulltable'] = 'Show full table';
 $string['temporary_hidden'] = 'temporarily unavailable';
+$string['add_class'] = 'Add Class';
+$string['copy_class_from_last_period'] = 'Copy Class from last Period';
+$string['import_class_from_backup'] = 'Import Class from Backup';

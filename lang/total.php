@@ -1329,5 +1329,17 @@ return [
     'temporary_hidden' => [
         'vorübergehend deaktiviert',
         'temporarily unavailable',
-    ]
+    ],
+    'add_class' => [
+        'Klasse hinzufügen',
+        'Add Class',
+    ],
+    'copy_class_from_last_period' => [
+        'Klasse vom vorigen Eingabezeitraum kopieren',
+        'Copy Class from last Period',
+    ],
+    'import_class_from_backup' => [
+        'Klasse von Sicherung wiederherstellen',
+        'Import Class from Backup',
+    ],
 ];

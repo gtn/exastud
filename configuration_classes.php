@@ -135,17 +135,17 @@ echo $output->table($tablePeriods);
 
 if (!block_exastud_is_siteadmin()) { // not for siteadmins
     echo $output->link_button($CFG->wwwroot.'/blocks/exastud/configuration_class_info.php?courseid='.$courseid.'&action=add',
-            block_exastud_trans(['de:Klasse hinzufügen', 'en:Add Class']), ['class' => 'btn btn-default']);
+            block_exastud_get_string('add_class'), ['class' => 'btn btn-default']);
 }
 
 if ($lastPeriodClasses && !block_exastud_is_siteadmin()) {
 	echo $output->link_button($CFG->wwwroot.'/blocks/exastud/copy_classes.php?courseid='.$courseid,
-		block_exastud_trans(['de:Klasse vom vorigen Eingabezeitraum kopieren', 'en:Copy Class from last Period']), ['class' => 'btn btn-default']);
+            block_exastud_get_string('copy_class_from_last_period'), ['class' => 'btn btn-default']);
 }
 
 if (!block_exastud_is_siteadmin()) { // not for siteadmins
     echo $output->link_button($CFG->wwwroot.'/blocks/exastud/import_class.php?courseid='.$courseid,
-            block_exastud_trans(['de:Klasse von Sicherung wiederherstellen', 'en:Import Class from Backup']),
+            block_exastud_get_string('import_class_from_backup'),
             ['class' => 'btn btn-default']);
 }
 

@@ -215,10 +215,12 @@ if ($class && $class->id) {
 
     echo html_writer::div($buttons, 'additional_buttons');
 
-} else {
-	echo $output->heading(block_exastud_trans(['de:Klasse hinzufügen', 'en:Add Class']));
+} else if (!block_exastud_is_siteadmin()) {
+	echo $output->heading(block_exastud_get_string('add_class'));
 
 	$classform->display();
+} else {
+    echo block_exastud_get_string('attention_admin_cannot_be_classteacher');
 }
 
 if ($class->id) {
