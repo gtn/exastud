@@ -678,12 +678,13 @@ function xmldb_block_exastud_upgrade($oldversion = 0) {
         upgrade_block_savepoint(true, 2019010301, 'exastud');
     }
 
-    if ($oldversion < 2019010401) {
+    if ($oldversion < 2019010404) {
         // reset all template settings
         for ($i = 1; $i <= 22; $i++) {
+            $DB->delete_records('block_exastudreportsettings', ['id' => $i]);
             block_exastud_fill_reportsettingstable($i);
         }
-        upgrade_block_savepoint(true, 2019010401, 'exastud');
+        upgrade_block_savepoint(true, 2019010404, 'exastud');
     }
 
     block_exastud_insert_default_entries();

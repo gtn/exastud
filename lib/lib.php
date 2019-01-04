@@ -2069,7 +2069,12 @@ function block_exastud_get_default_templates() {
                         'projekt_grade' => [
                                 'title' => 'Note',
                                 'type' => 'select',
-                                'values' => ['1' => 'sehr gut', '2' => 'gut', '3' => 'befriedigend', '4' => 'ausreichend', '5' => 'mangelhaft', '6' => 'ungenügend'], // TODO: is it correct grades?
+                                'values' => ['sehr gut' => 'sehr gut',
+                                        'gut' => 'gut',
+                                        'befriedigend' => 'befriedigend',
+                                        'ausreichend' => 'ausreichend',
+                                        'mangelhaft' => 'mangelhaft',
+                                        'ungenügend' => 'ungenügend'],
                         ],/*
                         'projekt_text3lines' => [
                             'title' => 'Projektthema',
@@ -2404,7 +2409,12 @@ function block_exastud_get_default_templates() {
                             'projekt_grade' => [
                                 'title' => 'Note',
                                 'type' => 'select',
-                                'values' => ['1' => 'sehr gut', '2' => 'gut', '3' => 'befriedigend', '4' => 'ausreichend', '5' => 'mangelhaft', '6' => 'ungenügend'], // TODO: is it correct grades?
+                                'values' => ['sehr gut' => 'sehr gut',
+                                            'gut' => 'gut',
+                                            'befriedigend' => 'befriedigend',
+                                            'ausreichend' => 'ausreichend',
+                                            'mangelhaft' => 'mangelhaft',
+                                            'ungenügend' => 'ungenügend'],
                             ],/*
                             'projekt_verbalbeurteilung' => [
                                     'title' => 'Verbalbeurteilung',
@@ -2484,7 +2494,12 @@ function block_exastud_get_default_templates() {
                         'projekt_grade' => [
                             'title' => 'Note',
                             'type' => 'select',
-                            'values' => ['1' => 'sehr gut', '2' => 'gut', '3' => 'befriedigend', '4' => 'ausreichend', '5' => 'mangelhaft', '6' => 'ungenügend'], // TODO: is it correct grades?
+                            'values' => ['sehr gut' => 'sehr gut',
+                                    'gut' => 'gut',
+                                    'befriedigend' => 'befriedigend',
+                                    'ausreichend' => 'ausreichend',
+                                    'mangelhaft' => 'mangelhaft',
+                                    'ungenügend' => 'ungenügend'],
                         ],/*
                         'projekt_verbalbeurteilung' => [
                                 'title' => 'Verbalbeurteilung',
@@ -2558,7 +2573,12 @@ function block_exastud_get_default_templates() {
                         'projekt_grade' => [
                             'title' => 'Note',
                             'type' => 'select',
-                            'values' => ['1' => 'sehr gut', '2' => 'gut', '3' => 'befriedigend', '4' => 'ausreichend', '5' => 'mangelhaft', '6' => 'ungenügend'], // TODO: is it correct grades?
+                            'values' => ['sehr gut' => 'sehr gut',
+                                    'gut' => 'gut',
+                                    'befriedigend' => 'befriedigend',
+                                    'ausreichend' => 'ausreichend',
+                                    'mangelhaft' => 'mangelhaft',
+                                    'ungenügend' => 'ungenügend'],
                         ],/*
                         'projekt_verbalbeurteilung' => [
                                 'title' => 'Verbalbeurteilung',
@@ -2623,7 +2643,12 @@ function block_exastud_get_default_templates() {
                             'projekt_grade' => [
                                     'title' => 'Note',
                                     'type' => 'select',
-                                    'values' => ['1' => 'sehr gut', '2' => 'gut', '3' => 'befriedigend', '4' => 'ausreichend', '5' => 'mangelhaft', '6' => 'ungenügend'], // TODO: is it correct grades?
+                                    'values' => ['sehr gut' => 'sehr gut',
+                                            'gut' => 'gut',
+                                            'befriedigend' => 'befriedigend',
+                                            'ausreichend' => 'ausreichend',
+                                            'mangelhaft' => 'mangelhaft',
+                                            'ungenügend' => 'ungenügend'],
                             ],/*
                             'projekt_verbalbeurteilung' => [
                                     'title' => 'Verbalbeurteilung',

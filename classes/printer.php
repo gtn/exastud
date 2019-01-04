@@ -625,6 +625,7 @@ class printer {
 				//$data['gd'] = static::spacerIfEmpty(@$studentdata->gesamtnote_und_durchschnitt_der_gesamtleistungen);
 			}
 
+			// project gardes
 			if ($value = @$grades[@$studentdata->projekt_grade]) {
 				// im "Beiblatt zur Projektpruefung HSA" heisst das feld projet_text3lines
 				$add_filter(function($content) use ($placeholder, $value) {
