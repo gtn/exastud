@@ -39,7 +39,6 @@
         });
         // button "preview"
         $(document).on('change', '.exastud-preview-checkbox', function(e) {
-            console.log(111);
             if ($(this).is(':checked')) {
                 $('.exastud-selecttemplate-checkbox').prop('checked', false);
                 $('.exastud-selecttemplate-checkbox').attr('readonly', 'readonly');
@@ -47,6 +46,7 @@
                 $('.exastud-selecttemplate-checkbox[data-previewPossible=1]').removeAttr('readonly');
                 $('.exastud-selecttemplate-checkbox[data-previewPossible=1]').removeAttr('disabled');
                 $('.exastud-selectall-checkbox').prop('checked', false);
+                $('.exastud-selecttemplate-checkbox[data-previewPossible=1]').prop('checked', true);
             } else {
                 $('.exastud-selecttemplate-checkbox').removeAttr('readonly');
                 $('.exastud-selecttemplate-checkbox').removeAttr('disabled');

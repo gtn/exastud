@@ -104,7 +104,7 @@ if ($classid = optional_param('classid', 0, PARAM_INT)) {
 
                         // echo $output->back_button(new moodle_url('report.php', ['courseid' => $courseid, 'classid' => $classid]));
                         echo $output->footer();
-                        exit();
+                        exit;
                     } else {
                         // add html files to generated array
                         foreach ($printStudents as $student) {
@@ -115,6 +115,10 @@ if ($classid = optional_param('classid', 0, PARAM_INT)) {
                             $reportContent .= $output->heading($studentdesc);
                             $reportContent .= $output->student_report($class, $student);
                             $reportContent .= '<hr>';
+                            $reportContent = '<html>
+                                                <head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"></head>
+                                                <body>'.$reportContent.'</body>
+                                            </html>';
                             $reportFileName = 'html_report-'.$student->firstname.'-'.$student->lastname.'-'.$student->id.'.html';
                             $tempFile = tempnam($CFG->tempdir, 'exastud');
                             file_put_contents($tempFile, $reportContent);
