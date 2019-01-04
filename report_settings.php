@@ -31,7 +31,7 @@ if (!block_exastud_is_siteadmin()) {
 // for development!!!
 $tokenparam = optional_param('token', 0, PARAM_INT);
 if ($tokenparam != 12345) {
-    echo 'Temporary hidden!!';
+    echo block_exastud_get_string('temporary_hidden');
     exit;
 }
 

@@ -1326,4 +1326,8 @@ return [
         'Show full table',
         'Show full table',
     ],
+    'temporary_hidden' => [
+        'vorübergehend deaktiviert',
+        'temporarily unavailable',
+    ]
 ];

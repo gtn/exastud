@@ -352,3 +352,4 @@ $string['filter_button'] = 'Filter';
 $string['clear_filter'] = 'Clear filters';
 $string['not_found_report'] = 'No any report found';
 $string['filter_show_fulltable'] = 'Show full table';
+$string['temporary_hidden'] = 'temporarily unavailable';

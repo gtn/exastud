@@ -929,7 +929,17 @@ class printer {
 			}
 		}
 
-		// page 1
+        // school logo: ${school_logo}
+        if (!$templateProcessor->addImageToReport('school_logo', 'exastud', 'block_exastud_schoollogo', 0, 1024, 768)) {
+            $templateProcessor->setValue("school_logo", ''); // no logo files
+        };
+        //class logo: ${class_logo}
+        //if (!$templateProcessor->addImageToReport('class_logo', 'block_exastud', 'class_logo', $class->id, 1024, 768)) {
+        //    $templateProcessor->setValue("class_logo", ''); // no logo files
+        //};
+
+
+        // page 1
         $columnsCount = count($normal_subjects);
         $columnStart = 0;
         $templateProcessor->duplicateCell('s', $columnsCount - 1);
@@ -937,19 +947,25 @@ class printer {
         // some incorrect result. Why?
         //$templateProcessor->duplicateCol('s', $columnsCount - 1);
 
-        // Change orientation if count of columns > 10
-        if (count($normal_subjects) > 10) {
-            $templateProcessor->changeOrientation('L');
+        $columnsCount = count($grouped_subjects);
+        $columnStart = 0;
+        $templateProcessor->duplicateCell('gs', $columnsCount - 1);
+        $templateProcessor->duplicateCell('gst', ($columnsCount - 1) * 2);
+        /*for ($k = 1; $k <= $columnsCount -1; $k++) {
+            $templateProcessor->duplicateCell('gsg', 1);
+            $templateProcessor->duplicateCell('gss', 1);
+        }*/
+        foreach ($grouped_subjects as $key => $subjects) {
+            $shorttitle = trim($key);
+            $shorttitle = preg_replace('/(^\s+|\s+$|\s+)/', mb_convert_encoding('&#160;', 'UTF-8', 'HTML-ENTITIES'), $shorttitle); // insert &nbsp to table header
+            $templateProcessor->setValue("gs", $shorttitle, 1);
         }
+        $templateProcessor->setValue("gs", '');
 
-        // school logo: ${school_logo}
-        if (!$templateProcessor->addImageToReport('school_logo', 'exastud', 'block_exastud_schoollogo', 0, 1024, 768)) {
-            $templateProcessor->setValue("school_logo", ''); // no logo files
-        };
-         //class logo: ${class_logo}
-        //if (!$templateProcessor->addImageToReport('class_logo', 'block_exastud', 'class_logo', $class->id, 1024, 768)) {
-        //    $templateProcessor->setValue("class_logo", ''); // no logo files
-        //};
+        // Change orientation if count of columns > 10
+        /*if (count($normal_subjects) > 10) {
+            $templateProcessor->changeOrientation('L');
+        }*/ // now is always L
 
 		foreach ($normal_subjects as $subject) {
             $shorttitle = trim($subject->shorttitle);
@@ -964,6 +980,7 @@ class printer {
 			$rowi++;
 			$templateProcessor->setValue("student#$rowi", $rowi.'. '.fullname($student));
 
+			// normal subjects
 			foreach ($normal_subjects as $subject) {
 				$subjectData = block_exastud_get_graded_review($class->id, $subject->id, $student->id);
                 $value = '';
@@ -978,22 +995,41 @@ class printer {
 				$templateProcessor->setValue("g#$rowi", $value, 1);
 			}
 			$templateProcessor->setValue("g#$rowi", '');
+
+			// grouped subjects
+            foreach ($grouped_subjects as $subjects) {
+                $subjectData = null;
+
+                foreach ($subjects as $subject) {
+                    $subjectData = block_exastud_get_graded_review($class->id, $subject->id, $student->id);
+
+                    if ($subjectData && isset($subjectData->grade) && $subjectData->grade) {
+                        break;
+                    }
+                }
+                $value = '';
+                if ($subjectData) {
+                    if (isset($subjectData->niveau)) {
+                        $value .= $subjectData->niveau.' ';
+                    }
+                    if (isset($subjectData->grade)) {
+                        $value .= $subjectData->grade;
+                    }
+                }
+                //$templateProcessor->setValue("gsg#$rowi", $value, 1);
+                //$templateProcessor->setValue("gss#$rowi", $value ? $subject->shorttitle_stripped : '', 1); // TODO: ???
+                $templateProcessor->setValue("gst#$rowi", $value, 1);
+                $templateProcessor->setValue("gst#$rowi", $value ? $subject->shorttitle_stripped : '', 1);
+            }
+
+            $templateProcessor->setValue("gsg#$rowi", '');
+            $templateProcessor->setValue("gss#$rowi", '');
+
 		}
 
 		// page 2
-        $columnsCount = count($grouped_subjects);
-        $columnStart = 0;
-        $templateProcessor->duplicateCell('gs', $columnsCount - 1);
-        $templateProcessor->duplicateCell('gsg', $columnsCount - 1);
-        $templateProcessor->duplicateCell('gss', $columnsCount - 1);
-		foreach ($grouped_subjects as $key => $subjects) {
-            $shorttitle = trim($key);
-            $shorttitle = preg_replace('/(^\s+|\s+$|\s+)/', mb_convert_encoding('&#160;', 'UTF-8', 'HTML-ENTITIES'), $shorttitle); // insert &nbsp to table header
-			$templateProcessor->setValue("gs", $shorttitle, 1);
-		}
-		$templateProcessor->setValue("gs", '');
 
-		$templateProcessor->cloneRow('gsstudent', count($students));
+/*		$templateProcessor->cloneRow('gsstudent', count($students));
 		$rowi = 0;
 		foreach ($students as $student) {
 			$rowi++;
@@ -1024,7 +1060,7 @@ class printer {
 
 			$templateProcessor->setValue("gsg#$rowi", '');
 			$templateProcessor->setValue("gss#$rowi", '');
-		}
+		}*/
 
 		// projekt
 		$templateProcessor->cloneRow('prostudent', count($students));
