@@ -27,12 +27,24 @@ use block_exastud\globals as g;
 use function PHPSTORM_META\type;
 
 class global_config {
-	static function get_niveau_options() {
-		return ['G' => 'G', 'M' => 'M', 'E' => 'E', 'Z' => 'zieldifferenter Unterricht'];
+	static function get_niveau_options($no_niveau = false) {
+	    $no_niveau_options = ['Niveau G/M/E' => 'Niveau G/M/E',
+                              'Z' => 'zieldifferenter Unterricht'];
+	    if ($no_niveau) {
+            return $no_niveau_options;
+        }
+        $niveau_options = ['G' => 'G',
+                            'M' => 'M',
+                            'E' => 'E',
+                            'Z' => 'zieldifferenter Unterricht'];
+	    if ($no_niveau == '_all_') {
+	        return array_merge($no_niveau_options, $niveau_options);
+        }
+        return $niveau_options;
 	}
 
 	static function get_niveau_option_title($id) {
-		return @static::get_niveau_options()[$id];
+		return @static::get_niveau_options('_all_')[$id];
 	}
 }
 

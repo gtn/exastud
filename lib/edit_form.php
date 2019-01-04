@@ -302,7 +302,7 @@ class student_edit_form extends moodleform {
                 }
                 $niveauarray=array();
 
-                $niveauarray[] =& $mform->createElement('select', 'niveau', block_exastud_get_string('Niveau'), ['' => ''] + block_exastud\global_config::get_niveau_options());
+                $niveauarray[] =& $mform->createElement('select', 'niveau', block_exastud_get_string('Niveau'), ['' => ''] + block_exastud\global_config::get_niveau_options($subjectObjData->no_niveau));
                 $niveauarray[] =& $mform->createElement('static', '', "", "");
                 $niveauarray[] =& $mform->createElement('static', 'lastPeriodNiveau', "", block_exastud_trans('de:lastPeriodNiveau'));
                 $niveauarray[] =& $mform->createElement('static', '', "", ")");

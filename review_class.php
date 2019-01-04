@@ -248,7 +248,8 @@ foreach ($classstudents as $classstudent) {
         }
         $row->cells[] = $grade_form;
         // Niveau column
-        $niveaus = ['' => ''] + block_exastud\global_config::get_niveau_options();
+        $no_niveau = $DB->get_field('block_exastudsubjects', 'no_niveau', ['id' => $subjectid]);
+        $niveaus = ['' => ''] + block_exastud\global_config::get_niveau_options($no_niveau);
         if (empty($formdata->niveau)) {
             $formdata->niveau = '';
         }
