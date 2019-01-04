@@ -231,10 +231,11 @@ if ($class->id) {
 
 $bps = $DB->get_records('block_exastudbp', [], 'sorting');
 $templates_by_bp = [];
+$tempbp = (object)['id' => 0];
+$templates_by_bp[''] = \block_exastud\print_templates::get_bp_available_print_templates($tempbp);
 foreach ($bps as $bp) {
 	$templates_by_bp[$bp->id] = \block_exastud\print_templates::get_bp_available_print_templates($bp);
 }
-
 ?>
 	<script>
 			var templates_by_bp = <?php echo json_encode($templates_by_bp); ?>;

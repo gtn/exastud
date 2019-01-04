@@ -45,6 +45,7 @@ class class_edit_form extends moodleform {
         $mform->addRule('title', null, 'required', null, 'client');
 
         $bps = g::$DB->get_records_menu('block_exastudbp', null, 'sorting', 'id, title');
+        $bps = ['' => ''] + $bps;
         if (!$this->_customdata['for_siteadmin']) {
             $mform->addElement('select',
                     'bpid',
