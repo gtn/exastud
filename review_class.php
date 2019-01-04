@@ -141,12 +141,12 @@ $table = new html_table();
 $table->head = array();
 $userdatacolumn = new html_table_cell();
 $table->head[] = $userdatacolumn; //userdata
-$table->head[] = block_exastud_get_string('report_learn_and_sociale'); // bewerten button
 if (!block_exastud_get_only_learnsociale_reports()) {
     $table->head[] = block_exastud_trans('de:Notenerfassung / Niveau / Fach'); // bewerten button
     $table->head[] = block_exastud_get_string('Note');
     $table->head[] = block_exastud_get_string('Niveau');
 }
+$table->head[] = block_exastud_get_string('report_learn_and_sociale'); // bewerten button
 if ($isSubjectTeacher) {
     $table->head[] = block_exastud_trans('de:Überfachliche Beurteilungen'); // bewerten button
 }
@@ -216,20 +216,14 @@ if ($isSubjectTeacher) {
         $userdatacell->rowspan = 2;
         $row->cells[] = $userdatacell;
 
-        $row->cells[] = ($visible ?
-                $output->link_button($CFG->wwwroot.'/blocks/exastud/review_student.php?courseid='.$courseid.'&classid='.$classid.
-                        '&subjectid='.$subjectid.'&studentid='.$classstudent->id.'&reporttype=social',
-                        block_exastud_get_string('review_button'), ['class' => 'btn btn-primary']) : '');
         if (!block_exastud_get_only_learnsociale_reports()) {
             $row->cells[] = ($visible ?
                     $output->link_button($CFG->wwwroot.'/blocks/exastud/review_student.php?courseid='.$courseid.'&classid='.
                             $classid.
                             '&subjectid='.$subjectid.'&studentid='.$classstudent->id,
                             block_exastud_get_string('review_button'), ['class' => 'btn btn-primary']) : '');
-        }
 
-        // Grades column
-        if (!block_exastud_get_only_learnsociale_reports()) {
+            // Grades column
             $formdata = new stdClass();
             $formdata = (object) array_merge((array) $formdata, (array) $subjectData);
             $template = block_exastud_get_student_print_template($class, $classstudent->id);
@@ -274,6 +268,10 @@ if ($isSubjectTeacher) {
             $niveau_form .= '</select>';
             $row->cells[] = $niveau_form;
         }
+        $row->cells[] = ($visible ?
+                $output->link_button($CFG->wwwroot.'/blocks/exastud/review_student.php?courseid='.$courseid.'&classid='.$classid.
+                        '&subjectid='.$subjectid.'&studentid='.$classstudent->id.'&reporttype=social',
+                        block_exastud_get_string('review_button'), ['class' => 'btn btn-primary']) : '');
 
         $row->cells[] = ($visible ?
                 $output->link_button($CFG->wwwroot.'/blocks/exastud/review_student.php?courseid='.$courseid.'&classid='.$classid.
@@ -388,13 +386,6 @@ if ($isSubjectTeacher) {
         $userdatacell->text = '<div class="cell-content">'.$userdata.'</div>';
         $row->cells[] = $userdatacell;
 
-        $learnReview = g::$DB->get_field('block_exastudreview', 'review', [
-                        'studentid' => $classstudent->id,
-                        'subjectid' => BLOCK_EXASTUD_SUBJECT_ID_LERN_UND_SOZIALVERHALTEN_VORSCHLAG,
-                        'periodid' => $actPeriod->id,
-                        'teacherid' => $teacherid]
-        );
-        $row->cells[] = ($visible ? $learnReview : '');
         if (!block_exastud_get_only_learnsociale_reports()) {
             // subject review
             $row->cells[] = '<p>'.
@@ -411,6 +402,13 @@ if ($isSubjectTeacher) {
             // Niveau column
             $row->cells[] = (block_exastud\global_config::get_niveau_option_title($subjectData->niveau) ?: $subjectData->niveau);
         }
+        $learnReview = g::$DB->get_field('block_exastudreview', 'review', [
+                        'studentid' => $classstudent->id,
+                        'subjectid' => BLOCK_EXASTUD_SUBJECT_ID_LERN_UND_SOZIALVERHALTEN_VORSCHLAG,
+                        'periodid' => $actPeriod->id,
+                        'teacherid' => $teacherid]
+        );
+        $row->cells[] = ($visible ? $learnReview : '');
 
         // intermediate data
         //$row->cells[] = '';
