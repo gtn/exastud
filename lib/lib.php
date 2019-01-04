@@ -360,9 +360,9 @@ function block_exastud_get_review_subjects($periodid) {
 	return g::$DB->get_records_sql("
 			SELECT ct.id, ct.subjectid, ct.classid, c.title, s.title AS subject_title
 			FROM {block_exastudclassteachers} ct
-			JOIN {block_exastudclass} c ON ct.classid=c.id
-			JOIN {block_exastudsubjects} s ON ct.subjectid = s.id AND s.bpid=c.bpid 
-			WHERE ct.teacherid=? AND c.periodid=? AND ct.subjectid >= 0
+			JOIN {block_exastudclass} c ON ct.classid = c.id
+			JOIN {block_exastudsubjects} s ON ct.subjectid = s.id AND s.bpid = c.bpid 
+			WHERE ct.teacherid = ? AND c.periodid = ? AND ct.subjectid >= 0
 			ORDER BY c.title, s.sorting
 		", array(g::$USER->id, $periodid));
 }

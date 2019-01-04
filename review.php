@@ -35,7 +35,7 @@ echo $output->header('review');
 $actPeriod = block_exastud_check_active_period();
 
 function block_exastud_print_period($courseid, $period, $type) {
-    global $CFG;
+    global $CFG, $USER;
 	$reviewclasses = block_exastud_get_head_teacher_classes_all($period->id);
 	$output = block_exastud_get_renderer();
 
@@ -51,7 +51,6 @@ function block_exastud_print_period($courseid, $period, $type) {
     //} else {
     //    $reviewsubjects = array();
     //}
-
 
 	if ($type == 'last') {
 
@@ -82,6 +81,7 @@ function block_exastud_print_period($courseid, $period, $type) {
 			}
 		}
 	}
+
 	foreach ($reviewsubjects as $reviewsubject) {
 		if (!array_key_exists($reviewsubject->classid, $reviewclasses)) {
 			$reviewclasses[$reviewsubject->classid] = $reviewsubject;
@@ -109,6 +109,7 @@ function block_exastud_print_period($courseid, $period, $type) {
         $table->align = array("left");
         //$table->attributes['class'] .= ' exastud-review-table';
 		foreach ($reviewclasses as $myclass) {
+            $shownSubjects[] = '';
             $classHeader = new html_table_row();
             $headerCell = new html_table_cell();
             $headerCell->text = '<span class="exastud-collapse-data" data-classid="'.$myclass->id.'">
@@ -137,6 +138,7 @@ function block_exastud_print_period($courseid, $period, $type) {
                 $subjectsData = array();
                 //if (!block_exastud_get_only_learnsociale_reports()) {
                     foreach ($myclass->subjects as $subject) {
+                        $shownSubjects[] = $subject->subjectid;
                         $subjectsData[] =
                                 html_writer::link(new moodle_url('/blocks/exastud/review_class.php', [
                                         'courseid' => $courseid,
@@ -145,6 +147,32 @@ function block_exastud_print_period($courseid, $period, $type) {
                                 ]), $subject->subject_title ?: block_exastud_get_string('not_assigned'));
                     }
                 //}
+                
+                // add all subjects from Subject teachers (for readonly via class teacher)
+                if ($USER->id == $myclass->userid) {
+                    $allClassSubjects = block_exastud_get_class_subjects($myclass);
+                    foreach ($allClassSubjects as $addSubj) {
+                        if (!in_array($addSubj->id, $shownSubjects)) {
+                            // teachers for subject
+                            $subjectTeachers = block_exastud_get_class_subject_teachers($myclass->id);
+                            $sTeachers = array_filter($subjectTeachers, function($subject) use ($addSubj) {
+                                return ($subject->subjectid == $addSubj->id ? true : false);
+                            });
+                            $teacherNames = array_map(function($o) {return fullname($o);}, $sTeachers);
+                            $teacherNames = implode(', ', $teacherNames);
+                            //$subjectTeachers = block_exastud_get_su($myclass->id);
+                            $subjectsData[] = '<span class="exastud_muted_link">'.
+                                    html_writer::link(new moodle_url('/blocks/exastud/review_class.php', [
+                                        'courseid' => $courseid,
+                                        'classid' => $myclass->id,
+                                        'subjectid' => $addSubj->id,
+                                    ]), $addSubj->title ?: block_exastud_get_string('not_assigned')).
+                                    ($teacherNames ? ' ('.$teacherNames.')' : '').
+                                    '</span>';
+                        }
+                    }
+                }
+                
 				$generaldata = array();
 				if ($myclass->is_head_teacher) {
 					/*if ($table->data) {

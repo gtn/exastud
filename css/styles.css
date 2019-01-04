@@ -142,3 +142,7 @@ body[id^=page-blocks-exastud].pagelayout-embedded {
 .exastud-textarea-left-block {
 	margin-left: 50px;
 }
+
+.exastud_muted_link, .exastud_muted_link a {
+	color: #5e5e5e;
+}
