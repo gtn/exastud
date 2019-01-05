@@ -149,7 +149,7 @@ function block_exastud_print_period($courseid, $period, $type) {
                 //}
                 
                 // add all subjects from Subject teachers (for readonly via class teacher)
-                if ($USER->id == $myclass->userid) {
+                if (!empty($myclass->userid) && $USER->id == $myclass->userid) {
                     $allClassSubjects = block_exastud_get_class_subjects($myclass);
                     foreach ($allClassSubjects as $addSubj) {
                         if (!in_array($addSubj->id, $shownSubjects)) {

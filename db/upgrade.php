@@ -687,6 +687,85 @@ function xmldb_block_exastud_upgrade($oldversion = 0) {
         upgrade_block_savepoint(true, 2019010408, 'exastud');
     }
 
+    if ($oldversion < 2019010500) {
+        $DB->execute(' UPDATE {block_exastudsubjects} SET not_relevant = 1 WHERE shorttitle = \'Sp\'');
+        $DB->execute(' UPDATE {block_exastudsubjects} SET no_niveau = 1 WHERE shorttitle = \'Sp\'');
+
+        $DB->execute(' UPDATE {block_exastudsubjects} SET not_relevant = 1 WHERE shorttitle = \'BK\'');
+        $DB->execute(' UPDATE {block_exastudsubjects} SET no_niveau = 1 WHERE shorttitle = \'BK\'');
+
+        $DB->execute(' UPDATE {block_exastudsubjects} SET not_relevant = 1 WHERE shorttitle = \'Mu\'');
+        $DB->execute(' UPDATE {block_exastudsubjects} SET no_niveau = 1 WHERE shorttitle = \'Mu\'');
+        upgrade_block_savepoint(true, 2019010500, 'exastud');
+    }
+
+    if ($oldversion < 2019010501) {
+        // update old niveau values for no_niveau subjects
+        $DB->execute(' SELECT * FROM {block_exastudsubjects} WHERE no_niveau = 1');
+        $subjects = $DB->get_records_select('block_exastudsubjects', " no_niveau = 1 ", [], '', 'id,title');
+        foreach ($subjects as $subject) {
+            $DB->execute(' UPDATE {block_exastuddata} SET value = \'Niveau G/M/E\' WHERE name = \'niveau\' AND subjectid = '.$subject->id.' AND value = \'\' ');
+        }
+        upgrade_block_savepoint(true, 2019010501, 'exastud');
+    }
+
+    if ($oldversion < 2019010502) {
+        // update learn_social_behavior with new learning_and_social_behavior
+        // 1. create new learning_and_social_behavior from old learn_social_behavior
+        $data1 = $DB->get_records_select('block_exastuddata', ' name = \'learn_social_behavior\' AND subjectid = 0 ');
+        foreach ($data1 as $d) {
+            // add only if not exists
+            $exists1 = $DB->get_records_select('block_exastuddata', ' name = \'learning_and_social_behavior\' 
+                                                                        AND subjectid = 0 
+                                                                        AND classid = '.$d->classid.' 
+                                                                        AND studentid = '.$d->studentid);
+            if (!(count($exists1) > 0)) {
+                $DB->insert_record('block_exastuddata', array('classid' => $d->classid,
+                                                                'subjectid' => 0,
+                                                                'studentid' => $d->studentid,
+                                                                'name' => 'learning_and_social_behavior',
+                                                                'value' => $d->value));
+                // insert another related data
+                $d1 = $DB->get_record('block_exastuddata',
+                        ['name' => 'learn_social_behavior.modifiedby',
+                            'classid' => $d->classid,
+                            'studentid' => $d->studentid,
+                            'subjectid' => 0],
+                        '*',
+                        IGNORE_MULTIPLE);
+                if ($d1) {
+                    $DB->insert_record('block_exastuddata', array('classid' => $d->classid,
+                                                                    'subjectid' => 0,
+                                                                    'studentid' => $d->studentid,
+                                                                    'name' => 'learning_and_social_behavior.modifiedby',
+                                                                    'value' => $d1->value));
+                }
+                $d1 = $DB->get_record('block_exastuddata',
+                        ['name' => 'learn_social_behavior.timemodified',
+                            'classid' => $d->classid,
+                            'studentid' => $d->studentid,
+                            'subjectid' => 0],
+                        '*',
+                        IGNORE_MULTIPLE);
+                if ($d1) {
+                    $DB->insert_record('block_exastuddata', array('classid' => $d->classid,
+                                                                    'subjectid' => 0,
+                                                                    'studentid' => $d->studentid,
+                                                                    'name' => 'learning_and_social_behavior.timemodified',
+                                                                    'value' => $d1->value));
+                }
+
+            }
+        }
+        // 2. delete all learn_social_behavior for subject = 0, because we use learning_and_social_behavior from now
+        $DB->execute(' DELETE FROM {block_exastuddata} WHERE name = \'learn_social_behavior\' AND subjectid = 0');
+        $DB->execute(' DELETE FROM {block_exastuddata} WHERE name = \'learn_social_behavior.modifiedby\' AND subjectid = 0');
+        $DB->execute(' DELETE FROM {block_exastuddata} WHERE name = \'learn_social_behavior.timemodified\' AND subjectid = 0');
+        upgrade_block_savepoint(true, 2019010502, 'exastud');
+    }
+
+
+
     block_exastud_insert_default_entries();
 	block_exastud_check_profile_fields();
 
