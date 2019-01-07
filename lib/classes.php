@@ -113,6 +113,10 @@ class print_templates {
             case BLOCK_EXASTUD_DATA_ID_ADDITIONAL_INFO:
                 $fields = unserialize($template->additional_params);
                 unset($fields['besondere_kompetenzen']);
+                unset($fields['projekt_thema']);
+                unset($fields['projekt_grade']);
+                unset($fields['projekt_verbalbeurteilung']);
+                unset($fields['projekt_text3lines']);
                 if (!$fields) {
                     $fields = array();
                 }

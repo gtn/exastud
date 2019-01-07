@@ -1343,7 +1343,7 @@ return [
         'Import Class from Backup',
     ],
     'only_profilesubject_teacher' => [
-        'Only profile subject\'s teacher can edit',
+        'Nur Profilfach-Lehrkräfte können diesen Eintrag bearbeiten.',
         'Only profile subject\'s teacher can edit',
     ],
 ];
