@@ -45,22 +45,29 @@ if ($type == BLOCK_EXASTUD_DATA_ID_LERN_UND_SOZIALVERHALTEN) {
 		],
 	];
 	$classheader = $reviewclass->title.' - '.block_exastud_get_string('learn_and_sociale');
-} elseif ($type == BLOCK_EXASTUD_DATA_ID_PRINT_TEMPLATE) {
+} /*elseif ($type == BLOCK_EXASTUD_DATA_ID_PRINT_TEMPLATE) {
 	$categories = [
 		BLOCK_EXASTUD_DATA_ID_PRINT_TEMPLATE => [
-			'title' => block_exastud_trans('de:Weitere Formularfelder'),
+			'title' => block_exastud_get_string('report_other_report_fields'),
 		],
 	];
-	$classheader = $reviewclass->title.' - '.block_exastud_trans('de:Weitere Formularfelder');
-} elseif ($type == BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_16_ZERTIFIKAT_FUER_PROFILFACH) {
+	$classheader = $reviewclass->title.' - '.block_exastud_get_string('report_other_report_fields');
+}*/ elseif ($type == BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_16_ZERTIFIKAT_FUER_PROFILFACH) {
 	$categories = [
             BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_16_ZERTIFIKAT_FUER_PROFILFACH => [
 			'title' => block_exastud_trans('de:Zertifikat für Profilfach'),
 		],
 	];
-	$classheader = $reviewclass->title.' - '.block_exastud_trans('de:Weitere Formularfelder');
+	$classheader = $reviewclass->title.' - '.block_exastud_trans('de:Zertifikat für Profilfach');
 } else {
-    // additional info - like BLOCK_EXASTUD_DATA_ID_PRINT_TEMPLATE, but used another fields
+    // BLOCK_EXASTUD_DATA_ID_PRINT_TEMPLATE
+    $categories = [
+            BLOCK_EXASTUD_DATA_ID_PRINT_TEMPLATE => [
+                    'title' => block_exastud_get_string('report_other_report_fields'),
+            ],
+    ];
+    $classheader = $reviewclass->title.' - '.block_exastud_get_string('report_other_report_fields');
+    /*// additional info - like BLOCK_EXASTUD_DATA_ID_PRINT_TEMPLATE, but used another fields
 	$template = \block_exastud\print_template::create($type);
 	//$categories = $template->get_inputs($type);
 	//$classheader = $reviewclass->title.' - '.$template->get_name();
@@ -69,7 +76,7 @@ if ($type == BLOCK_EXASTUD_DATA_ID_LERN_UND_SOZIALVERHALTEN) {
                     'title' => block_exastud_get_string('additional_info'),
             ],
     ];
-    $classheader = $reviewclass->title.' - '.block_exastud_get_string('additional_info');
+    $classheader = $reviewclass->title.' - '.block_exastud_get_string('additional_info');*/
 }
 $output = block_exastud_get_renderer();
 

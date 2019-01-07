@@ -89,11 +89,11 @@ switch ($type) {
         break;
     case BLOCK_EXASTUD_DATA_ID_PRINT_TEMPLATE:
         $categories = block_exastud_get_student_print_template($class, $student->id)->get_inputs($type);
-        $classheader = $reviewclass->title.' - '.block_exastud_trans('de:Weitere Formularfelder');
+        $classheader = $reviewclass->title.' - '.block_exastud_get_string('report_other_report_fields');
         break;
     case BLOCK_EXASTUD_DATA_ID_ADDITIONAL_INFO:
         $categories = block_exastud_get_student_print_template($class, $student->id)->get_inputs($type);
-        $classheader = $reviewclass->title.' - '.block_exastud_trans('de:Weitere Formularfelder');
+        $classheader = $reviewclass->title.' - '.block_exastud_get_string('report_other_report_fields');
         break;
     default:
         $template = \block_exastud\print_template::create($type);

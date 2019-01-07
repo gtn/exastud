@@ -829,7 +829,7 @@ return [
             'Learning and social behavior',
     ],
     'report_other_report_fields' => [
-            'Weitere Formularfelder',
+            'Weitere Daten/Formularfelder',
             'Other report fields',
     ],
     'report_for_subjects' => [

@@ -199,14 +199,14 @@ function block_exastud_print_period($courseid, $period, $type) {
                                         'type' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_16_ZERTIFIKAT_FUER_PROFILFACH,
                                 ]), block_exastud_get_string('report_for_subjects'));
                     }
-                    if (!block_exastud_get_only_learnsociale_reports() && $myclass->is_head_teacher) {
+/*                    if (!block_exastud_get_only_learnsociale_reports() && $myclass->is_head_teacher) {
                         $generaldata[] =
                                 html_writer::link(new moodle_url('/blocks/exastud/review_class_other_data.php', [
                                         'courseid' => $courseid,
                                         'classid' => $myclass->id,
                                         'type' => BLOCK_EXASTUD_DATA_ID_ADDITIONAL_INFO
                                 ]), block_exastud_get_string('report_for_additional'));
-                    }
+                    }*/
 
                         /*$templates = \block_exastud\print_templates::get_class_other_print_templates_for_input($class);
                         foreach ($templates as $key => $value) {

@@ -101,6 +101,18 @@ class print_templates {
                 break;
             case BLOCK_EXASTUD_DATA_ID_PRINT_TEMPLATE:
                 $fields = array('comments', /*'subjects', 'subject_elective', 'subject_profile',*/ 'ags');
+                $fieldsAdditional = unserialize($template->additional_params);
+                if (is_array($fieldsAdditional)) {
+                    $fields = array_merge($fields, $fieldsAdditional);
+                }
+                unset($fields['besondere_kompetenzen']);
+                unset($fields['projekt_thema']);
+                unset($fields['projekt_grade']);
+                unset($fields['projekt_verbalbeurteilung']);
+                unset($fields['projekt_text3lines']);
+                if (!$fields) {
+                    $fields = array();
+                }
                 break;
             case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_16_ZERTIFIKAT_FUER_PROFILFACH:
                 $fields_temp = unserialize($template->additional_params);
