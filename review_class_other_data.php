@@ -27,8 +27,12 @@ block_exastud_require_login($courseid);
 
 block_exastud_require_global_cap(BLOCK_EXASTUD_CAP_REVIEW);
 
-$reviewclass = block_exastud_get_review_class($classid, BLOCK_EXASTUD_SUBJECT_ID_OTHER_DATA);
 $class = block_exastud_get_class($classid);
+$simulateSubjectId = BLOCK_EXASTUD_SUBJECT_ID_OTHER_DATA;
+if ((block_exastud_is_profilesubject_teacher($classid) || $class->userid != $USER->id) && $type == BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_16_ZERTIFIKAT_FUER_PROFILFACH) {
+    $simulateSubjectId = BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_16_ZERTIFIKAT_FUER_PROFILFACH;
+}
+$reviewclass = block_exastud_get_review_class($classid, $simulateSubjectId);
 
 if (!$reviewclass || !$class) {
 	print_error("badclass", "block_exastud");
@@ -111,7 +115,7 @@ foreach ($classstudents as $classstudent) {
 
 	// if (true) { // block_exastud_can_edit_class($reviewclass)) {
 	$editUser = null;
-	if (@$data['head_teacher']) {
+	if (@$data['head_teacher'] && $type != BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_16_ZERTIFIKAT_FUER_PROFILFACH) {
 		$editUser = $DB->get_record('user', array('id' => $data['head_teacher']));
 	}
 	if (!$editUser) {
@@ -130,7 +134,9 @@ foreach ($classstudents as $classstudent) {
 		$hasInputs = !!$categories;
 	}
 
-	if ($editUser->id !== $USER->id && $type == BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_16_ZERTIFIKAT_FUER_PROFILFACH) {
+	if ($type == BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_16_ZERTIFIKAT_FUER_PROFILFACH && !block_exastud_is_profilesubject_teacher($classid)) {
+        $row->cells[] = block_exastud_get_string('only_profilesubject_teacher');
+    } else if ($editUser->id != $USER->id) {
 		$row->cells[] = block_exastud_trans(['de:Zugeteilt zu {$a}'], fullname($editUser));
 	} else if (!$hasInputs) {
 		// no categories, or it's a default printtemplate with no inputs

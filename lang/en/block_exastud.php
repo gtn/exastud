@@ -356,3 +356,4 @@ $string['temporary_hidden'] = 'temporarily unavailable';
 $string['add_class'] = 'Add Class';
 $string['copy_class_from_last_period'] = 'Copy Class from last Period';
 $string['import_class_from_backup'] = 'Import Class from Backup';
+$string['only_profilesubject_teacher'] = 'Only profile subject\'s teacher can edit';

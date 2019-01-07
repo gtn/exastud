@@ -1342,4 +1342,8 @@ return [
         'Klasse von Sicherung wiederherstellen',
         'Import Class from Backup',
     ],
+    'only_profilesubject_teacher' => [
+        'Only profile subject\'s teacher can edit',
+        'Only profile subject\'s teacher can edit',
+    ],
 ];

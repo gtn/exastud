@@ -293,6 +293,24 @@ function block_exastud_get_class_subject_teachers($classid) {
 		", [$classid]), false);
 }
 
+function block_exastud_is_profilesubject_teacher($classid, $userid = null) {
+    global $USER;
+    if (!$userid) {
+        $userid = $USER->id;
+    }
+    $teachersData = block_exastud_get_class_subject_teachers($classid);
+    foreach ($teachersData as $teacherData) {
+        if ($teacherData->userid != $userid) {
+            continue;
+        }
+        // if it is profile subject
+        if ($teacherData->userid == $userid && strpos($teacherData->subject_title, 'Profilfach') === 0) {
+            return true;
+        }
+    }
+    return false;
+}
+
 function block_exastud_get_class_additional_head_teachers($classid) {
 	$classteachers = g::$DB->get_records_sql("
 			SELECT u.*, ct.id AS record_id, ct.subjectid
@@ -374,15 +392,29 @@ function block_exastud_get_review_class($classid, $subjectid) {
 		$classes = block_exastud_get_head_teacher_lern_und_sozialverhalten_classes();
 
 		return isset($classes[$classid]) ? $classes[$classid] : null;
-	} else {
-		return $DB->get_record_sql("
+	} else if ($subjectid == BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_16_ZERTIFIKAT_FUER_PROFILFACH) {
+        if (block_exastud_is_profilesubject_teacher($classid)) {
+            $class = block_exastud_get_class($classid);
+            return (object)[
+                    'classid' => $classid,
+                    'subjectid' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_16_ZERTIFIKAT_FUER_PROFILFACH,
+                    'userid' => $USER->id,
+                    'title' => $class->title,
+                    'subject' => block_exastud_get_string('report_for_subjects'),
+                    'type' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_16_ZERTIFIKAT_FUER_PROFILFACH,
+            ];
+        } else {
+            return false;
+        }
+    } else {
+            return $DB->get_record_sql("
 			SELECT ct.id, ct.id AS classteacherid, c.title, s.title AS subject_title, s.id as subject_id, c.userid
 			FROM {block_exastudclassteachers} ct
-			JOIN {block_exastudclass} c ON ct.classid=c.id
+			JOIN {block_exastudclass} c ON ct.classid = c.id
 			LEFT JOIN {block_exastudsubjects} s ON ct.subjectid = s.id
-			WHERE ct.teacherid=? AND ct.classid=? AND ct.subjectid >= 0 AND ".($subjectid ? 's.id=?' : 's.id IS NULL')."
+			WHERE ct.teacherid = ? AND ct.classid = ? AND ct.subjectid >= 0 AND ".($subjectid ? 's.id = ?' : 's.id IS NULL')."
 		", array($USER->id, $classid, $subjectid), IGNORE_MULTIPLE);
-	}
+    }
 }
 
 /**

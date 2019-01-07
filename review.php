@@ -174,33 +174,32 @@ function block_exastud_print_period($courseid, $period, $type) {
                 }
                 
 				$generaldata = array();
-				if ($myclass->is_head_teacher) {
-					/*if ($table->data) {
-						// add spacer
-						$table->data[] = ['<b>Weitere Formulardaten:'];
-					}*/
-
-                    $generaldata[] =
-						html_writer::link(new moodle_url('/blocks/exastud/review_class_other_data.php', [
-							'courseid' => $courseid,
-							'classid' => $myclass->id,
-							'type' => BLOCK_EXASTUD_DATA_ID_LERN_UND_SOZIALVERHALTEN,
-						]), block_exastud_get_string('report_learn_and_sociale'));
-                    if (!block_exastud_get_only_learnsociale_reports()) {
+				if ($myclass->is_head_teacher || block_exastud_is_profilesubject_teacher($myclass->id)) {
+                    if ($myclass->is_head_teacher) {
+                        $generaldata[] =
+                                html_writer::link(new moodle_url('/blocks/exastud/review_class_other_data.php', [
+                                        'courseid' => $courseid,
+                                        'classid' => $myclass->id,
+                                        'type' => BLOCK_EXASTUD_DATA_ID_LERN_UND_SOZIALVERHALTEN,
+                                ]), block_exastud_get_string('report_learn_and_sociale'));
+                    }
+                    if (!block_exastud_get_only_learnsociale_reports() && $myclass->is_head_teacher) {
                         $generaldata[] =
                                 html_writer::link(new moodle_url('/blocks/exastud/review_class_other_data.php', [
                                         'courseid' => $courseid,
                                         'classid' => $myclass->id,
                                         'type' => BLOCK_EXASTUD_DATA_ID_PRINT_TEMPLATE,
                                 ]), block_exastud_get_string('report_other_report_fields'));
-
+                    }
+                    if (!block_exastud_get_only_learnsociale_reports() && ($myclass->is_head_teacher || block_exastud_is_profilesubject_teacher($myclass->id))) {
                         $generaldata[] =
                                 html_writer::link(new moodle_url('/blocks/exastud/review_class_other_data.php', [
                                         'courseid' => $courseid,
                                         'classid' => $myclass->id,
                                         'type' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_16_ZERTIFIKAT_FUER_PROFILFACH,
                                 ]), block_exastud_get_string('report_for_subjects'));
-
+                    }
+                    if (!block_exastud_get_only_learnsociale_reports() && $myclass->is_head_teacher) {
                         $generaldata[] =
                                 html_writer::link(new moodle_url('/blocks/exastud/review_class_other_data.php', [
                                         'courseid' => $courseid,
@@ -209,16 +208,16 @@ function block_exastud_print_period($courseid, $period, $type) {
                                 ]), block_exastud_get_string('report_for_additional'));
                     }
 
-					/*$templates = \block_exastud\print_templates::get_class_other_print_templates_for_input($class);
-					foreach ($templates as $key => $value) {
-						$table->data[] = [
-							html_writer::link(new moodle_url('/blocks/exastud/review_class_other_data.php', [
-								'courseid' => $courseid,
-								'classid' => $myclass->id,
-								'type' => $key,
-							]), $value),
-						];
-					}*/
+                        /*$templates = \block_exastud\print_templates::get_class_other_print_templates_for_input($class);
+                        foreach ($templates as $key => $value) {
+                            $table->data[] = [
+                                html_writer::link(new moodle_url('/blocks/exastud/review_class_other_data.php', [
+                                    'courseid' => $courseid,
+                                    'classid' => $myclass->id,
+                                    'type' => $key,
+                                ]), $value),
+                            ];
+                        }*/
 					$hRow->cells[] = block_exastud_get_string('review_table_part_additional');
 				} else {
                     $htCell1->colspan = 2;
@@ -232,10 +231,10 @@ function block_exastud_print_period($courseid, $period, $type) {
                     //if (!block_exastud_get_only_learnsociale_reports()) {
                     $subjectsCell = new \html_table_cell();
                     $subjectsCell->text = (isset($subjectsData[$i]) ? $subjectsData[$i] : '');
-                    $subjectsCell->colspan = ($myclass->is_head_teacher ? 1 : 2);
+                    $subjectsCell->colspan = ($myclass->is_head_teacher || block_exastud_is_profilesubject_teacher($myclass->id) ? 1 : 2);
                     $dRow->cells[] = $subjectsCell;
                     //}
-                    if ($myclass->is_head_teacher) {
+                    if ($myclass->is_head_teacher || block_exastud_is_profilesubject_teacher($myclass->id)) {
                         $generalCell = new \html_table_cell();
                         $generalCell->text = (isset($generaldata[$i]) ? $generaldata[$i] : '');
                         $dRow->cells[] = $generalCell;
