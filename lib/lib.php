@@ -1983,12 +1983,11 @@ function block_exastud_get_template_files() {
     return $filelist;
 }
 
-// Needed for install/upgrade plugin
-function block_exastud_get_default_templates() {
-    $grades_1_bis_6 = ['1' => '1', '2' => '2', '3' => '3', '4' => '4', '5' => '5', '6' => '6'];
-    $grades_lang = ['1' => 'sehr gut', '2' => 'gut', '3' => 'befriedigend', '4' => 'ausreichend', '5' => 'mangelhaft', '6' => 'ungenügend'];
-    $grades_short = ['1' => 'sgt', '2' => 'gut', '3' => 'bfr', '4' => 'ausr', '5' => 'mgh', '6' => 'ung'];
-    $grades_mit_plus_minus_bis = [
+function block_exastud_get_grades_set($variant = '1_bis_6') {
+    $grades['1_bis_6'] = ['1' => '1', '2' => '2', '3' => '3', '4' => '4', '5' => '5', '6' => '6'];
+    $grades['lang'] = ['1' => 'sehr gut', '2' => 'gut', '3' => 'befriedigend', '4' => 'ausreichend', '5' => 'mangelhaft', '6' => 'ungenügend'];
+    $grades['short'] = ['1' => 'sgt', '2' => 'gut', '3' => 'bfr', '4' => 'ausr', '5' => 'mgh', '6' => 'ung'];
+    $grades['mit_plus_minus_bis'] = [
             '1' => '1', '1-' => '1-', '1-2' => '1-2',
             '2+' => '2+', '2' => '2', '2-' => '2-', '2-3' => '2-3',
             '3+' => '3+', '3' => '3', '3-' => '3-', '3-4' => '3-4',
@@ -1996,7 +1995,7 @@ function block_exastud_get_default_templates() {
             '5+' => '5+', '5' => '5', '5-' => '5-', '5-6' => '5-6',
             '6+' => '6+', '6' => '6',
     ];
-    $grades_mit_plus_minus_bis_ausgeschrieben = [
+    $grades['mit_plus_minus_bis_ausgeschrieben'] = [
             '1' => '1', '1-' => '1 minus', '1-2' => '1 - 2',
             '2+' => '2 plus', '2' => '2', '2-' => '2 minus', '2-3' => '2 - 3',
             '3+' => '3 plus', '3' => '3', '3-' => '3 minus', '3-4' => '3 - 4',
@@ -2004,6 +2003,37 @@ function block_exastud_get_default_templates() {
             '5+' => '5 plus', '5' => '5', '5-' => '5 minus', '5-6' => '5 - 6',
             '6+' => '6 plus', '6' => '6',
     ];
+    if (array_key_exists($variant, $grades)) {
+        return $grades[$variant];
+    } else if ($variant == '_all_') {
+        return $grades;
+    }
+    print_error("badgrade", "block_exastud");
+}
+
+// for calculating sum/averages/... from grades
+function block_exastud_get_grade_index_by_value($value, $variant = null) {
+    $grades = array();
+    if ($variant) {
+        $grades[] = block_exastud_get_grades_set($variant);
+    } else {
+        $grades = block_exastud_get_grades_set('_all_');
+    }
+    foreach ($grades as $grade) {
+        // if the value is equal of key
+        if (is_numeric($value) && array_key_exists($value, $grade)) {
+            return $value;
+        }
+        // first of found
+        if ($neededkey = array_search($value, $grade)) {
+            return (float)$neededkey; // float? or?
+        };
+    }
+    return 0;
+}
+
+// Needed for install/upgrade plugin
+function block_exastud_get_default_templates() {
 
     $templates = [
             'default_report' => [
@@ -2017,7 +2047,7 @@ function block_exastud_get_default_templates() {
                     'place_of_birth' => '1',
                     'learning_group' => '1',
                     'class' => '1',
-                    'grades' => $grades_1_bis_6,
+                    'grades' => block_exastud_get_grades_set('1_bis_6'),
                     'inputs' => [
                             'learn_social_behavior' => [
                                     'title' => block_exastud_get_string('learn_and_sociale'),
@@ -2092,7 +2122,7 @@ function block_exastud_get_default_templates() {
                     'place_of_birth' => '1',
                     'learning_group' => '1',
                     'class' => '1',
-                    'grades' => $grades_lang,
+                    'grades' => block_exastud_get_grades_set('lang'),
                     'inputs' => [
                         'projekt_thema' => [
                                 'title' => 'Thema',
@@ -2134,7 +2164,7 @@ function block_exastud_get_default_templates() {
                     'place_of_birth' => '1',
                     'learning_group' => '1',
                     'class' => '1',
-                    'grades' => $grades_mit_plus_minus_bis,
+                    'grades' => block_exastud_get_grades_set('mit_plus_minus_bis'),
                     'inputs' => [
                             'learn_social_behavior' => [
                                     'title' => block_exastud_get_string('learn_and_sociale'),
@@ -2179,7 +2209,7 @@ function block_exastud_get_default_templates() {
                     'place_of_birth' => '1',
                     'learning_group' => '1',
                     'class' => '1',
-                    'grades' => $grades_1_bis_6,
+                    'grades' => block_exastud_get_grades_set('1_bis_6'),
                     'inputs' => [
                             'learn_social_behavior' => [
                                     'title' => block_exastud_get_string('learn_and_sociale'),
@@ -2224,7 +2254,7 @@ function block_exastud_get_default_templates() {
                     'place_of_birth' => '1',
                     'learning_group' => '1',
                     'class' => '1',
-                    'grades' => $grades_mit_plus_minus_bis,
+                    'grades' => block_exastud_get_grades_set('mit_plus_minus_bis'),
                     'inputs' => [
                             'learn_social_behavior' => [
                                 'title' => block_exastud_get_string('learn_and_sociale'),
@@ -2269,7 +2299,7 @@ function block_exastud_get_default_templates() {
                     'place_of_birth' => '1',
                     'learning_group' => '1',
                     'class' => '1',
-                    'grades' => $grades_1_bis_6,
+                    'grades' => block_exastud_get_grades_set('1_bis_6'),
                     'inputs' => [
                             'learn_social_behavior' => [
                                     'title' => block_exastud_get_string('learn_and_sociale'),
@@ -2314,7 +2344,7 @@ function block_exastud_get_default_templates() {
                     'place_of_birth' => '1',
                     'learning_group' => '1',
                     'class' => '1',
-                    'grades' => $grades_mit_plus_minus_bis_ausgeschrieben,
+                    'grades' => block_exastud_get_grades_set('mit_plus_minus_bis_ausgeschrieben'),
                     'inputs' => [
                             'ags' => [
                                     'title' => 'Teilnahme an Arbeitsgemeinschaften',
@@ -2345,7 +2375,7 @@ function block_exastud_get_default_templates() {
                     'place_of_birth' => '1',
                     'learning_group' => '1',
                     'class' => '1',
-                    'grades' => $grades_short,
+                    'grades' => block_exastud_get_grades_set('short'),
                     'inputs' => [/*
                             'verhalten' => [
                                     'title' => 'Verhalten',
@@ -2386,7 +2416,7 @@ function block_exastud_get_default_templates() {
                     'place_of_birth' => '1',
                     'learning_group' => '1',
                     'class' => '1',
-                    'grades' => $grades_lang,
+                    'grades' => block_exastud_get_grades_set('lang'),
                     'inputs' => [
                             'wann_verlassen' => [
                                     'title' => 'verlässt ...',
@@ -2436,7 +2466,7 @@ function block_exastud_get_default_templates() {
                     'place_of_birth' => '1',
                     'learning_group' => '1',
                     'class' => '1',
-                    'grades' => $grades_lang,
+                    'grades' => block_exastud_get_grades_set('lang'),
                     'inputs' => [
                             'wann_verlassen' => [
                                     'title' => 'verlässt ...',
@@ -2495,7 +2525,7 @@ function block_exastud_get_default_templates() {
                     'place_of_birth' => '1',
                     'learning_group' => '1',
                     'class' => '1',
-                    'grades' => $grades_short,
+                    'grades' => block_exastud_get_grades_set('short'),
                     'inputs' => [
                             'ags' => [
                                     'title' => 'Teilnahme an Arbeitsgemeinschaften',
@@ -2526,7 +2556,7 @@ function block_exastud_get_default_templates() {
                     'place_of_birth' => '1',
                     'learning_group' => '1',
                     'class' => '1',
-                    'grades' => $grades_lang,
+                    'grades' => block_exastud_get_grades_set('lang'),
                     'inputs' => [
                         /*
                         'abgelegt' => [
@@ -2590,7 +2620,7 @@ function block_exastud_get_default_templates() {
                     'place_of_birth' => '1',
                     'learning_group' => '1',
                     'class' => '1',
-                    'grades' => $grades_short,
+                    'grades' => block_exastud_get_grades_set('short'),
                     'inputs' => [
                             'ags' => [
                                     'title' => 'Teilnahme an Arbeitsgemeinschaften',
@@ -2621,7 +2651,7 @@ function block_exastud_get_default_templates() {
                     'place_of_birth' => '1',
                     'learning_group' => '1',
                     'class' => '1',
-                    'grades' => $grades_lang,
+                    'grades' => block_exastud_get_grades_set('lang'),
                     'inputs' => [
                         'projekt_thema' => [
                             'title' => 'Thema',
@@ -2672,7 +2702,7 @@ function block_exastud_get_default_templates() {
                     'place_of_birth' => '1',
                     'learning_group' => '1',
                     'class' => '1',
-                    'grades' => $grades_lang,
+                    'grades' => block_exastud_get_grades_set('lang'),
                     'inputs' => [
                             'focus' => [
                                     'title' => 'Schwerpunkt',
@@ -2732,7 +2762,7 @@ function block_exastud_get_default_templates() {
                     'place_of_birth' => '1',
                     'learning_group' => '1',
                     'class' => '1',
-                    'grades' => $grades_short,
+                    'grades' => block_exastud_get_grades_set('short'),
                     'inputs' => [
                             'ags' => [
                                     'title' => 'Teilnahme an Arbeitsgemeinschaften',
@@ -2776,7 +2806,7 @@ function block_exastud_get_default_templates() {
                     'place_of_birth' => '1',
                     'learning_group' => '1',
                     'class' => '1',
-                    'grades' => $grades_mit_plus_minus_bis_ausgeschrieben,
+                    'grades' => block_exastud_get_grades_set('mit_plus_minus_bis_ausgeschrieben'),
                     'inputs' => [
                             'ags' => [
                                     'title' => 'Teilnahme an Arbeitsgemeinschaften',
@@ -2807,7 +2837,7 @@ function block_exastud_get_default_templates() {
                     'place_of_birth' => '1',
                     'learning_group' => '1',
                     'class' => '1',
-                    'grades' => $grades_mit_plus_minus_bis_ausgeschrieben,
+                    'grades' => block_exastud_get_grades_set('mit_plus_minus_bis_ausgeschrieben'),
                     'inputs' => [
                             'ags' => [
                                     'title' => 'Teilnahme an Arbeitsgemeinschaften',

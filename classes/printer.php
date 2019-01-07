@@ -422,6 +422,7 @@ class printer {
 			$placeholder = 'ph'.time();
 
 			$grades = $template->get_grade_options();
+			echo "<pre>debug:<strong>printer.php:425</strong>\r\n"; print_r($grades); echo '</pre>'; // !!!!!!!!!! delete it
 
 			$add_filter(function($content) use ($placeholder) {
 				// im template 'BP 2004/Halbjahresinformation Klasse 10Gemeinschaftsschule_E-Niveau_BP 2004' ist der Standardwert "2 plus"
@@ -435,11 +436,11 @@ class printer {
 
 				return $ret;
 			});
-                $sum = 0.0;
-                $rsum = 0.0;
-                $scnt = 0;
-                $rcnt = 0;
-                $min = 0;
+            $sum = 0.0;
+            $rsum = 0.0;
+            $scnt = 0;
+            $rcnt = 0;
+            $min = 0;
 			// noten
 			foreach ($class_subjects as $subject) {
 				$subjectData = block_exastud_get_graded_review($class->id, $subject->id, $student->id);
@@ -510,22 +511,7 @@ class printer {
 					// einfach die erste zahl nehmen und dann durch text ersetzen
 					$grade = @$grades[substr(@$subjectData->grade, 0, 1)];
 				}
-
-                // to calculate the average grade
-                if ($subject->not_relevant == 1) {
-                    if ($grade < $min) {
-                        $min = $grade;
-                    }
-                    $rsum += $grade;
-                    $rcnt++;
-                }
-                $sum += $grade;
-                $scnt++;
-				    
 				
-				// TEST:
-				// $grade = $subject->title.' '.$grade;
-
 				$add_filter([
 					'grade',
 					$gradeSearch,
@@ -544,12 +530,27 @@ class printer {
 
 					return $ret;
 				});
+
+				$gradeForCalc = block_exastud_get_grade_index_by_value($grade);
+                // to calculate the average grade
+                if ($subject->not_relevant == 1) {
+                    if ($gradeForCalc < $min) {
+                        $min = $gradeForCalc;
+                    }
+                    $rsum += $gradeForCalc;
+                    $rcnt++;
+                }
+                $sum += $gradeForCalc;
+                $scnt++;
 			}
-			$avg = $sum / $scnt;
+			if ($scnt > 0) {
+                $avg = $sum / $scnt;
+            } else {
+			    $avg = 0;
+            }
 			if ($avg > 4.4) {
 			    $avg = (($sum - $rsum) + $min) / (($scnt - $rcnt) + 1);
 			}
-			
 			if (in_array($templateid, [
                             BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_ABGANGSZEUGNIS_FOE,
                             BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_ABSCHLUSSZEUGNIS_HS,
