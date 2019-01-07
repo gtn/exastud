@@ -764,7 +764,18 @@ function xmldb_block_exastud_upgrade($oldversion = 0) {
         upgrade_block_savepoint(true, 2019010502, 'exastud');
     }
 
+    if ($oldversion < 2019010704) {
+        // and again reset subjects, because was a version without this data after installation
+        $DB->execute(' UPDATE {block_exastudsubjects} SET not_relevant = 1 WHERE shorttitle = "Sp"');
+        $DB->execute(' UPDATE {block_exastudsubjects} SET no_niveau = 1 WHERE shorttitle = "Sp"');
 
+        $DB->execute(' UPDATE {block_exastudsubjects} SET not_relevant = 1 WHERE shorttitle = "BK"');
+        $DB->execute(' UPDATE {block_exastudsubjects} SET no_niveau = 1 WHERE shorttitle = "BK"');
+
+        $DB->execute(' UPDATE {block_exastudsubjects} SET not_relevant = 1 WHERE shorttitle = "Mu"');
+        $DB->execute(' UPDATE {block_exastudsubjects} SET no_niveau = 1 WHERE shorttitle = "Mu"');
+        upgrade_block_savepoint(true, 2019010704, 'exastud');
+    }
 
     block_exastud_insert_default_entries();
 	block_exastud_check_profile_fields();
