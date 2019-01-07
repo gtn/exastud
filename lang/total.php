@@ -1346,4 +1346,20 @@ return [
         'Nur Profilfach-Lehrkräfte können diesen Eintrag bearbeiten.',
         'Only profile subject\'s teacher can edit',
     ],
+    'man' => [
+        'männlich',
+        'male',
+    ],
+    'woman' => [
+        'weiblich',
+        'female',
+    ],
+    'Man' => [
+        'Männlich',
+        'Male',
+    ],
+    'Woman' => [
+        'Weiblich',
+        'Female',
+    ],
 ];

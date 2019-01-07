@@ -356,3 +356,7 @@ $string['add_class'] = 'Klasse hinzufügen';
 $string['copy_class_from_last_period'] = 'Klasse vom vorigen Eingabezeitraum kopieren';
 $string['import_class_from_backup'] = 'Klasse von Sicherung wiederherstellen';
 $string['only_profilesubject_teacher'] = 'Nur Profilfach-Lehrkräfte können diesen Eintrag bearbeiten.';
+$string['man'] = 'männlich';
+$string['woman'] = 'weiblich';
+$string['Man'] = 'Männlich';
+$string['Woman'] = 'Weiblich';

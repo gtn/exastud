@@ -1763,9 +1763,9 @@ function block_exastud_get_user_gender_string($userid) {
     if (!$gender) {
 
     } elseif ($gender == 'male') {
-        $gender = block_exastud_trans(['de:Männlich', 'en:male']);
+        $gender = block_exastud_get_string('man');
     } else {
-        $gender = block_exastud_trans(['de:Weiblich', 'en:female']);
+        $gender = block_exastud_get_string('woman');
     }
     return $gender;
 }
