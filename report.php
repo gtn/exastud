@@ -130,9 +130,21 @@ if ($classid = optional_param('classid', 0, PARAM_INT)) {
                 }
 
                 if ($printStudents && $template == 'grades_report') {
-                    $file = \block_exastud\printer::grades_report($class, $printStudents);
-                    $files_to_zip[$file->temp_file] = $file->filename;
-                    continue; // go to the next template
+                    if (optional_param('preview', false, PARAM_BOOL)) {
+                        // Preview of report on html page
+                        $PAGE->set_pagelayout('embedded');
+                        echo $output->header('report');
+                        $classheader = block_exastud_get_period($class->periodid)->description.' - '.$class->title;
+                        echo $output->heading($classheader);
+
+                        echo \block_exastud\printer::grades_report_html($class, $printStudents);
+                        echo $output->footer();
+                        exit;
+                    } else {
+                        $file = \block_exastud\printer::grades_report($class, $printStudents);
+                        $files_to_zip[$file->temp_file] = $file->filename;
+                        continue; // go to the next template
+                    }
                 }
 
                 if ($printStudents && $template == 'grades_report_xlsx') {

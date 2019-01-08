@@ -552,7 +552,7 @@ class printer {
                             BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_ABGANGSZEUGNIS_FOE,
                             BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_ABSCHLUSSZEUGNIS_HS,
                     ])) {
-                $avg = round($avg, 1);
+                $avg = round($avg, 1, PHP_ROUND_HALF_DOWN);
                 $data['gd'] = $avg;
                 $avgVerbal = 'sehr gut';
                 if ($avg >= 1.5 && $avg <= 2.4) {
@@ -1047,6 +1047,295 @@ class printer {
 		}
 
 		// page 2
+
+/*		$templateProcessor->cloneRow('gsstudent', count($students));
+		$rowi = 0;
+		foreach ($students as $student) {
+			$rowi++;
+			$templateProcessor->setValue("gsstudent#$rowi", $rowi.'. '.fullname($student));
+
+			foreach ($grouped_subjects as $subjects) {
+				$subjectData = null;
+
+				foreach ($subjects as $subject) {
+					$subjectData = block_exastud_get_graded_review($class->id, $subject->id, $student->id);
+
+					if ($subjectData && isset($subjectData->grade) && $subjectData->grade) {
+						break;
+					}
+				}
+                $value = '';
+                if ($subjectData) {
+                    if (isset($subjectData->niveau)) {
+                        $value .= $subjectData->niveau.' ';
+                    }
+                    if (isset($subjectData->grade)) {
+                        $value .= $subjectData->grade;
+                    }
+                }
+				$templateProcessor->setValue("gsg#$rowi", $value, 1);
+				$templateProcessor->setValue("gss#$rowi", $value ? $subject->shorttitle_stripped : '', 1); // TODO: ???
+			}
+
+			$templateProcessor->setValue("gsg#$rowi", '');
+			$templateProcessor->setValue("gss#$rowi", '');
+		}*/
+
+		// projekt
+		$templateProcessor->cloneRow('prostudent', count($students));
+		$rowi = 0;
+		foreach ($students as $student) {
+			$studentData = block_exastud_get_class_student_data($class->id, $student->id);
+			$rowi++;
+
+			$templateProcessor->setValue("prostudent#$rowi", $rowi.'. '.fullname($student));
+			$templateProcessor->setValue("prog#$rowi", @$studentData->projekt_grade);
+			$templateProcessor->setValue("prodescription#$rowi", @$studentData->projekt_thema);
+		}
+
+		// ags
+		$templateProcessor->cloneRow('agstudent', count($students));
+		$rowi = 0;
+		foreach ($students as $student) {
+			$studentData = block_exastud_get_class_student_data($class->id, $student->id);
+			$rowi++;
+
+			$templateProcessor->setValue("agstudent#$rowi", $rowi.'. '.fullname($student));
+			// crop ags by limits. Limits are got from class template
+            $template = block_exastud_get_student_print_template($class, $student->id);
+            $templateid = $template->get_template_id();
+            $ags = block_exastud_cropStringByInputLimitsFromTemplate(@$studentData->ags, $templateid, 'ags');
+			$templateProcessor->setValue("agdescription#$rowi", $ags);
+		}
+
+		// page 3
+		$class_teachers = block_exastud_get_class_subject_teachers($class->id);
+		$templateProcessor->cloneRow('sshort', count($class_teachers));
+		$rowi = 0;
+		foreach ($class_teachers as $class_teacher) {
+			$rowi++;
+
+			$subject = $class_subjects[$class_teacher->subjectid];
+			$templateProcessor->setValue("sshort#$rowi", $subject->shorttitle);
+			$templateProcessor->setValue("stitle#$rowi", $subject->title);
+			$templateProcessor->setValue("steacher#$rowi", fullname($class_teacher));
+		}
+
+		// image
+		// disable for now
+		/*
+		 * if ($logo = block_exastud_get_main_logo()) {
+		 * $image = $logo->copy_content_to_temp();
+		 * $size = @getimagesize($image);
+		 *
+		 * if ($size) {
+		 * $templateProcessor->updateFile('word/media/image1.png', $image);
+		 *
+		 * $templateProcessor->applyFiltersAllParts([function($content) use ($size) {
+		 * return preg_replace_callback('!<wp:extent cx="(?<viewportcx>[0-9]*)" cy="(?<viewportcy>[0-9]*)".*name="Picture [12]".*cx="(?<cx>[0-9]*)" cy="(?<cy>[0-9]*)"!U', function($matches) use ($size) {
+		 * if ($size[0] / $size[1] > $matches['cx'] / $matches['cy']) {
+		 * $w = round($matches['cx']);
+		 * $h = round($matches['cx'] / $size[0] * $size[1]);
+		 * } else {
+		 * $w = round($matches['cy'] / $size[1] * $size[0]);
+		 * $h = round($matches['cy']);
+		 * }
+		 *
+		 * return str_replace([$matches['cx'], $matches['cy'], $matches['viewportcx'], $matches['viewportcy']], [$w, $h, $w, $h], $matches[0]);
+		 * }, $content);
+		 * }]);
+		 * }
+		 * }
+		 */
+
+		// save as a random file in temp file
+		$temp_file = tempnam($CFG->tempdir, 'exastud');
+		$templateProcessor->saveAs($temp_file);
+
+		$filename = date('Y-m-d')."-".'Notenuebersicht'."-{$class->title}.docx";
+
+        return (object)[
+                'temp_file' => $temp_file,
+                'filename' => $filename,
+        ];
+
+		//require_once $CFG->dirroot.'/lib/filelib.php';
+		//send_temp_file($temp_file, $filename);
+	}
+	static function grades_report_html($class, $students) {
+		global $CFG;
+
+		$class_subjects = block_exastud_get_bildungsplan_subjects($class->bpid);
+
+		// split normal and grouped subjects
+		$normal_subjects = [];
+		$grouped_subjects = [];
+		foreach ($class_subjects as $subject) {
+			if (preg_match('!religi|ethi!i', $subject->title)) {
+				@$grouped_subjects['Religion / Ethik'][] = $subject;
+				$subject->shorttitle_stripped = $subject->shorttitle;
+			} elseif (preg_match('!^Wahlpflicht!i', $subject->title)) {
+				$subject->shorttitle_stripped = preg_replace('!^WPF\s+!i', '', $subject->shorttitle);
+				@$grouped_subjects['WPF'][] = $subject;
+			} elseif (preg_match('!^Profilfach!i', $subject->title)) {
+				$subject->shorttitle_stripped = preg_replace('!^Profil\s+!i', '', $subject->shorttitle);
+				@$grouped_subjects['Profil'][] = $subject;
+			} else {
+				$normal_subjects[] = $subject;
+			}
+		}
+
+        // school logo
+        $logo_src = '';
+        $fs = get_file_storage();
+        $files = $fs->get_area_files(\context_system::instance()->id, 'exastud', 'block_exastud_schoollogo', 0, 'itemid', false);
+        if ($files && count($files) > 0) {
+            foreach ($files as $file) {
+                $file_name = $file->get_filename();
+                $url = \moodle_url::make_file_url('/pluginfile.php',
+                        '/'.$file->get_contextid().'/block_exastud/block_exastud_schoollogo/'.$file->get_itemid().'/'.$file_name, true);
+                $logo_src = $url;
+            }
+        }
+        $all_subjects = $normal_subjects;
+        foreach (['Religion / Ethik', 'WPF', 'Profil'] as $sgroup) {
+            $all_subjects = array_merge($all_subjects, $grouped_subjects[$sgroup]);
+        }
+
+        // table 1
+        $isGroupedSubjects = array();
+        $groupedSubjectTitles = array();
+        // at first - generate data for subjects. So we will can hide empty columns
+        $studentsData = array();
+        foreach ($students as $student) {
+            // normal subjects
+            foreach ($normal_subjects as $subject) {
+                $subjectData = block_exastud_get_graded_review($class->id, $subject->id, $student->id);
+                $value = '';
+                if ($subjectData) {
+                    if (isset($subjectData->niveau)) {
+                        $value .= $subjectData->niveau.' ';
+                    }
+                    if (isset($subjectData->grade)) {
+                        $value .= $subjectData->grade;
+                    }
+                }
+                if ($value) {
+                    @$studentsData[$subject->id][$student->id] = $value;
+                }
+            }
+            // grouped subjects
+            foreach (['Religion / Ethik', 'WPF', 'Profil'] as $sgroup) {
+                foreach (@$grouped_subjects[$sgroup] as $skey => $subject) {
+                    $isGroupedSubjects[$subject->id] = $subject->id;
+                    $groupedSubjectTitles[$subject->id] = $sgroup;
+                    $subjectData = block_exastud_get_graded_review($class->id, $subject->id, $student->id);
+                    $value = '';
+                    if ($subjectData) {
+                        if (isset($subjectData->niveau)) {
+                            $value .= $subjectData->niveau.' ';
+                        }
+                        if (isset($subjectData->grade)) {
+                            $value .= $subjectData->grade;
+                        }
+                    }
+                    if ($value) {
+                        @$studentsData[$subject->id][$student->id] = $value;
+                    }
+                }
+            }
+        }
+
+        $subjectsTable = new \html_table();
+        $subjectsTable->head = array();
+        $subjectsTable->align = array();
+        $subjectsTable->attributes['border'] = '1';
+        $subjectsTable->head[] = ''; // student name
+        foreach ($all_subjects as $subject) {
+            if (count(@$studentsData[$subject->id]) > 0) {
+                $hCell = new \html_table_cell();
+                if (in_array($subject->id, $isGroupedSubjects)) {
+                    $hCell->colspan = 2;
+                    $hCell->text = $groupedSubjectTitles[$subject->id];
+                } else {
+                    $shorttitle = trim($subject->shorttitle);
+                    $shorttitle = preg_replace('/(^\s+|\s+$|\s+)/', mb_convert_encoding('&#160;', 'UTF-8', 'HTML-ENTITIES'), $shorttitle); // insert &nbsp to table header
+                    $hCell->text = $shorttitle;
+                }
+                $subjectsTable->head[] = $hCell;
+                $subjectsTable->align[] = 'center';
+            }
+        }
+
+
+		foreach ($students as $student) {
+			$row = new \html_table_row();
+			$cells = array();
+			$cells[] = fullname($student);
+            foreach ($all_subjects as $subject) {
+                if (count(@$studentsData[$subject->id]) > 0) {
+                    if (in_array($subject->id, $isGroupedSubjects)) {
+                        $cells[] = $studentsData[$subject->id][$student->id];
+                    } else {
+                        $cells[] = $studentsData[$subject->id][$student->id];
+                        $cells[] = $subject->shorttitle;
+                    }
+                }
+            }
+
+			// normal subjects
+			/*foreach ($normal_subjects as $subject) {
+				$subjectData = block_exastud_get_graded_review($class->id, $subject->id, $student->id);
+                $value = '';
+				if ($subjectData) {
+				    if (isset($subjectData->niveau)) {
+				        $value .= $subjectData->niveau.' ';
+                    }
+                    if (isset($subjectData->grade)) {
+                        $value .= $subjectData->grade;
+                    }
+                }
+				$templateProcessor->setValue("g#$rowi", $value, 1);
+			}
+			$templateProcessor->setValue("g#$rowi", '');*/
+
+			// grouped subjects
+            /*foreach ($grouped_subjects as $subjects) {
+                $subjectData = null;
+
+                foreach ($subjects as $subject) {
+                    $subjectData = block_exastud_get_graded_review($class->id, $subject->id, $student->id);
+
+                    if ($subjectData && isset($subjectData->grade) && $subjectData->grade) {
+                        break;
+                    }
+                }
+                $value = '';
+                if ($subjectData) {
+                    if (isset($subjectData->niveau)) {
+                        $value .= $subjectData->niveau.' ';
+                    }
+                    if (isset($subjectData->grade)) {
+                        $value .= $subjectData->grade;
+                    }
+                }
+                //$templateProcessor->setValue("gsg#$rowi", $value, 1);
+                //$templateProcessor->setValue("gss#$rowi", $value ? $subject->shorttitle_stripped : '', 1); // TODO: ???
+                $templateProcessor->setValue("gst#$rowi", $value, 1);
+                $templateProcessor->setValue("gst#$rowi", $value ? $subject->shorttitle_stripped : '', 1);
+            }
+
+            $templateProcessor->setValue("gsg#$rowi", '');
+            $templateProcessor->setValue("gss#$rowi", '');*/
+
+            $row->cells = $cells;
+            $subjectsTable->data[] = $row;
+		}
+
+        echo \html_writer::table($subjectsTable);
+		exit;
+
+		// table 2
 
 /*		$templateProcessor->cloneRow('gsstudent', count($students));
 		$rowi = 0;
