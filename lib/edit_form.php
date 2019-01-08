@@ -217,7 +217,7 @@ class student_edit_form extends moodleform {
             case 'social':
                 // learn and social
                 $inputs = $this->_customdata['template']->get_inputs('all');
-                if (array_key_exists('learn_social_behavior', $inputs)) {
+                if (is_array($inputs) && array_key_exists('learn_social_behavior', $inputs)) {
                     $template_inputparams = $inputs['learn_social_behavior'];
                 } else {
                     $template_inputparams = array();
@@ -274,7 +274,7 @@ class student_edit_form extends moodleform {
                         }
                     }
                 }
-                if (count($template_inputparams) == 0 && array_key_exists('subjects', $inputs)) {
+                if (count($template_inputparams) == 0 && is_array($inputs) && array_key_exists('subjects', $inputs)) {
                     $template_inputparams = $inputs['subjects'];
                 }
                 $subject_limits = array(
