@@ -1964,6 +1964,7 @@ function block_exastud_get_report_templates($class) {
         $templates[2] = 'Anlage';
         $templates[3] = 'Anlage (Alt)';
     }
+    $templates[BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_LERNENTWICKLUNGSBERICHT_DECKBLATT_UND_1_INNENSEITE] = 'Deckblatt und 1. Innenseite LEB';
     $templates['html_report'] = block_exastud_get_string('html_report');
     if ($class == '-all-') {
         $templates += \block_exastud\print_templates::get_class_other_print_templates(null);
