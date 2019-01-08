@@ -184,8 +184,6 @@ class printer {
             }
         }
 
-        //echo "<pre>debug:<strong>printer.php:121</strong>\r\n"; print_r($templateid); echo '</pre>'; // !!!!!!!!!! delete it
-
 		if ($templateid == BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_DEFAULT_REPORT) { // default_report
 			$class_subjects = block_exastud_get_class_subjects($class);
 			//$lern_soz = block_exastud_get_class_student_data($class->id, $student->id, BLOCK_EXASTUD_DATA_ID_LERN_UND_SOZIALVERHALTEN);
@@ -422,7 +420,6 @@ class printer {
 			$placeholder = 'ph'.time();
 
 			$grades = $template->get_grade_options();
-			echo "<pre>debug:<strong>printer.php:425</strong>\r\n"; print_r($grades); echo '</pre>'; // !!!!!!!!!! delete it
 
 			$add_filter(function($content) use ($placeholder) {
 				// im template 'BP 2004/Halbjahresinformation Klasse 10Gemeinschaftsschule_E-Niveau_BP 2004' ist der Standardwert "2 plus"
@@ -555,7 +552,29 @@ class printer {
                             BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_ABGANGSZEUGNIS_FOE,
                             BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_ABSCHLUSSZEUGNIS_HS,
                     ])) {
-			    $data['gd'] = $avg;
+			    //$data['gd'] = $avg;
+                $avg = round($avg, 1);
+                $avgVerbal = 'sehr gut';
+                if ($avg >= 1.5 && $avg <= 2.4) {
+                    $avgVerbal = 'gut';
+                } else if ($avg >= 1.5 && $avg <= 2.4) {
+                    $avgVerbal = 'gut';
+                } else if ($avg >= 2.5 && $avg <= 3.4) {
+                    $avgVerbal = 'befriedigend';
+                } else if ($avg >= 3.5 && $avg <= 4.4) {
+                    $avgVerbal = 'ausreichend';
+                } else if ($avg >= 4.5) {
+                    $avgVerbal = 'mangelhaft';
+                }
+
+                $add_filter(function($content) use ($placeholder, $avgVerbal) {
+                    $ret = preg_replace('!(Gesamtleistungen.*)'.$placeholder.'note!sU', '${1}'.$avgVerbal, $content, -1, $count);
+                    if (!$count) {
+                        throw new \Exception('"Gesamtleistungen" not found');
+                    }
+                    return $ret;
+                });
+
 			}
 
 			if ($templateid == BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_ABGANGSZEUGNIS_GMS) {
@@ -1772,7 +1791,6 @@ class TemplateProcessor extends \PhpOffice\PhpWord\TemplateProcessor {
         //$tempDocumentMainPart = $this->getDocumentMainPart();
         //$tempDocumentMainPart = preg_replace('/<(.*)val="(.*)\${'.$search.'}(.*)"(.*)>/', '<${1}val="${2}\${'.$search.'--}${3}"${4}>', $tempDocumentMainPart); // TODO: check this!!
         //$this->setDocumentMainPart($tempDocumentMainPart);
-        //echo "<pre>debug:<strong>printer.php:1731</strong>\r\n"; print_r($this->tempDocumentMainPart); echo '</pre>'; exit; // !!!!!!!!!! delete it
         //} else {
         //    $replaceNL = true;
         //}
