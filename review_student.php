@@ -40,6 +40,8 @@ $output = block_exastud_get_renderer();
 $url = '/blocks/exastud/review_student.php?courseid='.$courseid.'&classid='.$classid.'&subjectid='.$subjectid.'&studentid='.$studentid;
 $PAGE->set_url($url);
 
+$PAGE->requires->string_for_js('legend', 'block_exastud');
+
 block_exastud_require_global_cap(BLOCK_EXASTUD_CAP_REVIEW);
 
 $reviewclass = block_exastud_get_review_class($classid, $subjectid);

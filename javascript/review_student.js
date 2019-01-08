@@ -56,9 +56,11 @@
 
 		if ($options.length) {
 
+			html += M.str.block_exastud.legend;
             html += '<table id="review-table">';
 
-            html += '<tr><th class="category category-parent"></th>';
+            // html += '<tr><th class="category category-parent"></th>';
+            html += '<tr>';
             $options.each(function (tmp, option) {
                 html += '<th class="evaluation-header"><b>' + option.text + '</th>';
             });

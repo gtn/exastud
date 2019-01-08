@@ -360,3 +360,4 @@ $string['man'] = 'männlich';
 $string['woman'] = 'weiblich';
 $string['Man'] = 'Männlich';
 $string['Woman'] = 'Weiblich';
+$string['legend'] = 'Legende';

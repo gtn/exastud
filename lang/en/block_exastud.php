@@ -361,3 +361,4 @@ $string['man'] = 'male';
 $string['woman'] = 'female';
 $string['Man'] = 'Male';
 $string['Woman'] = 'Female';
+$string['legend'] = 'Key';

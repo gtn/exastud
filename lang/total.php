@@ -1362,4 +1362,8 @@ return [
         'Weiblich',
         'Female',
     ],
+    'legend' => [
+        'Legende',
+        'Key',
+    ]
 ];
