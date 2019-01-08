@@ -557,8 +557,6 @@ class printer {
                 $avgVerbal = 'sehr gut';
                 if ($avg >= 1.5 && $avg <= 2.4) {
                     $avgVerbal = 'gut';
-                } else if ($avg >= 1.5 && $avg <= 2.4) {
-                    $avgVerbal = 'gut';
                 } else if ($avg >= 2.5 && $avg <= 3.4) {
                     $avgVerbal = 'befriedigend';
                 } else if ($avg >= 3.5 && $avg <= 4.4) {
