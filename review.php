@@ -192,7 +192,8 @@ function block_exastud_print_period($courseid, $period, $type) {
                                 ]), block_exastud_get_string('report_other_report_fields'));
                     }
                     if (!block_exastud_get_only_learnsociale_reports() && ($myclass->is_head_teacher || block_exastud_is_profilesubject_teacher($myclass->id))) {
-                        $generaldata[] =
+                        // into Subject left column!!!!
+                        $subjectsData[] =
                                 html_writer::link(new moodle_url('/blocks/exastud/review_class_other_data.php', [
                                         'courseid' => $courseid,
                                         'classid' => $myclass->id,

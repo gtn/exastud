@@ -553,7 +553,7 @@ class printer {
                             BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_ABSCHLUSSZEUGNIS_HS,
                     ])) {
                 $avg = round($avg, 1, PHP_ROUND_HALF_DOWN);
-                $data['gd'] = $avg;
+                $data['gd'] = number_format($avg, 1, ',', '');
                 $avgVerbal = 'sehr gut';
                 if ($avg >= 1.5 && $avg <= 2.4) {
                     $avgVerbal = 'gut';
