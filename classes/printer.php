@@ -552,8 +552,8 @@ class printer {
                             BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_ABGANGSZEUGNIS_FOE,
                             BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_ABSCHLUSSZEUGNIS_HS,
                     ])) {
-			    //$data['gd'] = $avg;
                 $avg = round($avg, 1);
+                $data['gd'] = $avg;
                 $avgVerbal = 'sehr gut';
                 if ($avg >= 1.5 && $avg <= 2.4) {
                     $avgVerbal = 'gut';
