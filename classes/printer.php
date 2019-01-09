@@ -1257,6 +1257,7 @@ class printer {
         $subjectsTable->attributes['class'] = ' ';
         $subjectsTable->id = 'subjectsTable';
         $subjectsTable->head[] = ''; // student name
+        $subjectsTable->align[] = '';
         foreach ($all_subjects as $subject) {
             if (count(@$studentsData[$subject->id]) > 0) {
                 $hCell = new \html_table_cell();
