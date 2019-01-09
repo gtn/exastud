@@ -169,8 +169,6 @@ function block_exastud_import_class($doimport, $override_reviews, $draftitemid, 
 	}
 
 	// import it
-	//echo "<pre>debug:<strong>import_class.php:172</strong>\r\n"; print_r($classData); echo '</pre>'; exit; // !!!!!!!!!! delete it
-	/* */
 
 	$class = clone $classData->class;
 	$class->timemodified = time();

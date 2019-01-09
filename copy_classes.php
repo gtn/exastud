@@ -47,7 +47,6 @@ if ($action == 'copy') {
 	$class->timemodified = time();
 	$class->periodid = $actPeriod->id;
 	$class->title = block_exastud_trans(['de:Kopie von {$a}', 'en:Copy of {$a}'], $class->title);
-	//echo "<pre>debug:<strong>copy_classes.php:50</strong>\r\n"; print_r($class); echo '</pre>'; exit; // !!!!!!!!!! delete it
 	$newId = $DB->insert_record('block_exastudclass', $class);
 
 	$DB->execute("INSERT INTO {block_exastudclassstudents} (timemodified, classid, studentid)

@@ -330,8 +330,7 @@ class block_exastud_renderer extends plugin_renderer_base {
 
 		$output .= '</table>';
 
-
-		$output .= '<h3>'.block_exastud_get_string('detailedreview').'</h3>';
+		$output .= '<h3 class="detailed-for-student">'.block_exastud_get_string('detailedreview').'</h3>';
 
 		$output .= '<table id="ratingtable">';
 

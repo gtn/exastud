@@ -308,8 +308,6 @@ foreach ($categories as $dataid=>$category) {
 }
 */
 
-//echo "<pre>debug:<strong>review_student_other_data.php:226</strong>\r\n"; print_r($formdata); echo '</pre>'; // !!!!!!!!!! delete it
-
 $studentform->set_data($formdata);
 $studentform->display();
 

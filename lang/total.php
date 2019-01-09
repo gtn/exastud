@@ -1365,5 +1365,21 @@ return [
     'legend' => [
         'Legende',
         'Key',
-    ]
+    ],
+    'ags' => [
+        'Arbeitsgemeinschaften',
+        'Working groups',
+    ],
+    'acronym' => [
+        'Fachkürzel',
+        'Acronym',
+    ],
+    'subject' => [
+        'Fach',
+        'Subject',
+    ],
+    'teacher' => [
+        'Lehrer',
+        'Teacher',
+    ],
 ];

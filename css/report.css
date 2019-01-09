@@ -11,8 +11,9 @@
 	text-align: center;
 }
 
-#ratingtable {
-	width: 100%;
+#review-table, #ratingtable, #subjectsTable, #projectTable, #agsTable, #teachersTable, #logoTable {
+	width: 90%;
+	margin: 0px auto;
 }
 #ratingtable td {
 	border: 1px solid #999;
@@ -22,4 +23,8 @@
 
 #ratingtable .ratinguser {
 	width: 25%;
+}
+
+h3.detailed-for-student {
+	margin-top:25px;
 }

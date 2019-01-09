@@ -348,9 +348,7 @@ class student_other_data_form extends moodleform {
 
 	function definition() {
 		$mform = &$this->_form;
-        //echo "<pre>debug:<strong>edit_form.php:222</strong>\r\n"; print_r($this->_customdata['categories']); echo '</pre>'; // !!!!!!!!!! delete it
 		foreach ($this->_customdata['categories'] as $dataid => $input) {
-		    //echo "<pre>debug:<strong>edit_form.php:267</strong>\r\n"; print_r($input); echo '</pre>'; exit; // !!!!!!!!!! delete it
 			if (empty($input['type']) || $input['type'] == 'textarea') {
 				$mform->addElement('header', 'header_'.$dataid, $input['title']);
 				$mform->setExpanded('header_'.$dataid);

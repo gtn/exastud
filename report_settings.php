@@ -545,8 +545,6 @@ function block_exastud_report_templates_prepare_serialized_data($settingsform, $
                                             $aparams_count_in_rows[$pIndex] : 45);
                             break;
                         case 'select':
-                            //echo $pIndex.'---<br>keys:<br><pre>'; print_r($aparams_selectboxvalues_key[$pIndex]); echo '</pre>'; // !!!!!!!!!! delete it
-                            //echo $pIndex.'---<br>values:<br><pre>'; print_r($aparams_selectboxvalues_value[$pIndex]); echo '</pre>'; // !!!!!!!!!! delete it
                             if (array_key_exists($pIndex, $aparams_selectboxvalues_key) && count($aparams_selectboxvalues_key[$pIndex]) > 0) {
                                 foreach ($aparams_selectboxvalues_key[$pIndex] as $vIndex => $key) {
                                     $additional_params[$aparams_keys[$pIndex]]['values'][$key] =

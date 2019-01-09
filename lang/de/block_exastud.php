@@ -361,3 +361,7 @@ $string['woman'] = 'weiblich';
 $string['Man'] = 'Männlich';
 $string['Woman'] = 'Weiblich';
 $string['legend'] = 'Legende';
+$string['ags'] = 'Arbeitsgemeinschaften';
+$string['acronym'] = 'Fachkürzel';
+$string['subject'] = 'Fach';
+$string['teacher'] = 'Lehrer';

@@ -79,32 +79,21 @@ if ($classid = optional_param('classid', 0, PARAM_INT)) {
         }
 
         if (count($printStudents) > 0) {
+            $html_results = array();
             foreach ($templatesFromForm as $template => $tempVal2) {
 
                 if ($printStudents && $template == 'html_report') {
-
                     if (optional_param('preview', false, PARAM_BOOL)) {
                         // Preview of report on html page
-                        $PAGE->set_pagelayout('embedded');
-                        echo $output->header('report');
-
-                        $classheader = block_exastud_get_period($class->periodid)->description.' - '.$class->title;
-                        echo $output->heading($classheader);
-
                         foreach ($printStudents as $student) {
                             $studentdesc = $OUTPUT->user_picture($student, array(
                                             "courseid" => $courseid
                                     )).' '.fullname($student);
-                            echo $output->heading($studentdesc);
-
-                            echo $output->student_report($class, $student);
-
-                            echo '<hr>';
+                            $studentResult = $output->heading($studentdesc);
+                            $studentResult .= $output->student_report($class, $student);
+                            $html_results[] = $studentResult;
                         }
-
-                        // echo $output->back_button(new moodle_url('report.php', ['courseid' => $courseid, 'classid' => $classid]));
-                        echo $output->footer();
-                        exit;
+                        continue; // go to the next template
                     } else {
                         // add html files to generated array
                         foreach ($printStudents as $student) {
@@ -132,19 +121,12 @@ if ($classid = optional_param('classid', 0, PARAM_INT)) {
                 if ($printStudents && $template == 'grades_report') {
                     if (optional_param('preview', false, PARAM_BOOL)) {
                         // Preview of report on html page
-                        $PAGE->set_pagelayout('embedded');
-                        echo $output->header('report');
-                        $classheader = block_exastud_get_period($class->periodid)->description.' - '.$class->title;
-                        echo $output->heading($classheader);
-
-                        echo \block_exastud\printer::grades_report_html($class, $printStudents);
-                        echo $output->footer();
-                        exit;
+                        $html_results[] = \block_exastud\printer::grades_report_html($class, $printStudents);
                     } else {
                         $file = \block_exastud\printer::grades_report($class, $printStudents);
                         $files_to_zip[$file->temp_file] = $file->filename;
-                        continue; // go to the next template
                     }
+                    continue; // go to the next template
                 }
 
                 if ($printStudents && $template == 'grades_report_xlsx') {
@@ -201,6 +183,18 @@ if ($classid = optional_param('classid', 0, PARAM_INT)) {
                     //$filename = ($certificate_issue_date_text ?: date('Y-m-d'))."-Lernentwicklungsbericht-{$class->title}.zip";
 
                 }
+            }
+
+            if (count($html_results) > 0) {
+                // if it is a HTML preview
+                $PAGE->set_pagelayout('embedded');
+                echo $output->header('report');
+
+                $classheader = block_exastud_get_period($class->periodid)->description.' - '.$class->title;
+                echo $output->heading($classheader);
+                echo implode('<hr />', $html_results);
+                echo $output->footer();
+                exit;
             }
 
             if (count($files_to_zip) > 0) {
@@ -307,7 +301,7 @@ if ($classid = optional_param('classid', 0, PARAM_INT)) {
     $firstCell->text .= html_writer::checkbox('select_all', '1', false, '&nbsp;'.block_exastud_get_string('report_select_all'), ['class' => 'exastud-selectall-checkbox']);
 
     $secondCell = new html_table_cell();
-    $previewTemplates = array('html_report');
+    $previewTemplates = array('grades_report', 'html_report');
     $addAnlage = false;
     foreach ($templates as $key => $tmpl) {
         if (!$addAnlage && in_array($key, [

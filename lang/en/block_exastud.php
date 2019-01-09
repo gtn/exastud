@@ -362,3 +362,7 @@ $string['woman'] = 'female';
 $string['Man'] = 'Male';
 $string['Woman'] = 'Female';
 $string['legend'] = 'Key';
+$string['ags'] = 'Working groups';
+$string['acronym'] = 'Acronym';
+$string['subject'] = 'Subject';
+$string['teacher'] = 'Teacher';
