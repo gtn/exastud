@@ -505,11 +505,13 @@ class printer {
 				}
 
 				$grade = @$grades[@$subjectData->grade];
+				//echo "<pre>debug:<strong>printer.php:508</strong>\r\n"; print_r($grades); echo '</pre>'; // !!!!!!!!!! delete it
+				//echo "<pre>debug:<strong>printer.php:508</strong>\r\n"; print_r($subjectData->grade); echo '</pre>'; // !!!!!!!!!! delete it
 				if (!$grade) {
-					// einfach die erste zahl nehmen und dann durch text ersetzen
+				//	// einfach die erste zahl nehmen und dann durch text ersetzen
 					$grade = @$grades[substr(@$subjectData->grade, 0, 1)];
 				}
-				
+
 				$add_filter([
 					'grade',
 					$gradeSearch,
@@ -524,6 +526,9 @@ class printer {
 						return $content;
 					}
 
+					if (!trim($grade)) {
+					    $grade = '--';
+                    }
 					$ret = preg_replace('!('.preg_quote($gradeSearch, '!').'.*)'.$placeholder.'note!U', '${1}'.$grade, $content, 1, $count);
 
 					return $ret;
@@ -894,6 +899,7 @@ class printer {
 
 		// zuerst filters
 		$templateProcessor->applyFilters($filters);
+		//echo "<pre>debug:<strong>printer.php:898</strong>\r\n"; print_r($filters); echo '</pre>'; exit; // !!!!!!!!!! delete it
 		$templateProcessor->setValues($data);
 		$templateProcessor->replaceWords($dataTextReplacer);
 
