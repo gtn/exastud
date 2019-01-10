@@ -267,6 +267,14 @@ $.extend(window.block_exastud, {
             updateLeftMessage($(this));
         });
 
+        function insertNL(stringContent, maxPerRow) {
+            var count = Math.round(stringContent.length / maxPerRow);
+            var i = 0;
+            return stringContent.replace(new RegExp('(.{'+maxPerRow+'})', 'g'), function(match, capture) {
+                return (i++ < count) ? capture + "\r\n" : capture;
+            });
+        }
+
         function updateTextareaWithLimits(e, textarea) {
             if (e) {
                 var currentText = e.target.value;
@@ -289,8 +297,30 @@ $.extend(window.block_exastud, {
             var charsLimit = rowsLimit * charsPerRowLimit;
             if (itIsPaste) {
                 currentText = currentText.slice(0, cursorPos) + clipboardVal + currentText.slice(cursorPos);
+                var rows = currentText.split(/\r?\n/);
+                var newRows = [];
+                // we need to see on char per rows limit
+                rows.forEach(function (r, i) {
+                    var clearString = r.replace('\r?\n', ''); // string without new lines
+                    fullChars += clearString.length;
+                    if (clearString.length > charsPerRowLimit) {
+                        // clearString.replace(/(.{5})/, "$1" + "--");
+                        clearString = insertNL(clearString, charsPerRowLimit);
+                        // console.log(clearString);
+                        newRows.push(clearString);
+                        // var oldL = clearString.substr(0, charsPerRowLimit);
+                        // var newL = clearString.substr(charsPerRowLimit + 1);
+                        // var currentText = textarea.val().substring(0, positionOfCharsPerRowsLimit) + '\r' + textarea.val().substring(positionOfCharsPerRowsLimit);
+                    } else {
+                        newRows.push(clearString);
+                    }
+                })
+                currentText = newRows.join("\r\n");
+                // console.log(currentText);
+
                 textarea.attr('prev-value', currentText);
                 textarea.attr('correct-value', currentText);
+                textarea.val(textarea.attr('correct-value'));
             }
             var rows = currentText.split(/\r?\n/);
             var textareaName = textarea.attr('name');
