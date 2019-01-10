@@ -201,6 +201,9 @@ if ($classid = optional_param('classid', 0, PARAM_INT)) {
                 require_once $CFG->dirroot.'/lib/filelib.php';
                 if (count($files_to_zip) > 1) {
                     foreach ($files_to_zip as $tempF => $fileName) {
+                        // temporary:
+                        // delete folders
+                        $fileName = basename($fileName);
                         $zip->addFile($tempF, $fileName);
                     }
                 } else if (count($files_to_zip) == 1) {
