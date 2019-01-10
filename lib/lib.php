@@ -2857,6 +2857,11 @@ function block_exastud_get_default_templates() {
                                     'lines' => 5,
                                     'cols' => 90,
                             ],
+                            'focus' => [
+                                    'title' => 'Förderschwerpunkt',
+                                    'type' => 'select',
+                                    'values' => ['lernen' => 'lernen', 'geistige Enwicklung' => 'geistige Enwicklung'],
+                            ],
                             'subject_profile' => [
                                     'title' => 'Profil-fach',
                                     'type' => 'textarea',
