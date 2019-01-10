@@ -641,8 +641,23 @@ class printer {
 
 					return $ret;
 				});
-			} elseif ($templateid == BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_ABGANGSZEUGNIS_FOE) {
+			}
+			/*elseif (in_array($templateid, [
+			                BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_ABGANGSZEUGNIS_FOE,
+                            BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_HALBJAHR_ZEUGNIS_FOE,
+                            ])) {*/
+			if (in_array('focus', $inputs)) {
 				//$data['gd'] = static::spacerIfEmpty(@$studentdata->gesamtnote_und_durchschnitt_der_gesamtleistungen);
+                $focus = static::spacerIfEmpty(@$studentdata->focus);
+                $add_filter(function($content) use ($placeholder, $focus, $templateid) {
+                    // for Förderschwerpunkt
+                    $ret = preg_replace('!>[^<]*Lernen[^<]*<!U', '>'.$focus.'<', $content, -1, $count);
+                    if (!$count) {
+                        throw new \Exception('"Förderschwerpunkt" not found in report: '.$templateid);
+                    }
+
+                    return $ret;
+                });
 			}
 
 			// project gardes

@@ -2706,7 +2706,7 @@ function block_exastud_get_default_templates() {
                     'grades' => block_exastud_get_grades_set('lang'),
                     'inputs' => [
                             'focus' => [
-                                    'title' => 'Schwerpunkt',
+                                    'title' => 'Förderschwerpunkt',
                                     'type' => 'select',
                                     'values' => ['lernen' => 'lernen', 'geistige Enwicklung' => 'geistige Enwicklung'],
                             ],/*
@@ -2765,16 +2765,21 @@ function block_exastud_get_default_templates() {
                     'class' => '1',
                     'grades' => block_exastud_get_grades_set('short'),
                     'inputs' => [
+                            'focus' => [
+                                    'title' => 'Förderschwerpunkt',
+                                    'type' => 'select',
+                                    'values' => ['lernen' => 'lernen', 'geistige Enwicklung' => 'geistige Enwicklung'],
+                            ],
                             'ags' => [
                                     'title' => 'Teilnahme an Arbeitsgemeinschaften',
                                     'type' => 'textarea',
-                                    'lines' => 4,
+                                    'lines' => 3,
                                     'cols' => 80,
                             ],
                             'comments_short' => [
                                     'title' => 'Bemerkungen',
                                     'type' => 'textarea',
-                                    'lines' => 3,
+                                    'lines' => 4,
                                     'cols' => 80,
                             ],
                             'subject_profile' => [

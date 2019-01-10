@@ -100,7 +100,7 @@ class print_templates {
                 $fields = array('learn_social_behavior');
                 break;
             case BLOCK_EXASTUD_DATA_ID_PRINT_TEMPLATE:
-                $fields = array('comments', /*'subjects', 'subject_elective', 'subject_profile',*/ 'ags');
+                $fields = array('comments', /*'subjects', 'subject_elective', 'subject_profile',*/ 'ags', 'focus');
                 $fieldsAdditional = unserialize($template->additional_params);
                 if (is_array($fieldsAdditional)) {
                     $fields = array_merge($fields, $fieldsAdditional);
@@ -145,7 +145,7 @@ class print_templates {
                 }
                 break;
             case 'all':
-                $fieldsstatic = array('learn_social_behavior', 'subjects', 'comments', 'subject_elective', 'subject_profile', 'projekt_thema', 'ags');
+                $fieldsstatic = array('learn_social_behavior', 'subjects', 'comments', 'subject_elective', 'subject_profile', 'projekt_thema', 'ags', 'focus');
                 $customfields = unserialize($template->additional_params);
                 if ($customfields) {
                     $fields = array_merge($fieldsstatic, $customfields);
