@@ -549,7 +549,7 @@ class printer {
 			    $avg = (($sum - $rsum) + $min) / (($scnt - $rcnt) + 1);
 			}
 			if (in_array($templateid, [
-                            BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_ABGANGSZEUGNIS_FOE,
+                            BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_ABGANGSZEUGNIS_FOE, // is this need?
                             BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_ABSCHLUSSZEUGNIS_HS,
                     ])) {
                 $avg = round($avg, 1, PHP_ROUND_HALF_DOWN);
@@ -565,13 +565,15 @@ class printer {
                     $avgVerbal = 'mangelhaft';
                 }
 
-                $add_filter(function($content) use ($placeholder, $avgVerbal) {
-                    $ret = preg_replace('!(Gesamtleistungen.*)'.$placeholder.'note!sU', '${1}'.$avgVerbal, $content, -1, $count);
-                    if (!$count) {
-                        throw new \Exception('"Gesamtleistungen" not found');
-                    }
-                    return $ret;
-                });
+                if ($templateid == BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_ABSCHLUSSZEUGNIS_HS) {
+                    $add_filter(function($content) use ($placeholder, $avgVerbal) {
+                        $ret = preg_replace('!(Gesamtleistungen.*)'.$placeholder.'note!sU', '${1}'.$avgVerbal, $content, -1, $count);
+                        if (!$count) {
+                            throw new \Exception('"Gesamtleistungen" not found');
+                        }
+                        return $ret;
+                    });
+                }
 
 			}
 
