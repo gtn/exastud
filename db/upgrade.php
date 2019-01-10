@@ -786,6 +786,11 @@ function xmldb_block_exastud_upgrade($oldversion = 0) {
         upgrade_block_savepoint(true, 2019011008, 'exastud');
     }
 
+    if ($oldversion < 2019011009) {
+        $DB->execute(' UPDATE {block_exastuddata} SET value = \'Lernen\' WHERE value = \'lernen\' AND name = \'focus\'');
+        upgrade_block_savepoint(true, 2019011009, 'exastud');
+    }
+
     block_exastud_insert_default_entries();
 	block_exastud_check_profile_fields();
 
