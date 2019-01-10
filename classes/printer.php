@@ -477,6 +477,7 @@ class printer {
                             BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_HALBJAHR_ZEUGNIS_RS,
                             BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_HALBJAHR_ZEUGNIS_E_NIVEAU,
                             BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_HALBJAHR_ZEUGNIS_FOE,
+                            BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_HALBJAHRESINFORMATION_KL11,
 					])) {
 					    $religion = 'Religionslehre ('.$subject->shorttitle.')';
 					}
@@ -900,6 +901,7 @@ class printer {
 		// zuerst filters
 		$templateProcessor->applyFilters($filters);
 		//echo "<pre>debug:<strong>printer.php:898</strong>\r\n"; print_r($filters); echo '</pre>'; exit; // !!!!!!!!!! delete it
+        //echo "<pre>debug:<strong>printer.php:904</strong>\r\n"; print_r($templateProcessor->getDocumentMainPart()); echo '</pre>'; exit; // !!!!!!!!!! delete it
 		$templateProcessor->setValues($data);
 		$templateProcessor->replaceWords($dataTextReplacer);
 
