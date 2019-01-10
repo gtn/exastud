@@ -13,10 +13,10 @@
 }
 
 .exa_table .exastud-class-title .expanded_icon {
-    display: none;
+    /*display: none;*/
 }
 
-.exa_table .exastud-data-row {
+.exa_table .exastud-data-row[data-classopened="0"] {
     /*font-size: 0.75em;*/
     display: none;
 }

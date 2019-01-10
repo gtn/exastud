@@ -70,8 +70,9 @@ if ($action == 'update' && $isSubjectTeacher) {
     foreach ($niveaus_f as $studentid => $n) {
         block_exastud_set_subject_student_data($classid, $subjectid, $studentid, 'niveau', $n);
     }
-    
-    redirect($_SERVER['REQUEST_URI']);
+
+    redirect('review.php?courseid='.$courseid.'&openclass='.$classid);
+    //redirect($_SERVER['REQUEST_URI']);
 }
 
 if (($action == 'hide_student' || $action == 'show_student') && $isSubjectTeacher) {

@@ -22,6 +22,7 @@ require __DIR__.'/inc.php';
 use block_exastud\globals as g;
 
 $courseid = optional_param('courseid', 1, PARAM_INT);
+$openclass = optional_param('openclass', 0, PARAM_INT);
 
 block_exastud_require_login($courseid);
 
@@ -34,7 +35,7 @@ echo $output->header('review');
 
 $actPeriod = block_exastud_check_active_period();
 
-function block_exastud_print_period($courseid, $period, $type) {
+function block_exastud_print_period($courseid, $period, $type, $openclass) {
     global $CFG, $USER;
 	$reviewclasses = block_exastud_get_head_teacher_classes_all($period->id);
 	$output = block_exastud_get_renderer();
@@ -112,11 +113,20 @@ function block_exastud_print_period($courseid, $period, $type) {
             $shownSubjects[] = '';
             $classHeader = new html_table_row();
             $headerCell = new html_table_cell();
-            $headerCell->text = '<span class="exastud-collapse-data" data-classid="'.$myclass->id.'">
-                                    <img class="collapsed_icon" src="'.$CFG->wwwroot.'/blocks/exastud/pix/collapsed.png" width="16" height="16" title="'.block_exastud_get_string('collapse').'" />
-                                    <img class="expanded_icon" src="'.$CFG->wwwroot.'/blocks/exastud/pix/expanded.png" width="16" height="16" title="'.block_exastud_get_string('collapse').'" />'.
-                                    block_exastud_get_class_title($myclass->id).'
-                                </span>';
+            $headerCellText = '<span class="exastud-collapse-data" data-classid="'.$myclass->id.'" data-expanded="'.($openclass == $myclass->id ? 1 : 0).'">';
+            $headerCellText .= '<img class="collapsed_icon"
+                                    style="'.($openclass == $myclass->id ? 'display:none;' : '').'"                                     
+                                    src="'.$CFG->wwwroot.'/blocks/exastud/pix/collapsed.png" 
+                                    width="16" height="16" 
+                                    title="'.block_exastud_get_string('collapse').'" />';
+            $headerCellText .= '<img class="expanded_icon"
+                                    style="'.($openclass == $myclass->id ? '' : 'display:none;').'"                                    
+                                    src="'.$CFG->wwwroot.'/blocks/exastud/pix/expanded.png" 
+                                    width="16" height="16" 
+                                    title="'.block_exastud_get_string('collapse').'" />';
+            $headerCellText .= block_exastud_get_class_title($myclass->id);
+            $headerCellText .= '</span>';
+            $headerCell->text = $headerCellText;
             $headerCell->colspan = 2;
             $classHeader->cells[] = $headerCell;
             $classHeader->attributes['class'] = 'exastud-class-title';
@@ -135,6 +145,7 @@ function block_exastud_print_period($courseid, $period, $type) {
                 //}
                 $hRow->attributes['class'] = 'exastud-part-title exastud-data-row';
                 $hRow->attributes['data-classid'] = $myclass->id;
+                $hRow->attributes['data-classopened'] = ($openclass == $myclass->id ? 1 : 0);
                 $subjectsData = array();
                 //if (!block_exastud_get_only_learnsociale_reports()) {
                     foreach ($myclass->subjects as $subject) {
@@ -229,6 +240,7 @@ function block_exastud_print_period($courseid, $period, $type) {
                     $dRow = new \html_table_row();
                     $dRow->attributes['class'] = 'exastud-data-row';
                     $dRow->attributes['data-classid'] = $myclass->id;
+                    $dRow->attributes['data-classopened'] = ($openclass == $myclass->id ? 1 : 0);
                     //if (!block_exastud_get_only_learnsociale_reports()) {
                     $subjectsCell = new \html_table_cell();
                     $subjectsCell->text = (isset($subjectsData[$i]) ? $subjectsData[$i] : '');
@@ -247,6 +259,7 @@ function block_exastud_print_period($courseid, $period, $type) {
                     $dRow = new \html_table_row();
                     $dRow->attributes['class'] = 'exastud-data-row';
                     $dRow->attributes['data-classid'] = $myclass->id;
+                    $dRow->attributes['data-classopened'] = ($openclass == $myclass->id ? 1 : 0);
                     $projectCell = new \html_table_cell();
                     $projectCell->text = html_writer::link(new moodle_url('/blocks/exastud/review_class_project_teacher.php', [
                                                                 'courseid' => $courseid,
@@ -262,10 +275,10 @@ function block_exastud_print_period($courseid, $period, $type) {
 	}
 }
 
-block_exastud_print_period($courseid, $actPeriod, 'active');
+block_exastud_print_period($courseid, $actPeriod, 'active', $openclass);
 
 if ($lastPeriod = block_exastud_get_last_period()) {
-	block_exastud_print_period($courseid, $lastPeriod, 'last');
+	block_exastud_print_period($courseid, $lastPeriod, 'last', $openclass);
 }
 
 echo $output->footer();
