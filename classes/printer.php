@@ -119,8 +119,9 @@ class printer {
 			$year2 = $year1 + 1;
 			$year1 = str_pad($year1, 2, '0', STR_PAD_LEFT);
 			$year2 = str_pad($year2, 2, '0', STR_PAD_LEFT);
-
+			//echo "<pre>debug:<strong>printer.php:122</strong>\r\n"; print_r($content); echo '</pre>'; exit; // !!!!!!!!!! delete it
 			return preg_replace('!([^0-9])99([^0-9].{0,3000}[^0-9])99([^0-9])!U', '${1}'.$year1.'${2}'.$year2.'${3}', $content, 1, $count);
+			//return preg_replace('!([^0-9])99([^0-9].{0,3000}[^0-9])99([^0-9])!U', '${1}'.$year1.'${2}'.$year2.'${3}', $content, 1, $count);
 		});
         $lern_soz = block_exastud_get_class_student_data($class->id, $student->id, BLOCK_EXASTUD_DATA_ID_LERN_UND_SOZIALVERHALTEN);
         $fs = get_file_storage();
@@ -2039,16 +2040,16 @@ class TemplateProcessor extends \PhpOffice\PhpWord\TemplateProcessor {
 
 	function setValue($search, $replace, $limit = self::MAXIMUM_REPLACEMENTS_DEFAULT) {
 		$replace = $this->escape($replace);
-		// if the marker ${marker} is in the some element (form, taxtblock,...) he is inserting in something like w:val="${marker}"
+		// if the marker ${marker} is in the some element (form, textblock,...) he is inserting in something like w:val="${marker}"
         // and we does not need to replace linebreaks.
         // check at least one marker in the val=""
-        //$tempDocumentMainPart = $this->getDocumentMainPart();
-        //$tempDocumentMainPart = preg_replace('/<(.*)val="(.*)\${'.$search.'}(.*)"(.*)>/', '<${1}val="${2}\${'.$search.'--}${3}"${4}>', $tempDocumentMainPart); // TODO: check this!!
-        //$this->setDocumentMainPart($tempDocumentMainPart);
+        $tempDocumentMainPart = $this->getDocumentMainPart();
+        $tempDocumentMainPart = preg_replace('/(.*)<w:textInput>(.*)w:val="\${'.$search.'}"(.*)<\/w:textInput>(.*)/ms',
+                '${1}<w:textInput>${2}w:val="${--'.$search.'--}"${3}</w:textInput>${4}', $tempDocumentMainPart); // TODO: check this!!
+        $this->setDocumentMainPart($tempDocumentMainPart);
         //} else {
         //    $replaceNL = true;
         //}
-
 		$replace = str_replace([
 			"\r",
 			"\n",
