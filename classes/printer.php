@@ -442,10 +442,9 @@ class printer {
 			// noten
 			foreach ($class_subjects as $subject) {
 				$subjectData = block_exastud_get_graded_review($class->id, $subject->id, $student->id);
-
-				if (!$subjectData || !@$subjectData->grade) {
-					continue;
-				}
+				//if (!$subjectData || !@$subjectData->grade) {
+				//	continue;
+				//}
 
 				$subject->title = preg_replace('!\s*\(.*$!', '', $subject->title);
 
@@ -653,21 +652,8 @@ class printer {
 			                BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_ABGANGSZEUGNIS_FOE,
                             BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_HALBJAHR_ZEUGNIS_FOE,
                             ])) {*/
-			if (in_array('focus', $inputs)) {
-				//$data['gd'] = static::spacerIfEmpty(@$studentdata->gesamtnote_und_durchschnitt_der_gesamtleistungen);
-                $focus = static::spacerIfEmpty(@$studentdata->focus);
-                $add_filter(function($content) use ($placeholder, $focus, $templateid) {
-                    // for Förderschwerpunkt
-                    $ret = preg_replace('!>[^<]*Lernen[^<]*<!U', '>'.$focus.'<', $content, -1, $count);
-                    if (!$count) {
-                        throw new \Exception('"Förderschwerpunkt" not found in report: '.$templateid);
-                    }
 
-                    return $ret;
-                });
-			}
-
-			// project gardes
+			// project grades
 			if ($value = @$grades[@$studentdata->projekt_grade]) {
 				// im "Beiblatt zur Projektpruefung HSA" heisst das feld projet_text3lines
 				$add_filter(function($content) use ($placeholder, $value) {
@@ -886,6 +872,20 @@ class printer {
 		        $templateProcessor->deleteRow("descriptor");
 		    }
 		}
+
+		if (array_key_exists('focus', $inputs)) {
+            //$data['gd'] = static::spacerIfEmpty(@$studentdata->gesamtnote_und_durchschnitt_der_gesamtleistungen);
+            $focus = static::spacerIfEmpty(@$studentdata->focus);
+            $add_filter(function($content) use ($focus, $templateid) {
+                // for Förderschwerpunkt
+                $ret = preg_replace('!>[^<]*Lernen[^<]*<!U', '>'.$focus.'<', $content, -1, $count);
+                if (!$count) {
+                    throw new \Exception('"Förderschwerpunkt" not found in report: '.$templateid);
+                }
+
+                return $ret;
+            });
+        }
 
 		// TODO: how we can check template generation?
 		/*else {

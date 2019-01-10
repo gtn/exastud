@@ -2179,6 +2179,11 @@ function block_exastud_get_default_templates() {
                                     'lines' => 6,
                                     'cols' => 90,
                             ],
+                            'focus' => [
+                                    'title' => 'Förderschwerpunkt',
+                                    'type' => 'select',
+                                    'values' => ['Lernen' => 'Lernen', 'geistige Enwicklung' => 'geistige Enwicklung'],
+                            ],
                             'subjects' => [
                                     'title' => 'Fächer',
                                     'type' => 'textarea',
@@ -2708,7 +2713,7 @@ function block_exastud_get_default_templates() {
                             'focus' => [
                                     'title' => 'Förderschwerpunkt',
                                     'type' => 'select',
-                                    'values' => ['lernen' => 'lernen', 'geistige Enwicklung' => 'geistige Enwicklung'],
+                                    'values' => ['Lernen' => 'Lernen', 'geistige Enwicklung' => 'geistige Enwicklung'],
                             ],/*
                             'gesamtnote_und_durchschnitt_der_gesamtleistungen' => [
                                     'title' => 'Gesamtnote und Durchschnitt der Gesamtleistungen',
@@ -2768,7 +2773,7 @@ function block_exastud_get_default_templates() {
                             'focus' => [
                                     'title' => 'Förderschwerpunkt',
                                     'type' => 'select',
-                                    'values' => ['lernen' => 'lernen', 'geistige Enwicklung' => 'geistige Enwicklung'],
+                                    'values' => ['Lernen' => 'Lernen', 'geistige Enwicklung' => 'geistige Enwicklung'],
                             ],
                             'ags' => [
                                     'title' => 'Teilnahme an Arbeitsgemeinschaften',
@@ -2856,11 +2861,6 @@ function block_exastud_get_default_templates() {
                                     'type' => 'textarea',
                                     'lines' => 5,
                                     'cols' => 90,
-                            ],
-                            'focus' => [
-                                    'title' => 'Förderschwerpunkt',
-                                    'type' => 'select',
-                                    'values' => ['lernen' => 'lernen', 'geistige Enwicklung' => 'geistige Enwicklung'],
                             ],
                             'subject_profile' => [
                                     'title' => 'Profil-fach',
