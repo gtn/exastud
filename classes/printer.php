@@ -335,6 +335,11 @@ class printer {
 					$wahlpflichtfach = preg_replace('!^[^\s]+!', '', $subject->title);
 					$contentId = 'wahlpflichtfach';
 				} elseif (strpos($subject->title, 'Profilfach') === 0) {
+                    if ($profilfach != '---') {
+                        continue;
+                        // only if there is still no profilfach set
+                        // maybe there are 2 profilfach gradings? ignore the 2nd one
+                    }
 					$profilfach = preg_replace('!^[^\s]+!', '', $subject->title);
 					$contentId = 'profilfach';
 				} else {
@@ -499,6 +504,14 @@ class printer {
 					// hier ist 1 dropdown dazwischen erlaubt (wahlpflichtfach name dropdown)
 					$dropdownsBetween = 1;
 				} elseif (strpos($subject->title, 'Profilfach') === 0) {
+                    if ($profilfach != static::spacerIfEmpty('')) {
+                        continue;
+                        // only if there is still no profilfach set
+                        // maybe there are 2 profilfach gradings? ignore the 2nd one
+                    }
+                    if (!$subjectData->grade) {
+                        continue; // we need to select first graded profile subject
+                    }
 					$gradeSearch = 'Profilfach';
 					$profilfach = preg_replace('!^[^\s]+!', '', $subject->title);
 					// hier ist 1 dropdown dazwischen erlaubt (profilfach name dropdown)
@@ -718,33 +731,15 @@ class printer {
 			// religion + wahlpflichtfach + profilfach dropdowns
 			$add_filter(function($content) use ($templateid, $religion, $religion_sub, $wahlpflichtfach, $profilfach) {
 				$content = preg_replace('!>\s*Ethik\s*<!U', '>'.$religion.'<', $content, 1, $count);
-
-				/*
-				 * if (!$count) {
-				 * throw new \Exception('profilfach not found');
-				 * }
-				 */
-
+				
 				$content = preg_replace('!>\s*\(ev\)\s*<!U', '>'.$religion_sub.'<', $content, 1, $count);
 
 				$content = preg_replace('!(Wahlpflichtbereich.*>)Technik(<)!U', '${1}'.$wahlpflichtfach.'${2}', $content, 1, $count);
-
-				/*
-				 * if (!$count) {
-				 * throw new \Exception('wahlpflichtfach not found');
-				 * }
-				 */
 
 				$content = preg_replace('!(Profilfach.*>)Spanisch(<)!U', '${1}'.$profilfach.'${2}', $content, 1, $count);
 				if ($templateid == BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_HALBJAHRESINFORMATION_KL11) {
                     $content = preg_replace('!>Spanisch(.*Profil<)!U', $profilfach.'${1}', $content, 1, $count);
                 }
-
-				/*
-				 * if (!$count) {
-				 * throw new \Exception('profilfach not found');
-				 * }
-				 */
 
 				return $content;
 			});
@@ -1010,8 +1005,9 @@ class printer {
 		$templateProcessor->setValue('lehrer', fullname(g::$USER));
 		$templateProcessor->setValue('datum', date('d.m.Y'));
 
-		$class_subjects = block_exastud_get_bildungsplan_subjects($class->bpid);
-		
+		//$class_subjects = block_exastud_get_bildungsplan_subjects($class->bpid);
+		$class_subjects = block_exastud_get_class_subjects($class);
+
 
 		// split normal and grouped subjects (page 2)
 		$normal_subjects = [];
@@ -1248,7 +1244,8 @@ class printer {
 	static function grades_report_html($class, $students) {
 		global $CFG;
 
-		$class_subjects = block_exastud_get_bildungsplan_subjects($class->bpid);
+		//$class_subjects = block_exastud_get_bildungsplan_subjects($class->bpid);
+		$class_subjects = block_exastud_get_class_subjects($class);
 
 		// split normal and grouped subjects
 		$normal_subjects = [];
@@ -1286,7 +1283,9 @@ class printer {
 
         $all_subjects = $normal_subjects;
         foreach (['Religion / Ethik', 'WPF', 'Profil'] as $sgroup) {
-            $all_subjects = array_merge($all_subjects, $grouped_subjects[$sgroup]);
+            if (array_key_exists($sgroup, $grouped_subjects)) {
+                $all_subjects = array_merge($all_subjects, $grouped_subjects[$sgroup]);
+            }
         }
 
         // table 1: subjects
@@ -1313,21 +1312,23 @@ class printer {
             }
             // grouped subjects
             foreach (['Religion / Ethik', 'WPF', 'Profil'] as $sgroup) {
-                foreach (@$grouped_subjects[$sgroup] as $skey => $subject) {
-                    $isGroupedSubjects[$subject->id] = $subject->id;
-                    $groupedSubjectTitles[$subject->id] = $sgroup;
-                    $subjectData = block_exastud_get_graded_review($class->id, $subject->id, $student->id);
-                    $value = '';
-                    if ($subjectData) {
-                        if (isset($subjectData->niveau)) {
-                            $value .= $subjectData->niveau.' ';
+                if (array_key_exists($sgroup, $grouped_subjects)) {
+                    foreach (@$grouped_subjects[$sgroup] as $skey => $subject) {
+                        $isGroupedSubjects[$subject->id] = $subject->id;
+                        $groupedSubjectTitles[$subject->id] = $sgroup;
+                        $subjectData = block_exastud_get_graded_review($class->id, $subject->id, $student->id);
+                        $value = '';
+                        if ($subjectData) {
+                            if (isset($subjectData->niveau)) {
+                                $value .= $subjectData->niveau.' ';
+                            }
+                            if (isset($subjectData->grade)) {
+                                $value .= $subjectData->grade;
+                            }
                         }
-                        if (isset($subjectData->grade)) {
-                            $value .= $subjectData->grade;
+                        if (trim($value)) {
+                            @$studentsData[$subject->id][$student->id] = $value;
                         }
-                    }
-                    if (trim($value)) {
-                        @$studentsData[$subject->id][$student->id] = $value;
                     }
                 }
             }

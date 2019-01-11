@@ -2062,7 +2062,6 @@ function block_exastud_get_grade_by_index($ind, $grades = null, $variant = null)
     } else {
         $grades = array_values($grades);
     }
-    echo "<pre>debug:<strong>lib.php:2047</strong>\r\n"; print_r($grades); echo '</pre>'; // !!!!!!!!!! delete it
     $ind = intval($ind);
     if (array_key_exists($ind, $grades)) {
         return $grades[$ind];
