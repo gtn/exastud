@@ -394,6 +394,8 @@ class printer {
 			$profilfach = static::spacerIfEmpty('');
 			$religion = static::spacerIfEmpty('');
 			$religion_sub = '';
+            $profileFachPhysikOption = '* Physik wurde anstelle des Profilfachs dreistündig belegt.';
+            $subjectsToDelete = array('WBS' => 'Wirtschaft/ Berufs- und Studienorientierung'); // with title in doc template
 
 			//$data = [
 				//'schule' => get_config('exastud', 'school_name'),
@@ -493,6 +495,9 @@ class printer {
 					$profilfach = preg_replace('!^[^\s]+!', '', $subject->title);
 					// hier ist 1 dropdown dazwischen erlaubt (profilfach name dropdown)
 					$dropdownsBetween = 1;
+                    if ($subjectData) {
+                        $profileFachPhysikOption = '';
+                    }
 				} elseif (in_array($subject->shorttitle, [
 					'EWG',
 					'NWA',
@@ -500,13 +505,20 @@ class printer {
 					// hier den shorttitle suchen
 					$gradeSearch = $subject->shorttitle;
 					$dropdownsBetween = 0;
+				} elseif (array_key_exists($subject->shorttitle, $subjectsToDelete)) {
+					$gradeSearch = $subjectsToDelete[$subject->shorttitle];
+					$dropdownsBetween = 0;
 				} else {
 					$gradeSearch = '>'.$subject->title.'<';
 					$dropdownsBetween = 0;
 				}
+                // for deleting needed subjects
+                if (array_key_exists($subject->shorttitle, $subjectsToDelete)) {
+                    unset($subjectsToDelete[$subject->shorttitle]);
+                }
 
 				$grade = @$grades[@$subjectData->grade];
-				if (!$grade) { // get grade for cross grage between templates
+				if (!$grade && !empty($subjectData->grade)) { // get grade for cross grage between templates
                     $indexOfGrade = block_exastud_get_grade_index_by_value($subjectData->grade);
                     $gradeByCurrentTemplate = block_exastud_get_grade_by_index($indexOfGrade, $grades);
                     $grade = $gradeByCurrentTemplate;
@@ -587,6 +599,22 @@ class printer {
 
 			}
 
+			// delete subjects (now it is using only for BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_HALBJAHRESINFORMATION_KL11)
+            if (count($subjectsToDelete) > 0) {
+                foreach ($subjectsToDelete as $sTitle) {
+                    // at first - delete related grading
+                    $add_filter(function($content) use ($placeholder, $sTitle) {
+                        $ret = preg_replace('!('.preg_quote($sTitle, '!').'.*)'.$placeholder.'note!U', '${1}', $content, 1, $count);
+                        return $ret;
+                    });
+                    // then - hide subject name
+                    $add_filter(function($content) use ($placeholder, $sTitle) {
+                        $ret = preg_replace('!>[^<]*'.preg_quote($sTitle, '!').'[^<]*<!U', '><', $content, 1, $count);
+                        return $ret;
+                    });
+                }
+            }
+
 			if ($templateid == BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_ABGANGSZEUGNIS_GMS) {
 				$value = static::spacerIfEmpty(@$forminputs['wann_verlassen']['values'][@$studentdata->wann_verlassen]);
 				$add_filter(function($content) use ($placeholder, $value) {
@@ -651,7 +679,21 @@ class printer {
 
 					return $ret;
 				});
-			}
+			} elseif ($templateid == BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_HALBJAHRESINFORMATION_KL11) {
+                $add_filter(function($content) use ($profileFachPhysikOption) {
+                    $ret = preg_replace('!>[^<]*\* Physik wurde[^<]*<!U', '>'.$profileFachPhysikOption.'<', $content, -1, $count);
+                    return $ret;
+                });
+                if (!$profileFachPhysikOption) {
+                    $star = '';
+                } else {
+                    $star = '*';
+                }
+                $add_filter(function($content) use ($star) {
+                    $ret = preg_replace('!>\*<!U', '>'.$star.'<', $content, -1, $count);
+                    return $ret;
+                });
+            }
 			/*elseif (in_array($templateid, [
 			                BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_ABGANGSZEUGNIS_FOE,
                             BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_HALBJAHR_ZEUGNIS_FOE,
