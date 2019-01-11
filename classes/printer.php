@@ -340,6 +340,9 @@ class printer {
                         // only if there is still no profilfach set
                         // maybe there are 2 profilfach gradings? ignore the 2nd one
                     }
+                    if (!$subjectData || !$subjectData->grade) {
+                        continue; // we need to select first graded profile subject
+                    }
 					$profilfach = preg_replace('!^[^\s]+!', '', $subject->title);
 					$contentId = 'profilfach';
 				} else {
@@ -509,7 +512,7 @@ class printer {
                         // only if there is still no profilfach set
                         // maybe there are 2 profilfach gradings? ignore the 2nd one
                     }
-                    if (!$subjectData->grade) {
+                    if (!$subjectData || !$subjectData->grade) {
                         continue; // we need to select first graded profile subject
                     }
 					$gradeSearch = 'Profilfach';
