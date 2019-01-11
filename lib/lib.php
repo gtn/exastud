@@ -2221,6 +2221,11 @@ function block_exastud_get_default_templates() {
                                     'type' => 'select',
                                     'values' => ['Lernen' => 'Lernen', 'geistige Enwicklung' => 'geistige Enwicklung'],
                             ],
+                            'beiblatt' => [
+                                    'title' => 'Beiblatt',
+                                    'type' => 'select',
+                                    'values' => ['' => '', '(siehe schuleigenes Blatt)' => '(siehe schuleigenes Blatt)'],
+                            ],
                             'subjects' => [
                                     'title' => 'Fächer',
                                     'type' => 'textarea',
