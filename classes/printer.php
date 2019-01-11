@@ -476,7 +476,8 @@ class printer {
                             BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_HALBJAHR_ZEUGNIS_RS,
                             BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_HALBJAHR_ZEUGNIS_E_NIVEAU,
                             BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_HALBJAHR_ZEUGNIS_FOE,
-                            BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_HALBJAHRESINFORMATION_KL11,
+                            //BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_HALBJAHRESINFORMATION_KL11, // here are two selectboxes
+                            BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_HALBJAHRESINFORMATION_KL11, // here are two selectboxes
 					])) {
 					    $religion = 'Religionslehre ('.$subject->shorttitle.')';
 					}
@@ -662,7 +663,7 @@ class printer {
 			}
 
 			// religion + wahlpflichtfach + profilfach dropdowns
-			$add_filter(function($content) use ($religion, $religion_sub, $wahlpflichtfach, $profilfach) {
+			$add_filter(function($content) use ($templateid, $religion, $religion_sub, $wahlpflichtfach, $profilfach) {
 				$content = preg_replace('!>\s*Ethik\s*<!U', '>'.$religion.'<', $content, 1, $count);
 
 				/*
@@ -682,6 +683,9 @@ class printer {
 				 */
 
 				$content = preg_replace('!(Profilfach.*>)Spanisch(<)!U', '${1}'.$profilfach.'${2}', $content, 1, $count);
+				if ($templateid == BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_HALBJAHRESINFORMATION_KL11) {
+                    $content = preg_replace('!>Spanisch(.*Profil<)!U', $profilfach.'${1}', $content, 1, $count);
+                }
 
 				/*
 				 * if (!$count) {

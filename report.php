@@ -331,7 +331,7 @@ if ($classid = optional_param('classid', 0, PARAM_INT)) {
                 $classsubjects = block_exastud_get_class_subjects($class);
                 foreach ($classsubjects as $subject) {
                     $subjectData = block_exastud_get_review($classid, $subject->id, $classstudent->id);
-                    if ($subjectData->grade || $subjectData->niveau || $subjectData->review) {
+                    if (!empty($subjectData->grade) || !empty($subjectData->niveau) || $subjectData->review) {
                         $addCurrent = true;
                         break 2;
                     }
