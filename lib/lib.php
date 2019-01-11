@@ -2226,6 +2226,11 @@ function block_exastud_get_default_templates() {
                                     'type' => 'select',
                                     'values' => ['' => '', '(siehe schuleigenes Blatt)' => '(siehe schuleigenes Blatt)'],
                             ],
+                            'lessons_target' => [
+                                    'title' => 'zieldifferenter Unterricht',
+                                    'type' => 'select',
+                                    'values' => ['' => '', 'wurde zieldifferent unterrichtet. Die Leistungsbeschreibung und -bewertung erfolgte auf Grundlage des Bildungsplans für den Förderschwerpunkt' => 'wurde zieldifferent unterrichtet. Die Leistungsbeschreibung und -bewertung erfolgte auf Grundlage des Bildungsplans für den Förderschwerpunkt'],
+                            ],
                             'subjects' => [
                                     'title' => 'Fächer',
                                     'type' => 'textarea',

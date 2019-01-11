@@ -377,6 +377,7 @@ class printer {
             if (in_array($templateid, [
                     BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_HALBJAHR_LERNENTWICKLUNGSBERICHT])) {
                 $dataTextReplacer['Beiblatt'] = $studentdata->beiblatt ? $studentdata->beiblatt : '';
+                $dataTextReplacer['zieldifferenter Unterricht'] = $studentdata->lessons_target ? $studentdata->lessons_target : '';
             }
 
 		} elseif (in_array($templateid, [
