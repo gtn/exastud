@@ -2027,10 +2027,47 @@ function block_exastud_get_grade_index_by_value($value, $variant = null) {
         }
         // first of found
         if ($neededkey = array_search($value, $grade)) {
-            return (float)$neededkey; // float? or?
+            return $neededkey;
         };
     }
     return 0;
+}
+
+// for get grades of cross gradings (different reports use different grades)
+// @experimental!
+function block_exastud_get_grade_by_index($ind, $grades = null, $variant = null) {
+    if (!$grades || !is_array($grades) || count($grades) == 0) {
+        if ($variant) {
+            $grades[] = block_exastud_get_grades_set($variant);
+        } else {
+            $grades = block_exastud_get_grades_set('_all_');
+        }
+    }
+    //$grades = array_filter($grades);
+    // this part is ok?
+    if (count($grades) > 7) { // (6 + empty) like 1, 1 minus, 1-2, ....
+        $nGrades = array();
+        foreach ($grades as $k => $g) { // for manage of getting first or last value from grades  1 or 1 minus, or 1-2... (for future)
+            if (!$k) {
+                continue; // not empty or 0
+            }
+            $key = intval($k);
+            //if (!array_key_exists($key, $nGrades)) { // only first element by $k
+            //    $nGrades[$key] = $g;
+            //}
+            $nGrades[$key] = intval($g); // int of value
+            //$nGrades[$key] = $g; // last element for $k
+        }
+        $grades = $nGrades;
+    } else {
+        $grades = array_values($grades);
+    }
+    echo "<pre>debug:<strong>lib.php:2047</strong>\r\n"; print_r($grades); echo '</pre>'; // !!!!!!!!!! delete it
+    $ind = intval($ind);
+    if (array_key_exists($ind, $grades)) {
+        return $grades[$ind];
+    }
+    return null;
 }
 
 // Needed for install/upgrade plugin

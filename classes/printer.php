@@ -506,8 +506,11 @@ class printer {
 				}
 
 				$grade = @$grades[@$subjectData->grade];
-				//echo "<pre>debug:<strong>printer.php:508</strong>\r\n"; print_r($grades); echo '</pre>'; // !!!!!!!!!! delete it
-				//echo "<pre>debug:<strong>printer.php:508</strong>\r\n"; print_r($subjectData->grade); echo '</pre>'; // !!!!!!!!!! delete it
+				if (!$grade) { // get grade for cross grage between templates
+                    $indexOfGrade = block_exastud_get_grade_index_by_value($subjectData->grade);
+                    $gradeByCurrentTemplate = block_exastud_get_grade_by_index($indexOfGrade, $grades);
+                    $grade = $gradeByCurrentTemplate;
+                }
 				if (!$grade) {
 				//	// einfach die erste zahl nehmen und dann durch text ersetzen
 					$grade = @$grades[substr(@$subjectData->grade, 0, 1)];
@@ -535,7 +538,7 @@ class printer {
 					return $ret;
 				});
 
-				$gradeForCalc = block_exastud_get_grade_index_by_value($grade);
+				$gradeForCalc = (float)block_exastud_get_grade_index_by_value($grade);
                 // to calculate the average grade
                 if ($subject->not_relevant == 1) {
                     if ($gradeForCalc < $min) {
