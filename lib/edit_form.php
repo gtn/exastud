@@ -232,6 +232,7 @@ class student_edit_form extends moodleform {
                 $mform->setExpanded('vorschlag_header');
                 $mform->addElement('textarea', 'vorschlag', '',
                         [   //'cols' => $vorschlag_limits['cols'],
+                            'cols' => $vorschlag_limits['chars_per_row'] + 3,
                             'rows' => $vorschlag_limits['rows'],
                             'class' => 'limit-input-length',
                             'wrap' => 'off',
@@ -292,6 +293,7 @@ class student_edit_form extends moodleform {
 
                 $mform->addElement('textarea', 'review', '',
                         [   //'cols' => $subject_limits['cols'],
+                            'cols' => $subject_limits['chars_per_row'] + 3,
                             'rows' => $subject_limits['rows'],
                             'wrap' => 'off',
                             'class' => 'limit-input-length',
@@ -377,13 +379,14 @@ class student_other_data_form extends moodleform {
 
 				$mform->addElement('textarea', $dataid, '', [
 				        //'cols' => $input['cols'],
+                        'cols' => $textarea_limits['chars_per_row'] + 3,
                         'rows' => $input['lines'],
                         'wrap' => 'off',
 					    'class' => 'limit-input-length',
                         'data-rowscharslimit-enable' => 1,
                         'data-rowslimit' => $textarea_limits['rows'],
                         'data-charsperrowlimit' => $textarea_limits['chars_per_row'],
-                        'style' => "width: 100%;"./*($input['cols'] * 15).*/" height: ".($input['lines'] * 20)."px; resize: none; font-family: Arial !important; font-size: 11pt !important;",
+                        'style' => "/*width: 100%;*/"./*($input['cols'] * 15).*/" height: ".($input['lines'] * 20)."px; resize: none; font-family: Arial !important; font-size: 11pt !important;",
 				]);
 				$mform->setType($dataid, PARAM_RAW);
 				$mform->addElement('static', '', '',
