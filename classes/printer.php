@@ -131,6 +131,8 @@ class printer {
                 'schule' => get_config('exastud', 'school_name'),
                 'ort' => get_config('exastud', 'school_location'),
                 'name' => $student->firstname.' '.$student->lastname,
+                'first_name' => $student->firstname,
+                'last_name' => $student->lastname,
                 'geburtsdatum' => block_exastud_get_date_of_birth($student->id),
                 'klasse' => $class->title,
                 'kla' => $class->title,
@@ -482,7 +484,6 @@ class printer {
 						// only if there is still no religion set
 						// maybe there are 2 religion gradings? ignore the 2nd one
 					}
-
 					if ($subject->shorttitle == 'eth') {
 						$religion = 'Ethik';
 						$religion_sub = '';
@@ -490,10 +491,12 @@ class printer {
 						$religion = 'Religionslehre';
 						$religion_sub = '('.$subject->shorttitle.')';
 					}
-					if (in_array($templateid, [
+					if ($subject->shorttitle != 'eth' &&
+                        in_array($templateid, [
                             BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_HALBJAHR_ZEUGNIS_RS,
                             BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_HALBJAHR_ZEUGNIS_E_NIVEAU,
                             BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_HALBJAHR_ZEUGNIS_FOE,
+                            BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_ABSCHLUSSZEUGNIS_HS,
                             //BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_HALBJAHRESINFORMATION_KL11, // here are two selectboxes
                             BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_HALBJAHRESINFORMATION_KL11, // here are two selectboxes
 					])) {
@@ -733,15 +736,28 @@ class printer {
 
 			// religion + wahlpflichtfach + profilfach dropdowns
 			$add_filter(function($content) use ($templateid, $religion, $religion_sub, $wahlpflichtfach, $profilfach) {
-				$content = preg_replace('!>\s*Ethik\s*<!U', '>'.$religion.'<', $content, 1, $count);
-				
+			    if ($religion == self::spacerIfEmpty('')) {
+			        $religion = 'Religionslehre/Ethik';
+                }
+                $content = preg_replace('!>\s*Ethik\s*<!U', '>'.$religion.'<', $content, 1, $count);
+
 				$content = preg_replace('!>\s*\(ev\)\s*<!U', '>'.$religion_sub.'<', $content, 1, $count);
 
 				$content = preg_replace('!(Wahlpflichtbereich.*>)Technik(<)!U', '${1}'.$wahlpflichtfach.'${2}', $content, 1, $count);
 
-				$content = preg_replace('!(Profilfach.*>)Spanisch(<)!U', '${1}'.$profilfach.'${2}', $content, 1, $count);
 				if ($templateid == BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_HALBJAHRESINFORMATION_KL11) {
-                    $content = preg_replace('!>Spanisch(.*Profil<)!U', $profilfach.'${1}', $content, 1, $count);
+				    if ($profilfach == self::spacerIfEmpty('')) {
+                        // no profile subject!
+                        $content = preg_replace('!(>)Spanisch.*Profil(<)!U', '${1}Profilfach${2}', $content, 1, $count);
+                    } else {
+                        $content = preg_replace('!(>)Spanisch(.*Profil<)!U', '${1}'.$profilfach.'${2}', $content, 1, $count);
+                    }
+                } else {
+				    $tempProfilfach = $profilfach;
+				    if ($profilfach == self::spacerIfEmpty('')) {
+                        $tempProfilfach = '';
+                    }
+                    $content = preg_replace('!(Profilfach.*>)Spanisch(<)!U', '${1}'.$tempProfilfach.'${2}', $content, 1, $count);
                 }
 
 				return $content;
