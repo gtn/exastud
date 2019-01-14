@@ -105,6 +105,19 @@ class print_templates {
                 if (is_array($fieldsAdditional)) {
                     $fields = array_merge($fields, $fieldsAdditional);
                 }
+                // some sorting:
+                if (array_key_exists('lessons_target', $fields)) {
+                    $cloneElem = $fields['lessons_target'];
+                    unset($fields['lessons_target']);
+                    $focusPosition = array_search('focus', $fields);
+                    array_splice($fields, $focusPosition, 0, array($cloneElem) );
+                }
+                if (array_key_exists('beiblatt', $fields)) {
+                    $cloneElem = $fields['beiblatt'];
+                    unset($fields['beiblatt']);
+                    $focusPosition = array_search('focus', $fields);
+                    array_splice($fields, $focusPosition + 1, 0, array($cloneElem) );
+                }
                 unset($fields['besondere_kompetenzen']);
                 unset($fields['projekt_thema']);
                 unset($fields['projekt_grade']);
