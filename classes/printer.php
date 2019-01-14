@@ -32,6 +32,10 @@ class printer {
 	static function spacerIfEmpty($value) {
 		$value = trim($value);
 
+		if ($value == '/--empty--/') {
+		    return '';
+        }
+
 		if (!trim(strip_tags($value))) {
 			return '---';
 		} else {
@@ -376,7 +380,11 @@ class printer {
 				return preg_replace('!(>)Technik(<.*{'.'wahlpflichtfach'.'})!U', '${1}'.$wahlpflichtfach.'${2}', $content);
 			});
 			$add_filter(function($content) use ($profilfach) {
-				return preg_replace('!(>)Spanisch(<.*{'.'profilfach'.'})!U', '${1}'.$profilfach.'${2}', $content);
+			    $tempProfileFach = $profilfach;
+			    if ($profilfach == self::spacerIfEmpty('')) {
+			        $tempProfileFach = '';
+                }
+				return preg_replace('!(>)Spanisch(<.*{'.'profilfach'.'})!U', '${1}'.$tempProfileFach.'${2}', $content);
 			});
 
 			// nicht befüllte niveaus und noten befüllen
@@ -386,8 +394,19 @@ class printer {
 			// beiblatt
             if (in_array($templateid, [
                     BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_HALBJAHR_LERNENTWICKLUNGSBERICHT])) {
-                $dataTextReplacer['Beiblatt'] = $studentdata->beiblatt ? $studentdata->beiblatt : '';
-                $dataTextReplacer['zieldifferenter Unterricht'] = $studentdata->lessons_target ? $studentdata->lessons_target : '';
+                if ($studentdata->lessons_target) {
+                    $dataTextReplacer['zieldifferenter Unterricht'] =
+                            $studentdata->lessons_target ? $studentdata->lessons_target : '';
+                    $dataTextReplacer['Beiblatt'] = $studentdata->beiblatt ? $studentdata->beiblatt : '';
+                } else {
+                    // if not 'zieldifferenter Unterricht' - empty all Bemerkungen field
+                    $dataTextReplacer['zieldifferenter Unterricht'] = '';
+                    $dataTextReplacer['Beiblatt'] = '';
+                    $studentdata->focus = '/--empty--/';
+                    //echo "<pre>debug:<strong>printer.php:401</strong>\r\n"; print_r($studentdata); echo '</pre>'; exit; // !!!!!!!!!! delete it
+                    $data['first_name'] = '';
+                    $data['comments'] = '';
+                }
             }
 
 		} elseif (in_array($templateid, [
