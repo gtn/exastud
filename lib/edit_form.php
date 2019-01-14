@@ -231,12 +231,14 @@ class student_edit_form extends moodleform {
                         block_exastud_get_string("learn_and_sociale"));
                 $mform->setExpanded('vorschlag_header');
                 $mform->addElement('textarea', 'vorschlag', '',
-                        ['cols' => $vorschlag_limits['cols'], 'rows' => $vorschlag_limits['rows'],
-                                'class' => 'limit-input-length',
-                                'data-rowscharslimit-enable' => 1,
-                                'data-rowslimit' => $vorschlag_limits['rows'],
-                                'data-charsperrowlimit' => $vorschlag_limits['chars_per_row'],
-                                'style' => "width: 750px; height: 160px; resize: none; font-family: Arial !important; font-size: 11pt !important;",
+                        [   //'cols' => $vorschlag_limits['cols'],
+                            'rows' => $vorschlag_limits['rows'],
+                            'class' => 'limit-input-length',
+                            'wrap' => 'off',
+                            'data-rowscharslimit-enable' => 1,
+                            'data-rowslimit' => $vorschlag_limits['rows'],
+                            'data-charsperrowlimit' => $vorschlag_limits['chars_per_row'],
+                            'style' => "width: 100%; height: 160px; resize: none; font-family: Arial !important; font-size: 11pt !important;",
                         ]);
                 $mform->setType('vorschlag', PARAM_RAW);
                 $mform->addElement('static', '', '',
@@ -288,12 +290,15 @@ class student_edit_form extends moodleform {
                     $mform->addElement('static', '', '', $this->_customdata['review.modified']);
                 }
 
-                $mform->addElement('textarea', 'review', '', ['cols' => $subject_limits['cols'], 'rows' => $subject_limits['rows'],
-                        'class' => 'limit-input-length',
-                        'data-rowscharslimit-enable' => 1,
-                        'data-rowslimit' => $subject_limits['rows'],
-                        'data-charsperrowlimit' => $subject_limits['chars_per_row'],
-                        'style' => "width: 556px; height: 160px; resize: none; font-family: Arial !important; font-size: 11pt !important;",
+                $mform->addElement('textarea', 'review', '',
+                        [   //'cols' => $subject_limits['cols'],
+                            'rows' => $subject_limits['rows'],
+                            'wrap' => 'off',
+                            'class' => 'limit-input-length',
+                            'data-rowscharslimit-enable' => 1,
+                            'data-rowslimit' => $subject_limits['rows'],
+                            'data-charsperrowlimit' => $subject_limits['chars_per_row'],
+                            'style' => "width: 100%; height: 160px; resize: none; font-family: Arial !important; font-size: 11pt !important;",
                 ]);
                 $mform->setType('review', PARAM_RAW);
                 $mform->addElement('static', 'hint', "",
@@ -370,12 +375,15 @@ class student_other_data_form extends moodleform {
                         'rows' => @$input['lines'] ? $input['lines'] : 8
                 );
 
-				$mform->addElement('textarea', $dataid, '', ['cols' => $input['cols'], 'rows' => $input['lines'],
-					'class' => 'limit-input-length',
-                    'data-rowscharslimit-enable' => 1,
-                    'data-rowslimit' => $textarea_limits['rows'],
-                    'data-charsperrowlimit' => $textarea_limits['chars_per_row'],
-					'style' => "width: ".($input['cols'] * 15)."px; height: ".($input['lines'] * 20)."px; resize: none; font-family: Arial !important; font-size: 11pt !important;",
+				$mform->addElement('textarea', $dataid, '', [
+				        //'cols' => $input['cols'],
+                        'rows' => $input['lines'],
+                        'wrap' => 'off',
+					    'class' => 'limit-input-length',
+                        'data-rowscharslimit-enable' => 1,
+                        'data-rowslimit' => $textarea_limits['rows'],
+                        'data-charsperrowlimit' => $textarea_limits['chars_per_row'],
+                        'style' => "width: 100%;"./*($input['cols'] * 15).*/" height: ".($input['lines'] * 20)."px; resize: none; font-family: Arial !important; font-size: 11pt !important;",
 				]);
 				$mform->setType($dataid, PARAM_RAW);
 				$mform->addElement('static', '', '',
