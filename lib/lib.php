@@ -2212,7 +2212,7 @@ function block_exastud_get_default_templates() {
                             'comments' => [
                                     'title' => block_exastud_trans('de:Bemerkungen'),
                                     'type' => 'textarea',
-                                    'lines' => 6,
+                                    'lines' => 5,
                                     'cols' => 90,
                             ],
                             'lessons_target' => [
