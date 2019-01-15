@@ -30,6 +30,7 @@ bw-bp2016-syr;Religionslehre (syr);syr;0;0;0
 bw-bp2016-d;Deutsch;D;1;0;0
 bw-bp2016-e;Englisch;E;1;0;0
 bw-bp2016-m;Mathematik;M;1;0;0
+bw-bp2016-i;Informatik;I;1;0;0
 bw-bp2016-g;Geschichte;G;1;0;0
 bw-bp2016-geo;Geographie;Geo;1;0;0
 bw-bp2016-gk;Gemeinschaftskunde;Gk;1;0;0

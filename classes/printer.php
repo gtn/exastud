@@ -377,7 +377,11 @@ class printer {
             
 			// wahlpflichtfach + profilfach dropdowns
 			$add_filter(function($content) use ($wahlpflichtfach) {
-				return preg_replace('!(>)Technik(<.*{'.'wahlpflichtfach'.'})!U', '${1}'.$wahlpflichtfach.'${2}', $content);
+                $tempWahlpflichtFach = $wahlpflichtfach;
+                if ($wahlpflichtfach == self::spacerIfEmpty('')) {
+                    $tempWahlpflichtFach = '';
+                }
+				return preg_replace('!(>)Technik(<.*{'.'wahlpflichtfach'.'})!U', '${1}'.$tempWahlpflichtFach.'${2}', $content);
 			});
 			$add_filter(function($content) use ($profilfach) {
 			    $tempProfileFach = $profilfach;
@@ -968,7 +972,7 @@ class printer {
             $focus = static::spacerIfEmpty(@$studentdata->focus);
             $add_filter(function($content) use ($focus, $templateid) {
                 // for Förderschwerpunkt
-                $ret = preg_replace('!>[^<]*Lernen[^<]*<!U', '>'.$focus.'<', $content, -1, $count);
+                $ret = preg_replace('!>[^<]*Lernen\.[^<]*<!U', '>'.$focus.'<', $content, -1, $count);
                 if (!$count) {
                     throw new \Exception('"Förderschwerpunkt" not found in report: '.$templateid);
                 }
@@ -992,6 +996,7 @@ class printer {
 		$templateProcessor->applyFilters($filters);
 		//echo "<pre>debug:<strong>printer.php:898</strong>\r\n"; print_r($filters); echo '</pre>'; exit; // !!!!!!!!!! delete it
         //echo "<pre>debug:<strong>printer.php:904</strong>\r\n"; print_r($templateProcessor->getDocumentMainPart()); echo '</pre>'; exit; // !!!!!!!!!! delete it
+        //echo "<pre>debug:<strong>printer.php:999</strong>\r\n"; print_r($dataTextReplacer); echo '</pre>'; exit; // !!!!!!!!!! delete it
 		$templateProcessor->setValues($data);
 		$templateProcessor->replaceWords($dataTextReplacer);
 
