@@ -39,6 +39,7 @@ class block_exastud_renderer extends plugin_renderer_base {
 		if (block_exastud_get_active_period() && block_exastud_has_global_cap(BLOCK_EXASTUD_CAP_REVIEW)) {
 			$tabs['review'] = new tabobject('review', new moodle_url('/blocks/exastud/review.php', ['courseid' => g::$COURSE->id]), block_exastud_get_string('review'), '', true);
 		}
+
 		if (block_exastud_get_active_or_last_period() && block_exastud_has_global_cap(BLOCK_EXASTUD_CAP_VIEW_REPORT)) {
 			$tabs['report'] = new tabobject('report', new moodle_url('/blocks/exastud/report.php', ['courseid' => g::$COURSE->id]), block_exastud_get_string('reports'), '', true);
 		}

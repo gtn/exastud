@@ -90,7 +90,6 @@ function block_exastud_print_period($courseid, $period, $type, $openclass) {
 			$reviewclasses[$reviewsubject->classid]->is_head_teacher = false;
 			$reviewclasses[$reviewsubject->classid]->subjects = [];
 		}
-
 		$reviewclasses[$reviewsubject->classid]->subjects[] = $reviewsubject;
 	}
 
@@ -277,8 +276,9 @@ function block_exastud_print_period($courseid, $period, $type, $openclass) {
 
 block_exastud_print_period($courseid, $actPeriod, 'active', $openclass);
 
-if ($lastPeriod = block_exastud_get_last_period()) {
+// last period
+/*if ($lastPeriod = block_exastud_get_last_period()) {
 	block_exastud_print_period($courseid, $lastPeriod, 'last', $openclass);
-}
+}*/
 
 echo $output->footer();
