@@ -3109,6 +3109,9 @@ function block_exastud_get_exacomp_assessment_categories() {
 }
 
 function block_exastud_cropStringByInputLimitsFromTemplate($string, $templateid, $inputName, $defaultCharsPerRow = 80, $defaultRows = 8) {
+    return $string;
+
+    // disabled now. Probably better to dont crop the texts?
     $tempSubjectContent = $string;
     $tempContentRows = array();
     $inputs = \block_exastud\print_templates::get_template_inputs($templateid, 'all');
