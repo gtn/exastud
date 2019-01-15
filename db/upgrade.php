@@ -840,6 +840,31 @@ function xmldb_block_exastud_upgrade($oldversion = 0) {
         upgrade_block_savepoint(true, 2019011504, 'exastud');
     }
 
+    if ($oldversion < 2019011506) {
+        // update wrong shorttitle
+        $DB->execute(' UPDATE {block_exastudsubjects} SET shorttitle = ? WHERE shorttitle = ? ', ['Profil IMP', 'IMP']);
+        // some installations have another bp uids. move some subjects to needed BP2016
+        // at first - find BP2016
+        $bp2016id = $DB->get_field_select('block_exastudbp', 'id', ' sourceinfo = ? ', ['bw-bp2016']);
+        if (!$bp2016id) {
+            $bp2016id = $DB->execute(' SELECT id FROM {block_exastudbp} WHERE ');
+            $bps = $DB->get_records_select('block_exastudbp', " title LIKE '%Bp%2016%' ", [], '', 'id, title');
+            if ($bps) {
+                foreach ($bps as $bpt) {
+                    $bp2016id = $bpt->id;
+                    break;
+                }
+            }
+        }
+        // relate subjects to found BP
+        if ($bp2016id) {
+            foreach (['I', 'ABK-Inf', 'Profil IMP'] as $st) {
+                $DB->execute(' UPDATE {block_exastudsubjects} SET bpid = ? WHERE shorttitle = ? ', [$bp2016id, $st]);
+            }
+        }
+        upgrade_block_savepoint(true, 2019011506, 'exastud');
+    }
+
     block_exastud_insert_default_entries();
 	block_exastud_check_profile_fields();
 
