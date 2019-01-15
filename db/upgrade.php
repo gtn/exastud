@@ -798,6 +798,42 @@ function xmldb_block_exastud_upgrade($oldversion = 0) {
         upgrade_block_savepoint(true, 2019011404, 'exastud');
     }
 
+    if ($oldversion < 2019011500) {
+        $templatetochange = array(
+                'default_report' => 'default_report',
+                'BP 2016/GMS Zeugnis 1.HJ' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_HALBJAHR_LERNENTWICKLUNGSBERICHT,
+                'BP 2016/GMS Zeugnis SJ' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_JAHRESZEUGNIS_LERNENTWICKLUNGSBERICHT,
+                'BP 2004/GMS Zeugnis 1.HJ' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_HALBJAHR_LERNENTWICKLUNGSBERICHT,
+                'BP 2004/GMS Zeugnis SJ' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_JAHRESZEUGNIS_LERNENTWICKLUNGSBERICHT,
+                'BP 2004/GMS Klasse 10 E-Niveau 1.HJ' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_HALBJAHR_ZEUGNIS_E_NIVEAU,
+                'BP 2004/GMS Klasse 10 E-Niveau SJ' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_JAHRESZEUGNIS_E_NIVEAU,
+                'BP 2004/GMS Abgangszeugnis' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_ABGANGSZEUGNIS_GMS,
+                'BP 2004/GMS Abgangszeugnis HSA Kl.9 und 10' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_ABGANGSZEUGNIS_HS_9_10,
+                'BP 2004/GMS Hauptschulabschluss 1.HJ' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_HALBJAHR_ZEUGNIS_HS,
+                'BP 2004/GMS Hauptschulabschluss SJ' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_ABSCHLUSSZEUGNIS_HS,
+                'BP 2004/GMS Realschulabschluss 1.HJ' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_HALBJAHR_ZEUGNIS_RS,
+                'BP 2004/GMS Realschulabschluss SJ' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_ABSCHLUSSZEUGNIS_RS,
+                'BP 2004/Zertifikat fuer Profilfach' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_16_ZERTIFIKAT_FUER_PROFILFACH,
+                'BP 2004/Beiblatt zur Projektpruefung HSA' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_ANLAGE_PROJEKTPRUEFUNG_HS,
+                'Anlage zum Lernentwicklungsbericht' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_ANLAGE_ZUM_LERNENTWICKLUNGSBERICHT,
+                'Anlage zum LernentwicklungsberichtAlt' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_ANLAGE_ZUM_LERNENTWICKLUNGSBERICHTALT,
+                'BP 2004/GMS Abschlusszeugnis der Förderschule' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_ABGANGSZEUGNIS_FOE,
+                'BP 2004/GMS Halbjahreszeugniss der Förderschule' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_HALBJAHR_ZEUGNIS_FOE,
+                'Deckblatt und 1. Innenseite LEB' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_LERNENTWICKLUNGSBERICHT_DECKBLATT_UND_1_INNENSEITE,
+        );
+        // update class report settings to new
+        foreach ($templatetochange as $oldId => $newId) {
+            $DB->execute(' UPDATE {block_exastuddata} SET value = ? WHERE name = \'default_templateid\' AND value = ? ',
+                    [$newId, $oldId]);
+        }
+        // update student print templates to new
+        foreach ($templatetochange as $oldId => $newId) {
+            $DB->execute(' UPDATE {block_exastuddata} SET value = ? WHERE name = \'print_template\' AND value = ? ',
+                    [$newId, $oldId]);
+        }
+        upgrade_block_savepoint(true, 2019011500, 'exastud');
+    }
+
     block_exastud_insert_default_entries();
 	block_exastud_check_profile_fields();
 
