@@ -144,7 +144,7 @@ if (!$users) {
 	}
 
 	echo $output->table($table);
-	echo '<input type="submit" value="'.block_exastud_get_string('savechanges').'" />';
+	echo '<input type="submit" value="'.block_exastud_get_string('savechanges').'" class="btn btn-default"/>';
 	echo '</form>';
 }
 

@@ -246,7 +246,13 @@ $.extend(window.block_exastud, {
             // var leftChars = charsPerRowLimit;
             var leftChars = charsLimit;
             rows.forEach(function (r) {
-                // var lch = charsPerRowLimit - r.length;
+                var lch = charsPerRowLimit - r.length;
+                // if the line is longest than charsPerRowLimit - calculate how many rows it will take
+                var addedLines = 0;
+                if (r.length > charsPerRowLimit) {
+                    addedLines = Math.floor(r.length / charsPerRowLimit);
+                }
+                leftRows = leftRows - addedLines;
                 // if (lch < leftChars) {
                 //     leftChars = lch;
                 // }
@@ -254,7 +260,20 @@ $.extend(window.block_exastud, {
             })
             $('#left_'+textareaName+'_rows .exastud-value').html(leftRows);
             $('#left_'+textareaName+'_chars .exastud-value').html(leftChars);
+            if (leftRows < 0) {
+                $('#max_' + textareaName + '_rows').css('background-color', 'rgb(255, 240, 240)');
+                $('#max_' + textareaName + '_rows').css('color', 'rgb(216, 35, 35)');
+                $('#left_' + textareaName + '_rows').css('background-color', 'rgb(255, 240, 240)');
+                $('#left_' + textareaName + '_rows').css('color', 'rgb(216, 35, 35)');
+            } else {
+                $('#max_' + textareaName + '_rows').css('background-color', '');
+                $('#max_' + textareaName + '_rows').css('color', '');
+                $('#left_' + textareaName + '_rows').css('background-color', '');
+                $('#left_' + textareaName + '_rows').css('color', '');
+            }
+
         };
+
         $(document).find('textarea[data-rowscharslimit-enable]').each(function (e) {
             // for working with last correct value
             if (!$(this).attr('correct-value')) {
@@ -276,6 +295,9 @@ $.extend(window.block_exastud, {
         }
 
         function updateTextareaWithLimits(e, textarea) {
+            // now the online text modifying is disabled.
+            // it may work not very clear for user.
+            // TODO: may be tis function is not needed from now? all to updateLeftMessage()?
             if (e) {
                 var currentText = e.target.value;
             } else {
@@ -304,13 +326,8 @@ $.extend(window.block_exastud, {
                     var clearString = r.replace('\r?\n', ''); // string without new lines
                     fullChars += clearString.length;
                     if (clearString.length > charsPerRowLimit) {
-                        // clearString.replace(/(.{5})/, "$1" + "--");
                         clearString = insertNL(clearString, charsPerRowLimit);
-                        // console.log(clearString);
                         newRows.push(clearString);
-                        // var oldL = clearString.substr(0, charsPerRowLimit);
-                        // var newL = clearString.substr(charsPerRowLimit + 1);
-                        // var currentText = textarea.val().substring(0, positionOfCharsPerRowsLimit) + '\r' + textarea.val().substring(positionOfCharsPerRowsLimit);
                     } else {
                         newRows.push(clearString);
                     }
@@ -320,7 +337,7 @@ $.extend(window.block_exastud, {
 
                 textarea.attr('prev-value', currentText);
                 textarea.attr('correct-value', currentText);
-                textarea.val(textarea.attr('correct-value'));
+                // textarea.val(textarea.attr('correct-value'));
             }
             var rows = currentText.split(/\r?\n/);
             var textareaName = textarea.attr('name');
@@ -343,30 +360,20 @@ $.extend(window.block_exastud, {
                     charsPerRowLimitReached = true;
                     positionOfCharsPerRowsLimit = fullChars - (1 - i);
                 }
-                // fullChars = fullChars + 1; // new line
             })
-            // console.log('charsPerRowLimitReached:' + charsPerRowLimitReached);
-            // console.log('limit pos:' + positionOfCharsPerRowsLimit);
-            // console.log('rowsLimitReached:' + rowsLimitReached);
-            // console.log('charsLimitReached:' + charsLimitReached);
-            // console.log('fullChars:' + fullChars);
             if (e && charsPerRowLimitReached) {
                 // go to the next line if it is limit of chars per row
-                // var cursorPos = getCursorPosition(textarea);
-                // console.log('strip on this postions: '+positionOfCharsPerRowsLimit);
                 if (!rowsLimitReached) {
                     var newrowscount = rows.length + 1;
                     if (newrowscount <= rowsLimit) {
                         var currentText = textarea.val().substring(0, positionOfCharsPerRowsLimit) + '\r' + textarea.val().substring(positionOfCharsPerRowsLimit);
                         textarea.attr('correct-value', currentText);
-                        // console.log(currentText);
-                        textarea.val(currentText);
+                        // textarea.val(currentText);
                         charsPerRowLimitReached = false; // charsPerRowLimitReached is ok again
                     } else {
                         rowsLimitReached = true;
                     }
                 }
-                // return updateTextareaWithLimits(null, textarea);
             }
             if (charsPerRowLimitReached || rowsLimitReached || charsLimitReached) {
                 textarea.css('background-color', 'rgb(255, 240, 240)');
@@ -378,7 +385,7 @@ $.extend(window.block_exastud, {
                     textarea.attr('prev-value', currentText);
                     textarea.attr('correct-value', currentText);
                 }
-                textarea.val(textarea.attr('correct-value'));
+                // textarea.val(textarea.attr('correct-value'));
                 if (rowsLimitReached) {
                     $('#max_' + textareaName + '_rows').css('background-color', 'rgb(255, 240, 240)');
                     $('#max_' + textareaName + '_rows').css('color', 'rgb(216, 35, 35)');
@@ -402,14 +409,14 @@ $.extend(window.block_exastud, {
                 $('#max_' + textareaName + '_rows').css('color', '');
                 $('#max_' + textareaName + '_chars').css('background-color', '');
                 $('#max_' + textareaName + '_chars').css('color', '');
-                textarea.val(currentText); // need for 'paste' event
+                // textarea.val(currentText); // need for 'paste' event
                 enableButton();
             }
             updateLeftMessage(textarea);
         }
 
         // $(document).on('paste input', 'textarea[data-rowscharslimit-enable]', function (e) {
-        $(document).on('paste input', 'textarea[data-rowscharslimit-enable]', function (e) {
+        $(document).on('input', 'textarea[data-rowscharslimit-enable]', function (e) {
             e.preventDefault();
             $(this).unbind(); // TODO: needed?
             updateTextareaWithLimits(e, $(this));
