@@ -239,7 +239,7 @@ class student_edit_form extends moodleform {
                             'data-rowscharslimit-enable' => 1,
                             'data-rowslimit' => $vorschlag_limits['rows'],
                             'data-charsperrowlimit' => $vorschlag_limits['chars_per_row'],
-                            'style' => "/*width: 100%;*/ height: 160px; resize: none; font-family: Arial !important; font-size: 11pt !important;",
+                            'style' => "width: auto; height: 160px; resize: none; font-family: Arial !important; font-size: 11pt !important;",
                         ]);
                 $mform->setType('vorschlag', PARAM_RAW);
                 $mform->addElement('static', '', '',
@@ -300,7 +300,7 @@ class student_edit_form extends moodleform {
                             'data-rowscharslimit-enable' => 1,
                             'data-rowslimit' => $subject_limits['rows'],
                             'data-charsperrowlimit' => $subject_limits['chars_per_row'],
-                            'style' => "/*width: 100%;*/ height: 160px; resize: none; font-family: Arial !important; font-size: 11pt !important;",
+                            'style' => "width: auto; height: 160px; resize: none; font-family: Arial !important; font-size: 11pt !important;",
                 ]);
                 $mform->setType('review', PARAM_RAW);
                 $mform->addElement('static', 'hint', "",
@@ -386,7 +386,7 @@ class student_other_data_form extends moodleform {
                         'data-rowscharslimit-enable' => 1,
                         'data-rowslimit' => $textarea_limits['rows'],
                         'data-charsperrowlimit' => $textarea_limits['chars_per_row'],
-                        'style' => "/*width: 100%;*/"./*($input['cols'] * 15).*/" height: ".($input['lines'] * 20)."px; resize: none; font-family: Arial !important; font-size: 11pt !important;",
+                        'style' => "width: auto; "./*($input['cols'] * 15).*/" height: ".($input['lines'] * 20)."px; resize: none; font-family: Arial !important; font-size: 11pt !important;",
 				]);
 				$mform->setType($dataid, PARAM_RAW);
 				$mform->addElement('static', '', '',
