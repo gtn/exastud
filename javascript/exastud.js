@@ -357,7 +357,7 @@ $.extend(window.block_exastud, {
                     charsLimitReached = true;
                 }
                 if (clearString.length > charsPerRowLimit) {
-                    charsPerRowLimitReached = true;
+                    // charsPerRowLimitReached = true; // is it possible with current algorithm
                     positionOfCharsPerRowsLimit = fullChars - (1 - i);
                 }
             })
