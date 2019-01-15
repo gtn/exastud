@@ -52,7 +52,7 @@ if ($type == BLOCK_EXASTUD_DATA_ID_LERN_UND_SOZIALVERHALTEN) {
 		],
 	];
 	$classheader = $reviewclass->title.' - '.block_exastud_get_string('report_other_report_fields');
-}*/ elseif ($type == BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_16_ZERTIFIKAT_FUER_PROFILFACH) {
+}*/ elseif ($type == BLOCK_EXASTUD_DATA_ID_CERTIFICATE) {
 	$categories = [
             BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_16_ZERTIFIKAT_FUER_PROFILFACH => [
 			'title' => block_exastud_trans('de:Zertifikat für Profilfach'),

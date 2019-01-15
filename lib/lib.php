@@ -40,6 +40,7 @@ const BLOCK_EXASTUD_CAP_REVIEW = 'review';
 const BLOCK_EXASTUD_DATA_ID_LERN_UND_SOZIALVERHALTEN = 'learning_and_social_behavior';
 const BLOCK_EXASTUD_DATA_ID_UNLOCKED_TEACHERS = 'unlocked_teachers';
 const BLOCK_EXASTUD_DATA_ID_PRINT_TEMPLATE = 'print_template'; // TODO: change to id of 'block_exastudreportsettings' record?
+const BLOCK_EXASTUD_DATA_ID_CERTIFICATE = 'certificate';
 const BLOCK_EXASTUD_DATA_ID_ADDITIONAL_INFO = 'additional_info';
 const BLOCK_EXASTUD_DATA_ID_CLASS_DEFAULT_TEMPLATEID = 'default_templateid';
 const BLOCK_EXASTUD_DATA_ID_PROJECT_TEACHER = 'project_teacher';
@@ -392,15 +393,16 @@ function block_exastud_get_review_class($classid, $subjectid) {
 		$classes = block_exastud_get_head_teacher_lern_und_sozialverhalten_classes();
 
 		return isset($classes[$classid]) ? $classes[$classid] : null;
-	} else if ($subjectid == BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_16_ZERTIFIKAT_FUER_PROFILFACH) {
+	} else if ($subjectid == BLOCK_EXASTUD_DATA_ID_CERTIFICATE) {
         if (block_exastud_is_profilesubject_teacher($classid)) {
             $class = block_exastud_get_class($classid);
             return (object)[
                     'classid' => $classid,
-                    'subjectid' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_16_ZERTIFIKAT_FUER_PROFILFACH,
+                    'subjectid' => BLOCK_EXASTUD_DATA_ID_CERTIFICATE,
                     'userid' => $USER->id,
                     'title' => $class->title,
-                    'subject' => block_exastud_get_string('report_for_subjects'),
+                    'subject' => block_exastud_get_string('report_for_subjects'), // TODO: need?
+                    'subject_title' => block_exastud_get_string('report_for_subjects'),
                     'type' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_16_ZERTIFIKAT_FUER_PROFILFACH,
             ];
         } else {

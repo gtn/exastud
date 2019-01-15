@@ -95,12 +95,16 @@ switch ($type) {
         $categories = block_exastud_get_student_print_template($class, $student->id)->get_inputs($type);
         $classheader = $reviewclass->title.' - '.block_exastud_get_string('report_other_report_fields');
         break;
+    case BLOCK_EXASTUD_DATA_ID_CERTIFICATE:
+        $template = \block_exastud\print_template::create(BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_16_ZERTIFIKAT_FUER_PROFILFACH);
+        $categories = $template->get_inputs(BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_16_ZERTIFIKAT_FUER_PROFILFACH);
+        $classheader = $reviewclass->title.' - '.$template->get_name();
+        break;
     default:
         $template = \block_exastud\print_template::create($type);
         $categories = $template->get_inputs($type);
         $classheader = $reviewclass->title.' - '.$template->get_name();
 }
-
 $olddata = (array)block_exastud_get_class_student_data($classid, $studentid);
 
 $dataid = key($categories);
