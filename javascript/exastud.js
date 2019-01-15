@@ -261,11 +261,15 @@ $.extend(window.block_exastud, {
             $('#left_'+textareaName+'_rows .exastud-value').html(leftRows);
             $('#left_'+textareaName+'_chars .exastud-value').html(leftChars);
             if (leftRows < 0) {
+                textarea.css('background-color', 'rgb(255, 240, 240)');
+                textarea.css('color', 'rgb(216, 35, 35)');
                 $('#max_' + textareaName + '_rows').css('background-color', 'rgb(255, 240, 240)');
                 $('#max_' + textareaName + '_rows').css('color', 'rgb(216, 35, 35)');
                 $('#left_' + textareaName + '_rows').css('background-color', 'rgb(255, 240, 240)');
                 $('#left_' + textareaName + '_rows').css('color', 'rgb(216, 35, 35)');
             } else {
+                textarea.css('background-color', '');
+                textarea.css('color', '');
                 $('#max_' + textareaName + '_rows').css('background-color', '');
                 $('#max_' + textareaName + '_rows').css('color', '');
                 $('#left_' + textareaName + '_rows').css('background-color', '');
