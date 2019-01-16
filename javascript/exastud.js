@@ -100,11 +100,16 @@ $.extend(window.block_exastud, {
     });
 
     function disableButton() {
-    	$( '.btn, .btn-primary' ).prop( "disabled", true );
+        if ($('textarea[data-textareawitherror=1]').length > 0) {
+            $('.btn, .btn-primary').prop("disabled", true);
+        }
     }
     
     function enableButton() {
-    	$( '.btn, .btn-primary' ).prop( "disabled", false );
+        // enable only if no any textarea with error
+        if (!$('textarea[data-textareawitherror=1]').length) {
+            $('.btn, .btn-primary').prop("disabled", false);
+        }
     }
 
     /* deprecated ? */
@@ -266,6 +271,8 @@ $.extend(window.block_exastud, {
                 $('#max_' + textareaName + '_rows').css('color', 'rgb(216, 35, 35)');
                 $('#left_' + textareaName + '_rows').css('background-color', 'rgb(255, 240, 240)');
                 $('#left_' + textareaName + '_rows').css('color', 'rgb(216, 35, 35)');
+                $(textarea).attr('data-textareawitherror', '1');
+                disableButton();
             } else {
                 textarea.css('background-color', '');
                 textarea.css('color', '');
@@ -273,6 +280,8 @@ $.extend(window.block_exastud, {
                 $('#max_' + textareaName + '_rows').css('color', '');
                 $('#left_' + textareaName + '_rows').css('background-color', '');
                 $('#left_' + textareaName + '_rows').css('color', '');
+                $(textarea).attr('data-textareawitherror', '0');
+                enableButton();
             }
 
         };
@@ -398,16 +407,20 @@ $.extend(window.block_exastud, {
                 if (rowsLimitReached) {
                     $('#max_' + textareaName + '_rows').css('background-color', 'rgb(255, 240, 240)');
                     $('#max_' + textareaName + '_rows').css('color', 'rgb(216, 35, 35)');
+                    $(textarea).attr('data-textareawitherror', '1');
                 } else {
                     $('#max_' + textareaName + '_rows').css('background-color', '');
                     $('#max_' + textareaName + '_rows').css('color', '');
+                    $(textarea).attr('data-textareawitherror', '0');
                 }
                 if (charsPerRowLimitReached) {
                     $('#max_' + textareaName + '_chars').css('background-color', 'rgb(255, 240, 240)');
                     $('#max_' + textareaName + '_chars').css('color', 'rgb(216, 35, 35)');
+                    $(textarea).attr('data-textareawitherror', '1');
                 } else {
                     $('#max_' + textareaName + '_chars').css('background-color', '');
                     $('#max_' + textareaName + '_chars').css('color', '');
+                    $(textarea).attr('data-textareawitherror', '0');
                 }
                 disableButton();
             } else {
@@ -419,6 +432,7 @@ $.extend(window.block_exastud, {
                 $('#max_' + textareaName + '_chars').css('background-color', '');
                 $('#max_' + textareaName + '_chars').css('color', '');
                 // textarea.val(currentText); // need for 'paste' event
+                $(textarea).attr('data-textareawitherror', '0');
                 enableButton();
             }
             updateLeftMessage(textarea);
