@@ -354,11 +354,11 @@ class printer {
 				} elseif (strpos($subject->title, 'Wahlpflichtfach') === 0) {
                     if ($wahlpflichtfach != static::spacerIfEmpty('')) {
                         continue;
-                        // only if there is still no profilfach set
-                        // maybe there are 2 profilfach gradings? ignore the 2nd one
+                        // only if there is still no $wahlpflichtfach set
+                        // maybe there are 2 $wahlpflichtfach gradings? ignore the 2nd one
                     }
                     if (!$subjectData || !$subjectData->grade) {
-                        continue; // we need to select first graded profile subject
+                        continue; // we need to select first graded $wahlpflichtfach
                     }
 					$wahlpflichtfach = preg_replace('!^[^\s]+!', '', $subject->title);
 					$contentId = 'wahlpflichtfach';
@@ -559,6 +559,14 @@ class printer {
 					$gradeSearch = 'Ethik';
 					$dropdownsBetween = 1; // 1, weil es selber auch ein dropdown ist
 				} elseif (strpos($subject->title, 'Wahlpflichtfach') === 0) {
+                    if ($wahlpflichtfach != static::spacerIfEmpty('')) {
+                        continue;
+                        // only if there is still no $wahlpflichtfach set
+                        // maybe there are 2 $wahlpflichtfach gradings? ignore the 2nd one
+                    }
+                    if (!$subjectData || !$subjectData->grade) {
+                        continue; // we need to select first graded $wahlpflichtfach
+                    }
 					$gradeSearch = 'Wahlpflicht';
 					$wahlpflichtfach = preg_replace('!^[^\s]+!', '', $subject->title);
 					// hier ist 1 dropdown dazwischen erlaubt (wahlpflichtfach name dropdown)
