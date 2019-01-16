@@ -311,6 +311,7 @@ class printer {
 
 			$wahlpflichtfach = '---';
 			$profilfach = '---';
+            $religion = static::spacerIfEmpty('');
 
 			// danach mit richtigen werten überschreiben
 			foreach ($class_subjects as $subject) {
@@ -333,9 +334,22 @@ class printer {
 					'orth',
 					'syr',
 				])) {
-				    if ($subject->shorttitle != 'eth'){
+                    if ($religion != static::spacerIfEmpty('') && $religion != 'Ethik') {
+                        continue;
+                        // only if there is still no religion set
+                        // maybe there are 2 religion gradings? ignore the 2nd one
+                    }
+                    if (!$subjectData || !$subjectData->grade) {
+                        continue; // we need to select first graded religion
+                    }
+                    if ($subject->shorttitle == 'eth') {
+                        $religion = 'Ethik';
+                    } else {
+                        $religion = 'Religionslehre ('.$subject->shorttitle.')';
+                    }
+				    /*if ($subject->shorttitle != 'eth'){
 				        $dataTextReplacer['Ethik'] = 'Religionslehre ('.$subject->shorttitle.')';
-				    }
+				    }*/
 					$contentId = 'religion';
 				} elseif (strpos($subject->title, 'Wahlpflichtfach') === 0) {
 					$wahlpflichtfach = preg_replace('!^[^\s]+!', '', $subject->title);
@@ -374,6 +388,12 @@ class printer {
 					return preg_replace('!({'.$contentId.'}.*>)ggf. Note(<)!U', '${1}'.$grade.'${2}', $content);
 				};
 			}
+
+			if ($religion != self::spacerIfEmpty('')) {
+                $dataTextReplacer['Ethik'] = $religion;
+            } else {
+                $dataTextReplacer['Ethik'] = 'Religionslehre';
+            }
             
 			// wahlpflichtfach + profilfach dropdowns
 			$add_filter(function($content) use ($wahlpflichtfach) {
@@ -502,11 +522,14 @@ class printer {
 				    'orth',
 				    'syr',
 				])) {
-					if ($religion != static::spacerIfEmpty('')) {
+					if ($religion != static::spacerIfEmpty('') && $religion != 'Ethik') {
 						continue;
 						// only if there is still no religion set
 						// maybe there are 2 religion gradings? ignore the 2nd one
 					}
+                    if (!$subjectData || !$subjectData->grade) {
+                        continue; // we need to select first graded religion
+                    }
 					if ($subject->shorttitle == 'eth') {
 						$religion = 'Ethik';
 						$religion_sub = '';
@@ -760,7 +783,15 @@ class printer {
 			// religion + wahlpflichtfach + profilfach dropdowns
 			$add_filter(function($content) use ($templateid, $religion, $religion_sub, $wahlpflichtfach, $profilfach) {
 			    if ($religion == self::spacerIfEmpty('')) {
-			        $religion = 'Religionslehre/Ethik';
+			        if (in_array($templateid, [
+                        BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_HALBJAHR_ZEUGNIS_FOE,
+                        BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_HALBJAHR_ZEUGNIS_RS,
+
+                    ])) {
+                        $religion = 'Religionslehre/Ethik';
+                    } else {
+                        $religion = 'Religionslehre';
+                    }
                 }
                 $content = preg_replace('!>\s*Ethik\s*<!U', '>'.$religion.'<', $content, 1, $count);
 
