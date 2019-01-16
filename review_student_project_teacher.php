@@ -26,7 +26,7 @@ $studentid = required_param('studentid', PARAM_INT);
 
 block_exastud_require_login($courseid);
 
-$returnurl = new moodle_url('/blocks/exastud/review_class_project_teacher.php?courseid='.$courseid.'&classid='.$classid);
+$returnurl = new moodle_url('/blocks/exastud/review_class_project_teacher.php?courseid='.$courseid.'&classid='.$classid.'&openclass'.$classid);
 
 $output = block_exastud_get_renderer();
 

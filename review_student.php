@@ -32,7 +32,7 @@ $reporttype = optional_param('reporttype', '', PARAM_RAW);
 block_exastud_require_login($courseid);
 
 if (!$returnurl) {
-	$returnurl = new moodle_url('/blocks/exastud/review_class.php?courseid='.$courseid.'&classid='.$classid.'&subjectid='.$subjectid);
+	$returnurl = new moodle_url('/blocks/exastud/review_class.php?courseid='.$courseid.'&classid='.$classid.'&subjectid='.$subjectid.'&openclass='.$classid);
 }
 
 $output = block_exastud_get_renderer();

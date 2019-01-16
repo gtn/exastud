@@ -786,6 +786,10 @@ return [
             'Eingaben als Klassenlehrkraft',
             'General',
     ],
+    'review_table_part_subjectsfromother' => [
+            'Weitere Fachlehrkräfte',
+            'From other subject teachers',
+    ],
     'additional_info' => [
             'Zusatzinformationen',
             'Additional info'

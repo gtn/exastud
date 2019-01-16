@@ -41,6 +41,7 @@ $PAGE->set_url('/blocks/exastud/review_student_other_data.php', [
 	'type' => $type,
 	'studentid' => $studentid,
 	'returnurl' => $returnurl,
+    'openclass' => $classid,
 ]);
 
 block_exastud_require_global_cap(BLOCK_EXASTUD_CAP_REVIEW);

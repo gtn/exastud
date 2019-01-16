@@ -104,11 +104,13 @@ function block_exastud_print_period($courseid, $period, $type, $openclass) {
 	if (!$reviewclasses) {
 		echo block_exastud_get_string('noclassestoreview');
 	} else {
+        $columnsCount = 3; // Subject, Additional, Subjects from other teachers
         $table = new html_table();
         //$table->head = array(block_exastud_get_class_title($myclass->id));
         $table->align = array("left");
         //$table->attributes['class'] .= ' exastud-review-table';
 		foreach ($reviewclasses as $myclass) {
+		    $columnsUsed = 0;
             $shownSubjects[] = '';
             $classHeader = new html_table_row();
             $headerCell = new html_table_cell();
@@ -126,25 +128,24 @@ function block_exastud_print_period($courseid, $period, $type, $openclass) {
             $headerCellText .= block_exastud_get_class_title($myclass->id);
             $headerCellText .= '</span>';
             $headerCell->text = $headerCellText;
-            $headerCell->colspan = 2;
+            $headerCell->colspan = $columnsCount;
             $classHeader->cells[] = $headerCell;
             $classHeader->attributes['class'] = 'exastud-class-title';
             $table->data[] = $classHeader;
 
 			$classstudents = block_exastud_get_class_students($myclass->id);
 			if (!$classstudents) {
-				$table->data[] = [
-					block_exastud_get_string('nostudentstoreview'),
-				];
+                $dRow = new \html_table_row();
+                $dRow->attributes['class'] = 'exastud-data-row';
+                $dRow->attributes['data-classid'] = $myclass->id;
+                $dRow->attributes['data-classopened'] = ($openclass == $myclass->id ? 1 : 0);
+                $hCell = new html_table_cell();
+                $hCell->colspan = $columnsCount ;
+                $hCell->text = block_exastud_get_string('nostudentstoreview');
+                $dRow->cells[] = $hCell;
+				$table->data[] = $dRow;
 			} else {
-                $hRow = new \html_table_row();
-                //if (!block_exastud_get_only_learnsociale_reports()) {
-                $htCell1 = new \html_table_cell(block_exastud_get_string('review_table_part_subjects'));
-                $hRow->cells[] = $htCell1;
-                //}
-                $hRow->attributes['class'] = 'exastud-part-title exastud-data-row';
-                $hRow->attributes['data-classid'] = $myclass->id;
-                $hRow->attributes['data-classopened'] = ($openclass == $myclass->id ? 1 : 0);
+
                 $subjectsData = array();
                 //if (!block_exastud_get_only_learnsociale_reports()) {
                     foreach ($myclass->subjects as $subject) {
@@ -159,6 +160,7 @@ function block_exastud_print_period($courseid, $period, $type, $openclass) {
                 //}
                 
                 // add all subjects from Subject teachers (for readonly via class teacher)
+                $subjectsFromOtherData = array();
                 if (!empty($myclass->userid) && $USER->id == $myclass->userid) {
                     $allClassSubjects = block_exastud_get_class_subjects($myclass);
                     foreach ($allClassSubjects as $addSubj) {
@@ -171,7 +173,7 @@ function block_exastud_print_period($courseid, $period, $type, $openclass) {
                             $teacherNames = array_map(function($o) {return fullname($o);}, $sTeachers);
                             $teacherNames = implode(', ', $teacherNames);
                             //$subjectTeachers = block_exastud_get_su($myclass->id);
-                            $subjectsData[] = '<span class="exastud_muted_link">'.
+                            $subjectsFromOtherData[] = '<span class="exastud_muted_link">'.
                                     html_writer::link(new moodle_url('/blocks/exastud/review_class.php', [
                                         'courseid' => $courseid,
                                         'classid' => $myclass->id,
@@ -229,11 +231,37 @@ function block_exastud_print_period($courseid, $period, $type, $openclass) {
                                 ]), $value),
                             ];
                         }*/
-					$hRow->cells[] = block_exastud_get_string('review_table_part_additional');
-				} else {
-                    $htCell1->colspan = 2;
-                }
-				$rowsCount = max(count($subjectsData), count($generaldata));
+				}
+
+                $hRow = new \html_table_row();
+                $hRow->attributes['class'] = 'exastud-part-title exastud-data-row';
+                $hRow->attributes['data-classid'] = $myclass->id;
+                $hRow->attributes['data-classopened'] = ($openclass == $myclass->id ? 1 : 0);
+                $htCellSubject = new \html_table_cell(block_exastud_get_string('review_table_part_subjects'));
+                $hRow->cells[] = $htCellSubject;
+                $columnsUsed++;
+                if ($myclass->is_head_teacher || block_exastud_is_profilesubject_teacher($myclass->id)) {
+                    $htCell = new \html_table_cell(block_exastud_get_string('review_table_part_additional'));
+/*                    if (!empty($myclass->userid) && $USER->id == $myclass->userid) {
+                        if (!count($subjectsFromOtherData)) {
+                            $htCell->colspan = 2; // shown subjects from other teachers
+                        }
+                    }*/
+                    $hRow->cells[] = $htCell;
+                    $columnsUsed++;
+                    //$hRow->cells[] = block_exastud_get_string('review_table_part_additional');
+                    if (count($subjectsFromOtherData) > 0) {
+                        $htCell = new \html_table_cell(block_exastud_get_string('review_table_part_subjectsfromother'));
+                        $hRow->cells[] = $htCell;
+                        $columnsUsed++;
+                    }
+                } /*else {
+                    $htCellSubject->colspan = 3;
+                }*/
+                // last column -> colspan
+                end($hRow->cells)->colspan = $columnsCount - $columnsUsed + 1;
+
+				$rowsCount = max(count($subjectsData), count($generaldata), count($subjectsFromOtherData));
 				$table->data[] = $hRow;
                 for ($i = 0; $i < $rowsCount; $i++) {
                     $dRow = new \html_table_row();
@@ -243,14 +271,31 @@ function block_exastud_print_period($courseid, $period, $type, $openclass) {
                     //if (!block_exastud_get_only_learnsociale_reports()) {
                     $subjectsCell = new \html_table_cell();
                     $subjectsCell->text = (isset($subjectsData[$i]) ? $subjectsData[$i] : '');
-                    $subjectsCell->colspan = ($myclass->is_head_teacher || block_exastud_is_profilesubject_teacher($myclass->id) ? 1 : 2);
+                    //$subjectsCell->colspan = ($myclass->is_head_teacher || block_exastud_is_profilesubject_teacher($myclass->id) ? 1 : 2);
+/*                    if (!empty($myclass->userid) && $USER->id === $myclass->userid) { // TODO: is it enough?
+                        if (!count($subjectsFromOtherData)) {
+                            $subjectsCell->colspan += 1; // shown column for subjects from other teachers
+                        }
+                    }*/
                     $dRow->cells[] = $subjectsCell;
                     //}
                     if ($myclass->is_head_teacher || block_exastud_is_profilesubject_teacher($myclass->id)) {
                         $generalCell = new \html_table_cell();
                         $generalCell->text = (isset($generaldata[$i]) ? $generaldata[$i] : '');
+/*                        if (!empty($myclass->userid) && $USER->id === $myclass->userid) {
+                            if (!count($subjectsFromOtherData)) {
+                                $generalCell->colspan = 2; // shown subjects from other teachers
+                            }
+                        }*/
                         $dRow->cells[] = $generalCell;
+                        if (count($subjectsFromOtherData) > 0) {
+                            $subjectFromOtherCell = new \html_table_cell();
+                            $subjectFromOtherCell->text = (isset($subjectsFromOtherData[$i]) ? $subjectsFromOtherData[$i] : '');
+                            $dRow->cells[] = $subjectFromOtherCell;
+                        }
                     }
+                    // last column -> colspan
+                    end($dRow->cells)->colspan = $columnsCount - $columnsUsed + 1;
                     $table->data[] = $dRow;
                 }
 

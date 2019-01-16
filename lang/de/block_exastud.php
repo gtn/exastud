@@ -215,6 +215,7 @@ $string['select_student'] = 'Bitte wählen Sie zumindest einen Schüler/eine Sch
 $string['not_enough_data_for_report'] = 'Not enough data for report generation for selected students';
 $string['review_table_part_subjects'] = 'Eingaben als Fachlehrkraft';
 $string['review_table_part_additional'] = 'Eingaben als Klassenlehrkraft';
+$string['review_table_part_subjectsfromother'] = 'Weitere Fachlehrkräfte';
 $string['additional_info'] = 'Zusatzinformationen';
 $string['settings_only_learnsoziale'] = 'nur Lern- und Sozialverhalten erfassen';
 $string['settings_shoolname'] = 'Lernentwicklungsbericht: Schulname';

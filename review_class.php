@@ -397,7 +397,11 @@ if ($isSubjectTeacher) {
                 $row->cells[] = '';
             }
             // Niveau column
-            $row->cells[] = (block_exastud\global_config::get_niveau_option_title($subjectData->niveau) ?: $subjectData->niveau);
+            if (!empty($subjectData->niveau)) {
+                $row->cells[] = block_exastud\global_config::get_niveau_option_title($subjectData->niveau);
+            } else {
+                $row->cells[] = '';
+            }
             // subject review
             $row->cells[] = '<p>'.
                     ((trim(@$subjectData->review) ? block_exastud_text_to_html(trim($subjectData->review)) : '') ?: '---').
@@ -463,6 +467,6 @@ if ($hiddenclassstudents) {
 if ($isSubjectTeacher) {
     echo '<input type="submit" value="'.block_exastud_get_string('savechanges').'" class="btn btn-default"/>';
 }
-echo $output->back_button(new moodle_url('review.php', ['courseid' => $courseid]));
+echo $output->back_button(new moodle_url('review.php', ['courseid' => $courseid, 'openclass' => $classid]));
 echo '</form>';
 echo $output->footer();

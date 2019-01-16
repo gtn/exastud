@@ -215,6 +215,7 @@ $string['select_student'] = 'Please select at least one student';
 $string['not_enough_data_for_report'] = 'Not enough data for report generation for selected students';
 $string['review_table_part_subjects'] = 'Subjects';
 $string['review_table_part_additional'] = 'General';
+$string['review_table_part_subjectsfromother'] = 'From other subject teachers';
 $string['additional_info'] = 'Additional info';
 $string['settings_only_learnsoziale'] = 'assessment of learning and social behavior only';
 $string['settings_shoolname'] = 'Learning Development Report: School Name';

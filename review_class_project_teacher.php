@@ -144,6 +144,6 @@ foreach ($project_teacher_students as $classstudent) {
 
 echo $output->table($table);
 
-echo $output->back_button(new moodle_url('review.php', ['courseid' => $courseid]));
+echo $output->back_button(new moodle_url('review.php', ['courseid' => $courseid, 'openclass' => $classid]));
 
 echo $output->footer();
