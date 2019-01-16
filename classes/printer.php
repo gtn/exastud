@@ -309,8 +309,8 @@ class printer {
 				$data[static::toTemplateVarId($subject->title)] = '---';
 			}
 
-			$wahlpflichtfach = '---';
-			$profilfach = '---';
+			$wahlpflichtfach = static::spacerIfEmpty('');;
+			$profilfach = static::spacerIfEmpty('');;
             $religion = static::spacerIfEmpty('');
 
 			// danach mit richtigen werten überschreiben
