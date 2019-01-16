@@ -309,7 +309,7 @@ class printer {
 				$data[static::toTemplateVarId($subject->title)] = '---';
 			}
 
-			$wahlpflichtfach = static::spacerIfEmpty('');;
+			$wahlpflichtfach = static::spacerIfEmpty('');
 			$profilfach = static::spacerIfEmpty('');;
             $religion = static::spacerIfEmpty('');
 
@@ -352,10 +352,18 @@ class printer {
 				    }*/
 					$contentId = 'religion';
 				} elseif (strpos($subject->title, 'Wahlpflichtfach') === 0) {
+                    if ($wahlpflichtfach != static::spacerIfEmpty('')) {
+                        continue;
+                        // only if there is still no profilfach set
+                        // maybe there are 2 profilfach gradings? ignore the 2nd one
+                    }
+                    if (!$subjectData || !$subjectData->grade) {
+                        continue; // we need to select first graded profile subject
+                    }
 					$wahlpflichtfach = preg_replace('!^[^\s]+!', '', $subject->title);
 					$contentId = 'wahlpflichtfach';
 				} elseif (strpos($subject->title, 'Profilfach') === 0) {
-                    if ($profilfach != '---') {
+                    if ($profilfach != static::spacerIfEmpty('')) {
                         continue;
                         // only if there is still no profilfach set
                         // maybe there are 2 profilfach gradings? ignore the 2nd one
