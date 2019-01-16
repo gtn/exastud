@@ -2807,7 +2807,7 @@ function block_exastud_get_default_templates() {
             ],
             'BP 2004/GMS Halbjahreszeugniss der Förderschule' => [
                     'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_HALBJAHR_ZEUGNIS_FOE,
-                    'name' => 'BP 2004 GMS Halbjahreszeugniss der Förderschule',
+                    'name' => 'BP 2004 GMS Halbjahreszeugnis der Förderschule',
                     'file' => 'BP 2004/BP2004_GMS_Halbjahr_Zeugnis_Foe',
                     'year' => '1',
                     'report_date' => '1',
