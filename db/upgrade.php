@@ -899,6 +899,12 @@ function xmldb_block_exastud_upgrade($oldversion = 0) {
         upgrade_block_savepoint(true, 2019011601, 'exastud');
     }
 
+    if ($oldversion < 2019011607) {
+        // delete Informatik
+        $DB->execute(' DELETE FROM {block_exastudsubjects} WHERE shorttitle = \'I\' ', []);
+        upgrade_block_savepoint(true, 2019011607, 'exastud');
+    }
+
     block_exastud_insert_default_entries();
 	block_exastud_check_profile_fields();
 
