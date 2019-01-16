@@ -233,7 +233,6 @@ $.extend(window.block_exastud, {
             return pos;
         }
 
-
         // work with textareas (limits)
         function updateLeftMessage(textarea) {
             var rowsLimit = $(textarea).attr('data-rowslimit');
@@ -307,6 +306,12 @@ $.extend(window.block_exastud, {
             } else {
                 var currentText = textarea.val();
             }
+            // if (/class="?Mso|style="[^"]*\bmso-|style='[^'']*\bmso-|w:WordDocument/i.test( currentText )) {
+            //     console.log('!!!!!');
+            // }
+            // console.log(window.clipboardData.getData('Text'));
+            // console.log(currentText);
+
             // var currentText = textarea.val();
             var itIsPaste = false;
             if (e && e.originalEvent.type == 'paste') { // if content is paste from clipboard
@@ -421,8 +426,16 @@ $.extend(window.block_exastud, {
 
         // $(document).on('paste input', 'textarea[data-rowscharslimit-enable]', function (e) {
         $(document).on('input', 'textarea[data-rowscharslimit-enable]', function (e) {
-            e.preventDefault();
-            $(this).unbind(); // TODO: needed?
+            if (e.type == 'paste') {
+                // we need this for checkin of Word copying
+                // var copiedContent = e.originalEvent.clipboardData.getData('Text/html');
+                // e.originalEvent.clipboardData.setData('Text', '1234');
+                // e.target.value = '123';
+                // console.log();
+            } else {
+                e.preventDefault();
+                $(this).unbind(); // TODO: needed?
+            }
             updateTextareaWithLimits(e, $(this));
             return true;
         });

@@ -46,13 +46,13 @@ bw-bp2016-sp;Sport;Sp;1;1;1
 bw-bp2016-wpf-aes;Wahlpflichtfach Alltagskultur, Ernährung, Soziales;WPF AES;0;0;0
 bw-bp2016-wpf-f;Wahlpflichtfach Französisch;WPF F;0;0;0
 bw-bp2016-wpf-te;Wahlpflichtfach Technik;WPF Te;0;0;0
-bw-bp2016-profil-bk;Profilfach Bildende Kunst;Profil BK;0;0;0
-bw-bp2016-profil-f;Profilfach Französisch;Profil F;0;0;0
-bw-bp2016-profil-mu;Profilfach Musik;Profil Mu;0;0;0
-bw-bp2016-profil-nwt;Profilfach Naturwissenschaft und Technik;Profil NwT;0;0;0
-bw-bp2016-profil-imp;Profilfach Informatik, Mathematik, Physik;Profil IMP;0;0;0
-bw-bp2016-profil-s;Profilfach Spanisch;Profil S;0;0;0
-bw-bp2016-profil-sp;Profilfach Sport;Profil Sp;0;0;0
+bw-bp2016-profil-bk;Profilfach Bildende Kunst;Profil BK;0;1;0
+bw-bp2016-profil-f;Profilfach Französisch;Profil F;0;1;0
+bw-bp2016-profil-mu;Profilfach Musik;Profil Mu;0;1;0
+bw-bp2016-profil-nwt;Profilfach Naturwissenschaft und Technik;Profil NwT;0;1;0
+bw-bp2016-profil-imp;Profilfach Informatik, Mathematik, Physik;Profil IMP;0;1;0
+bw-bp2016-profil-s;Profilfach Spanisch;Profil S;0;1;0
+bw-bp2016-profil-sp;Profilfach Sport;Profil Sp;0;1;0
 				', ";", true),
 		],
 		'bp2004' => [
@@ -82,11 +82,11 @@ bw-bp2004-sp;Sport;Sp;1;1;1
 bw-bp2004-wpf-f;Wahlpflichtfach Französisch;WPF F;0;0;0
 bw-bp2004-wpf-mum;Wahlpflichtfach Mensch und Umwelt;WPF MuM;0;0;0
 bw-bp2004-wpf-te;Wahlpflichtfach Technik;WPF Te;0;0;0
-bw-bp2004-profil-bk;Profilfach Bildende Kunst;Profil BK;0;0;0
-bw-bp2004-profil-mum;Profilfach Musik;Profil MuM;0;0;0
-bw-bp2004-profil-nut;Profilfach Naturwissenschaft und Technik;Profil Nut;0;0;0
-bw-bp2004-profil-s;Profilfach Spanisch;Profil S;0;0;0
-bw-bp2004-profil-sp;Profilfach Sport;Profil Sp;0;0;0
+bw-bp2004-profil-bk;Profilfach Bildende Kunst;Profil BK;0;1;0
+bw-bp2004-profil-mu;Profilfach Musik;Profil Mu;0;1;0
+bw-bp2004-profil-nut;Profilfach Naturwissenschaft und Technik;Profil Nut;0;1;0
+bw-bp2004-profil-s;Profilfach Spanisch;Profil S;0;1;0
+bw-bp2004-profil-sp;Profilfach Sport;Profil Sp;0;1;0
 				', ";", true),
 		],
 	],

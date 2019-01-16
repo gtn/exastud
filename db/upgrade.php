@@ -847,7 +847,6 @@ function xmldb_block_exastud_upgrade($oldversion = 0) {
         // at first - find BP2016
         $bp2016id = $DB->get_field_select('block_exastudbp', 'id', ' sourceinfo = ? ', ['bw-bp2016']);
         if (!$bp2016id) {
-            $bp2016id = $DB->execute(' SELECT id FROM {block_exastudbp} WHERE ');
             $bps = $DB->get_records_select('block_exastudbp', " title LIKE '%Bp%2016%' ", [], '', 'id, title');
             if ($bps) {
                 foreach ($bps as $bpt) {
@@ -872,6 +871,25 @@ function xmldb_block_exastud_upgrade($oldversion = 0) {
             block_exastud_fill_reportsettingstable($i);
         }
         upgrade_block_savepoint(true, 2019011507, 'exastud');
+    }
+
+    if ($oldversion < 2019011600) {
+        // reset reports
+        foreach([22, 9, 7, 21] as $i) {
+            $DB->delete_records('block_exastudreportsettings', ['id' => $i]);
+            block_exastud_fill_reportsettingstable($i);
+        }
+        $DB->execute(' UPDATE {block_exastudsubjects} 
+                        SET sourceinfo = \'bw-bp2004-profil-mu\', shorttitle = \'Profil Mu\' 
+                        WHERE sourceinfo = \'bw-bp2004-profil-mum\' ', []);
+        // update not_relevant subjects
+        $notRelevatSubjects = ['Profil BK', 'Profil F', 'Profil Mu', 'Profil Nut', 'Profil NwT', 'Profil IMP', 'Profil S', 'Profil Sp'];
+        foreach ($notRelevatSubjects as $short) {
+            $DB->execute(' UPDATE {block_exastudsubjects} 
+                        SET not_relevant = 1 
+                        WHERE shorttitle = ? ', [$short]);
+        }
+        upgrade_block_savepoint(true, 2019011600, 'exastud');
     }
 
     block_exastud_insert_default_entries();
