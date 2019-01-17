@@ -94,6 +94,7 @@ bw-bp2004-ph;Physik;Ph;1;0;0
 bw-bp2004-ch;Chemie;Ch;1;0;0
 bw-bp2004-bio;Biologie;S;1;0;0
 bw-bp2004-gk;Gemeinschaftskunde;S;1;0;0
+bw-bp2004-er;Erdkunde;Er;1;0;0
 				', ";", true),
 		],
 	],

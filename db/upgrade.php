@@ -899,14 +899,21 @@ function xmldb_block_exastud_upgrade($oldversion = 0) {
         upgrade_block_savepoint(true, 2019011607, 'exastud');
     }
 
-    if ($oldversion < 2019011708) {
+    if ($oldversion < 2019011709) {
+        // delete wrong
+        $DB->execute(' DELETE FROM {block_exastudsubjects} WHERE shorttitle = \'Gr\' ', []);
+        upgrade_block_savepoint(true, 2019011709, 'exastud');
+    }
+
+    if ($oldversion < 2019011710) {
         $dataNew[2004] = array(
             'F' => 'Französisch',
             'S' => 'Spanisch',
             'Ph' => 'Physik',
             'Ch' => 'Chemie',
             'Bio' => 'Biologie',
-            'Gk' => 'Gemeinschaftskunde'
+            'Gk' => 'Gemeinschaftskunde',
+            'Er' => 'Erdkunde',
         );
         $dataNew[2016] = array(
             'F' => 'Französisch',
@@ -948,13 +955,7 @@ function xmldb_block_exastud_upgrade($oldversion = 0) {
                 }
             }
         }
-        upgrade_block_savepoint(true, 2019011708, 'exastud');
-    }
-
-    if ($oldversion < 2019011709) {
-        // delete wrong
-        $DB->execute(' DELETE FROM {block_exastudsubjects} WHERE shorttitle = \'Gr\' ', []);
-        upgrade_block_savepoint(true, 2019011709, 'exastud');
+        upgrade_block_savepoint(true, 2019011710, 'exastud');
     }
 
     block_exastud_insert_default_entries();
