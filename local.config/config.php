@@ -86,6 +86,8 @@ bw-bp2004-profil-mu;Profilfach Musik;Profil Mu;0;1;0
 bw-bp2004-profil-nut;Profilfach Naturwissenschaft und Technik;Profil Nut;0;1;0
 bw-bp2004-profil-s;Profilfach Spanisch;Profil S;0;1;0
 bw-bp2004-profil-sp;Profilfach Sport;Profil Sp;0;1;0
+bw-bp2004-f;Französich;F;1;0;0
+bw-bp2004-s;Spanisch;S;1;0;0
 				', ";", true),
 		],
 	],

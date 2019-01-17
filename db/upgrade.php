@@ -899,6 +899,43 @@ function xmldb_block_exastud_upgrade($oldversion = 0) {
         upgrade_block_savepoint(true, 2019011607, 'exastud');
     }
 
+    if ($oldversion < 2019011707) {
+        $bp2004id = $DB->get_field_select('block_exastudbp', 'id', ' sourceinfo = ? ', ['bw-bp2004']);
+        if (!$bp2004id) {
+            $bps = $DB->get_records_select('block_exastudbp', " title LIKE '%Bp%2004%' ", [], '', 'id, title');
+            if ($bps) {
+                foreach ($bps as $bpt) {
+                    $bp2004id = $bpt->id;
+                    break;
+                }
+            }
+        }
+        if (!$bp2004id) {
+            $bp2004id = 2; // at least we do not loos this subjects
+        }
+        // get last sorting
+        $sortings = $DB->get_fieldset_select('block_exastudsubjects', 'sorting', ' bpid = ? ', [$bp2004id]);
+        $sorting = max($sortings);
+        // add subjects
+        if ($bp2004id) {
+            foreach (['F' => 'Französich', 'S' => 'Spanisch'] as $shortTitle => $title) {
+                $sorting += 5;
+                $exist = $DB->get_record('block_exastudsubjects', ['bpid' => $bp2004id, 'shorttitle' => $shortTitle], '*', IGNORE_MULTIPLE);
+                if (!$exist) {
+                    $DB->insert_record('block_exastudsubjects', array('bpid' => $bp2004id,
+                            'sorting' => $sorting,
+                            'title' => $title,
+                            'shorttitle' => $shortTitle,
+                            'always_print' => 1,
+                            'sourceinfo' => 'bw-bp2004-'.strtolower($shortTitle),
+                            'not_relevant' => 0,
+                            'no_niveau' => 0));
+                }
+            }
+        }
+        upgrade_block_savepoint(true, 2019011707, 'exastud');
+    }
+
     block_exastud_insert_default_entries();
 	block_exastud_check_profile_fields();
 
