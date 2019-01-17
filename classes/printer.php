@@ -427,12 +427,13 @@ class printer {
             if (in_array($templateid, [
                     BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_HALBJAHR_LERNENTWICKLUNGSBERICHT])) {
                 if ($studentdata->lessons_target) {
-                    $dataTextReplacer['zieldifferenter Unterricht'] =
-                            $studentdata->lessons_target ? $studentdata->lessons_target : '';
+                    //$dataTextReplacer['zieldifferenter Unterricht'] = $studentdata->lessons_target ? $studentdata->lessons_target : '';
+                    $dataTextReplacer['Wählen Sie ein Element aus.'] = $studentdata->lessons_target ? $studentdata->lessons_target : '';
                     $dataTextReplacer['Beiblatt'] = $studentdata->beiblatt ? $studentdata->beiblatt : '';
                 } else {
                     // if not 'zieldifferenter Unterricht' - empty all Bemerkungen field
-                    $dataTextReplacer['zieldifferenter Unterricht'] = '';
+                    //$dataTextReplacer['zieldifferenter Unterricht'] = '';
+                    $dataTextReplacer['Wählen Sie ein Element aus.'] = '';
                     $dataTextReplacer['Beiblatt'] = '';
                     $studentdata->focus = '/--empty--/';
                     //echo "<pre>debug:<strong>printer.php:401</strong>\r\n"; print_r($studentdata); echo '</pre>'; exit; // !!!!!!!!!! delete it
