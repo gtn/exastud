@@ -345,10 +345,52 @@ class student_edit_form extends moodleform {
                 $mform->addElement('static', 'exacomp_grades', block_exastud_get_string('suggestions_from_exacomp'), $this->_customdata['exacomp_grades']);
         }
 
-
-
 		$this->add_action_buttons(false);
 	}
+
+    function validation($data, $files) {
+        $custom_errors = array();
+        // compare textareas: rows and cols must be good
+        $fields = array_keys($data);
+        $mform = $this->_form;
+        foreach ($fields as $field) {
+            if ($mform->elementExists($field)) {
+                $element = $mform->getElement($field);
+                if ($element->_type == 'textarea' && $data[$field] != '') {
+                    $rowsfromstring = preg_split("/[\r\n]+/", $data[$field]);
+                    $datawithoutlb = implode(' ', $rowsfromstring);
+                    $charsperrowlimit = $element->_attributes['data-charsperrowlimit'];
+                    $rows_limit = $element->_attributes['data-rowslimit'];
+                    $rowsLeft = $rows_limit - count($rowsfromstring);
+                    // real line can be without linebreaks, so - check only full text length
+                    $fullLengthLimit = $rows_limit * $charsperrowlimit;
+                    if (mb_strlen($datawithoutlb) > $fullLengthLimit) {
+                        $custom_errors[$field] = block_exastud_get_string('template_textarea_limits_error');
+                    } else {
+                        foreach ($rowsfromstring as $rS) {
+                            $addedLines = 0;
+                            if (mb_strlen($rS) > $charsperrowlimit) {
+                                $addedLines = floor((mb_strlen($rS) - 1) / $charsperrowlimit);
+                            }
+                            $rowsLeft = $rowsLeft - $addedLines;
+                        }
+                    }
+                    /*if ($element->_attributes['cols'] > 0) {
+                        $maxlength = max(array_map('strlen', $rowsfromstring));
+                        if ($maxlength > $element->_attributes['cols']) {
+                            $custom_errors[$field] = block_exastud_get_string('template_textarea_limits_error');
+                        }
+                    }*/
+                    if ($rows_limit > 0 && (count($rowsfromstring) > $rows_limit) || $rowsLeft < 0) {
+                        $custom_errors[$field] = block_exastud_get_string('template_textarea_limits_error');
+                    }
+                }
+            }
+        }
+        $parent_result = parent::validation($data, $files);
+        return $parent_result + $custom_errors;
+    }
+
 }
 
 class student_other_data_form extends moodleform {
@@ -421,24 +463,43 @@ class student_other_data_form extends moodleform {
 
 		$this->add_action_buttons(false);
 	}
-	
-	function validation($data, $files) {
+
+    function validation($data, $files) {
         $custom_errors = array();
         // compare textareas: rows and cols must be good
         $fields = array_keys($data);
         $mform = $this->_form;
         foreach ($fields as $field) {
-            $element = $mform->getElement($field);
-            if ($element->_type == 'textarea' && $data[$field] != '') {
-                $rowsfromstring = preg_split("/[\r\n]+/", $data[$field]);
-                if ($element->_attributes['cols'] > 0) {
-                    $maxlength = max(array_map('strlen', $rowsfromstring));
-                    if ($maxlength > $element->_attributes['cols']) {
+            if ($mform->elementExists($field)) {
+                $element = $mform->getElement($field);
+                if ($element->_type == 'textarea' && $data[$field] != '') {
+                    $rowsfromstring = preg_split("/[\r\n]+/", $data[$field]);
+                    $datawithoutlb = implode(' ', $rowsfromstring);
+                    $charsperrowlimit = $element->_attributes['data-charsperrowlimit'];
+                    $rows_limit = $element->_attributes['data-rowslimit'];
+                    $rowsLeft = $rows_limit - count($rowsfromstring);
+                    // real line can be without linebreaks, so - check only full text length
+                    $fullLengthLimit = $rows_limit * $charsperrowlimit;
+                    if (mb_strlen($datawithoutlb) > $fullLengthLimit) {
+                        $custom_errors[$field] = block_exastud_get_string('template_textarea_limits_error');
+                    } else {
+                        foreach ($rowsfromstring as $rS) {
+                            $addedLines = 0;
+                            if (mb_strlen($rS) > $charsperrowlimit) {
+                                $addedLines = floor((mb_strlen($rS) - 1) / $charsperrowlimit);
+                            }
+                            $rowsLeft = $rowsLeft - $addedLines;
+                        }
+                    }
+                    /*if ($element->_attributes['cols'] > 0) {
+                        $maxlength = max(array_map('strlen', $rowsfromstring));
+                        if ($maxlength > $element->_attributes['cols']) {
+                            $custom_errors[$field] = block_exastud_get_string('template_textarea_limits_error');
+                        }
+                    }*/
+                    if ($rows_limit > 0 && (count($rowsfromstring) > $rows_limit) || $rowsLeft < 0) {
                         $custom_errors[$field] = block_exastud_get_string('template_textarea_limits_error');
                     }
-                }
-                if ($element->_attributes['rows'] > 0 && count($rowsfromstring) > $element->_attributes['rows']) {
-                    $custom_errors[$field] = block_exastud_get_string('template_textarea_limits_error');
                 }
             }
         }

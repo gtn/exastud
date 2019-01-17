@@ -254,7 +254,7 @@ $.extend(window.block_exastud, {
                 // if the line is longest than charsPerRowLimit - calculate how many rows it will take
                 var addedLines = 0;
                 if (r.length > charsPerRowLimit) {
-                    addedLines = Math.floor(r.length / charsPerRowLimit);
+                    addedLines = Math.floor((r.length - 1) / charsPerRowLimit);
                 }
                 leftRows = leftRows - addedLines;
                 // if (lch < leftChars) {
@@ -264,7 +264,7 @@ $.extend(window.block_exastud, {
             })
             $('#left_'+textareaName+'_rows .exastud-value').html(leftRows);
             $('#left_'+textareaName+'_chars .exastud-value').html(leftChars);
-            if (leftRows < 0) {
+            if (leftRows < 0 || leftChars < 0) {
                 textarea.css('background-color', 'rgb(255, 240, 240)');
                 textarea.css('color', 'rgb(216, 35, 35)');
                 $('#max_' + textareaName + '_rows').css('background-color', 'rgb(255, 240, 240)');
@@ -282,6 +282,8 @@ $.extend(window.block_exastud, {
                 $('#left_' + textareaName + '_rows').css('color', '');
                 $(textarea).attr('data-textareawitherror', '0');
                 enableButton();
+                $('#id_error_' + textareaName).remove(); // remove error message if textarea is ok
+                $(textarea).closest('.has-danger').toggleClass('has-danger');
             }
 
         };
