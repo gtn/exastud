@@ -1376,8 +1376,8 @@ class printer {
 		$grouped_subjects = [];
 		foreach ($class_subjects as $subject) {
 			if (preg_match('!religi|ethi!i', $subject->title)) {
+                $subject->shorttitle_stripped = $subject->shorttitle;
 				@$grouped_subjects['Religion / Ethik'][] = $subject;
-				$subject->shorttitle_stripped = $subject->shorttitle;
 			} elseif (preg_match('!^Wahlpflicht!i', $subject->title)) {
 				$subject->shorttitle_stripped = preg_replace('!^WPF\s+!i', '', $subject->shorttitle);
 				@$grouped_subjects['WPF'][] = $subject;
@@ -1385,6 +1385,7 @@ class printer {
 				$subject->shorttitle_stripped = preg_replace('!^Profil\s+!i', '', $subject->shorttitle);
 				@$grouped_subjects['Profil'][] = $subject;
 			} else {
+                $subject->shorttitle_stripped = $subject->shorttitle;
 				$normal_subjects[] = $subject;
 			}
 		}
@@ -1473,7 +1474,7 @@ class printer {
                     $hCell->colspan = 2;
                     $hCell->text = $groupedSubjectTitles[$subject->id];
                 } else {
-                    $shorttitle = trim($subject->shorttitle);
+                    $shorttitle = trim($subject->shorttitle_stripped);
                     $shorttitle = preg_replace('/(^\s+|\s+$|\s+)/', mb_convert_encoding('&#160;', 'UTF-8', 'HTML-ENTITIES'), $shorttitle); // insert &nbsp to table header
                     $hCell->text = $shorttitle;
                 }
@@ -1491,7 +1492,7 @@ class printer {
                 if (count(@$studentsData[$subject->id]) > 0) {
                     if (in_array($subject->id, $isGroupedSubjects)) {
                         $cells[] = $studentsData[$subject->id][$student->id];
-                        $cells[] = $subject->shorttitle;
+                        $cells[] = $subject->shorttitle_stripped;
                     } else {
                         $cells[] = $studentsData[$subject->id][$student->id];
                     }
