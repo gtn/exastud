@@ -86,13 +86,17 @@ class printer {
 		$dataTextReplacer = [];
 		$filters = [];
 
-		$add_filter = function($id, $filter = null) use (&$filters) {
+		$add_filter = function($id, $filter = null, $replace = false) use (&$filters) {
 			if (is_callable($id)) {
 				$filters[] = $id;
 			} else {
-				if (!isset($filters[join(',', $id)])) {
-					$filters[join(',', $id)] = $filter;
-				}
+			    if (!$replace) { // do not replace if it is existing already
+                    if (!isset($filters[join(',', $id)])) {
+                        $filters[join(',', $id)] = $filter;
+                    }
+                } else {
+                    $filters[join(',', $id)] = $filter;
+                }
 			}
 		};
 
@@ -513,6 +517,7 @@ class printer {
             $min = 0;
 			// noten
 			foreach ($class_subjects as $subject) {
+			    $isReligionSubject = false;
 				$subjectData = block_exastud_get_graded_review($class->id, $subject->id, $student->id);
 				//if (!$subjectData || !@$subjectData->grade) {
 				//	continue;
@@ -531,6 +536,7 @@ class printer {
 				    'orth',
 				    'syr',
 				])) {
+                    $isReligionSubject = true;
 					if ($religion != static::spacerIfEmpty('') && $religion != 'Ethik') {
 						continue;
 						// only if there is still no religion set
@@ -618,27 +624,34 @@ class printer {
 					$grade = @$grades[substr(@$subjectData->grade, 0, 1)];
 				}
 
-				$add_filter([
-					'grade',
-					$gradeSearch,
-				], function($content) use ($gradeSearch, $grade, $placeholder, $dropdownsBetween) {
-					if (!preg_match('!('.preg_quote($gradeSearch, '!').'.*)'.$placeholder.'note!U', $content, $matches)) {
-						// var_dump(['fach nicht gefunden', $gradeSearch]);
-						return $content;
-					}
+                if ($isReligionSubject) {
+                    $replacefilter = true;
+                } else {
+                    $replacefilter = false;
+                }
 
-					if (substr_count($matches[0], '<w:dropDownList') > ($dropdownsBetween + 1)) {
-						// da ist noch ein anderes dropdown dazwischen => fehler
-						return $content;
-					}
-
-					if (!trim($grade)) {
-					    $grade = '--';
+                $add_filter([
+                        'grade',
+                        $gradeSearch,
+                ], function($content) use ($gradeSearch, $grade, $placeholder, $dropdownsBetween) {
+                    if (!preg_match('!('.preg_quote($gradeSearch, '!').'.*)'.$placeholder.'note!U', $content, $matches)) {
+                        // var_dump(['fach nicht gefunden', $gradeSearch]);
+                        return $content;
                     }
-					$ret = preg_replace('!('.preg_quote($gradeSearch, '!').'.*)'.$placeholder.'note!U', '${1}'.$grade, $content, 1, $count);
 
-					return $ret;
-				});
+                    if (substr_count($matches[0], '<w:dropDownList') > ($dropdownsBetween + 1)) {
+                        // da ist noch ein anderes dropdown dazwischen => fehler
+                        return $content;
+                    }
+
+                    if (!trim($grade)) {
+                        $grade = '--';
+                    }
+                    $ret = preg_replace('!('.preg_quote($gradeSearch, '!').'.*)'.$placeholder.'note!U', '${1}'.$grade, $content,
+                            1, $count);
+
+                    return $ret;
+                }, $replacefilter);
 
 				$gradeForCalc = (float)block_exastud_get_grade_index_by_value($grade);
                 // to calculate the average grade
@@ -1105,8 +1118,8 @@ class printer {
 		$grouped_subjects = [];
 		foreach ($class_subjects as $subject) {
 			if (preg_match('!religi|ethi!i', $subject->title)) {
+                $subject->shorttitle_stripped = $subject->shorttitle;
 				@$grouped_subjects['Religion / Ethik'][] = $subject;
-				$subject->shorttitle_stripped = $subject->shorttitle;
 			} elseif (preg_match('!^Wahlpflicht!i', $subject->title)) {
 				$subject->shorttitle_stripped = preg_replace('!^WPF\s+!i', '', $subject->shorttitle);
 				@$grouped_subjects['WPF'][] = $subject;
@@ -1186,29 +1199,49 @@ class printer {
 			$templateProcessor->setValue("g#$rowi", '');
 
 			// grouped subjects
-            foreach ($grouped_subjects as $subjects) {
-                $subjectData = null;
-
+            $toDoc = array();
+            foreach ($grouped_subjects as $groupkey => $subjects) {
+                if (!array_key_exists($groupkey, $toDoc)) {
+                    $toDoc[$groupkey] = array();
+                }
                 foreach ($subjects as $subject) {
                     $subjectData = block_exastud_get_graded_review($class->id, $subject->id, $student->id);
 
-                    if ($subjectData && isset($subjectData->grade) && $subjectData->grade) {
-                        break;
+                    if (!$subjectData || !$subjectData->grade) {
+                        continue;
                     }
-                }
-                $value = '';
-                if ($subjectData) {
+                    $value = '';
                     if (isset($subjectData->niveau)) {
                         $value .= $subjectData->niveau.' ';
                     }
                     if (isset($subjectData->grade)) {
                         $value .= $subjectData->grade;
                     }
+
+                    switch ($groupkey) {
+                        case 'Religion / Ethik': // for religin some another rule
+                            if (!empty($toDoc[$groupkey]['shorttitle']) && $toDoc[$groupkey]['shorttitle'] != 'eth') {
+                                continue;
+                            } else {
+                                $toDoc[$groupkey]['shorttitle'] = ($value ? $subject->shorttitle_stripped : '');
+                                $toDoc[$groupkey]['value'] = ($value ? $value : '');
+                            }
+                            break;
+                        default:
+                            if (empty($toDoc[$groupkey]['shorttitle'])) {
+                                $toDoc[$groupkey]['shorttitle'] = ($value ? $subject->shorttitle_stripped : '');
+                                $toDoc[$groupkey]['value'] = ($value ? $value : '');
+                            }
+                    }
+
                 }
-                //$templateProcessor->setValue("gsg#$rowi", $value, 1);
-                //$templateProcessor->setValue("gss#$rowi", $value ? $subject->shorttitle_stripped : '', 1); // TODO: ???
+            }
+
+            foreach ($grouped_subjects as $groupkey => $subjects) {
+                $subjectShorttitle = (@$toDoc[$groupkey]['shorttitle'] ? $toDoc[$groupkey]['shorttitle'] : '');
+                $value = (@$toDoc[$groupkey]['value'] ? $toDoc[$groupkey]['value'] : '');
                 $templateProcessor->setValue("gst#$rowi", $value, 1);
-                $templateProcessor->setValue("gst#$rowi", $value ? $subject->shorttitle_stripped : '', 1);
+                $templateProcessor->setValue("gst#$rowi", $value ? $subjectShorttitle : '', 1);
             }
 
             $templateProcessor->setValue("gsg#$rowi", '');
