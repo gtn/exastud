@@ -52,6 +52,8 @@ bw-bp2016-profil-nwt;Profilfach Naturwissenschaft und Technik;Profil NwT;0;1;0
 bw-bp2016-profil-imp;Profilfach Informatik, Mathematik, Physik;Profil IMP;0;1;0
 bw-bp2016-profil-s;Profilfach Spanisch;Profil S;0;1;0
 bw-bp2016-profil-sp;Profilfach Sport;Profil Sp;0;1;0
+bw-bp2016-f;Französich;F;1;0;0
+bw-bp2016-s;Spanisch;S;1;0;0
 				', ";", true),
 		],
 		'bp2004' => [
@@ -88,6 +90,10 @@ bw-bp2004-profil-s;Profilfach Spanisch;Profil S;0;1;0
 bw-bp2004-profil-sp;Profilfach Sport;Profil Sp;0;1;0
 bw-bp2004-f;Französich;F;1;0;0
 bw-bp2004-s;Spanisch;S;1;0;0
+bw-bp2004-ph;Physik;Ph;1;0;0
+bw-bp2004-ch;Chemie;Ch;1;0;0
+bw-bp2004-bio;Biologie;S;1;0;0
+bw-bp2004-gk;Gemeinschaftskunde;S;1;0;0
 				', ";", true),
 		],
 	],
