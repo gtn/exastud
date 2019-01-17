@@ -834,12 +834,6 @@ function xmldb_block_exastud_upgrade($oldversion = 0) {
         upgrade_block_savepoint(true, 2019011500, 'exastud');
     }
 
-    if ($oldversion < 2019011504) {
-        // insert lost Informatik subject
-        $DB->insert_record('block_exastudsubjects', array('bpid' => 1, 'sorting' => 50, 'title' => 'Informatik', 'shorttitle' => 'I', 'always_print' => 1 , 'sourceinfo' => 'bw-bp2016-i'));
-        upgrade_block_savepoint(true, 2019011504, 'exastud');
-    }
-
     if ($oldversion < 2019011506) {
         // update wrong shorttitle
         $DB->execute(' UPDATE {block_exastudsubjects} SET shorttitle = ? WHERE shorttitle = ? ', ['Profil IMP', 'IMP']);
