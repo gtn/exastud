@@ -911,7 +911,6 @@ function xmldb_block_exastud_upgrade($oldversion = 0) {
         $dataNew[2016] = array(
             'F' => 'Französisch',
             'S' => 'Spanisch',
-            'Gr' => 'Gruß',
         );
         foreach ($dataNew as $bpInd => $subjectsData) {
             $bpId = $DB->get_field_select('block_exastudbp', 'id', ' sourceinfo = ? ', ['bw-bp'.$bpInd]);
@@ -950,6 +949,12 @@ function xmldb_block_exastud_upgrade($oldversion = 0) {
             }
         }
         upgrade_block_savepoint(true, 2019011708, 'exastud');
+    }
+
+    if ($oldversion < 2019011709) {
+        // delete wrong
+        $DB->execute(' DELETE FROM {block_exastudsubjects} WHERE shorttitle = \'Gr\' ', []);
+        upgrade_block_savepoint(true, 2019011709, 'exastud');
     }
 
     block_exastud_insert_default_entries();
