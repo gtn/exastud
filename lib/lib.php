@@ -2089,7 +2089,6 @@ function block_exastud_get_default_templates() {
                     'date_of_birth' => '1',
                     'place_of_birth' => '1',
                     'learning_group' => '1',
-                    'class' => '1',
                     'grades' => block_exastud_get_grades_set('1_bis_6'),
                     'inputs' => [
                             'learn_social_behavior' => [
@@ -2116,7 +2115,6 @@ function block_exastud_get_default_templates() {
                     'date_of_birth' => '1',
                     'place_of_birth' => '1',
                     'learning_group' => '1',
-                    'class' => '1',
                     'inputs' => [
                     ],
             ],
@@ -2130,7 +2128,6 @@ function block_exastud_get_default_templates() {
                     'date_of_birth' => '1',
                     'place_of_birth' => '1',
                     'learning_group' => '1',
-                    'class' => '1',
                     'inputs' => [],
             ],
             'BP 2004/Zertifikat fuer Profilfach' => [
@@ -2143,7 +2140,6 @@ function block_exastud_get_default_templates() {
                     'date_of_birth' => '1',
                     'place_of_birth' => '1',
                     'learning_group' => '1',
-                    'class' => '1',
                     'grades' => [],
                     'inputs' => [
                             'besondere_kompetenzen' => [
@@ -2164,7 +2160,6 @@ function block_exastud_get_default_templates() {
                     'date_of_birth' => '1',
                     'place_of_birth' => '1',
                     'learning_group' => '1',
-                    'class' => '1',
                     'grades' => block_exastud_get_grades_set('lang'),
                     'inputs' => [
                         'projekt_thema' => [
@@ -2206,7 +2201,6 @@ function block_exastud_get_default_templates() {
                     'date_of_birth' => '1',
                     'place_of_birth' => '1',
                     'learning_group' => '1',
-                    'class' => '1',
                     'grades' => block_exastud_get_grades_set('mit_plus_minus_bis'),
                     'inputs' => [
                             'learn_social_behavior' => [
@@ -2229,7 +2223,7 @@ function block_exastud_get_default_templates() {
                             'focus' => [
                                     'title' => 'Förderschwerpunkt',
                                     'type' => 'select',
-                                    'values' => ['Lernen' => 'Lernen', 'geistige Enwicklung' => 'geistige Enwicklung'],
+                                    'values' => ['Lernen' => 'Lernen', 'geistige Entwicklung' => 'geistige Entwicklung'],
                             ],
                             'beiblatt' => [
                                     'title' => 'Beiblatt',
@@ -2266,7 +2260,6 @@ function block_exastud_get_default_templates() {
                     'date_of_birth' => '1',
                     'place_of_birth' => '1',
                     'learning_group' => '1',
-                    'class' => '1',
                     'grades' => block_exastud_get_grades_set('1_bis_6'),
                     'inputs' => [
                             'learn_social_behavior' => [
@@ -2311,7 +2304,6 @@ function block_exastud_get_default_templates() {
                     'date_of_birth' => '1',
                     'place_of_birth' => '1',
                     'learning_group' => '1',
-                    'class' => '1',
                     'grades' => block_exastud_get_grades_set('mit_plus_minus_bis'),
                     'inputs' => [
                             'learn_social_behavior' => [
@@ -2356,7 +2348,6 @@ function block_exastud_get_default_templates() {
                     'date_of_birth' => '1',
                     'place_of_birth' => '1',
                     'learning_group' => '1',
-                    'class' => '1',
                     'grades' => block_exastud_get_grades_set('1_bis_6'),
                     'inputs' => [
                             'learn_social_behavior' => [
@@ -2401,7 +2392,6 @@ function block_exastud_get_default_templates() {
                     'date_of_birth' => '1',
                     'place_of_birth' => '1',
                     'learning_group' => '1',
-                    'class' => '1',
                     'grades' => block_exastud_get_grades_set('mit_plus_minus_bis_ausgeschrieben'),
                     'inputs' => [
                             'ags' => [
@@ -2432,19 +2422,18 @@ function block_exastud_get_default_templates() {
                     'date_of_birth' => '1',
                     'place_of_birth' => '1',
                     'learning_group' => '1',
-                    'class' => '1',
                     'grades' => block_exastud_get_grades_set('short'),
-                    'inputs' => [/*
+                    'inputs' => [
                             'verhalten' => [
                                     'title' => 'Verhalten',
                                     'type' => 'select',
-                                    'values' => [1 => 'sgt', 2 => 'gut', 3 => 'bfr', 6 => 'unbfr'],
+                                    'values' => ['sgt' => 'sgt', 'gut' => 'gut', 'bfr' => 'bfr', 'unbfr' => 'unbfr'],
                             ],
                             'mitarbeit' => [
                                     'title' => 'Mitarbeit',
                                     'type' => 'select',
-                                    'values' => [1 => 'sgt', 2 => 'gut', 3 => 'bfr', 6 => 'unbfr'],
-                            ],*/
+                                    'values' => ['sgt' => 'sgt', 'gut' => 'gut', 'bfr' => 'bfr', 'unbfr' => 'unbfr'],
+                            ],
                             'ags' => [
                                     'title' => 'Teilnahme an Arbeitsgemeinschaften',
                                     'type' => 'textarea',
@@ -2473,7 +2462,6 @@ function block_exastud_get_default_templates() {
                     'date_of_birth' => '1',
                     'place_of_birth' => '1',
                     'learning_group' => '1',
-                    'class' => '1',
                     'grades' => block_exastud_get_grades_set('lang'),
                     'inputs' => [
                             'wann_verlassen' => [
@@ -2523,7 +2511,6 @@ function block_exastud_get_default_templates() {
                     'date_of_birth' => '1',
                     'place_of_birth' => '1',
                     'learning_group' => '1',
-                    'class' => '1',
                     'grades' => block_exastud_get_grades_set('lang'),
                     'inputs' => [
                             'wann_verlassen' => [
@@ -2582,7 +2569,6 @@ function block_exastud_get_default_templates() {
                     'date_of_birth' => '1',
                     'place_of_birth' => '1',
                     'learning_group' => '1',
-                    'class' => '1',
                     'grades' => block_exastud_get_grades_set('short'),
                     'inputs' => [
                             'ags' => [
@@ -2613,18 +2599,16 @@ function block_exastud_get_default_templates() {
                     'date_of_birth' => '1',
                     'place_of_birth' => '1',
                     'learning_group' => '1',
-                    'class' => '1',
                     'grades' => block_exastud_get_grades_set('lang'),
                     'inputs' => [
-                        /*
                         'abgelegt' => [
                             'title' => 'Hat die Hauptschulabschlussprüfung nach',
                             'type' => 'select',
                             'values' => [
-                                'nach9' => 'Klasse 9 der Gemeinschaftsschule mit Erfolg abgelegt.',
-                                'nach10' => 'Klasse 10 der Gemeinschaftsschule mit Erfolg abgelegt.',
+                                'Hat die Hauptschulabschlussprüfung nach Klasse 9 der Gemeinschaftsschule mit Erfolg abgelegt.' => 'Hat die Hauptschulabschlussprüfung nach Klasse 9 der Gemeinschaftsschule mit Erfolg abgelegt.',
+                                'Hat die Hauptschulabschlussprüfung nach Klasse 10 der Gemeinschaftsschule mit Erfolg abgelegt.' => 'Hat die Hauptschulabschlussprüfung nach Klasse 10 der Gemeinschaftsschule mit Erfolg abgelegt.',
                             ],
-                        ],*/
+                        ],
                         'projekt_thema' => [
                             'title' => 'Thema',
                             'type' => 'textarea',
@@ -2677,7 +2661,6 @@ function block_exastud_get_default_templates() {
                     'date_of_birth' => '1',
                     'place_of_birth' => '1',
                     'learning_group' => '1',
-                    'class' => '1',
                     'grades' => block_exastud_get_grades_set('short'),
                     'inputs' => [
                             'ags' => [
@@ -2708,7 +2691,6 @@ function block_exastud_get_default_templates() {
                     'date_of_birth' => '1',
                     'place_of_birth' => '1',
                     'learning_group' => '1',
-                    'class' => '1',
                     'grades' => block_exastud_get_grades_set('lang'),
                     'inputs' => [
                         'projekt_thema' => [
@@ -2759,13 +2741,12 @@ function block_exastud_get_default_templates() {
                     'date_of_birth' => '1',
                     'place_of_birth' => '1',
                     'learning_group' => '1',
-                    'class' => '1',
                     'grades' => block_exastud_get_grades_set('lang'),
                     'inputs' => [
                             'focus' => [
                                     'title' => 'Förderschwerpunkt',
                                     'type' => 'select',
-                                    'values' => ['Lernen' => 'Lernen', 'geistige Enwicklung' => 'geistige Enwicklung'],
+                                    'values' => ['Lernen' => 'Lernen', 'geistige Entwicklung' => 'geistige Entwicklung'],
                             ],/*
                             'gesamtnote_und_durchschnitt_der_gesamtleistungen' => [
                                     'title' => 'Gesamtnote und Durchschnitt der Gesamtleistungen',
@@ -2807,6 +2788,11 @@ function block_exastud_get_default_templates() {
                                     'title' => 'Profil-fach',
                                     'type' => 'textarea',
                             ],
+                            'class' => [
+                                    'title' => 'Klasse',
+                                    'type' => 'select',
+                                    'values' => ['9' => '9', '10' => '10'],
+                            ],
                     ],
             ],
             'BP 2004/GMS Halbjahreszeugniss der Förderschule' => [
@@ -2819,13 +2805,12 @@ function block_exastud_get_default_templates() {
                     'date_of_birth' => '1',
                     'place_of_birth' => '1',
                     'learning_group' => '1',
-                    'class' => '1',
                     'grades' => block_exastud_get_grades_set('short'),
                     'inputs' => [
                             'focus' => [
                                     'title' => 'Förderschwerpunkt',
                                     'type' => 'select',
-                                    'values' => ['Lernen' => 'Lernen', 'geistige Enwicklung' => 'geistige Enwicklung'],
+                                    'values' => ['Lernen' => 'Lernen', 'geistige Entwicklung' => 'geistige Entwicklung'],
                             ],
                             'ags' => [
                                     'title' => 'Teilnahme an Arbeitsgemeinschaften',
@@ -2843,6 +2828,11 @@ function block_exastud_get_default_templates() {
                                     'title' => 'Profil-fach',
                                     'type' => 'textarea',
                             ],
+                            'class' => [
+                                    'title' => 'Klasse',
+                                    'type' => 'select',
+                                    'values' => ['9' => '9', '10' => '10'],
+                            ],
                     ],
             ],
             'Deckblatt und 1. Innenseite LEB' => [
@@ -2855,7 +2845,6 @@ function block_exastud_get_default_templates() {
                     'date_of_birth' => '1',
                     'place_of_birth' => '1',
                     'learning_group' => '1',
-                    'class' => '1',
                     'inputs' => [],
             ],
             'BP 2004/Halbjahresinformation Kl11' => [
@@ -2868,7 +2857,6 @@ function block_exastud_get_default_templates() {
                     'date_of_birth' => '1',
                     'place_of_birth' => '1',
                     'learning_group' => '1',
-                    'class' => '1',
                     'grades' => block_exastud_get_grades_set('mit_plus_minus_bis_ausgeschrieben'),
                     'inputs' => [
                             'ags' => [
@@ -2899,7 +2887,6 @@ function block_exastud_get_default_templates() {
                     'date_of_birth' => '1',
                     'place_of_birth' => '1',
                     'learning_group' => '1',
-                    'class' => '1',
                     'grades' => block_exastud_get_grades_set('mit_plus_minus_bis_ausgeschrieben'),
                     'inputs' => [
                             'ags' => [
@@ -2960,7 +2947,7 @@ function block_exastud_fill_reportsettingstable($id = 0) {
         $data['bpid'] = $bpid;
         $data['template'] = $template['file'];
         $checkboxes = array('year', 'report_date', 'report_date', 'student_name',
-                'date_of_birth', 'place_of_birth', 'learning_group', 'class', 'focus');
+                'date_of_birth', 'place_of_birth', 'learning_group'/*, 'class', 'focus'*/);
         foreach ($checkboxes as $f) {
             if (array_key_exists($f, $template)) {
                 $data[$f] = serialize(array('checked' => "".$template[$f]));

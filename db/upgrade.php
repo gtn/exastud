@@ -886,13 +886,6 @@ function xmldb_block_exastud_upgrade($oldversion = 0) {
         upgrade_block_savepoint(true, 2019011600, 'exastud');
     }
 
-    if ($oldversion < 2019011601) {
-        // reset reports
-        $DB->delete_records('block_exastudreportsettings', ['id' => 19]);
-        block_exastud_fill_reportsettingstable(19);
-        upgrade_block_savepoint(true, 2019011601, 'exastud');
-    }
-
     if ($oldversion < 2019011607) {
         // delete Informatik
         $DB->execute(' DELETE FROM {block_exastudsubjects} WHERE shorttitle = \'I\' ', []);
@@ -956,6 +949,28 @@ function xmldb_block_exastud_upgrade($oldversion = 0) {
             }
         }
         upgrade_block_savepoint(true, 2019011710, 'exastud');
+    }
+
+    if ($oldversion < 2019011801) {
+        // typo
+        $DB->execute(' UPDATE {block_exastuddata} SET value = ? WHERE value = ? ', ['geistige Entwicklung', 'geistige Enwicklung']);
+        // reset reports (all, because 'class' property is in the all reports
+        for ($i = 1; $i <= 22; $i++) {
+            $DB->delete_records('block_exastudreportsettings', ['id' => $i]);
+            block_exastud_fill_reportsettingstable($i);
+        }
+        // old verhalten, mitarbeit to new
+        $convert = [1 => 'sgt', 2 => 'gut', 3 => 'bfr', 6 => 'unbfr'];
+        foreach ($convert as $old => $new) {
+            $DB->execute(' UPDATE {block_exastuddata} SET value = ? WHERE (name = ? OR name = ?) AND value = ? ', [$new, 'verhalten', 'mitarbeit', $old]);
+        }
+        // old 'abgelegt' to new
+        $convert = ['nach9' => 'Hat die Hauptschulabschlussprüfung nach Klasse 9 der Gemeinschaftsschule mit Erfolg abgelegt.',
+                    'nach10' => 'Hat die Hauptschulabschlussprüfung nach Klasse 10 der Gemeinschaftsschule mit Erfolg abgelegt.'];
+        foreach ($convert as $old => $new) {
+            $DB->execute(' UPDATE {block_exastuddata} SET value = ? WHERE name = ? AND value = ? ', [$new, 'abgelegt', $old]);
+        }
+        upgrade_block_savepoint(true, 2019011801, 'exastud');
     }
 
     block_exastud_insert_default_entries();

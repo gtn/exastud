@@ -440,6 +440,7 @@ class printer {
                     $dataTextReplacer['Wählen Sie ein Element aus.'] = '';
                     $dataTextReplacer['Beiblatt'] = '';
                     $studentdata->focus = '/--empty--/';
+                    $data['focus'] = '/--empty--/';
                     //echo "<pre>debug:<strong>printer.php:401</strong>\r\n"; print_r($studentdata); echo '</pre>'; exit; // !!!!!!!!!! delete it
                     $data['first_name'] = '';
                     $data['comments'] = '';
@@ -768,8 +769,8 @@ class printer {
 				}
 			} elseif ($templateid == BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_ABSCHLUSSZEUGNIS_HS) {
 				//$data['gd'] = @$studentdata->gesamtnote_und_durchschnitt_der_gesamtleistungen;
-
-				$values = [
+                // moved to marker ${abgelegt}
+				/*$values = [
 					'9' => 'hat die Hauptschulabschlussprüfung nach Klasse 9 der Gemeinschaftsschule mit Erfolg abge-legt.',
 					'10' => 'hat die Hauptschulabschlussprüfung nach Klasse 10 der Gemeinschaftsschule mit Erfolg abge-legt.',
 				];
@@ -781,7 +782,7 @@ class printer {
 					}
 
 					return $ret;
-				});
+				});*/
 			} elseif ($templateid == BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_HALBJAHRESINFORMATION_KL11) {
                 $add_filter(function($content) use ($profileFachPhysikOption) {
                     $ret = preg_replace('!>[^<]*\* Physik wurde[^<]*<!U', '>'.$profileFachPhysikOption.'<', $content, -1, $count);
@@ -838,7 +839,8 @@ class printer {
                     }
                 } else {
 				    $tempProfilfach = $profilfach;
-				    if ($profilfach == self::spacerIfEmpty('')) {
+				    if ($profilfach == self::spacerIfEmpty('')
+                        && $templateid != BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_HALBJAHR_ZEUGNIS_E_NIVEAU) {
                         $tempProfilfach = '';
                     }
                     $content = preg_replace('!(Profilfach.*>)Spanisch(<)!U', '${1}'.$tempProfilfach.'${2}', $content, 1, $count);
@@ -1029,17 +1031,18 @@ class printer {
 		}
 
 		if (array_key_exists('focus', $inputs)) {
-            //$data['gd'] = static::spacerIfEmpty(@$studentdata->gesamtnote_und_durchschnitt_der_gesamtleistungen);
-            $focus = static::spacerIfEmpty(@$studentdata->focus);
+		    // now here is used ${focus} marker for testing
+            /*$focus = static::spacerIfEmpty(@$studentdata->focus);
             $add_filter(function($content) use ($focus, $templateid) {
                 // for Förderschwerpunkt
                 $ret = preg_replace('!>[^<]*Lernen\.[^<]*<!U', '>'.$focus.'<', $content, -1, $count);
                 if (!$count) {
-                    throw new \Exception('"Förderschwerpunkt" not found in report: '.$templateid);
+                    throw new \Exception('"${focus}" not found in report: '.$templateid);
                 }
 
                 return $ret;
             });
+            */
         }
 
 		// TODO: how we can check template generation?
@@ -1053,11 +1056,53 @@ class printer {
 			exit();
 		}*/
 
+		// compare $data with values in selectboxes. If it is empty (---) - delete <w:sdtContent>, if not - delete option
+        $inputs = print_templates::get_template_inputs($templateid, 'all');
+        foreach ($data as $dKey => $dItem) {
+            // it is selectbox
+            if (array_key_exists($dKey, $inputs) && $inputs[$dKey]['type'] == 'select') {
+                //echo "<pre>debug:<strong>printer.php:1061</strong>\r\n"; print_r($inputs); echo '</pre>'; // !!!!!!!!!! delete it
+                //echo "<pre>debug:<strong>printer.php:1061</strong>\r\n"; print_r($data); echo '</pre>'; exit; // !!!!!!!!!! delete it
+                // delete option with key marker
+                $add_filter(function($content) use ($dKey) {
+                    $ret = preg_replace('!<w:listItem[^>]*w:value="\${'.$dKey.'}".*\/>!Us', '', $content, -1, $count);
+                    return $ret;
+                });
+                if (in_array($dItem, ['---', '/--empty--/'])) {
+                    // delete stdContent
+                    $add_filter(function($content) use ($dKey) {
+                        //$ret = preg_replace('!(<w:sdtContent>.*)\${'.$dKey.'}(.*<\/w:sdtContent>)!Us', '${1}Wählen Sie ein Element aus.${2}', $content, -1, $count);
+                        // add custom style to Placeholder
+                        $ret = preg_replace('~(<w:sdtContent>[^\/]*)(<w:rPr>)((?:(?!<w:sdtContent>).)*)(<\/w:rPr>[^\/]*)\${'.$dKey.'}(.*<\/w:sdtContent>)~Us',
+                                            '${1}${2}
+                                                <w:color w:val="555555" />
+										        <w:sz w:val="12" />
+										        ${4}Wählen Sie ein Element aus.${5}', $content, -1, $count);
+                        if (!$count) { // another dropdown
+                            $ret = preg_replace('~(<w:sdtContent>[^\/]*)(<w:pPr>.*<\/w:pPr>)(.*)(<w:rPr>)((?:(?!<w:sdtContent>).)*)(<\/w:rPr>[^\/]*)\${'.$dKey.'}(.*<\/w:sdtContent>)~Us',
+                                    '${1}${2}${3}${4}
+                                                <w:color w:val="555555" />
+										        <w:sz w:val="14" />
+										        ${6}Wählen Sie ein Element aus.${7}', $content, -1, $count);
+                        }
+                        /*$ret = preg_replace('!(<w:sdtContent>[^\/]*)(<w:rPr>)(.*)(<\/w:rPr>[^\/]*)\${class}(.*<\/w:sdtContent>)!Us',
+                                            '${1}${2}
+                                                <w:color w:val="555555" />
+										        <w:sz w:val="12" />
+										        ${4}Wählen Sie ein Element aus.${5}', $content, -1, $count);*/
+                        //$ret = preg_replace('!<w:sdtContent>.*\${'.$dKey.'}.*<\/w:sdtContent>!Us', '', $content, -1, $count);
+                        return $ret;
+                    });
+                }
+            }
+        }
+//echo "<pre>debug:<strong>printer.php:1088</strong>\r\n"; print_r($filters); echo '</pre>'; exit; // !!!!!!!!!! delete it
 		// zuerst filters
 		$templateProcessor->applyFilters($filters);
 		//echo "<pre>debug:<strong>printer.php:898</strong>\r\n"; print_r($filters); echo '</pre>'; exit; // !!!!!!!!!! delete it
         //echo "<pre>debug:<strong>printer.php:904</strong>\r\n"; print_r($templateProcessor->getDocumentMainPart()); echo '</pre>'; exit; // !!!!!!!!!! delete it
         //echo "<pre>debug:<strong>printer.php:999</strong>\r\n"; print_r($dataTextReplacer); echo '</pre>'; exit; // !!!!!!!!!! delete it
+        //echo "<pre>debug:<strong>printer.php:1062</strong>\r\n"; print_r($data); echo '</pre>'; exit; // !!!!!!!!!! delete it
 		$templateProcessor->setValues($data);
 		$templateProcessor->replaceWords($dataTextReplacer);
 

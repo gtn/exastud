@@ -94,13 +94,12 @@ class print_templates {
 
     static function get_inputs_for_template($templateid, $type = BLOCK_EXASTUD_DATA_ID_LERN_UND_SOZIALVERHALTEN) {
         $template = g::$DB->get_record('block_exastudreportsettings', ['id' => $templateid]);
-        // TODO: how to get inputs? by category? (social, print,...)
         switch ($type) {
             case BLOCK_EXASTUD_DATA_ID_LERN_UND_SOZIALVERHALTEN:
                 $fields = array('learn_social_behavior');
                 break;
             case BLOCK_EXASTUD_DATA_ID_PRINT_TEMPLATE:
-                $fields = array('comments', /*'subjects', 'subject_elective', 'subject_profile',*/ 'ags', 'focus');
+                $fields = array('comments', /*'subjects', 'subject_elective', 'subject_profile',*/ 'ags', 'focus', 'class');
                 $fieldsAdditional = unserialize($template->additional_params);
                 if (is_array($fieldsAdditional)) {
                     $fields = array_merge($fields, $fieldsAdditional);
@@ -158,7 +157,7 @@ class print_templates {
                 }
                 break;
             case 'all':
-                $fieldsstatic = array('learn_social_behavior', 'subjects', 'comments', 'subject_elective', 'subject_profile', 'projekt_thema', 'ags', 'focus');
+                $fieldsstatic = array('learn_social_behavior', 'subjects', 'comments', 'subject_elective', 'subject_profile', 'projekt_thema', 'ags', 'focus', 'class');
                 $customfields = unserialize($template->additional_params);
                 if ($customfields) {
                     $fields = array_merge($fieldsstatic, $customfields);
@@ -180,7 +179,6 @@ class print_templates {
             } else {
                 continue;
             }
-            
             if ($fieldData['checked'] == 1) {
                 $inputs[$field] = array(
                         'title' => $fieldData['title'],
@@ -757,7 +755,8 @@ class print_templates {
             'date_of_birth' => array('geburtsdatum', 'geburt'),
             'place_of_birth' => array('gebort'),
             'learning_group' => array(),
-            'class' => array('klasse', 'kla'),
+            //'class' => array('klasse', 'kla'),
+            'class' => array(),
             'focus' => array()
         );
         $valueInsert = function($field, $value) use (&$markers, $checkboxes) {
@@ -800,8 +799,11 @@ class print_templates {
                         break;
                     case 'learning_group':
                         //$fieldValue = ' -- learning group -- ';
-                    case 'class':
                         $fieldValue = $class->title;
+                        break;
+                    case 'class':
+                        //$fieldValue = $class->title;
+                        $fieldValue = ' -- class -- ';
                         break;
                     case 'focus':
                         $fieldValue = ' -- focus -- ';
