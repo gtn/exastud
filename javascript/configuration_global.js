@@ -48,6 +48,9 @@
 			if (this.disabled) {
 				$item.addClass('ui-state-disabled');
 			}
+			if (!this.canDelete) {
+				$item.find('button[exa="delete-button"]').remove();
+			}
 		});
 
 		if (sorting) {

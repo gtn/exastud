@@ -315,6 +315,7 @@ if ($action == 'subjects') {
 	    if (!$canEdit) {
 			$subject->disabled = true;
 		}
+		$subject->canDelete = block_exastud_can_delete_subject($subject);
 	}
 
 	echo "<h2>".block_exastud_trans('de:Bildungsplan').": {$bp->title}</h2>";

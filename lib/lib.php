@@ -1605,6 +1605,10 @@ function block_exastud_can_edit_bp($bp) {
 	return !preg_match('!^bw\-*!', $bp->sourceinfo);
 }
 
+function block_exastud_can_delete_subject($subject) {
+	return !preg_match('!^bw\-*!', $subject->sourceinfo);
+}
+
 function block_exastud_can_edit_class($class) {
 	return $class->userid == g::$USER->id;
 }
