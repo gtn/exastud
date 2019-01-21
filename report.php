@@ -160,7 +160,6 @@ if ($classid = optional_param('classid', 0, PARAM_INT)) {
                         $files_to_zip[$file->temp_file] =
                                 '/'.$student->firstname.'-'.$student->lastname.'-'.$student->id.'/'.$file->filename;
                     }
-
                     //ob_clean();
                     //if ($content = ob_get_clean()) {
                     //    throw new \Exception('there was some other output: '.$content);

@@ -441,9 +441,12 @@ class printer {
                     $dataTextReplacer['Beiblatt'] = '';
                     $studentdata->focus = '/--empty--/';
                     $data['focus'] = '/--empty--/';
+                    $dataTextReplacer['${lessons_target}'] = '';
+                    $data['lessons_target'] = '/--set-empty--/';
+                    $studentdata->lessons_target = '';
                     //echo "<pre>debug:<strong>printer.php:401</strong>\r\n"; print_r($studentdata); echo '</pre>'; exit; // !!!!!!!!!! delete it
                     $data['first_name'] = '';
-                    $data['comments'] = '';
+                    //$data['comments'] = '';
                 }
             }
 
@@ -1091,29 +1094,48 @@ class printer {
                     $ret = preg_replace('!<w:listItem[^>]*w:value="\${'.$dKey.'}".*\/>!Us', '', $content, -1, $count);
                     return $ret;
                 });
-                if (in_array($dItem, ['---', '/--empty--/'])) {
+                if (in_array($dItem, ['---', '/--empty--/', '/--set-empty--/'])) {
+                    $select_text = 'Wählen Sie ein Element aus.';
+                    if ($dItem == '/--set-empty--/') {
+                        $select_text = '';
+                    }
                     // delete stdContent
-                    $add_filter(function($content) use ($dKey) {
-                        //$ret = preg_replace('!(<w:sdtContent>.*)\${'.$dKey.'}(.*<\/w:sdtContent>)!Us', '${1}Wählen Sie ein Element aus.${2}', $content, -1, $count);
-                        // add custom style to Placeholder
-                        $ret = preg_replace('~(<w:sdtContent>[^\/]*)(<w:rPr>)((?:(?!<w:sdtContent>).)*)(<\/w:rPr>[^\/]*)\${'.$dKey.'}(.*<\/w:sdtContent>)~Us',
-                                            '${1}${2}
+                    $add_filter(function($content) use ($dKey, $templateid, $select_text) {
+                        //try {
+                            //$ret = preg_replace('!(<w:sdtContent>.*)\${'.$dKey.'}(.*<\/w:sdtContent>)!Us', '${1}Wählen Sie ein Element aus.${2}', $content, -1, $count);
+                            // add custom style to Placeholder
+                            $ret = preg_replace('~(<w:sdtContent>[^\/]*)(<w:rPr>)((?:(?!<w:sdtContent>).)*)(<\/w:rPr>[^\/]*)\${'.$dKey.'}(.*<\/w:sdtContent>)~Us',
+                                    '${1}${2}
                                                 <w:color w:val="555555" />
 										        <w:sz w:val="12" />
-										        ${4}Wählen Sie ein Element aus.${5}', $content, -1, $count);
-                        if (!$count) { // another dropdown
-                            $ret = preg_replace('~(<w:sdtContent>[^\/]*)(<w:pPr>.*<\/w:pPr>)(.*)(<w:rPr>)((?:(?!<w:sdtContent>).)*)(<\/w:rPr>[^\/]*)\${'.$dKey.'}(.*<\/w:sdtContent>)~Us',
-                                    '${1}${2}${3}${4}
+										        ${4}'.$select_text.'${5}', $content, -1, $count);
+                            if (!$count) { // another dropdown
+                                $ret = preg_replace('~(<w:sdtContent>[^\/]*)(<w:pPr>.*<\/w:pPr>)(.*)(<w:rPr>)((?:(?!<w:sdtContent>).)*)(<\/w:rPr>[^\/]*)\${'.$dKey.'}(.*<\/w:sdtContent>)~Us',
+                                                '${1}${2}${3}${4}
                                                 <w:color w:val="555555" />
 										        <w:sz w:val="14" />
-										        ${6}Wählen Sie ein Element aus.${7}', $content, -1, $count);
-                        }
-                        /*$ret = preg_replace('!(<w:sdtContent>[^\/]*)(<w:rPr>)(.*)(<\/w:rPr>[^\/]*)\${class}(.*<\/w:sdtContent>)!Us',
-                                            '${1}${2}
+										        ${6}'.$select_text.'${7}', $content, -1, $count);
+                            }
+                            if (!$count) { // another dropdown
+                                $ret = preg_replace('~(<w:sdtContent>[^\/]*)\${'.$dKey.'}(.*<\/w:sdtContent>)~Us',
+                                                '${1}<w:rPr>
                                                 <w:color w:val="555555" />
-										        <w:sz w:val="12" />
-										        ${4}Wählen Sie ein Element aus.${5}', $content, -1, $count);*/
-                        //$ret = preg_replace('!<w:sdtContent>.*\${'.$dKey.'}.*<\/w:sdtContent>!Us', '', $content, -1, $count);
+										        <w:sz w:val="14" /></w:rPr>${2}
+										        '.$select_text.'${3}', $content, -1, $count);
+                            }
+                            /*$ret = preg_replace('!(<w:sdtContent>[^\/]*)(<w:rPr>)(.*)(<\/w:rPr>[^\/]*)\${class}(.*<\/w:sdtContent>)!Us',
+                                                '${1}${2}
+                                                    <w:color w:val="555555" />
+                                                    <w:sz w:val="12" />
+                                                    ${4}Wählen Sie ein Element aus.${5}', $content, -1, $count);*/
+                            //$ret = preg_replace('!<w:sdtContent>.*\${'.$dKey.'}.*<\/w:sdtContent>!Us', '', $content, -1, $count);
+                        //} catch (\Exception $e) {
+                        //    throw new \Exception('"asdasdasd" not found');
+                        //}
+                        if (!$count) {
+                            return $content;
+                            throw new \Exception('"'.$dKey.'" in template "'.$templateid.'" not found');
+                        }
                         return $ret;
                     });
                 }
@@ -1121,6 +1143,8 @@ class printer {
         }
 //echo "<pre>debug:<strong>printer.php:1088</strong>\r\n"; print_r($filters); echo '</pre>'; exit; // !!!!!!!!!! delete it
 		// zuerst filters
+        //unset($filters[5]);
+        //unset($filters[6]);
 		$templateProcessor->applyFilters($filters);
 		//echo "<pre>debug:<strong>printer.php:898</strong>\r\n"; print_r($filters); echo '</pre>'; exit; // !!!!!!!!!! delete it
         //echo "<pre>debug:<strong>printer.php:904</strong>\r\n"; print_r($templateProcessor->getDocumentMainPart()); echo '</pre>'; exit; // !!!!!!!!!! delete it
