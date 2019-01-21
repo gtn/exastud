@@ -38,6 +38,7 @@ $output = block_exastud_get_renderer();
 $url = '/blocks/exastud/report.php?courseid='.$courseid.'&startPeriod='.$startPeriod;
 $PAGE->set_url($url);
 
+set_time_limit(600);
 
 ob_clean();
 
