@@ -654,18 +654,39 @@ class printer {
                     return $ret;
                 }, $replacefilter);
 
+                // The average is counted only for one report (21.01.2019). So use ONLY this list of subjects:
+                $avgCalcSubjects = array('D', 'M', 'E', 'G', 'BK', 'Mu', 'Sp', 'EWG', 'NWA');
+                $avgCalcSubjectsRel = array('eth', 'alev', 'ak', 'ev', 'isl', 'jd', 'rk', 'orth', 'syr');
+                $avgCalcSubjectsWPF = array('WPF F', 'WPF MuM', 'WPF Te');
+                $avgCalcSubjectsProfil = array('Profil BK', 'Profil Mu', 'Profil Nut', 'Profil S', 'Profil Sp');
+                $avgCalcAll = array_merge($avgCalcSubjects, $avgCalcSubjectsRel, $avgCalcSubjectsWPF, $avgCalcSubjectsProfil);
+                if (!isset($religionGrade)) {
+                    $religionGrade = 0;
+                }
 				$gradeForCalc = (float)block_exastud_get_grade_index_by_value($grade);
                 // to calculate the average grade
-                if ($subject->not_relevant == 1) {
-                    if ($gradeForCalc < $min) {
-                        $min = $gradeForCalc;
+                if (in_array($subject->shorttitle, $avgCalcAll)) {
+                    // look on religion (only one or Ethik).
+                    // Cause 'Ethik' we need to look not only for first value. So add this value later. now - ignore that
+                    if (in_array($subject->shorttitle, $avgCalcSubjectsRel)) {
+                        $religionGrade = $gradeForCalc;
+                    } else {
+                        if ($subject->not_relevant == 1) {
+                            if ($gradeForCalc < $min) {
+                                $min = $gradeForCalc;
+                            }
+                            $rsum += $gradeForCalc;
+                            $rcnt++;
+                        }
+                        $sum += $gradeForCalc;
+                        $scnt++;
                     }
-                    $rsum += $gradeForCalc;
-                    $rcnt++;
                 }
-                $sum += $gradeForCalc;
-                $scnt++;
 			}
+			if (isset($religionGrade) && $religionGrade > 0) {
+			    $sum += $religionGrade;
+			    $scnt++;
+            }
 			if ($scnt > 0) {
                 $avg = $sum / $scnt;
             } else {
@@ -678,7 +699,9 @@ class printer {
                             BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_ABGANGSZEUGNIS_FOE, // is this need?
                             BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_ABSCHLUSSZEUGNIS_HS,
                     ])) {
-                $avg = round($avg, 1, PHP_ROUND_HALF_DOWN);
+                //$avg = round($avg, 1, PHP_ROUND_HALF_DOWN); // not always correct. ???
+                $fig = (int) str_pad('1', 2, '0'); // 2 (second parameter) - precision
+                $avg  = (floor($avg * $fig) / $fig); // - ALWAYS round down!
                 $data['gd'] = number_format($avg, 1, ',', '');
                 $avgVerbal = 'sehr gut';
                 if ($avg >= 1.5 && $avg <= 2.4) {
