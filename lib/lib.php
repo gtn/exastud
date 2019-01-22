@@ -3140,6 +3140,56 @@ function block_exastud_cropStringByInputLimitsFromTemplate($string, $templateid,
     return implode("\r\n", $tempContentRows);
 }
 
+function block_exastud_get_grade_average_value($subjects = array(), $verbal = false) {
+    global $DB;
+    $min = 6; // TODO: or 0 or 6 or 7?
+    $rsum = 0.0;
+    $rcnt = 0;
+    $sum = 0.0;
+    $scnt = 0;
+    foreach ($subjects as $sId => $grade) {
+        $subject = $DB->get_record('block_exastudsubjects', ['id' => $sId]);
+        if ($subject) {
+            $gradeForCalc = (float) block_exastud_get_grade_index_by_value($grade);
+            if ($subject->not_relevant == 1) {
+                if ($gradeForCalc < $min) {
+                    $min = $gradeForCalc;
+                }
+                $rsum += $gradeForCalc;
+                $rcnt++;
+            }
+            $sum += $gradeForCalc;
+            $scnt++;
+        }
+    }
+    if ($scnt > 0) {
+        $avg = $sum / $scnt;
+    } else {
+        $avg = 0;
+    }
+    if ($avg > 4.4) {
+        $avg = (($sum - $rsum) + $min) / (($scnt - $rcnt) + 1);
+    }
+    //$avg = round($avg, 1, PHP_ROUND_HALF_DOWN); // not always correct. ???
+    $fig = (int) str_pad('1', 2, '0'); // 2 (second parameter) - precision
+    $avg  = (floor($avg * $fig) / $fig); // - ALWAYS round down!
+    $result = number_format($avg, 1, ',', '');
+    if ($verbal) {
+        $avgVerbal = 'sehr gut';
+        if ($avg >= 1.5 && $avg <= 2.4) {
+            $avgVerbal = 'gut';
+        } else if ($avg >= 2.5 && $avg <= 3.4) {
+            $avgVerbal = 'befriedigend';
+        } else if ($avg >= 3.5 && $avg <= 4.4) {
+            $avgVerbal = 'ausreichend';
+        } else if ($avg >= 4.5) {
+            $avgVerbal = 'mangelhaft';
+        }
+        return $avgVerbal;
+    }
+    return $result;
+}
+
 /*
 function block_exastud_encrypt_raw($value, $secret) {
 	$iv = openssl_random_pseudo_bytes(openssl_cipher_iv_length('aes-256-cbc'));

@@ -1246,6 +1246,10 @@ class printer {
         $columnStart = 0;
         $templateProcessor->duplicateCell('gs', $columnsCount - 1);
         $templateProcessor->duplicateCell('gst', ($columnsCount - 1) * 2);
+
+        // for average column
+        //$templateProcessor->duplicateCell('gs', 1);
+        //$templateProcessor->duplicateCell('gst', 2);
         /*for ($k = 1; $k <= $columnsCount -1; $k++) {
             $templateProcessor->duplicateCell('gsg', 1);
             $templateProcessor->duplicateCell('gss', 1);
@@ -1255,6 +1259,7 @@ class printer {
             $shorttitle = preg_replace('/(^\s+|\s+$|\s+)/', mb_convert_encoding('&#160;', 'UTF-8', 'HTML-ENTITIES'), $shorttitle); // insert &nbsp to table header
             $templateProcessor->setValue("gs", $shorttitle, 1);
         }
+        $templateProcessor->setValue("avg", 'Notendurchschnitt');
         $templateProcessor->setValue("gs", '');
 
         // Change orientation if count of columns > 10
@@ -1274,6 +1279,7 @@ class printer {
 		foreach ($students as $student) {
 			$rowi++;
 			$templateProcessor->setValue("student#$rowi", $rowi.'. '.fullname($student));
+            $subjectsToAverage = array();
 
 			// normal subjects
 			foreach ($normal_subjects as $subject) {
@@ -1284,6 +1290,7 @@ class printer {
 				        $value .= $subjectData->niveau.' ';
                     }
                     if (isset($subjectData->grade)) {
+                        $subjectsToAverage[$subject->id] = $subjectData->grade;
                         $value .= $subjectData->grade;
                     }
                 }
@@ -1308,6 +1315,7 @@ class printer {
                         $value .= $subjectData->niveau.' ';
                     }
                     if (isset($subjectData->grade)) {
+                        $subjectsToAverage[$subject->id] = $subjectData->grade;
                         $value .= $subjectData->grade;
                     }
 
@@ -1336,6 +1344,11 @@ class printer {
                 $templateProcessor->setValue("gst#$rowi", $value, 1);
                 $templateProcessor->setValue("gst#$rowi", $value ? $subjectShorttitle : '', 1);
             }
+            // add average values
+            $avg = block_exastud_get_grade_average_value($subjectsToAverage);
+            //$avgVerbal = block_exastud_get_grade_average_value($subjectsToAverage, true);
+            $templateProcessor->setValue("gavg#$rowi", $avg, 1);
+            //$templateProcessor->setValue("gst#$rowi", $avgVerbal ? $avgVerbal : '', 1);
 
             $templateProcessor->setValue("gsg#$rowi", '');
             $templateProcessor->setValue("gss#$rowi", '');
@@ -1458,6 +1471,7 @@ class printer {
 		//require_once $CFG->dirroot.'/lib/filelib.php';
 		//send_temp_file($temp_file, $filename);
 	}
+
 	static function grades_report_html($class, $students) {
 		global $CFG;
 
@@ -1511,6 +1525,7 @@ class printer {
         $groupedSubjectTitles = array();
         // at first - generate data for subjects. So we will can hide empty columns
         $studentsData = array();
+        $subjectsForAvg = array();
         foreach ($students as $student) {
             // normal subjects
             foreach ($normal_subjects as $subject) {
@@ -1521,6 +1536,7 @@ class printer {
                         $value .= $subjectData->niveau.' ';
                     }
                     if (isset($subjectData->grade)) {
+                        $subjectsForAvg[$student->id][$subject->id] = $subjectData->grade;
                         $value .= $subjectData->grade;
                     }
                 }
@@ -1541,6 +1557,7 @@ class printer {
                                 $value .= $subjectData->niveau.' ';
                             }
                             if (isset($subjectData->grade)) {
+                                $subjectsForAvg[$student->id][$subject->id] = $subjectData->grade;
                                 $value .= $subjectData->grade;
                             }
                         }
@@ -1575,6 +1592,12 @@ class printer {
                 $subjectsTable->align[] = 'center';
             }
         }
+        // average column
+        $hCell = new \html_table_cell();
+        //$hCell->colspan = 2;
+        $hCell->text = 'Notendurchschnitt';
+        $subjectsTable->head[] = $hCell;
+        $subjectsTable->align[] = 'center';
 
 
 		foreach ($students as $student) {
@@ -1591,6 +1614,10 @@ class printer {
                     }
                 }
             }
+            $avg = block_exastud_get_grade_average_value($subjectsForAvg[$student->id]);
+            //$avgVerbal = block_exastud_get_grade_average_value($subjectsForAvg, true);
+            $cells[] = $avg;
+            //$cells[] = $avgVerbal;
 
             $row->cells = $cells;
             $subjectsTable->data[] = $row;
@@ -1721,6 +1748,7 @@ class printer {
 			$sheet->setCellValueByColumnAndRow($cell++, 1, $subject->shorttitle);
 		}
 
+		$sheet->setCellValueByColumnAndRow($cell++, 1, 'Notendurchschnitt');
 		$sheet->setCellValueByColumnAndRow($cell++, 1, 'Projekt Note');
 		$sheet->setCellValueByColumnAndRow($cell++, 1, 'Projekt Thema');
 		$sheet->setCellValueByColumnAndRow($cell++, 1, 'AGs');
@@ -1731,6 +1759,7 @@ class printer {
 			$cell = 0;
 			$sheet->setCellValueByColumnAndRow($cell++, $rowi, $rowi - 1);
 			$sheet->setCellValueByColumnAndRow($cell++, $rowi, fullname($student));
+			$subjectsToAverage = array();
 
 			foreach ($class_subjects as $subject) {
 				$subjectData = block_exastud_get_graded_review($class->id, $subject->id, $student->id);
@@ -1740,12 +1769,15 @@ class printer {
                         $value .= $subjectData->niveau;
                     }
                     if (isset($subjectData->grade)) {
+                        $subjectsToAverage[$subject->id] = $subjectData->grade;
                         $value .= ' '.$subjectData->grade;
                     }
                 }
 
 				$sheet->setCellValueByColumnAndRow($cell++, $rowi, $value);
 			}
+            $avg = block_exastud_get_grade_average_value($subjectsToAverage);
+            $sheet->setCellValueByColumnAndRow($cell++, $rowi, ($avg ? $avg : ''));
 
 			$studentData = block_exastud_get_class_student_data($class->id, $student->id);
 			$sheet->setCellValueByColumnAndRow($cell++, $rowi, @$studentData->projekt_grade);
