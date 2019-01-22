@@ -196,6 +196,8 @@ if ($isSubjectTeacher) {
 
         $subjectData = block_exastud_get_review($classid, $subjectid, $classstudent->id);
 
+        $template = block_exastud_get_student_print_template($class, $classstudent->id);
+
         $row = new html_table_row();
         $userdata =
                 '<span class="exastud-userpicture">'.$output->user_picture($classstudent, array("courseid" => $courseid)).'</span>';
@@ -214,6 +216,7 @@ if ($isSubjectTeacher) {
         $userdatacell = new html_table_cell();
         $userdatacell->attributes['class'] .= 'exastud-userdata-cell';
         $userdatacell->text = '<div class="cell-content">'.$userdata.'</div>';
+        $userdatacell->text .= block_exastud_trans('de:Zeugnisformular').': '.$template->get_name();
         $userdatacell->rowspan = 2;
         $row->cells[] = $userdatacell;
 
@@ -221,7 +224,6 @@ if ($isSubjectTeacher) {
             // Grades column
             $formdata = new stdClass();
             $formdata = (object) array_merge((array) $formdata, (array) $subjectData);
-            $template = block_exastud_get_student_print_template($class, $classstudent->id);
             $grade_options = array_filter($template->get_grade_options());
             if (empty($formdata->grade)) {
                 $formdata->grade = '';

@@ -32,12 +32,8 @@ bw-bp2016-e;Englisch;E;1;0;0
 bw-bp2016-m;Mathematik;M;1;0;0
 bw-bp2016-g;Geschichte;G;1;0;0
 bw-bp2016-geo;Geographie;Geo;1;0;0
-bw-bp2016-gk;Gemeinschaftskunde;Gk;1;0;0
 bw-bp2016-wbs;Wirtschaft / Berufs- und Studienorientierung;WBS;1;0;0
 bw-bp2016-bnt;Biologie, Naturphänomene und Technik;BNT;1;0;0
-bw-bp2016-ph;Physik;Ph;1;0;0
-bw-bp2016-ch;Chemie;Ch;1;0;0
-bw-bp2016-bio;Biologie;Bio;1;0;0
 bw-bp2016-ai;Aufbaukurs Informatik;ABK-Inf;1;0;0
 bw-bp2016-mu;Musik;Mu;1;1;1
 bw-bp2016-b;Bildende Kunst;BK;1;1;1
@@ -54,6 +50,10 @@ bw-bp2016-profil-s;Profilfach Spanisch;Profil S;0;1;0
 bw-bp2016-profil-sp;Profilfach Sport;Profil Sp;0;1;0
 bw-bp2016-f;Französich;F;1;0;0
 bw-bp2016-s;Spanisch;S;1;0;0
+bw-bp2016-ph;Physik;Ph;1;0;0
+bw-bp2016-ch;Chemie;Ch;1;0;0
+bw-bp2016-bio;Biologie;Bio;1;0;0
+bw-bp2016-gk;Gemeinschaftskunde;Gk;1;0;0
 				', ";", true),
 		],
 		'bp2004' => [

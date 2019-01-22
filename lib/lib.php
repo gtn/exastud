@@ -393,17 +393,17 @@ function block_exastud_get_review_class($classid, $subjectid) {
 		$classes = block_exastud_get_head_teacher_lern_und_sozialverhalten_classes();
 
 		return isset($classes[$classid]) ? $classes[$classid] : null;
-	} else if ($subjectid == BLOCK_EXASTUD_DATA_ID_CERTIFICATE) {
+	} else if ($subjectid == BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_16_ZERTIFIKAT_FUER_PROFILFACH) {
         if (block_exastud_is_profilesubject_teacher($classid)) {
             $class = block_exastud_get_class($classid);
             return (object)[
                     'classid' => $classid,
-                    'subjectid' => BLOCK_EXASTUD_DATA_ID_CERTIFICATE,
+                    'subjectid' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_16_ZERTIFIKAT_FUER_PROFILFACH,
                     'userid' => $USER->id,
                     'title' => $class->title,
                     'subject' => block_exastud_get_string('report_for_subjects'), // TODO: need?
                     'subject_title' => block_exastud_get_string('report_for_subjects'),
-                    'type' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_16_ZERTIFIKAT_FUER_PROFILFACH,
+                    'type' => BLOCK_EXASTUD_DATA_ID_CERTIFICATE,
             ];
         } else {
             return false;
@@ -2271,7 +2271,7 @@ function block_exastud_get_default_templates() {
                             'comments' => [
                                     'title' => block_exastud_trans('de:Bemerkungen'),
                                     'type' => 'textarea',
-                                    'lines' => 8,
+                                    'lines' => 6,
                                     'cols' => 90,
                             ],
                             'subjects' => [
@@ -2291,6 +2291,16 @@ function block_exastud_get_default_templates() {
                                     'type' => 'textarea',
                                     'lines' => 8,
                                     'cols' => 75,
+                            ],
+                            'lessons_target' => [
+                                    'title' => 'zieldifferenter Unterricht',
+                                    'type' => 'select',
+                                    'values' => ['' => '', 'wurde zieldifferent unterrichtet. Die Leistungsbeschreibung und -bewertung erfolgte auf Grundlage des Bildungsplans für den Förderschwerpunkt' => 'wurde zieldifferent unterrichtet. Die Leistungsbeschreibung und -bewertung erfolgte auf Grundlage des Bildungsplans für den Förderschwerpunkt'],
+                            ],
+                            'focus' => [
+                                    'title' => 'Förderschwerpunkt',
+                                    'type' => 'select',
+                                    'values' => ['Lernen' => 'Lernen', 'geistige Entwicklung' => 'geistige Entwicklung'],
                             ],
                     ],
             ],

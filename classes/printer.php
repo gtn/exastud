@@ -429,7 +429,8 @@ class printer {
 
 			// beiblatt
             if (in_array($templateid, [
-                    BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_HALBJAHR_LERNENTWICKLUNGSBERICHT])) {
+                    BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_HALBJAHR_LERNENTWICKLUNGSBERICHT,
+                    BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_JAHRESZEUGNIS_LERNENTWICKLUNGSBERICHT])) {
                 if (!empty($studentdata->lessons_target)) {
                     //$dataTextReplacer['zieldifferenter Unterricht'] = $studentdata->lessons_target ? $studentdata->lessons_target : '';
                     $dataTextReplacer['Wählen Sie ein Element aus.'] = $studentdata->lessons_target ? $studentdata->lessons_target : '';

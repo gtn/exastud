@@ -973,6 +973,28 @@ function xmldb_block_exastud_upgrade($oldversion = 0) {
         upgrade_block_savepoint(true, 2019011801, 'exastud');
     }
 
+    if ($oldversion < 2019012200) {
+        $DB->delete_records('block_exastudreportsettings', ['id' => 7]);
+        block_exastud_fill_reportsettingstable(7);
+        // change sorting of subjects
+        // set these subjects to end of the list
+        $moveToEnd = array('F', 'S', 'Ph', 'Ch', 'Bio', 'Gk', 'Er');
+        $bps = $DB->get_records('block_exastudbp');
+        $step = 10;
+        foreach ($bps as $bp) {
+            $bpId = $bp->id;
+            // subjects for BP:
+            // get last sorting
+            $sortings = $DB->get_fieldset_select('block_exastudsubjects', 'sorting', ' bpid = ? ', [$bpId]);
+            $maxSorting = max($sortings);
+            foreach ($moveToEnd as $sTitle) {
+                $maxSorting += $step;
+                $DB->execute(' UPDATE {block_exastudsubjects} SET sorting = ? WHERE shorttitle = ? AND bpid = ? ', [$maxSorting, $sTitle, $bpId]);
+            }
+        }
+        upgrade_block_savepoint(true, 2019012200, 'exastud');
+    }
+
     block_exastud_insert_default_entries();
 	block_exastud_check_profile_fields();
 

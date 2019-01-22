@@ -205,12 +205,15 @@ function block_exastud_print_period($courseid, $period, $type, $openclass) {
                     }
                     if (!block_exastud_get_only_learnsociale_reports() && ($myclass->is_head_teacher || block_exastud_is_profilesubject_teacher($myclass->id))) {
                         // into Subject left column!!!!
-                        $subjectsData[] =
-                                html_writer::link(new moodle_url('/blocks/exastud/review_class_other_data.php', [
-                                        'courseid' => $courseid,
-                                        'classid' => $myclass->id,
-                                        'type' => BLOCK_EXASTUD_DATA_ID_CERTIFICATE,
-                                ]), block_exastud_get_string('report_for_subjects'));
+                        // only if at least one subject:
+                        if (block_exastud_is_profilesubject_teacher($myclass->id)) {
+                            $subjectsData[] =
+                                    html_writer::link(new moodle_url('/blocks/exastud/review_class_other_data.php', [
+                                            'courseid' => $courseid,
+                                            'classid' => $myclass->id,
+                                            'type' => BLOCK_EXASTUD_DATA_ID_CERTIFICATE,
+                                    ]), block_exastud_get_string('report_for_subjects'));
+                        }
                     }
 /*                    if (!block_exastud_get_only_learnsociale_reports() && $myclass->is_head_teacher) {
                         $generaldata[] =
