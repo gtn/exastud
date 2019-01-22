@@ -430,7 +430,7 @@ class printer {
 			// beiblatt
             if (in_array($templateid, [
                     BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_HALBJAHR_LERNENTWICKLUNGSBERICHT])) {
-                if ($studentdata->lessons_target) {
+                if (!empty($studentdata->lessons_target)) {
                     //$dataTextReplacer['zieldifferenter Unterricht'] = $studentdata->lessons_target ? $studentdata->lessons_target : '';
                     $dataTextReplacer['Wählen Sie ein Element aus.'] = $studentdata->lessons_target ? $studentdata->lessons_target : '';
                     $dataTextReplacer['Beiblatt'] = $studentdata->beiblatt ? $studentdata->beiblatt : '';
@@ -1056,7 +1056,7 @@ class printer {
 		    }
 		}
 
-		if (array_key_exists('focus', $inputs)) {
+		if (is_array($inputs) && array_key_exists('focus', $inputs)) {
 		    // now here is used ${focus} marker for testing
             /*$focus = static::spacerIfEmpty(@$studentdata->focus);
             $add_filter(function($content) use ($focus, $templateid) {
@@ -1086,7 +1086,7 @@ class printer {
         $inputs = print_templates::get_template_inputs($templateid, 'all');
         foreach ($data as $dKey => $dItem) {
             // it is selectbox
-            if (array_key_exists($dKey, $inputs) && $inputs[$dKey]['type'] == 'select') {
+            if (is_array($inputs) && array_key_exists($dKey, $inputs) && $inputs[$dKey]['type'] == 'select') {
                 //echo "<pre>debug:<strong>printer.php:1061</strong>\r\n"; print_r($inputs); echo '</pre>'; // !!!!!!!!!! delete it
                 //echo "<pre>debug:<strong>printer.php:1061</strong>\r\n"; print_r($data); echo '</pre>'; exit; // !!!!!!!!!! delete it
                 // delete option with key marker
@@ -1583,10 +1583,10 @@ class printer {
             foreach ($all_subjects as $subject) {
                 if (count(@$studentsData[$subject->id]) > 0) {
                     if (in_array($subject->id, $isGroupedSubjects)) {
-                        $cells[] = $studentsData[$subject->id][$student->id];
+                        $cells[] = @$studentsData[$subject->id][$student->id];
                         $cells[] = $subject->shorttitle_stripped;
                     } else {
-                        $cells[] = $studentsData[$subject->id][$student->id];
+                        $cells[] = @$studentsData[$subject->id][$student->id];
                     }
                 }
             }

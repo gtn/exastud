@@ -200,7 +200,7 @@ function block_exastud_get_head_teacher_classes_shared($periodid) {
 			FROM {block_exastudclass} c
 			JOIN {block_exastudclassteachers} ct ON ct.classid=c.id
 			JOIN {user} u ON c.userid = u.id
-			WHERE ct.subjectid=".BLOCK_EXASTUD_SUBJECT_ID_ADDITIONAL_HEAD_TEACHER." AND ct.teacherid=? AND c.periodid=?
+			WHERE ct.subjectid = ".BLOCK_EXASTUD_SUBJECT_ID_ADDITIONAL_HEAD_TEACHER." AND ct.teacherid = ? AND c.periodid = ?
 			ORDER BY c.title", [g::$USER->id, $periodid]);
 
 	/*

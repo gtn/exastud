@@ -197,6 +197,8 @@ if ($classid = optional_param('classid', 0, PARAM_INT)) {
                 exit;
             }
 
+            //echo "<pre>debug:<strong>report.php:216</strong>\r\n"; print_r($files_to_zip); echo '</pre>'; exit; // !!!!!!!!!! delete it
+
             if (count($files_to_zip) > 0) {
                 require_once $CFG->dirroot.'/lib/filelib.php';
                 if (count($files_to_zip) > 1) {
@@ -212,6 +214,7 @@ if ($classid = optional_param('classid', 0, PARAM_INT)) {
                         throw new \Exception('there was some other output: '.$content);
                     }
                     $temp_file = key($files_to_zip);
+
                     send_temp_file($temp_file, basename($files_to_zip[$temp_file]));
                     exit();
                 }
@@ -378,7 +381,9 @@ if ($classid = optional_param('classid', 0, PARAM_INT)) {
     $class_counts = array();
     foreach ($periods as $period) {
         $i = 0;
-        $classes = block_exastud_get_head_teacher_classes_owner($period->id, block_exastud_is_siteadmin());
+        //$classes = block_exastud_get_head_teacher_classes_owner($period->id, block_exastud_is_siteadmin());
+        $classes = block_exastud_get_head_teacher_classes_all($period->id);
+
         foreach ($classes as $cl) {
             $period_classes[$period->id][$i] = $cl;
             $i++;
