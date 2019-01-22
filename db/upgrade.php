@@ -978,7 +978,7 @@ function xmldb_block_exastud_upgrade($oldversion = 0) {
         block_exastud_fill_reportsettingstable(7);
         // change sorting of subjects
         // set these subjects to end of the list
-        $moveToEnd = array('F', 'S', 'Ph', 'Ch', 'Bio', 'Gk', 'Er');
+       /* $moveToEnd = array('F', 'S', 'Ph', 'Ch', 'Bio', 'Gk', 'Er');
         $bps = $DB->get_records('block_exastudbp');
         $step = 10;
         foreach ($bps as $bp) {
@@ -991,7 +991,7 @@ function xmldb_block_exastud_upgrade($oldversion = 0) {
                 $maxSorting += $step;
                 $DB->execute(' UPDATE {block_exastudsubjects} SET sorting = ? WHERE shorttitle = ? AND bpid = ? ', [$maxSorting, $sTitle, $bpId]);
             }
-        }
+        }*/
         upgrade_block_savepoint(true, 2019012200, 'exastud');
     }
 
