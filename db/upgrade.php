@@ -973,12 +973,25 @@ function xmldb_block_exastud_upgrade($oldversion = 0) {
         upgrade_block_savepoint(true, 2019011801, 'exastud');
     }
 
-    if ($oldversion < 2019012200) {
-        $DB->delete_records('block_exastudreportsettings', ['id' => 7]);
-        block_exastud_fill_reportsettingstable(7);
+    if ($oldversion < 2019012301) {
+        foreach([7, 6] as $i) {
+            $DB->delete_records('block_exastudreportsettings', ['id' => $i]);
+            block_exastud_fill_reportsettingstable($i);
+        }
+        // shorttitle wrongs
+        $DB->execute(' UPDATE {block_exastudsubjects} 
+                        SET shorttitle = \'Bio\' 
+                        WHERE sourceinfo = \'bw-bp2004-bio\' ', []);
+        $DB->execute(' UPDATE {block_exastudsubjects} 
+                        SET shorttitle = \'Gk\' 
+                        WHERE sourceinfo = \'bw-bp2004-gk\' ', []);
+        $DB->execute(' UPDATE {block_exastudsubjects} 
+                        SET shorttitle = \'ev\' 
+                        WHERE shorttitle = \'rev\' ', []);
         // change sorting of subjects
         // set these subjects to end of the list
-       /* $moveToEnd = array('F', 'S', 'Ph', 'Ch', 'Bio', 'Gk', 'Er');
+        $correctSorting = array('eth', 'alev', 'ak', 'ev', 'isl', 'jd', 'rk', 'orth', 'syr', 'D', 'E', 'F', 'S', 'M', 'EWG', 'NWA', 'G', 'Geo', 'Er', 'WBS', 'BNT', 'Ph', 'Ch', 'Bio', 'Gk', 'ABK-Inf', 'Mu', 'BK', 'Sp', 'WPF AES', 'WPF F', 'WPF MuM', 'WPF Te', 'Profil BK', 'Profil F', 'Profil Mu', 'Profil Nut', 'Profil NwT', 'Profil IMP', 'Profil S', 'Profil Sp');
+        //$moveToEnd = array('F', 'S', 'Ph', 'Ch', 'Bio', 'Gk', 'Er');
         $bps = $DB->get_records('block_exastudbp');
         $step = 10;
         foreach ($bps as $bp) {
@@ -987,12 +1000,12 @@ function xmldb_block_exastud_upgrade($oldversion = 0) {
             // get last sorting
             $sortings = $DB->get_fieldset_select('block_exastudsubjects', 'sorting', ' bpid = ? ', [$bpId]);
             $maxSorting = max($sortings);
-            foreach ($moveToEnd as $sTitle) {
+            foreach ($correctSorting as $sTitle) {
                 $maxSorting += $step;
                 $DB->execute(' UPDATE {block_exastudsubjects} SET sorting = ? WHERE shorttitle = ? AND bpid = ? ', [$maxSorting, $sTitle, $bpId]);
             }
-        }*/
-        upgrade_block_savepoint(true, 2019012200, 'exastud');
+        }
+        upgrade_block_savepoint(true, 2019012301, 'exastud');
     }
 
     block_exastud_insert_default_entries();

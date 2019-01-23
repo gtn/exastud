@@ -2212,7 +2212,7 @@ function block_exastud_get_default_templates() {
                             'comments' => [
                                     'title' => block_exastud_trans('de:Bemerkungen'),
                                     'type' => 'textarea',
-                                    'lines' => 5,
+                                    'lines' => 4,
                                     'cols' => 90,
                             ],
                             'lessons_target' => [
@@ -2271,7 +2271,7 @@ function block_exastud_get_default_templates() {
                             'comments' => [
                                     'title' => block_exastud_trans('de:Bemerkungen'),
                                     'type' => 'textarea',
-                                    'lines' => 6,
+                                    'lines' => 4,
                                     'cols' => 90,
                             ],
                             'subjects' => [
@@ -2291,6 +2291,11 @@ function block_exastud_get_default_templates() {
                                     'type' => 'textarea',
                                     'lines' => 8,
                                     'cols' => 75,
+                            ],
+                            'beiblatt' => [
+                                    'title' => 'Beiblatt',
+                                    'type' => 'select',
+                                    'values' => ['' => '', '(siehe schuleigenes Blatt)' => '(siehe schuleigenes Blatt)'],
                             ],
                             'lessons_target' => [
                                     'title' => 'zieldifferenter Unterricht',

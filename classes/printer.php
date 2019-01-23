@@ -1766,7 +1766,11 @@ class printer {
 				$value = '';
                 if ($subjectData) {
                     if (isset($subjectData->niveau)) {
-                        $value .= $subjectData->niveau;
+                        if ($subject->no_niveau == 1) {
+                            $value .= trim(str_ireplace('niveau', '', $subjectData->niveau));
+                        } else {
+                            $value .= $subjectData->niveau;
+                        }
                     }
                     if (isset($subjectData->grade)) {
                         $subjectsToAverage[$subject->id] = $subjectData->grade;
