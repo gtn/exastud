@@ -343,7 +343,7 @@ class printer {
                         // only if there is still no religion set
                         // maybe there are 2 religion gradings? ignore the 2nd one
                     }
-                    if (!$subjectData || !$subjectData->grade) {
+                    if (!$subjectData || (!$subjectData->review && !$subjectData->grade && !$subjectData->niveau)) {
                         continue; // we need to select first graded religion
                     }
                     if ($subject->shorttitle == 'eth') {
@@ -361,7 +361,7 @@ class printer {
                         // only if there is still no $wahlpflichtfach set
                         // maybe there are 2 $wahlpflichtfach gradings? ignore the 2nd one
                     }
-                    if (!$subjectData || !$subjectData->grade) {
+                    if (!$subjectData || (!$subjectData->review && !$subjectData->grade && !$subjectData->niveau)) {
                         continue; // we need to select first graded $wahlpflichtfach
                     }
 					$wahlpflichtfach = preg_replace('!^[^\s]+!', '', $subject->title);
@@ -372,7 +372,7 @@ class printer {
                         // only if there is still no profilfach set
                         // maybe there are 2 profilfach gradings? ignore the 2nd one
                     }
-                    if (!$subjectData || !$subjectData->grade) {
+                    if (!$subjectData || (!$subjectData->review && !$subjectData->grade && !$subjectData->niveau)) {
                         continue; // we need to select first graded profile subject
                     }
 					$profilfach = preg_replace('!^[^\s]+!', '', $subject->title);
@@ -547,7 +547,7 @@ class printer {
 						// only if there is still no religion set
 						// maybe there are 2 religion gradings? ignore the 2nd one
 					}
-                    if (!$subjectData || !$subjectData->grade) {
+                    if (!$subjectData || (!$subjectData->review && !$subjectData->grade && !$subjectData->niveau)) {
                         continue; // we need to select first graded religion
                     }
 					if ($subject->shorttitle == 'eth') {
@@ -576,7 +576,7 @@ class printer {
                         // only if there is still no $wahlpflichtfach set
                         // maybe there are 2 $wahlpflichtfach gradings? ignore the 2nd one
                     }
-                    if (!$subjectData || !$subjectData->grade) {
+                    if (!$subjectData || (!$subjectData->review && !$subjectData->grade && !$subjectData->niveau)) {
                         continue; // we need to select first graded $wahlpflichtfach
                     }
 					$gradeSearch = 'Wahlpflicht';
@@ -589,7 +589,7 @@ class printer {
                         // only if there is still no profilfach set
                         // maybe there are 2 profilfach gradings? ignore the 2nd one
                     }
-                    if (!$subjectData || !$subjectData->grade) {
+                    if (!$subjectData || (!$subjectData->review && !$subjectData->grade && !$subjectData->niveau)) {
                         continue; // we need to select first graded profile subject
                     }
 					$gradeSearch = 'Profilfach';
@@ -1307,7 +1307,7 @@ class printer {
                 foreach ($subjects as $subject) {
                     $subjectData = block_exastud_get_graded_review($class->id, $subject->id, $student->id);
 
-                    if (!$subjectData || !$subjectData->grade) {
+                    if (!$subjectData || (!$subjectData->review && !$subjectData->grade && !$subjectData->niveau)) {
                         continue;
                     }
                     $value = '';
