@@ -133,6 +133,8 @@ class printer {
 		});
         $lern_soz = block_exastud_get_class_student_data($class->id, $student->id, BLOCK_EXASTUD_DATA_ID_LERN_UND_SOZIALVERHALTEN);
         $fs = get_file_storage();
+        // markers for using in dropdowns. Used later as constant list
+        $data_dropdowns = ['profilfach_titel', 'wahlfach_titel'];
 		// default markers
         $data = [
                 'periode' => $period->description,
@@ -592,6 +594,7 @@ class printer {
                     if (!$subjectData || (!$subjectData->review && !$subjectData->grade && !$subjectData->niveau)) {
                         continue; // we need to select first graded profile subject
                     }
+                    //echo "<pre>debug:<strong>printer.php:595</strong>\r\n"; print_r($subjectData); echo '</pre>'; exit; // !!!!!!!!!! delete it
 					$gradeSearch = 'Profilfach';
 					$profilfach = preg_replace('!^[^\s]+!', '', $subject->title);
 					// hier ist 1 dropdown dazwischen erlaubt (profilfach name dropdown)
@@ -838,8 +841,16 @@ class printer {
 				});
 			}
 
+            $tempProfilfach = $profilfach;
+            if ($profilfach == self::spacerIfEmpty('')
+                    && $templateid != BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_HALBJAHR_ZEUGNIS_E_NIVEAU) {
+                $tempProfilfach = '';
+            }
+            $data['profilfach_titel'] = $tempProfilfach;
+            $data['wahlfach_titel'] = $wahlpflichtfach;
+
 			// religion + wahlpflichtfach + profilfach dropdowns
-			$add_filter(function($content) use ($templateid, $religion, $religion_sub, $wahlpflichtfach, $profilfach) {
+			$add_filter(function($content) use ($templateid, $religion, $religion_sub, $wahlpflichtfach, $profilfach, $tempProfilfach) {
 			    if ($religion == self::spacerIfEmpty('')) {
 			        if (in_array($templateid, [
                         BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_HALBJAHR_ZEUGNIS_FOE,
@@ -865,11 +876,6 @@ class printer {
                         $content = preg_replace('!(>)Spanisch(.*Profil<)!U', '${1}'.$profilfach.'${2}', $content, 1, $count);
                     }
                 } else {
-				    $tempProfilfach = $profilfach;
-				    if ($profilfach == self::spacerIfEmpty('')
-                        && $templateid != BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_HALBJAHR_ZEUGNIS_E_NIVEAU) {
-                        $tempProfilfach = '';
-                    }
                     $content = preg_replace('!(Profilfach.*>)Spanisch(<)!U', '${1}'.$tempProfilfach.'${2}', $content, 1, $count);
                 }
 
@@ -1087,7 +1093,8 @@ class printer {
         $inputs = print_templates::get_template_inputs($templateid, 'all');
         foreach ($data as $dKey => $dItem) {
             // it is selectbox
-            if (is_array($inputs) && array_key_exists($dKey, $inputs) && $inputs[$dKey]['type'] == 'select') {
+            if (in_array($dKey, $data_dropdowns) ||
+                    (is_array($inputs) && array_key_exists($dKey, $inputs) && $inputs[$dKey]['type'] == 'select')) {
                 //echo "<pre>debug:<strong>printer.php:1061</strong>\r\n"; print_r($inputs); echo '</pre>'; // !!!!!!!!!! delete it
                 //echo "<pre>debug:<strong>printer.php:1061</strong>\r\n"; print_r($data); echo '</pre>'; exit; // !!!!!!!!!! delete it
                 // delete option with key marker
@@ -2366,6 +2373,9 @@ class TemplateProcessor extends \PhpOffice\PhpWord\TemplateProcessor {
         $tempDocumentMainPart = $this->getDocumentMainPart();
         $tempDocumentMainPart = preg_replace('/(.*)<w:textInput>(.*)w:val="\${'.$search.'}"(.*)<\/w:textInput>(.*)/ms',
                 '${1}<w:textInput>${2}w:val="${--'.$search.'--}"${3}</w:textInput>${4}', $tempDocumentMainPart); // TODO: check this!!
+        // temporary hidden - much better use this! TODO: replace if perfomance issue!!!
+        //$tempDocumentMainPart = preg_replace('/(<w:textInput>[^\/]*?)w:val="\${'.$search.'}"(.*<\/w:textInput>)/Ums',
+        //        '${1}w:val="${--'.$search.'--}"${2}', $tempDocumentMainPart); // TODO: check this!!
         $this->setDocumentMainPart($tempDocumentMainPart);
         //} else {
         //    $replaceNL = true;
