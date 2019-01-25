@@ -171,10 +171,10 @@ if ($isSubjectTeacher) {
 
     foreach ($classstudents as $classstudent) {
         $visible = $DB->get_field('block_exastudclassteastudvis', 'visible', [
-                'classteacherid' => $reviewclass->userid,
+                'classteacherid' => $reviewclass->classteacherid,
                 'studentid' => $classstudent->id,
         ]);
-        if ($visible === false) {
+        if ($visible === false) { // if no table record
             $visible = true;
         }
 
