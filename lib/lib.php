@@ -990,10 +990,16 @@ function block_exastud_require_global_cap($cap, $user = null) {
 			require_capability('block/exastud:admin', context_system::instance(), $user);
 
 			return;
-
+        case BLOCK_EXASTUD_CAP_VIEW_REPORT:
+            // if the user is a additional teacher - he can view of report
+            $actPeriod = block_exastud_get_active_period();
+            $lastPeriod = block_exastud_get_last_period();
+            if (block_exastud_get_head_teacher_classes_shared($actPeriod->id)
+                    || block_exastud_get_head_teacher_classes_shared($lastPeriod->id)) {
+                return;
+            }
 		case BLOCK_EXASTUD_CAP_MANAGE_CLASSES:
 		case BLOCK_EXASTUD_CAP_HEAD_TEACHER:
-		case BLOCK_EXASTUD_CAP_VIEW_REPORT:
 			if (!block_exastud_is_head_teacher($user) && !block_exastud_is_siteadmin()) {
 				throw new block_exastud_permission_exception('no headteacher');
 			} else {
