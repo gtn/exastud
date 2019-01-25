@@ -1016,10 +1016,13 @@ class printer {
 		            
 		            					$templateProcessor->setValue("n", $topic->teacher_eval_niveau_text, 1);
 		            					$grading = @$studentdata->print_grades_anlage_leb ? $topic->teacher_eval_additional_grading : null;
-		            					$templateProcessor->setValue("ne", $grading === 0 ? 'X' : '', 1);
-		            					$templateProcessor->setValue("tw", $grading === 1 ? 'X' : '', 1);
-		            					$templateProcessor->setValue("ue", $grading === 2 ? 'X' : '', 1);
-		            					$templateProcessor->setValue("ve", $grading === 3 ? 'X' : '', 1);
+		            					$crossGrading = self::get_exacomp_crossgrade($grading, 'topic', 4);
+                    //echo "<pre>debug:<strong>printer.php:1020</strong>\r\n"; print_r($grading); echo '</pre>'; // !!!!!!!!!! delete it
+                    //echo "<pre>debug:<strong>printer.php:1043</strong>\r\n"; print_r($crossGrading); echo '</pre>'; // !!!!!!!!!! delete it
+		            					$templateProcessor->setValue("ne", $crossGrading == 0 ? 'X' : '', 1);
+		            					$templateProcessor->setValue("tw", $crossGrading == 1 ? 'X' : '', 1);
+		            					$templateProcessor->setValue("ue", $crossGrading == 2 ? 'X' : '', 1);
+		            					$templateProcessor->setValue("ve", $crossGrading == 3 ? 'X' : '', 1);
 		            
 		            /*
 		             * $gme = ['G', 'M', 'E'][$test % 3];
@@ -1038,10 +1041,11 @@ class printer {
 		                
 		                						$grading = @$studentdata->print_grades_anlage_leb ? $descriptor->teacher_eval_additional_grading : null;
 		                						$templateProcessor->setValue("n", $descriptor->teacher_eval_niveau_text, 1);
-		                						$templateProcessor->setValue("ne", $grading === 0 ? 'X' : '', 1);
-		                						$templateProcessor->setValue("tw", $grading === 1 ? 'X' : '', 1);
-		                						$templateProcessor->setValue("ue", $grading === 2 ? 'X' : '', 1);
-		                						$templateProcessor->setValue("ve", $grading === 3 ? 'X' : '', 1);
+                                                $crossGrading = self::get_exacomp_crossgrade($grading, 'topic', 4);
+		                						$templateProcessor->setValue("ne", $crossGrading == 0 ? 'X' : '', 1);
+		                						$templateProcessor->setValue("tw", $crossGrading == 1 ? 'X' : '', 1);
+		                						$templateProcessor->setValue("ue", $crossGrading == 2 ? 'X' : '', 1);
+		                						$templateProcessor->setValue("ve", $crossGrading == 3 ? 'X' : '', 1);
 		                
 		                /*
 		                 * $gme = ['G', 'M', 'E'][$test % 3];
@@ -1062,7 +1066,7 @@ class printer {
 		        $templateProcessor->deleteRow("descriptor");
 		    }
 		}
-
+//exit;
 		if (is_array($inputs) && array_key_exists('focus', $inputs)) {
 		    // now here is used ${focus} marker for testing
             /*$focus = static::spacerIfEmpty(@$studentdata->focus);
@@ -2299,6 +2303,70 @@ class printer {
 		}
 
 		return \block_exacomp\api::get_comp_tree_for_exastud($studentid);
+	}
+
+	// BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_ANLAGE_ZUM_LERNENTWICKLUNGSBERICHTALT has 4 columns
+    // the exacomp can have different grade values
+	static function get_exacomp_crossgrade($origValue, $level = 'topic', $columnsCount = 4) {
+	    if (!$origValue) {
+            return $origValue;
+        }
+		if (!block_exastud_is_exacomp_installed()) {
+			throw new \Exception('exacomp is not installed');
+		}
+
+		if (!method_exists('block_exacomp\api', 'get_comp_tree_for_exastud')) {
+			throw new \Exception('please update exacomp version to match exastud version number');
+		}
+
+		if ($level == 'comp') {
+            $scheme = block_exacomp_get_assessment_comp_scheme();
+        } else {
+            $scheme = block_exacomp_get_assessment_topic_scheme();
+        }
+        switch ($scheme) {
+            case BLOCK_EXACOMP_ASSESSMENT_TYPE_GRADE:
+                if (get_config('exacomp', 'use_grade_verbose_competenceprofile')) {
+                    if ($origValue == block_exacomp_get_string('grade_Verygood')) {
+                        $val = 6;
+                    } else if ($origValue == block_exacomp_get_string('grade_good')) {
+                        $val = 5;
+                    } else if ($origValue == block_exacomp_get_string('grade_Satisfactory')) {
+                        $val = 4;
+                    } else if ($origValue == block_exacomp_get_string('grade_Sufficient')) {
+                        $val = 3;
+                    } else if ($origValue == block_exacomp_get_string('grade_Deficient')) {
+                        $val = 2;
+                    } else {
+                        // block_exacomp_get_string('grade_Insufficient')
+                        $val = 1;
+                    }
+                    // if 4 columns
+                    return round($val * (-0.6) + 3.6); // max value 6 to 4 columns. TODO: is it ok?
+                } else {
+                    return round($origValue * (-0.6) + 3.6); // TODO: intval?
+                }
+                break;
+            case BLOCK_EXACOMP_ASSESSMENT_TYPE_VERBOSE:
+                $options = array_map('trim', explode(',', block_exacomp_get_assessment_verbose_options()));
+                //$crossPoints = array_combine(range(1, count($options)), array_values($options)); // start from 1
+                $numberValue = array_search($origValue, $options);
+                return $numberValue;
+                break;
+            case BLOCK_EXACOMP_ASSESSMENT_TYPE_POINTS:
+                return round($origValue * (-0.6) + 3.6); // TODO: intval?
+                break;
+            case BLOCK_EXACOMP_ASSESSMENT_TYPE_YESNO:
+                if (!isset($teacher_additional_grading_topics[$record->compid])) {
+                    if ($origValue == block_exacomp_get_string('yes_no_Yes') || $origValue > 0) {
+                        return $columnsCount;
+                    } else {
+                        return 1; // first column is BAD
+                    }
+                }
+                break;
+        }
+        return $origValue;
 	}
 
 }
