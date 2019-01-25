@@ -20,6 +20,7 @@ require __DIR__ . '/inc.php';
 
 $courseid = optional_param('courseid', 1, PARAM_INT); // Course ID
 $periodid = optional_param('periodid', 0, PARAM_INT); // Period ID
+$classid = optional_param('classid', 0, PARAM_INT); // Class ID
 
 $startPeriod = optional_param('startPeriod', 0, PARAM_INT);
 $countOfShownPeriods = 4;
@@ -35,14 +36,14 @@ block_exastud_require_global_cap(BLOCK_EXASTUD_CAP_VIEW_REPORT);
 
 $output = block_exastud_get_renderer();
 
-$url = '/blocks/exastud/report.php?courseid='.$courseid.'&startPeriod='.$startPeriod;
+$url = '/blocks/exastud/report.php?courseid='.$courseid.'&classid='.$classid;
 $PAGE->set_url($url);
 
 set_time_limit(600);
 
 ob_clean();
 
-if ($classid = optional_param('classid', 0, PARAM_INT)) {
+if ($classid) {
     $class = block_exastud_get_head_teacher_class($classid);
     
     if (! $classstudents = block_exastud_get_class_students($class->id)) {
@@ -349,8 +350,12 @@ if ($classid = optional_param('classid', 0, PARAM_INT)) {
                         '1',
                         (array_key_exists($key, $templatesFromForm) ? true : false),
                         '&nbsp;'.$tmpl,
-                        ['class' => 'exastud-selecttemplate-checkbox', 'data-templateid' => $key, 'data-previewPossible' => $previewPoss])
-                .'<br />';
+                        ['class' => 'exastud-selecttemplate-checkbox', 'data-templateid' => $key, 'data-previewPossible' => $previewPoss]);
+        if ($key == BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_LERNENTWICKLUNGSBERICHT_DECKBLATT_UND_1_INNENSEITE) {
+            $secondCell->text .= '<hr>';
+        } else {
+            $secondCell->text .= '<br />';
+        }
     }
 
     $templateRow->cells[] = $firstCell;

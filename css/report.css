@@ -28,3 +28,7 @@
 h3.detailed-for-student {
 	margin-top:25px;
 }
+
+#report .exa_table hr {
+	margin: 0px 0px 7px;
+}

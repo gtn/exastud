@@ -1095,18 +1095,17 @@ class printer {
             // it is selectbox
             if (in_array($dKey, $data_dropdowns) ||
                     (is_array($inputs) && array_key_exists($dKey, $inputs) && $inputs[$dKey]['type'] == 'select')) {
-                //echo "<pre>debug:<strong>printer.php:1061</strong>\r\n"; print_r($inputs); echo '</pre>'; // !!!!!!!!!! delete it
-                //echo "<pre>debug:<strong>printer.php:1061</strong>\r\n"; print_r($data); echo '</pre>'; exit; // !!!!!!!!!! delete it
-                // delete option with key marker
-                $add_filter(function($content) use ($dKey) {
-                    $ret = preg_replace('!<w:listItem[^>]*w:value="\${'.$dKey.'}".*\/>!Us', '', $content, -1, $count);
-                    return $ret;
-                });
+                // replace default marker
                 if (in_array($dItem, ['---', '/--empty--/', '/--set-empty--/'])) {
-                    $select_text = 'Wählen Sie ein Element aus.';
+                    if (in_array($dKey, ['profilfach_titel', 'wahlfach_titel'])) {
+                        $select_text = '---';
+                    } else {
+                        $select_text = 'Wählen Sie ein Element aus.';
+                    }
                     if ($dItem == '/--set-empty--/') {
                         $select_text = '';
                     }
+
                     // delete stdContent
                     $add_filter(function($content) use ($dKey, $templateid, $select_text) {
                         //try {
@@ -1118,11 +1117,17 @@ class printer {
 										        <w:sz w:val="12" />
 										        ${4}'.$select_text.'${5}', $content, -1, $count);
                             if (!$count) { // another dropdown
-                                $ret = preg_replace('~(<w:sdtContent>[^\/]*)(<w:pPr>.*<\/w:pPr>)(.*)(<w:rPr>)((?:(?!<w:sdtContent>).)*)(<\/w:rPr>[^\/]*)\${'.$dKey.'}(.*<\/w:sdtContent>)~Us',
+                                /*$ret = preg_replace('~(<w:sdtContent>[^\/]*)(<w:pPr>.*<\/w:pPr>)(.*)(<w:rPr>)((?:(?!<w:sdtContent>).)*)(<\/w:rPr>[^\/]*)\${'.$dKey.'}(.*<\/w:sdtContent>)~Us',
                                                 '${1}${2}${3}${4}
                                                 <w:color w:val="555555" />
 										        <w:sz w:val="14" />
-										        ${6}'.$select_text.'${7}', $content, -1, $count);
+										        ${6}'.$select_text.'${7}', $content, -1, $count);*/
+                                // next trying: the sdtContent always after dropdown items?
+                                $ret = preg_replace('~(\${'.$dKey.'}.*)(<w:sdtContent>.*)(<w:pPr>.*<\/w:pPr>)(.*)(<w:rPr>)(.*)(<\/w:rPr>[^\/]*)\${'.$dKey.'}(.*<\/w:sdtContent>)~Us',
+                                                '${1}${2}${3}${4}${5}
+                                                <w:color w:val="555555" />
+										        <w:sz w:val="14" />
+										        ${7}'.$select_text.'${8}', $content, -1, $count);
                             }
                             if (!$count) { // another dropdown
                                 $ret = preg_replace('~(<w:sdtContent>[^\/]*)\${'.$dKey.'}(.*<\/w:sdtContent>)~Us',
@@ -1147,6 +1152,11 @@ class printer {
                         return $ret;
                     });
                 }
+                // delete option with key marker
+                $add_filter(function($content) use ($dKey) {
+                    $ret = preg_replace('!<w:listItem[^>]*w:value="\${'.$dKey.'}".*\/>!Us', '', $content, -1, $count);
+                    return $ret;
+                });
             }
         }
 //echo "<pre>debug:<strong>printer.php:1088</strong>\r\n"; print_r($filters); echo '</pre>'; exit; // !!!!!!!!!! delete it
@@ -2373,7 +2383,7 @@ class TemplateProcessor extends \PhpOffice\PhpWord\TemplateProcessor {
         $tempDocumentMainPart = $this->getDocumentMainPart();
         $tempDocumentMainPart = preg_replace('/(.*)<w:textInput>(.*)w:val="\${'.$search.'}"(.*)<\/w:textInput>(.*)/ms',
                 '${1}<w:textInput>${2}w:val="${--'.$search.'--}"${3}</w:textInput>${4}', $tempDocumentMainPart); // TODO: check this!!
-        // temporary hidden - much better use this! TODO: replace if perfomance issue!!!
+         //temporary hidden - much better use this! TODO: replace if perfomance issue!!!
         //$tempDocumentMainPart = preg_replace('/(<w:textInput>[^\/]*?)w:val="\${'.$search.'}"(.*<\/w:textInput>)/Ums',
         //        '${1}w:val="${--'.$search.'--}"${2}', $tempDocumentMainPart); // TODO: check this!!
         $this->setDocumentMainPart($tempDocumentMainPart);
