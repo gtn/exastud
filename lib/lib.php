@@ -388,12 +388,12 @@ function block_exastud_get_review_subjects($periodid) {
 
 function block_exastud_get_review_class($classid, $subjectid) {
 	global $DB, $USER;
-
 	if ($subjectid == BLOCK_EXASTUD_SUBJECT_ID_LERN_UND_SOZIALVERHALTEN) {
 		$classes = block_exastud_get_head_teacher_lern_und_sozialverhalten_classes();
 
 		return isset($classes[$classid]) ? $classes[$classid] : null;
-	} else if ($subjectid == BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_16_ZERTIFIKAT_FUER_PROFILFACH) {
+	//} else if ($subjectid == BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_16_ZERTIFIKAT_FUER_PROFILFACH) {
+	} else if ($subjectid == BLOCK_EXASTUD_DATA_ID_CERTIFICATE) {
         if (block_exastud_is_profilesubject_teacher($classid)) {
             $class = block_exastud_get_class($classid);
             return (object)[

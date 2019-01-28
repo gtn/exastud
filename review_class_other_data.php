@@ -31,7 +31,8 @@ $class = block_exastud_get_class($classid);
 $simulateSubjectId = BLOCK_EXASTUD_SUBJECT_ID_OTHER_DATA;
 if ((block_exastud_is_profilesubject_teacher($classid) || $class->userid != $USER->id)
         && $type == BLOCK_EXASTUD_DATA_ID_CERTIFICATE) {
-    $simulateSubjectId = BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_16_ZERTIFIKAT_FUER_PROFILFACH;
+    //$simulateSubjectId = BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_16_ZERTIFIKAT_FUER_PROFILFACH;
+    $simulateSubjectId = BLOCK_EXASTUD_DATA_ID_CERTIFICATE;
 }
 $reviewclass = block_exastud_get_review_class($classid, $simulateSubjectId);
 

@@ -28,6 +28,7 @@ $studentid = required_param('studentid', PARAM_INT);
 $subjectid = required_param('subjectid', PARAM_INT);
 $returnurl = optional_param('returnurl', null, PARAM_LOCALURL);
 $reporttype = optional_param('reporttype', '', PARAM_RAW);
+$type = optional_param('type', '', PARAM_TEXT);
 
 block_exastud_require_login($courseid);
 
@@ -44,8 +45,14 @@ $PAGE->requires->string_for_js('legend', 'block_exastud');
 
 block_exastud_require_global_cap(BLOCK_EXASTUD_CAP_REVIEW);
 
-$reviewclass = block_exastud_get_review_class($classid, $subjectid);
 $class = block_exastud_get_class($classid);
+$simulateSubjectId = $subjectid;
+if ((block_exastud_is_profilesubject_teacher($classid) || $class->userid != $USER->id)
+        && $type == BLOCK_EXASTUD_DATA_ID_CERTIFICATE) {
+    //$simulateSubjectId = BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_16_ZERTIFIKAT_FUER_PROFILFACH;
+    $simulateSubjectId = BLOCK_EXASTUD_DATA_ID_CERTIFICATE;
+}
+$reviewclass = block_exastud_get_review_class($classid, $simulateSubjectId);
 
 if (!$reviewclass || !$class) {
 	print_error('badclass', 'block_exastud');

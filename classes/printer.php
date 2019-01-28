@@ -24,6 +24,7 @@ require_once __DIR__.'/../inc.php';
 require_once __DIR__.'/../../exacomp/inc.php';
 
 use block_exastud\globals as g;
+use core\plugininfo\search;
 use PhpOffice\PhpWord\Escaper\RegExp;
 use PhpOffice\PhpWord\Escaper\Xml;
 
@@ -1000,29 +1001,58 @@ class printer {
 		    $templateProcessor->deleteRow('kriterium');
 		    
 		    // subjects
-		    
-		    $templateProcessor->cloneBlock('subjectif', count($subjects), true);
-		    
+            $templateProcessor->cloneBlock('subjectif', count($subjects), true);
+
+            /*$colCount = block_exacomp_get_report_columns_count_by_assessment();
+            $startColumn = 0;
+            $gradeopts = array();
+            for ($i = $startColumn; $i < $colCount; $i++) {
+                switch (block_exacomp_get_assessment_comp_scheme()) {
+                    case BLOCK_EXACOMP_ASSESSMENT_TYPE_GRADE:
+                        echo $i;
+                        break;
+                    case BLOCK_EXACOMP_ASSESSMENT_TYPE_VERBOSE:
+                        $titles = preg_split("/(\/|,) /", block_exacomp_get_assessment_verbose_options());
+                        echo $titles[$i];
+                        break;
+                    case BLOCK_EXACOMP_ASSESSMENT_TYPE_POINTS:
+                        echo $i;
+                        break;
+                    case BLOCK_EXACOMP_ASSESSMENT_TYPE_YESNO:
+                        echo $i == 1 ? block_exacomp_get_string('yes_no_Yes') : block_exacomp_get_string('yes_no_No');
+                        break;
+                }
+                echo '</th>';
+            }
+            echo "<pre>debug:<strong>printer.php:1006</strong>\r\n"; print_r($subjects); echo '</pre>'; exit; // !!!!!!!!!! delete it
+            $templateProcessor->duplicateCol('gheader', count($gradeopts), 2, 3);
+            foreach ($gradeopts as $gradeopt) {
+                $templateProcessor->setValue('gheader', $gradeopt, 1);
+            }*/
 		    $test = 0;
 		    
 		    foreach ($subjects as $subject) {
 		        $templateProcessor->setValue("subject", $subject->title, 1);
 
-		        
 		        foreach ($subject->topics as $topic) {
 		            $templateProcessor->cloneRowToEnd("topic");
 		            $templateProcessor->cloneRowToEnd("descriptor");
 		            $templateProcessor->setValue("topic", $topic->title, 1);
 		            
-		            					$templateProcessor->setValue("n", $topic->teacher_eval_niveau_text, 1);
-		            					$grading = @$studentdata->print_grades_anlage_leb ? $topic->teacher_eval_additional_grading : null;
-		            					$crossGrading = self::get_exacomp_crossgrade($grading, 'topic', 4);
+                    $templateProcessor->setValue("n", $topic->teacher_eval_niveau_text, 1);
+                    if (@$studentdata->print_grades_anlage_leb) {
+                        $grading = $topic->teacher_eval_additional_grading;
+                        echo "<pre>debug:<strong>printer.php:1019</strong>\r\n"; print_r($grading); echo '</pre>'; // !!!!!!!!!! delete it
+                        $crossGrading = self::get_exacomp_crossgrade($grading, 'topic', 4);
+                    } else {
+                        $crossGrading = -1; // do not show at all
+                    }
                     //echo "<pre>debug:<strong>printer.php:1020</strong>\r\n"; print_r($grading); echo '</pre>'; // !!!!!!!!!! delete it
                     //echo "<pre>debug:<strong>printer.php:1043</strong>\r\n"; print_r($crossGrading); echo '</pre>'; // !!!!!!!!!! delete it
-		            					$templateProcessor->setValue("ne", $crossGrading == 0 ? 'X' : '', 1);
-		            					$templateProcessor->setValue("tw", $crossGrading == 1 ? 'X' : '', 1);
-		            					$templateProcessor->setValue("ue", $crossGrading == 2 ? 'X' : '', 1);
-		            					$templateProcessor->setValue("ve", $crossGrading == 3 ? 'X' : '', 1);
+                    $templateProcessor->setValue("ne", $crossGrading == 0 ? 'X' : '', 1);
+                    $templateProcessor->setValue("tw", $crossGrading == 1 ? 'X' : '', 1);
+                    $templateProcessor->setValue("ue", $crossGrading == 2 ? 'X' : '', 1);
+                    $templateProcessor->setValue("ve", $crossGrading == 3 ? 'X' : '', 1);
 		            
 		            /*
 		             * $gme = ['G', 'M', 'E'][$test % 3];
@@ -1038,14 +1068,18 @@ class printer {
 		            foreach ($topic->descriptors as $descriptor) {
 		                $templateProcessor->duplicateRow("descriptor");
 		                $templateProcessor->setValue("descriptor", ($descriptor->niveau_title ? $descriptor->niveau_title.': ' : '').$descriptor->title, 1);
-		                
-		                						$grading = @$studentdata->print_grades_anlage_leb ? $descriptor->teacher_eval_additional_grading : null;
-		                						$templateProcessor->setValue("n", $descriptor->teacher_eval_niveau_text, 1);
-                                                $crossGrading = self::get_exacomp_crossgrade($grading, 'topic', 4);
-		                						$templateProcessor->setValue("ne", $crossGrading == 0 ? 'X' : '', 1);
-		                						$templateProcessor->setValue("tw", $crossGrading == 1 ? 'X' : '', 1);
-		                						$templateProcessor->setValue("ue", $crossGrading == 2 ? 'X' : '', 1);
-		                						$templateProcessor->setValue("ve", $crossGrading == 3 ? 'X' : '', 1);
+
+                        $templateProcessor->setValue("n", $descriptor->teacher_eval_niveau_text, 1);
+		                if (@$studentdata->print_grades_anlage_leb) {
+                            $grading = $descriptor->teacher_eval_additional_grading;
+                            $crossGrading = self::get_exacomp_crossgrade($grading, 'topic', 4);
+                        } else {
+                            $crossGrading = -1; // do not show at all
+                        }
+                        $templateProcessor->setValue("ne", $crossGrading == 0 ? 'X' : '', 1);
+                        $templateProcessor->setValue("tw", $crossGrading == 1 ? 'X' : '', 1);
+                        $templateProcessor->setValue("ue", $crossGrading == 2 ? 'X' : '', 1);
+                        $templateProcessor->setValue("ve", $crossGrading == 3 ? 'X' : '', 1);
 		                
 		                /*
 		                 * $gme = ['G', 'M', 'E'][$test % 3];
@@ -2349,6 +2383,7 @@ class printer {
                 break;
             case BLOCK_EXACOMP_ASSESSMENT_TYPE_VERBOSE:
                 $options = array_map('trim', explode(',', block_exacomp_get_assessment_verbose_options()));
+                echo "<pre>debug:<strong>printer.php:2361</strong>\r\n"; print_r($options); echo '</pre>'; // !!!!!!!!!! delete it
                 //$crossPoints = array_combine(range(1, count($options)), array_values($options)); // start from 1
                 $numberValue = array_search($origValue, $options);
                 return $numberValue;
@@ -2733,7 +2768,9 @@ class TemplateProcessor extends \PhpOffice\PhpWord\TemplateProcessor {
         $this->tempDocumentMainPart = $table->join();
     }
 
-    function duplicateCol($search, $numberOfCols = 1) {
+    // $columnIndex: 1 - clone second column, 2 - third.... (sometimes it is needed)
+    // $columnCount: count of original columns (before cloning)
+    function duplicateCol($search, $numberOfCols = 1, $columnIndex = 1, $columnsCount = 2) {
 		$tagPos = $this->tagPos($search);
 
 		$table = $this->slice($this->tempDocumentMainPart, $this->rfindTagStart('tbl', $tagPos), $this->findTagEnd('tbl', $tagPos));
@@ -2741,7 +2778,7 @@ class TemplateProcessor extends \PhpOffice\PhpWord\TemplateProcessor {
 		$splits = static::splitByTag($table->get(), 'gridCol');
 
 		preg_match('!(^.*w:w=")([0-9]+)(".*)$!', $splits[1], $firstCol);
-		preg_match('!(^.*w:w=")([0-9]+)(".*)$!', $splits[2], $newCol);
+		preg_match('!(^.*w:w=")([0-9]+)(".*)$!', $splits[$columnIndex + 1], $newCol);
 		array_shift($firstCol);
 		array_shift($newCol);
 
@@ -2749,15 +2786,22 @@ class TemplateProcessor extends \PhpOffice\PhpWord\TemplateProcessor {
 		$firstCol[1] = $newWidth;
 
 		$splits[1] = join('', $firstCol);
-		$splits[2] = str_repeat($splits[2], $numberOfCols);
-		
+		$splits[$columnIndex + 1] = str_repeat($splits[$columnIndex + 1], $numberOfCols);
 
 		$splits = static::splitByTag(join('', $splits), 'tc');
-		for ($i = 1; $i < count($splits); $i+=3) {
+/*        if ($search == 'gheader') {
+            echo "<pre>debug:<strong>printer.php:2778</strong>\r\n"; print_r($splits); echo '</pre>'; // !!!!!!!!!! delete it
+        }*/
+        for ($i = 1; $i < count($splits); $i += $columnsCount + 1) {
 			$splits[$i] = preg_replace('!(w:w=")[0-9]+!', '${1}'.$newWidth, $splits[$i]);
-			$splits[$i+1] = str_repeat($splits[$i+1], $numberOfCols);
+            $ind = $i + $columnIndex;
+			if (array_key_exists($ind, $splits) && $ind != (count($splits) - 1)) {
+                $splits[$ind] = str_repeat($splits[$ind], $numberOfCols);
+            }
 		}
-
+/*		if ($search == 'gheader') {
+		    echo "<pre>debug:<strong>printer.php:2778</strong>\r\n"; print_r($splits); echo '</pre>'; exit; // !!!!!!!!!! delete it
+        }*/
 		$table->set(join('', $splits));
 
 		$this->tempDocumentMainPart = $table->join();

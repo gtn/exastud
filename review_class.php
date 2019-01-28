@@ -25,13 +25,19 @@ $courseid = optional_param('courseid', 1, PARAM_INT); // Course ID
 $classid = required_param('classid', PARAM_INT);
 $subjectid = required_param('subjectid', PARAM_INT);
 $action = optional_param('action', '', PARAM_TEXT);
+$type = optional_param('type', '', PARAM_TEXT);
 
 block_exastud_require_login($courseid);
 
 block_exastud_require_global_cap(BLOCK_EXASTUD_CAP_REVIEW);
 
-$reviewclass = block_exastud_get_review_class($classid, $subjectid);
 $class = block_exastud_get_class($classid);
+$simulateSubjectId = $subjectid;
+if ((block_exastud_is_profilesubject_teacher($classid) || $class->userid != $USER->id)
+        && $type == BLOCK_EXASTUD_DATA_ID_CERTIFICATE) {
+    $simulateSubjectId = BLOCK_EXASTUD_DATA_ID_CERTIFICATE;
+}
+$reviewclass = block_exastud_get_review_class($classid, $simulateSubjectId);
 
 if (!$class || (!$reviewclass && $USER->id != $class->userid)) { // class teacher can preview of reviews
 	print_error("badclass", "block_exastud");
