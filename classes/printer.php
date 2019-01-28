@@ -1073,7 +1073,8 @@ class printer {
                         $grading = -1;
                         $crossGrading = -1; // do not show at all
                     }
-
+//echo "<pre>debug:<strong>printer.php:1076</strong>\r\n"; print_r($grading); echo '</pre>'; // !!!!!!!!!! delete it
+//echo "<pre>debug:<strong>printer.php:1076</strong>\r\n"; print_r($crossGrading); echo '</pre>'; // !!!!!!!!!! delete it
                     // for grading options from exacomp
                     /*for ($i = $gradesStartColumn; $i < $gradesColCount; $i++) {
                         if (array_search($grading, $gradeopts) == $i) {
@@ -1083,10 +1084,14 @@ class printer {
                         }
                     }*/
 
+                    if ($crossGrading == -1) {
+                        $templateProcessor->setValue("ne", '---', 1);
+                    } else {
                         $templateProcessor->setValue("ne", $crossGrading == 0 ? 'X' : '', 1);
-                        $templateProcessor->setValue("tw", $crossGrading == 1 ? 'X' : '', 1);
-                        $templateProcessor->setValue("ue", $crossGrading == 2 ? 'X' : '', 1);
-                        $templateProcessor->setValue("ve", $crossGrading == 3 ? 'X' : '', 1);
+                    }
+                    $templateProcessor->setValue("tw", $crossGrading == 1 ? 'X' : '', 1);
+                    $templateProcessor->setValue("ue", $crossGrading == 2 ? 'X' : '', 1);
+                    $templateProcessor->setValue("ve", $crossGrading == 3 ? 'X' : '', 1);
 		            
 		            /*
 		             * $gme = ['G', 'M', 'E'][$test % 3];
@@ -1120,7 +1125,11 @@ class printer {
                             }
                         }*/
 
-                        $templateProcessor->setValue("ne", $crossGrading == 0 ? 'X' : '', 1);
+                        if ($crossGrading == -1) {
+                            $templateProcessor->setValue("ne", '---', 1);
+                        } else {
+                            $templateProcessor->setValue("ne", $crossGrading == 0 ? 'X' : '', 1);
+                        }
                         $templateProcessor->setValue("tw", $crossGrading == 1 ? 'X' : '', 1);
                         $templateProcessor->setValue("ue", $crossGrading == 2 ? 'X' : '', 1);
                         $templateProcessor->setValue("ve", $crossGrading == 3 ? 'X' : '', 1);
@@ -2406,20 +2415,21 @@ class printer {
         }
         switch ($scheme) {
             case BLOCK_EXACOMP_ASSESSMENT_TYPE_GRADE:
+                // now we are thinking only about 6
                 if (get_config('exacomp', 'use_grade_verbose_competenceprofile')) {
                     if ($origValue == block_exacomp_get_string('grade_Verygood')) {
-                        $val = 6;
+                        $val = 1;
                     } else if ($origValue == block_exacomp_get_string('grade_good')) {
-                        $val = 5;
-                    } else if ($origValue == block_exacomp_get_string('grade_Satisfactory')) {
-                        $val = 4;
-                    } else if ($origValue == block_exacomp_get_string('grade_Sufficient')) {
-                        $val = 3;
-                    } else if ($origValue == block_exacomp_get_string('grade_Deficient')) {
                         $val = 2;
+                    } else if ($origValue == block_exacomp_get_string('grade_Satisfactory')) {
+                        $val = 3;
+                    } else if ($origValue == block_exacomp_get_string('grade_Sufficient')) {
+                        $val = 4;
+                    } else if ($origValue == block_exacomp_get_string('grade_Deficient')) {
+                        $val = 5;
                     } else {
                         // block_exacomp_get_string('grade_Insufficient')
-                        $val = 1;
+                        $val = 6;
                     }
                     // if 4 columns
                     return round($val * (-0.6) + 3.6); // max value 6 to 4 columns. TODO: is it ok?
@@ -2429,13 +2439,15 @@ class printer {
                 break;
             case BLOCK_EXACOMP_ASSESSMENT_TYPE_VERBOSE:
                 $options = array_map('trim', explode(',', block_exacomp_get_assessment_verbose_options()));
-                echo "<pre>debug:<strong>printer.php:2361</strong>\r\n"; print_r($options); echo '</pre>'; // !!!!!!!!!! delete it
                 //$crossPoints = array_combine(range(1, count($options)), array_values($options)); // start from 1
                 $numberValue = array_search($origValue, $options);
                 return $numberValue;
                 break;
             case BLOCK_EXACOMP_ASSESSMENT_TYPE_POINTS:
-                return round($origValue * (-0.6) + 3.6); // TODO: intval?
+                $maxColumns = 3; // 0, 1, 2, 3
+                $maxPoints = block_exacomp_get_assessment_points_limit(); // 0, 1, ... max
+                $koef = $maxColumns / $maxPoints;
+                return round($origValue * $koef); // TODO: intval?
                 break;
             case BLOCK_EXACOMP_ASSESSMENT_TYPE_YESNO:
                 if (!isset($teacher_additional_grading_topics[$record->compid])) {
