@@ -1003,32 +1003,43 @@ class printer {
 		    // subjects
             $templateProcessor->cloneBlock('subjectif', count($subjects), true);
 
-            /*$colCount = block_exacomp_get_report_columns_count_by_assessment();
-            $startColumn = 0;
+            $gradesColCount = block_exacomp_get_report_columns_count_by_assessment();
+            $gradesStartColumn = 0;
             $gradeopts = array();
-            for ($i = $startColumn; $i < $colCount; $i++) {
+            $gradeVerbal = array(
+                    block_exacomp_get_string('grade_Verygood'),
+                    block_exacomp_get_string('grade_good'),
+                    block_exacomp_get_string('grade_Satisfactory'),
+                    block_exacomp_get_string('grade_Sufficient'),
+                    block_exacomp_get_string('grade_Deficient'),
+                    block_exacomp_get_string('grade_Insufficient')
+            );
+            for ($i = $gradesStartColumn; $i < $gradesColCount; $i++) {
                 switch (block_exacomp_get_assessment_comp_scheme()) {
                     case BLOCK_EXACOMP_ASSESSMENT_TYPE_GRADE:
-                        echo $i;
+                        if(get_config('exacomp', 'use_grade_verbose_competenceprofile')){
+                            $gradeopts[] = $gradeVerbal[$i];
+                        } else {
+                            $gradeopts[] = $i;
+                        }
                         break;
                     case BLOCK_EXACOMP_ASSESSMENT_TYPE_VERBOSE:
                         $titles = preg_split("/(\/|,) /", block_exacomp_get_assessment_verbose_options());
-                        echo $titles[$i];
+                        $gradeopts[] = $titles[$i];
                         break;
                     case BLOCK_EXACOMP_ASSESSMENT_TYPE_POINTS:
-                        echo $i;
+                        $gradeopts[] = $i;
                         break;
                     case BLOCK_EXACOMP_ASSESSMENT_TYPE_YESNO:
-                        echo $i == 1 ? block_exacomp_get_string('yes_no_Yes') : block_exacomp_get_string('yes_no_No');
+                        $gradeopts[] = $i == 1 ? block_exacomp_get_string('yes_no_Yes') : block_exacomp_get_string('yes_no_No');
                         break;
                 }
-                echo '</th>';
             }
-            echo "<pre>debug:<strong>printer.php:1006</strong>\r\n"; print_r($subjects); echo '</pre>'; exit; // !!!!!!!!!! delete it
+            $gradeopts = array_filter($gradeopts);
             $templateProcessor->duplicateCol('gheader', count($gradeopts), 2, 3);
             foreach ($gradeopts as $gradeopt) {
                 $templateProcessor->setValue('gheader', $gradeopt, 1);
-            }*/
+            }
 		    $test = 0;
 		    
 		    foreach ($subjects as $subject) {
@@ -1042,17 +1053,26 @@ class printer {
                     $templateProcessor->setValue("n", $topic->teacher_eval_niveau_text, 1);
                     if (@$studentdata->print_grades_anlage_leb) {
                         $grading = $topic->teacher_eval_additional_grading;
-                        echo "<pre>debug:<strong>printer.php:1019</strong>\r\n"; print_r($grading); echo '</pre>'; // !!!!!!!!!! delete it
-                        $crossGrading = self::get_exacomp_crossgrade($grading, 'topic', 4);
+                        //$crossGrading = self::get_exacomp_crossgrade($grading, 'topic', 4);
                     } else {
-                        $crossGrading = -1; // do not show at all
+                        $grading = -1;
+                        //$crossGrading = -1; // do not show at all
                     }
-                    //echo "<pre>debug:<strong>printer.php:1020</strong>\r\n"; print_r($grading); echo '</pre>'; // !!!!!!!!!! delete it
-                    //echo "<pre>debug:<strong>printer.php:1043</strong>\r\n"; print_r($crossGrading); echo '</pre>'; // !!!!!!!!!! delete it
-                    $templateProcessor->setValue("ne", $crossGrading == 0 ? 'X' : '', 1);
-                    $templateProcessor->setValue("tw", $crossGrading == 1 ? 'X' : '', 1);
-                    $templateProcessor->setValue("ue", $crossGrading == 2 ? 'X' : '', 1);
-                    $templateProcessor->setValue("ve", $crossGrading == 3 ? 'X' : '', 1);
+
+                    //echo "<pre>debug:<strong>printer.php:1048</strong>\r\n"; print_r($grading); echo '</pre>'; // !!!!!!!!!! delete it
+
+                    for ($i = $gradesStartColumn; $i < $gradesColCount; $i++) {
+                        if (array_search($grading, $gradeopts) == $i) {
+                            $templateProcessor->setValue("tv", 'X', 1);
+                        } else {
+                            $templateProcessor->setValue("tv", '', 1);
+                        }
+                    }
+
+                        /*$templateProcessor->setValue("ne", $crossGrading == 0 ? 'X' : '', 1);
+                        $templateProcessor->setValue("tw", $crossGrading == 1 ? 'X' : '', 1);
+                        $templateProcessor->setValue("ue", $crossGrading == 2 ? 'X' : '', 1);
+                        $templateProcessor->setValue("ve", $crossGrading == 3 ? 'X' : '', 1);*/
 		            
 		            /*
 		             * $gme = ['G', 'M', 'E'][$test % 3];
@@ -1072,14 +1092,24 @@ class printer {
                         $templateProcessor->setValue("n", $descriptor->teacher_eval_niveau_text, 1);
 		                if (@$studentdata->print_grades_anlage_leb) {
                             $grading = $descriptor->teacher_eval_additional_grading;
-                            $crossGrading = self::get_exacomp_crossgrade($grading, 'topic', 4);
+                            //$crossGrading = self::get_exacomp_crossgrade($grading, 'topic', 4);
                         } else {
-                            $crossGrading = -1; // do not show at all
+                            $grading = -1;
+                            //$crossGrading = -1; // do not show at all
                         }
-                        $templateProcessor->setValue("ne", $crossGrading == 0 ? 'X' : '', 1);
+
+                        for ($i = $gradesStartColumn; $i < $gradesColCount; $i++) {
+                            if (array_search($grading, $gradeopts) == $i) {
+                                $templateProcessor->setValue("dv", 'X', 1);
+                            } else {
+                                $templateProcessor->setValue("dv", '', 1);
+                            }
+                        }
+
+                        /*$templateProcessor->setValue("ne", $crossGrading == 0 ? 'X' : '', 1);
                         $templateProcessor->setValue("tw", $crossGrading == 1 ? 'X' : '', 1);
                         $templateProcessor->setValue("ue", $crossGrading == 2 ? 'X' : '', 1);
-                        $templateProcessor->setValue("ve", $crossGrading == 3 ? 'X' : '', 1);
+                        $templateProcessor->setValue("ve", $crossGrading == 3 ? 'X' : '', 1);*/
 		                
 		                /*
 		                 * $gme = ['G', 'M', 'E'][$test % 3];

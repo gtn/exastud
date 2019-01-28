@@ -58,7 +58,7 @@ $reviewclass = block_exastud_get_review_class($classid, $simulateSubjectId);
 
 if (!$reviewclass
         || !$class
-        || ($type == BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_16_ZERTIFIKAT_FUER_PROFILFACH
+        || ($type == BLOCK_EXASTUD_DATA_ID_CERTIFICATE
                 && !block_exastud_is_profilesubject_teacher($classid))) {
 	print_error('badclass', 'block_exastud');
 }
