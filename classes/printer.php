@@ -385,7 +385,7 @@ class printer {
 				}
 
 				$data[$contentId] = block_exastud_cropStringByInputLimitsFromTemplate(static::spacerIfEmpty(@$subjectData->review), $templateid, 'subjects');
-				if ($subject->no_niveau == 1){
+				if ($subject->no_niveau == 1 && !empty($subjectData->niveau) && $subjectData->niveau != 'Z' && $subjectData->niveau != 'zieldifferenter Unterricht') {
 				    $niveau = 'Niveau G / M / E';
 				} else {
 				    $niveau = \block_exastud\global_config::get_niveau_option_title(@$subjectData->niveau) ?: @$subjectData->niveau;
