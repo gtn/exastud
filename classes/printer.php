@@ -61,7 +61,15 @@ class printer {
             $forminputs = $template->get_inputs(BLOCK_EXASTUD_DATA_ID_PRINT_TEMPLATE);
             $template_type = $templateid; // for using later
 			$templateid = $template->get_template_id();
-		} else {
+		} else if ($templateid == BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_ANLAGE_ZUM_LERNENTWICKLUNGSBERICHT_SIMPLE) {
+            // temporary. TODO: delete this when the DB will be updated
+            $templatesAll = block_exastud_get_default_templates();
+            $tmplArr = $templatesAll['Anlage simple'];
+            $tempTemplateName = $tmplArr['name'];
+            $templateFile = __DIR__.'/../template/'.$tmplArr['file'].'.docx';
+            $template = null;
+            $forminputs = $tmplArr['inputs'];
+        } else {
 			$template = \block_exastud\print_template::create($templateid);
             $forminputs = $template->get_inputs($templateid);
             $template_type = $templateid; // for using later
@@ -73,7 +81,9 @@ class printer {
 		 * }
 		 */
 
-		$templateFile = $template->get_file();
+		if (!isset($templateFile)) {
+            $templateFile = $template->get_file();
+        }
 
 		// check if file does exist
 		if (!file_exists($templateFile)) {
@@ -168,11 +178,17 @@ class printer {
         //    $dataKey['class_logo'] = ''; // no logo files
         //};
 		// preparation data from template settings
-        $marker_configurations = $template->get_marker_configurations('all', $class, $student);
-        $data = array_merge($data, $marker_configurations);
+        if ($template) {
+            $marker_configurations = $template->get_marker_configurations('all', $class, $student);
+            $data = array_merge($data, $marker_configurations);
+        }
 
         // preparation data from images
-        $inputs = print_templates::get_template_inputs($templateid, 'all');
+        if ($template) {
+            $inputs = print_templates::get_template_inputs($templateid, 'all');
+        } else {
+            $inputs = null;
+        }
         if ($inputs && count($inputs) > 0) {
             $context = \context_system::instance();
             foreach ($inputs as $dataKey => $input) {
@@ -887,24 +903,22 @@ class printer {
 			$add_filter(function($content) use ($placeholder) {
 				return str_replace($placeholder.'note', '--', $content);
 			});
-		} elseif ($templateid == BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_ANLAGE_ZUM_LERNENTWICKLUNGSBERICHT ) {
+		} else if (in_array($templateid, [
+		        BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_ANLAGE_ZUM_LERNENTWICKLUNGSBERICHT,
+                BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_ANLAGE_ZUM_LERNENTWICKLUNGSBERICHT_SIMPLE
+                 ])) {
 			$evalopts = g::$DB->get_records('block_exastudevalopt', null, 'sorting', 'id, title, sourceinfo');
 			$categories = block_exastud_get_class_categories_for_report($student->id, $class->id);
-			$subjects = static::get_exacomp_subjects($student->id);
-			if (!$subjects || count($subjects) == 0) {
-			    // no any competences in dakora/exacomp for this student. So - no report
-                return null;
+			//$subjects = static::get_exacomp_subjects($student->id);
+			if ($templateid == BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_ANLAGE_ZUM_LERNENTWICKLUNGSBERICHT_SIMPLE) {
+                $subjects = array();
+            } else {
+                $subjects = static::get_exacomp_subjects($student->id);
+                if (!$subjects || count($subjects) == 0) {
+                    // no any competences in dakora/exacomp for this student. So - no report
+                    return null;
+                }
             }
-
-			//$data = [
-				//'periode' => $period->description,
-				//'schule' => get_config('exastud', 'school_name'),
-				//'ort' => get_config('exastud', 'school_location'),
-				//'name' => $student->firstname.' '.$student->lastname,
-				//'klasse' => $class->title,
-				//'geburtsdatum' => block_exastud_get_date_of_birth($student->id),
-				//'datum' => date('d.m.Y'),
-			//];
 
 			$templateProcessor->duplicateCol('kheader', count($evalopts));
 			foreach ($evalopts as $evalopt) {
@@ -926,17 +940,17 @@ class printer {
 
 			foreach ($subjects as $subject) {
 				$templateProcessor->setValue("subject", $subject->title, 1);
-				
+
 				if (get_config('exacomp', 'assessment_topic_diffLevel') == 1 || get_config('exacomp', 'assessment_comp_diffLevel') == 1) {
 				    $difflvl = get_config('exacomp', 'assessment_diffLevel_options');
 				    $templateProcessor->duplicateCol('compheader', 2);
 				    $templateProcessor->setValue("compheader", "Niveau", 1);
-				    
+
 				}
 				$templateProcessor->setValue("compheader", "Note", 1);
 
 				foreach ($subject->topics as $topic) {
-			     	$templateProcessor->cloneRowToEnd("topic");			
+			     	$templateProcessor->cloneRowToEnd("topic");
 					$templateProcessor->cloneRowToEnd("descriptor");
 					$templateProcessor->setValue("topic", $topic->title, 1);
 					$grading = @$studentdata->print_grades_anlage_leb ? $topic->teacher_eval_additional_grading : null;
@@ -1003,6 +1017,7 @@ class printer {
 		    // subjects
             $templateProcessor->cloneBlock('subjectif', count($subjects), true);
 
+            /*  uncomment this if you need to use grading options from exacomp ..
             $gradesColCount = block_exacomp_get_report_columns_count_by_assessment();
             $gradesStartColumn = 0;
             $gradeopts = array();
@@ -1039,7 +1054,7 @@ class printer {
             $templateProcessor->duplicateCol('gheader', count($gradeopts), 2, 3);
             foreach ($gradeopts as $gradeopt) {
                 $templateProcessor->setValue('gheader', $gradeopt, 1);
-            }
+            }*/
 		    $test = 0;
 		    
 		    foreach ($subjects as $subject) {
@@ -1053,26 +1068,25 @@ class printer {
                     $templateProcessor->setValue("n", $topic->teacher_eval_niveau_text, 1);
                     if (@$studentdata->print_grades_anlage_leb) {
                         $grading = $topic->teacher_eval_additional_grading;
-                        //$crossGrading = self::get_exacomp_crossgrade($grading, 'topic', 4);
+                        $crossGrading = self::get_exacomp_crossgrade($grading, 'topic', 4);
                     } else {
                         $grading = -1;
-                        //$crossGrading = -1; // do not show at all
+                        $crossGrading = -1; // do not show at all
                     }
 
-                    //echo "<pre>debug:<strong>printer.php:1048</strong>\r\n"; print_r($grading); echo '</pre>'; // !!!!!!!!!! delete it
-
-                    for ($i = $gradesStartColumn; $i < $gradesColCount; $i++) {
+                    // for grading options from exacomp
+                    /*for ($i = $gradesStartColumn; $i < $gradesColCount; $i++) {
                         if (array_search($grading, $gradeopts) == $i) {
                             $templateProcessor->setValue("tv", 'X', 1);
                         } else {
                             $templateProcessor->setValue("tv", '', 1);
                         }
-                    }
+                    }*/
 
-                        /*$templateProcessor->setValue("ne", $crossGrading == 0 ? 'X' : '', 1);
+                        $templateProcessor->setValue("ne", $crossGrading == 0 ? 'X' : '', 1);
                         $templateProcessor->setValue("tw", $crossGrading == 1 ? 'X' : '', 1);
                         $templateProcessor->setValue("ue", $crossGrading == 2 ? 'X' : '', 1);
-                        $templateProcessor->setValue("ve", $crossGrading == 3 ? 'X' : '', 1);*/
+                        $templateProcessor->setValue("ve", $crossGrading == 3 ? 'X' : '', 1);
 		            
 		            /*
 		             * $gme = ['G', 'M', 'E'][$test % 3];
@@ -1092,24 +1106,24 @@ class printer {
                         $templateProcessor->setValue("n", $descriptor->teacher_eval_niveau_text, 1);
 		                if (@$studentdata->print_grades_anlage_leb) {
                             $grading = $descriptor->teacher_eval_additional_grading;
-                            //$crossGrading = self::get_exacomp_crossgrade($grading, 'topic', 4);
+                            $crossGrading = self::get_exacomp_crossgrade($grading, 'topic', 4);
                         } else {
                             $grading = -1;
-                            //$crossGrading = -1; // do not show at all
+                            $crossGrading = -1; // do not show at all
                         }
 
-                        for ($i = $gradesStartColumn; $i < $gradesColCount; $i++) {
+                        /*for ($i = $gradesStartColumn; $i < $gradesColCount; $i++) {
                             if (array_search($grading, $gradeopts) == $i) {
                                 $templateProcessor->setValue("dv", 'X', 1);
                             } else {
                                 $templateProcessor->setValue("dv", '', 1);
                             }
-                        }
+                        }*/
 
-                        /*$templateProcessor->setValue("ne", $crossGrading == 0 ? 'X' : '', 1);
+                        $templateProcessor->setValue("ne", $crossGrading == 0 ? 'X' : '', 1);
                         $templateProcessor->setValue("tw", $crossGrading == 1 ? 'X' : '', 1);
                         $templateProcessor->setValue("ue", $crossGrading == 2 ? 'X' : '', 1);
-                        $templateProcessor->setValue("ve", $crossGrading == 3 ? 'X' : '', 1);*/
+                        $templateProcessor->setValue("ve", $crossGrading == 3 ? 'X' : '', 1);
 		                
 		                /*
 		                 * $gme = ['G', 'M', 'E'][$test % 3];
@@ -1158,7 +1172,9 @@ class printer {
 		}*/
 
 		// compare $data with values in selectboxes. If it is empty (---) - delete <w:sdtContent>, if not - delete option
-        $inputs = print_templates::get_template_inputs($templateid, 'all');
+        if ($template) {
+            $inputs = print_templates::get_template_inputs($templateid, 'all');
+        }
         foreach ($data as $dKey => $dItem) {
             // it is selectbox
             if (in_array($dKey, $data_dropdowns) ||
@@ -1256,7 +1272,7 @@ class printer {
         ])) {
 			$filename = ($certificate_issue_date_text ? preg_replace('/[\\/]/', '-', $certificate_issue_date_text) : date('Y-m-d'))."-".$template->get_name()."-{$class->title}-{$student->lastname}-{$student->firstname}.dotx";
 		} else {*/
-			$filename = ($certificate_issue_date_text ? preg_replace('/[\\/]/', '-', $certificate_issue_date_text) : date('Y-m-d'))."-".$template->get_name()."-{$class->title}-{$student->lastname}-{$student->firstname}.docx";
+			$filename = ($certificate_issue_date_text ? preg_replace('/[\\/]/', '-', $certificate_issue_date_text) : date('Y-m-d'))."-".($tempTemplateName ? $tempTemplateName : $template->get_name())."-{$class->title}-{$student->lastname}-{$student->firstname}.docx";
 		//}
 
 		return (object)[

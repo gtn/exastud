@@ -79,6 +79,7 @@ const BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_HALBJAHR_ZEUGNIS_FOE  = 19;
 const BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_LERNENTWICKLUNGSBERICHT_DECKBLATT_UND_1_INNENSEITE  = 20;
 const BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_HALBJAHRESINFORMATION_KL11  = 21;
 const BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_HALBJAHRESINFORMATION_KL11  = 22;
+const BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_ANLAGE_ZUM_LERNENTWICKLUNGSBERICHT_SIMPLE = 23;
 
 const BLOCK_EXASTUD_SESSION_TIMEOUT = 10*60 + 1;
 
@@ -1983,6 +1984,7 @@ function block_exastud_get_report_templates($class) {
     } else {
         $templates += \block_exastud\print_templates::get_class_other_print_templates($class);
     }
+    $templates[BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_ANLAGE_ZUM_LERNENTWICKLUNGSBERICHT_SIMPLE] = 'Anlage: Überfachliche Kompetenzen';
     return $templates;
 }
 
@@ -2115,6 +2117,19 @@ function block_exastud_get_default_templates() {
                     'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_ANLAGE_ZUM_LERNENTWICKLUNGSBERICHT,
                     'name' => 'Anlage',
                     'file' => 'Anlage zum Lernentwicklungsbericht',
+                    'year' => '1',
+                    'report_date' => '1',
+                    'student_name' => '1',
+                    'date_of_birth' => '1',
+                    'place_of_birth' => '1',
+                    'learning_group' => '1',
+                    'inputs' => [
+                    ],
+            ],
+            'Anlage simple' => [
+                    'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_ANLAGE_ZUM_LERNENTWICKLUNGSBERICHT_SIMPLE,
+                    'name' => 'Anlage Überfachliche Kompetenzen',
+                    'file' => 'Anlage simple',
                     'year' => '1',
                     'report_date' => '1',
                     'student_name' => '1',
