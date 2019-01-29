@@ -2428,7 +2428,7 @@ class printer {
         switch ($scheme) {
             case BLOCK_EXACOMP_ASSESSMENT_TYPE_GRADE:
                 // now we are thinking only about 6
-                /*if (get_config('exacomp', 'use_grade_verbose_competenceprofile')) {
+                if (get_config('exacomp', 'use_grade_verbose_competenceprofile')) {
                     // these values from exacomp API: get_comp_tree_for_exastud
                     if ($origValue == block_exacomp_get_string('grade_Verygood')) {
                         $val = 1.4;
@@ -2449,8 +2449,8 @@ class printer {
                 } else {
                     $val = $origValue;
                     //return round($origValue * (-0.6) + 3.6); // TODO: intval?
-                }*/
-                $val = $origValue;
+                }
+                //$val = $origValue;
                 break;
             case BLOCK_EXACOMP_ASSESSMENT_TYPE_VERBOSE:
                 $options = array_map('trim', explode(',', block_exacomp_get_assessment_verbose_options()));
