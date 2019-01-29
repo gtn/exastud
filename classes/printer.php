@@ -981,6 +981,13 @@ class printer {
 				$templateProcessor->deleteRow("descriptor");
 			}
 		} elseif ($templateid == BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_ANLAGE_ZUM_LERNENTWICKLUNGSBERICHTALT) {
+
+            // very old exacomp?
+            $oldExacomp = false;
+            if (!function_exists('block_exacomp_get_assessment_diffLevel')) { // this function - for example
+                $oldExacomp = true;
+            }
+
 		    $evalopts = g::$DB->get_records('block_exastudevalopt', null, 'sorting', 'id, title, sourceinfo');
 		    $categories = block_exastud_get_class_categories_for_report($student->id, $class->id);
 		    $subjects = static::get_exacomp_subjects($student->id);
@@ -1072,15 +1079,18 @@ class printer {
                         } else {
                             $grading = $topic->teacher_eval_additional_grading;
                         }
-                        $crossGrading = self::get_exacomp_crossgrade($grading, 'topic', 4);
+                        //echo "<pre>debug:<strong>printer.php:1075</strong>\r\n"; print_r($grading); echo '</pre>'; // !!!!!!!!!! delete it
+                        if ($oldExacomp) {
+                            // old exacomp returns correct column number. look function get_additionalinfo_value_mapping()
+                            $crossGrading = $grading;
+                        } else {
+                            $crossGrading = self::get_exacomp_crossgrade($grading, 'topic', 4);
+                        }
                     } else {
                         $grading = -1;
                         $crossGrading = -1; // do not show at all
                     }
 
-                    //echo "<pre>debug:<strong>printer.php:1076</strong>\r\n"; print_r($topic); echo '</pre>'; // !!!!!!!!!! delete it
-                    //echo "<pre>debug:<strong>printer.php:1076</strong>\r\n"; print_r($grading); echo '</pre>'; // !!!!!!!!!! delete it
-                    //echo "<pre>debug:<strong>printer.php:1076</strong>\r\n"; print_r($crossGrading); echo '</pre>'; // !!!!!!!!!! delete it
 
                     // for grading options from exacomp
                     /*for ($i = $gradesStartColumn; $i < $gradesColCount; $i++) {
@@ -1123,9 +1133,9 @@ class printer {
                             } else {
                                 $grading = $descriptor->teacher_eval_additional_grading;
                             }
+                            //echo "<pre>debug:<strong>printer.php:1136</strong>\r\n"; print_r('grading1: '.$grading); echo '</pre>'; // !!!!!!!!!! delete it
                             // from bug of exacomp - trying to get value from direct query. (for possibility work without upgrading of exacomp)
-                            if (!$grading) {
-                                $oldExacomp = false;
+                            if ($grading === null) {
                                 $gradeRecordExacomp = g::$DB->get_record_sql("
                                                     SELECT * FROM {".BLOCK_EXACOMP_DB_COMPETENCES."}
                                                     WHERE userid=? AND role=? AND comptype = ? AND compid = ?
@@ -1136,8 +1146,6 @@ class printer {
                                         $descriptor_scheme = block_exacomp_get_assessment_comp_scheme();
                                     } else {
                                         $descriptor_scheme = 1;
-                                        // very old exacomp?
-                                        $oldExacomp = true;
                                         if (!defined('BLOCK_EXACOMP_ASSESSMENT_TYPE_GRADE')) {
                                             @define('BLOCK_EXACOMP_ASSESSMENT_TYPE_GRADE', 1);
                                         }
@@ -1145,11 +1153,7 @@ class printer {
                                     switch ($descriptor_scheme) {
                                         case 1:
                                         case BLOCK_EXACOMP_ASSESSMENT_TYPE_GRADE:
-                                            if ($oldExacomp) {
-                                                $grading = $gradeRecordExacomp->value;
-                                            } else {
-                                                $grading = $gradeRecordExacomp->additionalinfo;
-                                            }
+                                            $grading = $gradeRecordExacomp->additionalinfo;
                                             break;
                                         case 2:
                                         case BLOCK_EXACOMP_ASSESSMENT_TYPE_VERBOSE:
@@ -1167,7 +1171,16 @@ class printer {
                                 }
                                 //echo "<pre>debug:<strong>printer.php:1127</strong>\r\n"; print_r($gradeRecordExacomp); echo '</pre>';  // !!!!!!!!!! delete it
                             }
-                            $crossGrading = self::get_exacomp_crossgrade($grading, 'comp', 4);
+                            if ($oldExacomp) {
+                                $crossGrading = $grading;
+                            } else {
+                                $crossGrading = self::get_exacomp_crossgrade($grading, 'comp', 4);
+                            }
+                            //echo "<pre>debug:<strong>printer.php:1076</strong>\r\n"; print_r($descriptor->title); echo '</pre>'; // !!!!!!!!!! delete it
+                            //echo "<pre>debug:<strong>printer.php:1076</strong>\r\n"; print_r($grading); echo '</pre>'; // !!!!!!!!!! delete it
+                            //echo "<pre>debug:<strong>printer.php:1076</strong>\r\n"; print_r($crossGrading); echo '</pre>'; // !!!!!!!!!! delete it
+
+
                         } else {
                             $grading = -1;
                             $crossGrading = -1; // do not show at all
