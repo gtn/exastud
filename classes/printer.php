@@ -1112,6 +1112,7 @@ class printer {
 		             */
 		            
 		            foreach ($topic->descriptors as $descriptor) {
+		                $grading = null;
 		                $templateProcessor->duplicateRow("descriptor");
 		                $templateProcessor->setValue("descriptor", ($descriptor->niveau_title ? $descriptor->niveau_title.': ' : '').$descriptor->title, 1);
 
@@ -1121,6 +1122,32 @@ class printer {
                                 $grading = $descriptor->teacher_eval_additional_grading_real;
                             } else {
                                 $grading = $descriptor->teacher_eval_additional_grading;
+                            }
+                            // from bug of exacomp - trying to get value from direct query. (for possibility work without upgrading of exacomp)
+                            if (!$grading) {
+                                $gradeRecordExacomp = g::$DB->get_record_sql("
+                                                    SELECT * FROM {".BLOCK_EXACOMP_DB_COMPETENCES."}
+                                                    WHERE userid=? AND role=? AND comptype = ? AND compid = ?
+                                                    ORDER BY timestamp DESC", [$student->id, BLOCK_EXACOMP_ROLE_TEACHER, BLOCK_EXACOMP_TYPE_DESCRIPTOR, $descriptor->id],
+                                                IGNORE_MULTIPLE);
+                                if ($gradeRecordExacomp) {
+                                    $descriptor_scheme = block_exacomp_get_assessment_comp_scheme();
+                                    switch ($descriptor_scheme) {
+                                        case BLOCK_EXACOMP_ASSESSMENT_TYPE_GRADE:
+                                            $grading = $gradeRecordExacomp->additionalinfo;
+                                            break;
+                                        case BLOCK_EXACOMP_ASSESSMENT_TYPE_VERBOSE:
+                                            $grading = $gradeRecordExacomp->value;
+                                            break;
+                                        case BLOCK_EXACOMP_ASSESSMENT_TYPE_POINTS:
+                                            $grading = $gradeRecordExacomp->value;
+                                            break;
+                                        case BLOCK_EXACOMP_ASSESSMENT_TYPE_GRADE:
+                                            $grading = $gradeRecordExacomp->value;
+                                            break;
+                                    }
+                                }
+                                //echo "<pre>debug:<strong>printer.php:1127</strong>\r\n"; print_r($grading); echo '</pre>';  // !!!!!!!!!! delete it
                             }
                             $crossGrading = self::get_exacomp_crossgrade($grading, 'comp', 4);
                         } else {
