@@ -639,7 +639,7 @@ class printer {
                 }
 
 				$grade = @$grades[@$subjectData->grade];
-				if (!$grade && !empty($subjectData->grade)) { // get grade for cross grage between templates
+				if (!$grade && !empty($subjectData->grade)) { // get grade for cross grade between templates
                     $indexOfGrade = block_exastud_get_grade_index_by_value($subjectData->grade);
                     $gradeByCurrentTemplate = block_exastud_get_grade_by_index($indexOfGrade, $grades);
                     $grade = $gradeByCurrentTemplate;
@@ -1067,15 +1067,17 @@ class printer {
 		            
                     $templateProcessor->setValue("n", $topic->teacher_eval_niveau_text, 1);
                     if (@$studentdata->print_grades_anlage_leb) {
-                        $grading = $topic->teacher_eval_additional_grading;
+                        $grading = $topic->teacher_eval_additional_grading_real;
                         $crossGrading = self::get_exacomp_crossgrade($grading, 'topic', 4);
                     } else {
                         $grading = -1;
                         $crossGrading = -1; // do not show at all
                     }
-//echo "<pre>debug:<strong>printer.php:1076</strong>\r\n"; print_r($topic->title); echo '</pre>'; // !!!!!!!!!! delete it
-//echo "<pre>debug:<strong>printer.php:1076</strong>\r\n"; print_r($grading); echo '</pre>'; // !!!!!!!!!! delete it
-//echo "<pre>debug:<strong>printer.php:1076</strong>\r\n"; print_r($crossGrading); echo '</pre>'; // !!!!!!!!!! delete it
+
+                    //echo "<pre>debug:<strong>printer.php:1076</strong>\r\n"; print_r($topic); echo '</pre>'; // !!!!!!!!!! delete it
+                    //echo "<pre>debug:<strong>printer.php:1076</strong>\r\n"; print_r($grading); echo '</pre>'; // !!!!!!!!!! delete it
+                    //echo "<pre>debug:<strong>printer.php:1076</strong>\r\n"; print_r($crossGrading); echo '</pre>'; // !!!!!!!!!! delete it
+
                     // for grading options from exacomp
                     /*for ($i = $gradesStartColumn; $i < $gradesColCount; $i++) {
                         if (array_search($grading, $gradeopts) == $i) {
@@ -1111,7 +1113,7 @@ class printer {
 
                         $templateProcessor->setValue("n", $descriptor->teacher_eval_niveau_text, 1);
 		                if (@$studentdata->print_grades_anlage_leb) {
-                            $grading = $descriptor->teacher_eval_additional_grading;
+                            $grading = $descriptor->teacher_eval_additional_grading_real;
                             $crossGrading = self::get_exacomp_crossgrade($grading, 'comp', 4);
                         } else {
                             $grading = -1;
@@ -2418,7 +2420,7 @@ class printer {
         switch ($scheme) {
             case BLOCK_EXACOMP_ASSESSMENT_TYPE_GRADE:
                 // now we are thinking only about 6
-                if (get_config('exacomp', 'use_grade_verbose_competenceprofile')) {
+                /*if (get_config('exacomp', 'use_grade_verbose_competenceprofile')) {
                     // these values from exacomp API: get_comp_tree_for_exastud
                     if ($origValue == block_exacomp_get_string('grade_Verygood')) {
                         $val = 1.4;
@@ -2439,7 +2441,8 @@ class printer {
                 } else {
                     $val = $origValue;
                     //return round($origValue * (-0.6) + 3.6); // TODO: intval?
-                }
+                }*/
+                $val = $origValue;
                 break;
             case BLOCK_EXACOMP_ASSESSMENT_TYPE_VERBOSE:
                 $options = array_map('trim', explode(',', block_exacomp_get_assessment_verbose_options()));
