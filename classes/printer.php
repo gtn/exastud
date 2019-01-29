@@ -1073,6 +1073,7 @@ class printer {
                         $grading = -1;
                         $crossGrading = -1; // do not show at all
                     }
+//echo "<pre>debug:<strong>printer.php:1076</strong>\r\n"; print_r($topic->title); echo '</pre>'; // !!!!!!!!!! delete it
 //echo "<pre>debug:<strong>printer.php:1076</strong>\r\n"; print_r($grading); echo '</pre>'; // !!!!!!!!!! delete it
 //echo "<pre>debug:<strong>printer.php:1076</strong>\r\n"; print_r($crossGrading); echo '</pre>'; // !!!!!!!!!! delete it
                     // for grading options from exacomp
@@ -1111,7 +1112,7 @@ class printer {
                         $templateProcessor->setValue("n", $descriptor->teacher_eval_niveau_text, 1);
 		                if (@$studentdata->print_grades_anlage_leb) {
                             $grading = $descriptor->teacher_eval_additional_grading;
-                            $crossGrading = self::get_exacomp_crossgrade($grading, 'topic', 4);
+                            $crossGrading = self::get_exacomp_crossgrade($grading, 'comp', 4);
                         } else {
                             $grading = -1;
                             $crossGrading = -1; // do not show at all
@@ -2413,53 +2414,73 @@ class printer {
         } else {
             $scheme = block_exacomp_get_assessment_topic_scheme();
         }
+        $val = 0;
         switch ($scheme) {
             case BLOCK_EXACOMP_ASSESSMENT_TYPE_GRADE:
                 // now we are thinking only about 6
                 if (get_config('exacomp', 'use_grade_verbose_competenceprofile')) {
+                    // these values from exacomp API: get_comp_tree_for_exastud
                     if ($origValue == block_exacomp_get_string('grade_Verygood')) {
-                        $val = 1;
+                        $val = 1.4;
                     } else if ($origValue == block_exacomp_get_string('grade_good')) {
-                        $val = 2;
+                        $val = 2.4;
                     } else if ($origValue == block_exacomp_get_string('grade_Satisfactory')) {
-                        $val = 3;
+                        $val = 3.4;
                     } else if ($origValue == block_exacomp_get_string('grade_Sufficient')) {
-                        $val = 4;
+                        $val = 4.4;
                     } else if ($origValue == block_exacomp_get_string('grade_Deficient')) {
-                        $val = 5;
+                        $val = 5.4;
                     } else {
                         // block_exacomp_get_string('grade_Insufficient')
-                        $val = 6;
+                        $val = 5.5;
                     }
                     // if 4 columns
-                    return round($val * (-0.6) + 3.6); // max value 6 to 4 columns. TODO: is it ok?
+                    //return round($val * (-0.6) + 3.6); // max value 6 to 4 columns. TODO: is it ok?
                 } else {
-                    return round($origValue * (-0.6) + 3.6); // TODO: intval?
+                    $val = $origValue;
+                    //return round($origValue * (-0.6) + 3.6); // TODO: intval?
                 }
                 break;
             case BLOCK_EXACOMP_ASSESSMENT_TYPE_VERBOSE:
                 $options = array_map('trim', explode(',', block_exacomp_get_assessment_verbose_options()));
                 //$crossPoints = array_combine(range(1, count($options)), array_values($options)); // start from 1
                 $numberValue = array_search($origValue, $options);
-                return $numberValue;
+                //return $numberValue;
+                $val = $numberValue;
                 break;
             case BLOCK_EXACOMP_ASSESSMENT_TYPE_POINTS:
                 $maxColumns = 3; // 0, 1, 2, 3
                 $maxPoints = block_exacomp_get_assessment_points_limit(); // 0, 1, ... max
                 $koef = $maxColumns / $maxPoints;
-                return round($origValue * $koef); // TODO: intval?
+                $val = $origValue * $koef;
+                //return round($origValue * $koef); // TODO: intval?
                 break;
             case BLOCK_EXACOMP_ASSESSMENT_TYPE_YESNO:
                 if (!isset($teacher_additional_grading_topics[$record->compid])) {
                     if ($origValue == block_exacomp_get_string('yes_no_Yes') || $origValue > 0) {
-                        return $columnsCount;
+                        //return $columnsCount;
+                        $val = 1;
                     } else {
-                        return 1; // first column is BAD
+                        //return 1; // first column is BAD
+                        $val = 6;
                     }
                 }
                 break;
         }
-        return $origValue;
+        $fig = (int) str_pad('1', 2, '0'); // 2 (second parameter) - precision
+        $val  = (floor($val * $fig) / $fig); // - ALWAYS round down!
+        //echo "<pre>debug:<strong>printer.php:2472</strong>\r\n"; print_r('orig:'.$origValue.' = val:'.$val); echo '</pre>'; // !!!!!!!!!! delete it
+        // result column
+        if ($val <= 2.2) {
+            $result = 3; // vollständig erreicht
+        } else if ($val <= 3.5) {
+            $result = 2; // überwiegend erreicht
+        } else if ($val <= 4.8) {
+            $result = 1; // teilweise erreicht
+        } else {
+            $result = 0; // nicht erreicht
+        }
+        return $result;
 	}
 
 }
