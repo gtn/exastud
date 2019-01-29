@@ -1067,7 +1067,11 @@ class printer {
 		            
                     $templateProcessor->setValue("n", $topic->teacher_eval_niveau_text, 1);
                     if (@$studentdata->print_grades_anlage_leb) {
-                        $grading = $topic->teacher_eval_additional_grading_real;
+                        if (isset($topic->teacher_eval_additional_grading_real)) {
+                            $grading = $topic->teacher_eval_additional_grading_real;
+                        } else {
+                            $grading = $topic->teacher_eval_additional_grading;
+                        }
                         $crossGrading = self::get_exacomp_crossgrade($grading, 'topic', 4);
                     } else {
                         $grading = -1;
@@ -1113,7 +1117,11 @@ class printer {
 
                         $templateProcessor->setValue("n", $descriptor->teacher_eval_niveau_text, 1);
 		                if (@$studentdata->print_grades_anlage_leb) {
-                            $grading = $descriptor->teacher_eval_additional_grading_real;
+                            if (isset($descriptor->teacher_eval_additional_grading_real)) {
+                                $grading = $descriptor->teacher_eval_additional_grading_real;
+                            } else {
+                                $grading = $descriptor->teacher_eval_additional_grading;
+                            }
                             $crossGrading = self::get_exacomp_crossgrade($grading, 'comp', 4);
                         } else {
                             $grading = -1;
