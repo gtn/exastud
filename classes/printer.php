@@ -2446,16 +2446,28 @@ class printer {
 			throw new \Exception('please update exacomp version to match exastud version number');
 		}
 
-		if ($level == 'comp') {
-            $scheme = block_exacomp_get_assessment_comp_scheme();
+        $oldExacomp = false;
+		if (!BLOCK_EXACOMP_ASSESSMENT_TYPE_GRADE) {
+            @define('BLOCK_EXACOMP_ASSESSMENT_TYPE_GRADE', 1);
+            @define('BLOCK_EXACOMP_ASSESSMENT_TYPE_VERBOSE', 2);
+            @define('BLOCK_EXACOMP_ASSESSMENT_TYPE_POINTS', 3);
+            @define('BLOCK_EXACOMP_ASSESSMENT_TYPE_YESNO', 4);
+            $oldExacomp = true;
+        }
+		if (function_exists('block_exacomp_get_assessment_comp_scheme')) {
+            if ($level == 'comp') {
+                $scheme = block_exacomp_get_assessment_comp_scheme();
+            } else {
+                $scheme = block_exacomp_get_assessment_topic_scheme();
+            }
         } else {
-            $scheme = block_exacomp_get_assessment_topic_scheme();
+		    $scheme = 1;
         }
         $val = 0;
         switch ($scheme) {
             case BLOCK_EXACOMP_ASSESSMENT_TYPE_GRADE:
                 // now we are thinking only about 6
-                if (get_config('exacomp', 'use_grade_verbose_competenceprofile')) {
+                if (!$oldExacomp && get_config('exacomp', 'use_grade_verbose_competenceprofile')) {
                     // these values from exacomp API: get_comp_tree_for_exastud
                     if ($origValue == block_exacomp_get_string('grade_Verygood')) {
                         $val = 1.4;
