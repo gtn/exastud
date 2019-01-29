@@ -907,6 +907,11 @@ class printer {
 		        BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_ANLAGE_ZUM_LERNENTWICKLUNGSBERICHT,
                 BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_ANLAGE_ZUM_LERNENTWICKLUNGSBERICHT_SIMPLE
                  ])) {
+            // very old exacomp?
+            $oldExacomp = false;
+            if (!function_exists('block_exacomp_get_assessment_diffLevel')) { // this function - for example
+                $oldExacomp = true;
+            }
 			$evalopts = g::$DB->get_records('block_exastudevalopt', null, 'sorting', 'id, title, sourceinfo');
 			$categories = block_exastud_get_class_categories_for_report($student->id, $class->id);
 			//$subjects = static::get_exacomp_subjects($student->id);
@@ -948,6 +953,11 @@ class printer {
 
 				}
 				$templateProcessor->setValue("compheader", "Note", 1);
+                $verbalsForOldExacomp = array(
+                        'nicht erreicht',
+                        'teilweise erreicht',
+                        'überwiegend erreicht',
+                        'vollständig erreicht');
 
 				foreach ($subject->topics as $topic) {
 			     	$templateProcessor->cloneRowToEnd("topic");
@@ -960,7 +970,10 @@ class printer {
 					} else if (get_config('exacomp', 'assessment_comp_diffLevel') == 1){
 					    $templateProcessor->setValue("tvalue", null, 1);
 					}
-					$templateProcessor->setValue("tvalue", $grading, 1);
+					if ($oldExacomp) {
+					    $grading = $verbalsForOldExacomp[$grading];
+                    }
+                    $templateProcessor->setValue("tvalue", $grading, 1);
 					foreach ($topic->descriptors as $descriptor) {
 						$templateProcessor->duplicateRow("descriptor");
 						$templateProcessor->setValue("descriptor", ($descriptor->niveau_title ? $descriptor->niveau_title.': ' : '').$descriptor->title, 1);
@@ -971,6 +984,9 @@ class printer {
 						}else if(get_config('exacomp', 'assessment_topic_diffLevel') == 1){
 						    $templateProcessor->setValue("dvalue", null, 1);
 						}
+                        if ($oldExacomp) {
+                            $grading = $verbalsForOldExacomp[$grading];
+                        }
 						$templateProcessor->setValue("dvalue", $grading, 1);
 					}
 
