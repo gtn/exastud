@@ -1125,29 +1125,47 @@ class printer {
                             }
                             // from bug of exacomp - trying to get value from direct query. (for possibility work without upgrading of exacomp)
                             if (!$grading) {
+                                $oldExacomp = false;
                                 $gradeRecordExacomp = g::$DB->get_record_sql("
                                                     SELECT * FROM {".BLOCK_EXACOMP_DB_COMPETENCES."}
                                                     WHERE userid=? AND role=? AND comptype = ? AND compid = ?
                                                     ORDER BY timestamp DESC", [$student->id, BLOCK_EXACOMP_ROLE_TEACHER, BLOCK_EXACOMP_TYPE_DESCRIPTOR, $descriptor->id],
                                                 IGNORE_MULTIPLE);
                                 if ($gradeRecordExacomp) {
-                                    $descriptor_scheme = block_exacomp_get_assessment_comp_scheme();
+                                    if (function_exists('block_exacomp_get_assessment_comp_scheme')) {
+                                        $descriptor_scheme = block_exacomp_get_assessment_comp_scheme();
+                                    } else {
+                                        $descriptor_scheme = 1;
+                                        // very old exacomp?
+                                        $oldExacomp = true;
+                                        if (!defined('BLOCK_EXACOMP_ASSESSMENT_TYPE_GRADE')) {
+                                            @define('BLOCK_EXACOMP_ASSESSMENT_TYPE_GRADE', 1);
+                                        }
+                                    }
                                     switch ($descriptor_scheme) {
+                                        case 1:
                                         case BLOCK_EXACOMP_ASSESSMENT_TYPE_GRADE:
-                                            $grading = $gradeRecordExacomp->additionalinfo;
+                                            if ($oldExacomp) {
+                                                $grading = $gradeRecordExacomp->value;
+                                            } else {
+                                                $grading = $gradeRecordExacomp->additionalinfo;
+                                            }
                                             break;
+                                        case 2:
                                         case BLOCK_EXACOMP_ASSESSMENT_TYPE_VERBOSE:
                                             $grading = $gradeRecordExacomp->value;
                                             break;
+                                        case 3:
                                         case BLOCK_EXACOMP_ASSESSMENT_TYPE_POINTS:
                                             $grading = $gradeRecordExacomp->value;
                                             break;
+                                        case 4:
                                         case BLOCK_EXACOMP_ASSESSMENT_TYPE_GRADE:
                                             $grading = $gradeRecordExacomp->value;
                                             break;
                                     }
                                 }
-                                //echo "<pre>debug:<strong>printer.php:1127</strong>\r\n"; print_r($grading); echo '</pre>';  // !!!!!!!!!! delete it
+                                //echo "<pre>debug:<strong>printer.php:1127</strong>\r\n"; print_r($gradeRecordExacomp); echo '</pre>';  // !!!!!!!!!! delete it
                             }
                             $crossGrading = self::get_exacomp_crossgrade($grading, 'comp', 4);
                         } else {
@@ -2447,7 +2465,7 @@ class printer {
 		}
 
         $oldExacomp = false;
-		if (!BLOCK_EXACOMP_ASSESSMENT_TYPE_GRADE) {
+		if (!!defined('BLOCK_EXACOMP_ASSESSMENT_TYPE_GRADE') || !defined('BLOCK_EXACOMP_ASSESSMENT_TYPE_VERBOSE')) {
             @define('BLOCK_EXACOMP_ASSESSMENT_TYPE_GRADE', 1);
             @define('BLOCK_EXACOMP_ASSESSMENT_TYPE_VERBOSE', 2);
             @define('BLOCK_EXACOMP_ASSESSMENT_TYPE_POINTS', 3);
