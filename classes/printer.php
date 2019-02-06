@@ -61,7 +61,7 @@ class printer {
             $forminputs = $template->get_inputs(BLOCK_EXASTUD_DATA_ID_PRINT_TEMPLATE);
             $template_type = $templateid; // for using later
 			$templateid = $template->get_template_id();
-		} else if ($templateid == BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_ANLAGE_ZUM_LERNENTWICKLUNGSBERICHT_SIMPLE) {
+		} else /*if ($templateid == BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_ANLAGE_ZUM_LERNENTWICKLUNGSBERICHT_SIMPLE) {
             // temporary. TODO: delete this when the DB will be updated
             $templatesAll = block_exastud_get_default_templates();
             $tmplArr = $templatesAll['Anlage simple'];
@@ -69,7 +69,7 @@ class printer {
             $templateFile = __DIR__.'/../template/'.$tmplArr['file'].'.docx';
             $template = null;
             $forminputs = $tmplArr['inputs'];
-        } else {
+        } else*/ {
 			$template = \block_exastud\print_template::create($templateid);
             $forminputs = $template->get_inputs($templateid);
             $template_type = $templateid; // for using later
@@ -145,7 +145,7 @@ class printer {
         $lern_soz = block_exastud_get_class_student_data($class->id, $student->id, BLOCK_EXASTUD_DATA_ID_LERN_UND_SOZIALVERHALTEN);
         $fs = get_file_storage();
         // markers for using in dropdowns. Used later as constant list
-        $data_dropdowns = ['profilfach_titel', 'wahlfach_titel'];
+        $data_dropdowns = ['profilfach_titel', 'wahlfach_titel', 'gender_select'];
 		// default markers
         $data = [
                 'periode' => $period->description,
@@ -168,6 +168,18 @@ class printer {
                 'ags' => static::spacerIfEmpty(@$studentdata->ags),
                 'lern_und_sozialverhalten' => static::spacerIfEmpty($lern_soz),
         ];
+        // gender
+        $gender = block_exastud_get_user_gender($student->id);
+        switch ($gender) {
+            case 'male':
+                $data['gender_select'] = 'Der Schüler';
+                break;
+            case 'female':
+                $data['gender_select'] = 'Die Schülerin';
+                break;
+            default:
+                $data['gender_select'] = '---';
+        }
 
         // school logo: ${school_logo}  : mantis 3450 - only for grades_report
         //if (!$templateProcessor->addImageToReport('school_logo', 'exastud', 'block_exastud_schoollogo', 0, 1024, 768)) {
@@ -481,7 +493,7 @@ class printer {
                 BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_ABGANGSZEUGNIS_HS_9_10,
                 BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_16_ZERTIFIKAT_FUER_PROFILFACH,
                 BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_ANLAGE_PROJEKTPRUEFUNG_HS,
-                BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_ABGANGSZEUGNIS_FOE,
+                BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_ABSCHLUSSZEUGNIS_FOE,
                 BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_HALBJAHR_ZEUGNIS_FOE,
                 BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_HALBJAHRESINFORMATION_KL11,
                 BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_HALBJAHRESINFORMATION_KL11,
@@ -524,7 +536,9 @@ class printer {
 
 			$add_filter(function($content) use ($placeholder) {
 				// im template 'BP 2004/Halbjahresinformation Klasse 10Gemeinschaftsschule_E-Niveau_BP 2004' ist der Standardwert "2 plus"
-				$ret = preg_replace('!>\s*(sgt|sehr gut|2 plus)\s*<!', '>'.$placeholder.'note<', $content, -1, $count);
+                // this bad if the text of document contains text like 'sgt', 'sehr gut'...:
+				//$ret = preg_replace('!>\s*(sgt|sehr gut|2 plus)\s*<!', '>'.$placeholder.'note<', $content, -1, $count);
+                $ret = preg_replace('!>\s*(sgt|sehr gut|2 plus)\s*<!', '>'.$placeholder.'note<', $content, -1, $count);
 
 				/*
 				 * if (!$count) {
@@ -720,7 +734,7 @@ class printer {
 			    $avg = (($sum - $rsum) + $min) / (($scnt - $rcnt) + 1);
 			}
 			if (in_array($templateid, [
-                            BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_ABGANGSZEUGNIS_FOE, // is this need?
+                            BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_ABSCHLUSSZEUGNIS_FOE, // is this need?
                             BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_ABSCHLUSSZEUGNIS_HS,
                     ])) {
                 //$avg = round($avg, 1, PHP_ROUND_HALF_DOWN); // not always correct. ???
@@ -973,6 +987,7 @@ class printer {
 					if ($oldExacomp) {
 					    $grading = $verbalsForOldExacomp[$grading];
                     }
+                    echo "<pre>debug:<strong>printer.php:976</strong>\r\n"; print_r($topic); echo '</pre>'; exit; // !!!!!!!!!! delete it
                     $templateProcessor->setValue("tvalue", $grading, 1);
 					foreach ($topic->descriptors as $descriptor) {
 						$templateProcessor->duplicateRow("descriptor");
