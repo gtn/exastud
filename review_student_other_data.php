@@ -66,7 +66,7 @@ if (!$reviewclass
 if ($DB->count_records('block_exastudclassstudents', array('studentid' => $studentid, 'classid' => $classid)) == 0) {
 	print_error('badstudent', 'block_exastud');
 }
-$student = $DB->get_record('user', array('id' => $studentid));
+$student = $DB->get_record('user', array('id' => $studentid, 'deleted' => 0));
 
 $strstudentreview = block_exastud_get_string('reviewstudent');
 $strclassreview = block_exastud_get_string('reviewclass');

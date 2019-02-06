@@ -66,7 +66,7 @@ if ($frm = data_submitted()) {
 					'subjectid' => $subjectid,
 				]);
 
-            $userData = $DB->get_record('user', ['id' => $adduser]);
+            $userData = $DB->get_record('user', ['id' => $adduser, 'deleted' => 0]);
             $subjectData = $DB->get_record('block_exastudsubjects', ['id' => $subjectid]);
             \block_exastud\event\classteacher_assigned::log(['objectid' => $class->id,
                     'courseid' => $courseid,
@@ -86,7 +86,7 @@ if ($frm = data_submitted()) {
             $DB->delete_records('block_exastudclassteachers', array('id' => $record_id, 'classid' => $class->id));
 
             if ($existingrecord) {
-                $userData = $DB->get_record('user', ['id' => $existingrecord->teacherid]);
+                $userData = $DB->get_record('user', ['id' => $existingrecord->teacherid, 'deleted' => 0]);
                 $subjectData = $DB->get_record('block_exastudsubjects', ['id' => $existingrecord->subjectid]);
                 if ($subjectData) {
                     \block_exastud\event\classteacher_unassigned::log(['objectid' => $class->id,
@@ -120,6 +120,7 @@ if ($searchtext !== '') {   // Search for a subset of remaining users
 $availableusers = $DB->get_records_sql('SELECT id, firstname, lastname, email, '.get_all_user_name_fields(true).'
 									FROM {user}
 									WHERE '.$select.'
+									AND deleted = 0
 									-- disabled, allow teacher to be assign more than once (eg. 2 different subjects)
 									-- AND id NOT IN (
 									--		 SELECT teacherid

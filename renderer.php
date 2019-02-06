@@ -429,7 +429,7 @@ class block_exastud_renderer extends plugin_renderer_base {
 
 	function last_modified($modifiedby, $timemodified) {
 		if (is_scalar($modifiedby) && $modifiedby) {
-			$modifiedby = g::$DB->get_record('user', array('id' => $modifiedby));
+			$modifiedby = g::$DB->get_record('user', array('id' => $modifiedby, 'deleted' => 0));
 		}
 
 		if (!$modifiedby) {

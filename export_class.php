@@ -65,7 +65,7 @@ if (block_exastud_get_plugin_config('export_class_password') && !$secret) {
 $students = $DB->get_records_sql('
 	SELECT u.id, u.firstname, u.lastname, u.idnumber, u.email, cs.timemodified
 	FROM {user} u
-	JOIN {block_exastudclassstudents} cs ON cs.classid=? AND u.id=cs.studentid
+	JOIN {block_exastudclassstudents} cs ON cs.classid=? AND u.id=cs.studentid AND u.deleted = 0
 	', [$class->id]);
 
 $subjects = $DB->get_records('block_exastudsubjects', ['bpid' => $class->bpid]);

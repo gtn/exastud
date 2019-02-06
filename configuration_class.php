@@ -401,7 +401,7 @@ if ($type == 'teachers_options') {
 		block_exastud_get_string('teacher_for_project'),
 	]);
 
-	$project_teachers = [$class->userid => fullname($DB->get_record('user', ['id' => $class->userid]))];
+	$project_teachers = [$class->userid => fullname($DB->get_record('user', ['id' => $class->userid, 'deleted' => 0]))];
 	foreach (block_exastud_get_class_teachers($classid) as $teacher) {
 		if ($teacher->id !== $class->userid) {
 			$project_teachers[$teacher->id] = fullname($teacher);

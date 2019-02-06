@@ -200,7 +200,7 @@ function block_exastud_get_head_teacher_classes_shared($periodid) {
 				".\user_picture::fields('u', null, 'teacher_owner_id', 'teacher_owner_')."
 			FROM {block_exastudclass} c
 			JOIN {block_exastudclassteachers} ct ON ct.classid=c.id
-			JOIN {user} u ON c.userid = u.id
+			JOIN {user} u ON c.userid = u.id AND u.deleted = 0
 			WHERE ct.subjectid = ".BLOCK_EXASTUD_SUBJECT_ID_ADDITIONAL_HEAD_TEACHER." AND ct.teacherid = ? AND c.periodid = ?
 			ORDER BY c.title", [g::$USER->id, $periodid]);
 
@@ -257,7 +257,7 @@ function block_exastud_get_class_students($classid) {
 			SELECT u.id, cs.id AS record_id, ".\user_picture::fields('u', null, 'userid')."
 			FROM {user} u
 			JOIN {block_exastudclassstudents} cs ON u.id=cs.studentid
-			WHERE cs.classid=?
+			WHERE cs.classid=? AND u.deleted = 0
 			ORDER BY u.lastname, u.firstname
 		", [$classid]);
 }
@@ -290,7 +290,7 @@ function block_exastud_get_class_subject_teachers($classid) {
 			JOIN {block_exastudclassteachers} ct ON ct.teacherid=u.id
 			JOIN {block_exastudclass} c ON c.id=ct.classid
 			JOIN {block_exastudsubjects} s ON ct.subjectid = s.id AND s.bpid=c.bpid
-			WHERE c.id=?
+			WHERE c.id=? AND u.deleted = 0
 			ORDER BY s.sorting, u.lastname, u.firstname, s.id
 		", [$classid]), false);
 }
@@ -321,6 +321,7 @@ function block_exastud_get_class_additional_head_teachers($classid) {
 			JOIN {block_exastudclass} c ON c.id=ct.classid
 			WHERE c.id=? AND ct.subjectid=?
 			AND c.userid<>u.id
+			AND u.deleted = 0
 			ORDER BY u.lastname, u.firstname
 		", [$classid, BLOCK_EXASTUD_SUBJECT_ID_ADDITIONAL_HEAD_TEACHER]);
 
@@ -456,6 +457,7 @@ function block_exastud_get_reviewers_by_category_and_pos($periodid, $studentid, 
 			LEFT JOIN {block_exastudsubjects} s ON r.subjectid = s.id
 			WHERE c.periodid = ? AND r.studentid = ?
 				AND pos.categoryid = ? AND pos.categorysource = ?
+				AND u.deleted = 0
 			".($pos_value !== null ? "AND pos.value = ?" : "AND pos.value > 0")."
 			-- GROUP BY r.teacherid, s.id, pos.value
 		", [$periodid, $studentid, $categoryid, $categorysource, $pos_value]), false);
@@ -473,7 +475,7 @@ function block_exastud_get_reviewers_by_category($periodid, $studentid, $average
 			JOIN {block_exastudclass} c ON c.periodid = r.periodid
 			JOIN {block_exastudclassteachers} ct ON ct.classid = c.id AND ct.teacherid = r.teacherid AND ct.subjectid = r.subjectid
 			LEFT JOIN {block_exastudsubjects} s ON r.subjectid = s.id
-			WHERE c.periodid = ? AND r.studentid = ?							
+			WHERE c.periodid = ? AND r.studentid = ? AND u.deleted = 0						
 			GROUP BY r.teacherid, pos.categoryid, pos.categorysource
 		", [$periodid, $studentid]), false);
         foreach ($values as $val) {
@@ -495,7 +497,7 @@ function block_exastud_get_reviewers_by_category($periodid, $studentid, $average
 			JOIN {block_exastudclass} c ON c.periodid = r.periodid
 			JOIN {block_exastudclassteachers} ct ON ct.classid = c.id AND ct.teacherid = r.teacherid AND ct.subjectid = r.subjectid
 			LEFT JOIN {block_exastudsubjects} s ON r.subjectid = s.id
-			WHERE c.periodid = ? AND r.studentid = ?										
+			WHERE c.periodid = ? AND r.studentid = ? AND u.deleted = 0									
 		", [$periodid, $studentid]), false);
         foreach ($values as $val) {
             if (!array_key_exists($val->teacher_id, $result)) {
@@ -525,6 +527,7 @@ function block_exastud_get_average_evaluation_by_category($periodid, $studentid,
                 LEFT JOIN {block_exastudsubjects} s ON r.subjectid = s.id
                 WHERE c.periodid = ? AND r.studentid = ?
                     AND pos.categoryid = ? AND pos.categorysource = ?
+                    AND u.deleted = 0
                 GROUP BY '.($averageForAllSubjects ? ' pos.categoryid ' :' s.id ')
             , [$periodid, $studentid, $categoryid, $categorysource]);
     foreach ($evals as $subjectid => $avg) {
@@ -672,7 +675,7 @@ function block_exastud_set_subject_student_data($classid, $subjectid, $userid, $
         };
         if ($strpos_arr($name, ['.timemodified', '.modifiedby', '_time']) === false && !in_array($name, ['review'])) { // 'review' works in studentreview_changed event
             $classData = block_exastud_get_class($classid);
-            $userData = g::$DB->get_record('user', ['id' => $userid]);
+            $userData = g::$DB->get_record('user', ['id' => $userid, 'deleted' => 0]);
             $subjectData = g::$DB->get_record('block_exastudsubjects', ['id' => $subjectid]);
             if ($subjectid === 0 && $userid === 0) { // classes data
                 \block_exastud\event\classdata_changed::log(['objectid' => $classid,
@@ -1268,7 +1271,7 @@ function block_exastud_get_report($studentid, $periodid) {
 				FROM {block_exastudreview} r
 				JOIN {user} u ON r.teacherid = u.id
 				LEFT JOIN {block_exastudsubjects} s ON r.subjectid = s.id
-				WHERE r.studentid = ? AND r.periodid = ? AND TRIM(r.review) !=  ''
+				WHERE r.studentid = ? AND r.periodid = ? AND TRIM(r.review) !=  '' AND u.deleted = 0
 				ORDER BY s.title, u.lastname, u.firstname",
 		array($studentid, $periodid));
 
@@ -1320,7 +1323,7 @@ function block_exastud_print_student_report($studentid, $periodid, $class, $pdf 
 	}
 
 
-	$student = $DB->get_record('user', array('id' => $studentid));
+	$student = $DB->get_record('user', array('id' => $studentid, 'deleted' => 0));
 	$studentreport = block_exastud_read_template_file('student_new.html');
 	$studentreport = str_replace('###STUDENTREVIEW###', block_exastud_get_string('studentreview'), $studentreport);
 	$studentreport = str_replace('###NAME###', block_exastud_get_string('name'), $studentreport);
@@ -1341,7 +1344,7 @@ function block_exastud_print_student_report($studentid, $periodid, $class, $pdf 
 					</tr>', "", $studentreport);
 	}
 	if (!$pdf) {
-		$studentreport = str_replace('###USERPIC###', $OUTPUT->user_picture($DB->get_record('user', array("id" => $studentid)), array("size" => 100)), $studentreport);
+		$studentreport = str_replace('###USERPIC###', $OUTPUT->user_picture($DB->get_record('user', array("id" => $studentid, 'deleted' => 0)), array("size" => 100)), $studentreport);
 	} else {
 		$studentreport = str_replace('###USERPIC###', '', $studentreport);
 	}
@@ -1371,7 +1374,7 @@ function block_exastud_print_student_report($studentid, $periodid, $class, $pdf 
 					JOIN {block_exastudreviewpos} pos ON pos.reviewid = r.id
 					JOIN {user} u ON r.teacherid = u.id
 					LEFT JOIN {block_exastudsubjects} s ON r.subjectid = s.id
-					WHERE studentid = ? AND periodid = ? AND pos.categoryid = ? AND pos.categorysource = ?", array($studentid, $periodid, $category->id, $category->source));
+					WHERE u.deleted = 0, studentid = ? AND periodid = ? AND pos.categoryid = ? AND pos.categorysource = ?", array($studentid, $periodid, $category->id, $category->source));
 			foreach ($detaildata as $detailrow) {
 				$html .= '<tr class="ratings"><td class="teacher">'.($detailrow->subject_title ? $detailrow->subject_title.' ('.fullname($detailrow).')' : fullname($detailrow)).'</td>
 				<td class="rating legend teacher">'.$detailrow->value.'</td></tr>';
@@ -1709,7 +1712,7 @@ function block_exastud_get_class_title($classid) {
     // Mark own classes.
     if ($class->userid == $USER->id) {
         $classTitle .= '&nbsp;<img class="exastud-my-class" src="'.$CFG->wwwroot.'/blocks/exastud/pix/star.png" width="16" height="16" title="'.block_exastud_get_string('it_is_my_class').'" />';
-    } else if ($head_teacher = g::$DB->get_record('user', array('id' => $class->userid))) {
+    } else if ($head_teacher = g::$DB->get_record('user', array('id' => $class->userid, 'deleted' => 0))) {
 		$classTitle .= ' ('.fullname($head_teacher).')';
 	}
 

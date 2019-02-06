@@ -62,7 +62,7 @@ if ($DB->count_records('block_exastudclassstudents', array('studentid' => $stude
 	print_error('badstudent', 'block_exastud');
 }
 
-$student = $DB->get_record('user', array('id' => $studentid));
+$student = $DB->get_record('user', array('id' => $studentid, 'deleted' => 0));
 $template = block_exastud_get_student_print_template($class, $student->id);
 
 $strstudentreview = block_exastud_get_string('reviewstudent');

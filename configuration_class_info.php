@@ -103,8 +103,8 @@ if ($classform->is_cancelled()) {
     if (block_exastud_is_siteadmin() &&
             (($class->id && $classedit->userid != $class->userid) ||
              (!$class->id && $newclass->userid != $USER->id)) ) {
-        $newowner = $DB->get_record('user', array('id' => $classedit->userid));
-        $oldowner = $DB->get_record('user', array('id' => ($class->id ? $class->userid : $USER->id)));
+        $newowner = $DB->get_record('user', array('id' => $classedit->userid, 'deleted' => 0));
+        $oldowner = $DB->get_record('user', array('id' => ($class->id ? $class->userid : $USER->id), 'deleted' => 0));
 
         \block_exastud\event\classowner_updated::log(['objectid' => $newclass->id,
                 'courseid' => $courseid,

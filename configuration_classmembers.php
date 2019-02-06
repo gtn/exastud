@@ -56,7 +56,7 @@ if ($frm = data_submitted()) {
 			$newuser->timemodified = time();
 			
 			$DB->insert_record('block_exastudclassstudents', $newuser);
-            $userData = $DB->get_record('user', ['id' => $newuser->studentid]);
+            $userData = $DB->get_record('user', ['id' => $newuser->studentid, 'deleted' => 0]);
             \block_exastud\event\classmember_assigned::log(['objectid' => $newuser->classid,
                                                             'courseid' => $courseid,
                                                             'relateduserid' => $newuser->studentid,
@@ -75,7 +75,7 @@ if ($frm = data_submitted()) {
 			
 			$DB->delete_records('block_exastudclassstudents', array('id'=>$record_id, 'classid'=>$class->id));
 
-            $userData = $DB->get_record('user', ['id' => $unassigneduserid]);
+            $userData = $DB->get_record('user', ['id' => $unassigneduserid, 'deleted' => 0]);
             \block_exastud\event\classmember_unassigned::log(['objectid' => $class->id,
                                                             'courseid' => $courseid,
                                                             'relateduserid' => $unassigneduserid,
@@ -103,6 +103,7 @@ if ($searchtext !== '') {   // Search for a subset of remaining users
 $availableusers = $DB->get_records_sql('SELECT id, firstname, lastname, email, '.get_all_user_name_fields(true).'
 									 FROM {user}
 									 WHERE '.$select.'
+									 AND deleted = 0
 									 AND id NOT IN (
 											 SELECT studentid
 											 FROM {block_exastudclassstudents}

@@ -63,7 +63,7 @@ if (optional_param('action', '', PARAM_TEXT) == 'add') {
 	$userids = block_exastud\param::optional_array('userids', [PARAM_INT => PARAM_BOOL]);
 
 	foreach ($userids as $userid => $add) {
-        $userData = $DB->get_record('user', ['id' => $userid]);
+        $userData = $DB->get_record('user', ['id' => $userid, 'deleted' => 0]);
 		if ($add) {
             $existing = $DB->get_record('block_exastudclassstudents', ['studentid' => $userid, 'classid' => $class->id]);
             g::$DB->insert_or_update_record('block_exastudclassstudents', [

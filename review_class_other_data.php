@@ -125,10 +125,10 @@ foreach ($classstudents as $classstudent) {
 	// if (true) { // block_exastud_can_edit_class($reviewclass)) {
 	$editUser = null;
 	if (@$data['head_teacher'] && $type != BLOCK_EXASTUD_DATA_ID_CERTIFICATE) {
-		$editUser = $DB->get_record('user', array('id' => $data['head_teacher']));
+		$editUser = $DB->get_record('user', array('id' => $data['head_teacher'], 'deleted' => 0));
 	}
 	if (!$editUser) {
-		$editUser = $DB->get_record('user', array('id' => $reviewclass->userid));
+		$editUser = $DB->get_record('user', array('id' => $reviewclass->userid, 'deleted' => 0));
 	}
 
 	if (@array_shift(array_keys($categories)) === BLOCK_EXASTUD_DATA_ID_PRINT_TEMPLATE) {

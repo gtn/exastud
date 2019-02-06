@@ -83,7 +83,7 @@ if ($action == 'update' && $isSubjectTeacher) {
 
 if (($action == 'hide_student' || $action == 'show_student') && $isSubjectTeacher) {
     $studentid = required_param('studentid', PARAM_INT);
-    $student = $DB->get_record('user', array('id' => $studentid));
+    $student = $DB->get_record('user', array('id' => $studentid, 'deleted' => 0));
     $existing = $DB->get_record('block_exastudclassteastudvis', [
             'classteacherid' => $reviewclass->classteacherid,
             'studentid' => $studentid,

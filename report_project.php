@@ -97,7 +97,7 @@ else if($classid == 0){
 
 	$i = 1;
 	foreach($classstudents as $classstudent) {
-		$user = $DB->get_record('user', array('id'=>$classstudent->studentid));
+		$user = $DB->get_record('user', array('id'=>$classstudent->studentid, 'deleted' => 0));
 	
 		if (!$user)
 			continue;

@@ -286,7 +286,7 @@ function block_exastud_import_class($doimport, $override_reviews, $draftitemid, 
 			if ($dbReview) {
 				if (!$doimport) {
 					if ($review->review != $dbReview->review || ($review->timemodified != $dbReview->timemodified && $review->subjectid > 0)) {
-						$teacher = $DB->get_record('user', ['id' => $review->teacherid]);
+						$teacher = $DB->get_record('user', ['id' => $review->teacherid, 'deleted' => 0]);
 
 						$subject = '';
 						if ($review->subjectid > 0) {

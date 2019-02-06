@@ -87,7 +87,7 @@ for ($i = 0; $i <= $max_classes; $i++) {
             $tempClass = $period_classes[$period->id][$i];
             $periodCell->text = '<a href="configuration_class.php?courseid='.$courseid.'&classid='.$tempClass->id.'">'.$tempClass->title.'</a>';
             if (block_exastud_is_siteadmin() && $tempClass->userid != $USER->id) {
-                $ownerData = $DB->get_record('user', ['id' => $tempClass->userid]);
+                $ownerData = $DB->get_record('user', ['id' => $tempClass->userid, 'deleted' => 0]);
                 $periodCell->text .= '&nbsp;<small>(id: '.$tempClass->id.') '.$ownerData->firstname.' '.$ownerData->lastname.'</small>';
             }
             // delete buttons
