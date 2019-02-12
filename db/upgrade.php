@@ -915,7 +915,7 @@ function xmldb_block_exastud_upgrade($oldversion = 0) {
         foreach ($dataNew as $bpInd => $subjectsData) {
             $bpId = $DB->get_field_select('block_exastudbp', 'id', ' sourceinfo = ? ', ['bw-bp'.$bpInd]);
             if (!$bpId) {
-                $bps = $DB->get_records_select('block_exastudbp', " title LIKE '%Bp%'.$bpInd.'%' ", [], '', 'id, title');
+                $bps = $DB->get_records_select('block_exastudbp', " title LIKE '%Bp%".$bpInd."%' ", [], '', 'id, title');
                 if ($bps) {
                     foreach ($bps as $bpt) {
                         $bpId = $bpt->id;
