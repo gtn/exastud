@@ -80,6 +80,7 @@ const BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_LERNENTWICKLUNGSBERICHT_DECKBLATT_UND_1_
 const BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_HALBJAHRESINFORMATION_KL11  = 21;
 const BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_HALBJAHRESINFORMATION_KL11  = 22;
 const BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_ANLAGE_ZUM_LERNENTWICKLUNGSBERICHT_SIMPLE = 23;
+const BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_ABSCHLUSSZEUGNIS_HSA_RSA = 24;
 
 const BLOCK_EXASTUD_SESSION_TIMEOUT = 10*60 + 1;
 
@@ -2375,6 +2376,21 @@ function block_exastud_get_default_templates() {
                                     'lines' => 8,
                                     'cols' => 75,
                             ],
+                            'lessons_target' => [
+                                    'title' => 'zieldifferenter Unterricht',
+                                    'type' => 'select',
+                                    'values' => ['' => '', 'wurde zieldifferent unterrichtet. Die Leistungsbeschreibung und -bewertung erfolgte auf Grundlage des Bildungsplans für den Förderschwerpunkt' => 'wurde zieldifferent unterrichtet. Die Leistungsbeschreibung und -bewertung erfolgte auf Grundlage des Bildungsplans für den Förderschwerpunkt'],
+                            ],
+                            'focus' => [
+                                    'title' => 'Förderschwerpunkt',
+                                    'type' => 'select',
+                                    'values' => ['Lernen' => 'Lernen', 'geistige Entwicklung' => 'geistige Entwicklung'],
+                            ],
+                            'beiblatt' => [
+                                    'title' => 'Beiblatt',
+                                    'type' => 'select',
+                                    'values' => ['' => '', '(siehe schuleigenes Blatt)' => '(siehe schuleigenes Blatt)'],
+                            ],
                     ],
             ],
             'BP 2004/GMS Zeugnis SJ' => [
@@ -2418,6 +2434,21 @@ function block_exastud_get_default_templates() {
                                     'type' => 'textarea',
                                     'lines' => 8,
                                     'cols' => 75,
+                            ],
+                            'lessons_target' => [
+                                    'title' => 'zieldifferenter Unterricht',
+                                    'type' => 'select',
+                                    'values' => ['' => '', 'wurde zieldifferent unterrichtet. Die Leistungsbeschreibung und -bewertung erfolgte auf Grundlage des Bildungsplans für den Förderschwerpunkt' => 'wurde zieldifferent unterrichtet. Die Leistungsbeschreibung und -bewertung erfolgte auf Grundlage des Bildungsplans für den Förderschwerpunkt'],
+                            ],
+                            'focus' => [
+                                    'title' => 'Förderschwerpunkt',
+                                    'type' => 'select',
+                                    'values' => ['Lernen' => 'Lernen', 'geistige Entwicklung' => 'geistige Entwicklung'],
+                            ],
+                            'beiblatt' => [
+                                    'title' => 'Beiblatt',
+                                    'type' => 'select',
+                                    'values' => ['' => '', '(siehe schuleigenes Blatt)' => '(siehe schuleigenes Blatt)'],
                             ],
                     ],
             ],
@@ -2625,6 +2656,11 @@ function block_exastud_get_default_templates() {
                             'subject_profile' => [
                                     'title' => 'Profil-fach',
                                     'type' => 'textarea',
+                            ],
+                            'class' => [
+                                    'title' => 'Klasse',
+                                    'type' => 'select',
+                                    'values' => ['9' => '9', '10' => '10'],
                             ],
                     ],
             ],
@@ -2939,6 +2975,61 @@ function block_exastud_get_default_templates() {
                                     'type' => 'textarea',
                                     'lines' => 5,
                                     'cols' => 90,
+                            ],
+                            'subject_profile' => [
+                                    'title' => 'Profil-fach',
+                                    'type' => 'textarea',
+                            ],
+                    ],
+            ],
+            'BP 2004/gleichwertiger Bildungsabschluss HSA/RSA' => [
+                    'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_ABSCHLUSSZEUGNIS_HSA_RSA,
+                    'name' => 'BP 2004 gleichwertiger Bildungsabschluss HSA/RSA',
+                    'file' => 'BP 2004/BP2004_GMS_Abschlusszeugnis_HSA_RSA',
+                    'year' => '1',
+                    'report_date' => '1',
+                    'student_name' => '1',
+                    'date_of_birth' => '1',
+                    'place_of_birth' => '1',
+                    'learning_group' => '1',
+                    'grades' => block_exastud_get_grades_set('lang'),
+                    'inputs' => [
+                            'ags' => [
+                                    'title' => 'Teilnahme an Arbeitsgemeinschaften',
+                                    'type' => 'textarea',
+                                    'lines' => 2,
+                                    'cols' => 80,
+                            ],
+                            'comments_short' => [
+                                    'title' => 'Bemerkungen',
+                                    'type' => 'textarea',
+                                    'lines' => 2,
+                                    'cols' => 80,
+                            ],
+                            'cert_level' => [
+                                    'title' => 'gleichwertigen Bildungsstand',
+                                    'type' => 'select',
+                                    'values' => [
+                                            'HSA/RSA' => 'HSA/RSA',
+                                            'Hauptschulabschluss' => 'Hauptschulabschluss',
+                                            'Realschulabschluss' => 'Realschulabschluss'
+                                    ],
+                            ],
+                            'class_level' => [
+                                    'title' => 'Klassenstufen',
+                                    'type' => 'select',
+                                    'values' => [
+                                            'hat in Klassenstufe 9 der Gemeinschaftsschule Leistungen in allen Fächern auf dem mittleren Niveau (M) erbracht und hätte nach der Versetzungsordnung der Realschulen  in die Klasse 10 versetzt wer-den können.' => 'hat in Klassenstufe 9 der Gemeinschaftsschule Leistungen in allen Fächern auf dem mittleren Niveau (M) erbracht und hätte nach der Versetzungsordnung der Realschulen  in die Klasse 10 versetzt wer-den können.',
+                                            'hat in Klassenstufe 10 der Gemeinschaftsschule Leistungen in allen Fächern auf dem erweiterten Ni-veau (E) erbracht und hätte nach der Versetzungsordnung der Gymnasien  in die Eingangsklasse der gymnasialen Oberstufe versetzt werden können.' => 'hat in Klassenstufe 10 der Gemeinschaftsschule Leistungen in allen Fächern auf dem erweiterten Ni-veau (E) erbracht und hätte nach der Versetzungsordnung der Gymnasien  in die Eingangsklasse der gymnasialen Oberstufe versetzt werden können.',
+                                    ],
+                            ],
+                            'education_standard' => [
+                                    'title' => 'gleichwertiger Bildungsstand',
+                                    'type' => 'select',
+                                    'values' => [
+                                            'Damit wurde ein dem Hauptschulabschluss gleichwertiger Bildungsstand erreicht.' => 'Damit wurde ein dem Hauptschulabschluss gleichwertiger Bildungsstand erreicht.',
+                                            'Damit wurde ein den Realschulabschluss gleichwertiger Bildungsstand erreicht.' => 'Damit wurde ein den Realschulabschluss gleichwertiger Bildungsstand erreicht.',
+                                    ],
                             ],
                             'subject_profile' => [
                                     'title' => 'Profil-fach',
