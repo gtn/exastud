@@ -2520,6 +2520,16 @@ function block_exastud_get_default_templates() {
                                     'title' => 'Profil-fach',
                                     'type' => 'textarea',
                             ],
+                            'student_transfered' => [
+                                    'title' => 'Versetzte',
+                                    'type' => 'select',
+                                    'values' => [
+                                        'Die Schülerin wird versetzt.' => 'Die Schülerin wird versetzt.',
+                                        'Die Schülerin wird nicht versetzt.' => 'Die Schülerin wird nicht versetzt.',
+                                        'Der Schüler wird versetzt.' => 'Der Schüler wird versetzt.',
+                                        'Der Schüler wird nicht versetzt.' => 'Der Schüler wird nicht versetzt.',
+                                    ],
+                            ],
                     ],
             ],
             'BP 2004/GMS Abgangszeugnis' => [
@@ -2839,7 +2849,7 @@ function block_exastud_get_default_templates() {
                                     'lines' => 2,
                                     'cols' => 80,
                             ],
-                            'projekt_thema' => [
+                            /*'projekt_thema' => [
                                     'title' => 'Thema',
                                     'type' => 'textarea',
                                     'lines' => 2,
@@ -2858,7 +2868,7 @@ function block_exastud_get_default_templates() {
                             'projekt_verbalbeurteilung' => [
                                     'title' => 'Verbalbeurteilung',
                                     'type' => 'textarea',
-                            ],
+                            ],*/
                             'subject_profile' => [
                                     'title' => 'Profil-fach',
                                     'type' => 'textarea',

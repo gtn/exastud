@@ -37,7 +37,7 @@ class global_config {
                             'M' => 'M',
                             'E' => 'E',
                             'Z' => 'zieldifferenter Unterricht'];
-	    if ($no_niveau == '_all_') {
+	    if ($no_niveau == '_all_') { // TODO: check this condition. looks impossible
 	        return array_merge($no_niveau_options, $niveau_options);
         }
         return $niveau_options;

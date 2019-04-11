@@ -56,6 +56,8 @@ class printer {
 		$studentdata = block_exastud_get_class_student_data($class->id, $student->id);
 		$period = block_exastud_get_period($class->periodid);
 
+        $class_subjects = block_exastud_get_class_subjects($class);
+
 		if ($templateid == BLOCK_EXASTUD_DATA_ID_PRINT_TEMPLATE) {
 			$template = block_exastud_get_student_print_template($class, $student->id);
             $forminputs = $template->get_inputs(BLOCK_EXASTUD_DATA_ID_PRINT_TEMPLATE);
@@ -227,7 +229,7 @@ class printer {
         }
 
 		if ($templateid == BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_DEFAULT_REPORT) { // default_report
-			$class_subjects = block_exastud_get_class_subjects($class);
+			//$class_subjects = block_exastud_get_class_subjects($class);
 			//$lern_soz = block_exastud_get_class_student_data($class->id, $student->id, BLOCK_EXASTUD_DATA_ID_LERN_UND_SOZIALVERHALTEN);
 
 			//$data = [
@@ -304,7 +306,7 @@ class printer {
                     BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_JAHRESZEUGNIS_LERNENTWICKLUNGSBERICHT,
                 ])) {
 			$bpsubjects = block_exastud_get_bildungsplan_subjects($class->bpid);
-            $class_subjects = block_exastud_get_class_subjects($class);
+            //$class_subjects = block_exastud_get_class_subjects($class);
             //$lern_soz = block_exastud_get_class_student_data($class->id, $student->id, BLOCK_EXASTUD_DATA_ID_LERN_UND_SOZIALVERHALTEN);
 
 			/*// use current year or last year
@@ -345,7 +347,7 @@ class printer {
 			}
 
 			$wahlpflichtfach = static::spacerIfEmpty('');
-			$profilfach = static::spacerIfEmpty('');;
+			$profilfach = static::spacerIfEmpty('');
             $religion = static::spacerIfEmpty('');
 
 			// danach mit richtigen werten überschreiben
@@ -499,7 +501,7 @@ class printer {
                 BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_HALBJAHRESINFORMATION_KL11,
                 BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_ABSCHLUSSZEUGNIS_HSA_RSA,
 		])) {
-			$class_subjects = block_exastud_get_class_subjects($class);
+			//$class_subjects = block_exastud_get_class_subjects($class);
 
 			$wahlpflichtfach = static::spacerIfEmpty('');
 			$profilfach = static::spacerIfEmpty('');
@@ -597,6 +599,7 @@ class printer {
                             BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_HALBJAHR_ZEUGNIS_E_NIVEAU,
                             BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_HALBJAHR_ZEUGNIS_FOE,
                             BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_ABSCHLUSSZEUGNIS_HS,
+                            BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_JAHRESZEUGNIS_E_NIVEAU,
                             //BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_HALBJAHRESINFORMATION_KL11, // here are two selectboxes
                             BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_HALBJAHRESINFORMATION_KL11, // here are two selectboxes
 					])) {
@@ -1270,6 +1273,33 @@ class printer {
             */
         }
 
+        // some templates has selectbox/niveau for languages. Make it works:
+        // only lang subjects
+        $langSubjects = [
+                'D' => 'deu',
+                'E' => 'eng',
+                'F' => 'fra',
+                'S' => 'spa'];
+        // default are empty:
+        foreach ($langSubjects as $lkey => $lindex) {
+            $data_dropdowns[] = $lindex.'_graded';
+            $data[$lindex.'_graded'] = '/--set-empty--/';
+            $data[$lindex.'_niveau'] = '';
+        }
+        foreach ($class_subjects as $subject) {
+            if (in_array($subject->shorttitle, array_keys($langSubjects)) && !$subject->no_niveau) {
+                $subjectData = block_exastud_get_graded_review($class->id, $subject->id, $student->id);
+                if (!$subjectData || (!$subjectData->review && !$subjectData->grade && !$subjectData->niveau)) {
+                    continue;
+                }
+                $data[$langSubjects[$subject->shorttitle].'_graded'] = $subject->title.':';
+                $niveau = \block_exastud\global_config::get_niveau_option_title(@$subjectData->niveau) ?: @$subjectData->niveau;
+                if (strlen($niveau) <= 1) {
+                    $data[$langSubjects[$subject->shorttitle].'_niveau'] = 'Niveau '.static::spacerIfEmpty($niveau);
+                }
+            }
+        }
+
 		// TODO: how we can check template generation?
 		/*else {
 			echo g::$OUTPUT->header();
@@ -1353,6 +1383,21 @@ class printer {
                 });
             }
         }
+
+        // some reports has '*' in the dropdownlists. We need to find all of them
+        switch ($templateid) {
+            case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_JAHRESZEUGNIS_E_NIVEAU:
+            case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_ABSCHLUSSZEUGNIS_HS:
+            case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_ABSCHLUSSZEUGNIS_RS:
+                if (strcmp($data['wahlfach_titel'], 'französisch')) {
+                    $data['wahlfach_titel'] .= '*';
+                }
+                if (strcmp($data['profilfach_titel'], 'spanisch')) {
+                    $data['profilfach_titel'] .= '*';
+                }
+                break;
+        }
+
 //echo "<pre>debug:<strong>printer.php:1088</strong>\r\n"; print_r($filters); echo '</pre>'; exit; // !!!!!!!!!! delete it
 		// zuerst filters
         //unset($filters[5]);
