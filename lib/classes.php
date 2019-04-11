@@ -621,6 +621,7 @@ class print_templates {
 			}
 
 			$templateids[] = BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_ANLAGE_PROJEKTPRUEFUNG_HS; // 'BP 2004/Beiblatt zur Projektpruefung HSA';
+			// TODO: add 2016? BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_ANLAGE_PROJEKTPRUEFUNG_HS
 		}
 		return static::get_template_name_array($templateids);
 	}

@@ -81,6 +81,10 @@ const BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_HALBJAHRESINFORMATION_KL11  =
 const BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_HALBJAHRESINFORMATION_KL11  = 22;
 const BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_ANLAGE_ZUM_LERNENTWICKLUNGSBERICHT_SIMPLE = 23;
 const BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_ABSCHLUSSZEUGNIS_HSA_RSA = 24;
+const BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_ABGANGSZEUGNIS_GMS  = 25;
+const BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_ABGANGSZEUGNIS_HS_9_10 = 26;
+const BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_ABSCHLUSSZEUGNIS_FOE = 27;
+const BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_ANLAGE_PROJEKTPRUEFUNG_HS = 28;
 
 const BLOCK_EXASTUD_SESSION_TIMEOUT = 10*60 + 1;
 
@@ -3047,6 +3051,222 @@ function block_exastud_get_default_templates() {
                             ],
                     ],
             ],
+            'BP 2016/GMS Abgangszeugnis' => [
+                    'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_ABGANGSZEUGNIS_GMS,
+                    'name' => 'BP 2016 GMS Abgangszeugnis',
+                    'file' => 'BP 2016/BP2016_GMS_Abgangszeugnis_GMS',
+                    'year' => '1',
+                    'report_date' => '1',
+                    'student_name' => '1',
+                    'date_of_birth' => '1',
+                    'place_of_birth' => '1',
+                    'learning_group' => '1',
+                    'grades' => block_exastud_get_grades_set('lang'),
+                    'inputs' => [
+                            'wann_verlassen' => [
+                                    'title' => 'verlässt ...',
+                                    'type' => 'select',
+                                    'values' => [
+                                            'heute8' => 'heute die Klasse 8 der Schule.',
+                                            'heute9' => 'heute die Klasse 9 der Schule.',
+                                            'heute10' => 'heute die Klasse 10 der Schule.',
+                                            'during8' => 'während der Klasse 8 die Schule.',
+                                            'during9' => 'während der Klasse 9 die Schule.',
+                                            'during10' => 'während der Klasse 10 die Schule.',
+                                            'ende8' => 'am Ende der Klasse 8 die Schule.',
+                                            'ende10' => 'am Ende der Klasse 10 die Schule.',
+                                    ],
+                            ],
+                            'ags' => [
+                                    'title' => 'Teilnahme an Arbeitsgemeinschaften',
+                                    'type' => 'textarea',
+                                    'lines' => 2,
+                                    'cols' => 80,
+                            ],
+                            'comments_short' => [
+                                    'title' => 'Bemerkungen',
+                                    'type' => 'textarea',
+                                    'lines' => 2,
+                                    'cols' => 80,
+                            ],
+                            'abgangszeugnis_niveau' => [
+                                    'title' => 'Die Leistung wurde in allen Fächern auf dem folgenden Niveau beurteilt',
+                                    'type' => 'select',
+                                    'values' => ['G' => 'G', 'M' => 'M', 'E' => 'E'],
+                            ],
+                            'subject_profile' => [
+                                    'title' => 'Profil-fach',
+                                    'type' => 'textarea',
+                            ],
+                    ],
+            ],
+            'BP 2016/GMS Abgangszeugnis HSA Kl.9 und 10' => [
+                    'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_ABGANGSZEUGNIS_HS_9_10,
+                    'name' => 'BP 2016 GMS Abgangszeugnis HSA Kl.9 und 10',
+                    'file' => 'BP 2016/BP2016_GMS_Abgangszeugnis_HS_9_10',
+                    'year' => '1',
+                    'report_date' => '1',
+                    'student_name' => '1',
+                    'date_of_birth' => '1',
+                    'place_of_birth' => '1',
+                    'learning_group' => '1',
+                    'grades' => block_exastud_get_grades_set('lang'),
+                    'inputs' => [
+                            'wann_verlassen' => [
+                                    'title' => 'verlässt ...',
+                                    'type' => 'select',
+                                    'values' => [
+                                            'ende9' => 'am Ende der Klasse 9 die Schule.',
+                                            'ende10' => 'am Ende der Klasse 10 die Schule.',
+                                    ],
+                            ],
+                            'projekt_thema' => [
+                                    'title' => 'Thema',
+                                    'type' => 'textarea',
+                                    'lines' => 2,
+                                    'cols' => 60,
+                            ],
+                            'projekt_grade' => [
+                                    'title' => 'Note',
+                                    'type' => 'select',
+                                    'values' => ['sehr gut' => 'sehr gut',
+                                            'gut' => 'gut',
+                                            'befriedigend' => 'befriedigend',
+                                            'ausreichend' => 'ausreichend',
+                                            'mangelhaft' => 'mangelhaft',
+                                            'ungenügend' => 'ungenügend'],
+                            ],
+                            'projekt_verbalbeurteilung' => [
+                                    'title' => 'Verbalbeurteilung',
+                                    'type' => 'textarea',
+                            ],
+                            'ags' => [
+                                    'title' => 'Teilnahme an Arbeitsgemeinschaften',
+                                    'type' => 'textarea',
+                                    'lines' => 2,
+                                    'cols' => 80,
+                            ],
+                            'comments_short' => [
+                                    'title' => 'Bemerkungen',
+                                    'type' => 'textarea',
+                                    'lines' => 2,
+                                    'cols' => 80,
+                            ],
+                            'subject_profile' => [
+                                    'title' => 'Profil-fach',
+                                    'type' => 'textarea',
+                            ],
+                    ],
+            ],
+            'BP 2016/GMS Abschlusszeugnis der Förderschule' => [
+                    'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_ABSCHLUSSZEUGNIS_FOE,
+                    'name' => 'BP 2016 GMS Abschlusszeugnis der Förderschule',
+                    'file' => 'BP 2016/BP2016_GMS_Abschlusszeugnis_Foe',
+                    'year' => '1',
+                    'report_date' => '1',
+                    'student_name' => '1',
+                    'date_of_birth' => '1',
+                    'place_of_birth' => '1',
+                    'learning_group' => '1',
+                    'grades' => block_exastud_get_grades_set('lang'),
+                    'inputs' => [
+                            'focus' => [
+                                    'title' => 'Förderschwerpunkt',
+                                    'type' => 'select',
+                                    'values' => ['Lernen' => 'Lernen', 'geistige Entwicklung' => 'geistige Entwicklung'],
+                            ],/*
+                            'gesamtnote_und_durchschnitt_der_gesamtleistungen' => [
+                                    'title' => 'Gesamtnote und Durchschnitt der Gesamtleistungen',
+                                    'type' => 'text',
+                            ],*/
+                            'ags' => [
+                                    'title' => 'Teilnahme an Arbeitsgemeinschaften',
+                                    'type' => 'textarea',
+                                    'lines' => 2,
+                                    'cols' => 80,
+                            ],
+                            'comments_short' => [
+                                    'title' => 'Bemerkungen',
+                                    'type' => 'textarea',
+                                    'lines' => 2,
+                                    'cols' => 80,
+                            ],
+                        /*'projekt_thema' => [
+                                'title' => 'Thema',
+                                'type' => 'textarea',
+                                'lines' => 2,
+                                'cols' => 60,
+                        ],
+                        'projekt_grade' => [
+                                'title' => 'Note',
+                                'type' => 'select',
+                                'values' => ['sehr gut' => 'sehr gut',
+                                        'gut' => 'gut',
+                                        'befriedigend' => 'befriedigend',
+                                        'ausreichend' => 'ausreichend',
+                                        'mangelhaft' => 'mangelhaft',
+                                        'ungenügend' => 'ungenügend'],
+                        ],
+                        'projekt_verbalbeurteilung' => [
+                                'title' => 'Verbalbeurteilung',
+                                'type' => 'textarea',
+                        ],*/
+                            'subject_profile' => [
+                                    'title' => 'Profil-fach',
+                                    'type' => 'textarea',
+                            ],
+                            'class' => [
+                                    'title' => 'Klasse',
+                                    'type' => 'select',
+                                    'values' => ['9' => '9', '10' => '10'],
+                            ],
+                    ],
+            ],
+            'BP 2016/Beiblatt zur Projektpruefung HSA' => [
+                    'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_ANLAGE_PROJEKTPRUEFUNG_HS,
+                    'name' => 'Beiblatt zur Projektprüfung HSA',
+                    'file' => 'BP 2016/BP2016_GMS_Anlage_Projektpruefung_HS',
+                    'year' => '1',
+                    'report_date' => '1',
+                    'student_name' => '1',
+                    'date_of_birth' => '1',
+                    'place_of_birth' => '1',
+                    'learning_group' => '1',
+                    'grades' => block_exastud_get_grades_set('lang'),
+                    'inputs' => [
+                            'projekt_thema' => [
+                                    'title' => 'Thema',
+                                    'type' => 'textarea',
+                                    'lines' => 3,
+                                    'cols' => 80
+                            ],
+                            'projekt_grade' => [
+                                    'title' => 'Note',
+                                    'type' => 'select',
+                                    'values' => [
+                                            'sehr gut' => 'sehr gut',
+                                            'gut' => 'gut',
+                                            'befriedigend' => 'befriedigend',
+                                            'ausreichend' => 'ausreichend',
+                                            'mangelhaft' => 'mangelhaft',
+                                            'ungenügend' => 'ungenügend'],
+                            ],
+                            'projekt_verbalbeurteilung' => [
+                                    'title' => 'Verbalbeurteilung',
+                                    'type' => 'textarea',
+                                    'lines' => 5,
+                                    'cols' => 80,
+                            ],
+                            'projekt_ingroup' => [
+                                    'title' => 'wer entwickelte',
+                                    'type' => 'select',
+                                    'values' => [
+                                            'in der Gruppe' => 'in der Gruppe',
+                                            'individuell' => 'individuell',
+                                    ],
+                            ],
+                    ],
+            ]
     ];
 
     return $templates;

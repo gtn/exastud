@@ -329,6 +329,7 @@ if ($classid) {
         if (in_array($key, [
             BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_16_ZERTIFIKAT_FUER_PROFILFACH,
             BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_ANLAGE_PROJEKTPRUEFUNG_HS, // TODO: is it correct?
+            BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_ANLAGE_PROJEKTPRUEFUNG_HS, // TODO: is it correct?
         ])) {
             $addCurrent = false;
             foreach ($classstudents as $classstudent) {

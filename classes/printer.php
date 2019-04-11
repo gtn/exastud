@@ -439,7 +439,7 @@ class printer {
             } else {
                 $dataTextReplacer['Ethik'] = 'Religionslehre';
             }
-            
+
 			// wahlpflichtfach + profilfach dropdowns
 			$add_filter(function($content) use ($wahlpflichtfach) {
                 $tempWahlpflichtFach = $wahlpflichtfach;
@@ -500,6 +500,10 @@ class printer {
                 BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_HALBJAHRESINFORMATION_KL11,
                 BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_HALBJAHRESINFORMATION_KL11,
                 BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_ABSCHLUSSZEUGNIS_HSA_RSA,
+                BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_ABGANGSZEUGNIS_GMS,
+                BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_ABGANGSZEUGNIS_HS_9_10,
+                BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_ABSCHLUSSZEUGNIS_FOE,
+                BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_ANLAGE_PROJEKTPRUEFUNG_HS
 		])) {
 			//$class_subjects = block_exastud_get_class_subjects($class);
 
@@ -600,6 +604,8 @@ class printer {
                             BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_HALBJAHR_ZEUGNIS_FOE,
                             BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_ABSCHLUSSZEUGNIS_HS,
                             BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_JAHRESZEUGNIS_E_NIVEAU,
+                            BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_HALBJAHR_ZEUGNIS_HS,
+                            BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_JAHRESZEUGNIS_LERNENTWICKLUNGSBERICHT,
                             //BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_HALBJAHRESINFORMATION_KL11, // here are two selectboxes
                             BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_HALBJAHRESINFORMATION_KL11, // here are two selectboxes
 					])) {
@@ -740,6 +746,7 @@ class printer {
 			if (in_array($templateid, [
                             BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_ABSCHLUSSZEUGNIS_FOE, // is this need?
                             BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_ABSCHLUSSZEUGNIS_HS,
+                            BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_ABSCHLUSSZEUGNIS_FOE,
                     ])) {
                 //$avg = round($avg, 1, PHP_ROUND_HALF_DOWN); // not always correct. ???
                 $fig = (int) str_pad('1', 2, '0'); // 2 (second parameter) - precision
@@ -784,7 +791,11 @@ class printer {
                 }
             }
 
-			if ($templateid == BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_ABGANGSZEUGNIS_GMS) {
+			if (in_array($templateid, [
+                    BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_ABGANGSZEUGNIS_GMS,
+                    BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_ABGANGSZEUGNIS_GMS
+                    ])
+            ) {
 				$value = static::spacerIfEmpty(@$forminputs['wann_verlassen']['values'][@$studentdata->wann_verlassen]);
 				$add_filter(function($content) use ($placeholder, $value) {
 					$ret = preg_replace('!>[^<]*am Ende[^<]*<!U', '>'.$value.'<', $content, -1, $count);
@@ -809,7 +820,10 @@ class printer {
 
 					return $ret;
 				});
-			} elseif ($templateid == BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_ABGANGSZEUGNIS_HS_9_10) {
+			} elseif (in_array($templateid, array(
+			        BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_ABGANGSZEUGNIS_HS_9_10,
+                    BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_ABGANGSZEUGNIS_HS_9_10)))
+            {
 				$value = static::spacerIfEmpty(@$forminputs['wann_verlassen']['values'][@$studentdata->wann_verlassen]);
 				$add_filter(function($content) use ($placeholder, $value) {
 					$ret = preg_replace('!>[^<]*am Ende[^<]*<!U', '>'.$value.'<', $content, -1, $count);
@@ -1257,20 +1271,28 @@ class printer {
 		        $templateProcessor->deleteRow("descriptor");
 		    }
 		}
-//exit;
-		if (is_array($inputs) && array_key_exists('focus', $inputs)) {
-		    // now here is used ${focus} marker for testing
-            /*$focus = static::spacerIfEmpty(@$studentdata->focus);
-            $add_filter(function($content) use ($focus, $templateid) {
-                // for Förderschwerpunkt
-                $ret = preg_replace('!>[^<]*Lernen\.[^<]*<!U', '>'.$focus.'<', $content, -1, $count);
-                if (!$count) {
-                    throw new \Exception('"${focus}" not found in report: '.$templateid);
-                }
 
-                return $ret;
-            });
-            */
+		if ($templateid == BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_ANLAGE_PROJEKTPRUEFUNG_HS) {
+		    // the teacher selects only one selectbox 'projekt_ingroup'. In the report we need a few:
+            $projekt_ingroup = static::spacerIfEmpty(@$studentdata->projekt_ingroup);
+            $data_dropdowns[] = 'projekt_individ';
+            $data_dropdowns[] = 'projekt_reviewedfor';
+            $data_dropdowns[] = 'projekt_individended';
+            $data['projekt_individ'] = 'Wählen Sie ein Element aus.';
+            $data['projekt_individended'] = 'Wählen Sie ein Element aus.';
+            $data['projekt_reviewedfor'] = 'Wählen Sie ein Element aus.';
+            switch ($projekt_ingroup) {
+                case 'in der Gruppe':
+                    $data['projekt_individ'] = 'in der Gruppe';
+                    $data['projekt_individended'] = 'in eine Präsentation durch eine Schülergruppe.';
+                    $data['projekt_reviewedfor'] = 'gemeinsamen';
+                    break;
+                case 'individuell':
+                    $data['projekt_individ'] = 'individuell';
+                    $data['projekt_individended'] = 'in eine Präsentation.';
+                    $data['projekt_reviewedfor'] = 'individuellen';
+                    break;
+            }
         }
 
         // some templates has selectbox/niveau for languages. Make it works:
@@ -1384,7 +1406,7 @@ class printer {
             }
         }
 
-        // some reports has '*' in the dropdownlists. We need to find all of them
+        // some reports has '*' or words in the dropdownlists. We need to find all of them
         switch ($templateid) {
             case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_JAHRESZEUGNIS_E_NIVEAU:
             case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_ABSCHLUSSZEUGNIS_HS:
@@ -1396,6 +1418,12 @@ class printer {
                     $data['profilfach_titel'] .= '*';
                 }
                 break;
+            case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_ABGANGSZEUGNIS_GMS:
+            case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_ABGANGSZEUGNIS_HS_9_10:
+            case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_ABSCHLUSSZEUGNIS_FOE:
+                if (trim($data['profilfach_titel']) != '') {
+                    $data['profilfach_titel'] = 'Profilfach '.trim($data['profilfach_titel']);
+                }
         }
 
 //echo "<pre>debug:<strong>printer.php:1088</strong>\r\n"; print_r($filters); echo '</pre>'; exit; // !!!!!!!!!! delete it
