@@ -503,7 +503,19 @@ class printer {
                 BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_ABGANGSZEUGNIS_GMS,
                 BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_ABGANGSZEUGNIS_HS_9_10,
                 BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_ABSCHLUSSZEUGNIS_FOE,
-                BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_ANLAGE_PROJEKTPRUEFUNG_HS
+                BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_ANLAGE_PROJEKTPRUEFUNG_HS,
+                BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_JAHRESZEUGNIS_E_NIVEAU,
+                BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_ABSCHLUSSZEUGNIS_HSA_RSA,
+                BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_ABSCHLUSSZEUGNIS_HS,
+                BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_HALBJAHR_ZEUGNIS_E_NIVEAU,
+                BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_HALBJAHR_ZEUGNIS_HS,
+                BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_HALBJAHR_ZEUGNIS_FOE,
+                BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_HALBJAHR_ZEUGNIS_RS,
+                BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_ABSCHLUSSZEUGNIS_RS,
+                BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_ZERTIFIKAT_FUER_PROJEKTARBEIT,
+                BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_JAHRESZEUGNIS_E_NIVEAU_KL11,
+                BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_16_TESTAT_BILINGUALES_PROFIL_KL_8,
+                BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_16_ZERTIFIKAT_BILINGUALES_KL_10
 		])) {
 			//$class_subjects = block_exastud_get_class_subjects($class);
 
@@ -602,12 +614,18 @@ class printer {
                             BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_HALBJAHR_ZEUGNIS_RS,
                             BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_HALBJAHR_ZEUGNIS_E_NIVEAU,
                             BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_HALBJAHR_ZEUGNIS_FOE,
-                            BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_ABSCHLUSSZEUGNIS_HS,
+                            //BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_ABSCHLUSSZEUGNIS_HS,
                             BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_JAHRESZEUGNIS_E_NIVEAU,
                             BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_HALBJAHR_ZEUGNIS_HS,
                             BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_JAHRESZEUGNIS_LERNENTWICKLUNGSBERICHT,
                             //BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_HALBJAHRESINFORMATION_KL11, // here are two selectboxes
                             BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_HALBJAHRESINFORMATION_KL11, // here are two selectboxes
+                            BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_JAHRESZEUGNIS_E_NIVEAU,
+                            BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_HALBJAHR_ZEUGNIS_E_NIVEAU,
+                            BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_HALBJAHR_ZEUGNIS_HS,
+                            BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_HALBJAHR_ZEUGNIS_FOE,
+                            BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_HALBJAHR_ZEUGNIS_RS,
+                            BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_JAHRESZEUGNIS_E_NIVEAU_KL11
 					])) {
 					    $religion = 'Religionslehre ('.$subject->shorttitle.')';
 					}
@@ -747,27 +765,50 @@ class printer {
                             BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_ABSCHLUSSZEUGNIS_FOE, // is this need?
                             BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_ABSCHLUSSZEUGNIS_HS,
                             BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_ABSCHLUSSZEUGNIS_FOE,
+                            BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_ABSCHLUSSZEUGNIS_HS,
+                            BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_ABSCHLUSSZEUGNIS_RS
                     ])) {
                 //$avg = round($avg, 1, PHP_ROUND_HALF_DOWN); // not always correct. ???
                 $fig = (int) str_pad('1', 2, '0'); // 2 (second parameter) - precision
                 $avg  = (floor($avg * $fig) / $fig); // - ALWAYS round down!
                 $data['gd'] = number_format($avg, 1, ',', '');
+                $avgForVerbal = '1';
                 $avgVerbal = 'sehr gut';
                 if ($avg >= 1.5 && $avg <= 2.4) {
                     $avgVerbal = 'gut';
+                    $avgForVerbal = '2';
                 } else if ($avg >= 2.5 && $avg <= 3.4) {
+                    $avgForVerbal = '3';
                     $avgVerbal = 'befriedigend';
                 } else if ($avg >= 3.5 && $avg <= 4.4) {
+                    $avgForVerbal = '4';
                     $avgVerbal = 'ausreichend';
                 } else if ($avg >= 4.5) {
+                    $avgForVerbal = '5';
                     $avgVerbal = 'mangelhaft';
                 }
+                // other selectboxes
+                if ($templateid == BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_ABSCHLUSSZEUGNIS_RS) {
+                    $avgVerbal = block_exastud_get_grades_set('short')[$avgForVerbal];
+                }
 
-                if ($templateid == BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_ABSCHLUSSZEUGNIS_HS) {
+                if (in_array($templateid, [
+                        BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_ABSCHLUSSZEUGNIS_HS,
+                        BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_ABSCHLUSSZEUGNIS_HS])
+                ) {
                     $add_filter(function($content) use ($placeholder, $avgVerbal) {
                         $ret = preg_replace('!(Gesamtleistungen.*)'.$placeholder.'note!sU', '${1}'.$avgVerbal, $content, -1, $count);
                         if (!$count) {
                             throw new \Exception('"Gesamtleistungen" not found');
+                        }
+                        return $ret;
+                    });
+                } else if (in_array($templateid, [BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_ABSCHLUSSZEUGNIS_RS])
+                ) {
+                    $add_filter(function($content) use ($placeholder, $avgVerbal) {
+                        $ret = preg_replace('!(Gesamtnote.*)'.$placeholder.'note!sU', '${1}'.$avgVerbal, $content, -1, $count);
+                        if (!$count) {
+                            throw new \Exception('"Gesamtnote" not found');
                         }
                         return $ret;
                     });
@@ -833,7 +874,11 @@ class printer {
 
 					return $ret;
 				});
-			} elseif ($templateid == BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_JAHRESZEUGNIS_E_NIVEAU) {
+			} elseif (in_array($templateid, array(
+			        BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_JAHRESZEUGNIS_E_NIVEAU,
+                    BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_JAHRESZEUGNIS_E_NIVEAU,
+                    BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_JAHRESZEUGNIS_E_NIVEAU_KL11))
+            ) {
 				if (@$studentdata->verhalten) {
 					$value = @$forminputs['verhalten']['values'][$studentdata->verhalten];
 					$add_filter(function($content) use ($placeholder, $value) {
@@ -862,7 +907,10 @@ class printer {
 
 					return $ret;
 				});*/
-			} elseif ($templateid == BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_HALBJAHRESINFORMATION_KL11) {
+			} elseif (in_array($templateid, [
+			        BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_HALBJAHRESINFORMATION_KL11,
+                    BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_JAHRESZEUGNIS_E_NIVEAU_KL11])
+            ) {
                 $add_filter(function($content) use ($profileFachPhysikOption) {
                     $ret = preg_replace('!>[^<]*\* Physik wurde[^<]*<!U', '>'.$profileFachPhysikOption.'<', $content, -1, $count);
                     return $ret;
@@ -892,7 +940,10 @@ class printer {
 
             $tempProfilfach = $profilfach;
             if ($profilfach == self::spacerIfEmpty('')
-                    && $templateid != BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_HALBJAHR_ZEUGNIS_E_NIVEAU) {
+                    && !in_array($templateid, [
+                            BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_HALBJAHR_ZEUGNIS_E_NIVEAU,
+                            BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_HALBJAHR_ZEUGNIS_E_NIVEAU]
+            )) {
                 $tempProfilfach = '';
             }
             $data['profilfach_titel'] = $tempProfilfach;
@@ -904,7 +955,8 @@ class printer {
 			        if (in_array($templateid, [
                         BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_HALBJAHR_ZEUGNIS_FOE,
                         BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_HALBJAHR_ZEUGNIS_RS,
-
+                        BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_HALBJAHR_ZEUGNIS_FOE,
+                        BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_HALBJAHR_ZEUGNIS_RS,
                     ])) {
                         $religion = 'Religionslehre/Ethik';
                     } else {
@@ -1272,7 +1324,11 @@ class printer {
 		    }
 		}
 
-		if ($templateid == BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_ANLAGE_PROJEKTPRUEFUNG_HS) {
+		if (in_array($templateid, [
+		        BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_ANLAGE_PROJEKTPRUEFUNG_HS,
+                BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_ZERTIFIKAT_FUER_PROJEKTARBEIT
+                ]
+        )) {
 		    // the teacher selects only one selectbox 'projekt_ingroup'. In the report we need a few:
             $projekt_ingroup = static::spacerIfEmpty(@$studentdata->projekt_ingroup);
             $data_dropdowns[] = 'projekt_individ';
@@ -1411,19 +1467,59 @@ class printer {
             case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_JAHRESZEUGNIS_E_NIVEAU:
             case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_ABSCHLUSSZEUGNIS_HS:
             case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_ABSCHLUSSZEUGNIS_RS:
-                if (strcmp($data['wahlfach_titel'], 'französisch')) {
+                if (mb_stripos($data['wahlfach_titel'], 'französisch') !== false) {
                     $data['wahlfach_titel'] .= '*';
                 }
-                if (strcmp($data['profilfach_titel'], 'spanisch')) {
+                if (mb_stripos($data['profilfach_titel'], 'spanisch') !== false) {
                     $data['profilfach_titel'] .= '*';
+                }
+                break;
+            case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_ABSCHLUSSZEUGNIS_RS:
+                if (mb_stripos($data['wahlfach_titel'], 'technik') !== false
+                        || mb_stripos($data['wahlfach_titel'], 'Alltagskultur, Ernährung, Soziales') !== false
+                ) {
+                    $data['wahlfach_titel'] .= '**';
+                }
+                if (mb_stripos($data['wahlfach_titel'], 'französisch') !== false) {
+                    $data['wahlfach_titel'] .= '*/**';
+                }
+                if (mb_stripos($data['profilfach_titel'], 'spanisch') !== false) {
+                    $data['profilfach_titel'] .= '*';
+                }
+                if (trim($data['profilfach_titel']) != '') {
+                    $data['profilfach_titel'] = 'Profilfach '.trim($data['profilfach_titel']);
+                }
+                break;
+            case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_ABSCHLUSSZEUGNIS_HS:
+            case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_JAHRESZEUGNIS_E_NIVEAU_KL11:
+                if (mb_stripos($data['wahlfach_titel'], 'technik') !== false
+                        || mb_stripos($data['wahlfach_titel'], 'Alltagskultur, Ernährung, Soziales') !== false
+                ) {
+                    $data['wahlfach_titel'] .= '**';
+                }
+                if (mb_stripos($data['wahlfach_titel'], 'französisch') !== false) {
+                    $data['wahlfach_titel'] .= '*/**';
+                }
+                if (mb_stripos($data['profilfach_titel'], 'spanisch') !== false) {
+                    $data['profilfach_titel'] .= '*';
+                }
+                if (trim($data['profilfach_titel']) != '') {
+                    $data['profilfach_titel'] = 'Profilfach '.trim($data['profilfach_titel']);
                 }
                 break;
             case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_ABGANGSZEUGNIS_GMS:
             case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_ABGANGSZEUGNIS_HS_9_10:
             case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_ABSCHLUSSZEUGNIS_FOE:
+            case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_JAHRESZEUGNIS_E_NIVEAU:
+            case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_ABSCHLUSSZEUGNIS_HSA_RSA:
+            case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_HALBJAHR_ZEUGNIS_E_NIVEAU:
+            case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_HALBJAHR_ZEUGNIS_HS:
+            case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_HALBJAHR_ZEUGNIS_FOE:
+            case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_HALBJAHR_ZEUGNIS_RS:
                 if (trim($data['profilfach_titel']) != '') {
                     $data['profilfach_titel'] = 'Profilfach '.trim($data['profilfach_titel']);
                 }
+                break;
         }
 
 //echo "<pre>debug:<strong>printer.php:1088</strong>\r\n"; print_r($filters); echo '</pre>'; exit; // !!!!!!!!!! delete it
