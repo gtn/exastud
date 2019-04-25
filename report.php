@@ -67,13 +67,19 @@ if ($classid) {
     $templates = block_exastud_get_report_templates($class);
 
     $studentsWithExacompGraded = array();
+    $studentsGraded = array();
     foreach ($classstudents as $classstudent) {
         $subjects = \block_exastud\printer::get_exacomp_subjects($classstudent->id);
         if ($subjects && count($subjects) > 0) {
             $studentsWithExacompGraded[] = $classstudent->id;
         }
+        if (block_exastud_student_is_graded($class, $classstudent->id)) {
+            $studentsGraded[] = $classstudent->id;
+        }
+
     }
     $studentsWithExacompGraded = array_filter($studentsWithExacompGraded);
+    $studentsGraded = array_filter($studentsGraded);
     $pleaseselectstudent = '';
     $messagebeforetables = '';
     //$template = optional_param('template', '', PARAM_TEXT);
@@ -168,7 +174,7 @@ if ($classid) {
                  */
 
                 $doit = true;
-                $checkstudentconditions = function($student, $template) use ($courseid, $class, $studentsWithExacompGraded) {
+                $checkstudentconditions = function($student, $template) use ($courseid, $class, $studentsWithExacompGraded, $studentsGraded) {
                     $doit = true;
                     // get template only if the student with conditions:
                     switch ($template) {
@@ -176,8 +182,12 @@ if ($classid) {
                         case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_ANLAGE_PROJEKTPRUEFUNG_HS:
                             // - Beiblatt zur Projektprüfung: only if there is grading in exastud
                         case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_16_ZERTIFIKAT_FUER_PROFILFACH:
+                        case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_ZERTIFIKAT_FUER_PROJEKTARBEIT:
                             // - Zertifikat für Profilfach: only if there is grading in exastud
-                            $doit = block_exastud_student_is_graded($class, $student->id);
+                            //$doit = block_exastud_student_is_graded($class, $student->id);
+                            if (!in_array($student->id, $studentsGraded)) {
+                                $doit = false;
+                            }
                             break;
                         case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_ANLAGE_ZUM_LERNENTWICKLUNGSBERICHT:
                         case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_ANLAGE_ZUM_LERNENTWICKLUNGSBERICHTALT:
@@ -352,39 +362,49 @@ if ($classid) {
 
     $secondCell = new html_table_cell();
     $previewTemplates = array('grades_report', 'html_report');
-    $addAnlage = false;
+    $addAnlage = false; // add only if at least one student graded in exacomp
     foreach ($templates as $key => $tmpl) {
         if (!$addAnlage && in_array($key, [
                 BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_ANLAGE_ZUM_LERNENTWICKLUNGSBERICHT,
-                BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_ANLAGE_ZUM_LERNENTWICKLUNGSBERICHTALT
+                BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_ANLAGE_ZUM_LERNENTWICKLUNGSBERICHTALT,
+                BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_ANLAGE_ZUM_LERNENTWICKLUNGSBERICHT_SIMPLE
             ])) {
             foreach ($classstudents as $classstudent) {
-                $subjects = \block_exastud\printer::get_exacomp_subjects($classstudent->id);
-                if ($subjects && count($subjects) > 0) {
+                if (in_array($classstudent->id, $studentsWithExacompGraded)) {
                     $addAnlage = true;
                     break;
                 }
+                /*$subjects = \block_exastud\printer::get_exacomp_subjects($classstudent->id);
+                if ($subjects && count($subjects) > 0) {
+                    $addAnlage = true;
+                    break;
+                }*/
             }
             if (!$addAnlage) {
                 continue; // hide the template if any users have not any data from exacomp
             }
         }
+
         if (in_array($key, [
             BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_16_ZERTIFIKAT_FUER_PROFILFACH,
             BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_ANLAGE_PROJEKTPRUEFUNG_HS, // TODO: is it correct?
             BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_ANLAGE_PROJEKTPRUEFUNG_HS, // TODO: is it correct?
-            BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_ZERTIFIKAT_FUER_PROJEKTARBEIT, // TODO: is it correct?
+            //BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_ZERTIFIKAT_FUER_PROJEKTARBEIT, // TODO: is it correct?
         ])) {
             $addCurrent = false;
             foreach ($classstudents as $classstudent) {
-                $classsubjects = block_exastud_get_class_subjects($class);
+                if (in_array($classstudent->id, $studentsGraded)) {
+                    $addCurrent = true;
+                    break;
+                }
+                /*$classsubjects = block_exastud_get_class_subjects($class);
                 foreach ($classsubjects as $subject) {
                     $subjectData = block_exastud_get_review($classid, $subject->id, $classstudent->id);
                     if (!empty($subjectData->grade) || !empty($subjectData->niveau) || $subjectData->review) {
                         $addCurrent = true;
                         break 2;
                     }
-                }
+                }*/
             }
             if (!$addCurrent) {
                 continue;
