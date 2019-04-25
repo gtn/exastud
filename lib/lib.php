@@ -1705,6 +1705,21 @@ function block_exastud_get_graded_review($classid, $subjectid, $studentid) {
 	return $subjectData;
 }
 
+/**
+ * is graded at least one of subject?
+ * @param $class
+ * @param $studentid
+ */
+function block_exastud_student_is_graded($class, $studentid) {
+    $classsubjects = block_exastud_get_class_subjects($class);
+    foreach ($classsubjects as $subject) {
+        if (block_exastud_get_graded_review($class->id, $subject->id, $studentid)) {
+            return true;
+        }
+    }
+    return false;
+}
+
 function block_exastud_get_bildungsplan_subjects($bpid) {
 	return g::$DB->get_records('block_exastudsubjects', ['bpid' => $bpid], 'sorting');
 }
@@ -3901,6 +3916,7 @@ function block_exastud_fill_reportsettingstable($id = 0) {
                 if ($fielddata['type'] == 'textarea' ) {
                     $fielddata['rows'] = @$inputconfig['lines'] ? $inputconfig['lines'] : "999"; // 999 - will be used calculated value later
                     $fielddata['count_in_row'] = @$inputconfig['cols'] ? $inputconfig['cols'] : "999";
+                    $fielddata['maxchars'] = @$inputconfig['maxchars'] ? $inputconfig['maxchars'] : "0";
                 }
                 if (!empty($inputconfig['type']) && $inputconfig['type'] == 'select' && !empty($inputconfig['values'])) {
                     $fielddata['values'] = $inputconfig['values'];
@@ -4104,6 +4120,61 @@ function block_exastud_get_grade_average_value($subjects = array(), $verbal = fa
         return $avgVerbal;
     }
     return $result;
+}
+
+/**
+ * @param $atleast in bytes
+ * @param $trytoset like in php.ini
+ */
+function block_exastud_check_memory_limit($atleast, $trytoset) {
+    $ml = ini_get('memory_limit');
+    $bytes = block_exastud_str2bytes($ml);
+    /*  32M = 33554432,
+        64M = 67108864
+        128M = 134217728
+        256M = 268435456
+        512M = 536870912
+        1024M = 1073741824
+        2048M = 2147483648
+    */
+    if ($bytes < $atleast) {
+        $success = @ini_set('memory_limit', $trytoset);
+        $success = $success !== false ? true : false;
+    } else {
+        $success = true;
+    }
+    return $success;
+}
+
+function block_exastud_str2bytes($value) {
+    // only string
+    $unit_byte = preg_replace('/[^a-zA-Z]/', '', $value);
+    $unit_byte = strtolower($unit_byte);
+    // only number (allow decimal point)
+    $num_val = preg_replace('/\D\.\D/', '', $value);
+    switch ($unit_byte) {
+        case 'p':	// petabyte
+        case 'pb':
+            $num_val *= 1024;
+        case 't':	// terabyte
+        case 'tb':
+            $num_val *= 1024;
+        case 'g':	// gigabyte
+        case 'gb':
+            $num_val *= 1024;
+        case 'm':	// megabyte
+        case 'mb':
+            $num_val *= 1024;
+        case 'k':	// kilobyte
+        case 'kb':
+            $num_val *= 1024;
+        case 'b':	// byte
+            return $num_val *= 1;
+            break; // make sure
+        default:
+            return FALSE;
+    }
+    return FALSE;
 }
 
 /*

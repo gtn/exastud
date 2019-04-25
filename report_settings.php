@@ -348,7 +348,7 @@ if ($action && ($settingsid > 0 || $action == 'new')) {
                         case 'textarea':
                             $result .= block_exastud_get_string('report_settings_countrows', null, $resArr['rows']);
                             $result .= '&nbsp;'.block_exastud_get_string('report_settings_countinrow', null, $resArr['count_in_row']);
-                            //$result .= '<br />'.block_exastud_get_string('report_settings_maxchars', null, $resArr['rows'] * $resArr['count_in_row']);
+                            $result .= '<br />'.block_exastud_get_string('report_settings_maxchars', null, $resArr['maxchars']);
                             $result = '<small>'.$result.'</small>';
                             break;
                         case 'text':
@@ -453,6 +453,9 @@ function block_exastud_get_reportsettings_additional_description($report) {
                 case 'textarea':
                     $additional .= ':'.block_exastud_get_string('report_settings_countrows', null, $reportData['rows']);
                     $additional .= '&nbsp;/&nbsp;'.block_exastud_get_string('report_settings_countinrow_short', null, $reportData['count_in_row']);
+                    if (@$reportData['maxchars'] > 0) {
+                        $additional .= '&nbsp;/&nbsp;'.block_exastud_get_string('report_settings_maxchars_short', null, $reportData['maxchars']);
+                    }
                     break;
             }
             $content .= '<li><strong>${'.$reportData['key'].'}:</strong> '.'<i>('.$reportData['type'].$additional.')</i> '.$reportData['title'].'</li>';
@@ -483,6 +486,9 @@ function block_exastud_report_templates_prepare_serialized_data($settingsform, $
                     $element_data['count_in_row'] =
                             (isset($settingsedit->{$field.'_count_in_row'}) && $settingsedit->{$field.'_count_in_row'} > 0 ?
                                     $settingsedit->{$field.'_count_in_row'} : 45);
+                    $element_data['maxchars'] =
+                            (isset($settingsedit->{$field.'_maxchars'}) && $settingsedit->{$field.'_maxchars'} > 0 ?
+                                    $settingsedit->{$field.'_maxchars'} : 0);
                     break;
                 case 'select':
                     // work with GP, because mform does not know about new options
@@ -520,6 +526,7 @@ function block_exastud_report_templates_prepare_serialized_data($settingsform, $
         $aparams_types = optional_param_array('additional_params_type', '', PARAM_RAW);
         $aparams_rows = optional_param_array('additional_params_rows', '', PARAM_INT);
         $aparams_count_in_rows = optional_param_array('additional_params_count_in_row', '', PARAM_INT);
+        $aparams_maxchars = optional_param_array('additional_params_maxchars', '', PARAM_INT);
         $aparams_maxbytes = optional_param_array('additional_params_maxbytes', '', PARAM_INT);
         $aparams_width = optional_param_array('additional_params_width', '', PARAM_INT);
         $aparams_height = optional_param_array('additional_params_height', '', PARAM_INT);
@@ -543,6 +550,10 @@ function block_exastud_report_templates_prepare_serialized_data($settingsform, $
                                     (isset($aparams_count_in_rows[$pIndex]) &&
                                     $aparams_count_in_rows[$pIndex] > 0 ?
                                             $aparams_count_in_rows[$pIndex] : 45);
+                            $additional_params[$aparams_keys[$pIndex]]['maxchars'] =
+                                    (isset($aparams_maxchars[$pIndex]) &&
+                                    $aparams_maxchars[$pIndex] > 0 ?
+                                            $aparams_maxchars[$pIndex] : 0);
                             break;
                         case 'select':
                             if (array_key_exists($pIndex, $aparams_selectboxvalues_key) && count($aparams_selectboxvalues_key[$pIndex]) > 0) {

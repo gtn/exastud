@@ -98,6 +98,10 @@ return [
 		'Berichte exportieren',
 		'Reports',
 	],
+	'reports_server_notification' => [
+		'Falls der Bericht nicht ordnungsgemäß generiert wird, könnte dies auf eine zu große Datenmenge bzw. eine zu geringe Server-Einstellung hinweisen. Bitte kontaktieren Sie in diesem Fall den Administrator des Servers.',
+		'If the report is not generated correctly, it could indicate an excessive amount of data or a server setting that is too low. Please contact the administrator of the server in this case.',
+	],
 	'periods' => [
 		'Eingabezeiträume',
 		'Periods',
@@ -417,6 +421,10 @@ return [
 	'nostudentstoreport' => [
 		'Kein Schüler zu beurteilen',
 		'No students to report.',
+	],
+	'nostudentsfound' => [
+		'Keine Schüler gefunden.',
+		'No students found.',
 	],
 	'errorstarttimebeforeendtime' => [
 		'Eingabezeitraum {$a->description} hat ein Enddatum vor dem Startdatum!',
@@ -848,6 +856,10 @@ return [
             'Projektprüfung',
             'Project evaluations',
     ],
+    'report_student_template' => [
+            'Zeugnisformular',
+            'Template',
+    ],
 
     'not_assigned' => [
         'nicht zugeordnet',
@@ -935,7 +947,7 @@ return [
         'This class already marked'
     ],
     'mark_to_delete_go' => [
-        'Mark to delete by admin',
+        'Markieren zur Löschung durch den Administrator.',
         'Mark to delete by admin'
     ],
     'unmark_to_delete_go' => [
@@ -1274,6 +1286,10 @@ return [
             'Zeichen verfügbar',
             'characters left',
     ],
+    'textarea_maxchars' => [
+            'all chharacters',
+            'all chharacters',
+    ],
     'attention_send_message_to_classteacher' => [
         'Bitte <a id="exastud_link_to_class_teacher" href="{$a->messagehref}" target="_blank">benachrichtigen</a> Sie die neue Klassenlehrkraft über die Neuzuteilung.',
         'Do not forget to <a id="exastud_link_to_class_teacher" href="{$a->messagehref}" target="_blank">send a message</a> to the new class teacher about his new class',
@@ -1386,4 +1402,7 @@ return [
         'Lehrer',
         'Teacher',
     ],
+
+
+
 ];

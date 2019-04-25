@@ -1057,7 +1057,6 @@ class printer {
 					if ($oldExacomp) {
 					    $grading = $verbalsForOldExacomp[$grading];
                     }
-                    echo "<pre>debug:<strong>printer.php:976</strong>\r\n"; print_r($topic); echo '</pre>'; exit; // !!!!!!!!!! delete it
                     $templateProcessor->setValue("tvalue", $grading, 1);
 					foreach ($topic->descriptors as $descriptor) {
 						$templateProcessor->duplicateRow("descriptor");

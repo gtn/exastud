@@ -416,7 +416,8 @@ class student_other_data_form extends moodleform {
                 $textarea_limits = array(
                         'cols' => (@$input['cols'] && @$input['cols'] <= 90) ? $input['cols'] : 50,
                         'chars_per_row' => @$input['cols'] ? $input['cols'] : 80,
-                        'rows' => @$input['lines'] ? $input['lines'] : 8
+                        'rows' => @$input['lines'] ? $input['lines'] : 8,
+                        'maxchars' => @$input['maxchars'] ? $input['maxchars'] : 0
                 );
 
 				$mform->addElement('textarea', $dataid, '', [
@@ -428,6 +429,7 @@ class student_other_data_form extends moodleform {
                         'data-rowscharslimit-enable' => 1,
                         'data-rowslimit' => $textarea_limits['rows'],
                         'data-charsperrowlimit' => $textarea_limits['chars_per_row'],
+                        'data-maxcharslimit' => $textarea_limits['maxchars'],
                         'style' => "width: auto; "./*($input['cols'] * 15).*/" height: ".($input['lines'] * 20)."px; resize: none; font-family: Arial !important; font-size: 11pt !important;",
 				]);
 				$mform->setType($dataid, PARAM_RAW);
@@ -436,10 +438,16 @@ class student_other_data_form extends moodleform {
                                 '<span id="max_'.$dataid.'_rows">'.$textarea_limits['rows'].' '.block_exastud_get_string('textarea_rows').'</span>'.
                                 ' / '.
                                 '<span id="max_'.$dataid.'_chars">'.(/*$textarea_limits['rows'] * */$textarea_limits['chars_per_row']).' '.block_exastud_get_string('textarea_chars').'</span>'.
+                                ((array_key_exists('maxchars', $textarea_limits) && $textarea_limits['maxchars'] > 0) ?
+                                    ' / '.'<span id="max_'.$dataid.'_maxchars">'.(/*$textarea_limits['rows'] * */$textarea_limits['maxchars']).' '.block_exastud_get_string('textarea_maxchars').'</span>'
+                                    : ''
+                                ).
                                 '<span class="exastud-textarea-left-block">'.block_exastud_get_string('textarea_charsleft').': '.
                                 '<span id="left_'.$dataid.'_rows"><span class="exastud-value">-</span> '.block_exastud_get_string('textarea_rows').'</span>'.
                                 ' / '.
                                 '<span id="left_'.$dataid.'_chars"><span class="exastud-value">-</span> '.block_exastud_get_string('textarea_chars').'</span>'.
+                                /*' / '.
+                                '<span id="left_'.$dataid.'_maxchars"><span class="exastud-value">-</span> '.block_exastud_get_string('textarea_maxchars').'</span>'.*/
                                 '</span>');
 			} elseif ($input['type'] == 'text') {
 				$mform->addElement('text', $dataid, $input['title']);
@@ -635,8 +643,8 @@ class reportsettings_edit_form extends moodleform {
                 $mform->setType($field.'_rows', PARAM_INT);
                 $tempGroup[] =& $mform->createElement('text', $field.'_count_in_row', block_exastud_get_string('report_settings_countinrow_fieldtitle'), array('size' => $input_size));
                 $mform->setType($field.'_count_in_row', PARAM_INT);
-                //$tempGroup[] =& $mform->createElement('text', $field.'_maxchars', block_exastud_get_string('report_settings_maxchars_fieldtitle'), array('size' => $input_size));
-                //$mform->setType($field.'_maxchars', PARAM_INT);
+                $tempGroup[] =& $mform->createElement('text', $field.'_maxchars', block_exastud_get_string('report_settings_maxchars_fieldtitle'), array('size' => $input_size));
+                $mform->setType($field.'_maxchars', PARAM_INT);
                 $mform->addGroup($tempGroup, $field.'_textareaparams', '', ' ', false);
 
                 // params for image
@@ -691,6 +699,9 @@ class reportsettings_edit_form extends moodleform {
             }
             if (!empty($fieldData['count_in_row'])) {
                 $result->{$field.'_count_in_row'} = $fieldData['count_in_row'];
+            }
+            if (!empty($fieldData['maxchars'])) {
+                $result->{$field.'_maxchars'} = $fieldData['maxchars'];
             }
             if (!empty($fieldData['values'])) {
                 $result->{$field.'_values'} = $fieldData['values'];
@@ -812,6 +823,11 @@ class reportsettings_edit_form extends moodleform {
                 $mform->setType('additional_params_count_in_row['.$i.']', PARAM_INT);
                 if (!empty($param_settings['count_in_row'])) {
                     $mform->setDefault('additional_params_count_in_row['.$i.']', $param_settings['count_in_row']);
+                }
+                $textareaParams[] = $mform->createElement('text', 'additional_params_maxchars['.$i.']', block_exastud_get_string('report_settings_maxchars_fieldtitle'), array('size' => 5));
+                $mform->setType('additional_params_maxchars['.$i.']', PARAM_INT);
+                if (!empty($param_settings['maxchars'])) {
+                    $mform->setDefault('additional_params_maxchars['.$i.']', $param_settings['maxchars']);
                 }
                 $mform->addGroup($textareaParams, 'additional_params_textareaparams['.$i.']', '', ' ', false);
 

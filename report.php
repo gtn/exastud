@@ -18,6 +18,12 @@
 // This copyright notice MUST APPEAR in all copies of the script!
 require __DIR__ . '/inc.php';
 
+// attempt to increase server paramaters
+@ini_set('max_execution_time', 600); // 600 seconds = 10 minutes
+@set_time_limit(600);
+
+block_exastud_check_memory_limit(536870912, '512M'); // 512
+
 $courseid = optional_param('courseid', 1, PARAM_INT); // Course ID
 $periodid = optional_param('periodid', 0, PARAM_INT); // Period ID
 $classid = optional_param('classid', 0, PARAM_INT); // Class ID
@@ -43,15 +49,14 @@ set_time_limit(600);
 
 ob_clean();
 
+$templates = array();
+
 if ($classid) {
     $class = block_exastud_get_head_teacher_class($classid);
     
     if (! $classstudents = block_exastud_get_class_students($class->id)) {
         echo $output->header('report');
-        echo $output->heading(block_exastud_trans([
-            'de:Keine Schüler gefunden',
-            'en:No students found'
-        ]));
+        echo $output->heading(block_exastud_get_string('nostudentsfound'));
         echo $output->back_button(new moodle_url('report.php', [
             'courseid' => $courseid
         ]));
@@ -59,6 +64,16 @@ if ($classid) {
         exit();
     }
 
+    $templates = block_exastud_get_report_templates($class);
+
+    $studentsWithExacompGraded = array();
+    foreach ($classstudents as $classstudent) {
+        $subjects = \block_exastud\printer::get_exacomp_subjects($classstudent->id);
+        if ($subjects && count($subjects) > 0) {
+            $studentsWithExacompGraded[] = $classstudent->id;
+        }
+    }
+    $studentsWithExacompGraded = array_filter($studentsWithExacompGraded);
     $pleaseselectstudent = '';
     $messagebeforetables = '';
     //$template = optional_param('template', '', PARAM_TEXT);
@@ -152,15 +167,42 @@ if ($classid) {
                  * }
                  */
 
+                $doit = true;
+                $checkstudentconditions = function($student, $template) use ($courseid, $class, $studentsWithExacompGraded) {
+                    $doit = true;
+                    // get template only if the student with conditions:
+                    switch ($template) {
+                        case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_ANLAGE_PROJEKTPRUEFUNG_HS:
+                        case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_ANLAGE_PROJEKTPRUEFUNG_HS:
+                            // - Beiblatt zur Projektprüfung: only if there is grading in exastud
+                        case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_16_ZERTIFIKAT_FUER_PROFILFACH:
+                            // - Zertifikat für Profilfach: only if there is grading in exastud
+                            $doit = block_exastud_student_is_graded($class, $student->id);
+                            break;
+                        case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_ANLAGE_ZUM_LERNENTWICKLUNGSBERICHT:
+                        case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_ANLAGE_ZUM_LERNENTWICKLUNGSBERICHTALT:
+                        case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_ANLAGE_ZUM_LERNENTWICKLUNGSBERICHT_SIMPLE:
+                            // - Anlage zum Lernentwicklungsbericht: only if competences in exacomp with grading is in the report
+                            if (!in_array($student->id, $studentsWithExacompGraded)) {
+                                $doit = false;
+                            }
+                            break;
+                    }
+                    return $doit;
+                };
+
                 if (!$printStudents) {
                     // do nothing
                 } else if (count($printStudents) == 1) {
                     // print one student
                     $student = reset($printStudents);
-                    $file = \block_exastud\printer::report_to_temp_file($class, $student, $template, $courseid);
-                    if ($file) {
-                        $files_to_zip[$file->temp_file] =
-                                '/'.$student->firstname.'-'.$student->lastname.'-'.$student->id.'/'.$file->filename;
+                    $doit = $checkstudentconditions($student, $template);
+                    if ($doit) {
+                        $file = \block_exastud\printer::report_to_temp_file($class, $student, $template, $courseid);
+                        if ($file) {
+                            $files_to_zip[$file->temp_file] =
+                                    '/'.$student->firstname.'-'.$student->lastname.'-'.$student->id.'/'.$file->filename;
+                        }
                     }
                     //ob_clean();
                     //if ($content = ob_get_clean()) {
@@ -172,12 +214,15 @@ if ($classid) {
                 } else {
 
                     foreach ($printStudents as $student) {
-                        $file = \block_exastud\printer::report_to_temp_file($class, $student, $template, $courseid);
-                        if ($file) {
-                            $files_to_zip[$file->temp_file] =
-                                    '/'.$student->firstname.'-'.$student->lastname.'-'.$student->id.'/'.$file->filename;
-                            //$zip->addFile($file->temp_file, $files_to_zip[$file->temp_file]);
-                            $temp_files[] = $file->temp_file;
+                        $doit = $checkstudentconditions($student, $template);
+                        if ($doit) {
+                            $file = \block_exastud\printer::report_to_temp_file($class, $student, $template, $courseid);
+                            if ($file) {
+                                $files_to_zip[$file->temp_file] =
+                                        '/'.$student->firstname.'-'.$student->lastname.'-'.$student->id.'/'.$file->filename;
+                                //$zip->addFile($file->temp_file, $files_to_zip[$file->temp_file]);
+                                $temp_files[] = $file->temp_file;
+                            }
                         }
                     }
                     //$certificate_issue_date_text = block_exastud_get_certificate_issue_date_text($class);
@@ -248,7 +293,7 @@ if ($classid) {
     $table->head[] = '';
     $table->head[] = '';
     $table->head[] = block_exastud_get_string('name');
-    $table->head[] = block_exastud_trans('de:Zeugnisformular');
+    $table->head[] = block_exastud_get_string('report_student_template');
     
     $table->size = [
         '5%',
@@ -285,8 +330,6 @@ if ($classid) {
     $bp = $DB->get_record('block_exastudbp', [
         'id' => $class->bpid
     ]);
-    
-    $templates = block_exastud_get_report_templates($class);
     
     echo $output->header('report');
     $classheader = block_exastud_get_period($class->periodid)->description . ' - ' . $class->title;
@@ -364,6 +407,9 @@ if ($classid) {
     $templateRow->cells[] = $secondCell;
 
     $templateTable->data[] = $templateRow;
+
+    $messagebeforetables .= $output->notification(block_exastud_get_string('reports_server_notification'), 'notifymessage');
+
     echo $messagebeforetables;
     echo $output->table($templateTable);
     echo $pleaseselectstudent;

@@ -190,6 +190,9 @@ class print_templates {
                     case 'textarea':
                         $inputs[$field]['lines'] = ($fieldData['rows'] > 0 ? $fieldData['rows'] : 8);
                         $inputs[$field]['cols'] = ($fieldData['count_in_row'] > 0 ? $fieldData['count_in_row'] : 45);
+                        if (array_key_exists('maxchars', $fieldData)) {
+                            $inputs[$field]['maxchars'] = ($fieldData['maxchars'] > 0 ? $fieldData['maxchars'] : 0);
+                        }
                         break;
                     case 'select':
                         $inputs[$field]['values'] = (count($fieldData['values']) > 0 ? $fieldData['values'] : array());
@@ -616,12 +619,17 @@ class print_templates {
 		if (block_exastud_is_bw_active()) {
 		    // templates for "Reports" page
 
-			if (!$bp || $bp->sourceinfo !== 'bw-bp2016') {
-				$templateids[] = BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_16_ZERTIFIKAT_FUER_PROFILFACH; // 'BP 2004/Zertifikat fuer Profilfach';
-			}
+			//if (!$bp || $bp->sourceinfo !== 'bw-bp2016') {
+            $templateids[] = BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_16_ZERTIFIKAT_FUER_PROFILFACH; // 'BP 2004/Zertifikat fuer Profilfach';
+			//}
 
-			$templateids[] = BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_ANLAGE_PROJEKTPRUEFUNG_HS; // 'BP 2004/Beiblatt zur Projektpruefung HSA';
-			// TODO: add 2016? BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_ANLAGE_PROJEKTPRUEFUNG_HS
+            if ($bp && $bp->sourceinfo == 'bw-bp2016') {
+                // 2016 Beiblatt zur Projektprüfung
+                $templateids[] = BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_ANLAGE_PROJEKTPRUEFUNG_HS; // 'BP 2016/Beiblatt zur Projektpruefung HSA';
+            } else {
+                // 2004 Beiblatt zur Projektprüfung
+                $templateids[] = BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_ANLAGE_PROJEKTPRUEFUNG_HS; // 'BP 2004/Beiblatt zur Projektpruefung HSA';
+            }
 		}
 		return static::get_template_name_array($templateids);
 	}

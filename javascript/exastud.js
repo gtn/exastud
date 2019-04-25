@@ -242,7 +242,11 @@ $.extend(window.block_exastud, {
         function updateLeftMessage(textarea) {
             var rowsLimit = $(textarea).attr('data-rowslimit');
             var charsPerRowLimit = $(textarea).attr('data-charsperrowlimit');
+            var maxCharsLimit = $(textarea).attr('data-maxcharslimit');
             var charsLimit = rowsLimit * charsPerRowLimit;
+            if (charsLimit > maxCharsLimit && maxCharsLimit > 0) {
+                charsLimit = maxCharsLimit;
+            }
             var currentText = $(textarea).val();
             var rows = currentText.split(/\r?\n/);
             var textareaName = $(textarea).attr('name');
@@ -264,13 +268,24 @@ $.extend(window.block_exastud, {
             })
             $('#left_'+textareaName+'_rows .exastud-value').html(leftRows);
             $('#left_'+textareaName+'_chars .exastud-value').html(leftChars);
-            if (leftRows < 0 || leftChars < 0) {
+            if (leftRows < 0) {
                 textarea.css('background-color', 'rgb(255, 240, 240)');
                 textarea.css('color', 'rgb(216, 35, 35)');
                 $('#max_' + textareaName + '_rows').css('background-color', 'rgb(255, 240, 240)');
                 $('#max_' + textareaName + '_rows').css('color', 'rgb(216, 35, 35)');
                 $('#left_' + textareaName + '_rows').css('background-color', 'rgb(255, 240, 240)');
                 $('#left_' + textareaName + '_rows').css('color', 'rgb(216, 35, 35)');
+                $(textarea).attr('data-textareawitherror', '1');
+                disableButton();
+            } else if (leftChars < 0) {
+                textarea.css('background-color', 'rgb(255, 240, 240)');
+                textarea.css('color', 'rgb(216, 35, 35)');
+                $('#max_' + textareaName + '_chars').css('background-color', 'rgb(255, 240, 240)');
+                $('#max_' + textareaName + '_chars').css('color', 'rgb(216, 35, 35)');
+                $('#max_' + textareaName + '_maxchars').css('background-color', 'rgb(255, 240, 240)');
+                $('#max_' + textareaName + '_maxchars').css('color', 'rgb(216, 35, 35)');
+                $('#left_' + textareaName + '_chars').css('background-color', 'rgb(255, 240, 240)');
+                $('#left_' + textareaName + '_chars').css('color', 'rgb(216, 35, 35)');
                 $(textarea).attr('data-textareawitherror', '1');
                 disableButton();
             } else {
