@@ -951,7 +951,7 @@ return [
         'Mark to delete by admin'
     ],
     'unmark_to_delete_go' => [
-        'Unmark to delete by admin',
+        'Markierung für die Löschung aufheben',
         'Unmark to delete by admin'
     ],
     'class_marked_as_todelete' => [
