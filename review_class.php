@@ -143,19 +143,25 @@ $evaluation_options = block_exastud_get_evaluation_options();
 echo '<form action="'.$_SERVER['REQUEST_URI'].'" method="post">';
 echo '<input type="hidden" name="action" value="update" />';
 
+$tableheadernote = block_exastud_get_string('Note');
+$tableheaderniveau = block_exastud_get_string('Niveau');
+$tableheadersubjects = block_exastud_trans('de:Fachkompetenzen '); // bewerten button
+$tableheaderlearnsocial = block_exastud_get_string('report_learn_and_sociale'); // bewerten button
+$tableheadercategories = block_exastud_trans('de:Überfachliche Beurteilungen'); // bewerten button
+
 /* Print the Students */
 $table = new html_table();
 $table->head = array();
 $userdatacolumn = new html_table_cell();
 $table->head[] = $userdatacolumn; //userdata
 if (!block_exastud_get_only_learnsociale_reports()) {
-    $table->head[] = block_exastud_get_string('Note');
-    $table->head[] = block_exastud_get_string('Niveau');
-    $table->head[] = block_exastud_trans('de:Fachkompetenzen '); // bewerten button
+    $table->head[] = $tableheadernote;
+    $table->head[] = $tableheaderniveau;
+    $table->head[] = $tableheadersubjects;
 }
-$table->head[] = block_exastud_get_string('report_learn_and_sociale'); // bewerten button
+$table->head[] = $tableheaderlearnsocial;
 if ($isSubjectTeacher) {
-    $table->head[] = block_exastud_trans('de:Überfachliche Beurteilungen'); // bewerten button
+    $table->head[] = $tableheadercategories;
 }
 
 $table->align = array();
@@ -172,6 +178,9 @@ $table->align[] = 'right';
 
 $hiddenclassstudents = [];
 $oddeven = false;
+
+$tabledeletecolumns = array('niveau', 'subjects', 'learnsocial'/*, 'categories'*/);
+$tabledeletecolumns = array_combine($tabledeletecolumns, $tabledeletecolumns);
 
 if ($isSubjectTeacher) {
 
@@ -203,6 +212,24 @@ if ($isSubjectTeacher) {
         $subjectData = block_exastud_get_review($classid, $subjectid, $classstudent->id);
 
         $template = block_exastud_get_student_print_template($class, $classstudent->id);
+
+        // some columns can be empty because template has not such fields:
+        $editSubjectNiveau = false;
+        $editSubjectReview = false;
+        $editLearnSocialBehavior = false;
+        $allinputs = $template->get_inputs('all');
+        if ($allinputs) {
+            if (array_key_exists('subjects', $allinputs)) {
+                $editSubjectReview = true;
+                $editSubjectNiveau = true;
+                unset($tabledeletecolumns['niveau']);
+                unset($tabledeletecolumns['subjects']);
+            }
+            if (array_key_exists('learn_social_behavior', $allinputs)) {
+                $editLearnSocialBehavior = true;
+                unset($tabledeletecolumns['learnsocial']);
+            }
+        }
 
         $row = new html_table_row();
         $userdata =
@@ -255,32 +282,44 @@ if ($isSubjectTeacher) {
             }
             $row->cells[] = $grade_form;
             // Niveau column
-            $no_niveau = $DB->get_field('block_exastudsubjects', 'no_niveau', ['id' => $subjectid]);
-            $niveaus = ['' => ''] + block_exastud\global_config::get_niveau_options($no_niveau);
-            if (empty($formdata->niveau)) {
-                $formdata->niveau = '';
-            }
-            $niveau_form = '<select name="exastud_niveau['.$classstudent->id.']" class="custom-select">';
-            foreach ($niveaus as $k => $niveau_option) {
-                if ($formdata->niveau == (string) $k) {
-                    $niveau_form .= '<option selected="selected" value="'.$k.'">'.$niveau_option.'</option>';
-                } else {
-                    $niveau_form .= '<option value="'.$k.'">'.$niveau_option.'</option>';
+            if ($editSubjectNiveau) {
+                $no_niveau = $DB->get_field('block_exastudsubjects', 'no_niveau', ['id' => $subjectid]);
+                $niveaus = ['' => ''] + block_exastud\global_config::get_niveau_options($no_niveau);
+                if (empty($formdata->niveau)) {
+                    $formdata->niveau = '';
                 }
+                $niveau_form = '<select name="exastud_niveau['.$classstudent->id.']" class="custom-select">';
+                foreach ($niveaus as $k => $niveau_option) {
+                    if ($formdata->niveau == (string) $k) {
+                        $niveau_form .= '<option selected="selected" value="'.$k.'">'.$niveau_option.'</option>';
+                    } else {
+                        $niveau_form .= '<option value="'.$k.'">'.$niveau_option.'</option>';
+                    }
+                }
+                $niveau_form .= '</select>';
+                $row->cells[] = $niveau_form;
+            } else {
+                $row->cells[] = '';
             }
-            $niveau_form .= '</select>';
-            $row->cells[] = $niveau_form;
             // Fachkompetenzen column
+            if ($editSubjectReview) {
+                $row->cells[] = ($visible ?
+                        $output->link_button($CFG->wwwroot.'/blocks/exastud/review_student.php?courseid='.$courseid.'&classid='.
+                                $classid.'&subjectid='.$subjectid.'&studentid='.$classstudent->id,
+                                block_exastud_get_string('review_button'), ['class' => 'btn btn-primary']) : '');
+            } else {
+                $row->cells[] = '';
+            }
+        }
+        // Learning and social behavior column
+        if ($editLearnSocialBehavior) {
             $row->cells[] = ($visible ?
                     $output->link_button($CFG->wwwroot.'/blocks/exastud/review_student.php?courseid='.$courseid.'&classid='.
-                            $classid.
-                            '&subjectid='.$subjectid.'&studentid='.$classstudent->id,
+                            $classid.'&subjectid='.$subjectid.'&studentid='.$classstudent->id.'&reporttype=social',
                             block_exastud_get_string('review_button'), ['class' => 'btn btn-primary']) : '');
+        } else {
+            $row->cells[] = '';
         }
-        $row->cells[] = ($visible ?
-                $output->link_button($CFG->wwwroot.'/blocks/exastud/review_student.php?courseid='.$courseid.'&classid='.$classid.
-                        '&subjectid='.$subjectid.'&studentid='.$classstudent->id.'&reporttype=social',
-                        block_exastud_get_string('review_button'), ['class' => 'btn btn-primary']) : '');
 
         $row->cells[] = ($visible ?
                 $output->link_button($CFG->wwwroot.'/blocks/exastud/review_student.php?courseid='.$courseid.'&classid='.$classid.
@@ -320,14 +359,17 @@ if ($isSubjectTeacher) {
         if ($visible) {
             $cell = new html_table_cell();
             if (!block_exastud_get_only_learnsociale_reports()) {
-                $cell->text = '<p>'.
-                        ((trim(@$subjectData->review) ? block_exastud_text_to_html(trim($subjectData->review)) : '') ?: '---').
-                        '</p>';
-
-                if (!empty($subjectData->niveau)) {
-                    $cell->text .= '<p><b>'.block_exastud_get_string('Niveau').':</b> '.
-                            (block_exastud\global_config::get_niveau_option_title($subjectData->niveau) ?: $subjectData->niveau).
+                if ($editSubjectReview) {
+                    $cell->text = '<p>'.
+                            ((trim(@$subjectData->review) ? block_exastud_text_to_html(trim($subjectData->review)) : '') ?: '---').
                             '</p>';
+                }
+                if ($editSubjectNiveau) {
+                    if (!empty($subjectData->niveau)) {
+                        $cell->text .= '<p><b>'.block_exastud_get_string('Niveau').':</b> '.
+                                (block_exastud\global_config::get_niveau_option_title($subjectData->niveau) ?: $subjectData->niveau).
+                                '</p>';
+                    }
                 }
                 if (!empty($subjectData->grade)) {
                     $template = block_exastud_get_student_print_template($class, $classstudent->id);
@@ -432,6 +474,36 @@ if ($isSubjectTeacher) {
         $oddeven = !$oddeven;
     }
 
+}
+
+// clean empty columns
+// get column indexes. They can be different via exastud configuration ot via logged in user
+$tablecolumns = array();
+foreach ($table->head as $k => $headitem) {
+    switch ($headitem) {
+        case $tableheadernote:
+            $tablecolumns['note'] = $k;
+            break;
+        case $tableheaderniveau:
+            $tablecolumns['niveau'] = $k;
+            break;
+        case $tableheadersubjects:
+            $tablecolumns['subjects'] = $k;
+            break;
+        case $tableheaderlearnsocial:
+            $tablecolumns['learnsocial'] = $k;
+            break;
+        case $tableheadercategories:
+            $tablecolumns['categories'] = $k;
+            break;
+    }
+}
+// delete needed columns
+foreach ($tabledeletecolumns as $todelete) {
+    unset($table->head[$tablecolumns[$todelete]]);
+    foreach ($table->data as $row) {
+        unset($row->cells[$tablecolumns[$todelete]]);
+    }
 }
 
 echo $output->table($table);
