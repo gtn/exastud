@@ -334,6 +334,10 @@ return [
 		'Schullogo',
 		'School logo',
 	],
+	'school_logo_description' => [
+		'maximale Bildgröße: {$a->width}x{$a->height} Pixel',
+		'max size of Image: {$a->width}x{$a->height} Pixel',
+	],
 	'class_delete' => [
 		'Klasse löschen',
 		'Delete class',

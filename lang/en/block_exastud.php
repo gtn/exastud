@@ -102,6 +102,7 @@ $string['class_default_template'] = 'Default template';
 $string['class_owner'] = 'Current class teacher';
 $string['class_logo'] = 'Klassenlogo';
 $string['school_logo'] = 'School logo';
+$string['school_logo_description'] = 'max size of Image: {$a->width}x{$a->height} Pixel';
 $string['class_delete'] = 'Delete class';
 $string['project_based_class'] = 'Project';
 $string['reviewclass'] = 'Class review';

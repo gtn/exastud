@@ -21,6 +21,71 @@ defined('MOODLE_INTERNAL') || die;
 
 require_once __DIR__.'/inc.php';
 
+if (!class_exists('block_exastud_settings_extraconfigstoredfile')) {
+    class block_exastud_settings_extraconfigstoredfile extends admin_setting_configstoredfile {
+
+        static public $logowidth = 150;
+        static public $logoheight = 300;
+
+        public function write_setting($data) {
+            global $CFG;
+            //require_once($CFG->libdir.'/gdlib.php');
+            $parentresult = parent::write_setting($data);
+            // change image size
+            //$size = array_shift($args); // The path hides the size.
+            $itemid = clean_param($this->itemid, PARAM_INT);
+            //$filename = clean_param(array_shift($args), PARAM_FILE);
+            // Extract the requested width and height.
+            $maxwidth = self::$logowidth;
+            $maxheight = self::$logoheight;
+            // Find the original file.
+            $fs = get_file_storage();
+            if ($files = $fs->get_area_files(1, 'exastud', 'block_exastud_schoollogo', $itemid, '', false)) {
+                foreach ($files as $logofile) {
+                    if ($logofile->is_valid_image()) {
+                        /** @var stored_file $logo */
+                        $logo = (array)$logofile;
+                        $filedata = $logofile->resize_image($maxwidth, $maxheight);
+                        $logo = array_merge($logo, array(
+                                'id' => $logofile->get_id(),
+                                'contextid' => $logofile->get_contextid(),
+                                'component' => 'exastud',
+                                'filearea' => 'block_exastud_schoollogo',
+                                'itemid' => $itemid,
+                                'filepath' => $logofile->get_filepath(),
+                                'filename' => $logofile->get_filename().'--temp',
+                        ));
+                        $newlogo = $fs->create_file_from_string($logo, $filedata);
+                        $logofile->replace_file_with($newlogo);
+                        $newlogo->delete();
+                    }
+                }
+            }
+            return $parentresult;
+        }
+
+        public function output_html($data, $query = '') {
+            $output = parent::output_html($data, $query);
+            $attr = new stdClass();
+            $attr->width = self::$logowidth;
+            $attr->height = self::$logoheight;
+            // Add needed element attributes for work with preconfiguration.
+            $doc = new DOMDocument();
+            $message = new DOMElement('span', block_exastud_get_string('school_logo_description', null, $attr));
+            $doc->loadHTML(utf8_decode($output), LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD);
+            $selector = new DOMXPath($doc);
+            foreach ($selector->query("//*[contains(@class, 'fp-restrictions')]") as $e) {
+                $mres = $e->insertBefore($message, $e->firstChild);
+                $mres->setAttribute('class', 'block-exastud-schoollogo-size');
+                $mres->setAttribute('style', 'color:red; clear:both; display: block;');
+                //$e->appendChild($message);
+            }
+            $output = $doc->saveHTML($doc->documentElement);
+            return $output;
+        }
+    }
+}
+
 if (!class_exists('block_exastud_settings_menu')) {
     class block_exastud_settings_menu extends admin_setting {
 
@@ -188,7 +253,8 @@ if ($ADMIN->fulltree) {
 	];
 	$settings->add(new admin_setting_configselect('exastud/a2fa_requirement', block_exastud_get_string('settings_a2fa_requirement'), $description, '', $a2fa_requirement));
 
-	$settings->add(new admin_setting_configstoredfile('exastud/school_logo',
+	//$settings->add(new admin_setting_configstoredfile('exastud/school_logo',
+	$settings->add(new block_exastud_settings_extraconfigstoredfile('exastud/school_logo',
                             block_exastud_get_string('school_logo'),
                             '',
                             'block_exastud_schoollogo',
