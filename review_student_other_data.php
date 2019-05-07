@@ -90,11 +90,13 @@ switch ($type) {
         $classheader = $reviewclass->title.' - '.block_exastud_get_string('learn_and_sociale');
         break;
     case BLOCK_EXASTUD_DATA_ID_PRINT_TEMPLATE:
-        $categories = block_exastud_get_student_print_template($class, $student->id)->get_inputs($type);
+        $template = block_exastud_get_student_print_template($class, $student->id);
+        $categories = $template->get_inputs($type);
         $classheader = $reviewclass->title.' - '.block_exastud_get_string('report_other_report_fields');
         break;
     case BLOCK_EXASTUD_DATA_ID_ADDITIONAL_INFO:
-        $categories = block_exastud_get_student_print_template($class, $student->id)->get_inputs($type);
+        $template = block_exastud_get_student_print_template($class, $student->id);
+        $categories = $template->get_inputs($type);
         $classheader = $reviewclass->title.' - '.block_exastud_get_string('report_other_report_fields');
         break;
     case BLOCK_EXASTUD_DATA_ID_CERTIFICATE:
@@ -112,6 +114,7 @@ $olddata = (array)block_exastud_get_class_student_data($classid, $studentid);
 $dataid = key($categories);
 $studentform = new student_other_data_form($PAGE->url, [
 	'categories' => $categories,
+	'templateid' => $template->get_template_id(),
     'type' => $type,
 	'modified' =>
 		@$olddata[$dataid.'.modifiedby'] ?

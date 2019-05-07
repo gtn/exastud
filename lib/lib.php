@@ -2121,7 +2121,7 @@ function block_exastud_get_grade_by_index($ind, $grades = null, $variant = null)
 }
 
 // Needed for install/upgrade plugin
-function block_exastud_get_default_templates() {
+function block_exastud_get_default_templates($templateid = null) {
 
     $templates = [
             'default_report' => [
@@ -2149,6 +2149,7 @@ function block_exastud_get_default_templates() {
                                     'cols' => 80,
                             ],
                     ],
+                    'inputs_footer' => ['comments'], // inputs in the footer of template
             ],
             'Anlage' => [
                     'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_ANLAGE_ZUM_LERNENTWICKLUNGSBERICHT,
@@ -2307,6 +2308,8 @@ function block_exastud_get_default_templates() {
                                     'cols' => 75,
                             ],
                     ],
+                    'inputs_footer' => ['lessons_target', 'focus', 'beiblatt', 'comments'], // inputs in the footer of template
+                    'inputs_order' => ['lessons_target', 'focus', 'beiblatt', 'comments'], // special ordering of inputs (makes similar to docx template)
             ],
             'BP 2016/GMS Zeugnis SJ' => [
                     'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_JAHRESZEUGNIS_LERNENTWICKLUNGSBERICHT,
@@ -2366,6 +2369,8 @@ function block_exastud_get_default_templates() {
                                     'values' => ['Lernen' => 'Lernen', 'geistige Entwicklung' => 'geistige Entwicklung'],
                             ],
                     ],
+                    'inputs_footer' => ['lessons_target', 'focus', 'beiblatt', 'comments'], // inputs in the footer of template
+                    'inputs_order' => ['lessons_target', 'focus', 'beiblatt', 'comments'], // special ordering of inputs (makes similar to docx template)
             ],
             'BP 2004/GMS Zeugnis 1.HJ' => [
                     'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_HALBJAHR_LERNENTWICKLUNGSBERICHT,
@@ -2425,6 +2430,8 @@ function block_exastud_get_default_templates() {
                                     'values' => ['' => '', '(siehe schuleigenes Blatt)' => '(siehe schuleigenes Blatt)'],
                             ],
                     ],
+                    'inputs_footer' => ['lessons_target', 'focus', 'beiblatt', 'comments'], // inputs in the footer of template
+                    'inputs_order' => ['lessons_target', 'focus', 'beiblatt', 'comments'], // special ordering of inputs (makes similar to docx template)
             ],
             'BP 2004/GMS Zeugnis SJ' => [
                     'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_JAHRESZEUGNIS_LERNENTWICKLUNGSBERICHT,
@@ -2484,6 +2491,8 @@ function block_exastud_get_default_templates() {
                                     'values' => ['' => '', '(siehe schuleigenes Blatt)' => '(siehe schuleigenes Blatt)'],
                             ],
                     ],
+                    'inputs_footer' => ['lessons_target', 'focus', 'beiblatt', 'comments'], // inputs in the footer of template
+                    'inputs_order' => ['lessons_target', 'focus', 'beiblatt', 'comments'], // special ordering of inputs (makes similar to docx template)
             ],
             'BP 2004/GMS Klasse 10 E-Niveau 1.HJ' => [
                     'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_HALBJAHR_ZEUGNIS_E_NIVEAU,
@@ -2514,6 +2523,8 @@ function block_exastud_get_default_templates() {
                                     'type' => 'textarea',
                             ],
                     ],
+                    'inputs_footer' => ['ags', 'comments_short'], // inputs in the footer of template
+                    'inputs_order' => ['ags', 'comments_short'], // special ordering of inputs (makes similar to docx template)
             ],
             'BP 2004/GMS Klasse 10 E-Niveau SJ' => [
                     'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_JAHRESZEUGNIS_E_NIVEAU,
@@ -2527,6 +2538,7 @@ function block_exastud_get_default_templates() {
                     'learning_group' => '1',
                     'grades' => block_exastud_get_grades_set('short'),
                     'inputs' => [
+                            // TODO: 'verhalten' and 'mitarbeit' are needed?
                             'verhalten' => [
                                     'title' => 'Verhalten',
                                     'type' => 'select',
@@ -2564,6 +2576,8 @@ function block_exastud_get_default_templates() {
                                     ],
                             ],
                     ],
+                    'inputs_footer' => ['ags', 'comments_short', 'student_transfered'], // inputs in the footer of template
+                    'inputs_order' => ['ags', 'comments_short', 'student_transfered'], // special ordering of inputs (makes similar to docx template)
             ],
             'BP 2004/GMS Abgangszeugnis' => [
                     'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_ABGANGSZEUGNIS_GMS,
@@ -2613,6 +2627,9 @@ function block_exastud_get_default_templates() {
                                     'type' => 'textarea',
                             ],
                     ],
+                    'inputs_header' => ['wann_verlassen'], // inputs in the header of template
+                    'inputs_footer' => ['ags', 'comments_short', 'abgangszeugnis_niveau'], // inputs in the footer of template
+                    'inputs_order' => ['wann_verlassen', 'ags', 'comments_short', 'abgangszeugnis_niveau'], // special ordering of inputs (makes similar to docx template)
             ],
             'BP 2004/GMS Abgangszeugnis HSA Kl.9 und 10' => [
                     'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_ABGANGSZEUGNIS_HS_9_10,
@@ -2671,6 +2688,9 @@ function block_exastud_get_default_templates() {
                                     'type' => 'textarea',
                             ],
                     ],
+                    'inputs_header' => ['wann_verlassen'], // inputs in the header of template
+                    'inputs_footer' => ['ags', 'comments_short'], // inputs in the footer of template
+                    'inputs_order' => ['wann_verlassen', 'projekt_thema', 'projekt_grade', 'ags', 'comments_short'], // special ordering of inputs (makes similar to docx template)
             ],
             'BP 2004/GMS Hauptschulabschluss 1.HJ' => [
                     'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_HALBJAHR_ZEUGNIS_HS,
@@ -2706,6 +2726,9 @@ function block_exastud_get_default_templates() {
                                     'values' => ['9' => '9', '10' => '10'],
                             ],
                     ],
+                    'inputs_header' => ['class'], // inputs in the header of template
+                    'inputs_footer' => ['ags', 'comments_short'], // inputs in the footer of template
+                    'inputs_order' => ['class', 'ags', 'comments_short'], // special ordering of inputs (makes similar to docx template)
             ],
             'BP 2004/GMS Hauptschulabschluss SJ' => [
                     'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_ABSCHLUSSZEUGNIS_HS,
@@ -2768,6 +2791,9 @@ function block_exastud_get_default_templates() {
                                 'type' => 'textarea',
                         ],
                     ],
+                    'inputs_header' => ['abgelegt'], // inputs in the header of template
+                    'inputs_footer' => ['ags', 'comments_short'], // inputs in the footer of template
+                    'inputs_order' => ['abgelegt', 'ags', 'comments_short'], // special ordering of inputs (makes similar to docx template)
             ],
             'BP 2004/GMS Realschulabschluss 1.HJ' => [
                     'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_HALBJAHR_ZEUGNIS_RS,
@@ -2798,6 +2824,8 @@ function block_exastud_get_default_templates() {
                                     'type' => 'textarea',
                             ],
                     ],
+                    'inputs_footer' => ['ags', 'comments_short'], // inputs in the footer of template
+                    'inputs_order' => ['ags', 'comments_short'], // special ordering of inputs (makes similar to docx template)
             ],
             'BP 2004/GMS Realschulabschluss SJ' => [
                     'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_ABSCHLUSSZEUGNIS_RS,
@@ -2848,6 +2876,8 @@ function block_exastud_get_default_templates() {
                                 'type' => 'textarea',
                         ],
                     ],
+                    'inputs_footer' => ['ags', 'comments_short'], // inputs in the footer of template
+                    'inputs_order' => ['ags', 'comments_short'], // special ordering of inputs (makes similar to docx template)
             ],
             'BP 2004/GMS Abschlusszeugnis der Förderschule' => [
                     'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_ABSCHLUSSZEUGNIS_FOE,
@@ -2912,6 +2942,9 @@ function block_exastud_get_default_templates() {
                                     'values' => ['9' => '9', '10' => '10'],
                             ],
                     ],
+                    'inputs_header' => ['class'],
+                    'inputs_footer' => ['ags', 'focus', 'comments_short'], // inputs in the footer of template
+                    'inputs_order' => ['ags', 'focus', 'comments_short'], // special ordering of inputs (makes similar to docx template)
             ],
             'BP 2004/GMS Halbjahreszeugniss der Förderschule' => [
                     'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_HALBJAHR_ZEUGNIS_FOE,
@@ -2952,6 +2985,9 @@ function block_exastud_get_default_templates() {
                                     'values' => ['9' => '9', '10' => '10'],
                             ],
                     ],
+                    'inputs_header' => ['class'],
+                    'inputs_footer' => ['ags', 'focus', 'comments_short'], // inputs in the footer of template
+                    'inputs_order' => ['ags', 'focus', 'comments_short'], // special ordering of inputs (makes similar to docx template)
             ],
             'Deckblatt und 1. Innenseite LEB' => [
                     'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_LERNENTWICKLUNGSBERICHT_DECKBLATT_UND_1_INNENSEITE,
@@ -2994,6 +3030,8 @@ function block_exastud_get_default_templates() {
                                     'type' => 'textarea',
                             ],
                     ],
+                    'inputs_footer' => ['ags', 'comments_short'], // inputs in the footer of template
+                    'inputs_order' => ['ags', 'comments_short'], // special ordering of inputs (makes similar to docx template)
             ],
             'BP 2016/Halbjahresinformation Kl11' => [
                     'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_HALBJAHRESINFORMATION_KL11,
@@ -3024,6 +3062,8 @@ function block_exastud_get_default_templates() {
                                     'type' => 'textarea',
                             ],
                     ],
+                    'inputs_footer' => ['ags', 'focus', 'comments_short'], // inputs in the footer of template
+                    'inputs_order' => ['ags', 'focus', 'comments_short'], // special ordering of inputs (makes similar to docx template)
             ],
             'BP 2004/gleichwertiger Bildungsabschluss HSA/RSA' => [
                     'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_ABSCHLUSSZEUGNIS_HSA_RSA,
@@ -3079,6 +3119,9 @@ function block_exastud_get_default_templates() {
                                     'type' => 'textarea',
                             ],
                     ],
+                    'inputs_header' => ['cert_level', 'class_level', 'education_standard'],
+                    'inputs_footer' => ['ags', 'comments_short'], // inputs in the footer of template
+                    'inputs_order' => ['cert_level', 'class_level', 'education_standard', 'ags', 'comments_short'], // special ordering of inputs (makes similar to docx template)
             ],
             'BP 2016/GMS Abgangszeugnis' => [
                     'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_ABGANGSZEUGNIS_GMS,
@@ -3128,6 +3171,9 @@ function block_exastud_get_default_templates() {
                                     'type' => 'textarea',
                             ],
                     ],
+                    'inputs_header' => ['wann_verlassen'],
+                    'inputs_footer' => ['ags', 'comments_short', 'abgangszeugnis_niveau'], // inputs in the footer of template
+                    'inputs_order' => ['wann_verlassen', 'ags', 'comments_short', 'abgangszeugnis_niveau'], // special ordering of inputs (makes similar to docx template)
             ],
             'BP 2016/GMS Abgangszeugnis HSA Kl.9 und 10' => [
                     'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_ABGANGSZEUGNIS_HS_9_10,
@@ -3186,6 +3232,9 @@ function block_exastud_get_default_templates() {
                                     'type' => 'textarea',
                             ],
                     ],
+                    'inputs_header' => ['wann_verlassen'],
+                    'inputs_footer' => ['ags', 'comments_short'], // inputs in the footer of template
+                    'inputs_order' => ['wann_verlassen', 'ags', 'comments_short'], // special ordering of inputs (makes similar to docx template)
             ],
             'BP 2016/GMS Abschlusszeugnis der Förderschule' => [
                     'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_ABSCHLUSSZEUGNIS_FOE,
@@ -3250,6 +3299,9 @@ function block_exastud_get_default_templates() {
                                     'values' => ['9' => '9', '10' => '10'],
                             ],
                     ],
+                    'inputs_header' => ['class'],
+                    'inputs_footer' => ['ags', 'focus', 'comments_short'], // inputs in the footer of template
+                    'inputs_order' => ['class', 'ags', 'focus', 'comments_short'], // special ordering of inputs (makes similar to docx template)
             ],
             'BP 2016/Beiblatt zur Projektpruefung HSA' => [
                     'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_ANLAGE_PROJEKTPRUEFUNG_HS,
@@ -3295,6 +3347,7 @@ function block_exastud_get_default_templates() {
                                     ],
                             ],
                     ],
+                    'inputs_order' => ['projekt_ingroup'], // special ordering of inputs (makes similar to docx template)
             ],
             'BP 2016/GMS Klasse 10 E-Niveau SJ' => [
                     'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_JAHRESZEUGNIS_E_NIVEAU,
@@ -3345,6 +3398,8 @@ function block_exastud_get_default_templates() {
                                     ],
                             ],
                     ],
+                    'inputs_footer' => ['ags', 'focus', 'comments_short', 'student_transfered'], // inputs in the footer of template
+                    'inputs_order' => ['verhalten', 'mitarbeit', 'ags', 'comments_short', 'student_transfered'], // special ordering of inputs (makes similar to docx template)
             ],
             'BP 2016/gleichwertiger Bildungsabschluss HSA/RSA' => [
                     'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_ABSCHLUSSZEUGNIS_HSA_RSA,
@@ -3400,6 +3455,9 @@ function block_exastud_get_default_templates() {
                                     'type' => 'textarea',
                             ],
                     ],
+                    'inputs_header' => ['cert_level', 'class_level', 'education_standard'],
+                    'inputs_footer' => ['ags', 'comments_short'], // inputs in the footer of template
+                    'inputs_order' => ['cert_level', 'class_level', 'education_standard', 'ags', 'comments_short'], // special ordering of inputs (makes similar to docx template)
             ],
             'BP 2016/GMS Hauptschulabschluss SJ' => [
                     'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_ABSCHLUSSZEUGNIS_HS,
@@ -3457,6 +3515,9 @@ function block_exastud_get_default_templates() {
                                     'type' => 'textarea',
                             ],
                     ],
+                    'inputs_header' => ['abgelegt'],
+                    'inputs_footer' => ['ags', 'comments_short'], // inputs in the footer of template
+                    'inputs_order' => ['abgelegt', 'ags', 'comments_short'], // special ordering of inputs (makes similar to docx template)
             ],
             'BP 2016/GMS Klasse 10 E-Niveau 1.HJ' => [
                     'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_HALBJAHR_ZEUGNIS_E_NIVEAU,
@@ -3487,6 +3548,8 @@ function block_exastud_get_default_templates() {
                                     'type' => 'textarea',
                             ],
                     ],
+                    'inputs_footer' => ['ags', 'comments_short'], // inputs in the footer of template
+                    'inputs_order' => ['ags', 'comments_short'], // special ordering of inputs (makes similar to docx template)
             ],
             'BP 2016/GMS Hauptschulabschluss 1.HJ' => [
                     'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_HALBJAHR_ZEUGNIS_HS,
@@ -3522,6 +3585,9 @@ function block_exastud_get_default_templates() {
                                     'values' => ['9' => '9', '10' => '10'],
                             ],
                     ],
+                    'inputs_header' => ['class'],
+                    'inputs_footer' => ['ags', 'comments_short'], // inputs in the footer of template
+                    'inputs_order' => ['class', 'ags', 'comments_short'], // special ordering of inputs (makes similar to docx template)
             ],
             'BP 2016/GMS Halbjahreszeugniss der Förderschule' => [
                     'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_HALBJAHR_ZEUGNIS_FOE,
@@ -3562,6 +3628,9 @@ function block_exastud_get_default_templates() {
                                     'values' => ['9' => '9', '10' => '10'],
                             ],
                     ],
+                    'inputs_header' => ['class'],
+                    'inputs_footer' => ['ags', 'focus', 'comments_short'], // inputs in the footer of template
+                    'inputs_order' => ['class', 'ags', 'focus', 'comments_short'], // special ordering of inputs (makes similar to docx template)
             ],
             'BP 2016/GMS Realschulabschluss 1.HJ' => [
                     'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_HALBJAHR_ZEUGNIS_RS,
@@ -3592,6 +3661,8 @@ function block_exastud_get_default_templates() {
                                     'type' => 'textarea',
                             ],
                     ],
+                    'inputs_footer' => ['ags', 'comments_short'], // inputs in the footer of template
+                    'inputs_order' => ['ags', 'comments_short'], // special ordering of inputs (makes similar to docx template)
             ],
             'BP 2016/GMS Realschulabschluss SJ' => [
                     'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_ABSCHLUSSZEUGNIS_RS,
@@ -3642,6 +3713,8 @@ function block_exastud_get_default_templates() {
                                     'type' => 'textarea',
                             ],
                     ],
+                    'inputs_footer' => ['ags', 'comments_short'], // inputs in the footer of template
+                    'inputs_order' => ['ags', 'comments_short'], // special ordering of inputs (makes similar to docx template)
             ],
             'BP 2016/Zertifikat zur Projektarbeit' => [
                     'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_ZERTIFIKAT_FUER_PROJEKTARBEIT,
@@ -3687,6 +3760,8 @@ function block_exastud_get_default_templates() {
                                     ],
                             ],
                     ],
+                    'inputs_footer' => ['projekt_ingroup'], // inputs in the footer of template
+                    'inputs_order' => ['projekt_ingroup'], // special ordering of inputs (makes similar to docx template)
             ],
             'BP 2016/GMS Klasse 11 E-Niveau SJ' => [
                     'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_JAHRESZEUGNIS_E_NIVEAU_KL11,
@@ -3737,6 +3812,8 @@ function block_exastud_get_default_templates() {
                                     ],
                             ],
                     ],
+                    'inputs_footer' => ['ags', 'comments_short', 'student_transfered'], // inputs in the footer of template
+                    'inputs_order' => ['verhalten', 'mitarbeit', 'ags', 'comments_short', 'student_transfered'], // special ordering of inputs (makes similar to docx template)
             ],
             'Testat Englisch/Deutsch (Klasse 8)' => [
                     'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_16_TESTAT_BILINGUALES_PROFIL_KL_8,
@@ -3849,6 +3926,11 @@ function block_exastud_get_default_templates() {
 
 
     ];
+
+    if ($templateid) {
+        $res = array_filter($templates, function($t) use ($templateid) {return $t['id'] == $templateid;});
+        return reset($res);
+    }
 
     return $templates;
 }

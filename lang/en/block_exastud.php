@@ -371,3 +371,6 @@ $string['ags'] = 'Working groups';
 $string['acronym'] = 'Acronym';
 $string['subject'] = 'Subject';
 $string['teacher'] = 'Teacher';
+$string['review_student_other_data_header'] = 'Header';
+$string['review_student_other_data_body'] = 'Body';
+$string['review_student_other_data_footer'] = 'Footer';

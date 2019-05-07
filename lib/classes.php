@@ -99,7 +99,7 @@ class print_templates {
                 $fields = array('learn_social_behavior');
                 break;
             case BLOCK_EXASTUD_DATA_ID_PRINT_TEMPLATE:
-                $fields = array('comments', /*'subjects', 'subject_elective', 'subject_profile',*/ 'ags', 'focus', 'class');
+                $fields = array('comments', /*'subjects', 'subject_elective', 'subject_profile',*/ 'ags', 'class', 'focus' );
                 $fieldsAdditional = unserialize($template->additional_params);
                 if (is_array($fieldsAdditional)) {
                     $fields = array_merge($fields, $fieldsAdditional);
@@ -169,6 +169,7 @@ class print_templates {
                 $fields = array();
                 break;
         }
+
         $inputs = array();
         foreach ($fields as $field) {
             if (is_array($field)) {
@@ -207,6 +208,14 @@ class print_templates {
                 }
             }
         }
+
+        // sort inputs by fixed sorting parameter
+        $defaulttemplatesettings = block_exastud_get_default_templates($templateid);
+        if (is_array($defaulttemplatesettings) && array_key_exists('inputs_order', $defaulttemplatesettings)) {
+            $inputsorting = $defaulttemplatesettings['inputs_order'];
+            $inputs = array_merge(array_flip($inputsorting), $inputs);
+        }
+
         if (count($inputs) > 0) {
             return $inputs;
         } else {

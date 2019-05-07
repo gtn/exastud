@@ -30,6 +30,14 @@ class block_exastud_htmltag extends HTML_QuickForm_html {
     public function toHtml() {
         return $this->_text;
     }
+
+    public function setName($name) {
+        parent::setName($name);
+    }
+
+    public function getName() {
+        return $this->getAttribute('name');
+    }
 }
 
 

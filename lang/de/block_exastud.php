@@ -370,3 +370,6 @@ $string['ags'] = 'Arbeitsgemeinschaften';
 $string['acronym'] = 'Fachkürzel';
 $string['subject'] = 'Fach';
 $string['teacher'] = 'Lehrer';
+$string['review_student_other_data_header'] = 'Kopfteil';
+$string['review_student_other_data_body'] = 'Fächer';
+$string['review_student_other_data_footer'] = 'Fussteil';

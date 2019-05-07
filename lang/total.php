@@ -1403,6 +1403,19 @@ return [
         'Teacher',
     ],
 
+    'review_student_other_data_header' => [
+        'Kopfteil',
+        'Header',
+    ],
+    'review_student_other_data_body' => [
+        'Fächer',
+        'Body',
+    ],
+    'review_student_other_data_footer' => [
+        'Fussteil',
+        'Footer',
+    ],
+
 
 
 ];

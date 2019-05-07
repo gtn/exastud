@@ -395,80 +395,143 @@ class student_edit_form extends moodleform {
 
 class student_other_data_form extends moodleform {
 
+    public function __construct($action = null, $customdata = null, $method = 'post', $target = '', $attributes = null,
+            $editable = true, $ajaxformdata = null) {
+        global $CFG;
+        require_once($CFG->dirroot.'/blocks/exastud/classes/exastud_htmltag.php');
+        MoodleQuickForm::registerElementType('exastud_htmltag', $CFG->dirroot.'/blocks/exastud/classes/exastud_htmltag.php', 'block_exastud_htmltag');
+        parent::__construct($action, $customdata, $method, $target, $attributes, $editable, $ajaxformdata);
+    }
+
 	function definition() {
 		$mform = &$this->_form;
-		foreach ($this->_customdata['categories'] as $dataid => $input) {
-			if (empty($input['type']) || $input['type'] == 'textarea') {
-				$mform->addElement('header', 'header_'.$dataid, $input['title']);
-				$mform->setExpanded('header_'.$dataid);
-				$maxchars = '550';
-				if (@$this->_customdata['modified']) {
-					$mform->addElement('static', '', '', $this->_customdata['modified']);
-				}
+        $defaulttemplatesettings = block_exastud_get_default_templates($this->_customdata['templateid']);
 
-				if (empty($input['lines'])) {
-					$input['lines'] = 8;
-				}
-				if (empty($input['cols'])) {
-					$input['cols'] = 45;
-				}
+        $addFormElement = function($dataid, $input, $pObj) use ($mform) {
+            switch ($input['type']) {
+                case '':
+                case 'textarea':
+                    $mform->addElement('header', 'header_'.$dataid, $input['title']);
+                    //$mform->setExpanded('header_'.$dataid);
+                    $maxchars = '550';
+                    if (@$pObj->_customdata['modified']) {
+                        $mform->addElement('static', '', '', $pObj->_customdata['modified']);
+                    }
 
-                $textarea_limits = array(
-                        'cols' => (@$input['cols'] && @$input['cols'] <= 90) ? $input['cols'] : 50,
-                        'chars_per_row' => @$input['cols'] ? $input['cols'] : 80,
-                        'rows' => @$input['lines'] ? $input['lines'] : 8,
-                        'maxchars' => @$input['maxchars'] ? $input['maxchars'] : 0
-                );
+                    if (empty($input['lines'])) {
+                        $input['lines'] = 8;
+                    }
+                    if (empty($input['cols'])) {
+                        $input['cols'] = 45;
+                    }
 
-				$mform->addElement('textarea', $dataid, '', [
-				        //'cols' => $input['cols'],
-                        'cols' => $textarea_limits['chars_per_row'] + 3,
-                        'rows' => $input['lines'],
+                    $textarea_limits = array(
+                            'cols' => (@$input['cols'] && @$input['cols'] <= 90) ? $input['cols'] : 50,
+                            'chars_per_row' => @$input['cols'] ? $input['cols'] : 80,
+                            'rows' => @$input['lines'] ? $input['lines'] : 8,
+                            'maxchars' => @$input['maxchars'] ? $input['maxchars'] : 0
+                    );
+
+                    $mform->addElement('textarea', $dataid, '', [
+                        //'cols' => $input['cols'],
+                            'cols' => $textarea_limits['chars_per_row'] + 3,
+                            'rows' => $input['lines'],
                         //'wrap' => 'off',
-					    'class' => 'limit-input-length',
-                        'data-rowscharslimit-enable' => 1,
-                        'data-rowslimit' => $textarea_limits['rows'],
-                        'data-charsperrowlimit' => $textarea_limits['chars_per_row'],
-                        'data-maxcharslimit' => $textarea_limits['maxchars'],
-                        'style' => "width: auto; "./*($input['cols'] * 15).*/" height: ".($input['lines'] * 20)."px; resize: none; font-family: Arial !important; font-size: 11pt !important;",
-				]);
-				$mform->setType($dataid, PARAM_RAW);
-				$mform->addElement('static', '', '',
-                        block_exastud_get_string('textarea_max').
-                                '<span id="max_'.$dataid.'_rows">'.$textarea_limits['rows'].' '.block_exastud_get_string('textarea_rows').'</span>'.
-                                ' / '.
-                                '<span id="max_'.$dataid.'_chars">'.(/*$textarea_limits['rows'] * */$textarea_limits['chars_per_row']).' '.block_exastud_get_string('textarea_chars').'</span>'.
-                                ((array_key_exists('maxchars', $textarea_limits) && $textarea_limits['maxchars'] > 0) ?
+                            'class' => 'limit-input-length',
+                            'data-rowscharslimit-enable' => 1,
+                            'data-rowslimit' => $textarea_limits['rows'],
+                            'data-charsperrowlimit' => $textarea_limits['chars_per_row'],
+                            'data-maxcharslimit' => $textarea_limits['maxchars'],
+                            'style' => "width: auto; "./*($input['cols'] * 15).*/" height: ".($input['lines'] * 20)."px; resize: none; font-family: Arial !important; font-size: 11pt !important;",
+                    ]);
+                    $mform->setType($dataid, PARAM_RAW);
+                    $mform->addElement('static', '', '',
+                            block_exastud_get_string('textarea_max').
+                            '<span id="max_'.$dataid.'_rows">'.$textarea_limits['rows'].' '.block_exastud_get_string('textarea_rows').'</span>'.
+                            ' / '.
+                            '<span id="max_'.$dataid.'_chars">'.(/*$textarea_limits['rows'] * */$textarea_limits['chars_per_row']).' '.block_exastud_get_string('textarea_chars').'</span>'.
+                            ((array_key_exists('maxchars', $textarea_limits) && $textarea_limits['maxchars'] > 0) ?
                                     ' / '.'<span id="max_'.$dataid.'_maxchars">'.(/*$textarea_limits['rows'] * */$textarea_limits['maxchars']).' '.block_exastud_get_string('textarea_maxchars').'</span>'
                                     : ''
-                                ).
-                                '<span class="exastud-textarea-left-block">'.block_exastud_get_string('textarea_charsleft').': '.
-                                '<span id="left_'.$dataid.'_rows"><span class="exastud-value">-</span> '.block_exastud_get_string('textarea_rows').'</span>'.
-                                ' / '.
-                                '<span id="left_'.$dataid.'_chars"><span class="exastud-value">-</span> '.block_exastud_get_string('textarea_chars').'</span>'.
-                                /*' / '.
-                                '<span id="left_'.$dataid.'_maxchars"><span class="exastud-value">-</span> '.block_exastud_get_string('textarea_maxchars').'</span>'.*/
-                                '</span>');
-			} elseif ($input['type'] == 'text') {
-				$mform->addElement('text', $dataid, $input['title']);
-				$mform->setType($dataid, PARAM_RAW);
-			} elseif ($input['type'] == 'select') {
-				$mform->addElement('select', $dataid, $input['title'], ['' => ''] + $input['values']);
-				$mform->setType($dataid, PARAM_RAW);
-			} elseif ($input['type'] == 'image') {
-                $mform->addElement('filemanager', 'images['.$dataid.']', $input['title'], null,
-                        array(
-                                'subdirs' => 0,
-                                'maxbytes' => intval($input['maxbytes']),
-                                'maxfiles' => 1,
-                                'accepted_types' => array('web_image'))
-                );
-            } else {
-				$mform->addElement('header', 'header_'.$dataid, $input['title']);
-				$mform->setExpanded('header_'.$dataid);
-			}
-		}
+                            ).
+                            '<span class="exastud-textarea-left-block">'.block_exastud_get_string('textarea_charsleft').': '.
+                            '<span id="left_'.$dataid.'_rows"><span class="exastud-value">-</span> '.block_exastud_get_string('textarea_rows').'</span>'.
+                            ' / '.
+                            '<span id="left_'.$dataid.'_chars"><span class="exastud-value">-</span> '.block_exastud_get_string('textarea_chars').'</span>'.
+                            /*' / '.
+                            '<span id="left_'.$dataid.'_maxchars"><span class="exastud-value">-</span> '.block_exastud_get_string('textarea_maxchars').'</span>'.*/
+                            '</span>');
+                    break;
+                case 'text':
+                    $mform->addElement('text', $dataid, $input['title']);
+                    $mform->setType($dataid, PARAM_RAW);
+                    break;
+                case 'select':
+                    $mform->addElement('select', $dataid, $input['title'], ['' => ''] + $input['values']);
+                    $mform->setType($dataid, PARAM_RAW);
+                    break;
+                case 'image':
+                    $mform->addElement('filemanager', 'images['.$dataid.']', $input['title'], null,
+                            array(
+                                    'subdirs' => 0,
+                                    'maxbytes' => intval($input['maxbytes']),
+                                    'maxfiles' => 1,
+                                    'accepted_types' => array('web_image'))
+                    );
+                    break;
+                case 'textarea':
+                    break;
+                default:
+                    $mform->addElement('header', 'header_'.$dataid, $input['title']);
+                    $mform->setExpanded('header_'.$dataid);
+            }
 
+        };
+        
+        // grouping by header/body/footer
+        // fixed list of inputs are in the header/footer. other list is in the body
+        $pageParts = array (
+                'header' => [
+                        'title' => block_exastud_get_string('review_student_other_data_header'),
+                        'inputs' => (@$defaulttemplatesettings['inputs_header'] ? $defaulttemplatesettings['inputs_header'] : array('class')),
+                ],
+                'body' => [
+                        'title' => block_exastud_get_string('review_student_other_data_body'),
+                        'inputs' => null, // all other
+                ],
+                'footer' => [
+                        'title' => block_exastud_get_string('review_student_other_data_footer'),
+                        'inputs' => (@$defaulttemplatesettings['inputs_footer'] ? $defaulttemplatesettings['inputs_footer'] : array('ags', 'comments', 'comments_short')),
+                ],
+        );
+
+        foreach ($pageParts as $key => $pagePart) {
+            $ff = $mform->addElement('exastud_htmltag',
+                                '<h2 class="exastud-student-review-block-header">'.$pagePart['title'].'</h2>');
+            $ff->setName('blockheader_'.$key);
+            // get last inserted key and use it later for manage this element
+            $clonetempt = $mform->_elements;
+            end($clonetempt);
+            $elementKey = key($clonetempt);
+            $showBlock = false;
+            foreach ($this->_customdata['categories'] as $dataid => $input) {
+                if (    ($pagePart['inputs'] && in_array($dataid, $pagePart['inputs'])) // for header and footer
+                        ||
+                        (!$pagePart['inputs'] && !in_array($dataid, $pageParts['footer']['inputs'])) // for body
+                ) {
+                    if (array_key_exists('type', $input)) {
+                        $addFormElement($dataid, $input, $this);
+                        unset($this->_customdata['categories'][$dataid]);
+                        $showBlock = true;
+                    }
+                }
+            }
+            // hide block header if it is empty
+            if (!$showBlock) {
+                //$mform->removeElement('blockheader_'.$key);
+                unset($mform->_elements[$elementKey]);
+            }
+        }
 		$this->add_action_buttons(false);
 	}
 
