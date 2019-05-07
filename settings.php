@@ -147,7 +147,6 @@ if ($ADMIN->fulltree) {
         BLOCK_EXASTUD_COMPETENCE_EVALUATION_TYPE_POINT => block_exastud_get_string('settings_competence_evaltype_point'),
     ];
     $settings->add(new admin_setting_configselect('exastud/competence_evaltype', block_exastud_get_string('settings_competence_evaltype'), '', 0, $evalTypes));
-    $settings->add(new admin_setting_configtext('exastud/competence_evalpoints_limit', block_exastud_get_string('settings_competence_evalpoints_limit'), block_exastud_get_string('settings_competence_evalpoints_limit_description'), 10, PARAM_INT));
     $settings->add(new block_exastud_link_to('link_to_settings_evals',
             block_exastud_get_string("settings_eval_setup"),
             '',
@@ -157,6 +156,8 @@ if ($ADMIN->fulltree) {
             ['action' => 'evalopts'],
             ['target' => '_blank'],
             true));
+    $settings->add(new admin_setting_configtext('exastud/competence_evalpoints_limit', block_exastud_get_string('settings_competence_evalpoints_limit'), block_exastud_get_string('settings_competence_evalpoints_limit_description'), 10, PARAM_INT));
+    $settings->add(new admin_setting_configcheckbox('exastud/only_learnsociale_reports', block_exastud_get_string('settings_only_learnsoziale'), '', 0));
     /*// periods
     $settings->add(new block_exastud_link_to('link_to_settings_periods', block_exastud_get_string("periods"), '', '', '/blocks/exastud/periods.php', block_exastud_get_string('periods'), [], ['class' => 'btn btn-default']));
     // competencies
@@ -196,8 +197,6 @@ if ($ADMIN->fulltree) {
                                     'subdirs' => 0,
                                     'maxfiles' => 1,
                                     'accepted_types' => array('web_image'))));
-
-    $settings->add(new admin_setting_configcheckbox('exastud/only_learnsociale_reports', block_exastud_get_string('settings_only_learnsoziale'), '', 0));
 
 	$settings->add(new admin_setting_configcheckbox('exastud/export_class_password', block_exastud_get_string('backup_class_protection'), '', 0));
 }
