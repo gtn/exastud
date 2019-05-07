@@ -699,7 +699,7 @@ class print_templates {
             $templates = g::$DB->get_records('block_exastudreportsettings');
         }
         foreach ($templates as $templ) {
-            if (!in_array($templ->id, $templateids)) {
+            if (!in_array($templ->id, $templateids) && !$templ->hidden) {
                 $templateids[] = $templ->id;
             }
         }

@@ -655,6 +655,10 @@ class reportsettings_edit_form extends moodleform {
         $mform->addElement('select', 'bpid', block_exastud_get_string('report_settings_setting_bp'), $bpList);
         $mform->setType('bpid', PARAM_RAW);
 
+        // hidden
+        $mform->addElement('advcheckbox', 'hidden', block_exastud_get_string('report_settings_setting_hidden'));
+        $mform->setType('hidden', PARAM_INT);
+
         // category
         $mform->addElement('text', 'category', block_exastud_get_string('report_settings_setting_category'), array('size' => 50));
         $mform->setType('category', PARAM_TEXT);

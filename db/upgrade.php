@@ -1026,6 +1026,15 @@ function xmldb_block_exastud_upgrade($oldversion = 0) {
         upgrade_block_savepoint(true, 2019041213, 'exastud');
     }
 
+    if ($oldversion < 2019050700) {
+        $table = new xmldb_table('block_exastudreportsettings');
+        $field = new xmldb_field('hidden', XMLDB_TYPE_INTEGER, 1, null, null, null, '0');
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+        upgrade_block_savepoint(true, 2019050700, 'exastud');
+    }
+
     block_exastud_insert_default_entries();
 	block_exastud_check_profile_fields();
 

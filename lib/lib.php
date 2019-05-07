@@ -1762,7 +1762,6 @@ function block_exastud_get_student_print_templateid($class, $userid) {
 	if (isset($available_templates[$default_templateid])) {
 		return $default_templateid;
 	}
-
 	return key($available_templates);
 }
 
@@ -1773,7 +1772,7 @@ function block_exastud_get_student_print_templateid($class, $userid) {
  */
 function block_exastud_get_student_print_template($class, $userid) {
 	$templateid = block_exastud_get_student_print_templateid($class, $userid);
-
+echo "<pre>debug:<strong>lib.php:1776</strong>\r\n"; print_r($templateid); echo '</pre>'; // !!!!!!!!!! delete it
 	return block_exastud\print_template::create($templateid);
 }
 

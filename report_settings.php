@@ -104,7 +104,7 @@ $filterform->set_data($filterdata);
 $reportsetting = new stdClass();
 $settingsform = new reportsettings_edit_form(null, [/*'classid' => $classid*/]);
 
-if ($action && ($settingsid > 0 || $action == 'new')) {
+if ($action && ($settingsid > 0 && ($action == 'edit' || $action == 'new'))) {
 
     //Form processing and displaying is done here
     if ($settingsform->is_cancelled()) {
@@ -282,6 +282,15 @@ if ($action && ($settingsid > 0 || $action == 'new')) {
     echo $output->heading(block_exastud_get_string('report_settings'));
     $content = '';
 
+    if ($settingsid > 0) {
+        if ($action == 'hide') {
+            $DB->execute('UPDATE {block_exastudreportsettings} SET hidden = 1 WHERE id = ? ', [$settingsid]);
+        }
+        if ($action == 'unhide') {
+            $DB->execute('UPDATE {block_exastudreportsettings} SET hidden = 0 WHERE id = ? ', [$settingsid]);
+        }
+    }
+
     // add filter form
     $content .= $filterform->display();
 
@@ -308,6 +317,7 @@ if ($action && ($settingsid > 0 || $action == 'new')) {
         $table->attributes['class'] .= 'exa_table small';
 
         $table->head = array(
+                '',
                 '',
                 block_exastud_get_string('report_settings_setting_title'),
                 block_exastud_get_string('report_settings_setting_bp'),
@@ -379,12 +389,26 @@ if ($action && ($settingsid > 0 || $action == 'new')) {
             }
             $editLink = html_writer::link(new moodle_url('/blocks/exastud/report_settings.php', $params),
                                             html_writer::tag("img", '', array('src' => 'pix/edit.png')), array('title' => 'id: '.$report->id));
+            if ($report->hidden) {
+                $params['action'] = 'unhide';
+                $hideLink = html_writer::link(new moodle_url('/blocks/exastud/report_settings.php', $params),
+                        html_writer::tag("img", '', array('src' => 'pix/show.png')), array('title' => ' unhide report '));
+            } else {
+                $params['action'] = 'hide';
+                $hideLink = html_writer::link(new moodle_url('/blocks/exastud/report_settings.php', $params),
+                        html_writer::tag("img", '', array('src' => 'pix/hide.png')), array('title' => ' hide report '));
+            }
             // function for call settings_marker only by name
             $call_setting_marker = function($name) use ($setting_marker, $report){
                 return $setting_marker($name, $report->{$name});
             };
+            $tableRow = new html_table_row();
+            if ($report->hidden) {
+                $tableRow->attributes['class'] .= ' exastud-hidden-report ';
+            }
             $row = array(
                     $editLink. ' :'.$report->id,
+                    $hideLink,
                     '<strong>'.$report->title.'</strong>',
                     $bpData ? $bpData->title : '',
                     $report->category,
@@ -410,8 +434,9 @@ if ($action && ($settingsid > 0 || $action == 'new')) {
                         block_exastud_get_reportsettings_additional_description($report)
                 ));
             }
+            $tableRow->cells = $row;
 
-            $table->data[] = $row;
+            $table->data[] = $tableRow;
         }
     }
 

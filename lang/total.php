@@ -582,6 +582,10 @@ return [
             'BP',
             'Curriculum',
     ],
+    'report_settings_setting_hidden' => [
+            'Hidden',
+            'Hidden',
+    ],
     'report_settings_setting_category' => [
             'Kategorie',
             'Category',

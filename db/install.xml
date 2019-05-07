@@ -212,6 +212,7 @@
         <FIELD NAME="ags" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
         <FIELD NAME="additional_params" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
         <FIELD NAME="grades" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="hidden" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="primary key of the table"/>
