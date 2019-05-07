@@ -90,9 +90,16 @@ for ($i = 0; $i <= $max_classes; $i++) {
                 $ownerData = $DB->get_record('user', ['id' => $tempClass->userid, 'deleted' => 0]);
                 $periodCell->text .= '&nbsp;<small>(id: '.$tempClass->id.') '.$ownerData->firstname.' '.$ownerData->lastname.'</small>';
             }
+            $buttons = '';
+            // backup buttons
+            if (block_exastud_is_siteadmin() || $tempClass->userid == $USER->id) {
+                $img = '<img src="'.$CFG->wwwroot.'/blocks/exastud/pix/backup.png" title="'.block_exastud_get_string('export_class').'"/>';
+                $buttons .= html_writer::link($CFG->wwwroot.'/blocks/exastud/export_class.php?courseid='.$courseid.'&classid='.$tempClass->id,
+                        $img,
+                        ['title' => block_exastud_get_string('export_class'), 'class' => '']);
+            }
             // delete buttons
             if (block_exastud_is_siteadmin() || $tempClass->userid == $USER->id) {
-                $buttons = '';
                 $img = '<img src="'.$CFG->wwwroot.'/blocks/exastud/pix/trash.png" title="'.block_exastud_get_string('class_delete').'"/>';
                 if (!block_exastud_get_class_students($tempClass->id) || block_exastud_is_siteadmin()) {
                     $buttons .= html_writer::link($CFG->wwwroot.'/blocks/exastud/configuration_class.php?courseid='.$courseid.'&action=delete&classid='.$tempClass->id.'&confirm=1',

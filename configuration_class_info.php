@@ -188,8 +188,9 @@ if ($class && $class->id) {
     //echo $output->heading2(block_exastud_get_string('export_class'));
 
     if ($class->userid == $USER->id) {
+        $img = '<img src="'.$CFG->wwwroot.'/blocks/exastud/pix/backup.png" title="'.block_exastud_get_string('export_class').'"/>';
         $buttons .= $output->link_button('export_class.php?courseid='.$COURSE->id.'&classid='.$class->id,
-                block_exastud_get_string('export_class'), ['class' => 'btn btn-default']);
+                $img.'&nbsp;&nbsp;&nbsp;'.block_exastud_get_string('export_class'), ['class' => 'btn btn-default']);
     }
 	//echo '<br/>';
 	//echo $output->heading2(block_exastud_get_string('class_delete'));
