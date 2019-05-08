@@ -490,7 +490,10 @@ if ($type == 'teachers_options') {
 if ($type == 'categories' && block_exastud_get_plugin_config('can_edit_bps_and_subjects')) {
 	// echo html_writer::tag("h2", block_exastud_get_string('categories'));
 
-	$table = new html_table();
+    // disabled now!!!!
+    echo $output->notification('This function is disabled!', 'notifyerror');
+
+	/*$table = new html_table();
 
 	$table->align = array("left");
 	$table->attributes['style'] = "width: 50%;";
@@ -504,7 +507,7 @@ if ($type == 'categories' && block_exastud_get_plugin_config('can_edit_bps_and_s
 	echo $output->table($table);
 
 	echo $OUTPUT->single_button($CFG->wwwroot.'/blocks/exastud/configuration_categories.php?courseid='.$courseid.'&classid='.$class->id,
-		block_exastud_get_string('editclasscategories'), 'get');
+		block_exastud_get_string('editclasscategories'), 'get');*/
 }
 
 echo $output->footer();

@@ -112,7 +112,7 @@ class block_exastud_renderer extends plugin_renderer_base {
                         block_exastud_get_string('teachers_options'),
                         '',
                         true);
-                if (block_exastud_get_plugin_config('can_edit_bps_and_subjects')) {
+                /*if (block_exastud_get_plugin_config('can_edit_bps_and_subjects')) {
                     $tabs['configuration_classes']->subtree[] = new tabobject('categories',
                             new moodle_url('/blocks/exastud/configuration_class.php',
                                     ['courseid' => g::$COURSE->id, 'action' => 'edit', 'classid' => $class->id,
@@ -120,7 +120,7 @@ class block_exastud_renderer extends plugin_renderer_base {
                             block_exastud_get_string('categories'),
                             '',
                             true);
-                }
+                }*/
                 $tabs['configuration_classes']->subtree[] = new tabobject('class_info',
                         new moodle_url('/blocks/exastud/configuration_class_info.php',
                                 ['courseid' => g::$COURSE->id, 'classid' => $class->id]),
