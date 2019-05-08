@@ -4290,6 +4290,13 @@ function block_exastud_str2bytes($value) {
     return FALSE;
 }
 
+function block_exastud_normalize_filename($filename) {
+    $filename = mb_ereg_replace("([^\w\s\d\-_~,;\[\]\(\).])", '_', $filename); // can be used!
+    // Remove any runs of periods (thanks falstro!)
+    $filename = mb_ereg_replace("([\.]{2,})", '', $filename);
+    return $filename;
+}
+
 /*
 function block_exastud_encrypt_raw($value, $secret) {
 	$iv = openssl_random_pseudo_bytes(openssl_cipher_iv_length('aes-256-cbc'));

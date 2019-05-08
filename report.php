@@ -132,11 +132,13 @@ if ($classid) {
                                                 <head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"></head>
                                                 <body>'.$reportContent.'</body>
                                             </html>';
-                            $reportFileName = 'html_report-'.$student->firstname.'-'.$student->lastname.'-'.$student->id.'.html';
+                            $reportFileName = block_exastud_normalize_filename('html_report-'.$student->firstname.'-'.$student->lastname.'-'.$student->id.'.html');
                             $tempFile = tempnam($CFG->tempdir, 'exastud');
                             file_put_contents($tempFile, $reportContent);
                             $files_to_zip[$tempFile] =
-                                    '/'.$student->firstname.'-'.$student->lastname.'-'.$student->id.'/'.$reportFileName;
+                                    '/'.
+                                    block_exastud_normalize_filename($student->firstname.'-'.$student->lastname.'-'.$student->id).
+                                    '/'.$reportFileName;
                         }
                     }
                     continue; // go to the next template
@@ -152,8 +154,7 @@ if ($classid) {
                     }
                     continue; // go to the next template
                 }
-
-                if ($printStudents && $template == 'grades_report_xlsx') {
+                if ($printStudents && $template == 'grades_report_xls') {
                     $file = \block_exastud\printer::grades_report_xlsx($class, $printStudents);
                     $files_to_zip[$file->temp_file] = $file->filename;
                     continue; // go to the next template
@@ -197,7 +198,9 @@ if ($classid) {
                         $file = \block_exastud\printer::report_to_temp_file($class, $student, $template, $courseid);
                         if ($file) {
                             $files_to_zip[$file->temp_file] =
-                                    '/'.$student->firstname.'-'.$student->lastname.'-'.$student->id.'/'.$file->filename;
+                                    '/'.
+                                    block_exastud_normalize_filename($student->firstname.'-'.$student->lastname.'-'.$student->id).
+                                    '/'.$file->filename;
                         }
                     }
                 } else {
@@ -208,7 +211,9 @@ if ($classid) {
                             $file = \block_exastud\printer::report_to_temp_file($class, $student, $template, $courseid);
                             if ($file) {
                                 $files_to_zip[$file->temp_file] =
-                                        '/'.$student->firstname.'-'.$student->lastname.'-'.$student->id.'/'.$file->filename;
+                                        '/'.
+                                        block_exastud_normalize_filename($student->firstname.'-'.$student->lastname.'-'.$student->id).
+                                        '/'.$file->filename;
                                 $temp_files[] = $file->temp_file;
                             }
                         }
@@ -235,9 +240,8 @@ if ($classid) {
                 require_once $CFG->dirroot.'/lib/filelib.php';
                 if (count($files_to_zip) > 1) {
                     foreach ($files_to_zip as $tempF => $fileName) {
-                        // temporary:
-                        // delete folders
-                        $fileName = basename($fileName);
+                        // temporary: delete folders
+                        //$fileName = basename($fileName);
                         $zip->addFile($tempF, $fileName);
                     }
                 } else if (count($files_to_zip) == 1) {

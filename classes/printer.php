@@ -1550,8 +1550,10 @@ class printer {
         ])) {
 			$filename = ($certificate_issue_date_text ? preg_replace('/[\\/]/', '-', $certificate_issue_date_text) : date('Y-m-d'))."-".$template->get_name()."-{$class->title}-{$student->lastname}-{$student->firstname}.dotx";
 		} else {*/
-			$filename = ($certificate_issue_date_text ? preg_replace('/[\\/]/', '-', $certificate_issue_date_text) : date('Y-m-d'))."-".($tempTemplateName ? $tempTemplateName : $template->get_name())."-{$class->title}-{$student->lastname}-{$student->firstname}.docx";
+			$filename = ($certificate_issue_date_text ? preg_replace('/[\\/]/', '-', $certificate_issue_date_text) : date('Y-m-d'))."-".(@$tempTemplateName ? $tempTemplateName : $template->get_name())."-{$class->title}-{$student->lastname}-{$student->firstname}.docx";
 		//}
+
+        $filename = block_exastud_normalize_filename($filename);
 
 		return (object)[
 			'temp_file' => $temp_file,
@@ -1841,6 +1843,7 @@ class printer {
 		$templateProcessor->saveAs($temp_file);
 
 		$filename = date('Y-m-d')."-".'Notenuebersicht'."-{$class->title}.docx";
+        $filename = block_exastud_normalize_filename($filename);
 
         return (object)[
                 'temp_file' => $temp_file,
@@ -1993,7 +1996,11 @@ class printer {
                     }
                 }
             }
-            $avg = block_exastud_get_grade_average_value($subjectsForAvg[$student->id]);
+            if (array_key_exists($student->id, $subjectsForAvg)) {
+                $avg = block_exastud_get_grade_average_value($subjectsForAvg[$student->id]);
+            } else {
+                $avg = block_exastud_get_grade_average_value(array());
+            }
             //$avgVerbal = block_exastud_get_grade_average_value($subjectsForAvg, true);
             $cells[] = $avg;
             //$cells[] = $avgVerbal;
@@ -2191,6 +2198,8 @@ class printer {
 		$writer = \PhpOffice\PhpSpreadsheet\IOFactory::createWriter($spreadsheet, 'Excel2007');
 		$temp_file = tempnam($CFG->tempdir, 'exastud');
 		$writer->save($temp_file);
+
+        $filename = block_exastud_normalize_filename($filename);
 
         return (object)[
                 'temp_file' => $temp_file,
