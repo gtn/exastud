@@ -21,6 +21,11 @@
     margin-left: 0px;
 }
 
+.exastud-userdata-cell .exastud-template-title {
+    font-size: 0.8em;
+    color: #787878;
+}
+
 .exa_table .verticalText {
     display: inline-block;
     overflow: hidden;
@@ -51,3 +56,4 @@
 .exa_table .cell.verticalCell {
     vertical-align: bottom !important;
 }
+

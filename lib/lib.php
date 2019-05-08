@@ -622,12 +622,45 @@ function block_exastud_get_class_categories_for_report($studentid, $classid) {
 	return $categories;
 }
 
+function block_exastud_set_custom_profile_field_value($userid, $fieldname, $value) {
+    $fieldid = g::$DB->get_field_sql("SELECT uif.id
+			FROM {user_info_field} uif 
+			WHERE uif.shortname = ?
+			", [$fieldname]);
+    if ($fieldid > 0) {
+        $exists = g::$DB->get_record('user_info_data', ['userid' => $userid, 'fieldid' => $fieldid], '*', IGNORE_MULTIPLE);
+        if ($exists) {
+            $exists->data = $value;
+            $updated = g::$DB->update_record('user_info_data', $exists);
+        } else {
+            $data = new stdClass();
+            $data->userid = $userid;
+            $data->fieldid = $fieldid;
+            $data->data = $value;
+            $inserted = g::$DB->insert_record('user_info_data', $data);
+        }
+        return true;
+    }
+    return false;
+}
+
 function block_exastud_get_custom_profile_field_value($userid, $fieldname) {
 	return g::$DB->get_field_sql("SELECT uid.data
 			FROM {user_info_data} uid
 			JOIN {user_info_field} uif ON uif.id=uid.fieldid
 			WHERE uif.shortname=? AND uid.userid=?
 			", [$fieldname, $userid]);
+}
+
+function block_exastud_get_custom_profile_field_valuelist($fieldname, $valuefield = 'param1', $asArray = false) {
+	$result = g::$DB->get_field_sql("SELECT uif.".$valuefield."
+			FROM {user_info_field} uif
+			WHERE uif.shortname = ?
+			", [$fieldname]);
+	if ($asArray) {
+        $result = explode("\n", $result);
+    }
+    return $result;
 }
 
 function block_exastud_is_exacomp_installed() {

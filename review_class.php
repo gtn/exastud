@@ -64,6 +64,11 @@ if (!$reviewclass && $USER->id == $class->userid) {
 
 
 if ($action == 'update' && $isSubjectTeacher) {
+    // Update genders
+    $genders = block_exastud\param::optional_array('exastud_gender', [PARAM_TEXT => PARAM_TEXT]);
+    foreach ($genders as $studentid => $gender) {
+        block_exastud_set_custom_profile_field_value($studentid, 'gender', $gender);
+    }
     // Update grades
     $grades = block_exastud\param::optional_array('exastud_grade', [PARAM_TEXT => PARAM_TEXT]);
     foreach ($grades as $studentid => $grade) {
@@ -154,12 +159,14 @@ $table = new html_table();
 $table->head = array();
 $userdatacolumn = new html_table_cell();
 $table->head[] = $userdatacolumn; //userdata
+$table->head[] = ''; // hide button
+$table->head[] = block_exastud_get_string('gender'); // gender
+$table->head[] = $tableheaderlearnsocial;
 if (!block_exastud_get_only_learnsociale_reports()) {
     $table->head[] = $tableheadernote;
     $table->head[] = $tableheaderniveau;
     $table->head[] = $tableheadersubjects;
 }
-$table->head[] = $tableheaderlearnsocial;
 if ($isSubjectTeacher) {
     $table->head[] = $tableheadercategories;
 }
@@ -181,6 +188,7 @@ $oddeven = false;
 
 $tabledeletecolumns = array('niveau', 'subjects', 'learnsocial'/*, 'categories'*/);
 $tabledeletecolumns = array_combine($tabledeletecolumns, $tabledeletecolumns);
+$gender_options = block_exastud_get_custom_profile_field_valuelist('gender', 'param1', true);
 
 if ($isSubjectTeacher) {
 
@@ -232,10 +240,17 @@ if ($isSubjectTeacher) {
         }
 
         $row = new html_table_row();
-        $userdata =
-                '<span class="exastud-userpicture">'.$output->user_picture($classstudent, array("courseid" => $courseid)).'</span>';
+        $userdata = '<span class="exastud-userpicture">'.$output->user_picture($classstudent, array("courseid" => $courseid)).'</span>';
         $userdata .= '<span class="exastud-username">'.fullname($classstudent).'</span>';
 
+        $userdatacell = new html_table_cell();
+        $userdatacell->attributes['class'] .= 'exastud-userdata-cell';
+        $userdatacell->text = '<div class="cell-content">'.$userdata.'</div>';
+        $userdatacell->text .= '<span class="exastud-template-title">'.block_exastud_trans('de:Zeugnisformular').': '.$template->get_name().'</span>';
+        $userdatacell->rowspan = 2;
+        $row->cells[] = $userdatacell;
+
+        // hide button
         if ($visible) {
             $show_hide_url = block_exastud\url::create($PAGE->url, ['action' => 'hide_student', 'studentid' => $classstudent->id]);
             $show_hide_icon = $OUTPUT->pix_icon('i/hide', block_exastud_get_string('hide'));
@@ -243,15 +258,39 @@ if ($isSubjectTeacher) {
             $show_hide_url = block_exastud\url::create($PAGE->url, ['action' => 'show_student', 'studentid' => $classstudent->id]);
             $show_hide_icon = $OUTPUT->pix_icon('i/show', block_exastud_get_string('show'));
         }
-        $userdata .= '<span class="exastud-usergender">'.block_exastud_get_user_gender_string($classstudent->id).'</span>';
-        $userdata .= '<span class="exastud-hidebutton"><a style="padding-right: 15px;" href="'.$show_hide_url.'">'.$show_hide_icon.
-                '</a></span>';
-        $userdatacell = new html_table_cell();
-        $userdatacell->attributes['class'] .= 'exastud-userdata-cell';
-        $userdatacell->text = '<div class="cell-content">'.$userdata.'</div>';
-        $userdatacell->text .= block_exastud_trans('de:Zeugnisformular').': '.$template->get_name();
-        $userdatacell->rowspan = 2;
-        $row->cells[] = $userdatacell;
+        $hidecolumn = new html_table_cell();
+        $hidecolumn->rowspan = 2;
+        $hidecolumn->style .= ' vertical-align: top; ';
+        $hidecolumn->text = '<span class="exastud-hidebutton"><a style="padding-right: 15px;" href="'.$show_hide_url.'">'.$show_hide_icon.'</a></span>';
+        $row->cells[] = $hidecolumn;
+
+        // gender
+        $gendercolumn = new html_table_cell();
+        $gendercolumn->rowspan = 2;
+        $gendercolumn->style .= ' vertical-align: top; ';
+        $gender = block_exastud_get_user_gender_string($classstudent->id);
+        if ($gender) {
+            $gendercolumn->text = '<span class="exastud-usergender">'.$gender.'</span>';
+        } else {
+            // show gender selectbox only if the user does not have own gender
+            $gender_form = '<select name="exastud_gender['.$classstudent->id.']" class="custom-select">';
+            foreach ($gender_options as $k => $gender_option) {
+                $gender_form .= '<option value="'.$gender_option.'">'.$gender_option.'</option>';
+            }
+            $gender_form .= '</select>';
+            $gendercolumn->text = $gender_form;
+        }
+        $row->cells[] = $gendercolumn;
+
+        // Learning and social behavior column
+        if ($editLearnSocialBehavior) {
+            $row->cells[] = ($visible ?
+                    $output->link_button($CFG->wwwroot.'/blocks/exastud/review_student.php?courseid='.$courseid.'&classid='.
+                            $classid.'&subjectid='.$subjectid.'&studentid='.$classstudent->id.'&reporttype=social',
+                            block_exastud_get_string('review_button'), ['class' => 'btn btn-primary']) : '');
+        } else {
+            $row->cells[] = '';
+        }
 
         if (!block_exastud_get_only_learnsociale_reports()) {
             // Grades column
@@ -310,15 +349,6 @@ if ($isSubjectTeacher) {
             } else {
                 $row->cells[] = '';
             }
-        }
-        // Learning and social behavior column
-        if ($editLearnSocialBehavior) {
-            $row->cells[] = ($visible ?
-                    $output->link_button($CFG->wwwroot.'/blocks/exastud/review_student.php?courseid='.$courseid.'&classid='.
-                            $classid.'&subjectid='.$subjectid.'&studentid='.$classstudent->id.'&reporttype=social',
-                            block_exastud_get_string('review_button'), ['class' => 'btn btn-primary']) : '');
-        } else {
-            $row->cells[] = '';
         }
 
         $row->cells[] = ($visible ?
@@ -467,7 +497,6 @@ if ($isSubjectTeacher) {
 
         // intermediate data
         //$row->cells[] = '';
-
 
         $row->attributes['class'] = 'oddeven'.(int) $oddeven;
         $table->data[] = $row;
