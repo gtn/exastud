@@ -326,12 +326,12 @@ if ($classid) {
         $studentdesc = fullname($classstudent);
         
         $data = array();
-        $data[] = '<input type="checkbox" name="studentids[]" value="' . $classstudent->id . '"/>';
+        $data[] = '<input type="checkbox" name="studentids[]" value="' . $classstudent->id . '" id="student_'.$classstudent->id.'" />';
         $data[] = $i ++;
         $data[] = $OUTPUT->user_picture($classstudent, array(
             "courseid" => $courseid
         ));
-        $data[] = $studentdesc;
+        $data[] = html_writer::tag('label', $studentdesc, ['for' => 'student_'.$classstudent->id]);
         $data[] = block_exastud_get_student_print_template($class, $classstudent->id)->get_name();
         
         $table->data[] = $data;
@@ -352,33 +352,43 @@ if ($classid) {
     $templateTable = new html_table();
     $templateTable->head[] = block_exastud_get_string('report_template') . ': ';
     $templateTable->headspan = [2];
+
     $templateRow = new html_table_row();
     $firstCell = new html_table_cell();
     $firstCell->attributes['width'] = '30%';
     $firstCell->attributes['valign'] = 'top';
     $firstCell->style .= 'vertical-align:top;';
-    $firstCell->text .= html_writer::checkbox('preview', '1', false, '&nbsp;'.block_exastud_get_string('report_preview'), ['class' => 'exastud-preview-checkbox']).'<br />';
-    $firstCell->text .= html_writer::checkbox('select_all', '1', false, '&nbsp;'.block_exastud_get_string('report_select_all'), ['class' => 'exastud-selectall-checkbox']);
-
+    $firstCell->text .= html_writer::tag('h3', block_exastud_trans('de:Obersichten'));
     $secondCell = new html_table_cell();
+    $secondCell->attributes['valign'] = 'top';
+    $secondCell->style .= 'vertical-align:top;';
+    $secondCell->text .= html_writer::tag('h3', block_exastud_trans('de:Zeugnisse und Anlagen'));
     $previewTemplates = array('grades_report', 'html_report');
     $addAnlage = false; // add only if at least one student graded in exacomp
+    $firstList = new html_table();
+    //$firstList->attributes['class'] .= 'generaltable no-border exastud-report-list';
+    $firstList->head[] = '';
+    $files = html_writer::checkbox('select_all1', '1', false, '', ['class' => 'exastud-selectall-checkbox', 'id' => 'select_all1', 'data-reportgroup' => 1]);
+    $files .= html_writer::tag('label', '&nbsp;'.block_exastud_trans('de:Datei'), ['for' => 'select_all1']);
+    $firstList->head[] = $files;
+    $previews = html_writer::checkbox('select_all2', '1', false, '', ['class' => 'exastud-selectall-checkbox', 'id' => 'select_all2', 'data-reportgroup' => 2]);
+    $previews .= html_writer::tag('label', '&nbsp;'.block_exastud_trans('de:Bildschirm'), ['for' => 'select_all2']);
+    $firstList->head[] = $previews;
+    $secondList = new html_table();
+    //$secondList->attributes['class'] .= 'generaltable no-border exastud-report-list';
+    $secondList->head[] = html_writer::checkbox('select_all3', '1', false, '', ['class' => 'exastud-selectall-checkbox', 'id' => 'select_all3', 'data-reportgroup' => 3]);
+    $secondList->head[] = html_writer::tag('label', block_exastud_get_string('report_select_all'), ['for' => 'select_all3']);
     foreach ($templates as $key => $tmpl) {
         if (!$addAnlage && in_array($key, [
-                BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_ANLAGE_ZUM_LERNENTWICKLUNGSBERICHT,
-                BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_ANLAGE_ZUM_LERNENTWICKLUNGSBERICHTALT,
-                BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_ANLAGE_ZUM_LERNENTWICKLUNGSBERICHT_SIMPLE
-            ])) {
+                        BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_ANLAGE_ZUM_LERNENTWICKLUNGSBERICHT,
+                        BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_ANLAGE_ZUM_LERNENTWICKLUNGSBERICHTALT,
+                        BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_ANLAGE_ZUM_LERNENTWICKLUNGSBERICHT_SIMPLE
+                ])) {
             foreach ($classstudents as $classstudent) {
                 if (in_array($classstudent->id, $studentsWithExacompGraded)) {
                     $addAnlage = true;
                     break;
                 }
-                /*$subjects = \block_exastud\printer::get_exacomp_subjects($classstudent->id);
-                if ($subjects && count($subjects) > 0) {
-                    $addAnlage = true;
-                    break;
-                }*/
             }
             if (!$addAnlage) {
                 continue; // hide the template if any users have not any data from exacomp
@@ -386,9 +396,9 @@ if ($classid) {
         }
 
         if (in_array($key, [
-            BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_16_ZERTIFIKAT_FUER_PROFILFACH,
-            BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_ANLAGE_PROJEKTPRUEFUNG_HS, // TODO: is it correct?
-            BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_ANLAGE_PROJEKTPRUEFUNG_HS, // TODO: is it correct?
+                BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_16_ZERTIFIKAT_FUER_PROFILFACH,
+                BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_ANLAGE_PROJEKTPRUEFUNG_HS, // TODO: is it correct?
+                BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_ANLAGE_PROJEKTPRUEFUNG_HS, // TODO: is it correct?
             //BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_ZERTIFIKAT_FUER_PROJEKTARBEIT, // TODO: is it correct?
         ])) {
             $addCurrent = false;
@@ -397,35 +407,62 @@ if ($classid) {
                     $addCurrent = true;
                     break;
                 }
-                /*$classsubjects = block_exastud_get_class_subjects($class);
-                foreach ($classsubjects as $subject) {
-                    $subjectData = block_exastud_get_review($classid, $subject->id, $classstudent->id);
-                    if (!empty($subjectData->grade) || !empty($subjectData->niveau) || $subjectData->review) {
-                        $addCurrent = true;
-                        break 2;
-                    }
-                }*/
             }
             if (!$addCurrent) {
                 continue;
             }
         }
-        $previewPoss = (in_array($key, $previewTemplates) ? '1' : '');
-        $secondCell->text .= html_writer::checkbox('template['.$key.']',
+        switch ($key) {
+            case 'grades_report':
+            case 'grades_report_xls':
+            case 'html_report':
+            case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_LERNENTWICKLUNGSBERICHT_DECKBLATT_UND_1_INNENSEITE:
+                $row = new html_table_row();
+                $row->cells[] = $tmpl;
+                $row->cells[] = html_writer::checkbox('template['.$key.']',
                         '1',
                         (array_key_exists($key, $templatesFromForm) ? true : false),
-                        '&nbsp;'.$tmpl,
-                        ['class' => 'exastud-selecttemplate-checkbox', 'data-templateid' => $key, 'data-previewPossible' => $previewPoss]);
-        if ($key == BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_LERNENTWICKLUNGSBERICHT_DECKBLATT_UND_1_INNENSEITE) {
-            $secondCell->text .= '<hr>';
-        } else {
-            $secondCell->text .= '<br />';
+                        '',
+                        ['class' => 'exastud-selecttemplate-checkbox',
+                                'data-reportgroup' => 1,
+                                'data-templateid' => $key]);
+                if (in_array($key, $previewTemplates)) {
+                    $row->cells[] = html_writer::checkbox('template['.$key.']',
+                            '1',
+                            (array_key_exists($key, $templatesFromForm) ? true : false),
+                            '',
+                            ['class' => 'exastud-selecttemplate-checkbox',
+                                    'data-reportgroup' => 2,
+                                    'data-templateid' => $key]);
+                } else {
+                    $row->cells[] = '&nbsp;';
+                }
+                $firstList->data[] = $row;
+                break;
+            default:
+                $row = new html_table_row();
+                $row->cells[] = html_writer::checkbox('template['.$key.']',
+                        '1',
+                        (array_key_exists($key, $templatesFromForm) ? true : false),
+                        '',
+                        ['class' => 'exastud-selecttemplate-checkbox',
+                                'data-reportgroup' => 3,
+                                'data-templateid' => $key,
+                                'id' => 'template_'.$key]);
+                $row->cells[] = html_writer::tag('label', $tmpl, ['for' => 'template_'.$key]);
+                $secondList->data[] = $row;
+                break;
         }
     }
 
+    $firstCell->text .= $output->table($firstList, 'no-border exastud-report-list');
+    $secondCell->text .= $output->table($secondList, 'no-border exastud-report-list');
+
+    //$firstCell->text .= html_writer::checkbox('preview', '1', false, '&nbsp;'.block_exastud_get_string('report_preview'), ['class' => 'exastud-preview-checkbox']).'<br />';
+    //$firstCell->text .= html_writer::checkbox('select_all', '1', false, '&nbsp;'.block_exastud_get_string('report_select_all'), ['class' => 'exastud-selectall-checkbox']);
+
     $templateRow->cells[] = $firstCell;
     $templateRow->cells[] = $secondCell;
-
     $templateTable->data[] = $templateRow;
 
     $messagebeforetables .= $output->notification(block_exastud_get_string('reports_server_notification'), 'notifymessage');

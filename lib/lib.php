@@ -2004,7 +2004,7 @@ function block_exastud_get_reportsettings_all($sortByPlans = false, $filter = ar
 function block_exastud_get_report_templates($class) {
     $templates = [];
     $templates['grades_report'] = 'Notenübersicht (docx)';
-    $templates['grades_report_xlsx'] = 'Notenübersicht (xlsx)';
+    $templates['grades_report_xls'] = 'Notenübersicht (xlsx)';
     $templates['html_report'] = block_exastud_get_string('html_report');
     $templates[BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_LERNENTWICKLUNGSBERICHT_DECKBLATT_UND_1_INNENSEITE] = 'Deckblatt und 1. Innenseite LEB';
     $templates[BLOCK_EXASTUD_DATA_ID_PRINT_TEMPLATE] = block_exastud_is_bw_active() ? block_exastud_trans('de:Zeugnis / Abgangszeugnis') : block_exastud_trans('de:Zeugnis');

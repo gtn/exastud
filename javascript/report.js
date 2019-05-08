@@ -27,30 +27,18 @@
 
         // button "select all"
         $(document).on('change', '.exastud-selectall-checkbox', function(e) {
+            var report_group = $(this).attr('data-reportgroup');
+            $('.exastud-selectall-checkbox[data-reportgroup!=' + report_group + ']').prop('checked', false);
+            $('.exastud-selecttemplate-checkbox').prop('checked', false);
             if ($(this).is(':checked')) {
-                if ($('.exastud-preview-checkbox:checked').length) {
-                    $('.exastud-selecttemplate-checkbox[data-previewPossible=1]').prop('checked', true);
-                } else {
-                    $('.exastud-selecttemplate-checkbox').prop('checked', true);
-                }
-            } else {
-                $('.exastud-selecttemplate-checkbox').prop('checked', false);
+                $('.exastud-selecttemplate-checkbox[data-reportgroup=' + report_group + ']').prop('checked', true);
             }
         });
-        // button "preview"
-        $(document).on('change', '.exastud-preview-checkbox', function(e) {
-            if ($(this).is(':checked')) {
-                $('.exastud-selecttemplate-checkbox').prop('checked', false);
-                $('.exastud-selecttemplate-checkbox').attr('readonly', 'readonly');
-                $('.exastud-selecttemplate-checkbox').attr('disabled', 'disabled');
-                $('.exastud-selecttemplate-checkbox[data-previewPossible=1]').removeAttr('readonly');
-                $('.exastud-selecttemplate-checkbox[data-previewPossible=1]').removeAttr('disabled');
-                $('.exastud-selectall-checkbox').prop('checked', false);
-                $('.exastud-selecttemplate-checkbox[data-previewPossible=1]').prop('checked', true);
-            } else {
-                $('.exastud-selecttemplate-checkbox').removeAttr('readonly');
-                $('.exastud-selecttemplate-checkbox').removeAttr('disabled');
-            }
+        // select single report - uncheck all reports from another group
+        $(document).on('change', '.exastud-selecttemplate-checkbox', function(e) {
+            var report_group = $(this).attr('data-reportgroup');
+            $('.exastud-selectall-checkbox[data-reportgroup!=' + report_group + ']').prop('checked', false);
+            $('.exastud-selecttemplate-checkbox[data-reportgroup!=' + report_group + ']').prop('checked', false);
         });
 
     });

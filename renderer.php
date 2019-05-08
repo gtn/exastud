@@ -250,11 +250,14 @@ class block_exastud_renderer extends plugin_renderer_base {
 		return $content;
 	}
 
-	public function table(html_table $table) {
+	public function table(html_table $table, $add_class = '') {
 
 		if (empty($table->attributes['class'])) {
 			$table->attributes['class'] = 'exa_table';
 		}
+		if ($add_class) {
+            $table->attributes['class'] .= ' '.$add_class.' ';
+        }
 
 		return html_writer::table($table);
 	}
