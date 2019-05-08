@@ -4000,6 +4000,14 @@ function block_exastud_fill_reportsettingstable($id = 0) {
         }
         $data['bpid'] = $bpid;
         $data['template'] = $template['file'];
+        $data['hidden'] = 0;
+        if (array_key_exists('hidden', $template) && $template['hidden']) {
+            $data['hidden'] = 1;
+        }
+        $data['relevant_subjects'] = 0;
+        if (array_key_exists('relevant_subjects', $template) && $template['relevant_subjects']) {
+            $data['relevant_subjects'] = 1;
+        }
         $checkboxes = array('year', 'report_date', 'report_date', 'student_name',
                 'date_of_birth', 'place_of_birth', 'learning_group'/*, 'class', 'focus'*/);
         foreach ($checkboxes as $f) {

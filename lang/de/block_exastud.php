@@ -166,6 +166,7 @@ $string['report_settings_setting_id'] = '';
 $string['report_settings_setting_title'] = 'Titel';
 $string['report_settings_setting_bp'] = 'BP';
 $string['report_settings_setting_hidden'] = 'Hidden';
+$string['report_settings_setting_relevant_subjects'] = 'Use relevant subjects';
 $string['report_settings_setting_category'] = 'Kategorie';
 $string['report_settings_setting_template'] = 'Formular';
 $string['report_settings_setting_grades'] = 'Notenskala';

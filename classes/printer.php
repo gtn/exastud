@@ -737,7 +737,7 @@ class printer {
                     if (in_array($subject->shorttitle, $avgCalcSubjectsRel)) {
                         $religionGrade = $gradeForCalc;
                     } else {
-                        if ($subject->not_relevant == 1) {
+                        if ($subject->not_relevant == 1/* && $template->is_relevant()*/) {
                             if ($gradeForCalc < $min) {
                                 $min = $gradeForCalc;
                             }

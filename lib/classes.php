@@ -921,6 +921,10 @@ class print_template {
 	    }*/
 	}
 
+	function is_relevant() {
+        return $this->relevant_subjects;
+    }
+
 
 
 }
