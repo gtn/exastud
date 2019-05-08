@@ -66,8 +66,8 @@ if ($classid) {
 
     $templates = block_exastud_get_report_templates($class);
 
-    $studentsWithExacompGraded = array();
-    $studentsGraded = array();
+    $studentsWithExacompGraded = array(); // graded students (exacomp)
+    $studentsGraded = array(); // graded students (exastud)
     foreach ($classstudents as $classstudent) {
         $subjects = \block_exastud\printer::get_exacomp_subjects($classstudent->id);
         if ($subjects && count($subjects) > 0) {
@@ -78,6 +78,7 @@ if ($classid) {
         }
 
     }
+
     $studentsWithExacompGraded = array_filter($studentsWithExacompGraded);
     $studentsGraded = array_filter($studentsGraded);
     $pleaseselectstudent = '';
@@ -158,42 +159,27 @@ if ($classid) {
                     continue; // go to the next template
                 }
 
-                /*
-                 * if ($printStudents && $template == 'html_report_grades') {
-                 * $PAGE->set_pagelayout('embedded');
-                 * echo $output->header('report');
-                 *
-                 * $classheader = block_exastud_get_period($class->periodid)->description.' - '.$class->title;
-                 * echo $output->heading($classheader);
-                 *
-                 * echo $output->report_grades($class, $printStudents);
-                 *
-                 * echo $output->footer();
-                 * exit;
-                 * }
-                 */
-
                 $doit = true;
                 $checkstudentconditions = function($student, $template) use ($courseid, $class, $studentsWithExacompGraded, $studentsGraded) {
                     $doit = true;
-                    // get template only if the student with conditions:
+                    // get template only if the student matches the conditions:
                     switch ($template) {
-                        case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_ANLAGE_PROJEKTPRUEFUNG_HS:
-                        case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_ANLAGE_PROJEKTPRUEFUNG_HS:
-                            // - Beiblatt zur Projektprüfung: only if there is grading in exastud
-                        case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_16_ZERTIFIKAT_FUER_PROFILFACH:
-                        case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_ZERTIFIKAT_FUER_PROJEKTARBEIT:
-                            // - Zertifikat für Profilfach: only if there is grading in exastud
-                            //$doit = block_exastud_student_is_graded($class, $student->id);
-                            if (!in_array($student->id, $studentsGraded)) {
-                                $doit = false;
-                            }
-                            break;
+                        // - Anlage zum Lernentwicklungsbericht: only if competences in exacomp with grading is in the report
                         case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_ANLAGE_ZUM_LERNENTWICKLUNGSBERICHT:
                         case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_ANLAGE_ZUM_LERNENTWICKLUNGSBERICHTALT:
                         case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_ANLAGE_ZUM_LERNENTWICKLUNGSBERICHT_SIMPLE:
-                            // - Anlage zum Lernentwicklungsbericht: only if competences in exacomp with grading is in the report
                             if (!in_array($student->id, $studentsWithExacompGraded)) {
+                                $doit = false;
+                            }
+                            break;
+                        // - Zertifikat für Profilfach: only if there is grading in exastud
+                        // - Beiblatt zur Projektprüfung: only if there is grading in exastud
+                        case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_ANLAGE_PROJEKTPRUEFUNG_HS:
+                        case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_ANLAGE_PROJEKTPRUEFUNG_HS:
+                        case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_16_ZERTIFIKAT_FUER_PROFILFACH:
+                        case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_ZERTIFIKAT_FUER_PROJEKTARBEIT:
+                        default:
+                            if (!in_array($student->id, $studentsGraded)) {
                                 $doit = false;
                             }
                             break;
@@ -214,13 +200,6 @@ if ($classid) {
                                     '/'.$student->firstname.'-'.$student->lastname.'-'.$student->id.'/'.$file->filename;
                         }
                     }
-                    //ob_clean();
-                    //if ($content = ob_get_clean()) {
-                    //    throw new \Exception('there was some other output: '.$content);
-                    //}
-                    //require_once $CFG->dirroot.'/lib/filelib.php';
-                    //send_temp_file($file->temp_file, $file->filename);
-                    //exit();
                 } else {
 
                     foreach ($printStudents as $student) {
@@ -230,13 +209,10 @@ if ($classid) {
                             if ($file) {
                                 $files_to_zip[$file->temp_file] =
                                         '/'.$student->firstname.'-'.$student->lastname.'-'.$student->id.'/'.$file->filename;
-                                //$zip->addFile($file->temp_file, $files_to_zip[$file->temp_file]);
                                 $temp_files[] = $file->temp_file;
                             }
                         }
                     }
-                    //$certificate_issue_date_text = block_exastud_get_certificate_issue_date_text($class);
-                    //$filename = ($certificate_issue_date_text ?: date('Y-m-d'))."-Lernentwicklungsbericht-{$class->title}.zip";
 
                 }
             }
@@ -372,6 +348,7 @@ if ($classid) {
     $files .= html_writer::tag('label', '&nbsp;'.block_exastud_trans('de:Datei'), ['for' => 'select_all1']);
     $firstList->head[] = $files;
     $previews = html_writer::checkbox('select_all2', '1', false, '', ['class' => 'exastud-selectall-checkbox', 'id' => 'select_all2', 'data-reportgroup' => 2]);
+    $previews .= html_writer::empty_tag('input', array('type'=>'hidden', 'name'=>'preview', 'value'=>0, 'id' => 'preview_selector'));
     $previews .= html_writer::tag('label', '&nbsp;'.block_exastud_trans('de:Bildschirm'), ['for' => 'select_all2']);
     $firstList->head[] = $previews;
     $secondList = new html_table();
@@ -457,9 +434,6 @@ if ($classid) {
 
     $firstCell->text .= $output->table($firstList, 'no-border exastud-report-list');
     $secondCell->text .= $output->table($secondList, 'no-border exastud-report-list');
-
-    //$firstCell->text .= html_writer::checkbox('preview', '1', false, '&nbsp;'.block_exastud_get_string('report_preview'), ['class' => 'exastud-preview-checkbox']).'<br />';
-    //$firstCell->text .= html_writer::checkbox('select_all', '1', false, '&nbsp;'.block_exastud_get_string('report_select_all'), ['class' => 'exastud-selectall-checkbox']);
 
     $templateRow->cells[] = $firstCell;
     $templateRow->cells[] = $secondCell;

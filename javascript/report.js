@@ -33,13 +33,23 @@
             if ($(this).is(':checked')) {
                 $('.exastud-selecttemplate-checkbox[data-reportgroup=' + report_group + ']').prop('checked', true);
             }
+            checkPreview();
         });
         // select single report - uncheck all reports from another group
         $(document).on('change', '.exastud-selecttemplate-checkbox', function(e) {
             var report_group = $(this).attr('data-reportgroup');
             $('.exastud-selectall-checkbox[data-reportgroup!=' + report_group + ']').prop('checked', false);
             $('.exastud-selecttemplate-checkbox[data-reportgroup!=' + report_group + ']').prop('checked', false);
+            checkPreview();
         });
+
+        function checkPreview() {
+            if ($('.exastud-selecttemplate-checkbox[data-reportgroup=2]:checked').length) {
+                $('#preview_selector').val(1);
+            } else {
+                $('#preview_selector').val(0);
+            }
+        }
 
     });
 })(block_exastud.jquery);
