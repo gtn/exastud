@@ -1382,11 +1382,11 @@ return [
         'weiblich',
         'female',
     ],
-    'Man' => [
+    'UMan' => [
         'Männlich',
         'Male',
     ],
-    'Woman' => [
+    'UWoman' => [
         'Weiblich',
         'Female',
     ],
