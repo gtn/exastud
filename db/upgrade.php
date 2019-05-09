@@ -563,7 +563,7 @@ function xmldb_block_exastud_upgrade($oldversion = 0) {
                 'Anlage zum Lernentwicklungsbericht' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_ANLAGE_ZUM_LERNENTWICKLUNGSBERICHT,
                 'Anlage zum LernentwicklungsberichtAlt' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_ANLAGE_ZUM_LERNENTWICKLUNGSBERICHTALT,
                 'BP 2004/BP2004_16_Zertifikat_fuer_Profilfach' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_16_ZERTIFIKAT_FUER_PROFILFACH,
-                'BP 2004/BP2004_GMS_Anlage_Projektpruefung_HS' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_ANLAGE_PROJEKTPRUEFUNG_HS ,
+                'BP 2004/BP2004_GMS_Anlage_Projektpruefung_HS' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_BEIBLATT_PROJEKTPRUEFUNG_HSA ,
                 'BP 2016/BP2016_GMS_Halbjahr_Lernentwicklungsbericht' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_HALBJAHR_LERNENTWICKLUNGSBERICHT ,
                 'BP 2016/BP2016_Jahreszeugnis_Lernentwicklungsbericht' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_JAHRESZEUGNIS_LERNENTWICKLUNGSBERICHT ,
                 'BP 2004/BP2004_GMS_Halbjahr_Lernentwicklungsbericht' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_HALBJAHR_LERNENTWICKLUNGSBERICHT ,
@@ -814,7 +814,7 @@ function xmldb_block_exastud_upgrade($oldversion = 0) {
                 'BP 2004/GMS Realschulabschluss 1.HJ' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_HALBJAHR_ZEUGNIS_RS,
                 'BP 2004/GMS Realschulabschluss SJ' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_ABSCHLUSSZEUGNIS_RS,
                 'BP 2004/Zertifikat fuer Profilfach' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_16_ZERTIFIKAT_FUER_PROFILFACH,
-                'BP 2004/Beiblatt zur Projektpruefung HSA' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_ANLAGE_PROJEKTPRUEFUNG_HS,
+                'BP 2004/Beiblatt zur Projektpruefung HSA' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_BEIBLATT_PROJEKTPRUEFUNG_HSA,
                 'Anlage zum Lernentwicklungsbericht' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_ANLAGE_ZUM_LERNENTWICKLUNGSBERICHT,
                 'Anlage zum LernentwicklungsberichtAlt' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_ANLAGE_ZUM_LERNENTWICKLUNGSBERICHTALT,
                 'BP 2004/GMS Abschlusszeugnis der Förderschule' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_ABSCHLUSSZEUGNIS_FOE,
@@ -1047,6 +1047,15 @@ function xmldb_block_exastud_upgrade($oldversion = 0) {
             block_exastud_fill_reportsettingstable($i);
         }
         upgrade_block_savepoint(true, 2019050801, 'exastud');
+    }
+
+    if ($oldversion < 2019050901) {
+        // reset reports
+        foreach([5, 28, 39, 40, 4, 37] as $i) {
+            $DB->delete_records('block_exastudreportsettings', ['id' => $i]);
+            block_exastud_fill_reportsettingstable($i);
+        }
+        upgrade_block_savepoint(true, 2019050901, 'exastud');
     }
 
     block_exastud_insert_default_entries();

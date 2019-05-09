@@ -40,45 +40,65 @@ if (!$reviewclass || !$class) {
 	print_error("badclass", "block_exastud");
 }
 
-if ($type == BLOCK_EXASTUD_DATA_ID_LERN_UND_SOZIALVERHALTEN) {
-	$categories = [
-		BLOCK_EXASTUD_DATA_ID_LERN_UND_SOZIALVERHALTEN => [
-			'title' => block_exastud_get_string('learn_and_sociale'),
-		],
-	];
-	$classheader = $reviewclass->title.' - '.block_exastud_get_string('learn_and_sociale');
-} /*elseif ($type == BLOCK_EXASTUD_DATA_ID_PRINT_TEMPLATE) {
-	$categories = [
-		BLOCK_EXASTUD_DATA_ID_PRINT_TEMPLATE => [
-			'title' => block_exastud_get_string('report_other_report_fields'),
-		],
-	];
-	$classheader = $reviewclass->title.' - '.block_exastud_get_string('report_other_report_fields');
-}*/ elseif ($type == BLOCK_EXASTUD_DATA_ID_CERTIFICATE) {
-	$categories = [
-            BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_16_ZERTIFIKAT_FUER_PROFILFACH => [
-			'title' => block_exastud_trans('de:Zertifikat für Profilfach'),
-		],
-	];
-	$classheader = $reviewclass->title.' - '.block_exastud_trans('de:Zertifikat für Profilfach');
-} else {
-    // BLOCK_EXASTUD_DATA_ID_PRINT_TEMPLATE
-    $categories = [
-            BLOCK_EXASTUD_DATA_ID_PRINT_TEMPLATE => [
+switch ($type) {
+    case BLOCK_EXASTUD_DATA_ID_LERN_UND_SOZIALVERHALTEN:
+            $categories = [
+                BLOCK_EXASTUD_DATA_ID_LERN_UND_SOZIALVERHALTEN => [
+                    'title' => block_exastud_get_string('learn_and_sociale'),
+                ],
+            ];
+            $classheader = $reviewclass->title.' - '.block_exastud_get_string('learn_and_sociale');
+            break;
+    /* case BLOCK_EXASTUD_DATA_ID_PRINT_TEMPLATE:
+            $categories = [
+                BLOCK_EXASTUD_DATA_ID_PRINT_TEMPLATE => [
                     'title' => block_exastud_get_string('report_other_report_fields'),
-            ],
-    ];
-    $classheader = $reviewclass->title.' - '.block_exastud_get_string('report_other_report_fields');
-    /*// additional info - like BLOCK_EXASTUD_DATA_ID_PRINT_TEMPLATE, but used another fields
-	$template = \block_exastud\print_template::create($type);
-	//$categories = $template->get_inputs($type);
-	//$classheader = $reviewclass->title.' - '.$template->get_name();
-    $categories = [
-            BLOCK_EXASTUD_DATA_ID_ADDITIONAL_INFO => [
-                    'title' => block_exastud_get_string('additional_info'),
-            ],
-    ];
-    $classheader = $reviewclass->title.' - '.block_exastud_get_string('additional_info');*/
+                ],
+            ];
+            $classheader = $reviewclass->title.' - '.block_exastud_get_string('report_other_report_fields');
+            break; */
+    case BLOCK_EXASTUD_DATA_ID_CERTIFICATE:
+            $categories = [
+                    BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_16_ZERTIFIKAT_FUER_PROFILFACH => [
+                    'title' => block_exastud_trans('de:Zertifikat für Profilfach'),
+                ],
+            ];
+            $classheader = $reviewclass->title.' - '.block_exastud_trans('de:Zertifikat für Profilfach');
+            break;
+    case BLOCK_EXASTUD_DATA_ID_CERTIFICATE:
+            $categories = [
+                    BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_16_ZERTIFIKAT_FUER_PROFILFACH => [
+                    'title' => block_exastud_trans('de:Zertifikat für Profilfach'),
+                ],
+            ];
+            $classheader = $reviewclass->title.' - '.block_exastud_trans('de:Zertifikat für Profilfach');
+            break;
+    case BLOCK_EXASTUD_DATA_ID_BILINGUALES:
+            $categories = [
+                    BLOCK_EXASTUD_DATA_ID_BILINGUALES => [
+                        'title' => block_exastud_get_string('report_bilinguales'),
+                    ],
+            ];
+            $classheader = $reviewclass->title.' - '.block_exastud_get_string('report_bilinguales');
+            break;
+    default:
+            // BLOCK_EXASTUD_DATA_ID_PRINT_TEMPLATE
+            $categories = [
+                    BLOCK_EXASTUD_DATA_ID_PRINT_TEMPLATE => [
+                            'title' => block_exastud_get_string('report_other_report_fields'),
+                    ],
+            ];
+            $classheader = $reviewclass->title.' - '.block_exastud_get_string('report_other_report_fields');
+            /*// additional info - like BLOCK_EXASTUD_DATA_ID_PRINT_TEMPLATE, but used another fields
+            $template = \block_exastud\print_template::create($type);
+            //$categories = $template->get_inputs($type);
+            //$classheader = $reviewclass->title.' - '.$template->get_name();
+            $categories = [
+                    BLOCK_EXASTUD_DATA_ID_ADDITIONAL_INFO => [
+                            'title' => block_exastud_get_string('additional_info'),
+                    ],
+            ];
+            $classheader = $reviewclass->title.' - '.block_exastud_get_string('additional_info');*/
 }
 $output = block_exastud_get_renderer();
 
@@ -139,6 +159,8 @@ foreach ($classstudents as $classstudent) {
         //$hasInputs = !!block_exastud_get_student_print_template($class, $classstudent->id)->get_inputs(BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_16_ZERTIFIKAT_FUER_PROFILFACH);
     } else if (@array_shift(array_keys($categories)) === BLOCK_EXASTUD_DATA_ID_ADDITIONAL_INFO) {
         $hasInputs = !!block_exastud_get_student_print_template($class, $classstudent->id)->get_inputs(BLOCK_EXASTUD_DATA_ID_ADDITIONAL_INFO); // TODO: some another?
+    } else if (@array_shift(array_keys($categories)) === BLOCK_EXASTUD_DATA_ID_BILINGUALES) {
+        $hasInputs = !!block_exastud_get_class_bilingual_template($class->id)->get_inputs(BLOCK_EXASTUD_DATA_ID_BILINGUALES);
     } else {
 		$hasInputs = !!$categories;
 	}
@@ -161,9 +183,14 @@ foreach ($classstudents as $classstudent) {
 
 		if ($dataid === BLOCK_EXASTUD_DATA_ID_PRINT_TEMPLATE
                 || $dataid === BLOCK_EXASTUD_DATA_ID_ADDITIONAL_INFO
-                || $dataid === BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_16_ZERTIFIKAT_FUER_PROFILFACH) {
+                || $dataid === BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_16_ZERTIFIKAT_FUER_PROFILFACH
+                || $dataid === BLOCK_EXASTUD_DATA_ID_BILINGUALES
+        ) {
 		    if ($dataid === BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_16_ZERTIFIKAT_FUER_PROFILFACH) {
                 $template = block_exastud\print_template::create(BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_16_ZERTIFIKAT_FUER_PROFILFACH);
+            } elseif ($dataid === BLOCK_EXASTUD_DATA_ID_BILINGUALES) {
+		        $template = block_exastud_get_class_bilingual_template($class->id);
+                //$template = block_exastud\print_template::create($templateid);
             } else {
                 $template = block_exastud_get_student_print_template($class, $classstudent->id);
             }

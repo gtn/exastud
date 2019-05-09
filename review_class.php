@@ -179,6 +179,8 @@ $table->align[] = 'center';
 $table->align[] = 'center';
 $table->align[] = 'center';
 $table->align[] = 'center';
+$table->align[] = 'center';
+$table->align[] = 'center';
 
 $table->align[] = 'left';
 $table->align[] = 'right';
@@ -351,6 +353,7 @@ if ($isSubjectTeacher) {
             }
         }
 
+        // Überfachliche Beurteilungen
         $row->cells[] = ($visible ?
                 $output->link_button($CFG->wwwroot.'/blocks/exastud/review_student.php?courseid='.$courseid.'&classid='.$classid.
                         '&subjectid='.$subjectid.'&studentid='.$classstudent->id.'&reporttype=inter',

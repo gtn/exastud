@@ -38,6 +38,7 @@ const BLOCK_EXASTUD_CAP_VIEW_REPORT = 'viewreport';
 const BLOCK_EXASTUD_CAP_REVIEW = 'review';
 
 const BLOCK_EXASTUD_DATA_ID_LERN_UND_SOZIALVERHALTEN = 'learning_and_social_behavior';
+const BLOCK_EXASTUD_DATA_ID_BILINGUALES = 'bilinguales';
 const BLOCK_EXASTUD_DATA_ID_UNLOCKED_TEACHERS = 'unlocked_teachers';
 const BLOCK_EXASTUD_DATA_ID_PRINT_TEMPLATE = 'print_template'; // TODO: change to id of 'block_exastudreportsettings' record?
 const BLOCK_EXASTUD_DATA_ID_CERTIFICATE = 'certificate';
@@ -61,7 +62,7 @@ const BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_DEFAULT_REPORT = 1;
 const BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_ANLAGE_ZUM_LERNENTWICKLUNGSBERICHT = 2;
 const BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_ANLAGE_ZUM_LERNENTWICKLUNGSBERICHTALT = 3;
 const BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_16_ZERTIFIKAT_FUER_PROFILFACH = 4;
-const BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_ANLAGE_PROJEKTPRUEFUNG_HS  = 5;
+const BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_BEIBLATT_PROJEKTPRUEFUNG_HSA  = 5;
 const BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_HALBJAHR_LERNENTWICKLUNGSBERICHT  = 6;
 const BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_JAHRESZEUGNIS_LERNENTWICKLUNGSBERICHT  = 7;
 const BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_HALBJAHR_LERNENTWICKLUNGSBERICHT  = 8;
@@ -84,7 +85,7 @@ const BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_ABSCHLUSSZEUGNIS_HSA_RSA = 24
 const BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_ABGANGSZEUGNIS_GMS  = 25;
 const BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_ABGANGSZEUGNIS_HS_9_10 = 26;
 const BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_ABSCHLUSSZEUGNIS_FOE = 27;
-const BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_ANLAGE_PROJEKTPRUEFUNG_HS = 28;
+const BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_BEIBLATT_PROJEKTARBEIT_HSA = 28;
 const BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_JAHRESZEUGNIS_E_NIVEAU = 29;
 const BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_ABSCHLUSSZEUGNIS_HSA_RSA = 30;
 const BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_ABSCHLUSSZEUGNIS_HS = 31;
@@ -1808,6 +1809,15 @@ function block_exastud_get_student_print_template($class, $userid) {
 	return block_exastud\print_template::create($templateid);
 }
 
+function block_exastud_get_class_bilingual_template($classid) {
+	$templateid = block_exastud_class_get_bilingual_templateid($classid);
+	if ($templateid) {
+        return block_exastud\print_template::create($templateid);
+    } else {
+	    return false;
+    }
+}
+
 function block_exastud_is_project_teacher($class, $userid) {
 	return !!block_exastud_get_project_teacher_students($class, $userid);
 }
@@ -2236,14 +2246,26 @@ function block_exastud_get_default_templates($templateid = null) {
                                     'title' => 'Besondere Kompetenzen in folgenden Bereichen erworben',
                                     'type' => 'textarea',
                                     'lines' => 13,
-                                    'cols' => 80,
+                                    'cols' => 70,
                             ],
+                            'profilfach_fixed' => [
+                                    'title' => 'Profilfach',
+                                    'type' => 'select',
+                                    'values' => [
+                                        'Naturwissenschaft und Technik (NwT)' => 'Naturwissenschaft und Technik (NwT)',
+                                        'Sport' => 'Sport',
+                                        'Musik' => 'Musik',
+                                        'Bildende Kunst' => 'Bildende Kunst',
+                                        'Spanisch' => 'Spanisch',
+                                        'Informatik, Mathematik, Physik (IMP)' => 'Informatik, Mathematik, Physik (IMP)',
+                                    ],
+                            ]
                     ],
             ],
             'BP 2004/Beiblatt zur Projektpruefung HSA' => [
-                    'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_ANLAGE_PROJEKTPRUEFUNG_HS,
+                    'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_BEIBLATT_PROJEKTPRUEFUNG_HSA,
                     'name' => 'Beiblatt zur Projektprüfung HSA',
-                    'file' => 'BP 2004/BP2004_GMS_Anlage_Projektpruefung_HS',
+                    'file' => 'BP 2004/BP2004_GMS_Beiblatt_Projektpruefung_HSA',
                     'year' => '1',
                     'report_date' => '1',
                     'student_name' => '1',
@@ -2261,7 +2283,8 @@ function block_exastud_get_default_templates($templateid = null) {
                         'projekt_grade' => [
                                 'title' => 'Note',
                                 'type' => 'select',
-                                'values' => ['sehr gut' => 'sehr gut',
+                                'values' => [
+                                        'sehr gut' => 'sehr gut',
                                         'gut' => 'gut',
                                         'befriedigend' => 'befriedigend',
                                         'ausreichend' => 'ausreichend',
@@ -2278,8 +2301,16 @@ function block_exastud_get_default_templates($templateid = null) {
                             'type' => 'textarea',
                             'lines' => 5,
                             'cols' => 80,
-                        ]
+                        ],
+                        'annotation' => [
+                                'title' => 'Anmerkung',
+                                'type' => 'select',
+                                'values' => [
+                                        'Die Projektprüfung wurde in Klasse 9 durchgeführt.' => 'Die Projektprüfung wurde in Klasse 9 durchgeführt.',
+                                ],
+                        ],
                     ],
+                    'inputs_footer' => ['annotation'], // inputs in the footer of template
             ],
             'BP 2016/GMS Zeugnis 1.HJ' => [
                     'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_HALBJAHR_LERNENTWICKLUNGSBERICHT,
@@ -3335,9 +3366,9 @@ function block_exastud_get_default_templates($templateid = null) {
                     'inputs_order' => ['class', 'ags', 'focus', 'comments_short'], // special ordering of inputs (makes similar to docx template)
             ],
             'BP 2016/Beiblatt zur Projektpruefung HSA' => [
-                    'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_ANLAGE_PROJEKTPRUEFUNG_HS,
+                    'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_BEIBLATT_PROJEKTARBEIT_HSA,
                     'name' => 'Beiblatt zur Projektprüfung HSA',
-                    'file' => 'BP 2016/BP2016_GMS_Anlage_Projektpruefung_HS',
+                    'file' => 'BP 2016/BP2016_GMS_Beiblatt_Projektarbeit_HSA',
                     'year' => '1',
                     'report_date' => '1',
                     'student_name' => '1',
@@ -3377,8 +3408,32 @@ function block_exastud_get_default_templates($templateid = null) {
                                             'individuell' => 'individuell',
                                     ],
                             ],
+                            'annotation' => [
+                                    'title' => 'Anmerkung',
+                                    'type' => 'select',
+                                    'values' => [
+                                            'Die Projektprüfung wurde in Klasse 9 durchgeführt.' => 'Die Projektprüfung wurde in Klasse 9 durchgeführt.',
+                                    ],
+                            ],/*
+                            'leiter' => [
+                                    'title' => 'Leiter',
+                                    'type' => 'select',
+                                    'values' => [
+                                        'Schulleiter' => 'Schulleiter',
+                                        'Schulleiterin' => 'Schulleiterin',
+                                    ],
+                            ],
+                            'chair' => [
+                                    'title' => 'Vorsitzende',
+                                    'type' => 'select',
+                                    'values' => [
+                                        'Vorsitzende des Fachausschusses' => 'Vorsitzende des Fachausschusses',
+                                        'Vorsitzender des Fachausschusses' => 'Vorsitzender des Fachausschusses',
+                                    ],
+                            ]*/
                     ],
-                    'inputs_order' => ['projekt_ingroup'], // special ordering of inputs (makes similar to docx template)
+                    'inputs_order' => ['projekt_ingroup', 'annotation', 'leiter', 'chair'], // special ordering of inputs (makes similar to docx template)
+                    'inputs_footer' => ['annotation', 'leiter', 'chair'],
             ],
             'BP 2016/GMS Klasse 10 E-Niveau SJ' => [
                     'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_JAHRESZEUGNIS_E_NIVEAU,
@@ -3762,7 +3817,7 @@ function block_exastud_get_default_templates($templateid = null) {
                             'projekt_thema' => [
                                     'title' => 'Thema',
                                     'type' => 'textarea',
-                                    'lines' => 3,
+                                    'lines' => 2,
                                     'cols' => 80
                             ],
                             'projekt_grade' => [
@@ -3779,7 +3834,7 @@ function block_exastud_get_default_templates($templateid = null) {
                             'projekt_verbalbeurteilung' => [
                                     'title' => 'Verbalbeurteilung',
                                     'type' => 'textarea',
-                                    'lines' => 5,
+                                    'lines' => 14,
                                     'cols' => 80,
                             ],
                             'projekt_ingroup' => [
@@ -3849,7 +3904,7 @@ function block_exastud_get_default_templates($templateid = null) {
             'Testat Englisch/Deutsch (Klasse 8)' => [
                     'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_16_TESTAT_BILINGUALES_PROFIL_KL_8,
                     'name' => 'Testat Englisch/Deutsch (Klasse 8)',
-                    'file' => 'BP 2004_16/testat_bilinguales_profil_kl_8',
+                    'file' => 'BP 2004_16/BP2004_16_Testat_bilinguales_Profil_Kl_8',
                     'year' => '1',
                     'report_date' => '1',
                     'student_name' => '1',
@@ -3858,44 +3913,62 @@ function block_exastud_get_default_templates($templateid = null) {
                     'learning_group' => '1',
                     'grades' => [],
                     'inputs' => [
-                        'eng_subjects_count_5' => [
+                        'eng_subjects_5' => [
                                 'title' => 'Bilinguale Sachfächer (Jahrgangsstufe 5)',
-                                'type' => 'text',
+                                'type' => 'textarea',
+                                'lines' => 1,
+                                'cols' => 35,
                         ],
-                        'eng_subjects_count_6' => [
+                        'eng_subjects_6' => [
                                 'title' => 'Bilinguale Sachfächer (Jahrgangsstufe 6)',
-                                'type' => 'text',
+                                'type' => 'textarea',
+                                'lines' => 1,
+                                'cols' => 35,
                         ],
-                        'eng_subjects_count_7' => [
+                        'eng_subjects_7' => [
                                 'title' => 'Bilinguale Sachfächer (Jahrgangsstufe 7)',
-                                'type' => 'text',
+                                'type' => 'textarea',
+                                'lines' => 1,
+                                'cols' => 35,
                         ],
-                        'eng_subjects_count_8' => [
+                        'eng_subjects_8' => [
                                 'title' => 'Bilinguale Sachfächer (Jahrgangsstufe 8)',
-                                'type' => 'text',
+                                'type' => 'textarea',
+                                'lines' => 1,
+                                'cols' => 35,
                         ],
-                        'eng_lessons_count_5' => [
+                        'eng_lessons_5' => [
                                 'title' => 'Wochenstunden (Jahrgangsstufe 5)',
-                                'type' => 'text',
+                                'type' => 'textarea',
+                                'lines' => 1,
+                                'cols' => 3,
                         ],
-                        'eng_lessons_count_6' => [
+                        'eng_lessons_6' => [
                                 'title' => 'Wochenstunden (Jahrgangsstufe 6)',
-                                'type' => 'text',
+                                'type' => 'textarea',
+                                'lines' => 1,
+                                'cols' => 35,
                         ],
-                        'eng_lessons_count_7' => [
+                        'eng_lessons_7' => [
                                 'title' => 'Wochenstunden (Jahrgangsstufe 7)',
-                                'type' => 'text',
+                                'type' => 'textarea',
+                                'lines' => 1,
+                                'cols' => 3,
                         ],
-                        'eng_lessons_count_8' => [
+                        'eng_lessons_8' => [
                                 'title' => 'Wochenstunden (Jahrgangsstufe 8)',
-                                'type' => 'text',
+                                'type' => 'textarea',
+                                'lines' => 1,
+                                'cols' => 3,
                         ],
                     ],
+                    'inputs_footer' => ['leiter'],
+                    'inputs_order' => ['eng_subjects_5', 'eng_lessons_5', 'eng_subjects_6', 'eng_lessons_6', 'eng_subjects_7', 'eng_lessons_7', 'eng_subjects_8', 'eng_lessons_8'],
             ],
             'Bilinguales Zertifikat Englisch/Deutsch (Klasse 10)' => [
                     'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_16_ZERTIFIKAT_BILINGUALES_KL_10,
                     'name' => 'Bilinguales Zertifikat Englisch/Deutsch (Klasse 10)',
-                    'file' => 'BP 2004_16/zertifikat_bilinguales_kl_10',
+                    'file' => 'BP 2004_16/BP2004_16_Zertifikat_bilinguales_Profil_Kl_10',
                     'year' => '1',
                     'report_date' => '1',
                     'student_name' => '1',
@@ -3904,55 +3977,81 @@ function block_exastud_get_default_templates($templateid = null) {
                     'learning_group' => '1',
                     'grades' => [],
                     'inputs' => [
-                            'eng_subjects_count_5' => [
+                            'eng_subjects_5' => [
                                     'title' => 'Bilinguale Sachfächer (Jahrgangsstufe 5)',
-                                    'type' => 'text',
+                                    'type' => 'textarea',
+                                    'lines' => 1,
+                                    'cols' => 35,
                             ],
-                            'eng_subjects_count_6' => [
+                            'eng_subjects_6' => [
                                     'title' => 'Bilinguale Sachfächer (Jahrgangsstufe 6)',
-                                    'type' => 'text',
+                                    'type' => 'textarea',
+                                    'lines' => 1,
+                                    'cols' => 35,
                             ],
-                            'eng_subjects_count_7' => [
+                            'eng_subjects_7' => [
                                     'title' => 'Bilinguale Sachfächer (Jahrgangsstufe 7)',
-                                    'type' => 'text',
+                                    'type' => 'textarea',
+                                    'lines' => 1,
+                                    'cols' => 35,
                             ],
-                            'eng_subjects_count_8' => [
+                            'eng_subjects_8' => [
                                     'title' => 'Bilinguale Sachfächer (Jahrgangsstufe 8)',
-                                    'type' => 'text',
+                                    'type' => 'textarea',
+                                    'lines' => 1,
+                                    'cols' => 35,
                             ],
-                            'eng_subjects_count_9' => [
+                            'eng_subjects_9' => [
                                     'title' => 'Bilinguale Sachfächer (Jahrgangsstufe 9)',
-                                    'type' => 'text',
+                                    'type' => 'textarea',
+                                    'lines' => 1,
+                                    'cols' => 35,
                             ],
-                            'eng_subjects_count_10' => [
+                            'eng_subjects_10' => [
                                     'title' => 'Bilinguale Sachfächer (Jahrgangsstufe 10)',
-                                    'type' => 'text',
+                                    'type' => 'textarea',
+                                    'lines' => 1,
+                                    'cols' => 35,
                             ],
-                            'eng_lessons_count_5' => [
+                            'eng_lessons_5' => [
                                     'title' => 'Wochenstunden (Jahrgangsstufe 5)',
-                                    'type' => 'text',
+                                    'type' => 'textarea',
+                                    'lines' => 1,
+                                    'cols' => 3,
                             ],
-                            'eng_lessons_count_6' => [
+                            'eng_lessons_6' => [
                                     'title' => 'Wochenstunden (Jahrgangsstufe 6)',
-                                    'type' => 'text',
+                                    'type' => 'textarea',
+                                    'lines' => 1,
+                                    'cols' => 3,
                             ],
-                            'eng_lessons_count_7' => [
+                            'eng_lessons_7' => [
                                     'title' => 'Wochenstunden (Jahrgangsstufe 7)',
-                                    'type' => 'text',
+                                    'type' => 'textarea',
+                                    'lines' => 1,
+                                    'cols' => 3,
                             ],
-                            'eng_lessons_count_8' => [
+                            'eng_lessons_8' => [
                                     'title' => 'Wochenstunden (Jahrgangsstufe 8)',
-                                    'type' => 'text',
+                                    'type' => 'textarea',
+                                    'lines' => 1,
+                                    'cols' => 3,
                             ],
-                            'eng_lessons_count_9' => [
+                            'eng_lessons_9' => [
                                     'title' => 'Wochenstunden (Jahrgangsstufe 9)',
-                                    'type' => 'text',
+                                    'type' => 'textarea',
+                                    'lines' => 1,
+                                    'cols' => 3,
                             ],
-                            'eng_lessons_count_10' => [
+                            'eng_lessons_10' => [
                                     'title' => 'Wochenstunden (Jahrgangsstufe 10)',
-                                    'type' => 'text',
+                                    'type' => 'textarea',
+                                    'lines' => 1,
+                                    'cols' => 3,
                             ],
                     ],
+                    'inputs_footer' => ['leiter'],
+                    'inputs_order' => ['eng_subjects_5', 'eng_lessons_5', 'eng_subjects_6', 'eng_lessons_6', 'eng_subjects_7', 'eng_lessons_7', 'eng_subjects_8', 'eng_lessons_8', 'eng_subjects_9', 'eng_lessons_9', 'eng_subjects_10', 'eng_lessons_10'],
             ]
 
 
@@ -4303,6 +4402,11 @@ function block_exastud_normalize_filename($filename) {
     // Remove any runs of periods (thanks falstro!)
     $filename = mb_ereg_replace("([\.]{2,})", '', $filename);
     return $filename;
+}
+
+function block_exastud_class_get_bilingual_templateid($classid) {
+    return 39; // TODO: delete
+    return block_exastud_get_class_data($classid, BLOCK_EXASTUD_DATA_ID_BILINGUALES);
 }
 
 /*

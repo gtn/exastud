@@ -856,6 +856,10 @@ return [
             'Weitere Daten/Formularfelder',
             'Other report fields',
     ],
+    'report_bilinguales' => [
+            'Bilingualer Unterricht',
+            'Bilingual instruction',
+    ],
     'report_for_subjects' => [
             'Zertifikat für Profilfach',
             'Certificate for profile subject',

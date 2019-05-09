@@ -131,7 +131,7 @@ class print_templates {
                 if (!$fields_temp) {
                     $fields = array();
                 } else {
-                    $fields = array_intersect_key($fields_temp, array_flip(array('besondere_kompetenzen')));
+                    $fields = array_intersect_key($fields_temp, array_flip(array('besondere_kompetenzen', 'profilfach_fixed')));
                 }
                 break;
             case BLOCK_EXASTUD_DATA_ID_ADDITIONAL_INFO:
@@ -154,6 +154,18 @@ class print_templates {
                     $fields = array_merge($fieldsstatic, $customfields);
                 } else {
                     $fields = $fieldsstatic;
+                }
+                break;
+            case BLOCK_EXASTUD_DATA_ID_BILINGUALES:
+                $fields = array();
+                $keptaditional = array();
+                for ($i = 5; $i <= 10; $i++) {
+                    $keptaditional[] = 'eng_subjects_'.$i;
+                    $keptaditional[] = 'eng_lessons_'.$i;
+                }
+                $customfields = unserialize($template->additional_params);
+                if ($customfields) {
+                    $fields = array_intersect_key($customfields, array_flip($keptaditional));
                 }
                 break;
             case 'all':
@@ -634,10 +646,10 @@ class print_templates {
 
             if ($bp && $bp->sourceinfo == 'bw-bp2016') {
                 // 2016 Beiblatt zur Projektprüfung
-                $templateids[] = BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_ANLAGE_PROJEKTPRUEFUNG_HS; // 'BP 2016/Beiblatt zur Projektpruefung HSA';
+                $templateids[] = BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_BEIBLATT_PROJEKTARBEIT_HSA; // 'BP 2016/Beiblatt zur Projektpruefung HSA';
             } else {
                 // 2004 Beiblatt zur Projektprüfung
-                $templateids[] = BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_ANLAGE_PROJEKTPRUEFUNG_HS; // 'BP 2004/Beiblatt zur Projektpruefung HSA';
+                $templateids[] = BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_BEIBLATT_PROJEKTPRUEFUNG_HSA; // 'BP 2004/Beiblatt zur Projektpruefung HSA';
             }
 		}
 		return static::get_template_name_array($templateids);

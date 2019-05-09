@@ -408,7 +408,9 @@ class printer {
                     if (!$subjectData || (!$subjectData->review && !$subjectData->grade && !$subjectData->niveau)) {
                         continue; // we need to select first graded profile subject
                     }
-					$profilfach = preg_replace('!^[^\s]+!', '', $subject->title);
+                    $profilfachT = preg_replace('!^[^\s]+!', '', $subject->title);
+					$profilfach = $profilfachT; 
+                    
 					$contentId = 'profilfach';
 				} else {
 					$contentId = static::toTemplateVarId($subject->title);
@@ -494,7 +496,7 @@ class printer {
                 BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_ABGANGSZEUGNIS_GMS,
                 BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_ABGANGSZEUGNIS_HS_9_10,
                 BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_16_ZERTIFIKAT_FUER_PROFILFACH,
-                BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_ANLAGE_PROJEKTPRUEFUNG_HS,
+                BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_BEIBLATT_PROJEKTPRUEFUNG_HSA,
                 BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_ABSCHLUSSZEUGNIS_FOE,
                 BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_HALBJAHR_ZEUGNIS_FOE,
                 BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_HALBJAHRESINFORMATION_KL11,
@@ -503,7 +505,7 @@ class printer {
                 BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_ABGANGSZEUGNIS_GMS,
                 BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_ABGANGSZEUGNIS_HS_9_10,
                 BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_ABSCHLUSSZEUGNIS_FOE,
-                BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_ANLAGE_PROJEKTPRUEFUNG_HS,
+                BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_BEIBLATT_PROJEKTARBEIT_HSA,
                 BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_JAHRESZEUGNIS_E_NIVEAU,
                 BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_ABSCHLUSSZEUGNIS_HSA_RSA,
                 BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_ABSCHLUSSZEUGNIS_HS,
@@ -655,7 +657,12 @@ class printer {
                     }
                     //echo "<pre>debug:<strong>printer.php:595</strong>\r\n"; print_r($subjectData); echo '</pre>'; exit; // !!!!!!!!!! delete it
 					$gradeSearch = 'Profilfach';
-					$profilfach = preg_replace('!^[^\s]+!', '', $subject->title);
+                    $profilfachT = trim(preg_replace('!^[^\s]+!', '', $subject->title));
+                    //echo "<pre>debug:<strong>printer.php:661</strong>\r\n"; print_r($profilfachT); echo '</pre>'; // !!!!!!!!!! delete it
+                    if (@$studentdata->profilfach_fixed && @$studentdata->profilfach_fixed != $profilfachT) {
+                        continue; // if the student has fixed profilfach (in review page) - we need to get values for this fixed subject
+                    }
+                    $profilfach = $profilfachT;
 					// hier ist 1 dropdown dazwischen erlaubt (profilfach name dropdown)
 					$dropdownsBetween = 1;
                     if ($subjectData) {
@@ -749,6 +756,7 @@ class printer {
                     }
                 }
 			}
+			//exit;
 			if (isset($religionGrade) && $religionGrade > 0) {
 			    $sum += $religionGrade;
 			    $scnt++;
@@ -1323,16 +1331,15 @@ class printer {
 		    }
 		}
 
+		// projekt_ingroup property
 		if (in_array($templateid, [
-		        BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_ANLAGE_PROJEKTPRUEFUNG_HS,
+		        BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_BEIBLATT_PROJEKTARBEIT_HSA,
                 BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_ZERTIFIKAT_FUER_PROJEKTARBEIT
                 ]
         )) {
 		    // the teacher selects only one selectbox 'projekt_ingroup'. In the report we need a few:
             $projekt_ingroup = static::spacerIfEmpty(@$studentdata->projekt_ingroup);
-            $data_dropdowns[] = 'projekt_individ';
-            $data_dropdowns[] = 'projekt_reviewedfor';
-            $data_dropdowns[] = 'projekt_individended';
+            $data_dropdowns = array_merge($data_dropdowns, array('projekt_individ', 'projekt_reviewedfor', 'projekt_individended'));
             $data['projekt_individ'] = 'Wählen Sie ein Element aus.';
             $data['projekt_individended'] = 'Wählen Sie ein Element aus.';
             $data['projekt_reviewedfor'] = 'Wählen Sie ein Element aus.';
@@ -1349,6 +1356,32 @@ class printer {
                     break;
             }
         }
+
+        // annotation property
+        if (in_array($templateid, [
+                        BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_BEIBLATT_PROJEKTPRUEFUNG_HSA,
+                        BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_BEIBLATT_PROJEKTARBEIT_HSA,
+                ]
+        )) {
+            // annotation: ${annotation_marker} only if ${annotation} is not empty
+            $data_dropdowns = array_merge($data_dropdowns, array('annotation_marker', 'annotation'));
+            $data['annotation_marker'] = ' ';
+            $data['annotation'] = ' ';
+            $annotation = trim(static::spacerIfEmpty(@$studentdata->annotation));
+            if ($annotation != '' && $annotation != '---') {
+                $data['annotation_marker'] = 'Anmerkung:';
+                $data['annotation'] = trim($annotation);
+            }
+        }
+
+        // leiter (director) and Vorsitzende (chair)
+        // almost all templates have this selectbox
+        // TODO: may be get this data not for every student, but from some central settings?
+        $data_dropdowns = array_merge($data_dropdowns, array('leiter', 'chair'));
+        $data['leiter'] = ' ';
+        $data['chair'] = ' ';
+        $data['leiter'] = trim(static::spacerIfEmpty(@$studentdata->leiter));
+        $data['chair'] = trim(static::spacerIfEmpty(@$studentdata->chair));
 
         // some templates has selectbox/niveau for languages. Make it works:
         // only lang subjects

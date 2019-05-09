@@ -232,6 +232,7 @@ $string['settings_exacomp_verbeval'] = 'Exabis Kompetenzraster Notenverbalisieru
 $string['settings_exacomp_assessment_categories'] = 'Kompetenzraster für Beurteilungskategorien verwenden';
 $string['report_learn_and_sociale'] = 'Lern- und Sozialverhalten';
 $string['report_other_report_fields'] = 'Weitere Daten/Formularfelder';
+$string['report_bilinguales'] = 'Bilingualer Unterricht';
 $string['report_for_subjects'] = 'Zertifikat für Profilfach';
 $string['report_for_additional'] = 'weitere Daten';
 $string['report_report_eval'] = 'Projektprüfung';

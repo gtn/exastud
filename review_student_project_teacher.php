@@ -73,7 +73,7 @@ $categories = block_exastud_get_student_print_template($class, $student->id)->ge
 
 // use limits from BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_ANLAGE_PROJEKTPRUEFUNG_HS
 if (@$categories['projekt_verbalbeurteilung']['lines'] == 999 || @$categories['projekt_verbalbeurteilung']['cols'] == 999) {
-    $standardTemplateInputs = \block_exastud\print_templates::get_inputs_for_template(BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_ANLAGE_PROJEKTPRUEFUNG_HS, BLOCK_EXASTUD_DATA_ID_PROJECT_TEACHER);
+    $standardTemplateInputs = \block_exastud\print_templates::get_inputs_for_template(BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_BEIBLATT_PROJEKTPRUEFUNG_HSA, BLOCK_EXASTUD_DATA_ID_PROJECT_TEACHER);
     if (array_key_exists('projekt_verbalbeurteilung', $standardTemplateInputs)) {
         if ($categories['projekt_verbalbeurteilung']['lines'] == 999) {
             $categories['projekt_verbalbeurteilung']['lines'] = $standardTemplateInputs['projekt_verbalbeurteilung']['lines'];

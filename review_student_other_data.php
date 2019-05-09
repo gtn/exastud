@@ -104,6 +104,11 @@ switch ($type) {
         $categories = $template->get_inputs(BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_16_ZERTIFIKAT_FUER_PROFILFACH);
         $classheader = $reviewclass->title.' - '.$template->get_name();
         break;
+    case BLOCK_EXASTUD_DATA_ID_BILINGUALES:
+        $template = block_exastud_get_class_bilingual_template($class->id);
+        $categories = $template->get_inputs(BLOCK_EXASTUD_DATA_ID_BILINGUALES);
+        $classheader = $reviewclass->title.' - '.$template->get_name();
+        break;
     default:
         $template = \block_exastud\print_template::create($type);
         $categories = $template->get_inputs($type);
