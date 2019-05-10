@@ -590,9 +590,9 @@ return [
             'Hidden',
             'Hidden',
     ],
-    'report_settings_setting_relevant_subjects' => [
-            'Use relevant subjects',
-            'Use relevant subjects',
+    'report_settings_setting_rs_hs' => [
+            'RS/HS category',
+            'RS/HS category',
     ],
     'report_settings_setting_category' => [
             'Kategorie',

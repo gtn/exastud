@@ -1049,8 +1049,8 @@ function block_exastud_require_global_cap($cap, $user = null) {
             // if the user is a additional teacher - he can view of report
             $actPeriod = block_exastud_get_active_period();
             $lastPeriod = block_exastud_get_last_period();
-            if (block_exastud_get_head_teacher_classes_shared($actPeriod->id)
-                    || block_exastud_get_head_teacher_classes_shared($lastPeriod->id)) {
+            if (($actPeriod && block_exastud_get_head_teacher_classes_shared($actPeriod->id))
+                    || ($lastPeriod && block_exastud_get_head_teacher_classes_shared($lastPeriod->id))) {
                 return;
             }
 		case BLOCK_EXASTUD_CAP_MANAGE_CLASSES:
@@ -4066,6 +4066,7 @@ function block_exastud_get_default_templates($templateid = null) {
 }
 
 function block_exastud_fill_reportsettingstable($id = 0) {
+    file_put_contents(__DIR__.'/1.111', 'GO', FILE_APPEND);
     $reporttemplates = block_exastud_get_default_templates();
     if ($id > 0) {
         // only needed template
@@ -4082,7 +4083,12 @@ function block_exastud_fill_reportsettingstable($id = 0) {
             return true; // not found any template with this id
         } 
     }
-    $convertdata = function($key, $template) {
+    $allBPs = g::$DB->get_records('block_exastudbp');
+    if (count($allBPs) == 0) {
+
+    }
+
+    $convertdata = function($key, $template) use ($allBPs) {
         $data = array();
         if (!empty($template['id']) && $template['id'] > 0) {
             $data['id'] = $template['id'];
@@ -4090,11 +4096,14 @@ function block_exastud_fill_reportsettingstable($id = 0) {
         $data['title'] = $template['name'];
         $bpid = 0;
         $bp_bykey = explode('/', $key);
-        $bptitle = 'bw-'.strtolower(str_replace(' ', '', $bp_bykey[0]));
-        $allBPs = g::$DB->get_records('block_exastudbp');
+        $bp_bykey = $bp_bykey[0];
+        $bp_bykey = str_replace(' ', '', $bp_bykey);
+        $bp_bykey = strtolower($bp_bykey);
+        $bptitle = 'bw-'.$bp_bykey;
         foreach ($allBPs as $bp) {
             if ($bptitle == $bp->sourceinfo) {
                 $bpid = $bp->id;
+                break;
             }
         }
         $data['bpid'] = $bpid;
@@ -4103,9 +4112,9 @@ function block_exastud_fill_reportsettingstable($id = 0) {
         if (array_key_exists('hidden', $template) && $template['hidden']) {
             $data['hidden'] = 1;
         }
-        $data['relevant_subjects'] = 0;
-        if (array_key_exists('relevant_subjects', $template) && $template['relevant_subjects']) {
-            $data['relevant_subjects'] = 1;
+        $data['rs_hs'] = '';
+        if (array_key_exists('rs_hs', $template) && $template['rs_hs']) {
+            $data['rs_hs'] = $template['rs_hs'];
         }
         $checkboxes = array('year', 'report_date', 'report_date', 'student_name',
                 'date_of_birth', 'place_of_birth', 'learning_group'/*, 'class', 'focus'*/);

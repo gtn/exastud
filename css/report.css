@@ -33,9 +33,19 @@ h3.detailed-for-student {
 	margin: 0px 0px 7px;
 }
 
-#report .exa_table .no-border td,
-#report .exa_table .no-border th {
+#report .exa_table .exastud-report-list td,
+#report .exa_table .exastud-report-list th,
+#report .exa_table .exastud-report-list tr:nth-child(2n+2) {
 	border: none;
+}
+
+#report .exa_table .exastud-report-list.left-list th {
+	padding-top: 0px;
+	padding-bottom: 0px;
+}
+
+#report .exa_table .exastud-report-list.right-list th {
+	padding-bottom: 1.25em;
 }
 
 #report .exastud-report-list label {

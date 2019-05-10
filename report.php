@@ -338,23 +338,58 @@ if ($classid) {
     $firstCell->attributes['width'] = '30%';
     $firstCell->attributes['valign'] = 'top';
     $firstCell->style .= 'vertical-align:top;';
-    $firstCell->text .= html_writer::tag('h3', block_exastud_trans('de:Obersichten'));
+    $firstCell->text .= html_writer::tag('h3', block_exastud_trans('de:Übersichten'));
     $secondCell = new html_table_cell();
     $secondCell->attributes['valign'] = 'top';
     $secondCell->style .= 'vertical-align:top;';
     $secondCell->text .= html_writer::tag('h3', block_exastud_trans('de:Zeugnisse und Anlagen'));
     $previewTemplates = array('grades_report', 'html_report');
     $addAnlage = false; // add only if at least one student graded in exacomp
+
+    // first list table configuration
     $firstList = new html_table();
-    //$firstList->attributes['class'] .= 'generaltable no-border exastud-report-list';
-    $firstList->head[] = '';
-    $files = html_writer::checkbox('select_all1', '1', false, '', ['class' => 'exastud-selectall-checkbox', 'id' => 'select_all1', 'data-reportgroup' => 1]);
-    $files .= html_writer::tag('label', '&nbsp;'.block_exastud_trans('de:Datei'), ['for' => 'select_all1']);
-    $firstList->head[] = $files;
+    $headerRow1 = new html_table_row();
+    $emptycell = new html_table_cell();
+    $emptycell->header = true;
+    $emptycell->colspan = 1;
+    $emptycell->rowspan = 3;
+    $allselect = new html_table_cell();
+    $allselect->header = true;
+    $allselect->text = block_exastud_get_string('report_select_all');
+    $allselect->colspan = 2;
+    $headerRow1->cells = array(
+            $emptycell,
+            $allselect
+    );
+    $headerRow2 = new html_table_row();
+    $headercell_1 = new html_table_cell();
+    $headercell_1->header = true;
+    $headercell_1->text = html_writer::checkbox('select_all1', '1', false, '', ['class' => 'exastud-selectall-checkbox', 'id' => 'select_all1', 'data-reportgroup' => 1]);
+    $headercell_2 = new html_table_cell();
+    $headercell_2->header = true;
     $previews = html_writer::checkbox('select_all2', '1', false, '', ['class' => 'exastud-selectall-checkbox', 'id' => 'select_all2', 'data-reportgroup' => 2]);
     $previews .= html_writer::empty_tag('input', array('type'=>'hidden', 'name'=>'preview', 'value'=>0, 'id' => 'preview_selector'));
-    $previews .= html_writer::tag('label', '&nbsp;'.block_exastud_trans('de:Bildschirm'), ['for' => 'select_all2']);
-    $firstList->head[] = $previews;
+    $headercell_2->text = $previews;
+    $headerRow2->cells = array(
+            $headercell_1,
+            $headercell_2,
+    );
+    $headerRow3 = new html_table_row();
+    $headercell_1 = new html_table_cell();
+    $headercell_1->header = true;
+    $headercell_1->text = html_writer::tag('label', block_exastud_trans('de:Datei'), ['for' => 'select_all1']);
+    $headercell_2 = new html_table_cell();
+    $headercell_2->header = true;
+    $headercell_2->text = html_writer::tag('label', block_exastud_trans('de:Bildschirm'), ['for' => 'select_all2']);
+    $headerRow3->cells = array(
+            $headercell_1,
+            $headercell_2,
+    );
+    $firstList->data[] = $headerRow1;
+    $firstList->data[] = $headerRow2;
+    $firstList->data[] = $headerRow3;
+
+    // second list table configuration
     $secondList = new html_table();
     //$secondList->attributes['class'] .= 'generaltable no-border exastud-report-list';
     $secondList->head[] = html_writer::checkbox('select_all3', '1', false, '', ['class' => 'exastud-selectall-checkbox', 'id' => 'select_all3', 'data-reportgroup' => 3]);
@@ -436,8 +471,8 @@ if ($classid) {
         }
     }
 
-    $firstCell->text .= $output->table($firstList, 'no-border exastud-report-list');
-    $secondCell->text .= $output->table($secondList, 'no-border exastud-report-list');
+    $firstCell->text .= $output->table($firstList, 'exastud-report-list left-list');
+    $secondCell->text .= $output->table($secondList, 'exastud-report-list right-list');
 
     $templateRow->cells[] = $firstCell;
     $templateRow->cells[] = $secondCell;

@@ -1058,6 +1058,25 @@ function xmldb_block_exastud_upgrade($oldversion = 0) {
         upgrade_block_savepoint(true, 2019050901, 'exastud');
     }
 
+    if ($oldversion < 2019051000) {
+        $table = new xmldb_table('block_exastudreportsettings');
+        $field = new xmldb_field('relevant_subjects');
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->drop_field($table, $field);
+        }
+        $field = new xmldb_field('rs_hs', XMLDB_TYPE_CHAR, '5', null, null, null, '');
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        $table = new xmldb_table('block_exastudsubjects');
+        $field = new xmldb_field('not_relevant_rs', XMLDB_TYPE_INTEGER, 1, null, null, null, '0');
+        if (!$dbman->field_exists($table, $field) && !$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+        upgrade_block_savepoint(true, 2019051000, 'exastud');
+    }
+
     block_exastud_insert_default_entries();
 	block_exastud_check_profile_fields();
 

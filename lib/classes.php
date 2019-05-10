@@ -66,6 +66,10 @@ class print_templates {
         }
 	}
 
+    static function get_template_rs_hs_category($templateid) {
+        return static::get_template_config($templateid)['rs_hs'];
+    }
+
 	static function get_template_grades($templateid) {
 		return static::get_template_config($templateid)['grades'];
 	}
@@ -86,6 +90,7 @@ class print_templates {
                     //'grades' => ['1'=>'1'], // for testing
                     //'grades' => block_exastud_get_evaluation_options(true),
                     'grades' => $grades,
+                    'rs_hs' => $tmpl->rs_hs,
                     'inputs' => self::get_inputs_for_template($tmpl->id, $type)
             );
         }
@@ -933,8 +938,8 @@ class print_template {
 	    }*/
 	}
 
-	function is_relevant() {
-        return $this->relevant_subjects;
+	function get_rs_hs_category() {
+        return print_templates::get_template_rs_hs_category($this->templateid);
     }
 
 

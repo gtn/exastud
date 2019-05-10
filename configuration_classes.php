@@ -32,6 +32,7 @@ $actPeriod = block_exastud_get_active_or_next_period();
 $lastPeriod = block_exastud_get_last_period();
 $periods = block_exastud_get_last_periods($startPeriod, $countOfShownPeriods);
 $count_periods = count(block_exastud_get_last_periods(0, 0));
+
 //$classes = block_exastud_get_head_teacher_classes_owner($actPeriod->id);
 $lastPeriodClasses = $lastPeriod ? block_exastud_get_head_teacher_classes_owner($lastPeriod->id) : [];
 $shownClasses = array(); // Which classes already shown on the page
@@ -138,7 +139,7 @@ if (($startPeriod + $countOfShownPeriods) < $count_periods) {
     $link = \html_writer::link($CFG->wwwroot.'/blocks/exastud/configuration_classes.php?startPeriod='.($startPeriod + $countOfShownPeriods), ' >> ');
     $tablePeriods->head[] = $link;
 }
-echo $output->table($tablePeriods);
+echo $output->table($tablePeriods, 'widthauto maxcellwidth600');
 
 if (!block_exastud_is_siteadmin()) { // not for siteadmins
     echo $output->link_button($CFG->wwwroot.'/blocks/exastud/configuration_class_info.php?courseid='.$courseid.'&action=add',

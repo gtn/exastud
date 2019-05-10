@@ -105,6 +105,7 @@
         <FIELD NAME="always_print" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
         <FIELD NAME="sourceinfo" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
         <FIELD NAME="not_relevant" TYPE="int" LENGTH="1" NOTNULL="false" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="not_relevant_rs" TYPE="int" LENGTH="1" NOTNULL="false" DEFAULT="0" SEQUENCE="false"/>
         <FIELD NAME="no_niveau" TYPE="int" LENGTH="1" NOTNULL="false" DEFAULT="0" SEQUENCE="false"/>
       </FIELDS>
       <KEYS>
@@ -213,7 +214,7 @@
         <FIELD NAME="additional_params" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
         <FIELD NAME="grades" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
         <FIELD NAME="hidden" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
-        <FIELD NAME="relevant_subjects" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="rs_hs" TYPE="char" LENGTH="5" NOTNULL="false" DEFAULT="" SEQUENCE="false"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="primary key of the table"/>

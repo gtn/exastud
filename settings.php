@@ -21,6 +21,25 @@ defined('MOODLE_INTERNAL') || die;
 
 require_once __DIR__.'/inc.php';
 
+if (!class_exists('block_exastud_admin_setting_bwactivecheckbox')) {
+    class block_exastud_admin_setting_bwactivecheckbox extends admin_setting_configcheckbox {
+
+        public function write_setting($data) {
+            global $DB;
+            // if this param does NOT exist - it is first installation
+            //$existing = get_config('exastud', 'bw_active');
+            // use SQL-request instead moodle api function! (possible cache, history....)
+            $existing = $DB->record_exists_sql('SELECT * FROM {config_plugins} WHERE plugin = \'exastud\' AND name=\'bw_active\'');
+            parent::write_setting($data);
+            if ($existing === false) {
+                block_exastud_insert_default_entries();
+                block_exastud_fill_reportsettingstable();
+            }
+            return '';
+        }
+    }
+}
+
 if (!class_exists('block_exastud_settings_extraconfigstoredfile')) {
     class block_exastud_settings_extraconfigstoredfile extends admin_setting_configstoredfile {
 
@@ -202,7 +221,8 @@ if ($ADMIN->fulltree) {
 	$settings->add(new admin_setting_configtext('exastud/school_location', block_exastud_get_string('settings_city'), '', '', PARAM_TEXT));
 	$settings->add(new admin_setting_configtext('exastud/bildungsstandards', block_exastud_get_string('settings_edustandarts'),
 		block_exastud_get_string('settings_edustandarts_description'), '5,6,7,8,9,10', PARAM_TEXT));
-	$settings->add(new admin_setting_configcheckbox('exastud/bw_active', block_exastud_get_string('settings_bw_reports'), '', 0));
+	//$settings->add(new admin_setting_configcheckbox('exastud/bw_active', block_exastud_get_string('settings_bw_reports'), '', 0));
+	$settings->add(new block_exastud_admin_setting_bwactivecheckbox('exastud/bw_active', block_exastud_get_string('settings_bw_reports'), '', 0));
 	$settings->add(new admin_setting_configcheckbox('exastud/use_exacomp_grade_verbose', block_exastud_get_string('settings_exacomp_verbeval'), '', 0));
 	$settings->add(new admin_setting_configcheckbox('exastud/use_exacomp_assessment_categories', block_exastud_get_string('settings_exacomp_assessment_categories'), '', 0));
     $settings->add(new admin_setting_configcheckbox('exastud/logging', block_exastud_get_string('logging'), '', 0));

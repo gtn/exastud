@@ -319,7 +319,6 @@ if ($action && ($settingsid > 0 && ($action == 'edit' || $action == 'new'))) {
         $table->head = array(
                 '',
                 '',
-                block_exastud_get_string('report_settings_setting_relevant_subjects'),
                 block_exastud_get_string('report_settings_setting_title'),
                 block_exastud_get_string('report_settings_setting_bp'),
                 block_exastud_get_string('report_settings_setting_category'),
@@ -402,13 +401,13 @@ if ($action && ($settingsid > 0 && ($action == 'edit' || $action == 'new'))) {
                         html_writer::tag("img", '', array('src' => 'pix/hide.png')), array('title' => ' hide report '));
             }
             // is relevant subjects report?
-            if ($report->relevant_subjects) {
+            /*if ($report->relevant_subjects) {
                 $relevantSubject = new html_table_cell();
                 $relevantSubject->attributes['align'] = 'center';
                 $relevantSubject->text = html_writer::tag("img", '', array('src' => 'pix/valid.png'));
             } else {
                 $relevantSubject = '&nbsp;';
-            }
+            }*/
             // function for call settings_marker only by name
             $call_setting_marker = function($name) use ($setting_marker, $report){
                 return $setting_marker($name, $report->{$name});
@@ -420,7 +419,7 @@ if ($action && ($settingsid > 0 && ($action == 'edit' || $action == 'new'))) {
             $row = array(
                     $editLink. ' :'.$report->id,
                     $hideLink,
-                    $relevantSubject,
+                    //$relevantSubject,
                     '<strong>'.$report->title.'</strong>',
                     $bpData ? $bpData->title : '',
                     $report->category,
