@@ -351,6 +351,10 @@ $string['attention_send_message_to_classteacher'] = 'Do not forget to <a id="exa
 $string['attention_admin_cannot_be_classteacher'] = 'Classes can only be defined in a class teacher role. Please log in as a class teacher to define a class.';
 $string['subject_category'] = 'Category';
 $string['subject_category_m'] = 'relevant Subject';
+//'subject_category_m_rs' => [
+//    'maßgebliches Fach',
+//    'relevant Subject'
+//],
 $string['subject_category_b'] = 'best grade';
 $string['filter_fieldset'] = 'Filter';
 $string['filter_search'] = 'Title search';

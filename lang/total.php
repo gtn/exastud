@@ -1322,6 +1322,10 @@ return [
         'maßgebliches Fach',
         'relevant Subject'
     ],
+    //'subject_category_m_rs' => [
+    //    'maßgebliches Fach',
+    //    'relevant Subject'
+    //],
     'subject_category_b' => [
         'beste Note of "Fächer"',
         'best grade'

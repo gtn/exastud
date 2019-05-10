@@ -37,8 +37,12 @@
 	margin-left: 10px;
 }
 #exa-list input[name=relevant] {
+	margin-right: 0px;
+	margin-left: 20px;
+}
+#exa-list input[name=relevant_rs] {
 	margin-right: 40px;
-	margin-left: 10px;
+	margin-left: 20px;
 }
 
 #exa-list li.ui-state-disabled, #exa-list li.ui-state-disabled input:not(button) {
@@ -80,6 +84,12 @@
 }
 #exa-list div.header [for-field=relevant] {
 	margin-left: 0px;
+}
+#exa-list div.header [for-field=HS] {
+	margin-left: 0px;
+}
+#exa-list div.header [for-field=RS] {
+	margin-left: 10px;
 }
 #exa-list div.header [for-field=always_print]{
 }

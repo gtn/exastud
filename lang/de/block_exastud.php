@@ -350,6 +350,10 @@ $string['attention_send_message_to_classteacher'] = 'Bitte <a id="exastud_link_t
 $string['attention_admin_cannot_be_classteacher'] = 'Klassen können nur als Klassenlehrkraft erstellt werden. Bitte loggen Sie sich als Klassenlehrkraft ein, um eine Klasse zu erstellen.';
 $string['subject_category'] = 'Kategorie';
 $string['subject_category_m'] = 'maßgebliches Fach';
+//'subject_category_m_rs' => [
+//    'maßgebliches Fach',
+//    'relevant Subject'
+//],
 $string['subject_category_b'] = 'beste Note of "Fächer"';
 $string['filter_fieldset'] = 'Filter';
 $string['filter_search'] = 'Title search';

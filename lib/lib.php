@@ -1632,7 +1632,6 @@ function block_exastud_str_to_csv($string, $delimiter, $has_header) {
 
 	if ($has_header) {
 		$header = array_shift($csv);
-
 		foreach ($csv as &$item) {
 			$newItem = [];
 			foreach ($item as $i => $part) {
@@ -4312,7 +4311,7 @@ function block_exastud_get_grade_average_value($subjects = array(), $verbal = fa
         $subject = $DB->get_record('block_exastudsubjects', ['id' => $sId]);
         if ($subject) {
             $gradeForCalc = (float) block_exastud_get_grade_index_by_value($grade);
-            if ($subject->not_relevant == 1) {
+            if ($subject->not_relevant == 1 || $subject->not_relevant_rs == 1) {
                 if ($gradeForCalc < $min) {
                     $min = $gradeForCalc;
                 }

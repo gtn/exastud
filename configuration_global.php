@@ -128,6 +128,7 @@ if ($action == 'save-subjects') {
 			'title' => PARAM_TEXT,
 			'shorttitle' => PARAM_TEXT,
 			'relevant' => PARAM_TEXT,
+			'relevant_rs' => PARAM_TEXT,
 			// 'always_print' => PARAM_BOOL,
 		))
 	);
@@ -140,6 +141,7 @@ if ($action == 'save-subjects') {
 		$sorting++;
 		$item->sorting = $sorting;
         $item->not_relevant = ($item->relevant ? 0 : 1); // inverse from form to field (relevant -> not_relevant)
+        $item->not_relevant_rs = ($item->relevant_rs ? 0 : 1);
 		if (isset($availablesubjects[$item->id])) {
 			// update
 			$DB->update_record('block_exastudsubjects', $item);
@@ -312,6 +314,7 @@ if ($action == 'subjects') {
 
     foreach ($availablesubjects as $subject) {
         $subject->relevant = ($subject->not_relevant ? 0 : 1); // inverse, because field is 'not_relevant', in the form - 'relevant' value
+        $subject->relevant_rs = ($subject->not_relevant_rs ? 0 : 1);
 	    if (!$canEdit) {
 			$subject->disabled = true;
 		}
@@ -328,7 +331,10 @@ if ($action == 'subjects') {
 		<div class="header">
 			<div for-field="title"><?php echo block_exastud_trans(['de:Bezeichnung', 'en:Name']); ?></div>
 			<div for-field="shorttitle"><?php echo block_exastud_trans(['de:Kurzbezeichnung', 'en:Shortname']); ?></div>
-			<div for-field="relevant"><?php echo block_exastud_get_string('subject_category_m'); ?></div>
+			<div for-field="relevant"><?php echo block_exastud_get_string('subject_category_m'); ?><br>
+                <span for-field="HS">(HS)</span><span for-field="RS">(RS)</span>
+            </div>
+<!--			<div for-field="relevant_rs">--><?php //echo block_exastud_get_string('subject_category_m_rs'); ?><!--</div>-->
 			<!-- div for-field="always_print"><?php echo block_exastud_trans(['de:Immer im LEB drucken', 'en:Always print']); ?></div -->
 		</div>
 		<ul exa="items">
@@ -336,6 +342,7 @@ if ($action == 'subjects') {
 				<input type="text" name="title"/>
 				<input type="text" name="shorttitle"/>
 				<input type="checkbox" name="relevant" value="1" />
+				<input type="checkbox" name="relevant_rs" value="1" />
 				<!-- input type="checkbox" name="always_print" value="1"/ -->
 				<button exa="delete-button" class="btn btn-default"><?php echo block_exastud_get_string('delete'); ?></button>
 			</li>
@@ -345,6 +352,7 @@ if ($action == 'subjects') {
 			<input type="text" name="title"/>
 			<input type="text" name="shorttitle"/>
             <input type="checkbox" name="relevant" value="1" />
+            <input type="checkbox" name="relevant_rs" value="1" />
 			<!-- input type="checkbox" name="always_print" value="1"/ -->
 			<input type="button" exa="new-button" class="btn btn-default" value="<?php echo block_exastud_get_string('add'); ?>">
 		</div>
