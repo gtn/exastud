@@ -345,7 +345,7 @@ $string['textarea_max'] = 'Max.';
 $string['textarea_rows'] = 'Zeilen';
 $string['textarea_chars'] = 'Zeichen';
 $string['textarea_charsleft'] = 'Zeichen verfügbar';
-$string['textarea_maxchars'] = 'all chharacters';
+$string['textarea_maxchars'] = 'all characters';
 $string['attention_send_message_to_classteacher'] = 'Bitte <a id="exastud_link_to_class_teacher" href="{$a->messagehref}" target="_blank">benachrichtigen</a> Sie die neue Klassenlehrkraft über die Neuzuteilung.';
 $string['attention_admin_cannot_be_classteacher'] = 'Klassen können nur als Klassenlehrkraft erstellt werden. Bitte loggen Sie sich als Klassenlehrkraft ein, um eine Klasse zu erstellen.';
 $string['subject_category'] = 'Kategorie';

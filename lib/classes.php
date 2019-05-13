@@ -186,7 +186,6 @@ class print_templates {
                 $fields = array();
                 break;
         }
-
         $inputs = array();
         foreach ($fields as $field) {
             if (is_array($field)) {
@@ -230,9 +229,10 @@ class print_templates {
         $defaulttemplatesettings = block_exastud_get_default_templates($templateid);
         if (is_array($defaulttemplatesettings) && array_key_exists('inputs_order', $defaulttemplatesettings)) {
             $inputsorting = $defaulttemplatesettings['inputs_order'];
-            $inputs = array_merge(array_flip($inputsorting), $inputs);
+            $inputsSorted = array_merge(array_flip($inputsorting), $inputs);
+            $inputsSorted = array_intersect_key($inputsSorted, $inputs);
+            $inputs = $inputsSorted;
         }
-
         if (count($inputs) > 0) {
             return $inputs;
         } else {

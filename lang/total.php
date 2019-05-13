@@ -1303,8 +1303,8 @@ return [
             'characters left',
     ],
     'textarea_maxchars' => [
-            'all chharacters',
-            'all chharacters',
+            'all characters',
+            'all characters',
     ],
     'attention_send_message_to_classteacher' => [
         'Bitte <a id="exastud_link_to_class_teacher" href="{$a->messagehref}" target="_blank">benachrichtigen</a> Sie die neue Klassenlehrkraft über die Neuzuteilung.',

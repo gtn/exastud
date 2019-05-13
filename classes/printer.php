@@ -154,6 +154,7 @@ class printer {
                 'schule' => get_config('exastud', 'school_name'),
                 'ort' => get_config('exastud', 'school_location'),
                 'name' => $student->firstname.' '.$student->lastname,
+                'student_name' => $student->firstname.' '.$student->lastname,
                 'first_name' => $student->firstname,
                 'last_name' => $student->lastname,
                 'geburtsdatum' => block_exastud_get_date_of_birth($student->id),
@@ -305,6 +306,7 @@ class printer {
                     BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_HALBJAHR_LERNENTWICKLUNGSBERICHT,
                     BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_JAHRESZEUGNIS_LERNENTWICKLUNGSBERICHT,
                 ])) {
+		    $cleanAllComments = false; // clean all comments if at least one subject has Z niveau
 			$bpsubjects = block_exastud_get_bildungsplan_subjects($class->bpid);
             //$class_subjects = block_exastud_get_class_subjects($class);
             //$lern_soz = block_exastud_get_class_student_data($class->id, $student->id, BLOCK_EXASTUD_DATA_ID_LERN_UND_SOZIALVERHALTEN);
@@ -426,9 +428,14 @@ class printer {
 					   $niveau = 'Niveau '.static::spacerIfEmpty($niveau);
 				    }
 				}
+
 				$filters[$contentId.'_niveau'] = function($content) use ($contentId, $niveau) {
 					return preg_replace('!({'.$contentId.'}.*>)Bitte die Niveaustufe auswählen(<)!U', '${1}'.$niveau.'${2}', $content);
 				};
+
+                if (!empty($subjectData->niveau) && ($subjectData->niveau == 'Z' || $subjectData->niveau == 'zieldifferenter Unterricht')) {
+                    $cleanAllComments = true;
+                }
 
 				$grade = (@$studentdata->print_grades ? 'Note '.static::spacerIfEmpty(@$subjectData->grade) : '');
 				$filters[$contentId.'_grade'] = function($content) use ($contentId, $grade) {
@@ -485,15 +492,49 @@ class printer {
                     //$data['comments'] = '';
                 }
             }
+            // clean comments block if at least one subject has Z niveau
+            if ($cleanAllComments
+                && in_array($templateid, [
+                    BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_HALBJAHR_LERNENTWICKLUNGSBERICHT,
+                    BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_JAHRESZEUGNIS_LERNENTWICKLUNGSBERICHT
+            ])) {
+                $dataTextReplacer['Wählen Sie ein Element aus.'] = '';
+                $dataTextReplacer['Beiblatt'] = '';
+                $studentdata->focus = '/--empty--/';
+                $data['focus'] = '/--empty--/';
+                $dataTextReplacer['${lessons_target}'] = '';
+                $data['lessons_target'] = '/--set-empty--/';
+                $studentdata->lessons_target = '';
+                $data['student_name'] = '';
+                $data['comments'] = '';
+            }
+
+            // clean bottom notification about grading
+            $data_dropdowns = array_merge($data_dropdowns, array('bottom_note_title_general', 'bottom_note_title', 'bottom_note1', 'bottom_note2'));
+            if (@$studentdata->print_grades
+                    && in_array($templateid, [
+                        BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_HALBJAHR_LERNENTWICKLUNGSBERICHT,
+                        BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_JAHRESZEUGNIS_LERNENTWICKLUNGSBERICHT
+            ])) {
+                $data['bottom_note_title_general'] = 'Notenstufen:';
+                $data['bottom_note_title'] = 'Leistungen in den einzelnen Fächern:';
+                $data['bottom_note1'] = 'sehr gut (1) = sgt, gut (2) = gut, befriedigend (3) = bfr,';
+                $data['bottom_note2'] = 'ausreichend (4) = ausr, mangelhaft (5) = mgh, ungenügend (6) = ung';
+            } else {
+                $data['bottom_note_title_general'] = '/--empty--/';
+                $data['bottom_note_title'] = '/--empty--/';
+                $data['bottom_note1'] = '/--empty--/';
+                $data['bottom_note2'] = '/--empty--/';
+            }
 
 		} elseif (in_array($templateid, [
                 BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_HALBJAHR_ZEUGNIS_RS,
                 BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_ABSCHLUSSZEUGNIS_RS,
-                BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_HALBJAHR_ZEUGNIS_E_NIVEAU,
-                BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_JAHRESZEUGNIS_E_NIVEAU,
-                BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_HALBJAHR_ZEUGNIS_HS,
+                BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_HALBJAHR_ZEUGNIS_KL10_E_NIVEAU,
+                BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_JAHRESZEUGNIS_KL10_E_NIVEAU,
+                BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_HALBJAHR_ZEUGNIS_KL9_10_HSA,
                 BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_ABSCHLUSSZEUGNIS_HS,
-                BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_ABGANGSZEUGNIS_GMS,
+                BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_ABGANGSZEUGNIS_SCHULPFLICHT,
                 BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_ABGANGSZEUGNIS_HS_9_10,
                 BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_16_ZERTIFIKAT_FUER_PROFILFACH,
                 BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_BEIBLATT_PROJEKTPRUEFUNG_HSA,
@@ -501,7 +542,7 @@ class printer {
                 BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_HALBJAHR_ZEUGNIS_FOE,
                 BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_HALBJAHRESINFORMATION_KL11,
                 BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_HALBJAHRESINFORMATION_KL11,
-                BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_ABSCHLUSSZEUGNIS_HSA_RSA,
+                BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GLEICHWERTIGER_BILDUNGSABSCHLUSS_HSA_RSA,
                 BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_ABGANGSZEUGNIS_GMS,
                 BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_ABGANGSZEUGNIS_HS_9_10,
                 BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_ABSCHLUSSZEUGNIS_FOE,
@@ -614,11 +655,11 @@ class printer {
 					if ($subject->shorttitle != 'eth' &&
                         in_array($templateid, [
                             BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_HALBJAHR_ZEUGNIS_RS,
-                            BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_HALBJAHR_ZEUGNIS_E_NIVEAU,
+                            BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_HALBJAHR_ZEUGNIS_KL10_E_NIVEAU,
                             BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_HALBJAHR_ZEUGNIS_FOE,
                             //BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_ABSCHLUSSZEUGNIS_HS,
-                            BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_JAHRESZEUGNIS_E_NIVEAU,
-                            BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_HALBJAHR_ZEUGNIS_HS,
+                            BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_JAHRESZEUGNIS_KL10_E_NIVEAU,
+                            BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_HALBJAHR_ZEUGNIS_KL9_10_HSA,
                             BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_JAHRESZEUGNIS_LERNENTWICKLUNGSBERICHT,
                             //BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_HALBJAHRESINFORMATION_KL11, // here are two selectboxes
                             BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_HALBJAHRESINFORMATION_KL11, // here are two selectboxes
@@ -843,7 +884,7 @@ class printer {
             }
 
 			if (in_array($templateid, [
-                    BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_ABGANGSZEUGNIS_GMS,
+                    BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_ABGANGSZEUGNIS_SCHULPFLICHT,
                     BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_ABGANGSZEUGNIS_GMS
                     ])
             ) {
@@ -885,7 +926,7 @@ class printer {
 					return $ret;
 				});
 			} elseif (in_array($templateid, array(
-			        BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_JAHRESZEUGNIS_E_NIVEAU,
+			        BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_JAHRESZEUGNIS_KL10_E_NIVEAU,
                     BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_JAHRESZEUGNIS_E_NIVEAU,
                     BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_JAHRESZEUGNIS_E_NIVEAU_KL11))
             ) {
@@ -951,7 +992,7 @@ class printer {
             $tempProfilfach = $profilfach;
             if ($profilfach == self::spacerIfEmpty('')
                     && !in_array($templateid, [
-                            BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_HALBJAHR_ZEUGNIS_E_NIVEAU,
+                            BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_HALBJAHR_ZEUGNIS_KL10_E_NIVEAU,
                             BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_HALBJAHR_ZEUGNIS_E_NIVEAU]
             )) {
                 $tempProfilfach = '';
@@ -1379,11 +1420,15 @@ class printer {
         // leiter (director) and Vorsitzende (chair)
         // almost all templates have this selectbox
         // TODO: may be get this data not for every student, but from some central settings?
-        $data_dropdowns = array_merge($data_dropdowns, array('leiter', 'chair'));
+        $data_dropdowns = array_merge($data_dropdowns, array('leiter', 'chair', 'gruppen_leiter'));
         $data['leiter'] = ' ';
+        $data['leiter_name'] = ' ';
         $data['chair'] = ' ';
-        $data['leiter'] = trim(static::spacerIfEmpty(@$studentdata->leiter));
-        $data['chair'] = trim(static::spacerIfEmpty(@$studentdata->chair));
+        $data['chair_name'] = ' ';
+        $data['gruppen_leiter'] = ' ';
+        $data['gruppen_leiter_name'] = ' ';
+        //$data['leiter'] = trim(static::spacerIfEmpty(@$studentdata->leiter));
+        //$data['chair'] = trim(static::spacerIfEmpty(@$studentdata->chair));
 
         // some templates has selectbox/niveau for languages. Make it works:
         // only lang subjects
@@ -1498,7 +1543,7 @@ class printer {
 
         // some reports has '*' or words in the dropdownlists. We need to find all of them
         switch ($templateid) {
-            case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_JAHRESZEUGNIS_E_NIVEAU:
+            case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_JAHRESZEUGNIS_KL10_E_NIVEAU:
             case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_ABSCHLUSSZEUGNIS_HS:
             case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_ABSCHLUSSZEUGNIS_RS:
                 if (mb_stripos($data['wahlfach_titel'], 'französisch') !== false) {
