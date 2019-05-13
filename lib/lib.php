@@ -82,18 +82,18 @@ const BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_HALBJAHRESINFORMATION_KL11  =
 const BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_HALBJAHRESINFORMATION_KL11  = 22;
 const BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_ANLAGE_ZUM_LERNENTWICKLUNGSBERICHT_SIMPLE = 23;
 const BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GLEICHWERTIGER_BILDUNGSABSCHLUSS_HSA_RSA = 24;
-const BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_ABGANGSZEUGNIS_GMS  = 25;
-const BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_ABGANGSZEUGNIS_HS_9_10 = 26;
+const BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_ABGANGSZEUGNIS_SCHULPFLICHT  = 25;
+const BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_ABGANGSZEUGNIS_NICHT_BEST_HSA = 26;
 const BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_ABSCHLUSSZEUGNIS_FOE = 27;
 const BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_BEIBLATT_PROJEKTARBEIT_HSA = 28;
 const BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_JAHRESZEUGNIS_E_NIVEAU = 29;
-const BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_ABSCHLUSSZEUGNIS_HSA_RSA = 30;
-const BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_ABSCHLUSSZEUGNIS_HS = 31;
+const BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_GLEICHWERTIGER_BILDUNGSABSCHLUSS_HSA_RSA = 30;
+const BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_ABSCHLUSSZEUGNIS_KL8_10_HSA = 31;
 const BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_HALBJAHR_ZEUGNIS_E_NIVEAU = 32;
 const BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_HALBJAHR_ZEUGNIS_HS = 33;
 const BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_HALBJAHR_ZEUGNIS_FOE = 34;
 const BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_HALBJAHR_ZEUGNIS_RS = 35;
-const BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_ABSCHLUSSZEUGNIS_RS = 36;
+const BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_ABSCHLUSSZEUGNIS_KL10_RSA = 36;
 const BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_ZERTIFIKAT_FUER_PROJEKTARBEIT = 37;
 const BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_JAHRESZEUGNIS_E_NIVEAU_KL11 = 38;
 const BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_16_TESTAT_BILINGUALES_PROFIL_KL_8 = 39;
@@ -3302,9 +3302,9 @@ function block_exastud_get_default_templates($templateid = null) {
                     'inputs_order' => ['cert_level', 'class_level', 'education_standard', 'ags', 'comments_short'], // special ordering of inputs (makes similar to docx template)
             ],
             'BP 2016/GMS Abgangszeugnis' => [
-                    'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_ABGANGSZEUGNIS_GMS,
+                    'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_ABGANGSZEUGNIS_SCHULPFLICHT,
                     'name' => 'BP 2016 GMS Abgangszeugnis',
-                    'file' => 'BP 2016/BP2016_GMS_Abgangszeugnis_GMS',
+                    'file' => 'BP 2016/BP2016_GMS_Abgangszeugnis_Schulpflicht',
                     'year' => '1',
                     'report_date' => '1',
                     'student_name' => '1',
@@ -3314,7 +3314,7 @@ function block_exastud_get_default_templates($templateid = null) {
                     'grades' => block_exastud_get_grades_set('lang'),
                     'inputs' => [
                             'wann_verlassen' => [
-                                    'title' => 'verlässt ...',
+                                    'title' => 'verlässt nach ...',
                                     'type' => 'select',
                                     'values' => [
                                             'heute8' => 'heute die Klasse 8 der Schule.',
@@ -3330,33 +3330,35 @@ function block_exastud_get_default_templates($templateid = null) {
                             'ags' => [
                                     'title' => 'Teilnahme an Arbeitsgemeinschaften',
                                     'type' => 'textarea',
-                                    'lines' => 2,
-                                    'cols' => 80,
+                                    'lines' => 3,
+                                    'cols' => 74,
+                                    'maxchars' => 500,
                             ],
                             'comments_short' => [
                                     'title' => 'Bemerkungen',
                                     'type' => 'textarea',
-                                    'lines' => 2,
+                                    'lines' => 6,
                                     'cols' => 80,
+                                    'maxchars' => 1000,
                             ],
                             'abgangszeugnis_niveau' => [
                                     'title' => 'Die Leistung wurde in allen Fächern auf dem folgenden Niveau beurteilt',
                                     'type' => 'select',
                                     'values' => ['G' => 'G', 'M' => 'M', 'E' => 'E'],
-                            ],
+                            ],/*
                             'subject_profile' => [
                                     'title' => 'Profil-fach',
                                     'type' => 'textarea',
-                            ],
+                            ],*/
                     ],
                     'inputs_header' => ['wann_verlassen'],
                     'inputs_footer' => ['ags', 'comments_short', 'abgangszeugnis_niveau'], // inputs in the footer of template
                     'inputs_order' => ['wann_verlassen', 'ags', 'comments_short', 'abgangszeugnis_niveau'], // special ordering of inputs (makes similar to docx template)
             ],
             'BP 2016/GMS Abgangszeugnis HSA Kl.9 und 10' => [
-                    'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_ABGANGSZEUGNIS_HS_9_10,
+                    'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_ABGANGSZEUGNIS_NICHT_BEST_HSA,
                     'name' => 'BP 2016 GMS Abgangszeugnis HSA Kl.9 und 10',
-                    'file' => 'BP 2016/BP2016_GMS_Abgangszeugnis_HS_9_10',
+                    'file' => 'BP 2016/BP2016_GMS_Abgangszeugnis_nicht_best_HSA',
                     'year' => '1',
                     'report_date' => '1',
                     'student_name' => '1',
@@ -3366,7 +3368,7 @@ function block_exastud_get_default_templates($templateid = null) {
                     'grades' => block_exastud_get_grades_set('lang'),
                     'inputs' => [
                             'wann_verlassen' => [
-                                    'title' => 'verlässt ...',
+                                    'title' => 'verlässt nach ...',
                                     'type' => 'select',
                                     'values' => [
                                             'ende9' => 'am Ende der Klasse 9 die Schule.',
@@ -3376,39 +3378,43 @@ function block_exastud_get_default_templates($templateid = null) {
                             'projekt_thema' => [
                                     'title' => 'Thema',
                                     'type' => 'textarea',
-                                    'lines' => 2,
-                                    'cols' => 60,
+                                    'lines' => 1,
+                                    'cols' => 64,
+                                    'maxchars' => 200,
                             ],
                             'projekt_grade' => [
                                     'title' => 'Note',
                                     'type' => 'select',
-                                    'values' => ['sehr gut' => 'sehr gut',
+                                    'values' => [
+                                            'sehr gut' => 'sehr gut',
                                             'gut' => 'gut',
                                             'befriedigend' => 'befriedigend',
                                             'ausreichend' => 'ausreichend',
                                             'mangelhaft' => 'mangelhaft',
                                             'ungenügend' => 'ungenügend'],
-                            ],
+                            ],/*
                             'projekt_verbalbeurteilung' => [
                                     'title' => 'Verbalbeurteilung',
                                     'type' => 'textarea',
-                            ],
+                            ],*/
                             'ags' => [
                                     'title' => 'Teilnahme an Arbeitsgemeinschaften',
                                     'type' => 'textarea',
-                                    'lines' => 2,
-                                    'cols' => 80,
+                                    'lines' => 3,
+                                    'cols' => 74,
+                                    'maxchars' => 500,
                             ],
                             'comments_short' => [
                                     'title' => 'Bemerkungen',
                                     'type' => 'textarea',
-                                    'lines' => 2,
-                                    'cols' => 80,
-                            ],
+                                    'lines' => 3,
+                                    'cols' => 81,
+                                    'maxchars' => 500,
+                            ],/*
                             'subject_profile' => [
                                     'title' => 'Profil-fach',
                                     'type' => 'textarea',
-                            ],
+                            ],*/
                     ],
                     'inputs_header' => ['wann_verlassen'],
                     'inputs_footer' => ['ags', 'comments_short'], // inputs in the footer of template
@@ -3438,14 +3444,16 @@ function block_exastud_get_default_templates($templateid = null) {
                             'ags' => [
                                     'title' => 'Teilnahme an Arbeitsgemeinschaften',
                                     'type' => 'textarea',
-                                    'lines' => 2,
-                                    'cols' => 80,
+                                    'lines' => 3,
+                                    'cols' => 81,
+                                    'maxchars' => 500,
                             ],
                             'comments_short' => [
                                     'title' => 'Bemerkungen',
                                     'type' => 'textarea',
-                                    'lines' => 2,
-                                    'cols' => 80,
+                                    'lines' => 5,
+                                    'cols' => 81,
+                                    'maxchars' => 500,
                             ],
                         /*'projekt_thema' => [
                                 'title' => 'Thema',
@@ -3466,11 +3474,11 @@ function block_exastud_get_default_templates($templateid = null) {
                         'projekt_verbalbeurteilung' => [
                                 'title' => 'Verbalbeurteilung',
                                 'type' => 'textarea',
-                        ],*/
+                        ],*//*
                             'subject_profile' => [
                                     'title' => 'Profil-fach',
                                     'type' => 'textarea',
-                            ],
+                            ],*/
                             'class' => [
                                     'title' => 'Klasse',
                                     'type' => 'select',
@@ -3604,9 +3612,9 @@ function block_exastud_get_default_templates($templateid = null) {
                     'inputs_order' => ['verhalten', 'mitarbeit', 'ags', 'comments_short', 'student_transfered'], // special ordering of inputs (makes similar to docx template)
             ],
             'BP 2016/gleichwertiger Bildungsabschluss HSA/RSA' => [
-                    'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_ABSCHLUSSZEUGNIS_HSA_RSA,
+                    'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_GLEICHWERTIGER_BILDUNGSABSCHLUSS_HSA_RSA,
                     'name' => 'BP 2016 gleichwertiger Bildungsabschluss HSA/RSA',
-                    'file' => 'BP 2016/BP2016_GMS_Abschlusszeugnis_HSA_RSA',
+                    'file' => 'BP 2016/BP2016_GMS_gleichwertiger_Bildungsabschluss_HSA_RSA',
                     'year' => '1',
                     'report_date' => '1',
                     'student_name' => '1',
@@ -3618,20 +3626,21 @@ function block_exastud_get_default_templates($templateid = null) {
                             'ags' => [
                                     'title' => 'Teilnahme an Arbeitsgemeinschaften',
                                     'type' => 'textarea',
-                                    'lines' => 2,
+                                    'lines' => 3,
                                     'cols' => 80,
+                                    'maxchars' => 500,
                             ],
                             'comments_short' => [
                                     'title' => 'Bemerkungen',
                                     'type' => 'textarea',
-                                    'lines' => 2,
+                                    'lines' => 3,
                                     'cols' => 80,
+                                    'maxchars' => 500,
                             ],
                             'cert_level' => [
-                                    'title' => 'gleichwertigen Bildungsstand',
+                                    'title' => 'HSA/RSA',
                                     'type' => 'select',
                                     'values' => [
-                                            'HSA/RSA' => 'HSA/RSA',
                                             'Hauptschulabschluss' => 'Hauptschulabschluss',
                                             'Realschulabschluss' => 'Realschulabschluss'
                                     ],
@@ -3651,20 +3660,20 @@ function block_exastud_get_default_templates($templateid = null) {
                                             'Damit wurde ein dem Hauptschulabschluss gleichwertiger Bildungsstand erreicht.' => 'Damit wurde ein dem Hauptschulabschluss gleichwertiger Bildungsstand erreicht.',
                                             'Damit wurde ein den Realschulabschluss gleichwertiger Bildungsstand erreicht.' => 'Damit wurde ein den Realschulabschluss gleichwertiger Bildungsstand erreicht.',
                                     ],
-                            ],
+                            ],/*
                             'subject_profile' => [
                                     'title' => 'Profil-fach',
                                     'type' => 'textarea',
-                            ],
+                            ],*/
                     ],
                     'inputs_header' => ['cert_level', 'class_level', 'education_standard'],
                     'inputs_footer' => ['ags', 'comments_short'], // inputs in the footer of template
                     'inputs_order' => ['cert_level', 'class_level', 'education_standard', 'ags', 'comments_short'], // special ordering of inputs (makes similar to docx template)
             ],
             'BP 2016/GMS Hauptschulabschluss SJ' => [
-                    'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_ABSCHLUSSZEUGNIS_HS,
+                    'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_ABSCHLUSSZEUGNIS_KL8_10_HSA,
                     'name' => 'BP 2016 GMS Hauptschulabschluss SJ',
-                    'file' => 'BP 2016/BP2016_GMS_Abschlusszeugnis_HS',
+                    'file' => 'BP 2016/BP2016_GMS_Abschlusszeugnis_KL8_10_HSA',
                     'year' => '1',
                     'report_date' => '1',
                     'student_name' => '1',
@@ -3685,8 +3694,9 @@ function block_exastud_get_default_templates($templateid = null) {
                             'projekt_thema' => [
                                     'title' => 'Thema',
                                     'type' => 'textarea',
-                                    'lines' => 2,
-                                    'cols' => 60,
+                                    'lines' => 1,
+                                    'cols' => 65,
+                                    'maxchars' => 100,
                             ],
                             'projekt_grade' => [
                                     'title' => 'Note',
@@ -3697,29 +3707,61 @@ function block_exastud_get_default_templates($templateid = null) {
                                             'ausreichend' => 'ausreichend',
                                             'mangelhaft' => 'mangelhaft',
                                             'ungenügend' => 'ungenügend'],
-                            ],
+                            ],/*
                             'projekt_verbalbeurteilung' => [
                                     'title' => 'Verbalbeurteilung',
                                     'type' => 'textarea',
-                            ],
+                            ],*/
                             'ags' => [
                                     'title' => 'Teilnahme an Arbeitsgemeinschaften',
                                     'lines' => 3,
-                                    'cols' => 80,
+                                    'cols' => 85,
+                                    'maxchars' => 500,
                             ],
                             'comments_short' => [
                                     'title' => 'Bemerkungen',
                                     'type' => 'textarea',
                                     'lines' => 3,
-                                    'cols' => 90,
+                                    'cols' => 88,
+                                    'maxchars' => 500,
                             ],
+                            'eng_niveau' => [
+                                    'title' => 'Fremdsprachenniveau - Englisch',
+                                    'type' => 'select',
+                                    'values' => [
+                                            '' => '',
+                                            'G' => 'G',
+                                            'M' => 'M',
+                                            'E' => 'E',
+                                    ],
+                            ],
+                            'fra_niveau' => [
+                                    'title' => 'Fremdsprachenniveau - Französisch',
+                                    'type' => 'select',
+                                    'values' => [
+                                            '' => '',
+                                            'G' => 'G',
+                                            'M' => 'M',
+                                            'E' => 'E',
+                                    ],
+                            ],
+                            'spa_niveau' => [
+                                    'title' => 'Fremdsprachenniveau - Spanisch',
+                                    'type' => 'select',
+                                    'values' => [
+                                            '' => '',
+                                            'G' => 'G',
+                                            'M' => 'M',
+                                            'E' => 'E',
+                                    ],
+                            ],/*
                             'subject_profile' => [
                                     'title' => 'Profil-fach',
                                     'type' => 'textarea',
-                            ],
+                            ],*/
                     ],
                     'inputs_header' => ['abgelegt'],
-                    'inputs_footer' => ['ags', 'comments_short'], // inputs in the footer of template
+                    'inputs_footer' => ['ags', 'comments_short', 'eng_niveau', 'fra_niveau', 'spa_niveau'], // inputs in the footer of template
                     'inputs_order' => ['abgelegt', 'ags', 'comments_short'], // special ordering of inputs (makes similar to docx template)
             ],
             'BP 2016/GMS Klasse 10 E-Niveau 1.HJ' => [
@@ -3870,9 +3912,9 @@ function block_exastud_get_default_templates($templateid = null) {
                     'inputs_order' => ['ags', 'comments_short'], // special ordering of inputs (makes similar to docx template)
             ],
             'BP 2016/GMS Realschulabschluss SJ' => [
-                    'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_ABSCHLUSSZEUGNIS_RS,
+                    'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_ABSCHLUSSZEUGNIS_KL10_RSA,
                     'name' => 'BP 2016 GMS Realschulabschluss SJ',
-                    'file' => 'BP 2016/BP2016_GMS_Abschlusszeugnis_RS',
+                    'file' => 'BP 2016/BP2016_GMS_Abschlusszeugnis_KL10_RSA',
                     'year' => '1',
                     'report_date' => '1',
                     'student_name' => '1',
@@ -3905,21 +3947,53 @@ function block_exastud_get_default_templates($templateid = null) {
                             'ags' => [
                                     'title' => 'Teilnahme an Arbeitsgemeinschaften',
                                     'type' => 'textarea',
-                                    'lines' => 3,
-                                    'cols' => 80,
+                                    'lines' => 5,
+                                    'cols' => 86,
+                                    'maxchars' => 500,
                             ],
                             'comments_short' => [
                                     'title' => 'Bemerkungen',
                                     'type' => 'textarea',
-                                    'lines' => 3,
-                                    'cols' => 80,
+                                    'lines' => 5,
+                                    'cols' => 86,
+                                    'maxchars' => 500,
                             ],
+                            'eng_niveau' => [
+                                    'title' => 'Fremdsprachenniveau - Englisch',
+                                    'type' => 'select',
+                                    'values' => [
+                                            '' => '',
+                                            'G' => 'G',
+                                            'M' => 'M',
+                                            'E' => 'E',
+                                    ],
+                            ],
+                            'fra_niveau' => [
+                                    'title' => 'Fremdsprachenniveau - Französisch',
+                                    'type' => 'select',
+                                    'values' => [
+                                            '' => '',
+                                            'G' => 'G',
+                                            'M' => 'M',
+                                            'E' => 'E',
+                                    ],
+                            ],
+                            'spa_niveau' => [
+                                    'title' => 'Fremdsprachenniveau - Spanisch',
+                                    'type' => 'select',
+                                    'values' => [
+                                            '' => '',
+                                            'G' => 'G',
+                                            'M' => 'M',
+                                            'E' => 'E',
+                                    ],
+                            ],/*
                             'subject_profile' => [
                                     'title' => 'Profil-fach',
                                     'type' => 'textarea',
-                            ],
+                            ],*/
                     ],
-                    'inputs_footer' => ['ags', 'comments_short'], // inputs in the footer of template
+                    'inputs_footer' => ['ags', 'comments_short', 'eng_niveau', 'fra_niveau', 'spa_niveau'], // inputs in the footer of template
                     'inputs_order' => ['ags', 'comments_short'], // special ordering of inputs (makes similar to docx template)
             ],
             'BP 2016/Zertifikat zur Projektarbeit' => [
