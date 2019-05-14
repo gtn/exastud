@@ -591,7 +591,7 @@ return [
             'Hidden',
     ],
     'report_settings_setting_rs_hs' => [
-            'RS/HS category',
+            'Schnittberechnung maßgebliches Fach',
             'RS/HS category',
     ],
     'report_settings_setting_category' => [
