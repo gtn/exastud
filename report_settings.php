@@ -104,7 +104,7 @@ $filterform->set_data($filterdata);
 $reportsetting = new stdClass();
 $settingsform = new reportsettings_edit_form(null, [/*'classid' => $classid*/]);
 
-if ($action && ($settingsid > 0 && ($action == 'edit' || $action == 'new'))) {
+if ($action && (($settingsid > 0 && $action == 'edit') || $action == 'new')) {
 
     //Form processing and displaying is done here
     if ($settingsform->is_cancelled()) {
@@ -116,7 +116,38 @@ if ($action && ($settingsid > 0 && ($action == 'edit' || $action == 'new'))) {
             $DB->update_record('block_exastudreportsettings', $settingsedit);
             // TODO: log event ?
         } else if ($settingsedit->action == 'new') {
-            $newid = $DB->insert_record('block_exastudreportsettings', $settingsedit);
+            // insert new reports with id > 1000. Because standard reports can be added manually to the code with static id
+            if ($records = $DB->get_records('block_exastudreportsettings', null, 'id DESC', 'id', 0, 1)) {
+                $lastid = key($records) + 1;
+                if ($lastid < 1000) {
+                    $lastid = 1000;
+                }
+            } else {
+                $lastid = 1000;
+            }
+            //$newid = $DB->insert_record('block_exastudreportsettings', $settingsedit);
+            $tablecolumns = $DB->get_columns('block_exastudreportsettings');
+            $cleanedReport = array();
+            $settingseditArray = (array)$settingsedit;
+            foreach ($settingseditArray as $field => $value) {
+                if (!isset($tablecolumns[$field])) {
+                    continue;
+                }
+                $column = $tablecolumns[$field];
+                // normalise value for DB
+                if (is_bool($value)) {
+                    $value = (int)$value;
+                } else if ($value === '') {
+                    if ($column->meta_type == 'I' or $column->meta_type == 'F' or $column->meta_type == 'N') {
+                        $value = 0; // prevent '' problems in numeric fields
+                    }
+                } else if (is_float($value) and ($column->meta_type == 'C' or $column->meta_type == 'X')) {
+                    $value = "$value";
+                }
+                $cleanedReport[$field] = $value;
+            }
+            $cleanedReport['id'] = $lastid;
+            $newid = $DB->insert_record_raw('block_exastudreportsettings', $cleanedReport, true, false, true);
             // TODO: log event ?
         }
         redirect('report_settings.php'.($tokenparam ? '?token='.$tokenparam : ''));
