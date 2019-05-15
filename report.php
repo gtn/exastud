@@ -392,8 +392,29 @@ if ($classid) {
     // second list table configuration
     $secondList = new html_table();
     //$secondList->attributes['class'] .= 'generaltable no-border exastud-report-list';
-    $secondList->head[] = html_writer::checkbox('select_all3', '1', false, '', ['class' => 'exastud-selectall-checkbox', 'id' => 'select_all3', 'data-reportgroup' => 3]);
-    $secondList->head[] = html_writer::tag('label', block_exastud_get_string('report_select_all'), ['for' => 'select_all3']);
+    $headerRow1 = new html_table_row();
+    $headercell_1 = new html_table_cell();
+    $headercell_1->header = true;
+    $headercell_1->colspan = 2;
+    $headercell_1->text = html_writer::tag('label', block_exastud_get_string('report_select_all'), ['for' => 'select_all3']);
+    $headerRow1->cells[] = $headercell_1;
+    $headerRow2 = new html_table_row();
+    $headercell_1 = new html_table_cell();
+    $headercell_1->header = true;
+    $headercell_1->colspan = 2;
+    $headercell_1->text = html_writer::checkbox('select_all3', '1', false, '', ['class' => 'exastud-selectall-checkbox', 'id' => 'select_all3', 'data-reportgroup' => 3]);
+    $headerRow2->cells[] = $headercell_1;
+    $headerRow3 = new html_table_row();
+    $headercell_1 = new html_table_cell();
+    $headercell_1->header = true;
+    $headercell_1->colspan = 2;
+    $headercell_1->text = '&nbsp;';
+    $headerRow3->cells[] = $headercell_1;
+    $secondList->data[] = $headerRow1;
+    $secondList->data[] = $headerRow2;
+    $secondList->data[] = $headerRow3;
+    //$secondList->head[] = html_writer::checkbox('select_all3', '1', false, '', ['class' => 'exastud-selectall-checkbox', 'id' => 'select_all3', 'data-reportgroup' => 3]);
+    //$secondList->head[] = html_writer::tag('label', block_exastud_get_string('report_select_all'), ['for' => 'select_all3']);
     foreach ($templates as $key => $tmpl) {
         if (!$addAnlage && in_array($key, [
                         BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_ANLAGE_ZUM_LERNENTWICKLUNGSBERICHT,

@@ -90,7 +90,7 @@ class print_templates {
                     //'grades' => ['1'=>'1'], // for testing
                     //'grades' => block_exastud_get_evaluation_options(true),
                     'grades' => $grades,
-                    'rs_hs' => $tmpl->rs_hs,
+                    'rs_hs' => (@$tmpl->rs_hs ? $tmpl->rs_hs : ''),
                     'inputs' => self::get_inputs_for_template($tmpl->id, $type)
             );
         }
