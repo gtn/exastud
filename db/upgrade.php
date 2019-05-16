@@ -1062,13 +1062,13 @@ function xmldb_block_exastud_upgrade($oldversion = 0) {
 
     if ($oldversion < 2019050801) {
         $table = new xmldb_table('block_exastudreportsettings');
-        $field = new xmldb_field('relevant_subjects', XMLDB_TYPE_INTEGER, 1, null, null, null, '0');
-        if (!$dbman->field_exists($table, $field)) {
-            $dbman->add_field($table, $field);
-        }
         $field = new xmldb_field('rs_hs', XMLDB_TYPE_CHAR, '5', null, null, null, '');
         if (!$dbman->field_exists($table, $field)) {
             $dbman->add_field($table, $field);
+        }
+        $field = new xmldb_field('relevant_subjects');
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->drop_field($table, $field);
         }
         // reset reports
         foreach([4] as $i) {
@@ -1083,6 +1083,10 @@ function xmldb_block_exastud_upgrade($oldversion = 0) {
         $field = new xmldb_field('rs_hs', XMLDB_TYPE_CHAR, '5', null, null, null, '');
         if (!$dbman->field_exists($table, $field)) {
             $dbman->add_field($table, $field);
+        }
+        $field = new xmldb_field('relevant_subjects');
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->drop_field($table, $field);
         }
         // reset reports
         foreach([5, 28, 39, 40, 4, 37] as $i) {
