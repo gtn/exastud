@@ -22,6 +22,7 @@ require __DIR__.'/inc.php';
 $courseid = optional_param('courseid', 1, PARAM_INT); // Course ID
 $classid = required_param('classid', PARAM_INT);
 $type = required_param('type', PARAM_TEXT);
+$templateid = optional_param('templateid', -1, PARAM_INT);
 
 block_exastud_require_login($courseid);
 
@@ -79,7 +80,8 @@ switch ($type) {
                         'title' => block_exastud_get_string('report_bilinguales'),
                     ],
             ];
-            $classheader = $reviewclass->title.' - '.block_exastud_get_string('report_bilinguales');
+            //$classheader = $reviewclass->title.' - '.block_exastud_get_string('report_bilinguales');
+            $classheader = $reviewclass->title.' - '.block_exastud\print_template::create($templateid)->get_name();
             break;
     default:
             // BLOCK_EXASTUD_DATA_ID_PRINT_TEMPLATE
@@ -132,6 +134,7 @@ if (true) { // block_exastud_can_edit_class($reviewclass)) {
 }
 
 foreach ($classstudents as $classstudent) {
+    $hideReviewButton = false;
 
 	$icons = '<img src="'.$CFG->wwwroot.'/pix/i/edit.gif" width="16" height="16" alt="'.block_exastud_get_string('edit').'" />';
 	$userdesc = fullname($classstudent);
@@ -151,18 +154,33 @@ foreach ($classstudents as $classstudent) {
 		$editUser = $DB->get_record('user', array('id' => $reviewclass->userid, 'deleted' => 0));
 	}
 
-	if (@array_shift(array_keys($categories)) === BLOCK_EXASTUD_DATA_ID_PRINT_TEMPLATE) {
-		$hasInputs = !!block_exastud_get_student_print_template($class, $classstudent->id)->get_inputs(BLOCK_EXASTUD_DATA_ID_PRINT_TEMPLATE);
-	} else if (@array_shift(array_keys($categories)) === BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_16_ZERTIFIKAT_FUER_PROFILFACH) {
-	    // TODO: is it correct?
-        $hasInputs = !!\block_exastud\print_templates::get_inputs_for_template(BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_16_ZERTIFIKAT_FUER_PROFILFACH, BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_16_ZERTIFIKAT_FUER_PROFILFACH);
-        //$hasInputs = !!block_exastud_get_student_print_template($class, $classstudent->id)->get_inputs(BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_16_ZERTIFIKAT_FUER_PROFILFACH);
-    } else if (@array_shift(array_keys($categories)) === BLOCK_EXASTUD_DATA_ID_ADDITIONAL_INFO) {
-        $hasInputs = !!block_exastud_get_student_print_template($class, $classstudent->id)->get_inputs(BLOCK_EXASTUD_DATA_ID_ADDITIONAL_INFO); // TODO: some another?
-    } else if (@array_shift(array_keys($categories)) === BLOCK_EXASTUD_DATA_ID_BILINGUALES) {
-        $hasInputs = !!block_exastud_get_class_bilingual_template($class->id)->get_inputs(BLOCK_EXASTUD_DATA_ID_BILINGUALES);
-    } else {
-		$hasInputs = !!$categories;
+	$firstCat = @array_shift(array_keys($categories));
+	switch ($firstCat) {
+	    case BLOCK_EXASTUD_DATA_ID_PRINT_TEMPLATE:
+		    $hasInputs = !!block_exastud_get_student_print_template($class, $classstudent->id)->get_inputs(BLOCK_EXASTUD_DATA_ID_PRINT_TEMPLATE);
+		    break;
+        case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_16_ZERTIFIKAT_FUER_PROFILFACH:
+            // TODO: is it correct?
+            $hasInputs = !!\block_exastud\print_templates::get_inputs_for_template(BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_16_ZERTIFIKAT_FUER_PROFILFACH, BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_16_ZERTIFIKAT_FUER_PROFILFACH);
+            //$hasInputs = !!block_exastud_get_student_print_template($class, $classstudent->id)->get_inputs(BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_16_ZERTIFIKAT_FUER_PROFILFACH);
+            break;
+        case BLOCK_EXASTUD_DATA_ID_ADDITIONAL_INFO:
+            $hasInputs = !!block_exastud_get_student_print_template($class, $classstudent->id)->get_inputs(BLOCK_EXASTUD_DATA_ID_ADDITIONAL_INFO); // TODO: some another?
+            break;
+        case BLOCK_EXASTUD_DATA_ID_BILINGUALES:
+            $hasInputs = !!(block_exastud\print_template::create($templateid)->get_inputs(BLOCK_EXASTUD_DATA_ID_BILINGUALES));
+            if (!block_exastud_is_bilingual_teacher($class->id, null, $classstudent->id, $templateid)) {
+                $editBilingualUser = block_exastud_get_bilingual_teacher($classid, $classstudent->id);
+                if ($editBilingualUser) {
+                    $hideReviewButton = block_exastud_trans(['de:Zugeteilt zu {$a}'], fullname($editBilingualUser));
+                } else {
+                    $hideReviewButton = ' ';
+                }
+            }
+            //$hasInputs = !!block_exastud_get_class_bilingual_template($class->id)->get_inputs(BLOCK_EXASTUD_DATA_ID_BILINGUALES);
+            break;
+        default:
+		    $hasInputs = !!$categories;
 	}
 
 	if ($type == BLOCK_EXASTUD_DATA_ID_CERTIFICATE && !block_exastud_is_profilesubject_teacher($classid)) {
@@ -172,11 +190,29 @@ foreach ($classstudents as $classstudent) {
 	} else if (!$hasInputs) {
 		// no categories, or it's a default printtemplate with no inputs
 		$row->cells[] = block_exastud_trans(['de:Dieses Formular hat keine weiteren Eingabfelder'], fullname($editUser));
-	} else {
-		$row->cells[] = $output->link_button($CFG->wwwroot.'/blocks/exastud/review_student_other_data.php?courseid='.$courseid.'&classid='.$classid.'&type='.$type.'&studentid='.$classstudent->id,
-			block_exastud_get_string('edit'),
-            array('class' => 'btn btn-default'));
-	}
+	} /*else if ($type == BLOCK_EXASTUD_DATA_ID_BILINGUALES) {
+        if (block_exastud_is_bilingual_teacher($class->id, null, $classstudent->id, $templateid)) {
+            $row->cells[] = $output->link_button($CFG->wwwroot.'/blocks/exastud/review_student_other_data.php?courseid='.$courseid.'&classid='.$classid.'&type='.$type.'&studentid='.$classstudent->id.'&templateid='.$templateid,
+                    block_exastud_get_string('edit'),
+                    array('class' => 'btn btn-default'));
+        } else {
+            $editBilingualUser = block_exastud_get_bilingual_teacher($classid, $classstudent->id);
+            if ($editBilingualUser) {
+                $row->cells[] = block_exastud_trans(['de:Zugeteilt zu {$a}'], fullname($editBilingualUser));
+            } else {
+                $row->cells[] = '';
+            }
+        }
+    }*/ else {
+	    if (!$hideReviewButton) {
+            $row->cells[] = $output->link_button($CFG->wwwroot.'/blocks/exastud/review_student_other_data.php?courseid='.$courseid.
+                    '&classid='.$classid.'&type='.$type.'&studentid='.$classstudent->id,
+                    block_exastud_get_string('edit'),
+                    array('class' => 'btn btn-default'));
+        } else {
+            $row->cells[] = $hideReviewButton;
+        }
+    }
     $fs = get_file_storage();
     $context = context_system::instance();
 	foreach ($categories as $dataid => $category) {
@@ -186,49 +222,80 @@ foreach ($classstudents as $classstudent) {
                 || $dataid === BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_16_ZERTIFIKAT_FUER_PROFILFACH
                 || $dataid === BLOCK_EXASTUD_DATA_ID_BILINGUALES
         ) {
-		    if ($dataid === BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_16_ZERTIFIKAT_FUER_PROFILFACH) {
-                $template = block_exastud\print_template::create(BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_16_ZERTIFIKAT_FUER_PROFILFACH);
-            } elseif ($dataid === BLOCK_EXASTUD_DATA_ID_BILINGUALES) {
-		        $template = block_exastud_get_class_bilingual_template($class->id);
-                //$template = block_exastud\print_template::create($templateid);
-            } else {
-                $template = block_exastud_get_student_print_template($class, $classstudent->id);
+		    switch ($dataid) {
+                case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_16_ZERTIFIKAT_FUER_PROFILFACH:
+                    $template = block_exastud\print_template::create(BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_16_ZERTIFIKAT_FUER_PROFILFACH);
+                    break;
+                case BLOCK_EXASTUD_DATA_ID_BILINGUALES:
+                    $template = block_exastud_get_class_bilingual_template($class->id, $classstudent->id);
+                    //if (!block_exastud_is_bilingual_teacher($class->id, null, $classstudent->id, $templateid)) {
+                    //    $template = null;
+                    //}
+                    break;
+                default:
+                    $template = block_exastud_get_student_print_template($class, $classstudent->id);
             }
-			$content = '<div><b>Formular:</b> '.$template->get_name().'</div>';
-			$inputs = $template->get_inputs($dataid);
-			if ($inputs) {
-                foreach ($inputs as $dataid => $form_input) {
-                    switch(@$form_input['type']) {
-                        case 'select':
-                            $value = @$form_input['values'][$data[$dataid]];
-                            break;
-                        case 'image':
-                            $files = $fs->get_area_files($context->id, 'block_exastud', 'report_image_'.$dataid, $classstudent->id, 'itemid', false);
-                            $filesOut = [];
-                            foreach ($files as $file) {
-                                if ($file->get_userid() != $USER->id) {
-                                    continue;
-                                }
-                                $filename = $file->get_filename();
-                                $url = moodle_url::make_pluginfile_url($file->get_contextid(), $file->get_component(), $file->get_filearea(), $file->get_itemid(), $file->get_filepath(), $file->get_filename());
-                                $img = html_writer::img($url, $filename, ['width' => 150]);
-                                $filesOut[] = html_writer::link($url, $img, ['target' => '_blank']);
-                            }
-                            $br = ''; //html_writer::empty_tag('br');
-                            $value = implode($br, $filesOut);
-                            //$value = file_rewrite_pluginfile_urls('sss', 'pluginfile.php',
-                            //        $context->id, 'block_exastud', 'report_image_'.$dataid, $classstudent->id);
-                            break;
-                        default:
-                            $value = !empty($data[$dataid]) ? block_exastud_text_to_html($data[$dataid]) : '';
-                    }
-
-                    $content .= '<div style="padding-top: 10px; font-weight: bold;">'.$form_input['title'].'</div>';
-                    $content .= '<div>'.$value.'</div>';
+            if ($template) {
+                if ($dataid == BLOCK_EXASTUD_DATA_ID_BILINGUALES && $hideReviewButton && block_exastud_is_bilingual_teacher($class->id, null, $classstudent->id)) {
+                    $content = '<div><b>Formular:</b> '.
+                            html_writer::link(new moodle_url('/blocks/exastud/review_class_other_data.php', [
+                                    'courseid' => $courseid,
+                                    'classid' => $class->id,
+                                    'type' => BLOCK_EXASTUD_DATA_ID_BILINGUALES,
+                                    'templateid' => $template->get_template_id()]),
+                                    $template->get_name()
+                            ).'</div>';
+                } else {
+                    $content = '<div><b>Formular:</b> '.$template->get_name().'</div>';
                 }
-            } /*else {
+                if (!$hideReviewButton) {
+                    $inputs = $template->get_inputs($dataid);
+                } else {
+                    $inputs = null;
+                }
+                if ($inputs) {
+                    foreach ($inputs as $dataid => $form_input) {
+                        switch (@$form_input['type']) {
+                            case 'select':
+                                $value = @$form_input['values'][$data[$dataid]];
+                                break;
+                            case 'image':
+                                $files = $fs->get_area_files($context->id, 'block_exastud', 'report_image_'.$dataid,
+                                        $classstudent->id, 'itemid', false);
+                                $filesOut = [];
+                                foreach ($files as $file) {
+                                    if ($file->get_userid() != $USER->id) {
+                                        continue;
+                                    }
+                                    $filename = $file->get_filename();
+                                    $url = moodle_url::make_pluginfile_url($file->get_contextid(), $file->get_component(),
+                                            $file->get_filearea(), $file->get_itemid(), $file->get_filepath(),
+                                            $file->get_filename());
+                                    $img = html_writer::img($url, $filename, ['width' => 150]);
+                                    $filesOut[] = html_writer::link($url, $img, ['target' => '_blank']);
+                                }
+                                $br = ''; //html_writer::empty_tag('br');
+                                $value = implode($br, $filesOut);
+                                //$value = file_rewrite_pluginfile_urls('sss', 'pluginfile.php',
+                                //        $context->id, 'block_exastud', 'report_image_'.$dataid, $classstudent->id);
+                                break;
+                            default:
+                                $value = !empty($data[$dataid]) ? block_exastud_text_to_html($data[$dataid]) : '';
+                        }
+
+                        $content .= '<div style="padding-top: 10px; font-weight: bold;">'.$form_input['title'].'</div>';
+                        $content .= '<div>'.$value.'</div>';
+                    }
+                } /*else {
 			    $content .= '<small>'.block_exastud_trans('de:Dieses Formular hat keine weiteren Eingabfelder').'</small>';
             }*/
+            } else {
+                /*if ($dataid == BLOCK_EXASTUD_DATA_ID_BILINGUALES && !block_exastud_is_bilingual_teacher($class->id, null, $classstudent->id, $templateid)) {
+                    $content = 'I am not an editor';
+                } else {*/
+                    $content = '';
+                //}
+            }
 
 			$row->cells[] = $content;
 		} /*elseif ($dataid == BLOCK_EXASTUD_DATA_ID_ADDITIONAL_INFO) {

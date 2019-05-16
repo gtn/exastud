@@ -1274,6 +1274,14 @@ return [
         'Lehrkraft für Projektprüfung',
         'Teacher for project assessment',
     ],
+    'teacher_for_bilingual' => [
+        'Lehrkraft für Bilingualer',
+        'Teacher for bilingual assessment',
+    ],
+    'report_for_bilingual' => [
+        'Zeugnisformular für Bilingualer',
+        'Report for project assessment',
+    ],
     'textblock' => [
         'Formulierungsvorschläge',
         'Text block',
@@ -1436,6 +1444,26 @@ return [
         'Footer',
     ],
 
+    'leaders' => [
+        'Leaders',
+        'Leaders'
+    ],
+    'schoollieder_fieldtitle' => [
+        'Schulleiterin',
+        'School director',
+    ],
+    'groupleader_fieldtitle' => [
+        'Lerngruppenbegleiter',
+        'Group head',
+    ],
+    'auditleader_fieldtitle' => [
+        'Vorsitzender des Prüfungsausschusses',
+        'Chairman of the Audit Committee',
+    ],
+    'classleader_fieldtitle' => [
+        'Klassenlehrer',
+        'Class head',
+    ],
 
 
 ];

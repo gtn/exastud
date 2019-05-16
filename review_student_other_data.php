@@ -105,7 +105,7 @@ switch ($type) {
         $classheader = $reviewclass->title.' - '.$template->get_name();
         break;
     case BLOCK_EXASTUD_DATA_ID_BILINGUALES:
-        $template = block_exastud_get_class_bilingual_template($class->id);
+        $template = block_exastud_get_class_bilingual_template($class->id, $student->id);
         $categories = $template->get_inputs(BLOCK_EXASTUD_DATA_ID_BILINGUALES);
         $classheader = $reviewclass->title.' - '.$template->get_name();
         break;

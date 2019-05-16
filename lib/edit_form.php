@@ -110,6 +110,23 @@ class class_edit_form extends moodleform {
                         'accepted_types' => array('web_image'))
         );*/
 
+        $genders = array(
+            'male' => block_exastud_get_string('UMan'),
+            'female' => block_exastud_get_string('UWoman'),
+        );
+        $liederfields = ['schoollieder', 'groupleader', 'auditleader', 'classleader'];
+        $mform->addElement('header', 'leaders', block_exastud_get_string('leaders'));
+        foreach ($liederfields as $field) {
+            $group = array();
+            $group[] =& $mform->createElement('select', $field.'_gender', block_exastud_get_string('gender'), $genders);
+            $mform->setType($field.'_gender', PARAM_TEXT);
+            $group[] =& $mform->createElement('text', $field.'_name', block_exastud_get_string('name'), ['placeholder' => block_exastud_get_string('name')]);
+            $mform->setType($field.'_name', PARAM_TEXT);
+            $mform->addGroup($group, $field.'_group', block_exastud_get_string($field.'_fieldtitle'), array(' '), false);
+        }
+        $mform->closeHeaderBefore('leaders');
+
+
 		$this->add_action_buttons();
 	}
 
@@ -406,12 +423,27 @@ class student_other_data_form extends moodleform {
 	function definition() {
 		$mform = &$this->_form;
         $defaulttemplatesettings = block_exastud_get_default_templates($this->_customdata['templateid']);
+        $bilingualTemplates = array_keys(block_exastud_get_bilingual_reports());
+        $tempCurrentElementGroup = '';
 
-        $addFormElement = function($dataid, $input, $pObj) use ($mform) {
+        $addFormElement = function($dataid, $input, $pObj) use ($mform, $defaulttemplatesettings, $bilingualTemplates, &$tempCurrentElementGroup) {
             switch ($input['type']) {
                 case '':
                 case 'textarea':
-                    $mform->addElement('header', 'header_'.$dataid, $input['title']);
+                    $elementSubTitle = '';
+                    $elementTitle = $input['title'];
+                    // bilingual form has some another behaviour. We need to group couples of inputs by field title
+                    if (in_array($defaulttemplatesettings['id'], $bilingualTemplates)) {
+                        preg_match('#\((.*?)\)#', $elementTitle, $match);
+                        $groupName = $match[1];
+                        if ($groupName != $tempCurrentElementGroup) {
+                            $mform->addElement('header', 'header_'.$dataid, $groupName);
+                            $tempCurrentElementGroup = $groupName;
+                        }
+                        $elementSubTitle =  preg_replace("/\([^)]+\)/", '', $elementTitle);
+                    } else {
+                        $mform->addElement('header', 'header_'.$dataid, $elementTitle);
+                    }
                     //$mform->setExpanded('header_'.$dataid);
                     $maxchars = '550';
                     if (@$pObj->_customdata['modified']) {
@@ -436,7 +468,7 @@ class student_other_data_form extends moodleform {
                     if ($input['lines'] == 1) {
                         $height = 35;
                     }
-                    $mform->addElement('textarea', $dataid, '', [
+                    $mform->addElement('textarea', $dataid, $elementSubTitle, [
                         //'cols' => $input['cols'],
                             'cols' => $textarea_limits['chars_per_row'] + 3,
                             'rows' => $input['lines'],

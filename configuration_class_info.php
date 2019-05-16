@@ -119,6 +119,15 @@ if ($classform->is_cancelled()) {
             $class->id, array('subdirs' => 0, 'maxfiles' => 1));*/
 
 	block_exastud_set_class_data($newclass->id, BLOCK_EXASTUD_DATA_ID_CLASS_DEFAULT_TEMPLATEID, $classedit->{BLOCK_EXASTUD_DATA_ID_CLASS_DEFAULT_TEMPLATEID});
+    $liederfields = ['schoollieder', 'groupleader', 'auditleader', 'classleader'];
+    foreach ($liederfields as $field) {
+        if (isset($classedit->{$field.'_gender'})) {
+            block_exastud_set_class_data($newclass->id, $field.'_gender', $classedit->{$field.'_gender'});
+        }
+        if (isset($classedit->{$field.'_name'})) {
+            block_exastud_set_class_data($newclass->id, $field.'_name', $classedit->{$field.'_name'});
+        }
+    }
 
 	if ($class->id) {
 		// standard zeugnis zurücksetzen (wegen alter version wo es kein standard zeugnis gab)

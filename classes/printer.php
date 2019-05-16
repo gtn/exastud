@@ -1423,22 +1423,20 @@ class printer {
 
         // leiter (director) and Vorsitzende (chair)
         // almost all templates have this selectbox
-        // TODO: may be get this data not for every student, but from some central settings?
         $data_dropdowns = array_merge($data_dropdowns, array('leiter', 'chair', 'gruppen_leiter', 'klass_leiter'));
-        $data['leiter'] = ' ';
-        $data['leiter_name'] = ' ';
-        $data['chair'] = ' ';
-        $data['chair_name'] = ' ';
-        $data['gruppen_leiter'] = ' ';
-        $data['gruppen_leiter_name'] = ' ';
-        $data['klass_leiter'] = ' ';
-        $data['klass_leiter_name'] = ' ';
-        $classteacher = block_exastud_get_user($class->userid);
+        $data['leiter'] = block_exastud_leiter_titles_by_gender('school', @block_exastud_get_class_data($class->id)->schoollieder_gender);
+        $data['leiter_name'] = (@block_exastud_get_class_data($class->id)->schoollieder_name ? block_exastud_get_class_data($class->id)->schoollieder_name : ' ');
+        $data['chair'] = block_exastud_leiter_titles_by_gender('chair', @block_exastud_get_class_data($class->id)->auditleader_gender);
+        $data['chair_name'] = (@block_exastud_get_class_data($class->id)->auditleader_name ? block_exastud_get_class_data($class->id)->auditleader_name : ' ');
+        $data['gruppen_leiter'] = block_exastud_leiter_titles_by_gender('group', @block_exastud_get_class_data($class->id)->groupleader_gender);
+        $data['gruppen_leiter_name'] = (@block_exastud_get_class_data($class->id)->groupleader_name ? block_exastud_get_class_data($class->id)->groupleader_name : ' ');
+        $data['klass_leiter'] = block_exastud_leiter_titles_by_gender('class', @block_exastud_get_class_data($class->id)->classleader_gender);
+        $data['klass_leiter_name'] = (@block_exastud_get_class_data($class->id)->classleader_name ? block_exastud_get_class_data($class->id)->classleader_name : ' ');
+        // aotu class leader data
+        /*$classteacher = block_exastud_get_user($class->userid);
         $classteachergender = block_exastud_get_user_gender($classteacher->id);
         $data['klass_leiter'] = block_exastud_leiter_titles_by_gender('class', $classteachergender);
-        $data['klass_leiter_name'] = fullname($classteacher);
-        //$data['leiter'] = trim(static::spacerIfEmpty(@$studentdata->leiter));
-        //$data['chair'] = trim(static::spacerIfEmpty(@$studentdata->chair));
+        $data['klass_leiter_name'] = fullname($classteacher);*/
 
         // some templates has selectbox/niveau for languages. Make it works:
         // only lang subjects

@@ -45,6 +45,8 @@ const BLOCK_EXASTUD_DATA_ID_CERTIFICATE = 'certificate';
 const BLOCK_EXASTUD_DATA_ID_ADDITIONAL_INFO = 'additional_info';
 const BLOCK_EXASTUD_DATA_ID_CLASS_DEFAULT_TEMPLATEID = 'default_templateid';
 const BLOCK_EXASTUD_DATA_ID_PROJECT_TEACHER = 'project_teacher';
+const BLOCK_EXASTUD_DATA_ID_BILINGUAL_TEACHER = 'bilingual_teacher';
+const BLOCK_EXASTUD_DATA_ID_BILINGUAL_TEMPLATE = 'bilingual_templateid';
 //const BLOCK_EXASTUD_DATA_ID_ZERTIFIKAT_FUER_PROFILFACH = 4;
 
 const BLOCK_EXASTUD_SUBJECT_ID_LERN_UND_SOZIALVERHALTEN = -1;
@@ -329,6 +331,64 @@ function block_exastud_is_profilesubject_teacher($classid, $userid = null) {
         }
     }
     return false;
+}
+
+function block_exastud_is_bilingual_teacher($classid, $teacherid = null, $studentid = null, $templateid = null) {
+    global $USER;
+    if (!$teacherid) {
+        $teacherid = $USER->id;
+    }
+    /*$conditions = [
+            'classid' => $classid,
+            'subjectid' => 0,
+            'name' => BLOCK_EXASTUD_DATA_ID_BILINGUAL_TEACHER,
+            'value' => $teacherid,
+    ];*/
+    $sql = 'SELECT DISTINCT studentid
+                  FROM {block_exastuddata} 
+                  WHERE classid = ? 
+                    AND subjectid = 0 
+                    AND name = ? 
+                    AND value = ? 
+              ';
+    if ($studentid) {
+        $sql .= ' AND studentid = ? ';
+        //$conditions['studentid'] = $studentid;
+    }
+    //$result = g::$DB->record_exists_sql($sql, [$classid, BLOCK_EXASTUD_DATA_ID_BILINGUAL_TEACHER, $teacherid, $studentid]);
+    $result = g::$DB->get_fieldset_sql($sql, [$classid, BLOCK_EXASTUD_DATA_ID_BILINGUAL_TEACHER, $teacherid, $studentid]);
+    if (!$templateid || !$result) {
+        return $result;
+    }
+    // here is comparing with templateid. only if the teacher is bilingual at least for one student
+    $sql = 'SELECT * 
+                  FROM {block_exastuddata} 
+                  WHERE classid = ? 
+                    AND subjectid = 0 
+                    AND name = ? 
+                    AND value = ? 
+              ';
+    if ($studentid) {
+        $sql .= ' AND studentid = ? ';
+    } else {
+        $sql .= ' AND studentid IN ('.implode(',', $result).') '; // only students from previous query
+    }
+    return g::$DB->record_exists_sql($sql, [$classid, BLOCK_EXASTUD_DATA_ID_BILINGUAL_TEMPLATE, $templateid, $studentid]);
+}
+
+function block_exastud_get_bilingual_teacher($classid, $studentid = null) {
+    $sql = 'SELECT value
+                  FROM {block_exastuddata} 
+                  WHERE classid = ? 
+                    AND studentid = ?
+                    AND subjectid = 0 
+                    AND name = ?                     
+              ';
+    $result = g::$DB->get_field_sql($sql, [$classid, $studentid, BLOCK_EXASTUD_DATA_ID_BILINGUAL_TEACHER]);
+    if ($result && $result > 0) {
+        return block_exastud_get_user($result);
+    }
+    return $result;
 }
 
 function block_exastud_get_class_additional_head_teachers($classid) {
@@ -1808,8 +1868,8 @@ function block_exastud_get_student_print_template($class, $userid) {
 	return block_exastud\print_template::create($templateid);
 }
 
-function block_exastud_get_class_bilingual_template($classid) {
-	$templateid = block_exastud_class_get_bilingual_templateid($classid);
+function block_exastud_get_class_bilingual_template($classid, $studentid = null) {
+	$templateid = block_exastud_class_get_bilingual_templateid($classid, $studentid);
 	if ($templateid) {
         return block_exastud\print_template::create($templateid);
     } else {
@@ -4686,9 +4746,8 @@ function block_exastud_normalize_filename($filename) {
     return $filename;
 }
 
-function block_exastud_class_get_bilingual_templateid($classid) {
-    return 39; // TODO: delete
-    return block_exastud_get_class_data($classid, BLOCK_EXASTUD_DATA_ID_BILINGUALES);
+function block_exastud_class_get_bilingual_templateid($classid, $studentid) {
+    return block_exastud_get_class_student_data($classid, $studentid, BLOCK_EXASTUD_DATA_ID_BILINGUAL_TEMPLATE);
 }
 
 function block_exastud_leiter_titles_by_gender($level = '', $gender = '', $defaultGender = 'female') {
@@ -4707,6 +4766,21 @@ function block_exastud_leiter_titles_by_gender($level = '', $gender = '', $defau
         }
     }
     return '';
+}
+
+function block_exastud_get_bilingual_reports($withempty = false) {
+    $alltemplates = [
+        BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_16_TESTAT_BILINGUALES_PROFIL_KL_8,
+        BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_16_ZERTIFIKAT_BILINGUALES_KL_10,
+    ];
+    $result = array();
+    if ($withempty) {
+        $result[] = ['' => ''];
+    }
+    foreach ($alltemplates as $templateid) {
+        $result[$templateid] = \block_exastud\print_templates::get_template_name($templateid);
+    }
+    return $result;
 }
 
 /*
