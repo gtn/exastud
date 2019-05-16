@@ -862,7 +862,19 @@ function block_exastud_check_profile_fields() {
 			// TODO: english male / famle auch berücksichtigen.
 			// => die moodle default sprach einstellung hernehmen.
 			'param1' => "\nmännlich\nweiblich",
-		],
+        ], [
+            'shortname' => 'class',
+            'name' => block_exastud_trans('de:Klasse/Lerngruppe'),
+            'description' => 'Klassen-, Lerngruppenbezeichnung',
+            'datatype' => 'text',
+            'categoryid' => $categoryid,
+            'locked' => 1,
+            'required' => 0,
+            'visible' => 0,
+            'param1' => 30,
+            'param2' => 2048,
+            'param3' => 0,
+        ],
 	];
 
 	foreach ($fields as $field) {

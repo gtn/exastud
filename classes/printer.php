@@ -700,13 +700,11 @@ class printer {
                     if (!$subjectData || (!$subjectData->review && !$subjectData->grade && !$subjectData->niveau)) {
                         continue; // we need to select first graded profile subject
                     }
-                    //echo "<pre>debug:<strong>printer.php:595</strong>\r\n"; print_r($subjectData); echo '</pre>'; exit; // !!!!!!!!!! delete it
 					$gradeSearch = 'Profilfach';
                     $profilfachT = trim(preg_replace('!^[^\s]+!', '', $subject->title));
-                    //echo "<pre>debug:<strong>printer.php:661</strong>\r\n"; print_r($profilfachT); echo '</pre>'; // !!!!!!!!!! delete it
-                    if (@$studentdata->profilfach_fixed && @$studentdata->profilfach_fixed != $profilfachT) {
+                    /*if (@$studentdata->profilfach_fixed && @$studentdata->profilfach_fixed != $profilfachT) {
                         continue; // if the student has fixed profilfach (in review page) - we need to get values for this fixed subject
-                    }
+                    }*/
                     $profilfach = $profilfachT;
 					// hier ist 1 dropdown dazwischen erlaubt (profilfach name dropdown)
 					$dropdownsBetween = 1;
@@ -1000,6 +998,13 @@ class printer {
                             BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_HALBJAHR_ZEUGNIS_KL10_E_NIVEAU]
             )) {
                 $tempProfilfach = '';
+            }
+            if (in_array($templateid, [
+                    BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_16_ZERTIFIKAT_FUER_PROFILFACH
+                    ])
+                && @$studentdata->profilfach_fixed
+                && @$studentdata->profilfach_fixed != $profilfach) {
+                $tempProfilfach = $studentdata->profilfach_fixed;
             }
             $data['profilfach_titel'] = $tempProfilfach;
             $data['wahlfach_titel'] = $wahlpflichtfach;

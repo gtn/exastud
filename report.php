@@ -173,12 +173,47 @@ if ($classid) {
                                 $doit = false;
                             }
                             break;
-                        // - Zertifikat für Profilfach: only if there is grading in exastud
-                        // - Beiblatt zur Projektprüfung: only if there is grading in exastud
+                        // - Beiblatt zur Projektprüfung: if there is grading in exastud and filled data in BLOCK_EXASTUD_DATA_ID_PROJECT_TEACHER
                         case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_BEIBLATT_PROJEKTPRUEFUNG_HSA:
                         case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_BEIBLATT_PROJEKTARBEIT_HSA:
-                        case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_16_ZERTIFIKAT_FUER_PROFILFACH:
                         case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_ZERTIFIKAT_FUER_PROJEKTARBEIT:
+                            if (!in_array($student->id, $studentsGraded)) {
+                                $doit = false;
+                            }
+                            $studentdata = block_exastud_get_class_student_data($class->id, $student->id);
+                            // also the student must have project reviewed data
+                            $projectinputs = \block_exastud\print_templates::get_inputs_for_template($template, BLOCK_EXASTUD_DATA_ID_PROJECT_TEACHER);
+                            $projectinputs = array_keys($projectinputs);
+                            $res = array();
+                            foreach ($projectinputs as $inp) {
+                                if (@$studentdata->{$inp}) {
+                                    $res[] = '1';
+                                } else {
+                                    $res[] = '0';
+                                }
+                            }
+                            if (!in_array('1', $res)) { // no any input does not filled
+                                $doit = false;
+                            }
+                            break;
+                        // - Zertifikat für Profilfach: only if there is grading in exastud
+                        case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_16_ZERTIFIKAT_FUER_PROFILFACH:
+                            $studentdata = block_exastud_get_class_student_data($class->id, $student->id);
+                            // the student must have project reviewed data
+                            $zertifinputs = \block_exastud\print_templates::get_inputs_for_template($template, BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_16_ZERTIFIKAT_FUER_PROFILFACH);
+                            $zertifinputs = array_keys($zertifinputs);
+                            $res = array();
+                            foreach ($zertifinputs as $inp) {
+                                if (@$studentdata->{$inp}) {
+                                    $res[] = '1';
+                                } else {
+                                    $res[] = '0';
+                                }
+                            }
+                            if (!in_array('1', $res)) { // no any input does not filled
+                                $doit = false;
+                            }
+                            break;
                         default:
                             if (!in_array($student->id, $studentsGraded)) {
                                 $doit = false;
@@ -221,7 +256,7 @@ if ($classid) {
 
                 }
             }
-
+//exit;
             if (count($html_results) > 0) {
                 // if it is a HTML preview
                 $PAGE->set_pagelayout('embedded');
