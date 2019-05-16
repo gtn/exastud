@@ -441,7 +441,7 @@ function xmldb_block_exastud_upgrade($oldversion = 0) {
         if (!$dbman->field_exists($table, $field)) {
             $dbman->add_field($table, $field);
         }
-        block_exastud_fill_reportsettingstable();
+        //block_exastud_fill_reportsettingstable();
     }
 
     if ($oldversion < 2018110701) {
@@ -632,10 +632,10 @@ function xmldb_block_exastud_upgrade($oldversion = 0) {
             $dbman->add_field($table, $field);
         }
         // add a couple default templates
-        $DB->delete_records('block_exastudreportsettings', ['id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_HALBJAHRESINFORMATION_KL11]);
-        block_exastud_fill_reportsettingstable(BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_HALBJAHRESINFORMATION_KL11);
-        $DB->delete_records('block_exastudreportsettings', ['id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_HALBJAHRESINFORMATION_KL11]);
-        block_exastud_fill_reportsettingstable(BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_HALBJAHRESINFORMATION_KL11);
+        //$DB->delete_records('block_exastudreportsettings', ['id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_HALBJAHRESINFORMATION_KL11]);
+        //block_exastud_fill_reportsettingstable(BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_HALBJAHRESINFORMATION_KL11);
+        //$DB->delete_records('block_exastudreportsettings', ['id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_HALBJAHRESINFORMATION_KL11]);
+        //block_exastud_fill_reportsettingstable(BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_HALBJAHRESINFORMATION_KL11);
         upgrade_block_savepoint(true, 2018122603, 'exastud');
     }
 
@@ -679,6 +679,11 @@ function xmldb_block_exastud_upgrade($oldversion = 0) {
     }
 
     if ($oldversion < 2019010408) {
+        $table = new xmldb_table('block_exastudreportsettings');
+        $field = new xmldb_field('rs_hs', XMLDB_TYPE_CHAR, '5', null, null, null, '');
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
         // reset all template settings
         for ($i = 1; $i <= 22; $i++) {
             $DB->delete_records('block_exastudreportsettings', ['id' => $i]);
@@ -777,26 +782,26 @@ function xmldb_block_exastud_upgrade($oldversion = 0) {
         upgrade_block_savepoint(true, 2019010704, 'exastud');
     }
 
-    if ($oldversion < 2019011008) {
+/*    if ($oldversion < 2019011008) {
         // reset 18, 19 template settings
         foreach([22, 6, 18, 19] as $i) {
             $DB->delete_records('block_exastudreportsettings', ['id' => $i]);
             block_exastud_fill_reportsettingstable($i);
         }
         upgrade_block_savepoint(true, 2019011008, 'exastud');
-    }
+    }*/
 
     if ($oldversion < 2019011009) {
         $DB->execute(' UPDATE {block_exastuddata} SET value = \'Lernen\' WHERE value = \'lernen\' AND name = \'focus\'');
         upgrade_block_savepoint(true, 2019011009, 'exastud');
     }
 
-    if ($oldversion < 2019011404) {
+/*    if ($oldversion < 2019011404) {
         // reset reports
         $DB->delete_records('block_exastudreportsettings', ['id' => 6]);
         block_exastud_fill_reportsettingstable(6);
         upgrade_block_savepoint(true, 2019011404, 'exastud');
-    }
+    }*/
 
     if ($oldversion < 2019011500) {
         $templatetochange = array(
@@ -858,16 +863,21 @@ function xmldb_block_exastud_upgrade($oldversion = 0) {
         upgrade_block_savepoint(true, 2019011506, 'exastud');
     }
 
-    if ($oldversion < 2019011507) {
+/*    if ($oldversion < 2019011507) {
         // reset reports
         foreach([6, 8] as $i) {
             $DB->delete_records('block_exastudreportsettings', ['id' => $i]);
             block_exastud_fill_reportsettingstable($i);
         }
         upgrade_block_savepoint(true, 2019011507, 'exastud');
-    }
+    }*/
 
     if ($oldversion < 2019011600) {
+        $table = new xmldb_table('block_exastudreportsettings');
+        $field = new xmldb_field('rs_hs', XMLDB_TYPE_CHAR, '5', null, null, null, '');
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
         // reset reports
         foreach([22, 9, 7, 21] as $i) {
             $DB->delete_records('block_exastudreportsettings', ['id' => $i]);
@@ -952,6 +962,11 @@ function xmldb_block_exastud_upgrade($oldversion = 0) {
     }
 
     if ($oldversion < 2019011801) {
+        $table = new xmldb_table('block_exastudreportsettings');
+        $field = new xmldb_field('rs_hs', XMLDB_TYPE_CHAR, '5', null, null, null, '');
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
         // typo
         $DB->execute(' UPDATE {block_exastuddata} SET value = ? WHERE value = ? ', ['geistige Entwicklung', 'geistige Enwicklung']);
         // reset reports (all, because 'class' property is in the all reports
@@ -974,10 +989,10 @@ function xmldb_block_exastud_upgrade($oldversion = 0) {
     }
 
     if ($oldversion < 2019012301) {
-        foreach([7, 6] as $i) {
+        /*foreach([7, 6] as $i) {
             $DB->delete_records('block_exastudreportsettings', ['id' => $i]);
             block_exastud_fill_reportsettingstable($i);
-        }
+        }*/
         // shorttitle wrongs
         $DB->execute(' UPDATE {block_exastudsubjects} 
                         SET shorttitle = \'Bio\' 
@@ -1009,6 +1024,11 @@ function xmldb_block_exastud_upgrade($oldversion = 0) {
     }
 
     if ($oldversion < 2019020600) {
+        $table = new xmldb_table('block_exastudreportsettings');
+        $field = new xmldb_field('rs_hs', XMLDB_TYPE_CHAR, '5', null, null, null, '');
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
         // reset reports
         foreach([18, 23] as $i) {
             $DB->delete_records('block_exastudreportsettings', ['id' => $i]);
@@ -1018,6 +1038,11 @@ function xmldb_block_exastud_upgrade($oldversion = 0) {
     }
 
     if ($oldversion < 2019041213) {
+        $table = new xmldb_table('block_exastudreportsettings');
+        $field = new xmldb_field('rs_hs', XMLDB_TYPE_CHAR, '5', null, null, null, '');
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
         // reset reports
         foreach([14, 8, 9, 24, 18, 11, 25, 26, 27, 28, 29, 30, 31, 32, 33 ,34, 35, 36, 37, 38, 20, 39, 40] as $i) {
             $DB->delete_records('block_exastudreportsettings', ['id' => $i]);
@@ -1041,6 +1066,10 @@ function xmldb_block_exastud_upgrade($oldversion = 0) {
         if (!$dbman->field_exists($table, $field)) {
             $dbman->add_field($table, $field);
         }
+        $field = new xmldb_field('rs_hs', XMLDB_TYPE_CHAR, '5', null, null, null, '');
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
         // reset reports
         foreach([4] as $i) {
             $DB->delete_records('block_exastudreportsettings', ['id' => $i]);
@@ -1050,6 +1079,11 @@ function xmldb_block_exastud_upgrade($oldversion = 0) {
     }
 
     if ($oldversion < 2019050901) {
+        $table = new xmldb_table('block_exastudreportsettings');
+        $field = new xmldb_field('rs_hs', XMLDB_TYPE_CHAR, '5', null, null, null, '');
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
         // reset reports
         foreach([5, 28, 39, 40, 4, 37] as $i) {
             $DB->delete_records('block_exastudreportsettings', ['id' => $i]);
