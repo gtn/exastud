@@ -145,6 +145,9 @@ if ($fromform = $studentform->get_data()) {
         block_exastud_set_class_student_data($classid, $studentid, $dataid.'.modifiedby', $USER->id);
         block_exastud_set_class_student_data($classid, $studentid, $dataid.'.timemodified', time());
 	}
+    if ($type == BLOCK_EXASTUD_DATA_ID_BILINGUALES) {
+        $returnurl .= '&templateid='.$template->get_template_id();
+    }
 	redirect($returnurl);
 }
 

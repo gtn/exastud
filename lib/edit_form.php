@@ -422,7 +422,11 @@ class student_other_data_form extends moodleform {
 
 	function definition() {
 		$mform = &$this->_form;
-        $defaulttemplatesettings = block_exastud_get_default_templates($this->_customdata['templateid']);
+		if (array_key_exists('templateid', $this->_customdata)) {
+            $defaulttemplatesettings = block_exastud_get_default_templates($this->_customdata['templateid']);
+        } else {
+            $defaulttemplatesettings = array();
+        }
         $bilingualTemplates = array_keys(block_exastud_get_bilingual_reports());
         $tempCurrentElementGroup = '';
 
@@ -433,7 +437,7 @@ class student_other_data_form extends moodleform {
                     $elementSubTitle = '';
                     $elementTitle = $input['title'];
                     // bilingual form has some another behaviour. We need to group couples of inputs by field title
-                    if (in_array($defaulttemplatesettings['id'], $bilingualTemplates)) {
+                    if (array_key_exists('id', $defaulttemplatesettings) && in_array($defaulttemplatesettings['id'], $bilingualTemplates)) {
                         preg_match('#\((.*?)\)#', $elementTitle, $match);
                         $groupName = $match[1];
                         if ($groupName != $tempCurrentElementGroup) {
