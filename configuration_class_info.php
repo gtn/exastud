@@ -246,6 +246,19 @@ $templates_by_bp[''] = \block_exastud\print_templates::get_bp_available_print_te
 foreach ($bps as $bp) {
 	$templates_by_bp[$bp->id] = \block_exastud\print_templates::get_bp_available_print_templates($bp);
 }
+// clean templates:
+$toClean = array(
+    BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_16_ZERTIFIKAT_FUER_PROFILFACH,
+    BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_BEIBLATT_PROJEKTPRUEFUNG_HSA,
+    BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_ZERTIFIKAT_FUER_PROJEKTARBEIT,
+    BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_BEIBLATT_PROJEKTARBEIT_HSA,
+);
+$templates_by_bp = array_map(function($subarr) use ($toClean) {
+    return array_filter($subarr, function($key) use ($toClean) {
+        return !in_array($key, $toClean);
+    }, ARRAY_FILTER_USE_KEY);
+}, $templates_by_bp);
+
 ?>
 	<script>
 			var templates_by_bp = <?php echo json_encode($templates_by_bp); ?>;

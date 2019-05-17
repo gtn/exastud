@@ -167,7 +167,7 @@ if ($fromform = $studentform->get_data()) {
             $existingReview = $DB->get_record('block_exastudreview',
                     ['studentid' => $studentid, 'subjectid' => $subjectid,
                             'periodid' => $actPeriod->id, 'teacherid' => $teacherid,]);
-            if ($existingReview->review) {
+            if ($existingReview && $existingReview->review) {
                 $newreview->review = $existingReview->review;
             } else {
                 $newreview->review = '';
