@@ -413,7 +413,7 @@ function xmldb_block_exastud_upgrade($oldversion = 0) {
         $table->add_field('ags', XMLDB_TYPE_TEXT, null, null, XMLDB_NOTNULL, null,
                 null); // AGs (Participation in working groups / supplementary offers)
         $table->add_field('grades', XMLDB_TYPE_TEXT, null, null, XMLDB_NOTNULL, null, null); // grades
-
+        $table->add_field('hidden', XMLDB_TYPE_INTEGER, 1, null, null, null, '0');
         // Adding keys to table block_exastudsubjects.
         $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
 
@@ -433,11 +433,19 @@ function xmldb_block_exastud_upgrade($oldversion = 0) {
         if (!$dbman->field_exists($table, $field)) {
             $dbman->add_field($table, $field);
         }
+        $field = new xmldb_field('hidden', XMLDB_TYPE_INTEGER, 1, null, null, null, '0');
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
     }
 
     if ($oldversion < 2018103100) {
         $table = new xmldb_table('block_exastudreportsettings');
         $field = new xmldb_field('grades', XMLDB_TYPE_TEXT, null, null, null, null, null);
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+        $field = new xmldb_field('hidden', XMLDB_TYPE_INTEGER, 1, null, null, null, '0');
         if (!$dbman->field_exists($table, $field)) {
             $dbman->add_field($table, $field);
         }
@@ -447,6 +455,10 @@ function xmldb_block_exastud_upgrade($oldversion = 0) {
     if ($oldversion < 2018110701) {
         $table = new xmldb_table('block_exastudreportsettings');
         $field = new xmldb_field('grades', XMLDB_TYPE_TEXT, null, null, null, null, null);
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+        $field = new xmldb_field('hidden', XMLDB_TYPE_INTEGER, 1, null, null, null, '0');
         if (!$dbman->field_exists($table, $field)) {
             $dbman->add_field($table, $field);
         }
@@ -466,6 +478,10 @@ function xmldb_block_exastud_upgrade($oldversion = 0) {
     if ($oldversion < 2018111500) {
         $table = new xmldb_table('block_exastudreportsettings');
         $field = new xmldb_field('grades', XMLDB_TYPE_TEXT, null, null, null, null, null);
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+        $field = new xmldb_field('hidden', XMLDB_TYPE_INTEGER, 1, null, null, null, '0');
         if (!$dbman->field_exists($table, $field)) {
             $dbman->add_field($table, $field);
         }
@@ -539,6 +555,10 @@ function xmldb_block_exastud_upgrade($oldversion = 0) {
         if (!$dbman->field_exists($table, $field)) {
             $dbman->add_field($table, $field);
         }
+        $field = new xmldb_field('hidden', XMLDB_TYPE_INTEGER, 1, null, null, null, '0');
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
         upgrade_block_savepoint(true, 2018122000, 'exastud');
     }
 
@@ -549,6 +569,10 @@ function xmldb_block_exastud_upgrade($oldversion = 0) {
             $dbman->rename_field($table, $field, 'projekt_thema');
         }
         $field = new xmldb_field('grades', XMLDB_TYPE_TEXT, null, null, null, null, null);
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+        $field = new xmldb_field('hidden', XMLDB_TYPE_INTEGER, 1, null, null, null, '0');
         if (!$dbman->field_exists($table, $field)) {
             $dbman->add_field($table, $field);
         }
@@ -593,12 +617,20 @@ function xmldb_block_exastud_upgrade($oldversion = 0) {
         if (!$dbman->field_exists($table, $field)) {
             $dbman->add_field($table, $field);
         }
+        $field = new xmldb_field('hidden', XMLDB_TYPE_INTEGER, 1, null, null, null, '0');
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
         upgrade_block_savepoint(true, 2018122106, 'exastud');
     }
 
     if ($oldversion < 2018122500) {
         $table = new xmldb_table('block_exastudreportsettings');
         $field = new xmldb_field('grades', XMLDB_TYPE_TEXT, null, null, null, null, null);
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+        $field = new xmldb_field('hidden', XMLDB_TYPE_INTEGER, 1, null, null, null, '0');
         if (!$dbman->field_exists($table, $field)) {
             $dbman->add_field($table, $field);
         }
@@ -631,6 +663,10 @@ function xmldb_block_exastud_upgrade($oldversion = 0) {
         if (!$dbman->field_exists($table, $field)) {
             $dbman->add_field($table, $field);
         }
+        $field = new xmldb_field('hidden', XMLDB_TYPE_INTEGER, 1, null, null, null, '0');
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
         // add a couple default templates
         //$DB->delete_records('block_exastudreportsettings', ['id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_HALBJAHRESINFORMATION_KL11]);
         //block_exastud_fill_reportsettingstable(BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_HALBJAHRESINFORMATION_KL11);
@@ -642,6 +678,10 @@ function xmldb_block_exastud_upgrade($oldversion = 0) {
     if ($oldversion < 2018122801) {
         $table = new xmldb_table('block_exastudreportsettings');
         $field = new xmldb_field('grades', XMLDB_TYPE_TEXT, null, null, null, null, null);
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+        $field = new xmldb_field('hidden', XMLDB_TYPE_INTEGER, 1, null, null, null, '0');
         if (!$dbman->field_exists($table, $field)) {
             $dbman->add_field($table, $field);
         }
@@ -674,6 +714,10 @@ function xmldb_block_exastud_upgrade($oldversion = 0) {
         if (!$dbman->field_exists($table, $field)) {
             $dbman->add_field($table, $field);
         }
+        $field = new xmldb_field('hidden', XMLDB_TYPE_INTEGER, 1, null, null, null, '0');
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
         $DB->execute(' UPDATE {block_exastudsubjects} SET shorttitle = \'ABK-Inf\' WHERE sourceinfo = \'bw-bp2016-ai\'');
         upgrade_block_savepoint(true, 2019010301, 'exastud');
     }
@@ -681,6 +725,10 @@ function xmldb_block_exastud_upgrade($oldversion = 0) {
     if ($oldversion < 2019010408) {
         $table = new xmldb_table('block_exastudreportsettings');
         $field = new xmldb_field('rs_hs', XMLDB_TYPE_CHAR, '5', null, null, null, '');
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+        $field = new xmldb_field('hidden', XMLDB_TYPE_INTEGER, 1, null, null, null, '0');
         if (!$dbman->field_exists($table, $field)) {
             $dbman->add_field($table, $field);
         }
@@ -878,6 +926,10 @@ function xmldb_block_exastud_upgrade($oldversion = 0) {
         if (!$dbman->field_exists($table, $field)) {
             $dbman->add_field($table, $field);
         }
+        $field = new xmldb_field('hidden', XMLDB_TYPE_INTEGER, 1, null, null, null, '0');
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
         // reset reports
         foreach([22, 9, 7, 21] as $i) {
             $DB->delete_records('block_exastudreportsettings', ['id' => $i]);
@@ -967,6 +1019,10 @@ function xmldb_block_exastud_upgrade($oldversion = 0) {
         if (!$dbman->field_exists($table, $field)) {
             $dbman->add_field($table, $field);
         }
+        $field = new xmldb_field('hidden', XMLDB_TYPE_INTEGER, 1, null, null, null, '0');
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
         // typo
         $DB->execute(' UPDATE {block_exastuddata} SET value = ? WHERE value = ? ', ['geistige Entwicklung', 'geistige Enwicklung']);
         // reset reports (all, because 'class' property is in the all reports
@@ -1029,6 +1085,10 @@ function xmldb_block_exastud_upgrade($oldversion = 0) {
         if (!$dbman->field_exists($table, $field)) {
             $dbman->add_field($table, $field);
         }
+        $field = new xmldb_field('hidden', XMLDB_TYPE_INTEGER, 1, null, null, null, '0');
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
         // reset reports
         foreach([18, 23] as $i) {
             $DB->delete_records('block_exastudreportsettings', ['id' => $i]);
@@ -1040,6 +1100,10 @@ function xmldb_block_exastud_upgrade($oldversion = 0) {
     if ($oldversion < 2019041213) {
         $table = new xmldb_table('block_exastudreportsettings');
         $field = new xmldb_field('rs_hs', XMLDB_TYPE_CHAR, '5', null, null, null, '');
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+        $field = new xmldb_field('hidden', XMLDB_TYPE_INTEGER, 1, null, null, null, '0');
         if (!$dbman->field_exists($table, $field)) {
             $dbman->add_field($table, $field);
         }

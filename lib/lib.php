@@ -2132,6 +2132,7 @@ function block_exastud_get_report_templates($class) {
         $templates += \block_exastud\print_templates::get_class_other_print_templates($class);
     }
     $templates[BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_ANLAGE_ZUM_LERNENTWICKLUNGSBERICHT_SIMPLE] = 'Anlage: Überfachliche Kompetenzen';
+    //$templates[BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_ANLAGE_ZUM_LERNENTWICKLUNGSBERICHT_SIMPLE] = 'Lern. und Sozialverhalten';
     $templates[BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_16_TESTAT_BILINGUALES_PROFIL_KL_8] = 'Bilingualer Unterricht an Gemeinschaftsschulen (Klasse 8)';
     $templates[BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_16_ZERTIFIKAT_BILINGUALES_KL_10] = 'Bilinguales Zertifikat Englisch/Deutsch (Klasse 10)';
     return $templates;
