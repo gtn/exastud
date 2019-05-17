@@ -159,6 +159,11 @@ if ($classid) {
                     $files_to_zip[$file->temp_file] = $file->filename;
                     continue; // go to the next template
                 }
+                if ($printStudents && $template == BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_LERN_UND_SOZIALVERHALTEN) {
+                    $file = \block_exastud\printer::lern_und_social_report($class, $printStudents);
+                    $files_to_zip[$file->temp_file] = $file->filename;
+                    continue; // go to the next template
+                }
 
                 $doit = true;
                 $checkstudentconditions = function($student, $template) use ($courseid, $class, $studentsWithExacompGraded, $studentsGraded) {

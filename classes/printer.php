@@ -1947,6 +1947,120 @@ class printer {
 		//send_temp_file($temp_file, $filename);
 	}
 
+	static function lern_und_social_report($class, $students) {
+		global $CFG;
+
+		$templateid = BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_LERN_UND_SOZIALVERHALTEN;
+        $templateFile = \block_exastud\print_templates::get_template_file($templateid);
+
+		if (!file_exists($templateFile)) {
+			throw new \Exception("template '$templateid' not found");
+		}
+
+
+		\PhpOffice\PhpWord\Settings::setTempDir($CFG->tempdir);
+		$templateProcessor = new TemplateProcessor($templateFile);
+
+		$period = block_exastud_get_period($class->periodid);
+
+		$templateProcessor->setValue('schule', get_config('exastud', 'school_name'));
+		$templateProcessor->setValue('ort', get_config('exastud', 'school_location'));
+		$templateProcessor->setValue('periode', $period->description);
+        $templateProcessor->setValue('year', block_exastud_get_year_for_report($class));
+		$templateProcessor->setValue('klasse', $class->title);
+		$classteacher = block_exastud_get_user($class->userid);
+		$templateProcessor->setValue('lehrer', fullname($classteacher));
+		$templateProcessor->setValue('datum', date('d.m.Y'));
+
+		// school logo: ${school_logo}
+        if (!$templateProcessor->addImageToReport('school_logo', 'exastud', 'block_exastud_schoollogo', 0, 1024, 768)) {
+            $templateProcessor->setValue("school_logo", ''); // no logo files
+        };
+
+        //$class_subjects = block_exastud_get_class_subjects($class);
+
+        // prepare reviews
+		$class_reviews = array();
+		foreach ($students as $student) {
+			$studentData = block_exastud_get_class_student_data($class->id, $student->id);
+			if ($studentData->head_teacher) {
+                $headTeacher = $studentData->head_teacher;
+            } else {
+			    $headTeacher = $class->userid; // class owner as head teacher
+            }
+			$headLernReview = $studentData->learning_and_social_behavior;
+			// get reviews from teachers
+            if (@$studentData->learning_and_social_behavior) {
+                $reviews = ['head' => (object)[
+                        'userid' => $headTeacher,
+                        'subject_title' => block_exastud_trans('de:Zuständiger Klassenlehrer'),
+                        'review' => $headLernReview
+                ]];
+            } else {
+                $reviews = array();
+            }
+            foreach (block_exastud_get_class_teachers($class->id) as $class_teacher) {
+                if ($class_teacher->subjectid == BLOCK_EXASTUD_SUBJECT_ID_ADDITIONAL_HEAD_TEACHER) {
+                    continue;
+                }
+
+                if (isset($reviews[$class_teacher->userid])) {
+                    $reviews[$class_teacher->userid]->subject_title .= ', '.$class_teacher->subject_title;
+                    continue;
+                }
+
+                $class_teacher->review = g::$DB->get_field('block_exastudreview', 'review', [
+                        'studentid' => $student->id,
+                        'subjectid' => BLOCK_EXASTUD_SUBJECT_ID_LERN_UND_SOZIALVERHALTEN_VORSCHLAG,
+                        'periodid' => $class->periodid,
+                        'teacherid' => $class_teacher->userid,
+                ]);
+
+                if ($class_teacher->review) {
+                    $reviews[$class_teacher->userid] = $class_teacher;
+                }
+            }
+            if (count($reviews)) {
+                $class_reviews[$student->id] = $reviews;
+            }
+		}
+        //echo "<pre>debug:<strong>printer.php:2005</strong>\r\n"; print_r($class_reviews); echo '</pre>'; exit; // !!!!!!!!!! delete it
+
+        $templateProcessor->cloneBlock('studentblock', count($class_reviews), true);
+
+        $s = 0;
+        foreach($class_reviews as $review_studentid => $student_reviews) {
+            $s++;
+            $student = block_exastud_get_user($review_studentid);
+            $templateProcessor->setValue("student_number", $s, 1);
+            $templateProcessor->setValue("student_name", fullname($student), 1);
+            $templateProcessor->setValue("birthday", block_exastud_get_date_of_birth($review_studentid), 1);
+
+            $templateProcessor->cloneRow('teacher', count($student_reviews));
+            $rowi = 0;
+            foreach ($student_reviews as $student_review) {
+                $rowi++;
+                $teacher = block_exastud_get_user($student_review->userid);
+                $templateProcessor->setValue("teacher#$rowi", fullname($teacher), 1);
+                $templateProcessor->setValue("subject#$rowi", $student_review->subject_title, 1);
+                $templateProcessor->setValue("learn_and_sociale#$rowi", $student_review->review, 1);
+            }
+        }
+
+		// save as a random file in temp file
+		$temp_file = tempnam($CFG->tempdir, 'exastud');
+		$templateProcessor->saveAs($temp_file);
+
+		$filename = date('Y-m-d')."-".'Lern_und_Sozialverhalten'."-{$class->title}.docx";
+        $filename = block_exastud_normalize_filename($filename);
+
+        return (object)[
+                'temp_file' => $temp_file,
+                'filename' => $filename,
+        ];
+
+	}
+
 	static function grades_report_html($class, $students) {
 		global $CFG;
 

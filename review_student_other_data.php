@@ -83,6 +83,7 @@ switch ($type) {
         $categories = [
             BLOCK_EXASTUD_DATA_ID_LERN_UND_SOZIALVERHALTEN => [
                 'title' => block_exastud_get_string('learn_and_sociale'),
+                'type' => 'textarea',
                 'cols' => (@$inputs['learn_social_behavior']['cols'] && @$inputs['learn_social_behavior']['cols'] <= 90) ? @$inputs['learn_social_behavior']['cols'] : 50,
                 'lines' => @$inputs['learn_social_behavior']['lines'] ? @$inputs['learn_social_behavior']['lines'] : 8,
             ],
@@ -298,7 +299,6 @@ if ($type == BLOCK_EXASTUD_DATA_ID_LERN_UND_SOZIALVERHALTEN) {
 	$studentdesc = $OUTPUT->user_picture($student, array("courseid" => $courseid)).' '.fullname($student);
 	echo $OUTPUT->heading($studentdesc);
 }
-
 $formdata = $olddata;
 
 if (count($categories) > 0) {

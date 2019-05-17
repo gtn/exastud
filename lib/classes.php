@@ -808,17 +808,7 @@ class print_templates {
                 $fieldValue = ' ---VAL--- '; // temporary
                 switch ($fieldname) {
                     case 'year':
-                        // use current year or last year
-                        $certificate_issue_date_timestamp = block_exastud_get_certificate_issue_date_timestamp($class);
-                        if (date('m', $certificate_issue_date_timestamp) >= 9) {
-                            $year1 = date('Y', $certificate_issue_date_timestamp);
-                        } else {
-                            $year1 = date('Y', $certificate_issue_date_timestamp) - 1;
-                        }
-                        $year2 = $year1 + 1;
-                        $year1 = str_pad($year1, 2, '0', STR_PAD_LEFT);
-                        $year2 = str_pad($year2, 2, '0', STR_PAD_LEFT);
-                        $fieldValue = $year1.'/'.$year2;
+                        $fieldValue = block_exastud_get_year_for_report($class);
                         break;
                     case 'report_date':
                         $fieldValue = date('d.m.Y');
