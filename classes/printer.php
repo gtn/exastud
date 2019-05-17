@@ -1456,7 +1456,8 @@ class printer {
             $data[$lindex.'_graded'] = '/--set-empty--/';
             $data[$lindex.'_niveau'] = '';
         }
-        foreach ($class_subjects as $subject) {
+        // get from language reviews
+        /*foreach ($class_subjects as $subject) {
             if (in_array($subject->shorttitle, array_keys($langSubjects)) && !$subject->no_niveau) {
                 $subjectData = block_exastud_get_graded_review($class->id, $subject->id, $student->id);
                 if (!$subjectData || (!$subjectData->review && !$subjectData->grade && !$subjectData->niveau)) {
@@ -1467,6 +1468,14 @@ class printer {
                 if (strlen($niveau) <= 1) {
                     $data[$langSubjects[$subject->shorttitle].'_niveau'] = 'Niveau '.static::spacerIfEmpty($niveau);
                 }
+            }
+        }*/
+        // get directly from review in "Other report fields"
+        foreach ($langSubjects as $lkey => $lindex) {
+            if (@$studentdata->{$lindex.'_niveau'}) {
+                $subject = block_exastud_get_subject_by_shorttitle($lkey, $class->bpid);
+                $data[$lindex.'_niveau'] = @$studentdata->{$lindex.'_niveau'};
+                $data[$langSubjects[$subject->shorttitle].'_graded'] = $subject->title.':';
             }
         }
 

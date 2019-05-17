@@ -2742,33 +2742,24 @@ function block_exastud_get_default_templates($templateid = null) {
                             ],
                             'eng_niveau' => [
                                     'title' => 'Fremdsprachenniveau - Englisch',
-                                    'type' => 'select',
-                                    'values' => [
-                                            '' => '',
-                                            'G' => 'G',
-                                            'M' => 'M',
-                                            'E' => 'E',
-                                    ],
+                                    'type' => 'textarea',
+                                    'lines' => 1,
+                                    'cols' => 20,
+                                    'maxchars' => 20,
                             ],
                             'fra_niveau' => [
                                     'title' => 'Fremdsprachenniveau - Französisch',
-                                    'type' => 'select',
-                                    'values' => [
-                                            '' => '',
-                                            'G' => 'G',
-                                            'M' => 'M',
-                                            'E' => 'E',
-                                    ],
+                                    'type' => 'textarea',
+                                    'lines' => 1,
+                                    'cols' => 20,
+                                    'maxchars' => 20,
                             ],
                             'spa_niveau' => [
                                     'title' => 'Fremdsprachenniveau - Spanisch',
-                                    'type' => 'select',
-                                    'values' => [
-                                            '' => '',
-                                            'G' => 'G',
-                                            'M' => 'M',
-                                            'E' => 'E',
-                                    ],
+                                    'type' => 'textarea',
+                                    'lines' => 1,
+                                    'cols' => 20,
+                                    'maxchars' => 20,
                             ],
                     ],
                     'inputs_header' => ['verhalten', 'mitarbeit'],
@@ -3076,33 +3067,24 @@ function block_exastud_get_default_templates($templateid = null) {
                         ],
                         'eng_niveau' => [
                                 'title' => 'Fremdsprachenniveau - Englisch',
-                                'type' => 'select',
-                                'values' => [
-                                        '' => '',
-                                        'G' => 'G',
-                                        'M' => 'M',
-                                        'E' => 'E',
-                                ],
+                                'type' => 'textarea',
+                                'lines' => 1,
+                                'cols' => 20,
+                                'maxchars' => 20,
                         ],
                         'fra_niveau' => [
                             'title' => 'Fremdsprachenniveau - Französisch',
-                            'type' => 'select',
-                            'values' => [
-                                    '' => '',
-                                    'G' => 'G',
-                                    'M' => 'M',
-                                    'E' => 'E',
-                            ],
+                                'type' => 'textarea',
+                                'lines' => 1,
+                                'cols' => 20,
+                                'maxchars' => 20,
                         ],
                         'spa_niveau' => [
                             'title' => 'Fremdsprachenniveau - Spanisch',
-                            'type' => 'select',
-                            'values' => [
-                                    '' => '',
-                                    'G' => 'G',
-                                    'M' => 'M',
-                                    'E' => 'E',
-                            ],
+                                'type' => 'textarea',
+                                'lines' => 1,
+                                'cols' => 20,
+                                'maxchars' => 20,
                         ],
                         'ags' => [
                                 'title' => 'Teilnahme an Arbeitsgemeinschaften',
@@ -3123,7 +3105,7 @@ function block_exastud_get_default_templates($templateid = null) {
                                 'type' => 'textarea',
                         ],*/
                     ],
-                    'inputs_footer' => ['projekt_thema', 'projekt_grade', 'fra_niveau', 'spa_niveau', 'ags', 'comments_short'], // inputs in the footer of template
+                    'inputs_footer' => ['projekt_thema', 'projekt_grade', 'eng_niveau', 'fra_niveau', 'spa_niveau', 'ags', 'comments_short'], // inputs in the footer of template
                     'inputs_order' => ['ags', 'comments_short'], // special ordering of inputs (makes similar to docx template)
             ],
             'BP 2004/GMS Abschlusszeugnis der Förderschule' => [
@@ -3693,33 +3675,24 @@ function block_exastud_get_default_templates($templateid = null) {
                             ],
                             'eng_niveau' => [
                                     'title' => 'Fremdsprachenniveau - Englisch',
-                                    'type' => 'select',
-                                    'values' => [
-                                            '' => '',
-                                            'G' => 'G',
-                                            'M' => 'M',
-                                            'E' => 'E',
-                                    ],
+                                    'type' => 'textarea',
+                                    'lines' => 1,
+                                    'cols' => 20,
+                                    'maxchars' => 20,
                             ],
                             'fra_niveau' => [
                                     'title' => 'Fremdsprachenniveau - Französisch',
-                                    'type' => 'select',
-                                    'values' => [
-                                            '' => '',
-                                            'G' => 'G',
-                                            'M' => 'M',
-                                            'E' => 'E',
-                                    ],
+                                    'type' => 'textarea',
+                                    'lines' => 1,
+                                    'cols' => 20,
+                                    'maxchars' => 20,
                             ],
                             'spa_niveau' => [
                                     'title' => 'Fremdsprachenniveau - Spanisch',
-                                    'type' => 'select',
-                                    'values' => [
-                                            '' => '',
-                                            'G' => 'G',
-                                            'M' => 'M',
-                                            'E' => 'E',
-                                    ],
+                                    'type' => 'textarea',
+                                    'lines' => 1,
+                                    'cols' => 20,
+                                    'maxchars' => 20,
                             ],
                     ],
                     'inputs_header' => ['verhalten', 'mitarbeit'],
@@ -3842,33 +3815,24 @@ function block_exastud_get_default_templates($templateid = null) {
                             ],
                             'eng_niveau' => [
                                     'title' => 'Fremdsprachenniveau - Englisch',
-                                    'type' => 'select',
-                                    'values' => [
-                                            '' => '',
-                                            'G' => 'G',
-                                            'M' => 'M',
-                                            'E' => 'E',
-                                    ],
+                                    'type' => 'textarea',
+                                    'lines' => 1,
+                                    'cols' => 20,
+                                    'maxchars' => 20,
                             ],
                             'fra_niveau' => [
                                     'title' => 'Fremdsprachenniveau - Französisch',
-                                    'type' => 'select',
-                                    'values' => [
-                                            '' => '',
-                                            'G' => 'G',
-                                            'M' => 'M',
-                                            'E' => 'E',
-                                    ],
+                                    'type' => 'textarea',
+                                    'lines' => 1,
+                                    'cols' => 20,
+                                    'maxchars' => 20,
                             ],
                             'spa_niveau' => [
                                     'title' => 'Fremdsprachenniveau - Spanisch',
-                                    'type' => 'select',
-                                    'values' => [
-                                            '' => '',
-                                            'G' => 'G',
-                                            'M' => 'M',
-                                            'E' => 'E',
-                                    ],
+                                    'type' => 'textarea',
+                                    'lines' => 1,
+                                    'cols' => 20,
+                                    'maxchars' => 20,
                             ],/*
                             'subject_profile' => [
                                     'title' => 'Profil-fach',
@@ -4083,33 +4047,24 @@ function block_exastud_get_default_templates($templateid = null) {
                             ],
                             'eng_niveau' => [
                                     'title' => 'Fremdsprachenniveau - Englisch',
-                                    'type' => 'select',
-                                    'values' => [
-                                            '' => '',
-                                            'G' => 'G',
-                                            'M' => 'M',
-                                            'E' => 'E',
-                                    ],
+                                    'type' => 'textarea',
+                                    'lines' => 1,
+                                    'cols' => 20,
+                                    'maxchars' => 20,
                             ],
                             'fra_niveau' => [
                                     'title' => 'Fremdsprachenniveau - Französisch',
-                                    'type' => 'select',
-                                    'values' => [
-                                            '' => '',
-                                            'G' => 'G',
-                                            'M' => 'M',
-                                            'E' => 'E',
-                                    ],
+                                    'type' => 'textarea',
+                                    'lines' => 1,
+                                    'cols' => 20,
+                                    'maxchars' => 20,
                             ],
                             'spa_niveau' => [
                                     'title' => 'Fremdsprachenniveau - Spanisch',
-                                    'type' => 'select',
-                                    'values' => [
-                                            '' => '',
-                                            'G' => 'G',
-                                            'M' => 'M',
-                                            'E' => 'E',
-                                    ],
+                                    'type' => 'textarea',
+                                    'lines' => 1,
+                                    'cols' => 20,
+                                    'maxchars' => 20,
                             ],/*
                             'subject_profile' => [
                                     'title' => 'Profil-fach',
@@ -4216,33 +4171,24 @@ function block_exastud_get_default_templates($templateid = null) {
                             ],
                             'eng_niveau' => [
                                     'title' => 'Fremdsprachenniveau - Englisch',
-                                    'type' => 'select',
-                                    'values' => [
-                                            '' => '',
-                                            'G' => 'G',
-                                            'M' => 'M',
-                                            'E' => 'E',
-                                    ],
+                                    'type' => 'textarea',
+                                    'lines' => 1,
+                                    'cols' => 20,
+                                    'maxchars' => 20,
                             ],
                             'fra_niveau' => [
                                     'title' => 'Fremdsprachenniveau - Französisch',
-                                    'type' => 'select',
-                                    'values' => [
-                                            '' => '',
-                                            'G' => 'G',
-                                            'M' => 'M',
-                                            'E' => 'E',
-                                    ],
+                                    'type' => 'textarea',
+                                    'lines' => 1,
+                                    'cols' => 20,
+                                    'maxchars' => 20,
                             ],
                             'spa_niveau' => [
                                     'title' => 'Fremdsprachenniveau - Spanisch',
-                                    'type' => 'select',
-                                    'values' => [
-                                            '' => '',
-                                            'G' => 'G',
-                                            'M' => 'M',
-                                            'E' => 'E',
-                                    ],
+                                    'type' => 'textarea',
+                                    'lines' => 1,
+                                    'cols' => 20,
+                                    'maxchars' => 20,
                             ],
                     ],
                     'inputs_header' => ['verhalten', 'mitarbeit'],
@@ -4820,6 +4766,14 @@ function block_exastud_get_year_for_report($class) {
     $year2 = str_pad($year2, 2, '0', STR_PAD_LEFT);
     $resultYear = $year1.'/'.$year2;
     return $resultYear;
+}
+
+function block_exastud_get_subject_by_shorttitle($shortitle, $bpid = null) {
+    $conditions = ['shorttitle' => $shortitle];
+    if ($bpid) {
+        $conditions['bpid'] = $bpid;
+    }
+    return g::$DB->get_record('block_exastudsubjects', $conditions, '*', IGNORE_MULTIPLE);
 }
 
 /*

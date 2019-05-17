@@ -111,8 +111,8 @@ class class_edit_form extends moodleform {
         );*/
 
         $genders = array(
-            'male' => block_exastud_get_string('UMan'),
-            'female' => block_exastud_get_string('UWoman'),
+            'male' => block_exastud_get_string('man'),
+            'female' => block_exastud_get_string('woman'),
         );
         $liederfields = ['schoollieder', 'groupleader', 'auditleader', 'classleader'];
         $mform->addElement('header', 'leaders', block_exastud_get_string('leaders'));
@@ -448,7 +448,6 @@ class student_other_data_form extends moodleform {
                     } else {
                         $mform->addElement('header', 'header_'.$dataid, $elementTitle);
                     }
-                    //$mform->setExpanded('header_'.$dataid);
                     $maxchars = '550';
                     if (@$pObj->_customdata['modified']) {
                         $mform->addElement('static', '', '', $pObj->_customdata['modified']);
@@ -467,6 +466,10 @@ class student_other_data_form extends moodleform {
                             'rows' => @$input['lines'] ? $input['lines'] : 8,
                             'maxchars' => @$input['maxchars'] ? $input['maxchars'] : 0
                     );
+
+                    if ($textarea_limits['rows'] == 1) {
+                        $mform->setExpanded('header_'.$dataid);
+                    }
 
                     $height = $input['lines'] * 20;
                     if ($input['lines'] == 1) {
