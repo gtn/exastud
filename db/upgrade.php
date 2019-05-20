@@ -1194,7 +1194,7 @@ function xmldb_block_exastud_upgrade($oldversion = 0) {
             $DB->delete_records('block_exastudreportsettings', ['id' => $i]);
             block_exastud_fill_reportsettingstable($i);
         }
-        upgrade_block_savepoint(true, 2019051702, 'exastud');
+        upgrade_block_savepoint(true, 2019052000, 'exastud');
     }
 
 
