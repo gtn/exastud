@@ -68,7 +68,7 @@ const BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_BEIBLATT_PROJEKTPRUEFUNG_HSA 
 const BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_HALBJAHR_LERNENTWICKLUNGSBERICHT  = 6;
 const BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_JAHRESZEUGNIS_LERNENTWICKLUNGSBERICHT  = 7;
 const BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_HALBJAHR_LERNENTWICKLUNGSBERICHT  = 8;
-const BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_JAHRESZEUGNIS_LERNENTWICKLUNGSBERICHT  = 9;
+const BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_JAHRESZEUGNIS_LERNENTWICKLUNGSBERICHT  = 9;
 const BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_HALBJAHR_ZEUGNIS_KL10_E_NIVEAU  = 10;
 const BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_JAHRESZEUGNIS_KL10_E_NIVEAU  = 11;
 const BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_ABGANGSZEUGNIS_SCHULPFLICHT = 12;
@@ -79,11 +79,11 @@ const BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_HALBJAHR_ZEUGNIS_RS  = 16;
 const BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_ABSCHLUSSZEUGNIS_RS  = 17;
 const BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_ABSCHLUSSZEUGNIS_FOE  = 18;
 const BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_HALBJAHR_ZEUGNIS_FOE  = 19;
-const BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_LERNENTWICKLUNGSBERICHT_DECKBLATT_UND_1_INNENSEITE  = 20;
+const BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_GMS_LERNENTWICKLUNGSBERICHT_DECKBLATT_UND_1_INNENSEITE  = 20;
 const BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_HALBJAHRESINFORMATION_KL11  = 21;
 const BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_HALBJAHRESINFORMATION_KL11  = 22;
 const BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_ANLAGE_ZUM_LERNENTWICKLUNGSBERICHT_SIMPLE = 23;
-const BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GLEICHWERTIGER_BILDUNGSABSCHLUSS_HSA_RSA = 24;
+const BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_GLEICHWERTIGER_BILDUNGSABSCHLUSS_HSA_RSA = 24;
 const BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_ABGANGSZEUGNIS_SCHULPFLICHT  = 25;
 const BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_ABGANGSZEUGNIS_NICHT_BEST_HSA = 26;
 const BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_ABSCHLUSSZEUGNIS_FOE = 27;
@@ -96,10 +96,10 @@ const BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_HALBJAHR_ZEUGNIS_KL9_10_HSA =
 const BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_HALBJAHR_ZEUGNIS_FOE = 34;
 const BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_JAHRZEUGNIS_RS = 35;
 const BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_ABSCHLUSSZEUGNIS_KL10_RSA = 36;
-const BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_ZERTIFIKAT_FUER_PROJEKTARBEIT = 37;
+const BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_BEIBLATT_PROJEKTARBEIT = 37;
 const BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_JAHRESZEUGNIS_KL11 = 38;
-const BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_16_TESTAT_BILINGUALES_PROFIL_KL_8 = 39;
-const BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_16_ZERTIFIKAT_BILINGUALES_KL_10 = 40;
+const BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_16_GMS_TESTAT_BILINGUALES_PROFIL_KL_8 = 39;
+const BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_16_GMS_ZERTIFIKAT_BILINGUALES_PROFIL_KL_10 = 40;
 const BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_LERN_UND_SOZIALVERHALTEN = 41;
 
 const BLOCK_EXASTUD_SESSION_TIMEOUT = 10*60 + 1;
@@ -2121,7 +2121,7 @@ function block_exastud_get_report_templates($class) {
     $templates['grades_report'] = 'Notenübersicht (docx)';
     $templates['grades_report_xls'] = 'Notenübersicht (xlsx)';
     $templates['html_report'] = block_exastud_get_string('html_report');
-    $templates[BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_LERNENTWICKLUNGSBERICHT_DECKBLATT_UND_1_INNENSEITE] = 'Deckblatt und 1. Innenseite LEB';
+    $templates[BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_GMS_LERNENTWICKLUNGSBERICHT_DECKBLATT_UND_1_INNENSEITE] = 'Deckblatt und 1. Innenseite LEB';
     $templates[BLOCK_EXASTUD_DATA_ID_PRINT_TEMPLATE] = block_exastud_is_bw_active() ? block_exastud_trans('de:Zeugnis / Abgangszeugnis') : block_exastud_trans('de:Zeugnis');
     if (block_exastud_is_exacomp_installed()) {
         $templates[BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_ANLAGE_ZUM_LERNENTWICKLUNGSBERICHT] = 'Anlage zum Lernentwicklungsbericht';
@@ -2134,8 +2134,8 @@ function block_exastud_get_report_templates($class) {
     }
     $templates[BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_ANLAGE_ZUM_LERNENTWICKLUNGSBERICHT_SIMPLE] = 'Anlage: Überfachliche Kompetenzen';
     $templates[BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_LERN_UND_SOZIALVERHALTEN] = 'Lern. und Sozialverhalten';
-    $templates[BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_16_TESTAT_BILINGUALES_PROFIL_KL_8] = 'Bilingualer Unterricht an Gemeinschaftsschulen (Klasse 8)';
-    $templates[BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_16_ZERTIFIKAT_BILINGUALES_KL_10] = 'Bilinguales Zertifikat Englisch/Deutsch (Klasse 10)';
+    $templates[BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_16_GMS_TESTAT_BILINGUALES_PROFIL_KL_8] = 'Bilingualer Unterricht an Gemeinschaftsschulen (Klasse 8)';
+    $templates[BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_16_GMS_ZERTIFIKAT_BILINGUALES_PROFIL_KL_10] = 'Bilinguales Zertifikat Englisch/Deutsch (Klasse 10)';
     return $templates;
 }
 
@@ -2351,8 +2351,10 @@ function block_exastud_get_default_templates($templateid = null) {
                         'projekt_thema' => [
                                 'title' => 'Thema',
                                 'type' => 'textarea',
-                                'lines' => 3,
-                                'cols' => 80
+                                'lines' => 2,
+                                'cols' => 80,
+                                'maxchars' => 250,
+
                         ],
                         'projekt_grade' => [
                                 'title' => 'Note',
@@ -2373,8 +2375,9 @@ function block_exastud_get_default_templates($templateid = null) {
                         'projekt_verbalbeurteilung' => [
                             'title' => 'Verbalbeurteilung',
                             'type' => 'textarea',
-                            'lines' => 5,
+                            'lines' => 14,
                             'cols' => 80,
+                            'maxchars' => 1900,
                         ],
                         'annotation' => [
                                 'title' => 'Anmerkung',
@@ -2588,9 +2591,9 @@ function block_exastud_get_default_templates($templateid = null) {
                     'inputs_order' => ['lessons_target', 'focus', 'beiblatt', 'comments'], // special ordering of inputs (makes similar to docx template)
             ],
             'BP 2004/GMS Zeugnis SJ' => [
-                    'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_JAHRESZEUGNIS_LERNENTWICKLUNGSBERICHT,
+                    'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_JAHRESZEUGNIS_LERNENTWICKLUNGSBERICHT,
                     'name' => 'BP 2004 GMS Zeugnis SJ',
-                    'file' => 'BP 2004/BP2004_Jahreszeugnis_Lernentwicklungsbericht',
+                    'file' => 'BP 2004/BP2004_GMS_Jahreszeugnis_Lernentwicklungsbericht',
                     'year' => '1',
                     'report_date' => '1',
                     'student_name' => '1',
@@ -3229,9 +3232,9 @@ function block_exastud_get_default_templates($templateid = null) {
                     'inputs_order' => ['ags', 'focus', 'comments_short'], // special ordering of inputs (makes similar to docx template)
             ],
             'Deckblatt und 1. Innenseite LEB' => [
-                    'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_LERNENTWICKLUNGSBERICHT_DECKBLATT_UND_1_INNENSEITE,
+                    'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_GMS_LERNENTWICKLUNGSBERICHT_DECKBLATT_UND_1_INNENSEITE,
                     'name' => 'Deckblatt und 1. Innenseite LEB',
-                    'file' => 'Lernentwicklungsbericht_Deckblatt_und_1._Innenseite',
+                    'file' => 'GMS_Lernentwicklungsbericht_Deckblatt_und_1_Innenseite',
                     'year' => '1',
                     'report_date' => '1',
                     'student_name' => '1',
@@ -3307,9 +3310,9 @@ function block_exastud_get_default_templates($templateid = null) {
                     'inputs_order' => ['ags', 'focus', 'comments_short'], // special ordering of inputs (makes similar to docx template)
             ],
             'BP 2004/gleichwertiger Bildungsabschluss HSA/RSA' => [
-                    'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GLEICHWERTIGER_BILDUNGSABSCHLUSS_HSA_RSA,
+                    'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_GLEICHWERTIGER_BILDUNGSABSCHLUSS_HSA_RSA,
                     'name' => 'BP 2004 gleichwertiger Bildungsabschluss HSA/RSA',
-                    'file' => 'BP 2004/BP2004_gleichwertiger_Bildungsabschluss_HSA_RSA',
+                    'file' => 'BP 2004/BP2004_GMS_gleichwertiger_Bildungsabschluss_HSA_RSA',
                     'year' => '1',
                     'report_date' => '1',
                     'student_name' => '1',
@@ -3568,8 +3571,9 @@ function block_exastud_get_default_templates($templateid = null) {
                             'projekt_thema' => [
                                     'title' => 'Thema',
                                     'type' => 'textarea',
-                                    'lines' => 3,
-                                    'cols' => 80
+                                    'lines' => 2,
+                                    'cols' => 80,
+                                    'maxchars' => 250
                             ],
                             'projekt_grade' => [
                                     'title' => 'Note',
@@ -3585,8 +3589,9 @@ function block_exastud_get_default_templates($templateid = null) {
                             'projekt_verbalbeurteilung' => [
                                     'title' => 'Verbalbeurteilung',
                                     'type' => 'textarea',
-                                    'lines' => 5,
+                                    'lines' => 14,
                                     'cols' => 80,
+                                    'maxchars' => 1900
                             ],
                             'projekt_ingroup' => [
                                     'title' => 'wer entwickelte',
@@ -4075,9 +4080,9 @@ function block_exastud_get_default_templates($templateid = null) {
                     'inputs_order' => ['ags', 'comments_short'], // special ordering of inputs (makes similar to docx template)
             ],
             'BP 2016/Zertifikat zur Projektarbeit' => [
-                    'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_ZERTIFIKAT_FUER_PROJEKTARBEIT,
+                    'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_BEIBLATT_PROJEKTARBEIT,
                     'name' => 'Zertifikat zur Projektarbeit',
-                    'file' => 'BP 2016/BP2016_Zertifikat_fuer_Projektarbeit',
+                    'file' => 'BP 2016/BP2016_GMS_Beiblatt_Projektarbeit',
                     'year' => '1',
                     'report_date' => '1',
                     'student_name' => '1',
@@ -4090,7 +4095,8 @@ function block_exastud_get_default_templates($templateid = null) {
                                     'title' => 'Thema',
                                     'type' => 'textarea',
                                     'lines' => 2,
-                                    'cols' => 80
+                                    'cols' => 80,
+                                    'maxchars' => 250,
                             ],
                             'projekt_grade' => [
                                     'title' => 'Note',
@@ -4108,6 +4114,7 @@ function block_exastud_get_default_templates($templateid = null) {
                                     'type' => 'textarea',
                                     'lines' => 14,
                                     'cols' => 80,
+                                    'maxchars' => 1900
                             ],
                             'projekt_ingroup' => [
                                     'title' => 'wer entwickelte',
@@ -4196,9 +4203,9 @@ function block_exastud_get_default_templates($templateid = null) {
                     'inputs_order' => ['verhalten', 'mitarbeit', 'ags', 'comments_short', 'eng_niveau', 'fra_niveau', 'spa_niveau', 'student_transfered'], // special ordering of inputs (makes similar to docx template)
             ],
             'Testat Englisch/Deutsch (Klasse 8)' => [
-                    'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_16_TESTAT_BILINGUALES_PROFIL_KL_8,
+                    'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_16_GMS_TESTAT_BILINGUALES_PROFIL_KL_8,
                     'name' => 'Testat Englisch/Deutsch (Klasse 8)',
-                    'file' => 'BP 2004_16/BP2004_16_Testat_bilinguales_Profil_Kl_8',
+                    'file' => 'BP 2004_16/BP2004_16_GMS_Testat_bilinguales_Profil_Kl_8',
                     'year' => '1',
                     'report_date' => '1',
                     'student_name' => '1',
@@ -4241,7 +4248,7 @@ function block_exastud_get_default_templates($templateid = null) {
                                 'title' => 'Wochenstunden (Jahrgangsstufe 6)',
                                 'type' => 'textarea',
                                 'lines' => 1,
-                                'cols' => 35,
+                                'cols' => 3,
                         ],
                         'eng_lessons_7' => [
                                 'title' => 'Wochenstunden (Jahrgangsstufe 7)',
@@ -4260,9 +4267,9 @@ function block_exastud_get_default_templates($templateid = null) {
                     'inputs_order' => ['eng_subjects_5', 'eng_lessons_5', 'eng_subjects_6', 'eng_lessons_6', 'eng_subjects_7', 'eng_lessons_7', 'eng_subjects_8', 'eng_lessons_8'],
             ],
             'Bilinguales Zertifikat Englisch/Deutsch (Klasse 10)' => [
-                    'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_16_ZERTIFIKAT_BILINGUALES_KL_10,
+                    'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_16_GMS_ZERTIFIKAT_BILINGUALES_PROFIL_KL_10,
                     'name' => 'Bilinguales Zertifikat Englisch/Deutsch (Klasse 10)',
-                    'file' => 'BP 2004_16/BP2004_16_Zertifikat_bilinguales_Profil_Kl_10',
+                    'file' => 'BP 2004_16/BP2004_16_GMS_Zertifikat_bilinguales_Profil_Kl_10',
                     'year' => '1',
                     'report_date' => '1',
                     'student_name' => '1',
@@ -4740,8 +4747,8 @@ function block_exastud_leiter_titles_by_gender($level = '', $gender = '', $defau
 
 function block_exastud_get_bilingual_reports($withempty = false) {
     $alltemplates = [
-        BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_16_TESTAT_BILINGUALES_PROFIL_KL_8,
-        BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_16_ZERTIFIKAT_BILINGUALES_KL_10,
+        BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_16_GMS_TESTAT_BILINGUALES_PROFIL_KL_8,
+        BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_16_GMS_ZERTIFIKAT_BILINGUALES_PROFIL_KL_10,
     ];
     $result = array();
     if ($withempty) {

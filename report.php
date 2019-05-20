@@ -181,7 +181,7 @@ if ($classid) {
                         // - Beiblatt zur Projektprüfung: if there is grading in exastud and filled data in BLOCK_EXASTUD_DATA_ID_PROJECT_TEACHER
                         case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_BEIBLATT_PROJEKTPRUEFUNG_HSA:
                         case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_BEIBLATT_PROJEKTARBEIT_HSA:
-                        case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_ZERTIFIKAT_FUER_PROJEKTARBEIT:
+                        case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_BEIBLATT_PROJEKTARBEIT:
                             if (!in_array($student->id, $studentsGraded)) {
                                 $doit = false;
                             }
@@ -493,7 +493,7 @@ if ($classid) {
             case 'grades_report':
             case 'grades_report_xls':
             case 'html_report':
-            case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_LERNENTWICKLUNGSBERICHT_DECKBLATT_UND_1_INNENSEITE:
+            case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_GMS_LERNENTWICKLUNGSBERICHT_DECKBLATT_UND_1_INNENSEITE:
                 $row = new html_table_row();
                 $row->cells[] = $tmpl;
                 $row->cells[] = html_writer::checkbox('template['.$key.']',
