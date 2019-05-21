@@ -161,15 +161,15 @@ $userdatacolumn = new html_table_cell();
 $table->head[] = $userdatacolumn; //userdata
 $table->head[] = ''; // hide button
 $table->head[] = block_exastud_get_string('gender'); // gender
-$table->head[] = $tableheaderlearnsocial;
 if (!block_exastud_get_only_learnsociale_reports()) {
-    $table->head[] = $tableheadernote;
-    $table->head[] = $tableheaderniveau;
-    $table->head[] = $tableheadersubjects;
+    $table->head[] = $tableheadernote; // note
+    $table->head[] = $tableheaderniveau; // niveau
+    $table->head[] = $tableheadersubjects; // fachcompetenzen
 }
 if ($isSubjectTeacher) {
-    $table->head[] = $tableheadercategories;
+    $table->head[] = $tableheadercategories; // Interdisciplinary competences
 }
+$table->head[] = $tableheaderlearnsocial; // learn and social
 
 $table->align = array();
 $table->align[] = 'left';
@@ -242,6 +242,7 @@ if ($isSubjectTeacher) {
         }
 
         $row = new html_table_row();
+        // user data
         $userdata = '<span class="exastud-userpicture">'.$output->user_picture($classstudent, array("courseid" => $courseid)).'</span>';
         $userdata .= '<span class="exastud-username">'.fullname($classstudent).'</span>';
 
@@ -283,16 +284,6 @@ if ($isSubjectTeacher) {
             $gendercolumn->text = $gender_form;
         }
         $row->cells[] = $gendercolumn;
-
-        // Learning and social behavior column
-        if ($editLearnSocialBehavior) {
-            $row->cells[] = ($visible ?
-                    $output->link_button($CFG->wwwroot.'/blocks/exastud/review_student.php?courseid='.$courseid.'&classid='.
-                            $classid.'&subjectid='.$subjectid.'&studentid='.$classstudent->id.'&reporttype=social',
-                            block_exastud_get_string('review_button'), ['class' => 'btn btn-primary']) : '');
-        } else {
-            $row->cells[] = '';
-        }
 
         if (!block_exastud_get_only_learnsociale_reports()) {
             // Grades column
@@ -358,6 +349,16 @@ if ($isSubjectTeacher) {
                 $output->link_button($CFG->wwwroot.'/blocks/exastud/review_student.php?courseid='.$courseid.'&classid='.$classid.
                         '&subjectid='.$subjectid.'&studentid='.$classstudent->id.'&reporttype=inter',
                         block_exastud_get_string('review_button'), ['class' => 'btn btn-primary']) : '');
+
+        // Learning and social behavior column
+        if ($editLearnSocialBehavior) {
+            $row->cells[] = ($visible ?
+                    $output->link_button($CFG->wwwroot.'/blocks/exastud/review_student.php?courseid='.$courseid.'&classid='.
+                            $classid.'&subjectid='.$subjectid.'&studentid='.$classstudent->id.'&reporttype=social',
+                            block_exastud_get_string('review_button'), ['class' => 'btn btn-primary']) : '');
+        } else {
+            $row->cells[] = '';
+        }
 
         /* if (!$visible) {
             $cell = new html_table_cell();

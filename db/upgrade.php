@@ -595,7 +595,7 @@ function xmldb_block_exastud_upgrade($oldversion = 0) {
                 'BP 2004/BP2004_GMS_Halbjahr_Zeugnis_E_Niveau' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_HALBJAHR_ZEUGNIS_KL10_E_NIVEAU ,
                 'BP 2004/BP2004_Jahreszeugnis_E_Niveau' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_JAHRESZEUGNIS_KL10_E_NIVEAU ,
                 'BP 2004/BP2004_GMS_Abgangszeugnis_GMS' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_ABGANGSZEUGNIS_SCHULPFLICHT ,
-                'BP 2004/BP2004_GMS_Abgangszeugnis_HS_9_10' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_ABGANGSZEUGNIS_HS_9_10 ,
+                'BP 2004/BP2004_GMS_Abgangszeugnis_HS_9_10' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_ABGANGSZEUGNIS_NICHT_BEST_HSA ,
                 'BP 2004/BP2004_GMS_Halbjahr_Zeugnis_HS' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_HALBJAHR_ZEUGNIS_KL9_10_HSA ,
                 'BP 2004/BP2004_GMS_Abschlusszeugnis_HS' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_ABSCHLUSSZEUGNIS_HS ,
                 'BP 2004/BP2004_GMS_Halbjahr_Zeugnis_RS' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_HALBJAHR_ZEUGNIS_RS ,
@@ -861,7 +861,7 @@ function xmldb_block_exastud_upgrade($oldversion = 0) {
                 'BP 2004/GMS Klasse 10 E-Niveau 1.HJ' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_HALBJAHR_ZEUGNIS_KL10_E_NIVEAU,
                 'BP 2004/GMS Klasse 10 E-Niveau SJ' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_JAHRESZEUGNIS_KL10_E_NIVEAU,
                 'BP 2004/GMS Abgangszeugnis' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_ABGANGSZEUGNIS_SCHULPFLICHT,
-                'BP 2004/GMS Abgangszeugnis HSA Kl.9 und 10' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_ABGANGSZEUGNIS_HS_9_10,
+                'BP 2004/GMS Abgangszeugnis HSA Kl.9 und 10' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_ABGANGSZEUGNIS_NICHT_BEST_HSA,
                 'BP 2004/GMS Hauptschulabschluss 1.HJ' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_HALBJAHR_ZEUGNIS_KL9_10_HSA,
                 'BP 2004/GMS Hauptschulabschluss SJ' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_ABSCHLUSSZEUGNIS_HS,
                 'BP 2004/GMS Realschulabschluss 1.HJ' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_HALBJAHR_ZEUGNIS_RS,
@@ -1195,6 +1195,16 @@ function xmldb_block_exastud_upgrade($oldversion = 0) {
             block_exastud_fill_reportsettingstable($i);
         }
         upgrade_block_savepoint(true, 2019052000, 'exastud');
+    }
+
+    if ($oldversion < 2019052100) {
+        $DB->delete_records('block_exastudreportsettings', ['id' => 21]);
+        // reset reports
+        foreach([13] as $i) {
+            $DB->delete_records('block_exastudreportsettings', ['id' => $i]);
+            block_exastud_fill_reportsettingstable($i);
+        }
+        upgrade_block_savepoint(true, 2019052100, 'exastud');
     }
 
 

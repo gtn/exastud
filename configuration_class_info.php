@@ -193,18 +193,15 @@ if ($class && $class->id) {
 	$classform->display();
 
 	$buttons = '';
-    //echo '<br/>';
-    //echo $output->heading2(block_exastud_get_string('export_class'));
 
-    if ($class->userid == $USER->id) {
+    /*if ($class->userid == $USER->id) {
         $img = '<img src="'.$CFG->wwwroot.'/blocks/exastud/pix/backup.png" title="'.block_exastud_get_string('export_class').'"/>';
         $buttons .= $output->link_button('export_class.php?courseid='.$COURSE->id.'&classid='.$class->id,
                 $img.'&nbsp;&nbsp;&nbsp;'.block_exastud_get_string('export_class'), ['class' => 'btn btn-default']);
-    }
-	//echo '<br/>';
-	//echo $output->heading2(block_exastud_get_string('class_delete'));
+    }*/
 
-	if (!block_exastud_get_class_students($class->id) || block_exastud_is_siteadmin()) {
+    // disabled now. button is in the ist view
+	/*if (!block_exastud_get_class_students($class->id) || block_exastud_is_siteadmin()) {
         $buttons .= $output->link_button('configuration_class.php?courseid='.$COURSE->id.'&action=delete&classid='.$class->id.'&confirm=1',
 			block_exastud_get_string('delete'),
 			['exa-confirm' => block_exastud_get_string('delete_confirmation', null, $class->title),
@@ -215,13 +212,13 @@ if ($class && $class->id) {
                 ['title' => block_exastud_get_string('class_delete'),
                  'class' => 'btn btn-danger btn-toRight']
         );
-		/*$deleteButton = html_writer::empty_tag('input', [
-			'type' => 'button',
-			'onclick' => "alert(".json_encode(block_exastud_get_string('delete_class_only_without_users')).")",
-			'value' => block_exastud_get_string('class_delete'),
-            'class' => 'btn btn-danger'
-		]);*/
-	}
+		//$deleteButton = html_writer::empty_tag('input', [
+		//	'type' => 'button',
+		//	'onclick' => "alert(".json_encode(block_exastud_get_string('delete_class_only_without_users')).")",
+		//	'value' => block_exastud_get_string('class_delete'),
+        //    'class' => 'btn btn-danger'
+		//]);
+	}*/
 
     echo html_writer::div($buttons, 'additional_buttons');
 

@@ -72,7 +72,7 @@ const BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_JAHRESZEUGNIS_LERNENTWICKLUNG
 const BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_HALBJAHR_ZEUGNIS_KL10_E_NIVEAU  = 10;
 const BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_JAHRESZEUGNIS_KL10_E_NIVEAU  = 11;
 const BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_ABGANGSZEUGNIS_SCHULPFLICHT = 12;
-const BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_ABGANGSZEUGNIS_HS_9_10  = 13;
+const BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_ABGANGSZEUGNIS_NICHT_BEST_HSA  = 13;
 const BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_HALBJAHR_ZEUGNIS_KL9_10_HSA  = 14;
 const BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_ABSCHLUSSZEUGNIS_HS  = 15;
 const BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_HALBJAHR_ZEUGNIS_RS  = 16;
@@ -2824,9 +2824,9 @@ function block_exastud_get_default_templates($templateid = null) {
                     'inputs_order' => ['wann_verlassen', 'ags', 'comments_short', 'abgangszeugnis_niveau'], // special ordering of inputs (makes similar to docx template)
             ],
             'BP 2004/GMS Abgangszeugnis HSA Kl.9 und 10' => [
-                    'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_ABGANGSZEUGNIS_HS_9_10,
+                    'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_ABGANGSZEUGNIS_NICHT_BEST_HSA,
                     'name' => 'BP 2004 GMS Abgangszeugnis HSA Kl.9 und 10',
-                    'file' => 'BP 2004/BP2004_GMS_Abgangszeugnis_HS_9_10',
+                    'file' => 'BP 2004/BP2004_GMS_Abgangszeugnis_nicht_best_HSA',
                     'year' => '1',
                     'report_date' => '1',
                     'student_name' => '1',
@@ -3242,7 +3242,7 @@ function block_exastud_get_default_templates($templateid = null) {
                     'place_of_birth' => '1',
                     'learning_group' => '1',
                     'inputs' => [],
-            ],
+            ],/*
             'BP 2004/Halbjahresinformation Kl11' => [
                     'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_HALBJAHRESINFORMATION_KL11,
                     'name' => 'BP 2004 GMS Halbjahresinformation Kl 11',
@@ -3266,15 +3266,15 @@ function block_exastud_get_default_templates($templateid = null) {
                                     'type' => 'textarea',
                                     'lines' => 5,
                                     'cols' => 90,
-                            ],/*
-                            'subject_profile' => [
-                                    'title' => 'Profil-fach',
-                                    'type' => 'textarea',
-                            ],*/
+                            ],
+                            //'subject_profile' => [
+                            //        'title' => 'Profil-fach',
+                            //        'type' => 'textarea',
+                            //],
                     ],
                     'inputs_footer' => ['ags', 'comments_short'], // inputs in the footer of template
                     'inputs_order' => ['ags', 'comments_short'], // special ordering of inputs (makes similar to docx template)
-            ],
+            ],*/
             'BP 2016/Halbjahresinformation Kl11' => [
                     'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_HALBJAHRESINFORMATION_KL11,
                     'name' => 'BP 2016 Halbjahresinformation Kl11',
