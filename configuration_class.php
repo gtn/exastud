@@ -226,16 +226,17 @@ if ($type == 'studentgradereports') {
 		$table = new html_table();
 
 		$table->size = ['1%', '15%', '15%'];
+		$selectall = '<br><label style="font-weight: normal;"><input type="checkbox" class="exastud-select-column-checkboxes">&nbsp;'.block_exastud_get_string('select_all').'</label>';
 
 		$table->head = [
 			'#',
 			block_exastud_get_string('lastname'),
 			block_exastud_get_string('firstname'),
 			block_exastud_trans('de:Zeugnisformular'),
-			block_exastud_trans('de:LEB: Note ausweisen'),
-			block_exastud_trans('de:LEB-Anlage: Note ausweisen'),
+			block_exastud_trans('de:LEB: Note ausweisen').$selectall,
+			block_exastud_trans('de:LEB-Anlage: Note ausweisen').$selectall,
 			block_exastud_trans('de:Bildungsstandard erreicht'),
-			block_exastud_trans('de:Ausgeschieden'),
+			block_exastud_trans('de:Ausgeschieden').$selectall,
 		];
 
 		$available_templates = \block_exastud\print_templates::get_class_available_print_templates($class);

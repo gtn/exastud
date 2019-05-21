@@ -558,6 +558,10 @@ return [
             'Alles markieren',
             'Select all'
     ],
+    'select_all' => [
+            'Alles markieren',
+            'Select all'
+    ],
     'report_selectdeselect_all' => [
             'Alles aus-/abwählen',
             'select/deselect all',
@@ -1445,8 +1449,8 @@ return [
     ],
 
     'leaders' => [
-        'Leaders',
-        'Leaders'
+        'beteiligte Personen',
+        'Involved persons'
     ],
     'schoollieder_fieldtitle' => [
         'Schulleiterin',
