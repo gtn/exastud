@@ -4783,6 +4783,105 @@ function block_exastud_get_subject_by_shorttitle($shortitle, $bpid = null) {
     return g::$DB->get_record('block_exastudsubjects', $conditions, '*', IGNORE_MULTIPLE);
 }
 
+function block_exastud_resize_image($file, $maxwidth, $maxheight) {
+    global $CFG;
+    require_once($CFG->libdir . '/gdlib.php');
+    $imageinfo = @getimagesizefromstring($file->get_content());
+    if (empty($imageinfo)) {
+        return false;
+    }
+    $original = @imagecreatefromstring($file->get_content());
+    if (function_exists('resize_image_from_image')) {
+        return resize_image_from_image($original, $imageinfo, $maxwidth, $maxheight);
+    } else {
+        return block_exastud_resize_image_from_image($original, $imageinfo, $maxwidth, $maxheight);
+    }
+    return false;
+}
+
+function block_exastud_resize_image_from_image($original, $imageinfo, $width, $height, $forcecanvas = false) {
+    global $CFG;
+    if (empty($width) && empty($height) || ($forcecanvas && (empty($width) || empty($height)))) {
+        return false;
+    }
+    if (empty($imageinfo)) {
+        return false;
+    }
+    $originalwidth  = $imageinfo[0];
+    $originalheight = $imageinfo[1];
+    if (empty($originalwidth) or empty($originalheight)) {
+        return false;
+    }
+
+    if (function_exists('imagepng')) {
+        $imagefnc = 'imagepng';
+        $filters = PNG_NO_FILTER;
+        $quality = 1;
+    } else if (function_exists('imagejpeg')) {
+        $imagefnc = 'imagejpeg';
+        $filters = null;
+        $quality = 90;
+    } else {
+        debugging('Neither JPEG nor PNG are supported at this server, please fix the system configuration.');
+        return false;
+    }
+
+    if (empty($height)) {
+        $ratio = $width / $originalwidth;
+    } else if (empty($width)) {
+        $ratio = $height / $originalheight;
+    } else {
+        $ratio = min($width / $originalwidth, $height / $originalheight);
+    }
+
+    if ($ratio < 1) {
+        $targetwidth    = floor($originalwidth * $ratio);
+        $targetheight   = floor($originalheight * $ratio);
+    } else {
+        // Do not enlarge the original file if it is smaller than the requested thumbnail size.
+        $targetwidth    = $originalwidth;
+        $targetheight   = $originalheight;
+    }
+
+    $canvaswidth = $targetwidth;
+    $canvasheight = $targetheight;
+    $dstx = 0;
+    $dsty = 0;
+
+    if ($forcecanvas) {
+        $canvaswidth = $width;
+        $canvasheight = $height;
+        $dstx = floor(($width - $targetwidth) / 2);
+        $dsty = floor(($height - $targetheight) / 2);
+    }
+
+    if (function_exists('imagecreatetruecolor')) {
+        $newimage = imagecreatetruecolor($canvaswidth, $canvasheight);
+        if ($imagefnc === 'imagepng') {
+            imagealphablending($newimage, false);
+            imagefill($newimage, 0, 0, imagecolorallocatealpha($newimage, 0, 0, 0, 127));
+            imagesavealpha($newimage, true);
+        }
+    } else {
+        $newimage = imagecreate($canvaswidth, $canvasheight);
+    }
+
+    imagecopybicubic($newimage, $original, $dstx, $dsty, 0, 0, $targetwidth, $targetheight, $originalwidth, $originalheight);
+
+    // Capture the image as a string object, rather than straight to file.
+    ob_start();
+    if (!$imagefnc($newimage, null, $quality, $filters)) {
+        ob_end_clean();
+        return false;
+    }
+    $data = ob_get_clean();
+    imagedestroy($original);
+    imagedestroy($newimage);
+
+    return $data;
+}
+
+
 /*
 function block_exastud_encrypt_raw($value, $secret) {
 	$iv = openssl_random_pseudo_bytes(openssl_cipher_iv_length('aes-256-cbc'));

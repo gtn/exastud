@@ -482,8 +482,8 @@ class printer {
                     //$dataTextReplacer['zieldifferenter Unterricht'] = '';
                     $dataTextReplacer['Wählen Sie ein Element aus.'] = '';
                     $dataTextReplacer['Beiblatt'] = '';
-                    $studentdata->focus = '/--empty--/';
-                    $data['focus'] = '/--empty--/';
+                    $studentdata->focus = '/--set-empty--/';
+                    $data['focus'] = '/--set-empty--/';
                     $dataTextReplacer['${lessons_target}'] = '';
                     $data['lessons_target'] = '/--set-empty--/';
                     $studentdata->lessons_target = '';
@@ -502,8 +502,8 @@ class printer {
             ])) {
                 $dataTextReplacer['Wählen Sie ein Element aus.'] = '';
                 $dataTextReplacer['Beiblatt'] = '';
-                $studentdata->focus = '/--empty--/';
-                $data['focus'] = '/--empty--/';
+                $studentdata->focus = '/--set-empty--/';
+                $data['focus'] = '/--set-empty--/';
                 $dataTextReplacer['${lessons_target}'] = '';
                 $data['lessons_target'] = '/--set-empty--/';
                 $studentdata->lessons_target = '';
@@ -513,22 +513,23 @@ class printer {
 
             // clean bottom notification about grading
             $data_dropdowns = array_merge($data_dropdowns, array('bottom_note_title_general', 'bottom_note_title', 'bottom_note1', 'bottom_note2'));
-            if (@$studentdata->print_grades
-                    && in_array($templateid, [
+            if (in_array($templateid, [
                         BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_HALBJAHR_LERNENTWICKLUNGSBERICHT,
                         BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_JAHRESZEUGNIS_LERNENTWICKLUNGSBERICHT,
                         BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_HALBJAHR_LERNENTWICKLUNGSBERICHT,
                         BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_JAHRESZEUGNIS_LERNENTWICKLUNGSBERICHT,
             ])) {
-                $data['bottom_note_title_general'] = 'Notenstufen:';
-                $data['bottom_note_title'] = 'Leistungen in den einzelnen Fächern:';
-                $data['bottom_note1'] = 'sehr gut (1) = sgt, gut (2) = gut, befriedigend (3) = bfr,';
-                $data['bottom_note2'] = 'ausreichend (4) = ausr, mangelhaft (5) = mgh, ungenügend (6) = ung';
-            } else {
-                $data['bottom_note_title_general'] = '/--empty--/';
-                $data['bottom_note_title'] = '/--empty--/';
-                $data['bottom_note1'] = '/--empty--/';
-                $data['bottom_note2'] = '/--empty--/';
+                if (@$studentdata->print_grades) {
+                    $data['bottom_note_title_general'] = 'Notenstufen:';
+                    $data['bottom_note_title'] = 'Leistungen in den einzelnen Fächern:';
+                    $data['bottom_note1'] = 'sehr gut (1) = sgt, gut (2) = gut, befriedigend (3) = bfr,';
+                    $data['bottom_note2'] = 'ausreichend (4) = ausr, mangelhaft (5) = mgh, ungenügend (6) = ung';
+                } else {
+                    $data['bottom_note_title_general'] = '/--set-empty--/';
+                    $data['bottom_note_title'] = '/--set-empty--/';
+                    $data['bottom_note1'] = '/--set-empty--/';
+                    $data['bottom_note2'] = '/--set-empty--/';
+                }
             }
 
 		} elseif (in_array($templateid, [
@@ -1507,6 +1508,7 @@ class printer {
             $inputs = print_templates::get_template_inputs($templateid, 'all');
         }
         foreach ($data as $dKey => $dItem) {
+            $select_text = '';
             // it is selectbox
             if (in_array($dKey, $data_dropdowns) ||
                     (is_array($inputs) && array_key_exists($dKey, $inputs) && $inputs[$dKey]['type'] == 'select')) {

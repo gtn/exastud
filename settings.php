@@ -64,19 +64,25 @@ if (!class_exists('block_exastud_settings_extraconfigstoredfile')) {
                     if ($logofile->is_valid_image()) {
                         /** @var stored_file $logo */
                         $logo = (array)$logofile;
-                        $filedata = $logofile->resize_image($maxwidth, $maxheight);
-                        $logo = array_merge($logo, array(
-                                'id' => $logofile->get_id(),
-                                'contextid' => $logofile->get_contextid(),
-                                'component' => 'exastud',
-                                'filearea' => 'block_exastud_schoollogo',
-                                'itemid' => $itemid,
-                                'filepath' => $logofile->get_filepath(),
-                                'filename' => $logofile->get_filename().'--temp',
-                        ));
-                        $newlogo = $fs->create_file_from_string($logo, $filedata);
-                        $logofile->replace_file_with($newlogo);
-                        $newlogo->delete();
+                        if (method_exists($logofile, 'resize_image')) {
+                            $filedata = $logofile->resize_image($maxwidth, $maxheight);
+                        } else {
+                            $filedata = block_exastud_resize_image($logofile, $maxwidth, $maxheight);
+                        }
+                        if ($filedata) {
+                            $logo = array_merge($logo, array(
+                                    'id' => $logofile->get_id(),
+                                    'contextid' => $logofile->get_contextid(),
+                                    'component' => 'exastud',
+                                    'filearea' => 'block_exastud_schoollogo',
+                                    'itemid' => $itemid,
+                                    'filepath' => $logofile->get_filepath(),
+                                    'filename' => $logofile->get_filename().'--temp',
+                            ));
+                            $newlogo = $fs->create_file_from_string($logo, $filedata);
+                            $logofile->replace_file_with($newlogo);
+                            $newlogo->delete();
+                        }
                     }
                 }
             }
