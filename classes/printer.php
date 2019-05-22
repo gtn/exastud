@@ -3028,6 +3028,8 @@ class Slice {
 
 class TemplateProcessor extends \PhpOffice\PhpWord\TemplateProcessor {
     protected $_rels;
+    protected $_headerrels = array();
+    protected $_footerrels = array();
     protected $_types;
     protected $_countRels = 0;
 
@@ -3039,9 +3041,23 @@ class TemplateProcessor extends \PhpOffice\PhpWord\TemplateProcessor {
     public function save()
     {
         //add this snippet to this function after $this->zipClass->addFromString('word/document.xml', $this->tempDocumentMainPart);
+        // for main content
         if ($this->_rels != "") {
             $this->zipClass->addFromString('word/_rels/document.xml.rels', $this->_rels);
         }
+        // for header
+        if (count($this->_headerrels)) {
+            foreach ($this->_headerrels as $fname => $fcontent) {
+                $this->zipClass->addFromString($fname, $fcontent);
+            }
+        }
+        // for footer
+        if (count($this->_footerrels)) {
+            foreach ($this->_footerrels as $fname => $fcontent) {
+                $this->zipClass->addFromString($fname, $fcontent);
+            }
+        }
+        // Content_Types
         if ($this->_types != "") {
             $this->zipClass->addFromString('[Content_Types].xml', $this->_types);
         }
@@ -3166,7 +3182,12 @@ class TemplateProcessor extends \PhpOffice\PhpWord\TemplateProcessor {
 		$oldEscaping = \PhpOffice\PhpWord\Settings::isOutputEscapingEnabled();
 		// it's a raw value
 		\PhpOffice\PhpWord\Settings::setOutputEscapingEnabled(false);
+        $this->tempDocumentHeaders = str_replace($search, $replace, $this->tempDocumentHeaders);
         $this->tempDocumentMainPart = str_replace($search, $replace, $this->tempDocumentMainPart);
+        $this->tempDocumentFooters = str_replace($search, $replace, $this->tempDocumentFooters);
+        //foreach ($this->tempDocumentFooters as &$footerXML) {
+        //    $footerXML = str_replace($search, $replace, $footerXML);
+        //}
 		\PhpOffice\PhpWord\Settings::setOutputEscapingEnabled($oldEscaping);
 		return true;
 	}
@@ -3509,8 +3530,8 @@ class TemplateProcessor extends \PhpOffice\PhpWord\TemplateProcessor {
                 $koef = $fileWidth / $w;
                 $newW = $w;
                 $newH = round((int)$fileHeight / $koef);
-                $fileWidth = $newW; // for use in hight checking
-                $fileHeight = $newH; // for use in hight checking
+                $fileWidth = $newW;
+                $fileHeight = $newH;
                 $resized = true;
             }
             if ($fileHeight > $h) {
@@ -3543,11 +3564,46 @@ class TemplateProcessor extends \PhpOffice\PhpWord\TemplateProcessor {
 
         $this->_types = str_replace('</Types>', $toAddType, $this->_types) . '</Types>';
         $this->_rels = str_replace('</Relationships>', $toAdd, $this->_rels) . '</Relationships>';
+
+        $header_footer_count = 3; // TODO: 3 or more???
+        $emptyRelFileContent = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"></Relationships>';
+        // if the word/_rels/headerX.xml.rels file exists - use this
+        // if does not exist - look on word/headerX.xml file. if it is existing - create new word/_rels/headerX.xml.rels
+        // if both do not exist - no any doings
+        // headers
+        if (!count($this->_headerrels)) {
+            for ($i = 1; $i <= $header_footer_count; $i++) {
+                if ($headerContent = $this->zipClass->getFromName('word/_rels/header'.$i.'.xml.rels')) {
+                    $this->_headerrels['word/_rels/header'.$i.'.xml.rels'] = $headerContent;
+                } else if ($tempContent = $this->zipClass->getFromName('word/header'.$i.'.xml')) {
+                    $this->_headerrels['word/_rels/header'.$i.'.xml.rels'] = $emptyRelFileContent; // new rel file
+                }
+            }
+        }
+        // footers
+        if (!count($this->_footerrels)) {
+            for ($i = 1; $i <= $header_footer_count; $i++) {
+                if ($footerContent = $this->zipClass->getFromName('word/_rels/footer'.$i.'.xml.rels')) {
+                    $this->_footerrels['word/_rels/footer'.$i.'.xml.rels'] = $footerContent;
+                } else if ($tempContent = $this->zipClass->getFromName('word/footer'.$i.'.xml')) {
+                    $this->_headerrels['word/_rels/footer'.$i.'.xml.rels'] = $emptyRelFileContent; // new rel file
+                }
+            }
+        }
+        // add relations
+        foreach ($this->_headerrels as $hkey => $hcontent) {
+            $this->_headerrels[$hkey] = str_replace('</Relationships>', $toAdd, $hcontent) . '</Relationships>';
+        }
+        foreach ($this->_footerrels as $hkey => $fcontent) {
+            $this->_footerrels[$hkey] = str_replace('</Relationships>', $toAdd, $fcontent) . '</Relationships>';
+        }
+
         $this->directReplace($strKey, $toAddImg);
         //return $toAddImg;
     }
 
-    // Mainf function to add images to temlkate
+    // Main function to add images to template
     public function addImageToReport($stringKey, $component="block_exastud", $filearea, $modelid, $w, $h, $fileFromLoggedInUser = false) {
         global $USER;
         $fs = get_file_storage();
