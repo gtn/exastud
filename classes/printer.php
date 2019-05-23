@@ -58,6 +58,14 @@ class printer {
 
         $class_subjects = block_exastud_get_class_subjects($class);
 
+        // change template for bilingual. it must be always only selected in 'teacher options page'
+        if (in_array($templateid, [
+                BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_16_GMS_TESTAT_BILINGUALES_PROFIL_KL_8,
+                BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_16_GMS_ZERTIFIKAT_BILINGUALES_PROFIL_KL_10,
+        ])) {
+            $templateid = block_exastud_get_class_bilingual_template($class->id, $student->id)->get_template_id();
+        }
+
 		if ($templateid == BLOCK_EXASTUD_DATA_ID_PRINT_TEMPLATE) {
 			$template = block_exastud_get_student_print_template($class, $student->id);
             $forminputs = $template->get_inputs(BLOCK_EXASTUD_DATA_ID_PRINT_TEMPLATE);

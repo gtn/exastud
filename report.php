@@ -219,6 +219,29 @@ if ($classid) {
                                 $doit = false;
                             }
                             break;
+                        // bilingual conditions
+                        case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_16_GMS_TESTAT_BILINGUALES_PROFIL_KL_8:
+                        case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_16_GMS_ZERTIFIKAT_BILINGUALES_PROFIL_KL_10:
+                            if (!block_exastud_get_bilingual_teacher($class->id, $student->id)) {
+                                // has not a bilingual teacher
+                                $doit = false;
+                            } else if (!block_exastud_get_class_bilingual_template($class->id, $student->id)) {
+                                // has not a bilingual template
+                                $doit = false;
+                            } else {
+                                // has not any bilingual review
+                                $doit = false; // false at first
+                                $studentdata = block_exastud_get_class_student_data($class->id, $student->id);
+                                $bilinginputs = \block_exastud\print_templates::get_inputs_for_template($template, BLOCK_EXASTUD_DATA_ID_BILINGUALES);
+                                $bilinginputs = array_keys($bilinginputs);
+                                foreach ($bilinginputs as $paramname) {
+                                    if (@$studentdata->{$paramname}) {
+                                        $doit = true; // at least one input is filled - GOT true!
+                                        break;
+                                    }
+                                }
+                            }
+                            break;
                         default:
                             if (!in_array($student->id, $studentsGraded)) {
                                 $doit = false;
