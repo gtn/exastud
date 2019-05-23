@@ -807,7 +807,7 @@ return [
         'Please select at least one student',
     ],
     'not_enough_data_for_report' => [
-        'Für den Schüler/die Schülerin liegen keine Rückmeldungen/Bewertungen im DAKORA Kompetenzraster vor!',
+        'Für den Schüler/die Schülerin wurden noch keine Bewertungen für das Zeugnis erfasst!',
         'Not enough data for report generation for selected students',
     ],
     'review_table_part_subjects' => [
@@ -1457,8 +1457,8 @@ return [
     ],
 
     'leaders' => [
-        'beteiligte Personen',
-        'Involved persons'
+        'Unterzeichnende',
+        'sign'
     ],
     'schoollieder_fieldtitle' => [
         'Schulleiterin',
