@@ -48,7 +48,6 @@ bw-bp2016-wpf-aes;Wahlpflichtfach Alltagskultur, Ernährung, Soziales;WPF AES;0;
 bw-bp2016-wpf-f;Wahlpflichtfach Französisch;WPF F;0;0;0;0
 bw-bp2016-wpf-te;Wahlpflichtfach Technik;WPF Te;0;0;0;0
 bw-bp2016-profil-bk;Profilfach Bildende Kunst;Profil BK;0;1;1;0
-bw-bp2016-profil-f;Profilfach Französisch;Profil F;0;1;1;0
 bw-bp2016-profil-mu;Profilfach Musik;Profil Mu;0;1;1;0
 bw-bp2016-profil-nwt;Profilfach Naturwissenschaft und Technik;Profil NwT;0;1;1;0
 bw-bp2016-profil-imp;Profilfach Informatik, Mathematik, Physik;Profil IMP;0;1;1;0

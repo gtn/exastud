@@ -1207,6 +1207,12 @@ function xmldb_block_exastud_upgrade($oldversion = 0) {
         upgrade_block_savepoint(true, 2019052100, 'exastud');
     }
 
+    if ($oldversion < 2019052300) {
+        $sql = 'DELETE FROM {block_exastudsubjects} WHERE sourceinfo = \'bw-bp2016-profil-f\'';
+        $DB->execute($sql);
+        upgrade_block_savepoint(true, 2019052300, 'exastud');
+    }
+
 
     block_exastud_insert_default_entries();
 	block_exastud_check_profile_fields();
