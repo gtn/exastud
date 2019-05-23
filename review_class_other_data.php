@@ -185,32 +185,35 @@ foreach ($classstudents as $classstudent) {
 
 	if ($type == BLOCK_EXASTUD_DATA_ID_CERTIFICATE && !block_exastud_is_profilesubject_teacher($classid)) {
         $row->cells[] = block_exastud_get_string('only_profilesubject_teacher');
-    } else if ($editUser->id != $USER->id) {
-		$row->cells[] = block_exastud_trans(['de:Zugeteilt zu {$a}'], fullname($editUser));
-	} else if (!$hasInputs) {
-		// no categories, or it's a default printtemplate with no inputs
-		$row->cells[] = block_exastud_trans(['de:Dieses Formular hat keine weiteren Eingabfelder'], fullname($editUser));
-	} /*else if ($type == BLOCK_EXASTUD_DATA_ID_BILINGUALES) {
-        if (block_exastud_is_bilingual_teacher($class->id, null, $classstudent->id, $templateid)) {
-            $row->cells[] = $output->link_button($CFG->wwwroot.'/blocks/exastud/review_student_other_data.php?courseid='.$courseid.'&classid='.$classid.'&type='.$type.'&studentid='.$classstudent->id.'&templateid='.$templateid,
-                    block_exastud_get_string('edit'),
-                    array('class' => 'btn btn-default'));
-        } else {
-            $editBilingualUser = block_exastud_get_bilingual_teacher($classid, $classstudent->id);
-            if ($editBilingualUser) {
-                $row->cells[] = block_exastud_trans(['de:Zugeteilt zu {$a}'], fullname($editBilingualUser));
-            } else {
-                $row->cells[] = '';
-            }
-        }
-    }*/ else {
+    } else {
 	    if (!$hideReviewButton) {
             $row->cells[] = $output->link_button($CFG->wwwroot.'/blocks/exastud/review_student_other_data.php?courseid='.$courseid.
                     '&classid='.$classid.'&type='.$type.'&studentid='.$classstudent->id,
                     block_exastud_get_string('edit'),
                     array('class' => 'btn btn-default'));
         } else {
-            $row->cells[] = $hideReviewButton;
+            if ($editUser->id != $USER->id) {
+                $row->cells[] = block_exastud_trans(['de:Zugeteilt zu {$a}'], fullname($editUser));
+            } else if (!$hasInputs) {
+                // no categories, or it's a default printtemplate with no inputs
+                $row->cells[] = block_exastud_trans(['de:Dieses Formular hat keine weiteren Eingabfelder'], fullname($editUser));
+            } /*else if ($type == BLOCK_EXASTUD_DATA_ID_BILINGUALES) {
+                if (block_exastud_is_bilingual_teacher($class->id, null, $classstudent->id, $templateid)) {
+                    $row->cells[] = $output->link_button($CFG->wwwroot.'/blocks/exastud/review_student_other_data.php?courseid='.$courseid.'&classid='.$classid.'&type='.$type.'&studentid='.$classstudent->id.'&templateid='.$templateid,
+                            block_exastud_get_string('edit'),
+                            array('class' => 'btn btn-default'));
+                } else {
+                    $editBilingualUser = block_exastud_get_bilingual_teacher($classid, $classstudent->id);
+                    if ($editBilingualUser) {
+                        $row->cells[] = block_exastud_trans(['de:Zugeteilt zu {$a}'], fullname($editBilingualUser));
+                    } else {
+                        $row->cells[] = '';
+                    }
+                }
+            }*/
+            else {
+                $row->cells[] = $hideReviewButton;
+            }
         }
     }
     $fs = get_file_storage();
@@ -231,6 +234,9 @@ foreach ($classstudents as $classstudent) {
                     //if (!block_exastud_is_bilingual_teacher($class->id, null, $classstudent->id, $templateid)) {
                     //    $template = null;
                     //}
+                    if (!$template || $templateid != $template->get_template_id()) {
+                        continue 3; // ignore this student because it has another template for bilingual
+                    }
                     break;
                 default:
                     $template = block_exastud_get_student_print_template($class, $classstudent->id);

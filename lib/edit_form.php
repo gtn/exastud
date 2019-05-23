@@ -468,7 +468,9 @@ class student_other_data_form extends moodleform {
                     );
 
                     if ($textarea_limits['rows'] == 1) {
-                        $mform->setExpanded('header_'.$dataid);
+                        if ($mform->elementExists('header_'.$dataid)) {
+                            $mform->setExpanded('header_'.$dataid);
+                        }
                     }
 
                     $height = $input['lines'] * 20;
