@@ -87,41 +87,70 @@ if ($action == 'update' && $isSubjectTeacher) {
 }
 
 if (($action == 'hide_student' || $action == 'show_student') && $isSubjectTeacher) {
-    $studentid = required_param('studentid', PARAM_INT);
-    $student = $DB->get_record('user', array('id' => $studentid, 'deleted' => 0));
-    $existing = $DB->get_record('block_exastudclassteastudvis', [
-            'classteacherid' => $reviewclass->classteacherid,
-            'studentid' => $studentid,
-    ]);
-    if ($action == 'hide_student') {
-        g::$DB->insert_or_update_record('block_exastudclassteastudvis', [
-                'visible' => 0,
-        ], [
-                'classteacherid' => $reviewclass->classteacherid,
-                'studentid' => $studentid,
-        ]);
-        if (!$existing) { // the form used also for another actions and thay can go to the link with hide_student
-            \block_exastud\event\student_hidden::log(['objectid' => $classid,
-                    'relateduserid' => $studentid,
-                    'other' => ['classtitle' => $reviewclass->title,
-                            'subjectid' => $reviewclass->subject_id,
-                            'subjecttitle' => $reviewclass->subject_title,
-                            'studentname' => $student->firstname.' '.$student->lastname]]);
+    $studentid = required_param('studentid', PARAM_ALPHANUM);
+    if ($studentid == 'all') {
+        // all students for class
+        $allstudents = block_exastud_get_class_students($classid);
+        $allstudents = array_keys($allstudents);
+        $alreadyhiddenStudents = g::$DB->get_records_menu('block_exastudclassteastudvis',
+                [   'classteacherid' => $reviewclass->classteacherid,
+                    'visible' => 0,
+                ],
+                '',
+                'studentid, studentid as temp');
+        $alreadyhiddenStudents = array_keys($alreadyhiddenStudents);
+        if ($action == 'hide_student') {
+            $studentsTo = array_diff($allstudents, $alreadyhiddenStudents);
+        } else {
+            $studentsTo = $alreadyhiddenStudents;
         }
-    } else if ($action == 'show_student') {
-        g::$DB->delete_records('block_exastudclassteastudvis', [
-                'classteacherid' => $reviewclass->classteacherid,
-                'studentid' => $studentid,
-        ]);
-        if ($existing) { // the form used also for another actions and thay can go to the link with show_student
-            \block_exastud\event\student_shown::log(['objectid' => $classid,
-                    'relateduserid' => $studentid,
-                    'other' => ['classtitle' => $reviewclass->title,
-                            'subjectid' => $reviewclass->subject_id,
-                            'subjecttitle' => $reviewclass->subject_title,
-                            'studentname' => $student->firstname.' '.$student->lastname]]);
-        }
+        $students = $studentsTo;
+    } else {
+        $students = array(intval($studentid));
     }
+
+    $doHideShow = function($action, $classid, $student, $reviewclass) use ($DB) {
+        $existing = $DB->get_record('block_exastudclassteastudvis', [
+                'classteacherid' => $reviewclass->classteacherid,
+                'studentid' => $student->id,
+        ]);
+        if ($action == 'hide_student') {
+            g::$DB->insert_or_update_record('block_exastudclassteastudvis', [
+                    'visible' => 0,
+            ], [
+                    'classteacherid' => $reviewclass->classteacherid,
+                    'studentid' => $student->id,
+            ]);
+            if (!$existing) { // the form used also for another actions and thay can go to the link with hide_student
+                \block_exastud\event\student_hidden::log(['objectid' => $classid,
+                        'relateduserid' => $student->id,
+                        'other' => ['classtitle' => $reviewclass->title,
+                                'subjectid' => $reviewclass->subject_id,
+                                'subjecttitle' => $reviewclass->subject_title,
+                                'studentname' => $student->firstname.' '.$student->lastname]]);
+            }
+        } else if ($action == 'show_student') {
+            g::$DB->delete_records('block_exastudclassteastudvis', [
+                    'classteacherid' => $reviewclass->classteacherid,
+                    'studentid' => $student->id,
+            ]);
+            if ($existing) { // the form used also for another actions and thay can go to the link with show_student
+                \block_exastud\event\student_shown::log(['objectid' => $classid,
+                        'relateduserid' => $student->id,
+                        'other' => ['classtitle' => $reviewclass->title,
+                                'subjectid' => $reviewclass->subject_id,
+                                'subjecttitle' => $reviewclass->subject_title,
+                                'studentname' => $student->firstname.' '.$student->lastname]]);
+            }
+        }
+    };
+
+    foreach ($students as $studentid) {
+        $student = $DB->get_record('user', array('id' => $studentid, 'deleted' => 0));
+        $doHideShow($action, $classid, $student, $reviewclass);
+    }
+
+
 }
 
 $url = '/blocks/exastud/review_class.php';
@@ -159,7 +188,13 @@ $table = new html_table();
 $table->head = array();
 $userdatacolumn = new html_table_cell();
 $table->head[] = $userdatacolumn; //userdata
-$table->head[] = ''; // hide button
+$hide_allstudents_url = block_exastud\url::create($PAGE->url, ['action' => 'hide_student', 'studentid' => 'all']);
+$hideAllButton = '<span class="exastud-hidebutton">
+                    <a style="padding-right: 15px;" href="'.$hide_allstudents_url.'">'.
+                        $OUTPUT->pix_icon('i/hide', block_exastud_get_string('hide')).
+                        '&nbsp;'.block_exastud_get_string('hide_all').
+                    '</a></span>';
+$table->head[] = $hideAllButton; // hide button
 $table->head[] = block_exastud_get_string('gender'); // gender
 if (!block_exastud_get_only_learnsociale_reports()) {
     $table->head[] = $tableheadernote; // note
@@ -242,6 +277,7 @@ if ($isSubjectTeacher) {
         }
 
         $row = new html_table_row();
+        $row->attributes['data-studentid'] = $classstudent->id;
         // user data
         $userdata = '<span class="exastud-userpicture">'.$output->user_picture($classstudent, array("courseid" => $courseid)).'</span>';
         $userdata .= '<span class="exastud-username">'.fullname($classstudent).'</span>';
@@ -534,8 +570,10 @@ foreach ($table->head as $k => $headitem) {
 // delete needed columns
 foreach ($tabledeletecolumns as $todelete) {
     unset($table->head[$tablecolumns[$todelete]]);
-    foreach ($table->data as $row) {
-        unset($row->cells[$tablecolumns[$todelete]]);
+    if (count($table->data)) {
+        foreach ($table->data as $row) {
+            unset($row->cells[$tablecolumns[$todelete]]);
+        }
     }
 }
 
@@ -549,7 +587,13 @@ if ($hiddenclassstudents) {
 	$table->head = array();
 	$table->head[] = ''; //userpic
 	$table->head[] = block_exastud_get_string('name');
-	$table->head[] = ''; //buttons
+    $hide_allstudents_url = block_exastud\url::create($PAGE->url, ['action' => 'show_student', 'studentid' => 'all']);
+    $showAllButton = '<span class="exastud-hidebutton">
+                    <a style="padding-right: 15px;" href="'.$hide_allstudents_url.'">'.
+            $OUTPUT->pix_icon('i/show', block_exastud_get_string('show')).
+            '&nbsp;'.block_exastud_get_string('show_all').
+            '</a></span>';
+	$table->head[] = $showAllButton; //buttons
 
 	$table->align = array();
 	$table->align[] = 'center';

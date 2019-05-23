@@ -562,6 +562,14 @@ return [
             'Alles markieren',
             'Select all'
     ],
+    'hide_all' => [
+            'alle ausblenden',
+            'hide all'
+    ],
+    'show_all' => [
+            'alle einblenden',
+            'show all'
+    ],
     'report_selectdeselect_all' => [
             'Alles aus-/abwählen',
             'select/deselect all',
