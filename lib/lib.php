@@ -4903,23 +4903,33 @@ function block_exastud_get_all_teachers($courseid) {
     $addTeachers = $DB->get_records_sql('SELECT DISTINCT u.* 
                                           FROM {block_exastuddata} d
                                           JOIN {user} u ON u.id = d.value
-                                          WHERE d.value > 0
+                                          WHERE u.deleted = 0 
+                                            AND d.value > 0
                                             AND d.name IN (\''.implode('\', \'', $names).'\') ');
     // add teachers from class owners
     $headTeachers = $DB->get_records_sql('SELECT DISTINCT u.* 
                                           FROM {block_exastudclass} c
                                           JOIN {user} u ON u.id = c.userid
-                                          WHERE c.userid > 0
+                                          WHERE u.deleted = 0 
+                                            AND c.userid > 0
+                                            ');
+    // add teachers from subjects
+    $subjectTeachers = $DB->get_records_sql('SELECT DISTINCT u.* 
+                                          FROM {block_exastudclassteachers} ct
+                                          JOIN {user} u ON u.id = ct.teacherid
+                                          WHERE u.deleted = 0 
+                                            AND ct.teacherid > 0
                                             ');
     // teachers from cohort 'head_teachers'
     $cohort = block_exastud_get_head_teacher_cohort();
     $cohortTeachers = $DB->get_records_sql('SELECT DISTINCT u.* 
                                           FROM {cohort_members} c
                                           JOIN {user} u ON u.id = c.userid
-                                          WHERE c.cohortid = ?
+                                          WHERE u.deleted = 0 
+                                            AND c.cohortid = ?
                                             ',
             [$cohort->id]);
-    $teachers = $teachers + $addTeachers + $headTeachers + $cohortTeachers;
+    $teachers = $teachers + $addTeachers + $headTeachers + $subjectTeachers + $cohortTeachers;
     //$headteachers = block_exastud_get_class_teachers();
     return $teachers;
 }
