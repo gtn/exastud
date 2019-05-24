@@ -1172,3 +1172,35 @@ class report_settings_filter_form extends moodleform {
     }
 
 }
+
+class change_subject_teacher_form extends moodleform {
+
+    function definition() {
+        $mform = $this->_form;
+        $courseid = $this->_customdata['courseid'];
+        $currentteacher = $this->_customdata['curentteacher'];
+        $subject = $this->_customdata['subject'];
+        $a = (object)[
+            'subjecttitle' => $subject->title,
+            'currentteacher_name' => fullname($currentteacher),
+        ];
+
+        //$mform->addElement('static', 'exastud_description', block_exastud_get_string('form_subject_teacher_form_description', '', $a).':', array('size' => 50));
+        $teachers = block_exastud_get_all_teachers($courseid);
+        $teachers = array_map(function($o) {return fullname($o);}, $teachers);
+        $mform->addElement('select',
+                'newsubjectteacher',
+                block_exastud_get_string('form_subject_teacher_form_select_new_teacher', '', $a).':',
+                $teachers);
+        $mform->setType('newsubjectteacher', PARAM_INT);
+        $mform->setDefault('newsubjectteacher', $currentteacher->id);
+
+
+        $buttons = array();
+        $buttons[] = $mform->createElement('submit', 'gochange', block_exastud_get_string('form_subject_teacher_form_save'));
+        $buttons[] = $mform->createElement('cancel');
+        $mform->addGroup($buttons, 'buttons', '', array(' '), false);
+    }
+
+}
+

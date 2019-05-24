@@ -316,6 +316,18 @@ function block_exastud_get_class_subject_teachers($classid) {
 		", [$classid]), false);
 }
 
+function block_exastud_get_class_teacher_by_subject($classid, $subjectid) {
+	return g::$DB->get_record_sql('
+			SELECT u.*
+			    FROM {user} u
+			        JOIN {block_exastudclassteachers} ct ON ct.teacherid=u.id
+			        JOIN {block_exastudclass} c ON c.id=ct.classid
+			        JOIN {block_exastudsubjects} s ON ct.subjectid = s.id AND s.bpid=c.bpid
+			    WHERE c.id = ? AND u.deleted = 0 AND s.id = ?
+			    ORDER BY u.lastname, u.firstname',
+        [$classid, $subjectid], IGNORE_MULTIPLE);
+}
+
 function block_exastud_is_profilesubject_teacher($classid, $userid = null) {
     global $USER;
     if (!$userid) {
@@ -4879,6 +4891,59 @@ function block_exastud_resize_image_from_image($original, $imageinfo, $width, $h
     imagedestroy($newimage);
 
     return $data;
+}
+
+function block_exastud_get_all_teachers($courseid) {
+    global $DB;
+    $role = $DB->get_record('role', array('shortname' => 'editingteacher'));
+    $context = context_course::instance($courseid);
+    $teachers = get_role_users($role->id, $context);
+    // add teachers from classes (head_teacher, project_teacher, bilingual_teacher)
+    $names = ['head_teacher', 'project_teacher', 'bilingual_teacher'];
+    $addTeachers = $DB->get_records_sql('SELECT DISTINCT u.* 
+                                          FROM {block_exastuddata} d
+                                          JOIN {user} u ON u.id = d.value
+                                          WHERE d.value > 0
+                                            AND d.name IN (\''.implode('\', \'', $names).'\') ');
+    // add teachers from class owners
+    $headTeachers = $DB->get_records_sql('SELECT DISTINCT u.* 
+                                          FROM {block_exastudclass} c
+                                          JOIN {user} u ON u.id = c.userid
+                                          WHERE c.userid > 0
+                                            ');
+    // teachers from cohort 'head_teachers'
+    $cohort = block_exastud_get_head_teacher_cohort();
+    $cohortTeachers = $DB->get_records_sql('SELECT DISTINCT u.* 
+                                          FROM {cohort_members} c
+                                          JOIN {user} u ON u.id = c.userid
+                                          WHERE c.cohortid = ?
+                                            ',
+            [$cohort->id]);
+    $teachers = $teachers + $addTeachers + $headTeachers + $cohortTeachers;
+    //$headteachers = block_exastud_get_class_teachers();
+    return $teachers;
+}
+
+function block_exastud_clean_templatelist_for_classconfiguration($list, $depth = 0) {
+    $toClean = array(
+        // clean beiblatt and zertificate
+            BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_16_ZERTIFIKAT_FUER_PROFILFACH,
+            BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_BEIBLATT_PROJEKTPRUEFUNG_HSA,
+            BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_BEIBLATT_PROJEKTARBEIT,
+            BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_BEIBLATT_PROJEKTARBEIT_HSA,
+    );
+    if (!$depth) {
+        $list = array_filter($list, function($key) use ($toClean) {
+            return !in_array($key, $toClean);
+        }, ARRAY_FILTER_USE_KEY);
+    } elseif ($depth == 2) {
+        $list = array_map(function($subarr) use ($toClean) {
+            return array_filter($subarr, function($key) use ($toClean) {
+                return !in_array($key, $toClean);
+            }, ARRAY_FILTER_USE_KEY);
+        }, $list);
+    }
+    return $list;
 }
 
 

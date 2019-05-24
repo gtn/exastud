@@ -1477,5 +1477,25 @@ return [
         'Class head',
     ],
 
+    'subjectteacher_change_button' => [
+        'neue Lehrerkraft zuordnen und Bewertungen übernehmen',
+        'match a new teacher and transmit his grading'
+    ],
+    'form_subject_teacher_form_header' => [
+        'Fach an andere Lehrkraft übertragen',
+        'Transmit subject to other teacher'
+    ],
+    'form_subject_teacher_form_description' => [
+        'Sie können das Fach {$a->subjecttitle} einer anderen Lehrkraft übertragen. Die bisherige Lehrkraft ist {$a->currentteacher_name}. Alle Eingaben und Bewertungen von {$a->currentteacher_name} werden der neuen Lehrkraft übertragen.',
+        'You can transmit the subject {$a->subjecttitle} to another teacher. The current teacher is {$a->currentteacher_name}. All gradings from {$a->currentteacher_name} are transmitted to new teacher.'
+    ],
+    'form_subject_teacher_form_select_new_teacher' => [
+        'Neue Lehrkraft für {$a->subjecttitle}',
+        'New teacher for {$a->subjecttitle}',
+    ],
+    'form_subject_teacher_form_save' => [
+        'Lehrkraft jetzt übertragen.',
+        'Transmit subject now.',
+    ],
 
 ];

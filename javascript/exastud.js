@@ -266,6 +266,10 @@ $.extend(window.block_exastud, {
                 // }
                 leftChars -= r.length;
             })
+            // if the textarea is empty - shown max lines as limit
+            if (!currentText) {
+                leftRows = rowsLimit;
+            }
             $('#left_'+textareaName+'_rows .exastud-value').html(leftRows);
             $('#left_'+textareaName+'_chars .exastud-value').html(leftChars);
             if (leftRows < 0) {
