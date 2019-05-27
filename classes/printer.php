@@ -2019,18 +2019,23 @@ class printer {
             } else {
 			    $headTeacher = $class->userid; // class owner as head teacher
             }
+            $headTeacherObject = block_exastud_get_user($headTeacher);
 			$headLernReview = $studentData->learning_and_social_behavior;
 			// get reviews from teachers
             if (@$studentData->learning_and_social_behavior) {
                 $reviews = ['head' => (object)[
                         'userid' => $headTeacher,
+                        'teacher' => $headTeacherObject,
                         'subject_title' => block_exastud_trans('de:Zuständiger Klassenlehrer'),
+                        'title' => block_exastud_trans('de:Zuständiger Klassenlehrer'), // subject title
                         'review' => $headLernReview
                 ]];
             } else {
                 $reviews = array();
             }
-            foreach (block_exastud_get_class_teachers($class->id) as $class_teacher) {
+
+            // 1. teacher by teacher:
+            /*foreach (block_exastud_get_class_teachers($class->id) as $class_teacher) {
                 if ($class_teacher->subjectid == BLOCK_EXASTUD_SUBJECT_ID_ADDITIONAL_HEAD_TEACHER) {
                     continue;
                 }
@@ -2050,17 +2055,37 @@ class printer {
                 if ($class_teacher->review) {
                     $reviews[$class_teacher->userid] = $class_teacher;
                 }
+            }*/
+
+            // 2. subject by subject
+            foreach (block_exastud_get_class_subjects($class) as $class_subject) {
+                $class_subject->teacher = block_exastud_get_class_teacher_by_subject($class->id, $class_subject->id);
+                $class_subject->review = g::$DB->get_field('block_exastudreview', 'review', [
+                        'studentid' => $student->id,
+                        'subjectid' => $class_subject->id,
+                        'periodid' => $class->periodid,
+                        'teacherid' => $class_subject->teacher->id,
+                ]);
+                if ($class_subject->review) {
+                    $reviews[$class_subject->id] = $class_subject;
+                }
             }
+
             if (count($reviews)) {
                 $class_reviews[$student->id] = $reviews;
             }
 		}
-        //echo "<pre>debug:<strong>printer.php:2005</strong>\r\n"; print_r($class_reviews); echo '</pre>'; exit; // !!!!!!!!!! delete it
+        if (!count($class_reviews)) {
+            // no any review = no any report
+            return null;
+        }
+        
+        //echo "<pre>debug:<strong>printer.php:2080</strong>\r\n"; print_r($class_reviews); echo '</pre>'; exit; // !!!!!!!!!! delete it
 
         $templateProcessor->cloneBlock('studentblock', count($class_reviews), true);
 
         $s = 0;
-        foreach($class_reviews as $review_studentid => $student_reviews) {
+        foreach ($class_reviews as $review_studentid => $student_reviews) {
             $s++;
             $student = block_exastud_get_user($review_studentid);
             $templateProcessor->setValue("student_number", $s, 1);
@@ -2072,8 +2097,8 @@ class printer {
             foreach ($student_reviews as $student_review) {
                 $rowi++;
                 $teacher = block_exastud_get_user($student_review->userid);
-                $templateProcessor->setValue("teacher#$rowi", fullname($teacher), 1);
-                $templateProcessor->setValue("subject#$rowi", $student_review->subject_title, 1);
+                $templateProcessor->setValue("teacher#$rowi", fullname($student_review->teacher ), 1);
+                $templateProcessor->setValue("subject#$rowi", $student_review->title, 1);
                 $templateProcessor->setValue("learn_and_sociale#$rowi", $student_review->review, 1);
             }
         }

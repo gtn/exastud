@@ -160,8 +160,18 @@ if ($classid) {
                     continue; // go to the next template
                 }
                 if ($printStudents && $template == BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_LERN_UND_SOZIALVERHALTEN) {
-                    $file = \block_exastud\printer::lern_und_social_report($class, $printStudents);
-                    $files_to_zip[$file->temp_file] = $file->filename;
+                    foreach ($printStudents as $printstudent) {
+                        $tempPrintStudents = array($printstudent);
+                        $file = \block_exastud\printer::lern_und_social_report($class, $tempPrintStudents);
+                        //$files_to_zip[$file->temp_file] = $file->filename;
+                        if ($file) {
+                            $files_to_zip[$file->temp_file] =
+                                    '/'.
+                                    block_exastud_normalize_filename($printstudent->firstname.'-'.$printstudent->lastname.'-'.$printstudent->id).
+                                    '/'.$file->filename;
+                            $temp_files[] = $file->temp_file;
+                        }
+                    }
                     continue; // go to the next template
                 }
 

@@ -262,7 +262,8 @@ if ($type == BLOCK_EXASTUD_DATA_ID_LERN_UND_SOZIALVERHALTEN) {
 	echo $output->table($table);*/
 
 	$vorschlaege = [];
-	foreach (block_exastud_get_class_teachers($classid) as $class_teacher) {
+    // 1. if the teacher can review Learn only ONE time for all own subjects
+/*	foreach (block_exastud_get_class_teachers($classid) as $class_teacher) {
 		if ($class_teacher->subjectid == BLOCK_EXASTUD_SUBJECT_ID_ADDITIONAL_HEAD_TEACHER) {
 			continue;
 		}
@@ -280,15 +281,31 @@ if ($type == BLOCK_EXASTUD_DATA_ID_LERN_UND_SOZIALVERHALTEN) {
 		]);
 
 		if ($class_teacher->vorschlag) {
+			//$vorschlaege[$class_teacher->userid] = $class_teacher;
 			$vorschlaege[$class_teacher->userid] = $class_teacher;
 		}
-	}
+	}*/
+
+    // 2. the teacher can review different subjects with different results
+    foreach (block_exastud_get_class_subjects($class) as $class_subject) {
+        $class_subject->teacher = block_exastud_get_class_teacher_by_subject($classid, $class_subject->id);
+        $class_subject->vorschlag = $DB->get_field('block_exastudreview', 'review', [
+                'studentid' => $studentid,
+                'subjectid' => $class_subject->id,
+                'periodid' => $actPeriod->id,
+                'teacherid' => $class_subject->teacher->id,
+        ]);
+        if ($class_subject->vorschlag) {
+            $vorschlaege[$class_subject->id] = $class_subject;
+        }
+    }
 
 	echo '<legend>'.block_exastud_get_string("textblock").'</legend>';
 
 	if ($vorschlaege) {
 		foreach ($vorschlaege as $vorschlag) {
-			echo '<div style="font-weight: bold;">'.$vorschlag->subject_title.':</div>'.$vorschlag->vorschlag;
+			//echo '<div style="font-weight: bold;">'.$vorschlag->subject_title.':</div>'.$vorschlag->vorschlag;
+			echo '<div style="font-weight: bold;">'.$vorschlag->title.' ('.fullname($vorschlag->teacher).'):</div>'.$vorschlag->vorschlag;
 			echo '<hr>';
 		}
 	} else {

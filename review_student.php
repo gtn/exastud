@@ -214,11 +214,15 @@ if ($fromform = $studentform->get_data()) {
         case 'social':
             $newreview->review = $fromform->vorschlag;
             $existingReview = $DB->get_record('block_exastudreview',
-                    ['studentid' => $studentid, 'subjectid' => BLOCK_EXASTUD_SUBJECT_ID_LERN_UND_SOZIALVERHALTEN_VORSCHLAG,
-                            'periodid' => $actPeriod->id, 'teacherid' => $teacherid,]);
+                    [       'studentid' => $studentid,
+                            //'subjectid' => BLOCK_EXASTUD_SUBJECT_ID_LERN_UND_SOZIALVERHALTEN_VORSCHLAG,
+                            'subjectid' => $subjectid,
+                            'periodid' => $actPeriod->id,
+                            'teacherid' => $teacherid,]);
             g::$DB->insert_or_update_record('block_exastudreview', $newreview, [
                     'studentid' => $studentid,
-                    'subjectid' => BLOCK_EXASTUD_SUBJECT_ID_LERN_UND_SOZIALVERHALTEN_VORSCHLAG,
+                    //'subjectid' => BLOCK_EXASTUD_SUBJECT_ID_LERN_UND_SOZIALVERHALTEN_VORSCHLAG,
+                    'subjectid' => $subjectid,
                     'periodid' => $actPeriod->id,
                     'teacherid' => $teacherid,
             ]);
@@ -292,7 +296,8 @@ echo $output->heading($studentdesc);
 // load lern&soz vorschlag
 $formdata->vorschlag = $DB->get_field('block_exastudreview', 'review', [
 	'studentid' => $studentid,
-	'subjectid' => BLOCK_EXASTUD_SUBJECT_ID_LERN_UND_SOZIALVERHALTEN_VORSCHLAG,
+	//'subjectid' => BLOCK_EXASTUD_SUBJECT_ID_LERN_UND_SOZIALVERHALTEN_VORSCHLAG,
+	'subjectid' => $subjectid,
 	'periodid' => $actPeriod->id,
 	'teacherid' => $teacherid,
 ]);
@@ -320,7 +325,8 @@ if ($lastPeriodClass) {
 
 		$formdata->vorschlag = $DB->get_field('block_exastudreview', 'review', [
 			'studentid' => $studentid,
-			'subjectid' => BLOCK_EXASTUD_SUBJECT_ID_LERN_UND_SOZIALVERHALTEN_VORSCHLAG,
+			//'subjectid' => BLOCK_EXASTUD_SUBJECT_ID_LERN_UND_SOZIALVERHALTEN_VORSCHLAG,
+			'subjectid' => $subjectid,
 			'periodid' => $lastPeriod->id,
 			'teacherid' => $teacherid,
 		]);

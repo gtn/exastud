@@ -4893,11 +4893,22 @@ function block_exastud_resize_image_from_image($original, $imageinfo, $width, $h
     return $data;
 }
 
-function block_exastud_get_all_teachers($courseid) {
+function block_exastud_get_all_teachers($courseid = null) {
     global $DB;
-    $role = $DB->get_record('role', array('shortname' => 'editingteacher'));
+
+    $role = $DB->get_record('role', array('shortname' => 'editingteacher')); // TODO: check 'editingteacher' or 'teacher'
+    /*
+    // only for current course
     $context = context_course::instance($courseid);
-    $teachers = get_role_users($role->id, $context);
+    $teachers = get_role_users($role->id, $context);*/
+    // for all moodle installation
+    $teachers = $DB->get_records_sql('SELECT DISTINCT u.* 
+                                        FROM {role_assignments} ra
+                                        JOIN {user} u ON u.id = ra.userid
+                                        WHERE ra.roleid = ?
+                                          AND u.deleted = 0
+                                        ', array($role->id));
+
     // add teachers from classes (head_teacher, project_teacher, bilingual_teacher)
     $names = ['head_teacher', 'project_teacher', 'bilingual_teacher'];
     $addTeachers = $DB->get_records_sql('SELECT DISTINCT u.* 

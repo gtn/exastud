@@ -164,6 +164,7 @@ if ($action == 'changesubjectteacher') {
     echo html_writer::tag('h1', block_exastud_get_string('form_subject_teacher_form_header'));
     echo html_writer::div(block_exastud_get_string('form_subject_teacher_form_description', '', $a));
     $teacherform->display();
+    echo html_writer::tag('small', block_exastud_get_string('form_subject_teacher_form_select_new_teacher_docu'));
     echo $output->footer();
     exit;
 }

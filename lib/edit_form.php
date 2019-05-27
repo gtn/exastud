@@ -1188,9 +1188,10 @@ class change_subject_teacher_form extends moodleform {
         //$mform->addElement('static', 'exastud_description', block_exastud_get_string('form_subject_teacher_form_description', '', $a).':', array('size' => 50));
         $teachers = block_exastud_get_all_teachers($courseid);
         $teachers = array_map(function($o) {return fullname($o);}, $teachers);
+        natcasesort($teachers);
         $mform->addElement('select',
                 'newsubjectteacher',
-                block_exastud_get_string('form_subject_teacher_form_select_new_teacher', '', $a).':',
+                block_exastud_get_string('form_subject_teacher_form_select_new_teacher', '', $a).':*',
                 $teachers);
         $mform->setType('newsubjectteacher', PARAM_INT);
         $mform->setDefault('newsubjectteacher', $currentteacher->id);

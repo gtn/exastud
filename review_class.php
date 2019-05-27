@@ -449,11 +449,11 @@ if ($isSubjectTeacher) {
             } else {
                 $learnReview = g::$DB->get_field('block_exastudreview', 'review', [
                                 'studentid' => $classstudent->id,
-                                'subjectid' => BLOCK_EXASTUD_SUBJECT_ID_LERN_UND_SOZIALVERHALTEN_VORSCHLAG,
+                                //'subjectid' => BLOCK_EXASTUD_SUBJECT_ID_LERN_UND_SOZIALVERHALTEN_VORSCHLAG,
+                                'subjectid' => $subjectid,
                                 'periodid' => $actPeriod->id,
                                 'teacherid' => $teacherid]
                 );
-
                 $cell->text = '<p>'.((trim(@$learnReview) ? block_exastud_text_to_html($learnReview) : '') ?: '---').'</p>';
             }
             $cell->colspan = count($categories) + 5;
@@ -529,7 +529,8 @@ if ($isSubjectTeacher) {
         }
         $learnReview = g::$DB->get_field('block_exastudreview', 'review', [
                         'studentid' => $classstudent->id,
-                        'subjectid' => BLOCK_EXASTUD_SUBJECT_ID_LERN_UND_SOZIALVERHALTEN_VORSCHLAG,
+                        //'subjectid' => BLOCK_EXASTUD_SUBJECT_ID_LERN_UND_SOZIALVERHALTEN_VORSCHLAG,
+                        'subjectid' => $subjectid,
                         'periodid' => $actPeriod->id,
                         'teacherid' => $teacherid]
         );

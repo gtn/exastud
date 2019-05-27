@@ -396,4 +396,5 @@ $string['subjectteacher_change_button'] = 'match a new teacher and transmit his 
 $string['form_subject_teacher_form_header'] = 'Transmit subject to other teacher';
 $string['form_subject_teacher_form_description'] = 'You can transmit the subject {$a->subjecttitle} to another teacher. The current teacher is {$a->currentteacher_name}. All gradings from {$a->currentteacher_name} are transmitted to new teacher.';
 $string['form_subject_teacher_form_select_new_teacher'] = 'New teacher for {$a->subjecttitle}';
+$string['form_subject_teacher_form_select_new_teacher_docu'] = 'In this Dropdown are Users listed, who have teacher role in some context (classteacher, teacher in this course, classowner, teacher in a subject, additional class teacher, teacher for project, bilingual teacher)';
 $string['form_subject_teacher_form_save'] = 'Transmit subject now.';

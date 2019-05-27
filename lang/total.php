@@ -828,7 +828,7 @@ return [
     ],
 
     'settings_only_learnsoziale' => [
-            'nur Lern- und Sozialverhalten erfassen',
+            'nur überfachliche Kompetenzen erfassen',
             'assessment of learning and social behavior only',
     ],
     'settings_shoolname' => [
@@ -1492,6 +1492,10 @@ return [
     'form_subject_teacher_form_select_new_teacher' => [
         'Neue Lehrkraft für {$a->subjecttitle}',
         'New teacher for {$a->subjecttitle}',
+    ],
+    'form_subject_teacher_form_select_new_teacher_docu' => [
+        'In der Auswahl sind Benutzer aufgelistet, welche in diversen Zusammenhängen die Lehrerrolle innehaben (Klassenlehrer, Kurslehrer, Klassenersteller, Fachlehrer, zusätzlicher Klassenlehrer, Projekt- oder bilungualer Lehrer)',
+        'In this Dropdown are Users listed, who have teacher role in some context (classteacher, teacher in this course, classowner, teacher in a subject, additional class teacher, teacher for project, bilingual teacher)',
     ],
     'form_subject_teacher_form_save' => [
         'Lehrkraft jetzt übertragen.',

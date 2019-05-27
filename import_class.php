@@ -296,9 +296,9 @@ function block_exastud_import_class($doimport, $override_reviews, $draftitemid, 
 							}
 						} elseif ($review->subjectid == BLOCK_EXASTUD_SUBJECT_ID_LERN_UND_SOZIALVERHALTEN) {
 							$subject = block_exastud_get_string("learn_and_sociale");
-						} elseif ($review->subjectid == BLOCK_EXASTUD_SUBJECT_ID_LERN_UND_SOZIALVERHALTEN_VORSCHLAG) {
+						} /*elseif ($review->subjectid == BLOCK_EXASTUD_SUBJECT_ID_LERN_UND_SOZIALVERHALTEN_VORSCHLAG) {
 							$subject = block_exastud_get_string("learn_and_sociale_for_head");
-						} else {
+						}*/ else {
 							$subject = '-';
 						}
 
