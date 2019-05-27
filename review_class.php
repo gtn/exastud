@@ -181,7 +181,7 @@ $tableheadernote = block_exastud_get_string('Note');
 $tableheaderniveau = block_exastud_get_string('Niveau');
 $tableheadersubjects = block_exastud_trans('de:Fachkompetenzen '); // bewerten button
 $tableheaderlearnsocial = block_exastud_get_string('report_learn_and_sociale'); // bewerten button
-$tableheadercategories = block_exastud_trans('de:Überfachliche Beurteilungen'); // bewerten button
+$tableheadercategories = block_exastud_trans('de:Überfachliche Kompetenzen'); // bewerten button
 
 /* Print the Students */
 $table = new html_table();

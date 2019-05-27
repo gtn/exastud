@@ -68,7 +68,7 @@ if ($action == 'delete') {
 $output = block_exastud_get_renderer();
 
 // redirect to edit class form if it is not a class owner, but is site admin
-if (block_exastud_is_siteadmin() && $class->userid != $USER->id) {
+if (block_exastud_is_siteadmin() && $class->userid != $USER->id && !in_array($type, ['categories'])) {
     $redirecturl = new moodle_url('/blocks/exastud/configuration_class_info.php',
             ['courseid' => $courseid, 'classid' => $class->id]);
     redirect($redirecturl);
@@ -598,10 +598,9 @@ switch ($type) {
         if (block_exastud_get_plugin_config('can_edit_bps_and_subjects')) {
             // echo html_writer::tag("h2", block_exastud_get_string('categories'));
 
-            // disabled now!!!!
-            echo $output->notification('This function is disabled!', 'notifyerror');
+            //echo $output->notification('This function is disabled!', 'notifyerror');
 
-            /*$table = new html_table();
+            $table = new html_table();
 
             $table->align = array("left");
             $table->attributes['style'] = "width: 50%;";
@@ -615,7 +614,7 @@ switch ($type) {
             echo $output->table($table);
 
             echo $OUTPUT->single_button($CFG->wwwroot.'/blocks/exastud/configuration_categories.php?courseid='.$courseid.'&classid='.$class->id,
-                block_exastud_get_string('editclasscategories'), 'get');*/
+                block_exastud_get_string('editclasscategories'), 'get');
         }
         break;
 }

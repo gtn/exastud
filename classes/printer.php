@@ -1066,8 +1066,7 @@ class printer {
 				return str_replace($placeholder.'note', '--', $content);
 			});
 		} else if (in_array($templateid, [
-		        BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_ANLAGE_ZUM_LERNENTWICKLUNGSBERICHT,
-                BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_ANLAGE_ZUM_LERNENTWICKLUNGSBERICHT_SIMPLE
+		        BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_ANLAGE_ZUM_LERNENTWICKLUNGSBERICHT
                  ])) {
             // very old exacomp?
             $oldExacomp = false;
@@ -1077,15 +1076,15 @@ class printer {
 			$evalopts = g::$DB->get_records('block_exastudevalopt', null, 'sorting', 'id, title, sourceinfo');
 			$categories = block_exastud_get_class_categories_for_report($student->id, $class->id);
 			//$subjects = static::get_exacomp_subjects($student->id);
-			if ($templateid == BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_ANLAGE_ZUM_LERNENTWICKLUNGSBERICHT_SIMPLE) {
+			/*if ($templateid == BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_UEBERFACHLICHE_KOMPETENZEN) {
                 $subjects = array();
-            } else {
+            } else {*/
                 $subjects = static::get_exacomp_subjects($student->id);
                 if (!$subjects || count($subjects) == 0) {
                     // no any competences in dakora/exacomp for this student. So - no report
                     return null;
                 }
-            }
+            //}
 
 			$templateProcessor->duplicateCol('kheader', count($evalopts));
 			foreach ($evalopts as $evalopt) {
@@ -1200,6 +1199,13 @@ class printer {
 		    $templateProcessor->deleteRow('kriterium');
 		    
 		    // subjects
+            if (!count($subjects)) {
+                $templateProcessor->replaceBlock('headerExacompSubjects', '');
+            } else {
+                $templateProcessor->cloneBlock('headerExacompSubjects', 1, true);
+                //$templateProcessor->replaceBlock('headerExacompSubjects', 'Erreichte Kompetenzen in den Fächern mit Kompetenzrastern');
+            }
+
             $templateProcessor->cloneBlock('subjectif', count($subjects), true);
 
             /*  uncomment this if you need to use grading options from exacomp ..
@@ -1399,7 +1405,129 @@ class printer {
 		        $templateProcessor->deleteRow("topic");
 		        $templateProcessor->deleteRow("descriptor");
 		    }
-		}
+		} else if (in_array($templateid, [
+                BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_UEBERFACHLICHE_KOMPETENZEN
+        ])) {
+            // very old exacomp?
+            $oldExacomp = false;
+            if (!function_exists('block_exacomp_get_assessment_diffLevel')) { // this function - for example
+                $oldExacomp = true;
+            }
+            //$evalopts = g::$DB->get_records('block_exastudevalopt', null, 'sorting', 'id, title, sourceinfo');
+            $categories = block_exastud_get_class_categories_for_report($student->id, $class->id);
+            $subjects = static::get_exacomp_subjects($student->id);
+            if (!$subjects || count($subjects) == 0) {
+                // no any competences in dakora/exacomp for this student. So - no report
+                return null;
+            }
+
+            // get max count of columns
+            $maxReviewers = 0;
+            $teacherReviews = array();
+            $teachersForColumns = block_exastud_get_class_teachers($class->id);
+            $tempArr = array();
+            $teachersForColumns = array_filter($teachersForColumns, function($o) use (&$tempArr) {
+                        if (!in_array($o->id, $tempArr)) {
+                            $tempArr[] = $o->id;
+                            return block_exastud_get_user($o->id);
+                        }
+                        return null;
+                    });
+            //$teachersForColumns = array();
+            $maxReviewers = count($teachersForColumns);
+            foreach ($categories as $category) {
+                $categoryKey = $category->id.'_'.$category->source;
+                $teacherReviews[$categoryKey] = (object)array(
+                    'title' => $category->title,
+                    'average' => $category->average,
+                    'reviewers' => array()
+                );
+                if ($category->evaluationOptions && count($category->evaluationOptions)) {
+                    foreach ($category->evaluationOptions as $evalOption) {
+                        if ($evalOption->reviewers && count($evalOption->reviewers)) {
+                            //$maxReviewers = max($maxReviewers, count($evalOption->reviewers));
+                            foreach ($evalOption->reviewers as $reviewer) {
+                                /*if (!in_array($reviewer->id, $teachersForColumns)) {
+                                    $teachersForColumns[] = $reviewer->id;
+                                }*/
+                                $teacherReviews[$categoryKey]->reviewers[$reviewer->id] = $reviewer;
+                            }
+                        }
+                    }
+                }
+            }
+
+            $templateProcessor->duplicateCol('kheader', $maxReviewers + 1); // +1 = column for average
+            $templateProcessor->setValue('kheader', block_exastud_get_string('average'), 1);
+            foreach ($teachersForColumns as $columnTeacher) {
+                $templateProcessor->setValue('kheader', fullname($columnTeacher), 1);
+            }
+
+            foreach ($teacherReviews as $key => $review) {
+                list($categoryId, $categorySource) = explode('_', $key);
+                $templateProcessor->cloneRowToEnd('kriterium');
+                $templateProcessor->setValue('kriterium', $review->title, 1);
+                //$templateProcessor->setValue('kvalue', $review->average, 1);
+                // TODO: is not clear request...
+                $sql = 'SELECT DISTINCT r.id, rp.value, r.subjectid, r.teacherid, ct.classid
+                        FROM {block_exastudreviewpos} rp                        
+                        JOIN {block_exastudreview} r ON r.id = rp.reviewid
+                        JOIN {block_exastudclassteachers} ct ON ct.teacherid = r.teacherid AND ct.classid = ?
+                        JOIN {block_exastudclass} c ON c.id = ct.classid
+                        JOIN {block_exastudsubjects} s ON s.id = ct.subjectid AND c.bpid = s.bpid
+                        WHERE rp.categoryid = ?
+                              AND rp.categorysource = ?
+                              AND r.studentid = ?                                                     
+                              AND r.periodid = ?
+                              AND ct.teacherid IS NOT NULL
+                              AND r.subjectid > 0
+                              AND s.id IS NOT NULL
+                        ';
+                $tempValues = g::$DB->get_records_sql($sql, [
+                        $class->id,
+                        $categoryId,
+                        $categorySource,
+                        $student->id,
+                        block_exastud_get_active_or_last_period()->id]);
+                $tempValues = array_map(function($o) {return $o->value;}, $tempValues);
+                if (count($tempValues)) {
+                    $globalAverage = array_sum($tempValues) / count($tempValues);
+                } else {
+                    $globalAverage = 0;
+                }
+                $templateProcessor->setValue('kvalue', round($globalAverage, 1), 1);
+                foreach ($teachersForColumns as $columnTeacher) {
+                    $sql = 'SELECT AVG(rp.value) as average
+                        FROM {block_exastudreviewpos} rp
+                        JOIN {block_exastudreview} r ON r.id = rp.reviewid
+                        LEFT JOIN {block_exastudclassteachers} ct ON ct.teacherid = r.teacherid AND ct.classid = ?
+                        WHERE rp.categoryid = ?
+                              AND rp.categorysource = ?
+                              AND r.studentid = ?                       
+                              AND r.teacherid = ?
+                              AND r.periodid = ?
+                        ';
+                    $value = g::$DB->get_record_sql($sql, [
+                            $class->id,
+                            $categoryId,
+                            $categorySource,
+                            $student->id,
+                            $columnTeacher->id,
+                            block_exastud_get_active_or_last_period()->id]);
+                    if ($value) {
+                        //$templateProcessor->setValue('kvalue', $teacherReviews[$key]->reviewers[$columnTeacher->id], 1);
+                        $templateProcessor->setValue('kvalue', round($value->average, 1) , 1);
+                    } else {
+                        $templateProcessor->setValue('kvalue', '', 1);
+                    }
+                }
+            }
+            $templateProcessor->deleteRow('kriterium');
+            
+            if (!$templateProcessor->addImageToReport('school_logo', 'exastud', 'block_exastud_schoollogo', 0, 1024, 768)) {
+                $templateProcessor->setValue("school_logo", ''); // no logo files
+            };
+        }
 
 		// projekt_ingroup property
 		if (in_array($templateid, [

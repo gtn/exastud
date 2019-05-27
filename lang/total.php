@@ -1292,7 +1292,7 @@ return [
     ],
     'report_for_bilingual' => [
         'Zeugnisformular für Bilingualer',
-        'Report for project assessment',
+        'Report for bilingual assessment',
     ],
     'textblock' => [
         'Formulierungsvorschläge',
