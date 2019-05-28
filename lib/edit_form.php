@@ -265,9 +265,9 @@ class student_edit_form extends moodleform {
                             ' / '.
                             '<span id="max_vorschlag_chars">'.(/*$vorschlag_limits['rows'] * */$vorschlag_limits['chars_per_row']).' '.block_exastud_get_string('textarea_chars').'</span>'.
                             '<span class="exastud-textarea-left-block">'.block_exastud_get_string('textarea_charsleft').': '.
-                            '<span id="left_vorschlag_rows"><span class="exastud-value">-</span> '.block_exastud_get_string('textarea_rows').'</span>'.
+                            '<span id="left_vorschlag_rows"><span class="exastud-value">-</span> <span class="exastud-wording">'.block_exastud_get_string('textarea_rows').'</span></span>'.
                             ' / '.
-                            '<span id="left_vorschlag_chars"><span class="exastud-value">-</span> '.block_exastud_get_string('textarea_chars').'</span>'.
+                            '<span id="left_vorschlag_chars"><span class="exastud-value">-</span> <span class="exastud-wording">'.block_exastud_get_string('textarea_chars').'</span></span>'.
                             '</span>');
                 break;
             default:
@@ -326,9 +326,9 @@ class student_edit_form extends moodleform {
                                 ' / '.
                                 '<span id="max_review_chars">'.(/*$subject_limits['rows'] * */$subject_limits['chars_per_row']).' '.block_exastud_get_string('textarea_chars').'</span>'.
                                 '<span class="exastud-textarea-left-block">'.block_exastud_get_string('textarea_charsleft').': '.
-                                '<span id="left_review_rows"><span class="exastud-value">-</span> '.block_exastud_get_string('textarea_rows').'</span>'.
+                                '<span id="left_review_rows"><span class="exastud-value">-</span> <span class="exastud-wording">'.block_exastud_get_string('textarea_rows').'</span></span>'.
                                 ' / '.
-                                '<span id="left_review_chars"><span class="exastud-value">-</span> '.block_exastud_get_string('textarea_chars').'</span>'.
+                                '<span id="left_review_chars"><span class="exastud-value">-</span> <span class="exastud-wording">'.block_exastud_get_string('textarea_chars').'</span></span>'.
                                 '</span>');
 
                 // grades, niveaus
@@ -500,9 +500,9 @@ class student_other_data_form extends moodleform {
                                     : ''
                             ).
                             '<span class="exastud-textarea-left-block">'.block_exastud_get_string('textarea_charsleft').': '.
-                            '<span id="left_'.$dataid.'_rows"><span class="exastud-value">-</span> '.block_exastud_get_string('textarea_rows').'</span>'.
+                            '<span id="left_'.$dataid.'_rows"><span class="exastud-value">-</span> <span class="exastud-wording">'.block_exastud_get_string('textarea_rows').'</span></span>'.
                             ' / '.
-                            '<span id="left_'.$dataid.'_chars"><span class="exastud-value">-</span> '.block_exastud_get_string('textarea_chars').'</span>'.
+                            '<span id="left_'.$dataid.'_chars"><span class="exastud-value">-</span> <span class="exastud-wording">'.block_exastud_get_string('textarea_chars').'</span></span>'.
                             /*' / '.
                             '<span id="left_'.$dataid.'_maxchars"><span class="exastud-value">-</span> '.block_exastud_get_string('textarea_maxchars').'</span>'.*/
                             '</span>');

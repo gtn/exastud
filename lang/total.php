@@ -1322,6 +1322,14 @@ return [
             'Zeichen verfügbar',
             'characters left',
     ],
+    'textarea_linestomuch' => [
+            'Zeilen zuviel',
+            'lines to much',
+    ],
+    'textarea_charstomuch' => [
+            'Zeichen zuviel',
+            'chars to much',
+    ],
     'textarea_maxchars' => [
             'all characters',
             'all characters',

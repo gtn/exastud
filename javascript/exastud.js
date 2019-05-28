@@ -270,8 +270,11 @@ $.extend(window.block_exastud, {
             if (!currentText) {
                 leftRows = rowsLimit;
             }
-            $('#left_'+textareaName+'_rows .exastud-value').html(leftRows);
-            $('#left_'+textareaName+'_chars .exastud-value').html(leftChars);
+            $('#left_' + textareaName + '_rows .exastud-value').html(Math.abs(leftRows));
+            $('#left_' + textareaName + '_chars .exastud-value').html(Math.abs(leftChars));
+            $('#left_' + textareaName + '_rows .exastud-wording').html(M.str.block_exastud.textarea_rows);
+            $('#left_' + textareaName + '_chars .exastud-wording').html(M.str.block_exastud.textarea_chars);
+            var error = false;
             if (leftRows < 0) {
                 textarea.css('background-color', 'rgb(255, 240, 240)');
                 textarea.css('color', 'rgb(216, 35, 35)');
@@ -279,9 +282,12 @@ $.extend(window.block_exastud, {
                 $('#max_' + textareaName + '_rows').css('color', 'rgb(216, 35, 35)');
                 $('#left_' + textareaName + '_rows').css('background-color', 'rgb(255, 240, 240)');
                 $('#left_' + textareaName + '_rows').css('color', 'rgb(216, 35, 35)');
+                $('#left_' + textareaName + '_rows .exastud-wording').html(M.str.block_exastud.textarea_linestomuch);
                 $(textarea).attr('data-textareawitherror', '1');
                 disableButton();
-            } else if (leftChars < 0) {
+                error = true;
+            }
+            if (leftChars < 0) {
                 textarea.css('background-color', 'rgb(255, 240, 240)');
                 textarea.css('color', 'rgb(216, 35, 35)');
                 $('#max_' + textareaName + '_chars').css('background-color', 'rgb(255, 240, 240)');
@@ -290,9 +296,12 @@ $.extend(window.block_exastud, {
                 $('#max_' + textareaName + '_maxchars').css('color', 'rgb(216, 35, 35)');
                 $('#left_' + textareaName + '_chars').css('background-color', 'rgb(255, 240, 240)');
                 $('#left_' + textareaName + '_chars').css('color', 'rgb(216, 35, 35)');
+                $('#left_' + textareaName + '_chars .exastud-wording').html(M.str.block_exastud.textarea_charstomuch);
                 $(textarea).attr('data-textareawitherror', '1');
                 disableButton();
-            } else {
+                error = true;
+            }
+            if (!error) {
                 textarea.css('background-color', '');
                 textarea.css('color', '');
                 $('#max_' + textareaName + '_rows').css('background-color', '');
