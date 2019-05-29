@@ -312,7 +312,7 @@ switch ($type) {
                 }
             }
 
-            $available_templates = block_exastud_clean_templatelist_for_classconfiguration($available_templates);
+            $available_templates = block_exastud_clean_templatelist_for_classconfiguration($available_templates, 'student');
 
             $i = 0;
             foreach ($classstudents as $classstudent) {
@@ -420,8 +420,11 @@ switch ($type) {
                             html_writer::tag("img", '', array('src' => 'pix/refresh.png')),
                             array('title' => block_exastud_get_string('subjectteacher_change_button'))),
                     'exastud-buttons');
+            $subjectCell = new html_table_cell();
+            $subjectCell->text = $classteacher->subject_title ?: block_exastud_trans('de:nicht zugeordnet');
+            $subjectCell->attributes['data-subjectid'] = $classteacher->subjectid;
             $table->data[] = [
-                    $classteacher->subject_title ?: block_exastud_trans('de:nicht zugeordnet'),
+                    $subjectCell,
                     $classteacher->lastname,
                     $classteacher->firstname.$changeTeacherButton,
             ];

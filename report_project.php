@@ -96,13 +96,13 @@ else if($classid == 0){
 	$table->align[] = 'center';
 
 	$i = 1;
-	foreach($classstudents as $classstudent) {
+	foreach ($classstudents as $classstudent) {
 		$user = $DB->get_record('user', array('id'=>$classstudent->studentid, 'deleted' => 0));
 	
 		if (!$user)
 			continue;
 	
-		$userReport = block_exastud_get_report($user->id, $actPeriod->id);
+		$userReport = block_exastud_get_report($user->id, $actPeriod->id, $classid);
 	
 		$link = '<a href="' . $CFG->wwwroot . '/blocks/exastud/printstudent.php?courseid=' . $courseid . '&amp;studentid=' . $user->id . '&amp;sesskey=' . sesskey() . '&periodid='.$periodid.'&classid='.$classid.'">';
 		$icons = $link.'<img src="' . $CFG->wwwroot . '/blocks/exastud/pix/print.png" width="16" height="16" alt="' . block_exastud_get_string('printversion'). '" /></a>';

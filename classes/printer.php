@@ -1079,11 +1079,11 @@ class printer {
 			/*if ($templateid == BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_UEBERFACHLICHE_KOMPETENZEN) {
                 $subjects = array();
             } else {*/
-                $subjects = static::get_exacomp_subjects($student->id);
+               /* $subjects = static::get_exacomp_subjects($student->id);
                 if (!$subjects || count($subjects) == 0) {
                     // no any competences in dakora/exacomp for this student. So - no report
                     return null;
-                }
+                }*/
             //}
 
 			$templateProcessor->duplicateCol('kheader', count($evalopts));
@@ -1415,19 +1415,25 @@ class printer {
             }
             //$evalopts = g::$DB->get_records('block_exastudevalopt', null, 'sorting', 'id, title, sourceinfo');
             $categories = block_exastud_get_class_categories_for_report($student->id, $class->id);
-            $subjects = static::get_exacomp_subjects($student->id);
+            /*$subjects = static::get_exacomp_subjects($student->id);
             if (!$subjects || count($subjects) == 0) {
                 // no any competences in dakora/exacomp for this student. So - no report
                 return null;
-            }
+            }*/
 
+            $student_review = block_exastud_get_report($student->id,  $class->periodid, $class->id);
+            
             // get max count of columns
             $maxReviewers = 0;
             $teacherReviews = array();
             $teachersForColumns = block_exastud_get_class_teachers($class->id);
             $tempArr = array();
-            $teachersForColumns = array_filter($teachersForColumns, function($o) use (&$tempArr) {
-                        if (!in_array($o->id, $tempArr)) {
+            $subjectsOfTeacher = array();
+            $teachersForColumns = array_filter($teachersForColumns, function($o) use (&$tempArr, &$subjectsOfTeacher) {
+                        if ($o->subjectid > 0) {
+                            $subjectsOfTeacher[$o->id][] = $o->subjectid;
+                        }
+                        if (!in_array($o->id, $tempArr) && $o->subjectid > 0) {
                             $tempArr[] = $o->id;
                             return block_exastud_get_user($o->id);
                         }
@@ -1463,13 +1469,15 @@ class printer {
                 $templateProcessor->setValue('kheader', fullname($columnTeacher), 1);
             }
 
+            
+            
             foreach ($teacherReviews as $key => $review) {
                 list($categoryId, $categorySource) = explode('_', $key);
                 $templateProcessor->cloneRowToEnd('kriterium');
                 $templateProcessor->setValue('kriterium', $review->title, 1);
                 //$templateProcessor->setValue('kvalue', $review->average, 1);
                 // TODO: is not clear request...
-                $sql = 'SELECT DISTINCT r.id, rp.value, r.subjectid, r.teacherid, ct.classid
+                /*$sql = 'SELECT DISTINCT r.id, rp.value, r.subjectid, r.teacherid, ct.classid
                         FROM {block_exastudreviewpos} rp                        
                         JOIN {block_exastudreview} r ON r.id = rp.reviewid
                         JOIN {block_exastudclassteachers} ct ON ct.teacherid = r.teacherid AND ct.classid = ?
@@ -1488,16 +1496,24 @@ class printer {
                         $categoryId,
                         $categorySource,
                         $student->id,
-                        block_exastud_get_active_or_last_period()->id]);
+                        $class->periodid]);
                 $tempValues = array_map(function($o) {return $o->value;}, $tempValues);
                 if (count($tempValues)) {
                     $globalAverage = array_sum($tempValues) / count($tempValues);
                 } else {
                     $globalAverage = 0;
-                }
-                $templateProcessor->setValue('kvalue', round($globalAverage, 1), 1);
+                }*/
+                $globalAverage = (@$student_review->category_averages[$categorySource.'-'.$categoryId] ? $student_review->category_averages[$categorySource.'-'.$categoryId] : 0);
+                $templateProcessor->setValue('kvalue', round($globalAverage, 2), 1);
                 foreach ($teachersForColumns as $columnTeacher) {
-                    $sql = 'SELECT AVG(rp.value) as average
+                    $teacher_total = 0;
+                    $teacher_cnt = 0;
+                    foreach ($subjectsOfTeacher[$columnTeacher->id] as $subjectid) {
+                        $cateReview = block_exastud_get_category_review_by_subject_and_teacher($class->periodid, $student->id, $categoryId, $categorySource, $columnTeacher->id, $subjectid);
+                        $teacher_total += (@$cateReview->catreview_value ? $cateReview->catreview_value : 0);
+                        $teacher_cnt++;
+                    }
+                    /*$sql = 'SELECT AVG(rp.value) as average
                         FROM {block_exastudreviewpos} rp
                         JOIN {block_exastudreview} r ON r.id = rp.reviewid
                         LEFT JOIN {block_exastudclassteachers} ct ON ct.teacherid = r.teacherid AND ct.classid = ?
@@ -1505,7 +1521,7 @@ class printer {
                               AND rp.categorysource = ?
                               AND r.studentid = ?                       
                               AND r.teacherid = ?
-                              AND r.periodid = ?
+                              AND r.periodid1 = ?
                         ';
                     $value = g::$DB->get_record_sql($sql, [
                             $class->id,
@@ -1513,10 +1529,11 @@ class printer {
                             $categorySource,
                             $student->id,
                             $columnTeacher->id,
-                            block_exastud_get_active_or_last_period()->id]);
-                    if ($value) {
+                            $class->periodid]);*/
+                    $teacher_average = $teacher_cnt > 0 ? round($teacher_total / $teacher_cnt, 2) : 0;
+                    if ($teacher_average) {
                         //$templateProcessor->setValue('kvalue', $teacherReviews[$key]->reviewers[$columnTeacher->id], 1);
-                        $templateProcessor->setValue('kvalue', round($value->average, 1) , 1);
+                        $templateProcessor->setValue('kvalue', $teacher_average, 1);
                     } else {
                         $templateProcessor->setValue('kvalue', '', 1);
                     }

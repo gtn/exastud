@@ -99,15 +99,18 @@ if ($action == 'save-categories') {
 
 	// update classes with checked 'always_basiccategories'
     if (count($newAddToClasses) > 0) {
-        $updateClasses = $DB->get_records('block_exastudclass', ['always_basiccategories' => 1]);
-        foreach ($updateClasses as $cId => $class) {
-            foreach ($newAddToClasses as $catId) {
-                $newrelation = [
-                    'classid' => $class->id,
-                    'categoryid' => $catId,
-                    'categorysource' => 'exastud'
-                ];
-                $newid = $DB->insert_record('block_exastudclasscate', $newrelation);
+        if (block_exastud_get_plugin_config('category_addbasictoclassalways')) {
+            //$updateClasses = $DB->get_records('block_exastudclass', ['always_basiccategories' => 1]);
+            $updateClasses = $DB->get_records('block_exastudclass');
+            foreach ($updateClasses as $cId => $class) {
+                foreach ($newAddToClasses as $catId) {
+                    $newrelation = [
+                            'classid' => $class->id,
+                            'categoryid' => $catId,
+                            'categorysource' => 'exastud'
+                    ];
+                    $newid = $DB->insert_record('block_exastudclasscate', $newrelation);
+                }
             }
         }
     }
@@ -286,6 +289,10 @@ if ($action == 'categories') {
 		</div>
 		<div exa="save">
 			<input type="button" exa="save-button" class="btn btn-default" value="<?php echo block_exastud_get_string('savechanges'); ?>" class="btn btn-default">
+            <?php
+                echo $output->link_button($CFG->wwwroot.'/blocks/exastud/configuration_categories.php?courseid='.$courseid,
+                    block_exastud_get_string('button_interdisciplinary_skills'), ['class' => 'btn btn-default']);
+            ?>
 		</div>
 	</div>
 	<?php

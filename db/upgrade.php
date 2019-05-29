@@ -1222,6 +1222,29 @@ function xmldb_block_exastud_upgrade($oldversion = 0) {
         upgrade_block_savepoint(true, 2019052700, 'exastud');
     }
 
+    if ($oldversion < 2019052800) {
+        // delete redundant reviews
+        $sql = 'DELETE ct
+                    FROM {block_exastudclassteachers} ct
+                      LEFT JOIN {block_exastudsubjects} s ON s.id = ct.subjectid
+                    WHERE ct.subjectid > 0
+                          AND s.id IS NULL';
+        $DB->execute($sql);
+        $sql = 'DELETE r
+                  FROM {block_exastudreview} r
+                    LEFT JOIN {block_exastudsubjects} s ON s.id = r.subjectid
+                  WHERE r.subjectid > 0
+                    AND s.id IS NULL';
+        $DB->execute($sql);
+        $sql = 'DELETE rp 
+                  FROM {block_exastudreviewpos} rp
+                    LEFT JOIN {block_exastudreview} r ON r.id = rp.reviewid
+                  WHERE r.id IS NULL';
+        $DB->execute($sql);
+
+        upgrade_block_savepoint(true, 2019052800, 'exastud');
+    }
+
     block_exastud_insert_default_entries();
 	block_exastud_check_profile_fields();
 

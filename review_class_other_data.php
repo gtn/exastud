@@ -48,7 +48,7 @@ switch ($type) {
                     'title' => block_exastud_get_string('learn_and_sociale'),
                 ],
             ];
-            $classheader = $reviewclass->title.' - '.block_exastud_get_string('learn_and_sociale');
+            $classheader = $reviewclass->title.' - '.block_exastud_get_string('learn_and_sociale_for_head');
             break;
     /* case BLOCK_EXASTUD_DATA_ID_PRINT_TEMPLATE:
             $categories = [

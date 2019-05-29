@@ -88,7 +88,7 @@ switch ($type) {
                 'lines' => @$inputs['learn_social_behavior']['lines'] ? @$inputs['learn_social_behavior']['lines'] : 8,
             ],
         ];
-        $classheader = $reviewclass->title.' - '.block_exastud_get_string('learn_and_sociale');
+        $classheader = $reviewclass->title.' - '.block_exastud_get_string('learn_and_sociale_for_head2');
         break;
     case BLOCK_EXASTUD_DATA_ID_PRINT_TEMPLATE:
         $template = block_exastud_get_student_print_template($class, $student->id);
@@ -160,14 +160,29 @@ echo $output->heading($classheader);
 
 if ($type == BLOCK_EXASTUD_DATA_ID_LERN_UND_SOZIALVERHALTEN) {
 	$user = $student;
-	$userReport = block_exastud_get_report($user->id, $actPeriod->id);
-	$userCategoryReviews = block_exastud_get_reviewers_by_category($actPeriod->id, $user->id, false);
+	$userReport = block_exastud_get_report($user->id, $actPeriod->id, $class->id);
+	//$userCategoryReviews = block_exastud_get_reviewers_by_category($actPeriod->id, $user->id, false);
+	//$userCategoryReviews = block_exastud_get_reviewers_by_category($class->periodid, $user->id, false);
+    $teachersForColumns = block_exastud_get_class_subject_teachers($class->id);
     $teachers = array();
+    $subjectsOfTeacher = array();
+    $teachersForColumns = array_filter($teachersForColumns, function($o) use (&$teachers, &$subjectsOfTeacher) {
+        if (!in_array($o->id, $teachers)) {
+            $teachers[] = $o->id;
+        }
+        if ($o->subjectid > 0) {
+            $subjectsOfTeacher[$o->id][] = $o->subjectid;
+        }
+        return null;
+    });
+    $teachers = array_map(function($o) {return block_exastud_get_user($o);}, $teachers);
+    usort($teachers, function($a, $b) {return strcmp(fullname($a), fullname($b));});
+	/*$teachers = array();
 	foreach ($userCategoryReviews as $rid => $r) {
         $tmpUser = block_exastud_get_user($rid);
         $teachers[$rid] = fullname($tmpUser);
     }
-    asort($teachers);
+    asort($teachers);*/
 
 	$table = new html_table();
 	$headerrow = new html_table_row();
@@ -182,21 +197,21 @@ if ($type == BLOCK_EXASTUD_DATA_ID_LERN_UND_SOZIALVERHALTEN) {
     $average->text = block_exastud_get_string('average');
     $headerrow->cells[] = $average;
     // teachers
-    foreach ($teachers as $teacherId => $teacherName) {
+    foreach ($teachers as $teacher) {
         $hCell = new html_table_cell();
         $hCell->header = true;
-        $hCell->text = $teacherName;
-        $hCell->colspan = count($userCategoryReviews[$teacherId]);
+        $hCell->text = fullname($teacher);
+        $hCell->colspan = count($subjectsOfTeacher[$teacher->id]);
         $headerrow->cells[] = $hCell;
     }
     $table->data[] = $headerrow;
     // subjects
     $subjectsRow = new html_table_row();
-    foreach ($teachers as $teacherId => $teacherName) {
-        foreach (array_keys($userCategoryReviews[$teacherId]) as $subjectId) {
+    foreach ($teachers as $teacher) {
+        foreach ($subjectsOfTeacher[$teacher->id] as $subjectId) {
             $subj = new html_table_cell();
             $subj->header = true;
-            $subj->text = $DB->get_field('block_exastudsubjects', 'title', ['id' => $subjectId]);
+            $subj->text = /*$subjectId.'='.*/$DB->get_field('block_exastudsubjects', 'title', ['id' => $subjectId]);
             $subjectsRow->cells[] = $subj;
         }
     }
@@ -209,20 +224,18 @@ if ($type == BLOCK_EXASTUD_DATA_ID_LERN_UND_SOZIALVERHALTEN) {
         $categoryCell->text = $category->title;
         $row[] = $categoryCell;
         $row[] = @$userReport->category_averages[$category->source.'-'.$category->id];
-        foreach ($teachers as $teacherId => $teacherName) {
-            if (array_key_exists($teacherId, $userCategoryReviews)) {
-                foreach (array_keys($userCategoryReviews[$teacherId]) as $subjectId) {
-                    if (array_key_exists($subjectId, $userCategoryReviews[$teacherId])
-                            && array_key_exists($category->source, $userCategoryReviews[$teacherId][$subjectId])
-                            && array_key_exists($category->id, $userCategoryReviews[$teacherId][$subjectId][$category->source])) {
-                        $row[] = $userCategoryReviews[$teacherId][$subjectId][$category->source][$category->id];
+        foreach ($teachers as $teacher) {
+                foreach ($subjectsOfTeacher[$teacher->id] as $subjectId) {
+                    $cateReview = block_exastud_get_category_review_by_subject_and_teacher($actPeriod->id, $student->id, $category->id, $category->source, $teacher->id, $subjectId);
+                    $row[] = (@$cateReview->catreview_value ? $cateReview->catreview_value : '0');
+/*                    if (array_key_exists($subjectId, $userCategoryReviews[$teacher->id])
+                            && array_key_exists($category->source, $userCategoryReviews[$teacher->id][$subjectId])
+                            && array_key_exists($category->id, $userCategoryReviews[$teacher->id][$subjectId][$category->source])) {
+                        $row[] = $userCategoryReviews[$teacher->id][$subjectId][$category->source][$category->id];
                     } else {
                         $row[] = '';
-                    }
+                    }*/
                 }
-            } else {
-                $row[] = '';
-            }
         }
         $table->data[] = $row;
     }

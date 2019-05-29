@@ -182,8 +182,8 @@ if ($classid) {
                     switch ($template) {
                         // - Anlage zum Lernentwicklungsbericht: only if competences in exacomp with grading is in the report
                         case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_ANLAGE_ZUM_LERNENTWICKLUNGSBERICHT:
-                        case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_ANLAGE_ZUM_LERNENTWICKLUNGSBERICHTALT:
-                        case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_UEBERFACHLICHE_KOMPETENZEN:
+                        //case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_ANLAGE_ZUM_LERNENTWICKLUNGSBERICHTALT:
+                        //case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_UEBERFACHLICHE_KOMPETENZEN:
                             if (!in_array($student->id, $studentsWithExacompGraded)) {
                                 $doit = false;
                             }

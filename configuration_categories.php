@@ -23,7 +23,7 @@ define("MAX_USERS_PER_PAGE", 5000);
 
 
 $courseid   = optional_param('courseid', 1, PARAM_INT); // Course ID
-$classid    = required_param('classid', PARAM_INT);
+//$classid    = required_param('classid', PARAM_INT); // 29.05.2019: the categories now are from global moodle installation. not for every class
 $showall    = optional_param('showall', 0, PARAM_BOOL);
 $searchtext	= optional_param('searchtext', '', PARAM_TEXT); // search string
 $add		= optional_param('add', 0, PARAM_BOOL);
@@ -33,24 +33,37 @@ $remove		= optional_param('remove', 0, PARAM_BOOL);
 
 block_exastud_require_login($courseid);
 
-block_exastud_require_global_cap(BLOCK_EXASTUD_CAP_MANAGE_CLASSES);
+block_exastud_require_global_cap(BLOCK_EXASTUD_CAP_ADMIN);
+//block_exastud_require_global_cap(BLOCK_EXASTUD_CAP_MANAGE_CLASSES);
+
 $curPeriod = block_exastud_get_active_or_next_period();
 
-$class = block_exastud_get_head_teacher_class($classid);
+//$class = block_exastud_get_head_teacher_class($classid);
+$class = (object)[
+        'title' => 'Class object for keeping of categories global settings (id:0)',
+        'id' => 0
+];
 
 $header = block_exastud_get_string('configcategories', null, $class->title);
-$url = '/blocks/exastud/configuration_categories.php?classid='.$classid.'&courseid'.$courseid;
+//$url = '/blocks/exastud/configuration_categories.php?classid='.$classid.'&courseid'.$courseid;
+$url = '/blocks/exastud/configuration_categories.php?courseid'.$courseid;
 $PAGE->set_url($url);
 $output = block_exastud_get_renderer();
-echo $output->header(['configuration_classes', 'categories'], ['class' => $class]);
+//echo $output->header(['configuration_classes', 'categories'], ['class' => $class]);
+echo $output->header(['competencies'], ['content_title' => block_exastud_get_string('pluginname')], true);
 
 if ($frm = data_submitted()) {
     // if checked 'always add new basic categories'
     if ($addbasicalways) {
-        $DB->set_field('block_exastudclass', 'always_basiccategories', 1, ['id' => $classid]);
+        //$DB->set_field('block_exastudclass', 'always_basiccategories', 1, ['id' => $classid]);
+        set_config('category_addbasictoclassalways', 1, 'exastud');
     } else {
-        $DB->set_field('block_exastudclass', 'always_basiccategories', 0, ['id' => $classid]);
+        //$DB->set_field('block_exastudclass', 'always_basiccategories', 0, ['id' => $classid]);
+        set_config('category_addbasictoclassalways', 0, 'exastud');
     }
+
+    $toAdd = array();
+    $toRemove = array();
 
     $availablecategoriesAll = get_availablecategories('', $class, false);
     $availablecategories = get_availablecategories('', $class);
@@ -75,6 +88,7 @@ if ($frm = data_submitted()) {
 			$entry->classid = $class->id;
 			$entry->categoryid = $category[0];
 			$entry->categorysource = $category[1];
+			$toAdd[] = $category[0].'_'.$category[1];
 				
 			if (!$DB->insert_record('block_exastudclasscate', $entry)) {
 				error('errorinsertingcategories', 'block_exastud');
@@ -91,6 +105,7 @@ if ($frm = data_submitted()) {
 				
 			$category = explode("_", $removecat);
             $categoryData = $findInAvailableCats($category[0], $category[1], $availablecategoriesAll);
+            $toRemove[] = $category[0].'_'.$category[1];
 			if (!$DB->delete_records('block_exastudclasscate', array('categoryid'=>$category[0], 'categorysource'=>$category[1], 'classid'=>$class->id))) {
 				error('errorremovingcategories', 'block_exastud');
 			}
@@ -104,8 +119,8 @@ if ($frm = data_submitted()) {
 	} else if ($showall) {
 		$searchtext = '';
 	} else if ($addbasic) {
-	    foreach($availablecategories as $category){
-	        if($category->source == 'exastud'){
+	    foreach ($availablecategories as $category){
+	        if ($category->source == 'exastud'){
 	            
 	            $entry = new stdClass();
 	            $entry->classid = $class->id;
@@ -116,6 +131,8 @@ if ($frm = data_submitted()) {
 	                error('errorinsertingcategories', 'block_exastud');
 	            }
 
+                $toAdd[] = $category->id.'_'.$category->source;
+
 	           \block_exastud\event\classassessmentcategory_added::log(['objectid' => $class->id,
 	               'other' => ['categoryid' => $category->id,
 	                   'categorysource' => $category->source,
@@ -124,9 +141,12 @@ if ($frm = data_submitted()) {
 	       }
 	    }
 	}
+    if ($class->id == 0) {
+        block_exastud_update_class_categories_for_global_settings($toAdd, $toRemove);
+    }
 }
 
-function get_availablecategories($searchtext, $class, $notInClass = true) {
+function get_availablecategories($searchtext, $class = 0, $notInClass = true) {
     global $DB;
     if ($searchtext !== '') {   // Search for a subset of remaining users
         //$LIKE	  = $DB->sql_ilike();
@@ -139,9 +159,9 @@ function get_availablecategories($searchtext, $class, $notInClass = true) {
     }
 
     $sql = 'SELECT id, title FROM {block_exastudcate} ';
-    if ($selectsql_begin || $notInClass) {
+    if ($selectsql_begin || ($class && $notInClass)) {
         $sql .= ' WHERE '.$selectsql_begin.' ';
-        if ($notInClass) {
+        if ($class && $notInClass) {
             $sql .= ($selectsql_begin ? ' AND ' : '' ).' id NOT IN (
                                 SELECT categoryid
                                 FROM {block_exastudclasscate}
@@ -159,9 +179,9 @@ function get_availablecategories($searchtext, $class, $notInClass = true) {
         $availablesubjects = $DB->get_records('block_exacompsubjects');
         foreach ($availablesubjects as $subject) {
             $sql = 'SELECT id, title FROM {block_exacomptopics} ';
-            if ($selectsql_begin || $notInClass) {
+            if ($selectsql_begin || ($class && $notInClass)) {
                 $sql .= ' WHERE '.$selectsql_begin.' ';
-                if ($notInClass) {
+                if ($class && $notInClass) {
                     $sql .= ($selectsql_begin ? ' AND ' : '').' id NOT IN (
                                                             SELECT categoryid
                                                             FROM {block_exastudclasscate}
@@ -179,17 +199,20 @@ function get_availablecategories($searchtext, $class, $notInClass = true) {
     }
     return $availablecategories;
 }
+
 $availablecategories = get_availablecategories($searchtext, $class);
 
-$classcategories = block_exastud_get_class_categories($class->id);
+$classcategories = block_exastud_get_class_categories(0/*$class->id*/);
 // renew $addbasicalways
-$addbasicalways = $DB->get_field('block_exastudclass', 'always_basiccategories', ['id' => $classid]);
+//$addbasicalways = $DB->get_field('block_exastudclass', 'always_basiccategories', ['id' => $classid]);
+$addbasicalways = block_exastud_get_plugin_config('category_addbasictoclassalways');
 
 echo $OUTPUT->box_start();
 $userlistType = 'configurations';
 require __DIR__.'/lib/configuration_categories.inc.php';
 echo $OUTPUT->box_end();
 
-echo $output->back_button($CFG->wwwroot . '/blocks/exastud/configuration_class.php?courseid='.$courseid.'&classid='.$class->id.'&type=categories');
+//echo $output->back_button($CFG->wwwroot . '/blocks/exastud/configuration_class.php?courseid='.$courseid.'&classid='.$class->id.'&type=categories');
+echo $output->back_button($CFG->wwwroot . '/blocks/exastud/configuration_global.php?courseid='.$courseid.'&action=categories');
 
 echo $output->footer();

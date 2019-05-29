@@ -94,6 +94,8 @@ if ($classform->is_cancelled()) {
         }
 		$newclass->periodid = $curPeriod->id;
 		$newclass->id = $DB->insert_record('block_exastudclass', $newclass);
+        // relate categories:
+        block_exastud_relate_categories_to_class($newclass->id);
 
 		\block_exastud\event\class_created::log(['objectid' => $newclass->id,
                                                 'courseid' => $courseid,
@@ -243,7 +245,7 @@ $templates_by_bp[''] = \block_exastud\print_templates::get_bp_available_print_te
 foreach ($bps as $bp) {
 	$templates_by_bp[$bp->id] = \block_exastud\print_templates::get_bp_available_print_templates($bp);
 }
-$templates_by_bp = block_exastud_clean_templatelist_for_classconfiguration($templates_by_bp, 2);
+$templates_by_bp = block_exastud_clean_templatelist_for_classconfiguration($templates_by_bp, 'class');
 
 ?>
 	<script>

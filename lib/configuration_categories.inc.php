@@ -19,7 +19,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-?><form id="assignform" action="<?php p($_SERVER['REQUEST_URI'])?>" method="post">
+?><form id="assignform" action="<?php p($_SERVER['REQUEST_URI'])?>" method="post" autocomplete="off">
 <div>
 	<input type="hidden" name="sesskey" value="<?php p(sesskey()) ?>" />
 	<table class="roleassigntable generaltable generalbox boxaligncenter" cellspacing="0">

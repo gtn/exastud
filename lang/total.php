@@ -861,7 +861,7 @@ return [
     ],
 
     'report_learn_and_sociale' => [
-            'Lern- und Sozialverhalten',
+            'Überfachliche Kompetenzen / Lern- und Sozialverhalten',
             'Learning and social behavior',
     ],
     'report_other_report_fields' => [
@@ -987,7 +987,7 @@ return [
         'This class marked to delete by site-admin',
     ],
     'interdisciplinary_competences' => [
-        'Fachübergreifende Kompetenzen',
+        'Überfachliche Kompetenzen',
         'Interdisciplinary competences',
     ],
     'average' => [
@@ -1303,8 +1303,12 @@ return [
             'Learning and social behavior',
     ],
     'learn_and_sociale_for_head' => [
-            'Lern- und Sozialverhalten: Formulierungsvorschlag für Klassenlehrkraft',
-            'Learning and social behavior: for class teacher',
+            'Überfachliche Kompetenzen / Lern- und Sozialverhalten',
+            'Learning and social behavior',
+    ],
+    'learn_and_sociale_for_head2' => [
+            'Überfachliche Kompetenzen',
+            'Learning and social behavior',
     ],
     'textarea_max' => [
             'Max.',
@@ -1508,6 +1512,11 @@ return [
     'form_subject_teacher_form_save' => [
         'Lehrkraft jetzt übertragen.',
         'Transmit subject now.',
+    ],
+
+    'button_interdisciplinary_skills' => [
+        'Fächerübergreifende Kompetenzen bearbeiten',
+        'Interdisciplinary skills'
     ],
 
 ];
