@@ -184,9 +184,9 @@ if ($classid) {
                         case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_ANLAGE_ZUM_LERNENTWICKLUNGSBERICHT:
                         //case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_ANLAGE_ZUM_LERNENTWICKLUNGSBERICHTALT:
                         //case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_UEBERFACHLICHE_KOMPETENZEN:
-                            if (!in_array($student->id, $studentsWithExacompGraded)) {
-                                $doit = false;
-                            }
+                        //    if (!in_array($student->id, $studentsWithExacompGraded)) {
+                        //        $doit = false;
+                        //    }
                             break;
                         // - Beiblatt zur Projektprüfung: if there is grading in exastud and filled data in BLOCK_EXASTUD_DATA_ID_PROJECT_TEACHER
                         case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_BEIBLATT_PROJEKTPRUEFUNG_HSA:
@@ -494,7 +494,8 @@ if ($classid) {
                         BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_ANLAGE_ZUM_LERNENTWICKLUNGSBERICHTALT,
                         BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_UEBERFACHLICHE_KOMPETENZEN
                 ])) {
-            foreach ($classstudents as $classstudent) {
+            $addAnlage = true;
+            /*foreach ($classstudents as $classstudent) {
                 if (in_array($classstudent->id, $studentsWithExacompGraded)) {
                     $addAnlage = true;
                     break;
@@ -502,7 +503,7 @@ if ($classid) {
             }
             if (!$addAnlage) {
                 continue; // hide the template if any users have not any data from exacomp
-            }
+            }*/
         }
 
         if (in_array($key, [
