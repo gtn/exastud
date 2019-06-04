@@ -136,7 +136,7 @@ class print_templates {
                 if (!$fields_temp) {
                     $fields = array();
                 } else {
-                    $fields = array_intersect_key($fields_temp, array_flip(array('besondere_kompetenzen', 'profilfach_fixed')));
+                    $fields = array_intersect_key($fields_temp, array_flip(array('besondere_kompetenzen'/*, 'profilfach_fixed'*/)));
                 }
                 break;
             case BLOCK_EXASTUD_DATA_ID_ADDITIONAL_INFO:

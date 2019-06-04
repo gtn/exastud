@@ -1013,13 +1013,13 @@ class printer {
             )) {
                 $tempProfilfach = '';
             }
-            if (in_array($templateid, [
+            /*if (in_array($templateid, [
                     BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_16_ZERTIFIKAT_FUER_PROFILFACH
                     ])
                 && @$studentdata->profilfach_fixed
                 && @$studentdata->profilfach_fixed != $profilfach) {
                 $tempProfilfach = $studentdata->profilfach_fixed;
-            }
+            }*/
             $data['profilfach_titel'] = $tempProfilfach;
             $data['wahlfach_titel'] = $wahlpflichtfach;
 
