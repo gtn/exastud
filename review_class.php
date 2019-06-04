@@ -180,7 +180,7 @@ echo '<input type="hidden" name="action" value="update" />';
 $tableheadernote = block_exastud_get_string('Note');
 $tableheaderniveau = block_exastud_get_string('Niveau');
 $tableheadersubjects = block_exastud_trans('de:Fachkompetenzen '); // bewerten button
-$tableheaderlearnsocial = block_exastud_get_string('report_learn_and_sociale'); // bewerten button
+$tableheaderlearnsocial = block_exastud_get_string('learn_and_sociale'); // bewerten button
 $tableheadercategories = block_exastud_trans('de:Überfachliche Kompetenzen'); // bewerten button
 
 /* Print the Students */

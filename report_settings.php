@@ -207,8 +207,7 @@ if ($action && (($settingsid > 0 && $action == 'edit') || $action == 'new')) {
         $templateids = optional_param_array('templateid', null, PARAM_INT);
         if ($templateids) {
             foreach ($templateids as $tid) {
-                $DB->delete_records('block_exastudreportsettings', ['id' => $tid]);
-                block_exastud_fill_reportsettingstable($tid);
+                block_exastud_fill_reportsettingstable($tid, true);
             }
         }
         redirect(new moodle_url('/blocks/exastud/report_settings.php', ['sesskey' => sesskey(), 'token' => $tokenparam]));

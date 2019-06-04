@@ -563,6 +563,7 @@ class printer {
                 BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_JAHRESZEUGNIS_KL10_E_NIVEAU,
                 BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_GLEICHWERTIGER_BILDUNGSABSCHLUSS_HSA_RSA,
                 BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_ABSCHLUSSZEUGNIS_KL9_10_HSA,
+                BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_ABSCHLUSSZEUGNIS_KL9_10_HSA_2,
                 BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_HALBJAHR_ZEUGNIS_KL10_E_NIVEAU,
                 BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_HALBJAHR_ZEUGNIS_KL9_10_HSA,
                 BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_HALBJAHR_ZEUGNIS_FOE,
@@ -581,6 +582,7 @@ class printer {
 			$religion_sub = '';
             $profileFachPhysikOption = '* Physik wurde anstelle des Profilfachs dreistündig belegt.';
             $subjectsToDelete = array('WBS' => 'Wirtschaft/ Berufs- und Studienorientierung'); // with title in doc template
+            $data['exam_english'] = '/--set-empty--/';
 
 			//$data = [
 				//'schule' => get_config('exastud', 'school_name'),
@@ -829,6 +831,7 @@ class printer {
                             BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_ABSCHLUSSZEUGNIS_HS,
                             BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_ABSCHLUSSZEUGNIS_FOE,
                             BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_ABSCHLUSSZEUGNIS_KL9_10_HSA,
+                            BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_ABSCHLUSSZEUGNIS_KL9_10_HSA_2,
                             BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_ABSCHLUSSZEUGNIS_KL10_RSA
                     ])) {
                 //$avg = round($avg, 1, PHP_ROUND_HALF_DOWN); // not always correct. ???
@@ -857,7 +860,8 @@ class printer {
 
                 if (in_array($templateid, [
                         BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_ABSCHLUSSZEUGNIS_HS,
-                        BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_ABSCHLUSSZEUGNIS_KL9_10_HSA])
+                        BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_ABSCHLUSSZEUGNIS_KL9_10_HSA,
+                        BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_ABSCHLUSSZEUGNIS_KL9_10_HSA_2])
                 ) {
                     $add_filter(function($content) use ($placeholder, $avgVerbal) {
                         $ret = preg_replace('!(Gesamtleistungen.*)'.$placeholder.'note!sU', '${1}'.$avgVerbal, $content, -1, $count);
@@ -1029,6 +1033,7 @@ class printer {
                         BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_JAHRZEUGNIS_RS,
                         BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_GLEICHWERTIGER_BILDUNGSABSCHLUSS_HSA_RSA,
                         BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_ABSCHLUSSZEUGNIS_KL9_10_HSA,
+                        BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_ABSCHLUSSZEUGNIS_KL9_10_HSA_2,
                         BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_ABSCHLUSSZEUGNIS_KL10_RSA,
                         BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_HALBJAHRESINFORMATION_KL11,
                         BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_HALBJAHR_ZEUGNIS_KL10_E_NIVEAU,
@@ -1735,42 +1740,43 @@ class printer {
             case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_JAHRESZEUGNIS_KL10_E_NIVEAU:
             case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_ABSCHLUSSZEUGNIS_HS:
             case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_ABSCHLUSSZEUGNIS_RS:
-                if (mb_stripos($data['wahlfach_titel'], 'französisch') !== false) {
-                    $data['wahlfach_titel'] .= '*';
-                }
-                if (mb_stripos($data['profilfach_titel'], 'spanisch') !== false) {
-                    $data['profilfach_titel'] .= '*';
-                }
+                //if (mb_stripos($data['wahlfach_titel'], 'französisch') !== false) {
+                //    $data['wahlfach_titel'] .= '*';
+                //}
+                //if (mb_stripos($data['profilfach_titel'], 'spanisch') !== false) {
+                //    $data['profilfach_titel'] .= '*';
+                //}
                 break;
             case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_ABSCHLUSSZEUGNIS_KL10_RSA:
-                if (mb_stripos($data['wahlfach_titel'], 'technik') !== false
-                        || mb_stripos($data['wahlfach_titel'], 'Alltagskultur, Ernährung, Soziales') !== false
-                ) {
-                    $data['wahlfach_titel'] .= '**';
-                }
-                if (mb_stripos($data['wahlfach_titel'], 'französisch') !== false) {
-                    $data['wahlfach_titel'] .= '*/**';
-                }
-                if (mb_stripos($data['profilfach_titel'], 'spanisch') !== false) {
-                    $data['profilfach_titel'] .= '*';
-                }
+                //if (mb_stripos($data['wahlfach_titel'], 'technik') !== false
+                //        || mb_stripos($data['wahlfach_titel'], 'Alltagskultur, Ernährung, Soziales') !== false
+                //) {
+                //    $data['wahlfach_titel'] .= '**';
+                //}
+                //if (mb_stripos($data['wahlfach_titel'], 'französisch') !== false) {
+                //    $data['wahlfach_titel'] .= '*/**';
+                //}
+                //if (mb_stripos($data['profilfach_titel'], 'spanisch') !== false) {
+                //    $data['profilfach_titel'] .= '*';
+                //}
                 if (trim($data['profilfach_titel']) != '') {
                     $data['profilfach_titel'] = 'Profilfach '.trim($data['profilfach_titel']);
                 }
                 break;
             case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_ABSCHLUSSZEUGNIS_KL9_10_HSA:
+            case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_ABSCHLUSSZEUGNIS_KL9_10_HSA_2:
             case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_JAHRESZEUGNIS_KL11:
-                if (mb_stripos($data['wahlfach_titel'], 'technik') !== false
-                        || mb_stripos($data['wahlfach_titel'], 'Alltagskultur, Ernährung, Soziales') !== false
-                ) {
-                    $data['wahlfach_titel'] .= '**';
-                }
-                if (mb_stripos($data['wahlfach_titel'], 'französisch') !== false) {
-                    $data['wahlfach_titel'] .= '*/**';
-                }
-                if (mb_stripos($data['profilfach_titel'], 'spanisch') !== false) {
-                    $data['profilfach_titel'] .= '*';
-                }
+                //if (mb_stripos($data['wahlfach_titel'], 'technik') !== false
+                //        || mb_stripos($data['wahlfach_titel'], 'Alltagskultur, Ernährung, Soziales') !== false
+                //) {
+                //    $data['wahlfach_titel'] .= '**';
+                //}
+                //if (mb_stripos($data['wahlfach_titel'], 'französisch') !== false) {
+                //    $data['wahlfach_titel'] .= '*/**';
+                //}
+                //if (mb_stripos($data['profilfach_titel'], 'spanisch') !== false) {
+                //    $data['profilfach_titel'] .= '*';
+                //}
                 if (trim($data['profilfach_titel']) != '') {
                     $data['profilfach_titel'] = 'Profilfach '.trim($data['profilfach_titel']);
                 }

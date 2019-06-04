@@ -101,6 +101,7 @@ const BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_JAHRESZEUGNIS_KL11 = 38;
 const BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_16_GMS_TESTAT_BILINGUALES_PROFIL_KL_8 = 39;
 const BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_16_GMS_ZERTIFIKAT_BILINGUALES_PROFIL_KL_10 = 40;
 const BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_LERN_UND_SOZIALVERHALTEN = 41;
+const BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_ABSCHLUSSZEUGNIS_KL9_10_HSA_2 = 42;
 
 const BLOCK_EXASTUD_SESSION_TIMEOUT = 10*60 + 1;
 
@@ -2364,10 +2365,10 @@ function block_exastud_get_default_templates($templateid = null) {
                     'learning_group' => '1',
                     'inputs' => [],
             ],
-            'BP 2004/Zertifikat fuer Profilfach' => [
+            'BP 2004_16/Zertifikat fuer Profilfach' => [
                     'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_16_ZERTIFIKAT_FUER_PROFILFACH,
                     'name' => 'Zertifikat für Profilfach',
-                    'file' => 'BP 2004_16/BP2004_16_Zertifikat_fuer_Profilfach',
+                    'file' => 'BP 2004_16/BP2004_16_GMS_Zertifikat_fuer_Profilfach',
                     'year' => '1',
                     'report_date' => '1',
                     'student_name' => '1',
@@ -2396,7 +2397,7 @@ function block_exastud_get_default_templates($templateid = null) {
                             ]
                     ],
             ],
-            'BP 2004/Beiblatt zur Projektpruefung HSA' => [
+            'BP 2004/Beiblatt zur Projektprüfung HSA' => [
                     'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_BEIBLATT_PROJEKTPRUEFUNG_HSA,
                     'name' => 'Beiblatt zur Projektprüfung HSA',
                     'file' => 'BP 2004/BP2004_GMS_Beiblatt_Projektpruefung_HSA',
@@ -2978,14 +2979,14 @@ function block_exastud_get_default_templates($templateid = null) {
                                     'title' => 'Profil-fach',
                                     'type' => 'textarea',
                             ],*/
-                            'class' => [
+                            /*'class' => [
                                     'title' => 'Klasse',
                                     'type' => 'select',
                                     'values' => [
                                             '9' => '9',
                                             '10' => '10'
                                     ],
-                            ],
+                            ],*/
                     ],
                     'inputs_header' => ['class'], // inputs in the header of template
                     'inputs_footer' => ['ags', 'comments_short'], // inputs in the footer of template
@@ -3004,14 +3005,14 @@ function block_exastud_get_default_templates($templateid = null) {
                     'rs_hs' => 'HS',
                     'grades' => block_exastud_get_grades_set('lang'),
                     'inputs' => [
-                        'abgelegt' => [
+                        /*'abgelegt' => [
                             'title' => 'Hat die Hauptschulabschlussprüfung nach ...',
                             'type' => 'select',
                             'values' => [
                                 'Hat die Hauptschulabschlussprüfung nach Klasse 9 der Gemeinschaftsschule mit Erfolg abgelegt.' => 'Hat die Hauptschulabschlussprüfung nach Klasse 9 der Gemeinschaftsschule mit Erfolg abgelegt.',
                                 'Hat die Hauptschulabschlussprüfung nach Klasse 10 der Gemeinschaftsschule mit Erfolg abgelegt.' => 'Hat die Hauptschulabschlussprüfung nach Klasse 10 der Gemeinschaftsschule mit Erfolg abgelegt.',
                             ],
-                        ],
+                        ],*/
                         'projekt_thema' => [
                             'title' => 'Thema',
                             'type' => 'textarea',
@@ -3052,10 +3053,18 @@ function block_exastud_get_default_templates($templateid = null) {
                                 'title' => 'Profil-fach',
                                 'type' => 'textarea',
                         ],*/
+                        'exam_english' => [
+                                'title' => 'Schriftliche Prüfungsfächer',
+                                'type' => 'select',
+                                'values' => [
+                                        '' => '',
+                                        ', Englisch' => ', Englisch',
+                                ],
+                        ],
                     ],
-                    'inputs_header' => ['abgelegt'], // inputs in the header of template
+                    'inputs_header' => ['exam_english'/*, 'abgelegt'*/], // inputs in the header of template
                     'inputs_footer' => ['ags', 'comments_short'], // inputs in the footer of template
-                    'inputs_order' => ['abgelegt', 'projekt_thema', 'projekt_grade', 'ags', 'comments_short'], // special ordering of inputs (makes similar to docx template)
+                    'inputs_order' => ['exam_english', /*'abgelegt', */'projekt_thema', 'projekt_grade', 'ags', 'comments_short'], // special ordering of inputs (makes similar to docx template)
             ],
             'BP 2004/GMS Realschulabschluss 1.HJ' => [
                     'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_HALBJAHR_ZEUGNIS_RS,
@@ -3281,11 +3290,11 @@ function block_exastud_get_default_templates($templateid = null) {
                                     'title' => 'Profil-fach',
                                     'type' => 'textarea',
                             ],*/
-                            'class' => [
+                            /*'class' => [
                                     'title' => 'Klasse',
                                     'type' => 'select',
                                     'values' => ['9' => '9', '10' => '10'],
-                            ],
+                            ],*/
                     ],
                     'inputs_header' => ['class'],
                     'inputs_footer' => ['ags', 'focus', 'comments_short'], // inputs in the footer of template
@@ -3616,7 +3625,7 @@ function block_exastud_get_default_templates($templateid = null) {
                     'inputs_footer' => ['ags', 'focus', 'comments_short'], // inputs in the footer of template
                     'inputs_order' => ['class', 'ags', 'focus', 'comments_short'], // special ordering of inputs (makes similar to docx template)
             ],
-            'BP 2016/Beiblatt zur Projektpruefung HSA' => [
+            'BP 2016/Beiblatt zur Projektprüfung HSA' => [
                     'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_BEIBLATT_PROJEKTARBEIT_HSA,
                     'name' => 'Beiblatt zur Projektprüfung HSA',
                     'file' => 'BP 2016/BP2016_GMS_Beiblatt_Projektarbeit_HSA',
@@ -3836,14 +3845,14 @@ function block_exastud_get_default_templates($templateid = null) {
                     'rs_hs' => 'HS',
                     'grades' => block_exastud_get_grades_set('lang'),
                     'inputs' => [
-                            'abgelegt' => [
+                            /*'abgelegt' => [
                                     'title' => 'Hat die Hauptschulabschlussprüfung nach',
                                     'type' => 'select',
                                     'values' => [
                                             'Hat die Hauptschulabschlussprüfung nach Klasse 9 der Gemeinschaftsschule mit Erfolg abgelegt.' => 'Hat die Hauptschulabschlussprüfung nach Klasse 9 der Gemeinschaftsschule mit Erfolg abgelegt.',
                                             'Hat die Hauptschulabschlussprüfung nach Klasse 10 der Gemeinschaftsschule mit Erfolg abgelegt.' => 'Hat die Hauptschulabschlussprüfung nach Klasse 10 der Gemeinschaftsschule mit Erfolg abgelegt.',
                                     ],
-                            ],
+                            ],*/
                             'projekt_thema' => [
                                     'title' => 'Thema',
                                     'type' => 'textarea',
@@ -3973,11 +3982,11 @@ function block_exastud_get_default_templates($templateid = null) {
                                     'title' => 'Profil-fach',
                                     'type' => 'textarea',
                             ],*/
-                            'class' => [
+                            /*'class' => [
                                     'title' => 'Klasse',
                                     'type' => 'select',
                                     'values' => ['9' => '9', '10' => '10'],
-                            ],
+                            ],*/
                     ],
                     'inputs_header' => ['class'],
                     'inputs_footer' => ['ags', 'comments_short'], // inputs in the footer of template
@@ -4018,11 +4027,11 @@ function block_exastud_get_default_templates($templateid = null) {
                                     'title' => 'Profil-fach',
                                     'type' => 'textarea',
                             ],*/
-                            'class' => [
+                            /*'class' => [
                                     'title' => 'Klasse',
                                     'type' => 'select',
                                     'values' => ['9' => '9', '10' => '10'],
-                            ],
+                            ],*/
                     ],
                     'inputs_header' => ['class'],
                     'inputs_footer' => ['ags', 'focus', 'comments_short'], // inputs in the footer of template
@@ -4074,7 +4083,7 @@ function block_exastud_get_default_templates($templateid = null) {
                     'place_of_birth' => '1',
                     'learning_group' => '1',
                     'rs_hs' => 'RS',
-                    'grades' => block_exastud_get_grades_set('short'),
+                    'grades' => block_exastud_get_grades_set('lang'),
                     'inputs' => [
                             'projekt_thema' => [
                                     'title' => 'Thema',
@@ -4424,6 +4433,91 @@ function block_exastud_get_default_templates($templateid = null) {
                     'date_of_birth' => '1',
                     'place_of_birth' => '1',
                     'learning_group' => '1',
+            ],
+            'BP 2016/GMS Hauptschulabschluss SJ 2' => [
+                    'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_ABSCHLUSSZEUGNIS_KL9_10_HSA_2,
+                    'name' => 'BP 2016 GMS Hauptschulabschluss SJ 2',
+                    'file' => 'BP 2016/BP2016_GMS_Abschlusszeugnis_KL9_10_HSA_2',
+                    'year' => '1',
+                    'report_date' => '1',
+                    'student_name' => '1',
+                    'date_of_birth' => '1',
+                    'place_of_birth' => '1',
+                    'learning_group' => '1',
+                    'rs_hs' => 'HS',
+                    'grades' => block_exastud_get_grades_set('lang'),
+                    'inputs' => [
+                            /*'abgelegt' => [
+                                    'title' => 'Hat die Hauptschulabschlussprüfung nach',
+                                    'type' => 'select',
+                                    'values' => [
+                                            'Hat die Hauptschulabschlussprüfung nach Klasse 9 der Gemeinschaftsschule mit Erfolg abgelegt.' => 'Hat die Hauptschulabschlussprüfung nach Klasse 9 der Gemeinschaftsschule mit Erfolg abgelegt.',
+                                            'Hat die Hauptschulabschlussprüfung nach Klasse 10 der Gemeinschaftsschule mit Erfolg abgelegt.' => 'Hat die Hauptschulabschlussprüfung nach Klasse 10 der Gemeinschaftsschule mit Erfolg abgelegt.',
+                                    ],
+                            ],*/
+                            'projekt_thema' => [
+                                    'title' => 'Thema',
+                                    'type' => 'textarea',
+                                    'lines' => 1,
+                                    'cols' => 65,
+                                    'maxchars' => 100,
+                            ],
+                            'projekt_grade' => [
+                                    'title' => 'Note',
+                                    'type' => 'select',
+                                    'values' => ['sehr gut' => 'sehr gut',
+                                            'gut' => 'gut',
+                                            'befriedigend' => 'befriedigend',
+                                            'ausreichend' => 'ausreichend',
+                                            'mangelhaft' => 'mangelhaft',
+                                            'ungenügend' => 'ungenügend'],
+                            ],
+                            'projekt_verbalbeurteilung' => [
+                                    'title' => 'Verbalbeurteilung',
+                                    'type' => 'textarea',
+                            ],
+                            'ags' => [
+                                    'title' => 'Teilnahme an Arbeitsgemeinschaften',
+                                    'lines' => 3,
+                                    'cols' => 88,
+                                    'maxchars' => 500,
+                            ],
+                            'comments_short' => [
+                                    'title' => 'Bemerkungen',
+                                    'type' => 'textarea',
+                                    'lines' => 3,
+                                    'cols' => 88,
+                                    'maxchars' => 500,
+                            ],
+                            'eng_niveau' => [
+                                    'title' => 'Fremdsprachenniveau - Englisch',
+                                    'type' => 'textarea',
+                                    'lines' => 1,
+                                    'cols' => 20,
+                                    'maxchars' => 20,
+                            ],
+                            'fra_niveau' => [
+                                    'title' => 'Fremdsprachenniveau - Französisch',
+                                    'type' => 'textarea',
+                                    'lines' => 1,
+                                    'cols' => 20,
+                                    'maxchars' => 20,
+                            ],
+                            'spa_niveau' => [
+                                    'title' => 'Fremdsprachenniveau - Spanisch',
+                                    'type' => 'textarea',
+                                    'lines' => 1,
+                                    'cols' => 20,
+                                    'maxchars' => 20,
+                            ],/*
+                            'subject_profile' => [
+                                    'title' => 'Profil-fach',
+                                    'type' => 'textarea',
+                            ],*/
+                    ],
+                    'inputs_header' => ['abgelegt'],
+                    'inputs_footer' => ['ags', 'comments_short', 'eng_niveau', 'fra_niveau', 'spa_niveau'], // inputs in the footer of template
+                    'inputs_order' => ['abgelegt', 'ags', 'comments_short'], // special ordering of inputs (makes similar to docx template)
             ]
 
     ];
@@ -4436,7 +4530,11 @@ function block_exastud_get_default_templates($templateid = null) {
     return $templates;
 }
 
-function block_exastud_fill_reportsettingstable($id = 0) {
+function block_exastud_fill_reportsettingstable($id = 0, $update = false) {
+    global $DB;
+    if ($update) {
+        $DB->delete_records('block_exastudreportsettings', ['id' => $id]);
+    }
     $reporttemplates = block_exastud_get_default_templates();
     if ($id > 0) {
         // only needed template
