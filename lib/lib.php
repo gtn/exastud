@@ -2383,7 +2383,7 @@ function block_exastud_get_default_templates($templateid = null) {
                                     'lines' => 13,
                                     'cols' => 70,
                             ],
-                            'profilfach_fixed' => [
+                            /*'profilfach_fixed' => [
                                     'title' => 'Profilfach',
                                     'type' => 'select',
                                     'values' => [
@@ -2394,7 +2394,7 @@ function block_exastud_get_default_templates($templateid = null) {
                                         'Spanisch' => 'Spanisch',
                                         'Informatik, Mathematik, Physik (IMP)' => 'Informatik, Mathematik, Physik (IMP)',
                                     ],
-                            ]
+                            ]*/
                     ],
             ],
             'BP 2004/Beiblatt zur Projektprüfung HSA' => [
