@@ -83,7 +83,7 @@ const BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_GMS_LERNENTWICKLUNGSBERICHT_DECKBLATT_UN
 const BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_HALBJAHRESINFORMATION_KL11  = 21;
 const BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_HALBJAHRESINFORMATION_KL11  = 22;
 const BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_UEBERFACHLICHE_KOMPETENZEN = 23;
-const BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_GLEICHWERTIGER_BILDUNGSABSCHLUSS_HSA_RSA = 24;
+const BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_GLEICHWERTIGER_BILDUNGSABSCHLUSS_HSA = 24;
 const BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_ABGANGSZEUGNIS_SCHULPFLICHT  = 25;
 const BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_ABGANGSZEUGNIS_NICHT_BEST_HSA = 26;
 const BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_ABSCHLUSSZEUGNIS_FOE = 27;
@@ -2843,17 +2843,20 @@ function block_exastud_get_default_templates($templateid = null) {
                     'grades' => block_exastud_get_grades_set('lang'),
                     'inputs' => [
                             'wann_verlassen' => [
-                                    'title' => 'verlässt nach ...',
+                                    'title' => 'verlässt ... Klasse',
                                     'type' => 'select',
                                     'values' => [
-                                            'heute8' => 'heute die Klasse 8 der Schule.',
+                                            '8' => '8',
+                                            '9' => '9',
+                                            '10' => '10',
+                                            /*'heute8' => 'heute die Klasse 8 der Schule.',
                                             'heute9' => 'heute die Klasse 9 der Schule.',
                                             'heute10' => 'heute die Klasse 10 der Schule.',
                                             'during8' => 'während der Klasse 8 die Schule.',
                                             'during9' => 'während der Klasse 9 die Schule.',
                                             'during10' => 'während der Klasse 10 die Schule.',
                                             'ende8' => 'am Ende der Klasse 8 die Schule.',
-                                            'ende10' => 'am Ende der Klasse 10 die Schule.',
+                                            'ende10' => 'am Ende der Klasse 10 die Schule.',*/
                                     ],
                             ],
                             'ags' => [
@@ -2871,9 +2874,14 @@ function block_exastud_get_default_templates($templateid = null) {
                                     'maxchars' => 1000,
                             ],
                             'abgangszeugnis_niveau' => [
-                                    'title' => 'Die Leistung wurde in allen Fächern auf dem folgenden Niveau beurteilt',
+                                    'title' => 'Leistungen in den einzelnen Fächern auf',
                                     'type' => 'select',
-                                    'values' => ['G' => 'G', 'M' => 'M', 'E' => 'E'],
+                                    'values' => [
+                                            'grundlegenden Niveau' => 'grundlegenden Niveau',
+                                            'mittleren Niveau' => 'mittleren Niveau',
+                                            'erweiteren Niveau' => 'erweiteren Niveau',
+                                            //'G' => 'G', 'M' => 'M', 'E' => 'E'
+                                    ],
                             ],/*
                             'subject_profile' => [
                                     'title' => 'Profil-fach',
@@ -3379,9 +3387,9 @@ function block_exastud_get_default_templates($templateid = null) {
                     'inputs_order' => ['ags', 'focus', 'comments_short'], // special ordering of inputs (makes similar to docx template)
             ],
             'BP 2004/gleichwertiger Bildungsabschluss HSA/RSA' => [
-                    'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_GLEICHWERTIGER_BILDUNGSABSCHLUSS_HSA_RSA,
-                    'name' => 'BP 2004 gleichwertiger Bildungsabschluss HSA/RSA',
-                    'file' => 'BP 2004/BP2004_GMS_gleichwertiger_Bildungsabschluss_HSA_RSA',
+                    'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_GLEICHWERTIGER_BILDUNGSABSCHLUSS_HSA,
+                    'name' => 'BP 2004 gleichwertiger Bildungsabschluss HSA',
+                    'file' => 'BP 2004/BP2004_GMS_gleichwertiger_Bildungsabschluss_HSA',
                     'year' => '1',
                     'report_date' => '1',
                     'student_name' => '1',
@@ -3403,7 +3411,7 @@ function block_exastud_get_default_templates($templateid = null) {
                                     'lines' => 3,
                                     'cols' => 74,
                                     'maxchars' => 500,
-                            ],
+                            ],/*
                             'cert_level' => [
                                     'title' => 'HSA/RSA',
                                     'type' => 'select',
@@ -3411,7 +3419,7 @@ function block_exastud_get_default_templates($templateid = null) {
                                             'Hauptschulabschluss' => 'Hauptschulabschluss',
                                             'Realschulabschluss' => 'Realschulabschluss'
                                     ],
-                            ],
+                            ],*//*
                             'class_level' => [
                                     'title' => 'Klassenstufen',
                                     'type' => 'select',
@@ -3427,7 +3435,16 @@ function block_exastud_get_default_templates($templateid = null) {
                                             'Damit wurde ein dem Hauptschulabschluss gleichwertiger Bildungsstand erreicht.' => 'Damit wurde ein dem Hauptschulabschluss gleichwertiger Bildungsstand erreicht.',
                                             'Damit wurde ein den Realschulabschluss gleichwertiger Bildungsstand erreicht.' => 'Damit wurde ein den Realschulabschluss gleichwertiger Bildungsstand erreicht.',
                                     ],
-                            ],/*
+                            ],*/
+                            'abgangszeugnis_niveau' => [
+                                    'title' => 'Leistungen in den einzelnen Fächern auf',
+                                    'type' => 'select',
+                                    'values' => [
+                                            'mittleren Niveau' => 'mittleren Niveau',
+                                            'erweiteren Niveau' => 'erweiteren Niveau',
+                                    ],
+                            ],
+                            /*
                             'subject_profile' => [
                                     'title' => 'Profil-fach',
                                     'type' => 'textarea',
@@ -3453,14 +3470,17 @@ function block_exastud_get_default_templates($templateid = null) {
                                     'title' => 'verlässt nach ...',
                                     'type' => 'select',
                                     'values' => [
-                                            'heute8' => 'heute die Klasse 8 der Schule.',
+                                            '8' => '8',
+                                            '9' => '9',
+                                            '10' => '10',
+                                            /*'heute8' => 'heute die Klasse 8 der Schule.',
                                             'heute9' => 'heute die Klasse 9 der Schule.',
                                             'heute10' => 'heute die Klasse 10 der Schule.',
                                             'during8' => 'während der Klasse 8 die Schule.',
                                             'during9' => 'während der Klasse 9 die Schule.',
                                             'during10' => 'während der Klasse 10 die Schule.',
                                             'ende8' => 'am Ende der Klasse 8 die Schule.',
-                                            'ende10' => 'am Ende der Klasse 10 die Schule.',
+                                            'ende10' => 'am Ende der Klasse 10 die Schule.',*/
                                     ],
                             ],
                             'ags' => [
@@ -3480,7 +3500,12 @@ function block_exastud_get_default_templates($templateid = null) {
                             'abgangszeugnis_niveau' => [
                                     'title' => 'Die Leistung wurde in allen Fächern auf dem folgenden Niveau beurteilt',
                                     'type' => 'select',
-                                    'values' => ['G' => 'G', 'M' => 'M', 'E' => 'E'],
+                                    'values' => [
+                                            'grundlegenden Niveau' => 'grundlegenden Niveau',
+                                            'mittleren Niveau' => 'mittleren Niveau',
+                                            'erweiteren Niveau' => 'erweiteren Niveau',
+                                            //'G' => 'G', 'M' => 'M', 'E' => 'E'
+                                    ],
                             ],/*
                             'subject_profile' => [
                                     'title' => 'Profil-fach',
@@ -3661,7 +3686,7 @@ function block_exastud_get_default_templates($templateid = null) {
                                     'lines' => 14,
                                     'cols' => 80,
                                     'maxchars' => 1900
-                            ],
+                            ],/*
                             'projekt_ingroup' => [
                                     'title' => 'wer entwickelte',
                                     'type' => 'select',
@@ -3676,7 +3701,7 @@ function block_exastud_get_default_templates($templateid = null) {
                                     'values' => [
                                             'Die Projektprüfung wurde in Klasse 9 durchgeführt.' => 'Die Projektprüfung wurde in Klasse 9 durchgeführt.',
                                     ],
-                            ],/*
+                            ],*//*
                             'leiter' => [
                                     'title' => 'Leiter',
                                     'type' => 'select',
@@ -3775,8 +3800,8 @@ function block_exastud_get_default_templates($templateid = null) {
             ],
             'BP 2016/gleichwertiger Bildungsabschluss HSA/RSA' => [
                     'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_GLEICHWERTIGER_BILDUNGSABSCHLUSS_HSA_RSA,
-                    'name' => 'BP 2016 gleichwertiger Bildungsabschluss HSA/RSA',
-                    'file' => 'BP 2016/BP2016_GMS_gleichwertiger_Bildungsabschluss_HSA_RSA',
+                    'name' => 'BP 2016 gleichwertiger Bildungsabschluss RSA',
+                    'file' => 'BP 2016/BP2016_GMS_gleichwertiger_Bildungsabschluss_RSA',
                     'year' => '1',
                     'report_date' => '1',
                     'student_name' => '1',
@@ -3799,7 +3824,7 @@ function block_exastud_get_default_templates($templateid = null) {
                                     'cols' => 80,
                                     'maxchars' => 500,
                             ],
-                            'cert_level' => [
+                            /*'cert_level' => [
                                     'title' => 'HSA/RSA',
                                     'type' => 'select',
                                     'values' => [
@@ -3822,7 +3847,7 @@ function block_exastud_get_default_templates($templateid = null) {
                                             'Damit wurde ein dem Hauptschulabschluss gleichwertiger Bildungsstand erreicht.' => 'Damit wurde ein dem Hauptschulabschluss gleichwertiger Bildungsstand erreicht.',
                                             'Damit wurde ein den Realschulabschluss gleichwertiger Bildungsstand erreicht.' => 'Damit wurde ein den Realschulabschluss gleichwertiger Bildungsstand erreicht.',
                                     ],
-                            ],/*
+                            ],*//*
                             'subject_profile' => [
                                     'title' => 'Profil-fach',
                                     'type' => 'textarea',
@@ -5160,6 +5185,32 @@ function block_exastud_relate_categories_to_class($classid) {
     $toAdd = $DB->get_records('block_exastudclasscate', ['classid' => 0]);
     $toAdd = array_map(function ($o) {return $o->categoryid.'_'.$o->categorysource;}, $toAdd);
     block_exastud_update_class_categories_for_global_settings($toAdd, null, $classid);
+}
+
+function block_exastud_get_student_profilefach($class, $studentid) {
+    $profilfach = '';
+    $class_subjects = block_exastud_get_class_subjects($class);
+    foreach ($class_subjects as $subject) {
+        $subjectData = block_exastud_get_graded_review($class->id, $subject->id, $studentid);
+        if (!$subjectData) {
+            continue; // not graded yet
+        }
+        $subject->title = preg_replace('!\s*\(.*$!', '', $subject->title);
+        if (strpos($subject->title, 'Profilfach') === 0) {
+            if ($profilfach != '') {
+                continue;
+                // only if there is still no profilfach set
+                // maybe there are 2 profilfach gradings? ignore the 2nd one
+            }
+            if (!$subjectData || (!$subjectData->review && !$subjectData->grade && !$subjectData->niveau)) {
+                continue; // we need to select first !graded! profile subject
+            }
+            $profilfachT = preg_replace('!^[^\s]+!', '', $subject->title);
+            $profilfach = $profilfachT;
+            break; // we found a profile subject. stop!
+        }
+    }
+    return $profilfach;
 }
 
 

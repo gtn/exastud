@@ -835,6 +835,10 @@ return [
                 'Lernentwicklungsbericht: Schulname',
                 'Learning Development Report: School Name',
     ],
+    'settings_shooltype' => [
+                'Lernentwicklungsbericht: Schulart',
+                'Learning Development Report: School Type',
+    ],
     'settings_city' => [
                 'Lernentwicklungsbericht: Ort',
                 'Learning Development Report: City',
@@ -1517,6 +1521,11 @@ return [
     'button_interdisciplinary_skills' => [
         'Fächerübergreifende Kompetenzen bearbeiten',
         'Interdisciplinary skills'
+    ],
+
+    'profilesubject' => [
+        'Profilfach',
+        'Profile subject',
     ],
 
 ];

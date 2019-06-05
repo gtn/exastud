@@ -66,14 +66,6 @@ switch ($type) {
             ];
             $classheader = $reviewclass->title.' - '.block_exastud_trans('de:Zertifikat für Profilfach');
             break;
-    case BLOCK_EXASTUD_DATA_ID_CERTIFICATE:
-            $categories = [
-                    BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_16_ZERTIFIKAT_FUER_PROFILFACH => [
-                    'title' => block_exastud_trans('de:Zertifikat für Profilfach'),
-                ],
-            ];
-            $classheader = $reviewclass->title.' - '.block_exastud_trans('de:Zertifikat für Profilfach');
-            break;
     case BLOCK_EXASTUD_DATA_ID_BILINGUALES:
             $categories = [
                     BLOCK_EXASTUD_DATA_ID_BILINGUALES => [
@@ -253,6 +245,10 @@ foreach ($classstudents as $classstudent) {
                             ).'</div>';
                 } else {
                     $content = '<div><b>Formular:</b> '.$template->get_name().'</div>';
+                }
+                $student_profilfach = block_exastud_get_student_profilefach($class, $classstudent->id);
+                if ($student_profilfach) {
+                    $content .= '<span><strong>'.block_exastud_get_string('profilesubject').':</strong></span> '.$student_profilfach;
                 }
                 if (!$hideReviewButton) {
                     $inputs = $template->get_inputs($dataid);

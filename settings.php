@@ -224,6 +224,7 @@ if ($ADMIN->fulltree) {
     $settings->add(new block_exastud_settings_menu('exastud/menu', '', ''));
 
 	$settings->add(new admin_setting_configtext('exastud/school_name', block_exastud_get_string('settings_shoolname'), '', '', PARAM_TEXT));
+	$settings->add(new admin_setting_configtext('exastud/school_type', block_exastud_get_string('settings_shooltype'), '', '', PARAM_TEXT));
 	$settings->add(new admin_setting_configtext('exastud/school_location', block_exastud_get_string('settings_city'), '', '', PARAM_TEXT));
 	$settings->add(new admin_setting_configtext('exastud/bildungsstandards', block_exastud_get_string('settings_edustandarts'),
 		block_exastud_get_string('settings_edustandarts_description'), '5,6,7,8,9,10', PARAM_TEXT));

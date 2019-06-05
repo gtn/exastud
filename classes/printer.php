@@ -160,6 +160,8 @@ class printer {
         $data = [
                 'periode' => $period->description,
                 'schule' => get_config('exastud', 'school_name'),
+                'schule_type' => get_config('exastud', 'school_type'),
+                'schule_nametype' => get_config('exastud', 'school_name').' '.get_config('exastud', 'school_type'),
                 'ort' => get_config('exastud', 'school_location'),
                 'name' => $student->firstname.' '.$student->lastname,
                 'student_name' => $student->firstname.' '.$student->lastname,
@@ -555,7 +557,7 @@ class printer {
                 BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_HALBJAHR_ZEUGNIS_FOE,
                 BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_HALBJAHRESINFORMATION_KL11,
                 BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_HALBJAHRESINFORMATION_KL11,
-                BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_GLEICHWERTIGER_BILDUNGSABSCHLUSS_HSA_RSA,
+                BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_GLEICHWERTIGER_BILDUNGSABSCHLUSS_HSA,
                 BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_ABGANGSZEUGNIS_SCHULPFLICHT,
                 BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_ABGANGSZEUGNIS_NICHT_BEST_HSA,
                 BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_ABSCHLUSSZEUGNIS_FOE,
@@ -583,20 +585,9 @@ class printer {
             $profileFachPhysikOption = '* Physik wurde anstelle des Profilfachs dreistündig belegt.';
             $subjectsToDelete = array('WBS' => 'Wirtschaft/ Berufs- und Studienorientierung'); // with title in doc template
             $data['exam_english'] = '/--set-empty--/';
-
-			//$data = [
-				//'schule' => get_config('exastud', 'school_name'),
-				//'ort' => get_config('exastud', 'school_location'),
-				//'name' => $student->firstname.' '.$student->lastname,
-				//'kla' => $class->title,
-				//'geburt' => static::spacerIfEmpty(block_exastud_get_custom_profile_field_value($student->id, 'dateofbirth')),
-				//'certda' => $certificate_issue_date_text,
-				//'gebort' => static::spacerIfEmpty(block_exastud_get_custom_profile_field_value($student->id, 'placeofbirth')),
-				//'ags' => static::spacerIfEmpty(@$studentdata->ags),
-				//'projekt_thema' => static::spacerIfEmpty(@$studentdata->projekt_thema),
-				//'projekt_verbalbeurteilung' => static::spacerIfEmpty(@$studentdata->projekt_verbalbeurteilung),
-				//'datum' => date('d.m.Y'),
-			//];
+            if (@$studentdata->exam_english) {
+                $data['exam_english'] = $studentdata->exam_english;
+            }
 
 
 			/*foreach ($template->get_inputs() as $inputid => $tmp) {
@@ -900,10 +891,27 @@ class printer {
             }
 
 			if (in_array($templateid, [
+                    BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_GLEICHWERTIGER_BILDUNGSABSCHLUSS_HSA
+                    ])
+            ) {
+                $values = [
+                        'G' => 'grundlegenden Niveau',
+                        'M' => 'mittleren Niveau',
+                        'E' => 'erweiteren Niveau',
+                ];
+                // for working already existing values
+                if (array_key_exists(@$studentdata->abgangszeugnis_niveau, $values)) {
+                    $data['abgangszeugnis_niveau'] =
+                            static::spacerIfEmpty($values[$studentdata->abgangszeugnis_niveau]);
+                }
+            } elseif (in_array($templateid, [
                     BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_ABGANGSZEUGNIS_SCHULPFLICHT,
                     BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_ABGANGSZEUGNIS_SCHULPFLICHT
                     ])
             ) {
+			    // for working already existing values
+                $data['wann_verlassen'] = static::spacerIfEmpty((int)filter_var(@$studentdata->wann_verlassen, FILTER_SANITIZE_NUMBER_INT));
+			    /* // template was changed
 				$value = static::spacerIfEmpty(@$forminputs['wann_verlassen']['values'][@$studentdata->wann_verlassen]);
 				$add_filter(function($content) use ($placeholder, $value) {
 					$ret = preg_replace('!>[^<]*am Ende[^<]*<!U', '>'.$value.'<', $content, -1, $count);
@@ -913,12 +921,19 @@ class printer {
 
 					return $ret;
 				});
+			    */
 
 				$values = [
-					'G' => 'grundlegenden Niveau (G) beurteilt.',
-					'M' => 'mittleren Niveau (M) beurteilt.',
-					'E' => 'erweiteren Niveau (E) beurteilt.',
+					'G' => 'grundlegenden Niveau',
+					'M' => 'mittleren Niveau',
+					'E' => 'erweiteren Niveau',
 				];
+                // for working already existing values
+                if (array_key_exists(@$studentdata->abgangszeugnis_niveau, $values)) {
+                    $data['abgangszeugnis_niveau'] =
+                            static::spacerIfEmpty($values[$studentdata->abgangszeugnis_niveau]);
+                }
+				/*
 				$value = static::spacerIfEmpty(@$values[@$studentdata->abgangszeugnis_niveau]);
 				$add_filter(function($content) use ($value) {
 					$ret = preg_replace('!>grundlegenden Niveau[^<]*<!U', '>'.$value.'<', $content, -1, $count);
@@ -927,7 +942,7 @@ class printer {
 					}
 
 					return $ret;
-				});
+				});*/
 			} elseif (in_array($templateid, array(
 			        BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_ABGANGSZEUGNIS_NICHT_BEST_HSA,
                     BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_ABGANGSZEUGNIS_NICHT_BEST_HSA)))
