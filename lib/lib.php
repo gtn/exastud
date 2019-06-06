@@ -1842,7 +1842,8 @@ function block_exastud_get_review($classid, $subjectid, $studentid) {
 		$reviewdata = g::$DB->get_records('block_exastudreview', array('subjectid' => $subjectid, 'periodid' => $class->periodid, 'studentid' => $studentid), 'timemodified DESC');
 		$reviewdata = reset($reviewdata);
 		if ($reviewdata) {
-			$data->review = $reviewdata->review;
+			//$data->review = $reviewdata->review; // overwrites the fachkompetenzen; TODO: check this!
+			$data->learnreview = $reviewdata->review;
 			$data->{'review.modifiedby'} = $reviewdata->teacherid;
 			$data->{'review.timemodified'} = $reviewdata->timemodified;
 		}

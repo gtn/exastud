@@ -246,12 +246,12 @@ if ($fromform = $studentform->get_data()) {
             $newreview->review = $fromform->review;
             $existingReview = $DB->get_record('block_exastudreview', ['studentid' => $studentid, 'subjectid' => $subjectid,
                     'periodid' => $actPeriod->id, 'teacherid' => $teacherid,]);
-            $newreview = g::$DB->insert_or_update_record('block_exastudreview', $newreview, [
+            /*$newreview = g::$DB->insert_or_update_record('block_exastudreview', $newreview, [
                     'studentid' => $studentid,
                     'subjectid' => $subjectid,
                     'periodid' => $actPeriod->id,
                     'teacherid' => $teacherid,
-            ]);
+            ]);*/
             if (!$existingReview || $existingReview->review != $fromform->review) {
                 $subjectObjData = $DB->get_record('block_exastudsubjects', ['id' => $subjectid]);
                 \block_exastud\event\studentreview_changed::log(['objectid' => $reviewclass->id,

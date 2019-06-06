@@ -664,7 +664,6 @@ class reportsettings_edit_form extends moodleform {
     public function __construct($action = null, $customdata = null, $method = 'post', $target = '', $attributes = null,
             $editable = true, $ajaxformdata = null) {
         global $CFG;
-        //parent::definition_after_data();
         require_once($CFG->dirroot.'/blocks/exastud/classes/exastud_htmltag.php');
         MoodleQuickForm::registerElementType('exastud_htmltag', $CFG->dirroot.'/blocks/exastud/classes/exastud_htmltag.php', 'block_exastud_htmltag');
         parent::__construct($action, $customdata, $method, $target, $attributes, $editable, $ajaxformdata);
@@ -1204,4 +1203,25 @@ class change_subject_teacher_form extends moodleform {
     }
 
 }
+
+class add_students_via_class_parameter_form extends moodleform {
+
+    function definition() {
+        global $CFG;
+        $mform = $this->_form;
+        require_once($CFG->dirroot.'/blocks/exastud/classes/exastud_htmltag.php');
+        MoodleQuickForm::registerElementType('exastud_htmltag', $CFG->dirroot.'/blocks/exastud/classes/exastud_htmltag.php', 'block_exastud_htmltag');
+
+        //$mform->addElement('header', 'class_toadd');
+        $group=array();
+        $group[] =& $mform->createElement('text', 'class_toadd', block_exastud_trans('de:Klasse/Lerngruppe').':');
+        $group[] =& $mform->createElement('submit', 'add', block_exastud_trans('de:Schüler hinzufügen'));
+        $mform->setType('class_toadd', PARAM_TEXT);
+        $mform->addGroup($group, 'group', block_exastud_trans('de:Klasse/Lerngruppe').':', ' ', false);
+        $mform->addElement('exastud_htmltag', block_exastud_trans('de: Schüler, die in ihrem Nutzerprofil im Bereich "weitere Profileinstellungen" im Feld Klasse/Lerngruppe den entsprechenden Eintrag haben zur Klasse hinzufügen.'));
+    }
+
+
+}
+
 
