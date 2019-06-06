@@ -148,7 +148,6 @@ class printer {
 			$year2 = $year1 + 1;
 			$year1 = str_pad($year1, 2, '0', STR_PAD_LEFT);
 			$year2 = str_pad($year2, 2, '0', STR_PAD_LEFT);
-			//echo "<pre>debug:<strong>printer.php:122</strong>\r\n"; print_r($content); echo '</pre>'; exit; // !!!!!!!!!! delete it
 			return preg_replace('!([^0-9])99([^0-9].{0,3000}[^0-9])99([^0-9])!U', '${1}'.$year1.'${2}'.$year2.'${3}', $content, 1, $count);
 			//return preg_replace('!([^0-9])99([^0-9].{0,3000}[^0-9])99([^0-9])!U', '${1}'.$year1.'${2}'.$year2.'${3}', $content, 1, $count);
 		});
@@ -497,7 +496,6 @@ class printer {
                     $dataTextReplacer['${lessons_target}'] = '';
                     $data['lessons_target'] = '/--set-empty--/';
                     $studentdata->lessons_target = '';
-                    //echo "<pre>debug:<strong>printer.php:401</strong>\r\n"; print_r($studentdata); echo '</pre>'; exit; // !!!!!!!!!! delete it
                     $data['first_name'] = '';
                     //$data['comments'] = '';
                 }
@@ -1283,7 +1281,6 @@ class printer {
                         } else {
                             $grading = $topic->teacher_eval_additional_grading;
                         }
-                        //echo "<pre>debug:<strong>printer.php:1075</strong>\r\n"; print_r($grading); echo '</pre>'; // !!!!!!!!!! delete it
                         if ($oldExacomp) {
                             // old exacomp returns correct column number. look function get_additionalinfo_value_mapping()
                             $crossGrading = $grading;
@@ -1337,7 +1334,6 @@ class printer {
                             } else {
                                 $grading = $descriptor->teacher_eval_additional_grading;
                             }
-                            //echo "<pre>debug:<strong>printer.php:1136</strong>\r\n"; print_r('grading1: '.$grading); echo '</pre>'; // !!!!!!!!!! delete it
                             // from bug of exacomp - trying to get value from direct query. (for possibility work without upgrading of exacomp)
                             if ($grading === null) {
                                 $gradeRecordExacomp = g::$DB->get_record_sql("
@@ -1373,18 +1369,12 @@ class printer {
                                             break;
                                     }
                                 }
-                                //echo "<pre>debug:<strong>printer.php:1127</strong>\r\n"; print_r($gradeRecordExacomp); echo '</pre>';  // !!!!!!!!!! delete it
                             }
                             if ($oldExacomp) {
                                 $crossGrading = $grading;
                             } else {
                                 $crossGrading = self::get_exacomp_crossgrade($grading, 'comp', 4);
                             }
-                            //echo "<pre>debug:<strong>printer.php:1076</strong>\r\n"; print_r($descriptor->title); echo '</pre>'; // !!!!!!!!!! delete it
-                            //echo "<pre>debug:<strong>printer.php:1076</strong>\r\n"; print_r($grading); echo '</pre>'; // !!!!!!!!!! delete it
-                            //echo "<pre>debug:<strong>printer.php:1076</strong>\r\n"; print_r($crossGrading); echo '</pre>'; // !!!!!!!!!! delete it
-
-
                         } else {
                             $grading = -1;
                             $crossGrading = -1; // do not show at all
@@ -1811,15 +1801,8 @@ class printer {
                 break;
         }
 
-//echo "<pre>debug:<strong>printer.php:1088</strong>\r\n"; print_r($filters); echo '</pre>'; exit; // !!!!!!!!!! delete it
 		// zuerst filters
-        //unset($filters[5]);
-        //unset($filters[6]);
 		$templateProcessor->applyFilters($filters);
-		//echo "<pre>debug:<strong>printer.php:898</strong>\r\n"; print_r($filters); echo '</pre>'; exit; // !!!!!!!!!! delete it
-        //echo "<pre>debug:<strong>printer.php:904</strong>\r\n"; print_r($templateProcessor->getDocumentMainPart()); echo '</pre>'; exit; // !!!!!!!!!! delete it
-        //echo "<pre>debug:<strong>printer.php:999</strong>\r\n"; print_r($dataTextReplacer); echo '</pre>'; exit; // !!!!!!!!!! delete it
-        //echo "<pre>debug:<strong>printer.php:1062</strong>\r\n"; print_r($data); echo '</pre>'; exit; // !!!!!!!!!! delete it
 		$templateProcessor->setValues($data);
 		$templateProcessor->replaceWords($dataTextReplacer);
 
@@ -2245,8 +2228,6 @@ class printer {
             // no any review = no any report
             return null;
         }
-        
-        //echo "<pre>debug:<strong>printer.php:2080</strong>\r\n"; print_r($class_reviews); echo '</pre>'; exit; // !!!!!!!!!! delete it
 
         $templateProcessor->cloneBlock('studentblock', count($class_reviews), true);
 
@@ -3188,7 +3169,6 @@ class printer {
         }
         $fig = (int) str_pad('1', 2, '0'); // 2 (second parameter) - precision
         $val  = (floor($val * $fig) / $fig); // - ALWAYS round down!
-        //echo "<pre>debug:<strong>printer.php:2472</strong>\r\n"; print_r('orig:'.$origValue.' = val:'.$val); echo '</pre>'; // !!!!!!!!!! delete it
         // result column
         if ($val <= 2.2) {
             $result = 3; // vollständig erreicht
@@ -3656,9 +3636,6 @@ class TemplateProcessor extends \PhpOffice\PhpWord\TemplateProcessor {
 		$splits[$columnIndex + 1] = str_repeat($splits[$columnIndex + 1], $numberOfCols);
 
 		$splits = static::splitByTag(join('', $splits), 'tc');
-/*        if ($search == 'gheader') {
-            echo "<pre>debug:<strong>printer.php:2778</strong>\r\n"; print_r($splits); echo '</pre>'; // !!!!!!!!!! delete it
-        }*/
         for ($i = 1; $i < count($splits); $i += $columnsCount + 1) {
 			$splits[$i] = preg_replace('!(w:w=")[0-9]+!', '${1}'.$newWidth, $splits[$i]);
             $ind = $i + $columnIndex;
@@ -3666,9 +3643,6 @@ class TemplateProcessor extends \PhpOffice\PhpWord\TemplateProcessor {
                 $splits[$ind] = str_repeat($splits[$ind], $numberOfCols);
             }
 		}
-/*		if ($search == 'gheader') {
-		    echo "<pre>debug:<strong>printer.php:2778</strong>\r\n"; print_r($splits); echo '</pre>'; exit; // !!!!!!!!!! delete it
-        }*/
 		$table->set(join('', $splits));
 
 		$this->tempDocumentMainPart = $table->join();

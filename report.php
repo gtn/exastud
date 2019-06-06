@@ -307,8 +307,6 @@ if ($classid) {
                 exit;
             }
 
-            //echo "<pre>debug:<strong>report.php:216</strong>\r\n"; print_r($files_to_zip); echo '</pre>'; exit; // !!!!!!!!!! delete it
-
             if (count($files_to_zip) > 0) {
                 require_once $CFG->dirroot.'/lib/filelib.php';
                 if (count($files_to_zip) > 1) {
