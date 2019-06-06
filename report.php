@@ -190,8 +190,8 @@ if ($classid) {
                             break;
                         // - Beiblatt zur Projektprüfung: if there is grading in exastud and filled data in BLOCK_EXASTUD_DATA_ID_PROJECT_TEACHER
                         case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_BEIBLATT_PROJEKTPRUEFUNG_HSA:
-                        case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_BEIBLATT_PROJEKTARBEIT_HSA:
-                        case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_BEIBLATT_PROJEKTARBEIT:
+                        //case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_BEIBLATT_PROJEKTARBEIT_HSA:
+                        //case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_BEIBLATT_PROJEKTARBEIT:
                             if (!in_array($student->id, $studentsGraded)) {
                                 $doit = false;
                             }
