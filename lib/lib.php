@@ -4174,9 +4174,9 @@ function block_exastud_get_default_templates($templateid = null) {
                     'inputs_footer' => ['ags', 'comments_short', 'eng_niveau', 'fra_niveau', 'spa_niveau'], // inputs in the footer of template
                     'inputs_order' => ['ags', 'comments_short'], // special ordering of inputs (makes similar to docx template)
             ],
-            'BP 2016/Zertifikat zur Projektarbeit' => [
+            'BP 2016/Zertifikat über die Projektarbeit' => [
                     'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_BEIBLATT_PROJEKTARBEIT,
-                    'name' => 'Zertifikat zur Projektarbeit',
+                    'name' => 'Zertifikat über die Projektarbeit',
                     'file' => 'BP 2016/BP2016_GMS_Beiblatt_Projektarbeit',
                     'year' => '1',
                     'report_date' => '1',
