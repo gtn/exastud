@@ -41,11 +41,6 @@ $output = block_exastud_get_renderer();
 $url = '/blocks/exastud/review_student.php?courseid='.$courseid.'&classid='.$classid.'&subjectid='.$subjectid.'&studentid='.$studentid;
 $PAGE->set_url($url);
 
-$PAGE->requires->string_for_js('legend', 'block_exastud');
-$PAGE->requires->string_for_js('textarea_charsleft', 'block_exastud');
-$PAGE->requires->string_for_js('textarea_linestomuch', 'block_exastud');
-$PAGE->requires->string_for_js('textarea_charstomuch', 'block_exastud');
-
 block_exastud_require_global_cap(BLOCK_EXASTUD_CAP_REVIEW);
 
 $class = block_exastud_get_class($classid);

@@ -220,7 +220,8 @@ function block_exastud_print_period($courseid, $period, $type, $openclass) {
                     if (!block_exastud_get_only_learnsociale_reports()) {
                         $bilingualtemplates = block_exastud_get_bilingual_reports();
                         foreach ($bilingualtemplates as $bilingualtemplateid => $bilingualtemplatename) {
-                            if (block_exastud_is_bilingual_teacher($myclass->id, null, null, $bilingualtemplateid)) {
+                            // temporary disabled
+                            if (11==22 && block_exastud_is_bilingual_teacher($myclass->id, null, null, $bilingualtemplateid)) {
                                 // into Subject left column!!!!
                                 $subjectsData[] =
                                         html_writer::link(new moodle_url('/blocks/exastud/review_class_other_data.php', [

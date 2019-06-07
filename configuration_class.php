@@ -495,8 +495,8 @@ switch ($type) {
 
                 block_exastud_set_class_student_data($class->id, $student->id, 'head_teacher', $new->head_teacher);
                 block_exastud_set_class_student_data($class->id, $student->id, 'project_teacher', $new->project_teacher);
-                block_exastud_set_class_student_data($class->id, $student->id, 'bilingual_teacher', $new->bilingual_teacher);
-                block_exastud_set_class_student_data($class->id, $student->id, 'bilingual_templateid', $new->bilingual_templateid);
+                //block_exastud_set_class_student_data($class->id, $student->id, 'bilingual_teacher', $new->bilingual_teacher);
+                //block_exastud_set_class_student_data($class->id, $student->id, 'bilingual_templateid', $new->bilingual_templateid);
             }
         }
 
@@ -522,8 +522,8 @@ switch ($type) {
         ]);
 
         // bilingual properties
-        $table->head[] = block_exastud_get_string('teacher_for_bilingual');
-        $table->head[] = block_exastud_get_string('report_for_bilingual');
+        //$table->head[] = block_exastud_get_string('teacher_for_bilingual');
+        //$table->head[] = block_exastud_get_string('report_for_bilingual');
 
         // different teacher lists
         $project_teachers = [$class->userid => fullname($DB->get_record('user', ['id' => $class->userid, 'deleted' => 0]))];
@@ -564,10 +564,10 @@ switch ($type) {
             }
 
             // bilinguales
-            $row[] = html_writer::select($bilingual_teachers, 'userdatas['.$classstudent->id.'][bilingual_teacher]',
+/*            $row[] = html_writer::select($bilingual_teachers, 'userdatas['.$classstudent->id.'][bilingual_teacher]',
                     @$userdata->{BLOCK_EXASTUD_DATA_ID_BILINGUAL_TEACHER}, block_exastud_trans('de:keine'));
             $row[] = html_writer::select($bilingual_templates, 'userdatas['.$classstudent->id.'][bilingual_templateid]',
-                    @$userdata->{BLOCK_EXASTUD_DATA_ID_BILINGUAL_TEMPLATE}, block_exastud_trans('de:keine'));
+                    @$userdata->{BLOCK_EXASTUD_DATA_ID_BILINGUAL_TEMPLATE}, block_exastud_trans('de:keine'));*/
 
             $table->data[] = $row;
         }

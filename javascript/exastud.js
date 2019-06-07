@@ -274,6 +274,7 @@ $.extend(window.block_exastud, {
             $('#left_' + textareaName + '_chars .exastud-value').html(Math.abs(leftChars));
             $('#left_' + textareaName + '_rows .exastud-wording').html(M.str.block_exastud.textarea_rows);
             $('#left_' + textareaName + '_chars .exastud-wording').html(M.str.block_exastud.textarea_chars);
+
             var error = false;
             if (leftRows < 0) {
                 textarea.css('background-color', 'rgb(255, 240, 240)');

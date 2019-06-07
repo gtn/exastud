@@ -1644,6 +1644,13 @@ function block_exastud_init_js_css() {
 	if (file_exists($CFG->dirroot.'/blocks/exastud/javascript/'.$scriptName.'.js')) {
 		$PAGE->requires->js('/blocks/exastud/javascript/'.$scriptName.'.js', true);
 	}
+
+    $PAGE->requires->string_for_js('legend', 'block_exastud');
+    $PAGE->requires->string_for_js('textarea_rows', 'block_exastud');
+    $PAGE->requires->string_for_js('textarea_chars', 'block_exastud');
+    $PAGE->requires->string_for_js('textarea_charsleft', 'block_exastud');
+    $PAGE->requires->string_for_js('textarea_linestomuch', 'block_exastud');
+    $PAGE->requires->string_for_js('textarea_charstomuch', 'block_exastud');
 }
 
 function block_exastud_get_category($categoryid, $categorysource) {
@@ -2196,8 +2203,8 @@ function block_exastud_get_report_templates($class) {
     }
     $templates[BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_UEBERFACHLICHE_KOMPETENZEN] = '"Überfachliche Kompetenzen" (Vorlage zur Notenkonferenz)';
     $templates[BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_LERN_UND_SOZIALVERHALTEN] = 'Bericht "Lern- und Sozialverhalten" (Vorlage zur Notenkonferenz)';
-    $templates[BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_16_GMS_TESTAT_BILINGUALES_PROFIL_KL_8] = 'Bilingualer Unterricht an Gemeinschaftsschulen (Klasse 8)';
-    $templates[BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_16_GMS_ZERTIFIKAT_BILINGUALES_PROFIL_KL_10] = 'Bilinguales Zertifikat Englisch/Deutsch (Klasse 10)';
+    //$templates[BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_16_GMS_TESTAT_BILINGUALES_PROFIL_KL_8] = 'Bilingualer Unterricht an Gemeinschaftsschulen (Klasse 8)';
+    //$templates[BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_16_GMS_ZERTIFIKAT_BILINGUALES_PROFIL_KL_10] = 'Bilinguales Zertifikat Englisch/Deutsch (Klasse 10)';
     return $templates;
 }
 
