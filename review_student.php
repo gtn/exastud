@@ -30,6 +30,8 @@ $returnurl = optional_param('returnurl', null, PARAM_LOCALURL);
 $reporttype = optional_param('reporttype', '', PARAM_RAW);
 $type = optional_param('type', '', PARAM_TEXT);
 
+setcookie('lastclass', $classid);
+
 block_exastud_require_login($courseid);
 
 if (!$returnurl) {

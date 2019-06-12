@@ -504,5 +504,11 @@ $.extend(window.block_exastud, {
             updateLinkBySelectedTeacher($(this));
         });
     });
+
+    $(function() {
+        $('body').on('click', '.exastud-class-selector', function () {
+            $('.exastud-class-list').toggle();
+        });
+    });
  
 }();

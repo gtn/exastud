@@ -52,3 +52,7 @@ h3.detailed-for-student {
 #report .exastud-report-list label {
 	margin: 0px;
 }
+
+.exastud-class-selector {
+	font-size: small;
+}

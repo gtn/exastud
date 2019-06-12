@@ -33,7 +33,6 @@
 		$.each(exa_list_items, function () {
 			var item = this;
 			var $item = $itemTemplate.clone();
-
 			$item.data('id', this.id);
 
 			$item.find(':text').each(function () {
@@ -49,7 +48,12 @@
 				$item.addClass('ui-state-disabled');
 			}
 			if (!this.canDelete) {
-				$item.find('button[exa="delete-button"]').remove();
+				if (this.deleteButtonMessage) {
+                    $item.find('button[exa="delete-button"]').attr('title', this.deleteButtonMessage);
+                    $item.find('button[exa="delete-button"]').prop('disabled', true);
+				} else {
+                    $item.find('button[exa="delete-button"]').remove();
+                }
 			}
 		});
 

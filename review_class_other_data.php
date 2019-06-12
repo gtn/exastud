@@ -24,6 +24,8 @@ $classid = required_param('classid', PARAM_INT);
 $type = required_param('type', PARAM_TEXT);
 $templateid = optional_param('templateid', -1, PARAM_INT);
 
+setcookie('lastclass', $classid);
+
 block_exastud_require_login($courseid);
 
 block_exastud_require_global_cap(BLOCK_EXASTUD_CAP_REVIEW);
@@ -42,6 +44,14 @@ if (!$reviewclass || !$class) {
 }
 
 switch ($type) {
+    case BLOCK_EXASTUD_DATA_ID_CROSS_COMPETENCES:
+            $categories = [
+                    //BLOCK_EXASTUD_DATA_ID_CROSS_COMPETENCES => [
+                    //'title' => block_exastud_get_string('cross_competences_for_head'),
+                //],
+            ];
+            $classheader = $reviewclass->title.' - '.block_exastud_get_string('cross_competences_for_head');
+            break;
     case BLOCK_EXASTUD_DATA_ID_LERN_UND_SOZIALVERHALTEN:
             $categories = [
                 BLOCK_EXASTUD_DATA_ID_LERN_UND_SOZIALVERHALTEN => [
@@ -179,10 +189,16 @@ foreach ($classstudents as $classstudent) {
         $row->cells[] = block_exastud_get_string('only_profilesubject_teacher');
     } else {
 	    if (!$hideReviewButton) {
-            $row->cells[] = $output->link_button($CFG->wwwroot.'/blocks/exastud/review_student_other_data.php?courseid='.$courseid.
-                    '&classid='.$classid.'&type='.$type.'&studentid='.$classstudent->id,
-                    block_exastud_get_string('edit'),
-                    array('class' => 'btn btn-default'));
+	        if ($type == BLOCK_EXASTUD_DATA_ID_CROSS_COMPETENCES) {
+                $buttonTitle = block_exastud_get_string('show');
+            } else {
+                $buttonTitle = block_exastud_get_string('edit');
+            }
+            $row->cells[] =
+                    $output->link_button($CFG->wwwroot.'/blocks/exastud/review_student_other_data.php?courseid='.$courseid.
+                            '&classid='.$classid.'&type='.$type.'&studentid='.$classstudent->id,
+                            $buttonTitle,
+                            array('class' => 'btn btn-default'));
         } else {
             if ($editUser->id != $USER->id) {
                 $row->cells[] = block_exastud_trans(['de:Zugeteilt zu {$a}'], fullname($editUser));

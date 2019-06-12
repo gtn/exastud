@@ -33,6 +33,7 @@ block_exastud_require_login($courseid);
 block_exastud_require_global_cap(BLOCK_EXASTUD_CAP_MANAGE_CLASSES);
 
 $classid = required_param('classid', PARAM_INT);
+setcookie('lastclass', $classid);
 $class = block_exastud_get_head_teacher_class($classid);
 
 $period = block_exastud_get_period($class->periodid);

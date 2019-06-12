@@ -24,6 +24,12 @@ use block_exastud\globals as g;
 $courseid = optional_param('courseid', 1, PARAM_INT);
 $openclass = optional_param('openclass', 0, PARAM_INT);
 
+if (!$openclass) {
+    if (isset($_COOKIE['lastclass']) && $_COOKIE['lastclass'] > 0) {
+        $openclass = $_COOKIE['lastclass'];
+    }
+}
+
 block_exastud_require_login($courseid);
 
 block_exastud_require_global_cap(BLOCK_EXASTUD_CAP_REVIEW);
@@ -188,6 +194,12 @@ function block_exastud_print_period($courseid, $period, $type, $openclass) {
 				$generaldata = array();
 				if ($myclass->is_head_teacher || block_exastud_is_profilesubject_teacher($myclass->id)) {
                     if ($myclass->is_head_teacher) {
+                        $generaldata[] =
+                                html_writer::link(new moodle_url('/blocks/exastud/review_class_other_data.php', [
+                                        'courseid' => $courseid,
+                                        'classid' => $myclass->id,
+                                        'type' => BLOCK_EXASTUD_DATA_ID_CROSS_COMPETENCES,
+                                ]), block_exastud_get_string('report_cross_competences'));
                         $generaldata[] =
                                 html_writer::link(new moodle_url('/blocks/exastud/review_class_other_data.php', [
                                         'courseid' => $courseid,

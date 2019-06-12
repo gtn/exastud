@@ -577,7 +577,9 @@ class student_other_data_form extends moodleform {
                 unset($mform->_elements[$elementKey]);
             }
         }
-		$this->add_action_buttons(false);
+        if (count($this->_customdata['categories'])) {
+            $this->add_action_buttons(false);
+        }
 	}
 
     function validation($data, $files) {

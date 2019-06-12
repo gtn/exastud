@@ -865,8 +865,12 @@ return [
     ],
 
     'report_learn_and_sociale' => [
-            'Überfachliche Kompetenzen / Lern- und Sozialverhalten',
+            'Lern- und Sozialverhalten',
             'Learning and social behavior',
+    ],
+    'report_cross_competences' => [
+            'Überfachliche Kompetenzen',
+            'Cross competences',
     ],
     'report_other_report_fields' => [
             'Weitere Daten/Formularfelder',
@@ -899,7 +903,7 @@ return [
     ],
 
 	'competencies' => [
-		'Fächerübergreifende Kompetenzen',
+		'Überfachliche Kompetenzen',
 		'Competences',
 	],
 	'Note' => [
@@ -1306,8 +1310,12 @@ return [
             'Lern- und Sozialverhalten',
             'Learning and social behavior',
     ],
+    'cross_competences_for_head' => [
+            'Überfachliche Kompetenzen',
+            'Cross competences',
+    ],
     'learn_and_sociale_for_head' => [
-            'Überfachliche Kompetenzen / Lern- und Sozialverhalten',
+            'Lern- und Sozialverhalten',
             'Learning and social behavior',
     ],
     'learn_and_sociale_for_head2' => [
@@ -1519,13 +1527,18 @@ return [
     ],
 
     'button_interdisciplinary_skills' => [
-        'Fächerübergreifende Kompetenzen bearbeiten',
+        'Überfachliche Kompetenzen bearbeiten',
         'Interdisciplinary skills'
     ],
 
     'profilesubject' => [
         'Profilfach',
         'Profile subject',
+    ],
+
+    'select_another_class' => [
+            'Select another class',
+            'Select another class',
     ],
 
 ];

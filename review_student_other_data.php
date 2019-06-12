@@ -26,6 +26,8 @@ $type = required_param('type', PARAM_TEXT);
 $studentid = required_param('studentid', PARAM_INT);
 $returnurl = optional_param('returnurl', null, PARAM_LOCALURL);
 
+setcookie('lastclass', $classid);
+
 block_exastud_require_login($courseid);
 
 $parenturl = new moodle_url('/blocks/exastud/review_class_other_data.php?courseid='.$courseid.'&classid='.$classid.'&type='.$type);
@@ -75,6 +77,12 @@ $strreview = block_exastud_get_string('review');
 $actPeriod = block_exastud_check_active_period();
 
 switch ($type) {
+    case BLOCK_EXASTUD_DATA_ID_CROSS_COMPETENCES:
+        $template = block_exastud_get_student_print_template($class, $studentid); // only temporary. is not used later
+        $inputs = array();
+        $categories = [];
+        $classheader = $reviewclass->title.' - '.block_exastud_get_string('cross_competences_for_head');
+        break;
     case BLOCK_EXASTUD_DATA_ID_LERN_UND_SOZIALVERHALTEN:
         $classstandarttemplate = block_exastud_get_class_data($class->id)->default_templateid;
         $template = block_exastud_get_student_print_template($class, $studentid);
@@ -88,7 +96,7 @@ switch ($type) {
                 'lines' => @$inputs['learn_social_behavior']['lines'] ? @$inputs['learn_social_behavior']['lines'] : 8,
             ],
         ];
-        $classheader = $reviewclass->title.' - '.block_exastud_get_string('learn_and_sociale_for_head2');
+        $classheader = $reviewclass->title.' - '.block_exastud_get_string('learn_and_sociale_for_head');
         break;
     case BLOCK_EXASTUD_DATA_ID_PRINT_TEMPLATE:
         $template = block_exastud_get_student_print_template($class, $student->id);
@@ -158,7 +166,7 @@ echo $output->header(array('review',
 
 echo $output->heading($classheader);
 
-if ($type == BLOCK_EXASTUD_DATA_ID_LERN_UND_SOZIALVERHALTEN) {
+if ($type == BLOCK_EXASTUD_DATA_ID_CROSS_COMPETENCES) {
 	$user = $student;
 	$userReport = block_exastud_get_report($user->id, $actPeriod->id, $class->id);
 	//$userCategoryReviews = block_exastud_get_reviewers_by_category($actPeriod->id, $user->id, false);

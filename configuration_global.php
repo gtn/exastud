@@ -272,6 +272,29 @@ block_exastud_custom_breadcrumb($PAGE);
 if ($action == 'categories') {
 	echo $output->header(['competencies'], ['content_title' => block_exastud_get_string('pluginname')], true/*['settings', ['id' => 'categories', 'name' => block_exastud_trans("de:Kompetenzen")]]*/);
 
+	foreach ($availablecategories as $cat) {
+        $cat->deleteButtonMessage = '';
+        $relatedToClass = $DB->get_fieldset_sql('SELECT DISTINCT c.title 
+                                                  FROM {block_exastudclasscate} cat
+                                                    JOIN {block_exastudclass} c ON c.id = cat.classid
+                                                  WHERE cat.categoryid = ? AND cat.categorysource = ?',
+                array($cat->id, 'exastud'));
+        if ($relatedToClass) {
+            $cat->deleteButtonMessage .= 'This category is related to classes: '.implode(', ', $relatedToClass);
+        }
+        $reviewed = $DB->get_fieldset_sql('SELECT *
+                                                  FROM {block_exastudreviewpos} rev                                                  
+                                                  WHERE rev.categoryid = ? 
+                                                      AND rev.categorysource = ?',
+                array($cat->id, 'exastud'));
+        if ($reviewed) {
+            $cat->deleteButtonMessage .= ($cat->deleteButtonMessage ? "\r\n" : "").'This category has reviewed for some students';
+        }
+        if (!$relatedToClass && !$reviewed) {
+            $cat->canDelete = true;
+        }
+    }
+
 	?>
 	<script>
 		var exa_list_items = <?php echo json_encode(array_values($availablecategories) /* use array_values, because else the array gets sorted by key and not by sorting */); ?>

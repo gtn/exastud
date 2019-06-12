@@ -315,7 +315,7 @@ class printer {
                     BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_HALBJAHR_LERNENTWICKLUNGSBERICHT,
                     BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_JAHRESZEUGNIS_LERNENTWICKLUNGSBERICHT,
                 ])) {
-		    $cleanAllComments = false; // clean all comments if at least one subject has Z niveau
+		    $showNiveauZComments = false; // show niveau Z comments if at least one subject has Z niveau
 			$bpsubjects = block_exastud_get_bildungsplan_subjects($class->bpid);
             //$class_subjects = block_exastud_get_class_subjects($class);
             //$lern_soz = block_exastud_get_class_student_data($class->id, $student->id, BLOCK_EXASTUD_DATA_ID_LERN_UND_SOZIALVERHALTEN);
@@ -443,7 +443,7 @@ class printer {
 				};
 
                 if (!empty($subjectData->niveau) && ($subjectData->niveau == 'Z' || $subjectData->niveau == 'zieldifferenter Unterricht')) {
-                    $cleanAllComments = true;
+                    $showNiveauZComments = true;
                 }
 
 				$grade = (@$studentdata->print_grades ? 'Note '.static::spacerIfEmpty(@$subjectData->grade) : '');
@@ -452,6 +452,7 @@ class printer {
 				};
 			}
 
+			//echo "<pre>debug:<strong>printer.php:455</strong>\r\n"; print_r($religion); echo '</pre>'; exit; // !!!!!!!!!! delete it
 			if ($religion != self::spacerIfEmpty('')) {
                 $dataTextReplacer['Ethik'] = $religion;
             } else {
@@ -501,7 +502,7 @@ class printer {
                 }
             }
             // clean comments block if at least one subject has Z niveau
-            if ($cleanAllComments
+            if (!$showNiveauZComments
                 && in_array($templateid, [
                     BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_HALBJAHR_LERNENTWICKLUNGSBERICHT,
                     BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_JAHRESZEUGNIS_LERNENTWICKLUNGSBERICHT,
@@ -516,7 +517,7 @@ class printer {
                 $data['lessons_target'] = '/--set-empty--/';
                 $studentdata->lessons_target = '';
                 $data['student_name'] = '';
-                $data['comments'] = '';
+                //$data['comments'] = '';
             }
 
             // clean bottom notification about grading
@@ -1109,12 +1110,40 @@ class printer {
 				$templateProcessor->setValue('kheader', $evalopt->title, 1);
 			}
 
+            $classteachers = array();
+            $subjectsOfTeacher = array();
+            $teachers = array_filter(block_exastud_get_class_subject_teachers($class->id), function($o) use (&$classteachers, &$subjectsOfTeacher) {
+                if (!in_array($o->id, $classteachers)) {
+                    $classteachers[] = $o->id;
+                }
+                if ($o->subjectid > 0) {
+                    $subjectsOfTeacher[$o->id][] = $o->subjectid;
+                }
+                return null;
+            });
+            $classteachers = array_map(function($o) {return block_exastud_get_user($o);}, $classteachers);
+            foreach ($categories as $category) {
+                $category_cnt = 0;
+                $category_total = 0;
+                foreach ($classteachers as $teacher) {
+                    foreach ($subjectsOfTeacher[$teacher->id] as $subjectId) {
+                        $cateReview = block_exastud_get_category_review_by_subject_and_teacher($class->periodid, $student->id, $category->id, $category->source, $teacher->id, $subjectId);
+                        if (@$cateReview->catreview_value) {
+                            $category_total += (@$cateReview->catreview_value ? $cateReview->catreview_value : 0);
+                            $category_cnt++;
+                        }
+                    }
+                }
+                $average = $category_cnt > 0 ? round($category_total / $category_cnt, 2) : 0;
+                $category->average = $average;
+            }
+
 			foreach ($categories as $category) {
 				$templateProcessor->cloneRowToEnd('kriterium');
 				$templateProcessor->setValue('kriterium', $category->title, 1);
 
 				for ($i = 0; $i < count($evalopts); $i++) {
-					$templateProcessor->setValue('kvalue', $category->average !== null && round($category->average) == $i ? 'X' : '', 1);
+					$templateProcessor->setValue('kvalue', $category->average !== null && round($category->average) == ($i + 1) ? 'X' : '', 1);
 				}
 			}
 			$templateProcessor->deleteRow('kriterium');
@@ -1205,13 +1234,43 @@ class printer {
 		    foreach ($evalopts as $evalopt) {
 		        $templateProcessor->setValue('kheader', $evalopt->title, 1);
 		    }
-		    
+
+            $classteachers = array();
+            $subjectsOfTeacher = array();
+            $teachers = array_filter(block_exastud_get_class_subject_teachers($class->id), function($o) use (&$classteachers, &$subjectsOfTeacher) {
+                if (!in_array($o->id, $classteachers)) {
+                    $classteachers[] = $o->id;
+                }
+                if ($o->subjectid > 0) {
+                    $subjectsOfTeacher[$o->id][] = $o->subjectid;
+                }
+                return null;
+            });
+            $classteachers = array_map(function($o) {return block_exastud_get_user($o);}, $classteachers);
+
+            foreach ($categories as $category) {
+                $category_cnt = 0;
+                $category_total = 0;
+                foreach ($classteachers as $teacher) {
+                    foreach ($subjectsOfTeacher[$teacher->id] as $subjectId) {
+                        $cateReview = block_exastud_get_category_review_by_subject_and_teacher($class->periodid, $student->id, $category->id, $category->source, $teacher->id, $subjectId);
+                        if (@$cateReview->catreview_value) {
+                            $category_total += (@$cateReview->catreview_value ? $cateReview->catreview_value : 0);
+                            $category_cnt++;
+                        }
+                    }
+                }
+                $average = $category_cnt > 0 ? round($category_total / $category_cnt, 2) : 0;
+                $category->average = $average;
+            }
+
 		    foreach ($categories as $category) {
 		        $templateProcessor->cloneRowToEnd('kriterium');
 		        $templateProcessor->setValue('kriterium', $category->title, 1);
 		        
 		        for ($i = 0; $i < count($evalopts); $i++) {
-		            $templateProcessor->setValue('kvalue', $category->average !== null && round($category->average) == $i ? 'X' : '', 1);
+                    $average = $category->average;
+		            $templateProcessor->setValue('kvalue', $average !== null && round($average) == ($i + 1) ? 'X' : '', 1);
 		        }
 		    }
 		    $templateProcessor->deleteRow('kriterium');
@@ -1479,8 +1538,6 @@ class printer {
                 $templateProcessor->setValue('kheader', fullname($columnTeacher), 1);
             }
 
-            
-            
             foreach ($teacherReviews as $key => $review) {
                 list($categoryId, $categorySource) = explode('_', $key);
                 $templateProcessor->cloneRowToEnd('kriterium');
@@ -1520,8 +1577,10 @@ class printer {
                     $teacher_cnt = 0;
                     foreach ($subjectsOfTeacher[$columnTeacher->id] as $subjectid) {
                         $cateReview = block_exastud_get_category_review_by_subject_and_teacher($class->periodid, $student->id, $categoryId, $categorySource, $columnTeacher->id, $subjectid);
-                        $teacher_total += (@$cateReview->catreview_value ? $cateReview->catreview_value : 0);
-                        $teacher_cnt++;
+                        if (@$cateReview->catreview_value) { // only reviewed subject/categories
+                            $teacher_total += (@$cateReview->catreview_value ? $cateReview->catreview_value : 0);
+                            $teacher_cnt++;
+                        }
                     }
                     /*$sql = 'SELECT AVG(rp.value) as average
                         FROM {block_exastudreviewpos} rp

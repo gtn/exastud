@@ -38,6 +38,7 @@ const BLOCK_EXASTUD_CAP_VIEW_REPORT = 'viewreport';
 const BLOCK_EXASTUD_CAP_REVIEW = 'review';
 
 const BLOCK_EXASTUD_DATA_ID_LERN_UND_SOZIALVERHALTEN = 'learning_and_social_behavior';
+const BLOCK_EXASTUD_DATA_ID_CROSS_COMPETENCES = 'cross_competences';
 const BLOCK_EXASTUD_DATA_ID_BILINGUALES = 'bilinguales';
 const BLOCK_EXASTUD_DATA_ID_UNLOCKED_TEACHERS = 'unlocked_teachers';
 const BLOCK_EXASTUD_DATA_ID_PRINT_TEMPLATE = 'print_template'; // TODO: change to id of 'block_exastudreportsettings' record?
@@ -543,11 +544,11 @@ function block_exastud_get_reviewers_by_category_and_pos($periodid, $studentid, 
     return iterator_to_array(g::$DB->get_recordset_sql("
 			SELECT DISTINCT u.*, s.title AS subject_title, pos.value
 			FROM {block_exastudreview} r
-			JOIN {block_exastudreviewpos} pos ON pos.reviewid = r.id
-			JOIN {user} u ON r.teacherid = u.id
-			JOIN {block_exastudclass} c ON c.periodid = r.periodid
-			JOIN {block_exastudclassteachers} ct ON ct.classid=c.id AND ct.teacherid=r.teacherid AND ct.subjectid=r.subjectid
-			LEFT JOIN {block_exastudsubjects} s ON r.subjectid = s.id
+                JOIN {block_exastudreviewpos} pos ON pos.reviewid = r.id
+                JOIN {user} u ON r.teacherid = u.id
+                JOIN {block_exastudclass} c ON c.periodid = r.periodid
+                JOIN {block_exastudclassteachers} ct ON ct.classid=c.id AND ct.teacherid=r.teacherid AND ct.subjectid=r.subjectid
+                LEFT JOIN {block_exastudsubjects} s ON r.subjectid = s.id
 			WHERE c.periodid = ? AND r.studentid = ?
 				AND pos.categoryid = ? AND pos.categorysource = ?
 				AND u.deleted = 0				
@@ -644,7 +645,7 @@ function block_exastud_get_average_evaluation_by_category($periodid, $studentid,
                 WHERE c.periodid = ? AND r.studentid = ?
                     AND pos.categoryid = ? AND pos.categorysource = ?
                     AND u.deleted = 0
-                GROUP BY '.($averageForAllSubjects ? ' pos.categoryid ' :' s.id ')
+                GROUP BY '.($averageForAllSubjects ? ' pos.categoryid, r.studentid ' : ' s.id ')
             , [$periodid, $studentid, $categoryid, $categorysource]);
     foreach ($evals as $subjectid => $avg) {
         $average[$subjectid] = (object) [
@@ -677,27 +678,29 @@ function block_exastud_get_class_categories_for_report($studentid, $classid) {
 		$category->evaluationOptions = [];
 		$reviewPoints = 0;
 		$reviewCnt = 0;
-
 		if ($evaluationOptions) {
 		    // for texts and points
             $i = 0;
             foreach ($evaluationOptions as $pos_value => $option) {
+                $reviewers = block_exastud_get_reviewers_by_category_and_pos(block_exastud_get_active_or_last_period()->id,
+                                $studentid, $category->id, $category->source, $pos_value);
                 $category->evaluationOptions[$pos_value] = (object) [
                         'value' => $pos_value,
                         'title' => $option,
-                        'reviewers' => $reviewers =
-                                block_exastud_get_reviewers_by_category_and_pos(block_exastud_get_active_or_last_period()->id,
-                                        $studentid, $category->id, $category->source, $pos_value),
+                        'reviewers' => $reviewers,
                 ];
                 $reviewPoints += count($reviewers) * $i;
                 $reviewCnt += count($reviewers);
                 $i++;
             }
-            if ($reviewCnt) {
+            /*if ($reviewCnt) {
                 $category->average = $reviewPoints / $reviewCnt;
             } else {
                 $category->average = null;
-            }
+            }*/
+            $category->average = block_exastud_get_average_evaluation_by_category(block_exastud_get_active_or_last_period()->id,
+                    $studentid, $category->id, $category->source, true);
+            echo "<pre>debug:<strong>lib.php:702</strong>\r\n"; print_r($category->average); echo '</pre>'; // !!!!!!!!!! delete it
         } else {
 		    // for grades
             $i = 0;
@@ -1398,7 +1401,6 @@ function block_exastud_get_report($studentid, $periodid, $classid) {
                                         array($studentid, $periodid));
 	$report->totalvalue = $totalvalue->total;
 
-
 	$reviewcategories = $DB->get_records_sql("
                 SELECT DISTINCT rp.categoryid, rp.categorysource
                     FROM {block_exastudreview} r
@@ -1406,7 +1408,7 @@ function block_exastud_get_report($studentid, $periodid, $classid) {
                     WHERE r.studentid = ? 
                           AND r.periodid = ?",
         array($studentid, $periodid));
-
+		
 	$report->category_averages = [];
 
     $classteachers = array();
@@ -1437,8 +1439,10 @@ function block_exastud_get_report($studentid, $periodid, $classid) {
 			foreach ($classteachers as $teacher) {
                 foreach ($subjectsOfTeacher[$teacher->id] as $subjectId) {
                     $cateReview = block_exastud_get_category_review_by_subject_and_teacher($periodid, $studentid, $rcat->categoryid, $rcat->categorysource, $teacher->id, $subjectId);
-                    $category_total += (@$cateReview->catreview_value ? $cateReview->catreview_value : 0);
-                    $category_cnt++;
+                    if (@$cateReview->catreview_value) {
+                        $category_total += (@$cateReview->catreview_value ? $cateReview->catreview_value : 0);
+                        $category_cnt++;
+                    }
                 }
             }
 			$average = $category_cnt > 0 ? round($category_total / $category_cnt, 2) : 0;
