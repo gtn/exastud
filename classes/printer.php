@@ -1872,6 +1872,8 @@ class printer {
         switch ($templateid) {
             // student_transfered
             case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_JAHRESZEUGNIS_KL10_E_NIVEAU:
+            case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_JAHRESZEUGNIS_KL10_E_NIVEAU:
+            case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_JAHRESZEUGNIS_KL11:
                 if (array_key_exists('student_transfered', $inputs)) {
                     $newItems = [
                             '' => 'Wählen Sie ein Element aus.',
@@ -4012,6 +4014,9 @@ class TemplateProcessor extends \PhpOffice\PhpWord\TemplateProcessor {
         $sboxStart = strrpos($this->tempDocumentMainPart, '<w:comboBox ', ((strlen($this->tempDocumentMainPart) - $tagPos) * -1));
         if (!$sboxStart) {
             $sboxStart = strrpos($this->tempDocumentMainPart, '<w:comboBox>', ((strlen($this->tempDocumentMainPart) - $tagPos) * -1));
+        }
+        if (!$sboxStart) {
+            return true;
         }
         $sboxEnd = strpos($this->tempDocumentMainPart, '</w:comboBox>', $tagPos) + 13;
 
