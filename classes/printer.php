@@ -713,12 +713,18 @@ class printer {
                     if ($subjectData) {
                         $profileFachPhysikOption = '';
                     }
-				} elseif (in_array($subject->shorttitle, [
+				}
+				// 13.06.2019 hidden for many reports, except these:
+                elseif (in_array($subject->shorttitle, [
 					'EWG',
 					'NWA',
-				])) {
+                ]) && in_array($templateid, [
+                            BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_GLEICHWERTIGER_BILDUNGSABSCHLUSS_HSA,
+                            BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_ABGANGSZEUGNIS_NICHT_BEST_HSA,
+                        ])) {
 					// hier den shorttitle suchen
-					$gradeSearch = $subject->shorttitle;
+					//$gradeSearch = $subject->shorttitle;
+					$gradeSearch = $subject->title.' ('.$subject->shorttitle.')';
 					$dropdownsBetween = 0;
 				} elseif (array_key_exists($subject->shorttitle, $subjectsToDelete)) {
 					$gradeSearch = $subjectsToDelete[$subject->shorttitle];
@@ -749,12 +755,13 @@ class printer {
                     $replacefilter = false;
                 }
 
+                //echo "<pre>debug:<strong>printer.php:758</strong>\r\n"; print_r($gradeSearch); echo '</pre>'; // !!!!!!!!!! delete it
                 $add_filter([
                         'grade',
                         $gradeSearch,
                 ], function($content) use ($gradeSearch, $grade, $placeholder, $dropdownsBetween) {
                     if (!preg_match('!('.preg_quote($gradeSearch, '!').'.*)'.$placeholder.'note!U', $content, $matches)) {
-                        // var_dump(['fach nicht gefunden', $gradeSearch]);
+                         var_dump(['fach nicht gefunden', $gradeSearch]);
                         return $content;
                     }
 
@@ -803,7 +810,8 @@ class printer {
                     }
                 }
 			}
-			//exit;
+			//exit; // delete it!
+
 			if (isset($religionGrade) && $religionGrade > 0) {
 			    $sum += $religionGrade;
 			    $scnt++;
@@ -817,7 +825,7 @@ class printer {
 			    $avg = (($sum - $rsum) + $min) / (($scnt - $rcnt) + 1);
 			}
 			if (in_array($templateid, [
-                            BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_ABSCHLUSSZEUGNIS_FOE, // is this need?
+                            //BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_ABSCHLUSSZEUGNIS_FOE, // is this need?
                             BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_ABSCHLUSSZEUGNIS_HS,
                             BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_ABSCHLUSSZEUGNIS_FOE,
                             BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_ABSCHLUSSZEUGNIS_KL9_10_HSA,
@@ -1860,6 +1868,30 @@ class printer {
                 break;
         }
 
+        // fill selectboxes by needed values
+        switch ($templateid) {
+            // student_transfered
+            case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_JAHRESZEUGNIS_KL10_E_NIVEAU:
+                if (array_key_exists('student_transfered', $inputs)) {
+                    $newItems = [
+                            '' => 'Wählen Sie ein Element aus.',
+                    ];
+                    $gender = block_exastud_get_user_gender($student->id);
+                    $values = $inputs['student_transfered']['values'];
+                    switch ($gender) {
+                        case 'male':
+                            $values = array_slice($values, 2); // delete first TWO values from selectbox
+                            break;
+                        case 'female':
+                            $values = array_slice($values, 0, 2); // use only first TWO values from selectbox
+                            break;
+                    }
+                    $newItems = array_merge($newItems, $values);
+                    $templateProcessor->fillSelectbox('student_transfered', $newItems);
+                }
+                break;
+        }
+
 		// zuerst filters
 		$templateProcessor->applyFilters($filters);
 		$templateProcessor->setValues($data);
@@ -1921,6 +1953,25 @@ class printer {
 
 		// split normal and grouped subjects (page 2)
 		$normal_subjects = [];
+        // add Verhalten and Mitarbeit to $normal_subjects if selected report has them
+        // at least one selected student
+        $verhaltenExists = false;
+        $verhaltens = array();
+        $mitarbeitExists = false;
+        $mitarbeits = array();
+        foreach ($students as $student) {
+            $inputs = array_keys(block_exastud_get_student_print_template($class, $student->id)->get_inputs(BLOCK_EXASTUD_DATA_ID_ADDITIONAL_INFO));
+            $studentData = block_exastud_get_class_student_data($class->id, $student->id);
+            if (in_array('verhalten', $inputs)) {
+                $verhaltenExists = true;
+                $verhaltens[$student->id] = @$studentData->verhalten;
+            }
+            if (in_array('mitarbeit', $inputs)) {
+                $mitarbeitExists = true;
+                $mitarbeits[$student->id] = @$studentData->mitarbeit;
+            }
+        }
+
 		$grouped_subjects = [];
 		foreach ($class_subjects as $subject) {
 			if (preg_match('!religi|ethi!i', $subject->title)) {
@@ -1949,6 +2000,12 @@ class printer {
 
         // page 1
         $columnsCount = count($normal_subjects);
+        if ($verhaltenExists) {
+            $columnsCount++;
+        }
+        if ($mitarbeitExists) {
+            $columnsCount++;
+        }
         $columnStart = 0;
         $templateProcessor->duplicateCell('s', $columnsCount - 1);
         $templateProcessor->duplicateCell('g', $columnsCount - 1);
@@ -1979,6 +2036,12 @@ class printer {
         /*if (count($normal_subjects) > 10) {
             $templateProcessor->changeOrientation('L');
         }*/ // now is always L
+        if ($verhaltenExists) {
+            $templateProcessor->setValue("s", 'Verhalten', 1);
+        }
+        if ($mitarbeitExists) {
+            $templateProcessor->setValue("s", 'Mitarbeit', 1);
+        }
 
 		foreach ($normal_subjects as $subject) {
             $shorttitle = trim($subject->shorttitle);
@@ -1993,7 +2056,21 @@ class printer {
 			$rowi++;
 			$templateProcessor->setValue("student#$rowi", $rowi.'. '.fullname($student));
             $subjectsToAverage = array();
-
+            // verhalten und mitarbeit
+            if ($verhaltenExists) {
+                if (array_key_exists($student->id, $verhaltens)) {
+                    $templateProcessor->setValue("g#$rowi", $verhaltens[$student->id], 1);
+                } else {
+                    $templateProcessor->setValue("g#$rowi", '', 1);
+                }
+            }
+            if ($mitarbeitExists) {
+                if (array_key_exists($student->id, $mitarbeits)) {
+                    $templateProcessor->setValue("g#$rowi", $mitarbeits[$student->id], 1);
+                } else {
+                    $templateProcessor->setValue("g#$rowi", '', 1);
+                }
+            }
 			// normal subjects
 			foreach ($normal_subjects as $subject) {
 				$subjectData = block_exastud_get_graded_review($class->id, $subject->id, $student->id);
@@ -2331,6 +2408,25 @@ class printer {
 
 		// split normal and grouped subjects
 		$normal_subjects = [];
+		// add Verhalten and Mitarbeit to $normal_subjects if selected report has them
+        // at least one selected student
+        $verhaltenExists = false;
+        $verhaltens = array();
+        $mitarbeitExists = false;
+        $mitarbeits = array();
+        foreach ($students as $student) {
+            $inputs = array_keys(block_exastud_get_student_print_template($class, $student->id)->get_inputs(BLOCK_EXASTUD_DATA_ID_ADDITIONAL_INFO));
+            $studentData = block_exastud_get_class_student_data($class->id, $student->id);
+            if (in_array('verhalten', $inputs)) {
+                $verhaltenExists = true;
+                $verhaltens[$student->id] = @$studentData->verhalten;
+            }
+            if (in_array('mitarbeit', $inputs)) {
+                $mitarbeitExists = true;
+                $mitarbeits[$student->id] = @$studentData->mitarbeit;
+            }
+        }
+
 		$grouped_subjects = [];
 		foreach ($class_subjects as $subject) {
 			if (preg_match('!religi|ethi!i', $subject->title)) {
@@ -2428,6 +2524,13 @@ class printer {
         $subjectsTable->id = 'subjectsTable';
         $subjectsTable->head[] = ''; // student name
         $subjectsTable->align[] = '';
+        if ($verhaltenExists) {
+            $subjectsTable->head[] = 'Verhalten'; // Verhalten
+        }
+        if ($mitarbeitExists) {
+            $subjectsTable->head[] = 'Mitarbeit'; // mitarbeit
+        }
+
         foreach ($all_subjects as $subject) {
             if (count(@$studentsData[$subject->id]) > 0) {
                 $hCell = new \html_table_cell();
@@ -2455,6 +2558,12 @@ class printer {
 			$row = new \html_table_row();
 			$cells = array();
 			$cells[] = fullname($student);
+			if ($verhaltenExists) {
+                $cells[] = array_key_exists($student->id, $verhaltens) ? $verhaltens[$student->id] : '';
+            }
+			if ($mitarbeitExists) {
+                $cells[] = array_key_exists($student->id, $mitarbeits) ? $mitarbeits[$student->id] : '';
+            }
             foreach ($all_subjects as $subject) {
                 if (count(@$studentsData[$subject->id]) > 0) {
                     if (in_array($subject->id, $isGroupedSubjects)) {
@@ -2599,6 +2708,32 @@ class printer {
 		$cell = 0;
 		$sheet->setCellValueByColumnAndRow($cell++, 1, 'Nr.');
 		$sheet->setCellValueByColumnAndRow($cell++, 1, 'Name');
+
+        // add Verhalten and Mitarbeit to $normal_subjects if selected report has them
+        // at least one selected student
+        $verhaltenExists = false;
+        $verhaltens = array();
+        $mitarbeitExists = false;
+        $mitarbeits = array();
+        foreach ($students as $student) {
+            $inputs = array_keys(block_exastud_get_student_print_template($class, $student->id)->get_inputs(BLOCK_EXASTUD_DATA_ID_ADDITIONAL_INFO));
+            $studentData = block_exastud_get_class_student_data($class->id, $student->id);
+            if (in_array('verhalten', $inputs)) {
+                $verhaltenExists = true;
+                $verhaltens[$student->id] = @$studentData->verhalten;
+            }
+            if (in_array('mitarbeit', $inputs)) {
+                $mitarbeitExists = true;
+                $mitarbeits[$student->id] = @$studentData->mitarbeit;
+            }
+        }
+        if ($verhaltenExists) {
+            $sheet->setCellValueByColumnAndRow($cell++, 1, 'Verhalten');
+        }
+        if ($mitarbeitExists) {
+            $sheet->setCellValueByColumnAndRow($cell++, 1, 'Mitarbeit');
+        }
+
 		foreach ($class_subjects as $subject) {
 			$sheet->setCellValueByColumnAndRow($cell++, 1, $subject->shorttitle);
 		}
@@ -2615,6 +2750,21 @@ class printer {
 			$sheet->setCellValueByColumnAndRow($cell++, $rowi, $rowi - 1);
 			$sheet->setCellValueByColumnAndRow($cell++, $rowi, fullname($student));
 			$subjectsToAverage = array();
+			// Verhalten and Mitarbeit
+            if ($verhaltenExists) {
+                if (array_key_exists($student->id, $verhaltens)) {
+                    $sheet->setCellValueByColumnAndRow($cell++, $rowi, $verhaltens[$student->id]);
+                } else {
+                    $sheet->setCellValueByColumnAndRow($cell++, $rowi, '');
+                }
+            }
+            if ($mitarbeitExists) {
+                if (array_key_exists($student->id, $mitarbeits)) {
+                    $sheet->setCellValueByColumnAndRow($cell++, $rowi, $mitarbeits[$student->id]);
+                } else {
+                    $sheet->setCellValueByColumnAndRow($cell++, $rowi, '');
+                }
+            }
 
 			foreach ($class_subjects as $subject) {
 				$subjectData = block_exastud_get_graded_review($class->id, $subject->id, $student->id);
@@ -3855,6 +4005,28 @@ class TemplateProcessor extends \PhpOffice\PhpWord\TemplateProcessor {
             return true;
         }
         return false; // empty marker
+    }
+
+    public function fillSelectbox($stringKey, $newItems = array()) {
+        $tagPos = $this->tagPos($stringKey);
+        $sboxStart = strrpos($this->tempDocumentMainPart, '<w:comboBox ', ((strlen($this->tempDocumentMainPart) - $tagPos) * -1));
+        if (!$sboxStart) {
+            $sboxStart = strrpos($this->tempDocumentMainPart, '<w:comboBox>', ((strlen($this->tempDocumentMainPart) - $tagPos) * -1));
+        }
+        $sboxEnd = strpos($this->tempDocumentMainPart, '</w:comboBox>', $tagPos) + 13;
+
+        //$sboxXml = $this->getSlice($sboxStart, $sboxEnd);
+        $newSboxXml = '<w:comboBox>';
+        foreach ($newItems as $text => $value) {
+            $newSboxXml .= '<w:listItem '.($text ? 'w:displayText="'.$text.'"' : '').' w:value="'.$value.'"/>';
+        }
+        $newSboxXml .= '</w:comboBox>';
+
+        $result = $this->getSlice(0, $sboxStart);
+        $result .= $newSboxXml;
+        $result .= $this->getSlice($sboxEnd);
+
+        $this->tempDocumentMainPart = $result;
     }
 
 }

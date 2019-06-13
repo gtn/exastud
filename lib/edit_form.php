@@ -429,7 +429,6 @@ class student_other_data_form extends moodleform {
         }
         $bilingualTemplates = array_keys(block_exastud_get_bilingual_reports());
         $tempCurrentElementGroup = '';
-
         $addFormElement = function($dataid, $input, $pObj) use ($mform, $defaulttemplatesettings, $bilingualTemplates, &$tempCurrentElementGroup) {
             switch ($input['type']) {
                 case '':
@@ -512,6 +511,17 @@ class student_other_data_form extends moodleform {
                     $mform->setType($dataid, PARAM_RAW);
                     break;
                 case 'select':
+                    if ($dataid == 'student_transfered') {
+                        $gender = block_exastud_get_user_gender($this->_customdata['student']->id);
+                        switch ($gender) {
+                            case 'male':
+                                $input['values'] = array_slice($input['values'], 2); // delete first TWO values from selectbox
+                                break;
+                            case 'female':
+                                $input['values'] = array_slice($input['values'], 0, 2); // use only first TWO values from selectbox
+                                break;
+                        }
+                    }
                     $mform->addElement('select', $dataid, $input['title'], ['' => ''] + $input['values']);
                     $mform->setType($dataid, PARAM_RAW);
                     break;
@@ -577,7 +587,7 @@ class student_other_data_form extends moodleform {
                 unset($mform->_elements[$elementKey]);
             }
         }
-        if (count($this->_customdata['categories'])) {
+        if ($this->_customdata['type'] != 'cross_competences') {
             $this->add_action_buttons(false);
         }
 	}

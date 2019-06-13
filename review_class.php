@@ -175,6 +175,9 @@ if (!$classstudents = block_exastud_get_class_students($classid)) {
 
 $categories = block_exastud_get_class_categories($classid);
 $evaluation_options = block_exastud_get_evaluation_options();
+
+// hide cross category editing for these categories:
+$hideCrossCategoryFor = array('Abgang', 'Abschluss');
  
 echo '<form action="'.$_SERVER['REQUEST_URI'].'" method="post">';
 echo '<input type="hidden" name="action" value="update" />';
@@ -204,7 +207,19 @@ if (!block_exastud_get_only_learnsociale_reports()) {
     $table->head[] = $tableheadersubjects; // fachcompetenzen
 }
 if ($isSubjectTeacher) {
-    $table->head[] = $tableheadercategories; // Interdisciplinary competences
+    // if at least student has tamplate with a category not in $hideCrossCategoryFor
+    $editCrossCategories = false;
+    foreach ($classstudents as $classstudent) {
+        $template = block_exastud_get_student_print_template($class, $classstudent->id);
+        $template_category = $template->get_category();
+        if (!in_array($template_category, $hideCrossCategoryFor)) {
+            $editCrossCategories = true;
+            break;
+        }
+    }
+    if ($editCrossCategories) {
+        $table->head[] = $tableheadercategories; // Interdisciplinary competences
+    }
 }
 $table->head[] = $tableheaderlearnsocial; // learn and social
 
@@ -259,6 +274,12 @@ if ($isSubjectTeacher) {
         $subjectData = block_exastud_get_review($classid, $subjectid, $classstudent->id);
 
         $template = block_exastud_get_student_print_template($class, $classstudent->id);
+        
+        $template_category = $template->get_category();
+        $editCrossCategories = false;
+        if (!in_array($template_category, $hideCrossCategoryFor)) {
+            $editCrossCategories = true;
+        }
 
         // some columns can be empty because template has not such fields:
         $editSubjectNiveau = false;
@@ -383,11 +404,12 @@ if ($isSubjectTeacher) {
         }
 
         // Überfachliche Beurteilungen
-        $row->cells[] = ($visible ?
-                $output->link_button($CFG->wwwroot.'/blocks/exastud/review_student.php?courseid='.$courseid.'&classid='.$classid.
-                        '&subjectid='.$subjectid.'&studentid='.$classstudent->id.'&reporttype=inter',
-                        block_exastud_get_string('review_button'), ['class' => 'btn btn-primary']) : '');
-
+        if ($editCrossCategories) {
+            $row->cells[] = ($visible ?
+                    $output->link_button($CFG->wwwroot.'/blocks/exastud/review_student.php?courseid='.$courseid.'&classid='.
+                                            $classid.'&subjectid='.$subjectid.'&studentid='.$classstudent->id.'&reporttype=inter',
+                            block_exastud_get_string('review_button'), ['class' => 'btn btn-primary']) : '');
+        }
         // Learning and social behavior column
         if ($editLearnSocialBehavior) {
             $row->cells[] = ($visible ?

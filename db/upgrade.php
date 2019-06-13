@@ -1245,34 +1245,12 @@ function xmldb_block_exastud_upgrade($oldversion = 0) {
         upgrade_block_savepoint(true, 2019052800, 'exastud');
     }
 
-    if ($oldversion < 2019060400) {
+    if ($oldversion < 2019061300) {
         // reset reports
-        foreach([39, 40, 14, 10, 16, 19, 8, 9, 17, 31, 36, 32, 33, 34, 35, 6, 7, 38, 42] as $i) {
+        for ($i = 1; $i <= 42; $i++) {
             block_exastud_fill_reportsettingstable($i, true);
         }
-        upgrade_block_savepoint(true, 2019060400, 'exastud');
-    }
-
-    if ($oldversion < 2019060401) {
-        // reset reports
-        foreach([4] as $i) {
-            block_exastud_fill_reportsettingstable($i, true);
-        }
-        upgrade_block_savepoint(true, 2019060401, 'exastud');
-    }
-
-    if ($oldversion < 2019060501) {
-        // reset reports
-        foreach([12, 25, 18, 27, 5, 24, 30, 11, 29, 15, 22, 28] as $i) {
-            block_exastud_fill_reportsettingstable($i, true);
-        }
-        upgrade_block_savepoint(true, 2019060501, 'exastud');
-    }
-
-    if ($oldversion < 2019060701) {
-        // reset reports
-        block_exastud_fill_reportsettingstable(37, true);
-        upgrade_block_savepoint(true, 2019060701, 'exastud');
+        upgrade_block_savepoint(true, 2019061300, 'exastud');
     }
 
     block_exastud_insert_default_entries();

@@ -130,6 +130,7 @@ $studentform = new student_other_data_form($PAGE->url, [
 	'categories' => $categories,
 	'templateid' => $template->get_template_id(),
     'type' => $type,
+	'student' => $student,
 	'modified' =>
 		@$olddata[$dataid.'.modifiedby'] ?
 			block_exastud_get_renderer()->last_modified(@$olddata[$dataid.'.modifiedby'], @$olddata[$dataid.'.timemodified'])

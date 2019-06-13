@@ -85,6 +85,13 @@ if ($lastPeriod) {
 	$lastPeriodClass = null;
 }
 
+if ($reporttype == 'inter') { // no inter competences for such reports
+    $template_category = $template->get_category();
+    if (in_array($template_category, ['Abgang', 'Abschluss'])) {
+        print_error('badtemplate', 'block_exastud');
+    }
+}
+
 $formdata = new stdClass();
 
 $formdata->courseid = $courseid;
