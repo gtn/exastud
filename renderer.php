@@ -92,26 +92,30 @@ class block_exastud_renderer extends plugin_renderer_base {
                         block_exastud_get_string('students'),
                         '',
                         true);
-                $tabs['configuration_classes']->subtree[] = new tabobject('studentgradereports',
-                        new moodle_url('/blocks/exastud/configuration_class.php',
-                                ['courseid' => g::$COURSE->id, 'action' => 'edit', 'classid' => $class->id,
-                                        'type' => 'studentgradereports']),
-                        block_exastud_get_string('studentgradereports'),
-                        '',
-                        true);
+                if (!block_exastud_get_only_learnsociale_reports()) {
+                    $tabs['configuration_classes']->subtree[] = new tabobject('studentgradereports',
+                            new moodle_url('/blocks/exastud/configuration_class.php',
+                                    ['courseid' => g::$COURSE->id, 'action' => 'edit', 'classid' => $class->id,
+                                            'type' => 'studentgradereports']),
+                            block_exastud_get_string('studentgradereports'),
+                            '',
+                            true);
+                }
                 $tabs['configuration_classes']->subtree[] = new tabobject('teachers',
                         new moodle_url('/blocks/exastud/configuration_class.php',
                                 ['courseid' => g::$COURSE->id, 'action' => 'edit', 'classid' => $class->id, 'type' => 'teachers']),
                         block_exastud_get_string('teachers'),
                         '',
                         true);
-                $tabs['configuration_classes']->subtree[] = new tabobject('teachers_options',
-                        new moodle_url('/blocks/exastud/configuration_class.php',
-                                ['courseid' => g::$COURSE->id, 'action' => 'edit', 'classid' => $class->id,
-                                        'type' => 'teachers_options']),
-                        block_exastud_get_string('teachers_options'),
-                        '',
-                        true);
+                if (!block_exastud_get_only_learnsociale_reports()) {
+                    $tabs['configuration_classes']->subtree[] = new tabobject('teachers_options',
+                            new moodle_url('/blocks/exastud/configuration_class.php',
+                                    ['courseid' => g::$COURSE->id, 'action' => 'edit', 'classid' => $class->id,
+                                            'type' => 'teachers_options']),
+                            block_exastud_get_string('teachers_options'),
+                            '',
+                            true);
+                }
                 /*if (is_siteadmin()) {
                     $tabs['configuration_classes']->subtree[] = new tabobject('categories',
                             new moodle_url('/blocks/exastud/configuration_class.php',

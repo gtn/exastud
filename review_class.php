@@ -594,10 +594,10 @@ foreach ($table->head as $k => $headitem) {
 }
 // delete needed columns
 foreach ($tabledeletecolumns as $todelete) {
-    unset($table->head[$tablecolumns[$todelete]]);
+    unset($table->head[@$tablecolumns[$todelete]]);
     if (count($table->data)) {
         foreach ($table->data as $row) {
-            unset($row->cells[$tablecolumns[$todelete]]);
+            unset($row->cells[@$tablecolumns[$todelete]]);
         }
     }
 }

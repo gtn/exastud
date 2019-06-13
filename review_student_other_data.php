@@ -232,11 +232,12 @@ if ($type == BLOCK_EXASTUD_DATA_ID_CROSS_COMPETENCES) {
         $categoryCell = new html_table_cell();
         $categoryCell->text = $category->title;
         $row[] = $categoryCell;
-        $row[] = @$userReport->category_averages[$category->source.'-'.$category->id];
+        $cat_key = $category->source.'-'.$category->id;
+        $row[] = (array_key_exists($cat_key, $userReport->category_averages) ? block_exastud_get_verbal_category_by_value($userReport->category_averages[$cat_key]) : '');
         foreach ($teachers as $teacher) {
                 foreach ($subjectsOfTeacher[$teacher->id] as $subjectId) {
                     $cateReview = block_exastud_get_category_review_by_subject_and_teacher($actPeriod->id, $student->id, $category->id, $category->source, $teacher->id, $subjectId);
-                    $row[] = (@$cateReview->catreview_value ? $cateReview->catreview_value : '0');
+                    $row[] = (@$cateReview->catreview_value ? block_exastud_get_verbal_category_by_value($cateReview->catreview_value) : ' ');
 /*                    if (array_key_exists($subjectId, $userCategoryReviews[$teacher->id])
                             && array_key_exists($category->source, $userCategoryReviews[$teacher->id][$subjectId])
                             && array_key_exists($category->id, $userCategoryReviews[$teacher->id][$subjectId][$category->source])) {

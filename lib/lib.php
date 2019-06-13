@@ -2190,12 +2190,14 @@ function block_exastud_get_reportsettings_all($sortByPlans = false, $filter = ar
 
 function block_exastud_get_report_templates($class) {
     $templates = [];
-    $templates['grades_report'] = 'Notenübersicht (docx)';
-    $templates['grades_report_xls'] = 'Notenübersicht (xlsx)';
-    $templates['html_report'] = block_exastud_get_string('html_report');
-    $templates[BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_GMS_LERNENTWICKLUNGSBERICHT_DECKBLATT_UND_1_INNENSEITE] = 'Deckblatt und 1. Innenseite LEB';
-    $templates[BLOCK_EXASTUD_DATA_ID_PRINT_TEMPLATE] = block_exastud_is_bw_active() ? block_exastud_trans('de:Zeugnis / Abgangszeugnis') : block_exastud_trans('de:Zeugnis');
-    if (block_exastud_is_exacomp_installed()) {
+    if (!block_exastud_get_only_learnsociale_reports()) {
+        $templates['grades_report'] = 'Notenübersicht (docx)';
+        $templates['grades_report_xls'] = 'Notenübersicht (xlsx)';
+        $templates['html_report'] = block_exastud_get_string('html_report');
+        $templates[BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_GMS_LERNENTWICKLUNGSBERICHT_DECKBLATT_UND_1_INNENSEITE] = 'Deckblatt und 1. Innenseite LEB';
+        $templates[BLOCK_EXASTUD_DATA_ID_PRINT_TEMPLATE] = block_exastud_is_bw_active() ? block_exastud_trans('de:Zeugnis / Abgangszeugnis') : block_exastud_trans('de:Zeugnis');
+    }
+    if (block_exastud_is_exacomp_installed() && !block_exastud_get_only_learnsociale_reports()) {
         $templates[BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_ANLAGE_ZUM_LERNENTWICKLUNGSBERICHT] = 'Anlage zum Lernentwicklungsbericht';
         $templates[BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_ANLAGE_ZUM_LERNENTWICKLUNGSBERICHTALT] = 'Anlage zum Lernentwicklungsbericht (GMS)';
     }
@@ -5263,6 +5265,18 @@ function block_exastud_get_student_profilefach($class, $studentid) {
         }
     }
     return $profilfach;
+}
+
+function block_exastud_get_verbal_category_by_value($value) {
+    if (!$value) {
+        return '';
+    }
+    $value = intval(round($value));
+    $options = block_exastud_get_evaluation_options();
+    if (array_key_exists($value, $options)) {
+        return $options[$value];
+    }
+    return '';
 }
 
 

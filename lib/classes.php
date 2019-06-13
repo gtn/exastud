@@ -647,7 +647,7 @@ class print_templates {
 		}
 		$templateids = [];
 
-		if (block_exastud_is_bw_active()) {
+		if (block_exastud_is_bw_active() && !block_exastud_get_only_learnsociale_reports()) {
 		    // templates for "Reports" page
 
 			//if (!$bp || $bp->sourceinfo !== 'bw-bp2016') {

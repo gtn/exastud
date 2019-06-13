@@ -658,7 +658,9 @@ if ($classid) {
     $firstCell->text .= $output->table($firstList, 'exastud-report-list left-list');
     $secondCell->text .= $output->table($secondList, 'exastud-report-list right-list');
 
-    $templateRow->cells[] = $firstCell;
+    if (count($firstList->data) > 3) { // 3 - header of left subtable
+        $templateRow->cells[] = $firstCell;
+    }
     $templateRow->cells[] = $secondCell;
     $templateTable->data[] = $templateRow;
 
