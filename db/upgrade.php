@@ -1245,14 +1245,6 @@ function xmldb_block_exastud_upgrade($oldversion = 0) {
         upgrade_block_savepoint(true, 2019052800, 'exastud');
     }
 
-    if ($oldversion < 2019061300) {
-        // reset reports
-        for ($i = 1; $i <= 42; $i++) {
-            block_exastud_fill_reportsettingstable($i, true);
-        }
-        upgrade_block_savepoint(true, 2019061300, 'exastud');
-    }
-
     if ($oldversion < 2019061400) {
         // reset reports
         foreach([11, 29, 38] as $i) {
@@ -1260,6 +1252,14 @@ function xmldb_block_exastud_upgrade($oldversion = 0) {
         }
         $DB->execute("UPDATE {block_exastudsubjects} SET shorttitle = ? WHERE shorttitle = ?", ['alev', 'alevu']);
         upgrade_block_savepoint(true, 2019061400, 'exastud');
+    }
+
+    if ($oldversion < 2019061401) {
+        // reset reports
+        for ($i = 1; $i <= 45; $i++) {
+            block_exastud_fill_reportsettingstable($i, true);
+        }
+        upgrade_block_savepoint(true, 2019061401, 'exastud');
     }
 
     block_exastud_insert_default_entries();
