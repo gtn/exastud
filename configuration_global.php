@@ -280,7 +280,7 @@ if ($action == 'categories') {
                                                   WHERE cat.categoryid = ? AND cat.categorysource = ?',
                 array($cat->id, 'exastud'));
         if ($relatedToClass) {
-            $cat->deleteButtonMessage .= 'This category is related to classes: '.implode(', ', $relatedToClass);
+            $cat->deleteButtonMessage .= block_exastud_get_string('this_category_related_to_classes').': '.implode(', ', $relatedToClass);
         }
         $reviewed = $DB->get_fieldset_sql('SELECT *
                                                   FROM {block_exastudreviewpos} rev                                                  
@@ -288,7 +288,7 @@ if ($action == 'categories') {
                                                       AND rev.categorysource = ?',
                 array($cat->id, 'exastud'));
         if ($reviewed) {
-            $cat->deleteButtonMessage .= ($cat->deleteButtonMessage ? "\r\n" : "").'This category has reviewed for some students';
+            $cat->deleteButtonMessage .= ($cat->deleteButtonMessage ? "\r\n" : "").block_exastud_get_string('this_category_reviewed_for_student');
         }
         if (!$relatedToClass && !$reviewed) {
             $cat->canDelete = true;

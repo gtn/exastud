@@ -1,4 +1,9 @@
 
+/*shown and hidden classes*/
+.exa_table .exastud-class-title.exastud-transparent {
+    opacity: 0.75;
+}
+
 .exa_table .exastud-class-title td {
     font-weight: bold;
 }
@@ -25,3 +30,4 @@
     font-weight: bold;
     font-size: 1em;
 }
+

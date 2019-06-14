@@ -2820,7 +2820,7 @@ function block_exastud_get_default_templates($templateid = null) {
                                     'type' => 'textarea',
                             ],*/
                             'student_transfered' => [
-                                    'title' => 'Versetzte',
+                                    'title' => 'Versetzung',
                                     'type' => 'select',
                                     'values' => [
                                         'Die Schülerin wird versetzt.' => 'Die Schülerin wird versetzt.',
@@ -3804,7 +3804,7 @@ function block_exastud_get_default_templates($templateid = null) {
                                     'type' => 'textarea',
                             ],*/
                             'student_transfered' => [
-                                    'title' => 'Versetzte',
+                                    'title' => 'Versetzung',
                                     'type' => 'select',
                                     'values' => [
                                             'Die Schülerin wird versetzt.' => 'Die Schülerin wird versetzt.',
@@ -4311,7 +4311,7 @@ function block_exastud_get_default_templates($templateid = null) {
                                     'type' => 'textarea',
                             ],*/
                             'student_transfered' => [
-                                    'title' => 'Versetzte',
+                                    'title' => 'Versetzung',
                                     'type' => 'select',
                                     'values' => [
                                             'Die Schülerin wird versetzt.' => 'Die Schülerin wird versetzt.',

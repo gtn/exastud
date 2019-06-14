@@ -284,30 +284,35 @@ if ($type == BLOCK_EXASTUD_DATA_ID_CROSS_COMPETENCES) {
 
 	echo $output->table($table);*/
 
-	$vorschlaege = [];
+} elseif ($type == BLOCK_EXASTUD_DATA_ID_LERN_UND_SOZIALVERHALTEN) {
+
+    $studentdesc = $OUTPUT->user_picture($student, array("courseid" => $courseid)).' '.fullname($student);
+    echo $OUTPUT->heading($studentdesc);
+
+    $vorschlaege = [];
     // 1. if the teacher can review Learn only ONE time for all own subjects
-/*	foreach (block_exastud_get_class_teachers($classid) as $class_teacher) {
-		if ($class_teacher->subjectid == BLOCK_EXASTUD_SUBJECT_ID_ADDITIONAL_HEAD_TEACHER) {
-			continue;
-		}
+    /*	foreach (block_exastud_get_class_teachers($classid) as $class_teacher) {
+            if ($class_teacher->subjectid == BLOCK_EXASTUD_SUBJECT_ID_ADDITIONAL_HEAD_TEACHER) {
+                continue;
+            }
 
-		if (isset($vorschlaege[$class_teacher->userid])) {
-			$vorschlaege[$class_teacher->userid]->subject_title .= ', '.$class_teacher->subject_title;
-			continue;
-		}
+            if (isset($vorschlaege[$class_teacher->userid])) {
+                $vorschlaege[$class_teacher->userid]->subject_title .= ', '.$class_teacher->subject_title;
+                continue;
+            }
 
-		$class_teacher->vorschlag = $DB->get_field('block_exastudreview', 'review', [
-			'studentid' => $studentid,
-			'subjectid' => BLOCK_EXASTUD_SUBJECT_ID_LERN_UND_SOZIALVERHALTEN_VORSCHLAG,
-			'periodid' => $actPeriod->id,
-			'teacherid' => $class_teacher->userid,
-		]);
+            $class_teacher->vorschlag = $DB->get_field('block_exastudreview', 'review', [
+                'studentid' => $studentid,
+                'subjectid' => BLOCK_EXASTUD_SUBJECT_ID_LERN_UND_SOZIALVERHALTEN_VORSCHLAG,
+                'periodid' => $actPeriod->id,
+                'teacherid' => $class_teacher->userid,
+            ]);
 
-		if ($class_teacher->vorschlag) {
-			//$vorschlaege[$class_teacher->userid] = $class_teacher;
-			$vorschlaege[$class_teacher->userid] = $class_teacher;
-		}
-	}*/
+            if ($class_teacher->vorschlag) {
+                //$vorschlaege[$class_teacher->userid] = $class_teacher;
+                $vorschlaege[$class_teacher->userid] = $class_teacher;
+            }
+        }*/
 
     // 2. the teacher can review different subjects with different results
     foreach (block_exastud_get_class_subjects($class) as $class_subject) {
@@ -323,17 +328,17 @@ if ($type == BLOCK_EXASTUD_DATA_ID_CROSS_COMPETENCES) {
         }
     }
 
-	echo '<legend>'.block_exastud_get_string("textblock").'</legend>';
+    echo '<legend>'.block_exastud_get_string("textblock").'</legend>';
 
-	if ($vorschlaege) {
-		foreach ($vorschlaege as $vorschlag) {
-			//echo '<div style="font-weight: bold;">'.$vorschlag->subject_title.':</div>'.$vorschlag->vorschlag;
-			echo '<div style="font-weight: bold;">'.$vorschlag->title.' ('.fullname($vorschlag->teacher).'):</div>'.$vorschlag->vorschlag;
-			echo '<hr>';
-		}
-	} else {
-		echo block_exastud_trans('de:Keine Vorschläge gefunden');
-	}
+    if ($vorschlaege) {
+        foreach ($vorschlaege as $vorschlag) {
+            //echo '<div style="font-weight: bold;">'.$vorschlag->subject_title.':</div>'.$vorschlag->vorschlag;
+            echo '<div style="font-weight: bold;">'.$vorschlag->title.' ('.fullname($vorschlag->teacher).'):</div>'.$vorschlag->vorschlag;
+            echo '<hr>';
+        }
+    } else {
+        echo block_exastud_trans('de:Keine Vorschläge gefunden');
+    }
 
 } else {
 	$studentdesc = $OUTPUT->user_picture($student, array("courseid" => $courseid)).' '.fullname($student);

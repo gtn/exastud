@@ -405,4 +405,6 @@ $string['form_subject_teacher_form_select_new_teacher_docu'] = 'In der Auswahl s
 $string['form_subject_teacher_form_save'] = 'Lehrkraft jetzt übertragen.';
 $string['button_interdisciplinary_skills'] = 'Überfachliche Kompetenzen bearbeiten';
 $string['profilesubject'] = 'Profilfach';
-$string['select_another_class'] = 'Select another class';
+$string['select_another_class'] = 'Andere Klasse auswählen';
+$string['this_category_related_to_classes'] = 'Diese Kategorie wird in folgenden Klassen verwendet';
+$string['this_category_reviewed_for_student'] = 'Zu dieser Kategorie gibt es Schülerbeurteilungen';

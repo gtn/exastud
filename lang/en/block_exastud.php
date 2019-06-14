@@ -407,3 +407,5 @@ $string['form_subject_teacher_form_save'] = 'Transmit subject now.';
 $string['button_interdisciplinary_skills'] = 'Interdisciplinary skills';
 $string['profilesubject'] = 'Profile subject';
 $string['select_another_class'] = 'Select another class';
+$string['this_category_related_to_classes'] = 'This category is related to classe';
+$string['this_category_reviewed_for_student'] = 'This category has reviewed for some students';

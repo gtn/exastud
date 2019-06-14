@@ -136,7 +136,10 @@ function block_exastud_print_period($courseid, $period, $type, $openclass) {
             $headerCell->text = $headerCellText;
             $headerCell->colspan = $columnsCount;
             $classHeader->cells[] = $headerCell;
-            $classHeader->attributes['class'] = 'exastud-class-title';
+            $classHeader->attributes['class'] = ' exastud-class-title ';
+            if ($openclass != $myclass->id) {
+                $classHeader->attributes['class'] .= ' exastud-transparent ';
+            }
             $table->data[] = $classHeader;
 
 			$classstudents = block_exastud_get_class_students($myclass->id);

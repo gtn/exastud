@@ -26,11 +26,13 @@
                 $('.exastud-data-row[data-classid='+classid+']').hide();
                 $(this).find('.collapsed_icon').show();
                 $(this).find('.expanded_icon').hide();
+                $(this).closest('.exastud-class-title').addClass('exastud-transparent').removeClass('exastud-no-transparent');
             } else {
                 $(this).attr('data-expanded', 1);
                 $('.exastud-data-row[data-classid='+classid+']').show();
                 $(this).find('.collapsed_icon').hide();
                 $(this).find('.expanded_icon').show();
+                $(this).closest('.exastud-class-title').removeClass('exastud-transparent').addClass('exastud-no-transparent');
             }
         })
 	});

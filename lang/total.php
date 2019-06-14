@@ -1537,8 +1537,17 @@ return [
     ],
 
     'select_another_class' => [
+            'Andere Klasse auswählen',
             'Select another class',
-            'Select another class',
+    ],
+
+    'this_category_related_to_classes' => [
+            'Diese Kategorie wird in folgenden Klassen verwendet',
+            'This category is related to classe',
+    ],
+    'this_category_reviewed_for_student' => [
+            'Zu dieser Kategorie gibt es Schülerbeurteilungen',
+            'This category has reviewed for some students',
     ],
 
 ];
