@@ -704,7 +704,7 @@ class printer {
                         // only if there is still no profilfach set
                         // maybe there are 2 profilfach gradings? ignore the 2nd one
                     }
-                    if (!$subjectData || (!$subjectData->review && !$subjectData->grade && !$subjectData->niveau)) {
+                    if (!$subjectData || (!trim($subjectData->review) && !$subjectData->grade && !$subjectData->niveau)) {
                         continue; // we need to select first graded profile subject
                     }
 					$gradeSearch = 'Profilfach';
@@ -1246,17 +1246,7 @@ class printer {
                 // no any competences in dakora/exacomp for this student. So - no report
                 return null;
             }
-		    
-		    //$data = [
-		        //'periode' => $period->description,
-		        //'schule' => get_config('exastud', 'school_name'),
-		        //'ort' => get_config('exastud', 'school_location'),
-		        //'name' => $student->firstname.' '.$student->lastname,
-		        //'klasse' => $class->title,
-		        //'geburtsdatum' => block_exastud_get_date_of_birth($student->id),
-		        //'datum' => date('d.m.Y'),
-		    //];
-		    
+
 		    $templateProcessor->duplicateCol('kheader', count($evalopts));
 		    foreach ($evalopts as $evalopt) {
 		        $templateProcessor->setValue('kheader', $evalopt->title, 1);
@@ -1312,8 +1302,8 @@ class printer {
 
             $templateProcessor->cloneBlock('subjectif', count($subjects), true);
 
-            /*  uncomment this if you need to use grading options from exacomp ..
-            $gradesColCount = block_exacomp_get_report_columns_count_by_assessment();
+            // uncomment this if you need to use grading options from exacomp ..
+            /*$gradesColCount = block_exacomp_get_report_columns_count_by_assessment();
             $gradesStartColumn = 0;
             $gradeopts = array();
             $gradeVerbal = array(
@@ -1350,15 +1340,16 @@ class printer {
             foreach ($gradeopts as $gradeopt) {
                 $templateProcessor->setValue('gheader', $gradeopt, 1);
             }*/
+            // to this (for grading)
 		    $test = 0;
-		    
+		    //echo "<pre>debug:<strong>printer.php:1345</strong>\r\n"; print_r($subjects); echo '</pre>'; exit; // !!!!!!!!!! delete it
 		    foreach ($subjects as $subject) {
 		        $templateProcessor->setValue("subject", $subject->title, 1);
 
 		        foreach ($subject->topics as $topic) {
 		            $templateProcessor->cloneRowToEnd("topic");
 		            $templateProcessor->cloneRowToEnd("descriptor");
-		            $templateProcessor->setValue("topic", $topic->title, 1);
+		            $templateProcessor->setValue("topic", html_entity_decode($topic->title), 1);
 		            
                     $templateProcessor->setValue("n", $topic->teacher_eval_niveau_text, 1);
                     if (@$studentdata->print_grades_anlage_leb) {
@@ -1411,7 +1402,7 @@ class printer {
 		            foreach ($topic->descriptors as $descriptor) {
 		                $grading = null;
 		                $templateProcessor->duplicateRow("descriptor");
-		                $templateProcessor->setValue("descriptor", ($descriptor->niveau_title ? $descriptor->niveau_title.': ' : '').$descriptor->title, 1);
+		                $templateProcessor->setValue("descriptor", ($descriptor->niveau_title ? html_entity_decode($descriptor->niveau_title).': ' : '').html_entity_decode($descriptor->title), 1);
 
                         $templateProcessor->setValue("n", $descriptor->teacher_eval_niveau_text, 1);
 		                if (@$studentdata->print_grades_anlage_leb) {
@@ -1461,6 +1452,7 @@ class printer {
                             } else {
                                 $crossGrading = self::get_exacomp_crossgrade($grading, 'comp', 4);
                             }
+                            //echo "<pre>debug:<strong>printer.php:1414</strong>\r\n"; echo $descriptor->title.'==='.$grading.'==='.$crossGrading; echo '</pre>'; // !!!!!!!!!! delete it
                         } else {
                             $grading = -1;
                             $crossGrading = -1; // do not show at all
@@ -1501,6 +1493,7 @@ class printer {
 		        $templateProcessor->deleteRow("topic");
 		        $templateProcessor->deleteRow("descriptor");
 		    }
+		    //exit; // delete it
 		} else if (in_array($templateid, [
                 BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_UEBERFACHLICHE_KOMPETENZEN
         ])) {
@@ -1878,7 +1871,9 @@ class printer {
             case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_ABSCHLUSSZEUGNIS_FOE:
             case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_JAHRESZEUGNIS_KL10_E_NIVEAU:
             case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_GLEICHWERTIGER_BILDUNGSABSCHLUSS_RSA:
+            case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_GLEICHWERTIGER_BILDUNGSABSCHLUSS_HSA:
             case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_GLEICHWERTIGER_BILDUNGSABSCHLUSS_RSA:
+            case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_GLEICHWERTIGER_BILDUNGSABSCHLUSS_HSA:
             case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_HALBJAHR_ZEUGNIS_KL10_E_NIVEAU:
             case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_HALBJAHR_ZEUGNIS_KL9_10_HSA:
             case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_HALBJAHR_ZEUGNIS_FOE:
@@ -3332,7 +3327,8 @@ class printer {
 		}
 
         $oldExacomp = false;
-		if (!!defined('BLOCK_EXACOMP_ASSESSMENT_TYPE_GRADE') || !defined('BLOCK_EXACOMP_ASSESSMENT_TYPE_VERBOSE')) {
+		//if (!!defined('BLOCK_EXACOMP_ASSESSMENT_TYPE_GRADE') || !defined('BLOCK_EXACOMP_ASSESSMENT_TYPE_VERBOSE')) {
+        if (!function_exists('block_exacomp_get_assessment_diffLevel')) {
             @define('BLOCK_EXACOMP_ASSESSMENT_TYPE_GRADE', 1);
             @define('BLOCK_EXACOMP_ASSESSMENT_TYPE_VERBOSE', 2);
             @define('BLOCK_EXACOMP_ASSESSMENT_TYPE_POINTS', 3);
