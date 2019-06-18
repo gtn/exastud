@@ -174,10 +174,10 @@ class printer {
                 'profilfach' => '---',
                 'wahlpflichtfach' => '---',
                 'projekt_thema' => static::spacerIfEmpty(@$studentdata->projekt_thema),
-                'projekt_verbalbeurteilung' => static::spacerIfEmpty(@$studentdata->projekt_verbalbeurteilung),
-                'comments' => static::spacerIfEmpty(@$studentdata->comments),
-                'comments_short' => static::spacerIfEmpty(@$studentdata->comments_short),
-                'ags' => static::spacerIfEmpty(@$studentdata->ags),
+                'projekt_verbalbeurteilung' => static::spacerIfEmpty(block_exastud_crop_value_by_template_input_setting(@$studentdata->projekt_verbalbeurteilung, $templateid, 'projekt_verbalbeurteilung')),
+                'comments' => static::spacerIfEmpty(block_exastud_crop_value_by_template_input_setting(@$studentdata->comments, $templateid, 'comments')),
+                'comments_short' => static::spacerIfEmpty(block_exastud_crop_value_by_template_input_setting(@$studentdata->comments_short, $templateid, 'comments_short')),
+                'ags' => static::spacerIfEmpty(block_exastud_crop_value_by_template_input_setting(@$studentdata->ags, $templateid, 'ags')),
                 'lern_und_sozialverhalten' => static::spacerIfEmpty($lern_soz),
         ];
         // gender
@@ -408,7 +408,7 @@ class printer {
                     if (!$subjectData || (!$subjectData->review && !$subjectData->grade && !$subjectData->niveau)) {
                         continue; // we need to select first graded $wahlpflichtfach
                     }
-					$wahlpflichtfach = preg_replace('!^[^\s]+!', '', $subject->title);
+					$wahlpflichtfach = trim(preg_replace('!^[^\s]+!', '', $subject->title));
 					$contentId = 'wahlpflichtfach';
 				} elseif (strpos($subject->title, 'Profilfach') === 0) {
                     if ($profilfach != static::spacerIfEmpty('')) {
@@ -585,7 +585,7 @@ class printer {
 			$religion = static::spacerIfEmpty('');
 			$religion_sub = '';
             $profileFachPhysikOption = '* Physik wurde anstelle des Profilfachs dreistündig belegt.';
-            $subjectsToDelete = array('WBS' => 'Wirtschaft/ Berufs- und Studienorientierung'); // with title in doc template
+            $subjectsToDelete = array('WBS' => 'Wirtschaft / Berufs- und Studienorientierung'); // with title in doc template
             $data['exam_english'] = '/--set-empty--/';
             if (@$studentdata->exam_english) {
                 $data['exam_english'] = $studentdata->exam_english;
@@ -608,7 +608,9 @@ class printer {
 				// im template 'BP 2004/Halbjahresinformation Klasse 10Gemeinschaftsschule_E-Niveau_BP 2004' ist der Standardwert "2 plus"
                 // this bad if the text of document contains text like 'sgt', 'sehr gut'...:
 				//$ret = preg_replace('!>\s*(sgt|sehr gut|2 plus)\s*<!', '>'.$placeholder.'note<', $content, -1, $count);
-                $ret = preg_replace('!>\s*(sgt|sehr gut|2 plus)\s*<!', '>'.$placeholder.'note<', $content, -1, $count);
+                // try this regexp - change only in selectboxes. Need to check!
+                $ret = preg_replace('!<w:sdtContent>(.*)(<w:t>[^\/]*)(\s*)(sgt|sehr gut|2 plus)<\/w:t>(.*)<\/w:sdtContent[^\/]*>!Us',
+                                        '<w:sdtContent>${1}${2}${3}'.$placeholder.'note</w:t>${5}</w:sdtContent>', $content, -1);
 
 				/*
 				 * if (!$count) {
@@ -678,8 +680,9 @@ class printer {
                             BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_JAHRZEUGNIS_RS,
                             BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_JAHRESZEUGNIS_KL11,
                             BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_JAHRESZEUGNIS_KL11,
-                            BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_GLEICHWERTIGER_BILDUNGSABSCHLUSS_RSA,
+                            //BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_GLEICHWERTIGER_BILDUNGSABSCHLUSS_RSA,
                             BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_GLEICHWERTIGER_BILDUNGSABSCHLUSS_RSA,
+                            BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_ABSCHLUSSZEUGNIS_KL9_10_HSA,
 					])) {
 					    $religion = 'Religionslehre ('.$subject->shorttitle.')';
 					}
@@ -694,10 +697,20 @@ class printer {
                     if (!$subjectData || (!$subjectData->review && !$subjectData->grade && !$subjectData->niveau)) {
                         continue; // we need to select first graded $wahlpflichtfach
                     }
-					$gradeSearch = 'Wahlpflicht';
-					$wahlpflichtfach = preg_replace('!^[^\s]+!', '', $subject->title);
+                    $wahlpflichtfach = trim(preg_replace('!^[^\s]+!', '', $subject->title));
+                    switch ($templateid) {
+                        // may be for all?
+                        case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_GLEICHWERTIGER_BILDUNGSABSCHLUSS_HSA:
+                        case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_GLEICHWERTIGER_BILDUNGSABSCHLUSS_RSA:
+                        case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_GLEICHWERTIGER_BILDUNGSABSCHLUSS_HSA:
+                        case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_GLEICHWERTIGER_BILDUNGSABSCHLUSS_RSA:
+                            $gradeSearch = $wahlpflichtfach;
+                            break;
+                        default:
+                            $gradeSearch = 'Wahlpflicht';
+                    }
 					// hier ist 1 dropdown dazwischen erlaubt (wahlpflichtfach name dropdown)
-					$dropdownsBetween = 1;
+					$dropdownsBetween = 0; // 1?
 				} elseif (strpos($subject->title, 'Profilfach') === 0) {
                     if ($profilfach != static::spacerIfEmpty('')) {
                         continue;
@@ -707,8 +720,18 @@ class printer {
                     if (!$subjectData || (!trim($subjectData->review) && !$subjectData->grade && !$subjectData->niveau)) {
                         continue; // we need to select first graded profile subject
                     }
-					$gradeSearch = 'Profilfach';
                     $profilfachT = trim(preg_replace('!^[^\s]+!', '', $subject->title));
+                    switch ($templateid) {
+                        // may be for all?
+                        case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_GLEICHWERTIGER_BILDUNGSABSCHLUSS_HSA:
+                        case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_GLEICHWERTIGER_BILDUNGSABSCHLUSS_RSA:
+                        case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_GLEICHWERTIGER_BILDUNGSABSCHLUSS_HSA:
+                        case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_GLEICHWERTIGER_BILDUNGSABSCHLUSS_RSA:
+                            $gradeSearch = $profilfachT;
+                            break;
+                        default:
+                            $gradeSearch = 'Profilfach';
+                    }
                     /*if (@$studentdata->profilfach_fixed && @$studentdata->profilfach_fixed != $profilfachT) {
                         continue; // if the student has fixed profilfach (in review page) - we need to get values for this fixed subject
                     }*/
@@ -724,8 +747,8 @@ class printer {
 					'EWG',
 					'NWA',
                 ]) && in_array($templateid, [
-                            BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_GLEICHWERTIGER_BILDUNGSABSCHLUSS_HSA,
-                            BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_GLEICHWERTIGER_BILDUNGSABSCHLUSS_HSA,
+                            //BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_GLEICHWERTIGER_BILDUNGSABSCHLUSS_HSA,
+                            //BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_GLEICHWERTIGER_BILDUNGSABSCHLUSS_HSA,
                             BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_ABGANGSZEUGNIS_NICHT_BEST_HSA,
                         ])) {
 					// hier den shorttitle suchen
@@ -784,6 +807,10 @@ class printer {
 
                     return $ret;
                 }, $replacefilter);
+                if ($wahlpflichtfach != static::spacerIfEmpty('')) {
+                    //echo "<pre>debug:<strong>printer.php:791</strong>\r\n"; print_r($grade); echo '</pre>'; // !!!!!!!!!! delete it
+                    //echo "<pre>debug:<strong>printer.php:791</strong>\r\n"; print_r($gradeSearch); echo '</pre>'; exit; // !!!!!!!!!! delete it
+                }
 
                 // The average is counted only for one report (21.01.2019). So use ONLY this list of subjects:
                 $avgCalcSubjects = array('D', 'M', 'E', 'G', 'BK', 'Mu', 'Sp', 'EWG', 'NWA');
@@ -1910,6 +1937,11 @@ class printer {
                     $templateProcessor->fillSelectbox('student_transfered', $newItems);
                 }
                 break;
+        }
+
+        // crop by input limits: TODO: check!!!!
+        foreach ($data as $d => $value) {
+            $data[$d] = block_exastud_crop_value_by_template_input_setting($value, $templateid, $d);
         }
 
 		// zuerst filters

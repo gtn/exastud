@@ -1264,10 +1264,18 @@ function xmldb_block_exastud_upgrade($oldversion = 0) {
 
     if ($oldversion < 2019061700) {
         // reset reports
-        foreach([21, 25, 12, 24, 43, 44, 30] as $i) {
+        foreach([21, 25, 12] as $i) {
             block_exastud_fill_reportsettingstable($i, true);
         }
         upgrade_block_savepoint(true, 2019061700, 'exastud');
+    }
+
+    if ($oldversion < 2019061800) {
+        // reset reports
+        foreach([15, 31, 42, 24, 44, 43, 30] as $i) {
+            block_exastud_fill_reportsettingstable($i, true);
+        }
+        upgrade_block_savepoint(true, 2019061800, 'exastud');
     }
 
     block_exastud_insert_default_entries();
