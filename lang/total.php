@@ -314,6 +314,14 @@ return [
 		'Klasse',
 		'Class',
 	],
+    'class_title_for_report' => [
+        'Klassenname im Zeugnis',
+        'Classname in Report'
+    ],
+    'class_title_for_report_description' => [
+        'Dieser Klassenname wird im Zeugnis angezeigt. Wenn hier kein Wert eingefügt wird, wird obige Klassenbezeichnung verwendet.',
+        'This class title is used in reports. If this field is empty, in reports the title of class above is used'
+    ],
     'class_educationplan' => [
         'Bildungsplan',
         'Education plan'
@@ -1549,5 +1557,9 @@ return [
             'Zu dieser Kategorie gibt es Schülerbeurteilungen',
             'This category has reviewed for some students',
     ],
+    'info_category_without_cross_competences' => [
+            'if category is {$a->categorytitles} - this report does not have &#8221;Überfachliche Kompetenzen&#8220; ',
+            'if category is {$a->categorytitles} - this report does not have &#8221;Überfachliche Kompetenzen&#8220; ',
+    ]
 
 ];

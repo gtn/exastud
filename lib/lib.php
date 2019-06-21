@@ -2891,14 +2891,14 @@ function block_exastud_get_default_templates($templateid = null) {
                             'ags' => [
                                     'title' => 'Teilnahme an Arbeitsgemeinschaften',
                                     'type' => 'textarea',
-                                    'lines' => 3,
+                                    'lines' => 2,
                                     'cols' => 74,
                                     'maxchars' => 500,
                             ],
                             'comments_short' => [
                                     'title' => 'Bemerkungen',
                                     'type' => 'textarea',
-                                    'lines' => 6,
+                                    'lines' => 3,
                                     'cols' => 81,
                                     'maxchars' => 1000,
                             ],
@@ -3536,14 +3536,14 @@ function block_exastud_get_default_templates($templateid = null) {
                             'ags' => [
                                     'title' => 'Teilnahme an Arbeitsgemeinschaften',
                                     'type' => 'textarea',
-                                    'lines' => 3,
+                                    'lines' => 2,
                                     'cols' => 74,
                                     'maxchars' => 500,
                             ],
                             'comments_short' => [
                                     'title' => 'Bemerkungen',
                                     'type' => 'textarea',
-                                    'lines' => 6,
+                                    'lines' => 3,
                                     'cols' => 80,
                                     'maxchars' => 1000,
                             ],
@@ -5598,6 +5598,9 @@ function block_exastud_crop_value_by_template_input_setting($value, $templateid,
                             $row = substr($row, 0, $inputs[$property]['cols']);
                         }
                     }
+                }
+                if ($lines == 1 && array_key_exists('cols', $inputs[$property]) && $inputs[$property]['cols']) {
+                    $rows[0] = substr($rows[0], 0, $inputs[$property]['cols']);
                 }
                 $result = implode("\r\n", $rows);
             }

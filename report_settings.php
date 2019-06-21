@@ -100,9 +100,17 @@ if ($action) {
 }
 $filterform->set_data($filterdata);
 
+$categories_withoutcross_competences = array('Abgang', 'Abschluss');
+$attr = new stdClass();
+$attr->categorytitles = '&#8221;'.implode('&#8220; or &#8221;', $categories_withoutcross_competences).'&#8220;';
+$categoryinfo_text = block_exastud_get_string('info_category_without_cross_competences', null, $attr);
+
 // report settings form
 $reportsetting = new stdClass();
-$settingsform = new reportsettings_edit_form(null, [/*'classid' => $classid*/]);
+$settingsform = new reportsettings_edit_form(null, [
+        //'classid' => $classid,
+        'category_infomessage' => $categoryinfo_text
+]);
 
 if ($action && (($settingsid > 0 && $action == 'edit') || $action == 'new')) {
 
@@ -346,12 +354,19 @@ if ($action && (($settingsid > 0 && $action == 'edit') || $action == 'new')) {
         $table = new html_table();
         $table->attributes['class'] .= 'exa_table small';
 
+        $infoicon = '<img class=""
+                        src="'.$CFG->wwwroot.'/blocks/exastud/pix/info.png"                          
+                        title="'.$categoryinfo_text.'" />';
+        $commenticon = '<img class=""
+                        src="'.$CFG->wwwroot.'/blocks/exastud/pix/comment.png"                          
+                        title="'.$categoryinfo_text.'" />';
+
         $table->head = array(
                 '',
                 '',
                 block_exastud_get_string('report_settings_setting_title'),
                 block_exastud_get_string('report_settings_setting_bp'),
-                block_exastud_get_string('report_settings_setting_category'),
+                block_exastud_get_string('report_settings_setting_category').html_writer::span($infoicon, 'info-icon'),
                 block_exastud_get_string('report_settings_setting_template')
         );
         if ($showfulltable) {
@@ -452,7 +467,7 @@ if ($action && (($settingsid > 0 && $action == 'edit') || $action == 'new')) {
                     //$relevantSubject,
                     '<strong>'.$report->title.'</strong>',
                     $bpData ? $bpData->title : '',
-                    $report->category,
+                    $report->category.(in_array(trim($report->category), $categories_withoutcross_competences) ? html_writer::span($commenticon, 'info-icon') : ''),
                     array_key_exists($report->template, $templateList) ? $templateList[$report->template] : $report->template,);
             if ($showfulltable) {
                 $row = array_merge($row, array(

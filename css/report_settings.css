@@ -73,3 +73,7 @@
 .exa_table .exastud-hidden-report {
     color: #a8a8a8;
 }
+
+.exa_table .info-icon {
+    float: right;
+}

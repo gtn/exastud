@@ -167,8 +167,8 @@ class printer {
                 'first_name' => $student->firstname,
                 'last_name' => $student->lastname,
                 'geburtsdatum' => block_exastud_get_date_of_birth($student->id),
-                'klasse' => $class->title,
-                'kla' => $class->title,
+                'klasse' => (trim($class->title_forreport) ? $class->title_forreport : $class->title),
+                'kla' => (trim($class->title_forreport) ? $class->title_forreport : $class->title),
                 'certda' => $certificate_issue_date_text,
                 'religion' => '---',
                 'profilfach' => '---',
@@ -704,6 +704,7 @@ class printer {
                         case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_GLEICHWERTIGER_BILDUNGSABSCHLUSS_RSA:
                         case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_GLEICHWERTIGER_BILDUNGSABSCHLUSS_HSA:
                         case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_GLEICHWERTIGER_BILDUNGSABSCHLUSS_RSA:
+                        case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_HALBJAHR_ZEUGNIS_KL9_10_HSA:
                             $gradeSearch = $wahlpflichtfach;
                             break;
                         default:
@@ -738,6 +739,7 @@ class printer {
                     $profilfach = $profilfachT;
 					// hier ist 1 dropdown dazwischen erlaubt (profilfach name dropdown)
 					$dropdownsBetween = 1;
+					// if at least one profilfach is graded - clear PhysikOption ('*' and description)
                     if ($subjectData) {
                         $profileFachPhysikOption = '';
                     }
@@ -945,7 +947,9 @@ class printer {
                     $data['abgangszeugnis_niveau'] =
                             static::spacerIfEmpty($values[$studentdata->abgangszeugnis_niveau]);
                 }
-            } elseif (in_array($templateid, [
+            }
+            // wann_verlassen
+            if (in_array($templateid, [
                     BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_ABGANGSZEUGNIS_SCHULPFLICHT,
                     BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_ABGANGSZEUGNIS_SCHULPFLICHT
                     ])
@@ -984,7 +988,9 @@ class printer {
 
 					return $ret;
 				});*/
-			} elseif (in_array($templateid, array(
+			}
+			// am Ende...
+			if (in_array($templateid, array(
 			        BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_ABGANGSZEUGNIS_NICHT_BEST_HSA,
                     BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_ABGANGSZEUGNIS_NICHT_BEST_HSA)))
             {
@@ -997,7 +1003,9 @@ class printer {
 
 					return $ret;
 				});
-			} elseif (in_array($templateid, array(
+			}
+			// Verhalten, mitarbeit
+			if (in_array($templateid, array(
 			        BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_JAHRESZEUGNIS_KL10_E_NIVEAU,
                     BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_JAHRESZEUGNIS_KL10_E_NIVEAU,
                     BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_JAHRESZEUGNIS_KL11,
@@ -1015,7 +1023,8 @@ class printer {
 						return preg_replace('!(Mitarbeit.*)'.$placeholder.'note!U', '${1}'.$value, $content, -1, $count);
 					});
 				}
-			} elseif ($templateid == BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_ABSCHLUSSZEUGNIS_HS) {
+			}
+			if ($templateid == BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_ABSCHLUSSZEUGNIS_HS) {
 				//$data['gd'] = @$studentdata->gesamtnote_und_durchschnitt_der_gesamtleistungen;
                 // moved to marker ${abgelegt}
 				/*$values = [
@@ -1031,11 +1040,13 @@ class printer {
 
 					return $ret;
 				});*/
-			} elseif (in_array($templateid, [
+			}
+			// * Physik wurde ...
+			if (in_array($templateid, [
 			        BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_HALBJAHRESINFORMATION_KL11,
                     BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_HALBJAHRESINFORMATION_KL11,
                     BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_JAHRESZEUGNIS_KL11,
-                    BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_JAHRESZEUGNIS_KL11])
+                    BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_JAHRESZEUGNIS_KL11,])
             ) {
                 $add_filter(function($content) use ($profileFachPhysikOption) {
                     $ret = preg_replace('!>[^<]*\* Physik wurde[^<]*<!U', '>'.$profileFachPhysikOption.'<', $content, -1, $count);
@@ -1784,7 +1795,7 @@ class printer {
                 // replace default marker
                 if (in_array($dItem, ['---', '/--empty--/', '/--set-empty--/'])) {
                     if (in_array($dKey, ['profilfach_titel', 'wahlfach_titel'])) {
-                        $select_text = '---';
+                        $select_text = '--';
                     } else {
                         $select_text = 'Wählen Sie ein Element aus.';
                     }
@@ -1894,20 +1905,28 @@ class printer {
                 }
                 break;
             case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_ABGANGSZEUGNIS_SCHULPFLICHT:
+            case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_ABGANGSZEUGNIS_SCHULPFLICHT:
             case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_ABGANGSZEUGNIS_NICHT_BEST_HSA:
             case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_ABSCHLUSSZEUGNIS_FOE:
             case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_JAHRESZEUGNIS_KL10_E_NIVEAU:
-            case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_GLEICHWERTIGER_BILDUNGSABSCHLUSS_RSA:
-            case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_GLEICHWERTIGER_BILDUNGSABSCHLUSS_HSA:
-            case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_GLEICHWERTIGER_BILDUNGSABSCHLUSS_RSA:
-            case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_GLEICHWERTIGER_BILDUNGSABSCHLUSS_HSA:
             case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_HALBJAHR_ZEUGNIS_KL10_E_NIVEAU:
             case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_HALBJAHR_ZEUGNIS_KL9_10_HSA:
             case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_HALBJAHR_ZEUGNIS_FOE:
             case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_JAHRZEUGNIS_RS:
             case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_HALBJAHRESINFORMATION_KL11:
+            case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_HALBJAHRESINFORMATION_KL11:
                 if (trim($data['profilfach_titel']) != '') {
                     $data['profilfach_titel'] = 'Profilfach '.trim($data['profilfach_titel']);
+                }
+                break;
+            case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_GLEICHWERTIGER_BILDUNGSABSCHLUSS_RSA:
+            case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_GLEICHWERTIGER_BILDUNGSABSCHLUSS_HSA:
+            case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_GLEICHWERTIGER_BILDUNGSABSCHLUSS_RSA:
+            case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_GLEICHWERTIGER_BILDUNGSABSCHLUSS_HSA:
+                if (trim($data['profilfach_titel']) != '') {
+                    $data['profilfach_titel'] = 'Profilfach '.trim($data['profilfach_titel']);
+                } else {
+                    $data['profilfach_titel'] = '--';
                 }
                 break;
         }
@@ -1966,7 +1985,7 @@ class printer {
         ])) {
 			$filename = ($certificate_issue_date_text ? preg_replace('/[\\/]/', '-', $certificate_issue_date_text) : date('Y-m-d'))."-".$template->get_name()."-{$class->title}-{$student->lastname}-{$student->firstname}.dotx";
 		} else {*/
-			$filename = ($certificate_issue_date_text ? preg_replace('/[\\/]/', '-', $certificate_issue_date_text) : date('Y-m-d'))."-".(@$tempTemplateName ? $tempTemplateName : $template->get_name())."-{$class->title}-{$student->lastname}-{$student->firstname}.docx";
+			$filename = ($certificate_issue_date_text ? preg_replace('/[\\/]/', '-', $certificate_issue_date_text) : date('Y-m-d'))."-".(@$tempTemplateName ? $tempTemplateName : $template->get_name())/*."-{$class->title}"*/."-{$student->lastname}-{$student->firstname}.docx";
 		//}
 
         $filename = block_exastud_normalize_filename($filename);
@@ -1995,7 +2014,7 @@ class printer {
 
 		$templateProcessor->setValue('schule', get_config('exastud', 'school_name'));
 		$templateProcessor->setValue('periode', $period->description);
-		$templateProcessor->setValue('klasse', $class->title);
+		$templateProcessor->setValue('klasse', (trim($class->title_forreport) ? $class->title_forreport : $class->title));
 		$templateProcessor->setValue('lehrer', fullname(g::$USER));
 		$templateProcessor->setValue('datum', date('d.m.Y'));
 
@@ -2303,7 +2322,7 @@ class printer {
 		$temp_file = tempnam($CFG->tempdir, 'exastud');
 		$templateProcessor->saveAs($temp_file);
 
-		$filename = date('Y-m-d')."-".'Notenuebersicht'."-{$class->title}.docx";
+		$filename = date('Y-m-d')."-".'Notenuebersicht'."-".(trim($class->title_forreport) ? $class->title_forreport : $class->title).".docx";
         $filename = block_exastud_normalize_filename($filename);
 
         return (object)[
@@ -2336,7 +2355,7 @@ class printer {
 		$templateProcessor->setValue('ort', get_config('exastud', 'school_location'));
 		$templateProcessor->setValue('periode', $period->description);
         $templateProcessor->setValue('year', block_exastud_get_year_for_report($class));
-		$templateProcessor->setValue('klasse', $class->title);
+		$templateProcessor->setValue('klasse', (trim($class->title_forreport) ? $class->title_forreport : $class->title));
 		$classteacher = block_exastud_get_user($class->userid);
 		$templateProcessor->setValue('lehrer', fullname($classteacher));
 		$templateProcessor->setValue('datum', date('d.m.Y'));
@@ -2443,7 +2462,7 @@ class printer {
 		$temp_file = tempnam($CFG->tempdir, 'exastud');
 		$templateProcessor->saveAs($temp_file);
 
-		$filename = date('Y-m-d')."-".'Lern_und_Sozialverhalten'."-{$class->title}.docx";
+		$filename = date('Y-m-d')."-".'Lern_und_Sozialverhalten'."-".(trim($class->title_forreport) ? $class->title_forreport : $class->title).".docx";
         $filename = block_exastud_normalize_filename($filename);
 
         return (object)[
@@ -2865,7 +2884,7 @@ class printer {
 		 * exit;
 		 */
 
-		$filename = date('Y-m-d')."-".'Notenuebersicht'."-{$class->title}.xlsx";
+		$filename = date('Y-m-d')."-".'Notenuebersicht'."-".(trim($class->title_forreport) ? $class->title_forreport : $class->title).".xlsx";
 
 		$writer = \PhpOffice\PhpSpreadsheet\IOFactory::createWriter($spreadsheet, 'Excel2007');
 		$temp_file = tempnam($CFG->tempdir, 'exastud');

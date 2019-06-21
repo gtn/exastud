@@ -44,6 +44,14 @@ class class_edit_form extends moodleform {
         $mform->setType('title', PARAM_TEXT);
         $mform->addRule('title', null, 'required', null, 'client');
 
+        $mform->addElement('text',
+                            'title_forreport',
+                            block_exastud_get_string('class_title_for_report').':',
+                            array('size' => 50,
+                                    'class' => 'exastud-review-message',
+                                    'data-exastudmessage' => block_exastud_get_string('class_title_for_report_description')));
+        $mform->setType('title_forreport', PARAM_TEXT);
+
         $bps = g::$DB->get_records_menu('block_exastudbp', null, 'sorting', 'id, title');
         $bps = ['' => ''] + $bps;
         if (!$this->_customdata['for_siteadmin']) {
@@ -721,9 +729,16 @@ class reportsettings_edit_form extends moodleform {
         $mform->setType('rs_hs', PARAM_TEXT);
 
         // category
-        $mform->addElement('text', 'category', block_exastud_get_string('report_settings_setting_category'), array('size' => 50));
+        //$mform->addElement('text', 'category', block_exastud_get_string('report_settings_setting_category'), array('size' => 50));
+        // --- $mform->addRule('category', block_exastud_get_string('error'), 'required', null, 'server', false, false);
+        $categoryGroup = array();
+        $categoryGroup[] = $mform->createElement('text', 'category', block_exastud_trans('report_settings_setting_category'), array('size' => 50));
         $mform->setType('category', PARAM_TEXT);
-        //$mform->addRule('category', block_exastud_get_string('error'), 'required', null, 'server', false, false);
+        $infoicon = '<img class=""
+                        src="'.$CFG->wwwroot.'/blocks/exastud/pix/info.png"                          
+                        title="'.$this->_customdata['category_infomessage'].'" />';
+        $categoryGroup[] =& $mform->createElement('static', 'infocategory', '', $infoicon);
+        $mform->addGroup($categoryGroup, 'category',  block_exastud_trans('report_settings_setting_category'), ' ', false);
 
         // template
         //$templateList = block_exastud_get_report_templates('-all-');
