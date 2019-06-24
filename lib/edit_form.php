@@ -44,13 +44,19 @@ class class_edit_form extends moodleform {
         $mform->setType('title', PARAM_TEXT);
         $mform->addRule('title', null, 'required', null, 'client');
 
-        $mform->addElement('text',
-                            'title_forreport',
-                            block_exastud_get_string('class_title_for_report').':',
-                            array('size' => 50,
-                                    'class' => 'exastud-review-message',
-                                    'data-exastudmessage' => block_exastud_get_string('class_title_for_report_description')));
+        if (!$this->_customdata['for_siteadmin']) {
+            $mform->addElement('text',
+                    'title_forreport',
+                    block_exastud_get_string('class_title_for_report').':',
+                    array('size' => 50,
+                            'class' => 'exastud-review-message',
+                            'data-exastudmessage' => block_exastud_get_string('class_title_for_report_description')));
+        } else {
+            $mform->addElement('hidden', 'title_forreport');
+        }
         $mform->setType('title_forreport', PARAM_TEXT);
+        $maxlength = 10;
+        $mform->addRule('title_forreport', null, 'maxlength', $maxlength, 'client');
 
         $bps = g::$DB->get_records_menu('block_exastudbp', null, 'sorting', 'id, title');
         $bps = ['' => ''] + $bps;
@@ -438,6 +444,15 @@ class student_other_data_form extends moodleform {
         $bilingualTemplates = array_keys(block_exastud_get_bilingual_reports());
         $tempCurrentElementGroup = '';
         $addFormElement = function($dataid, $input, $pObj) use ($mform, $defaulttemplatesettings, $bilingualTemplates, &$tempCurrentElementGroup) {
+            static $previousDataid;
+
+            // close header before current if it was a language niveaus
+            if ($previousDataid == 'spa_niveau') {
+                if ($mform->elementExists('header_'.$previousDataid)) {
+                    $mform->closeHeaderBefore($dataid);
+                }
+            }
+
             switch ($input['type']) {
                 case '':
                 case 'textarea':
@@ -519,16 +534,18 @@ class student_other_data_form extends moodleform {
                     $mform->setType($dataid, PARAM_RAW);
                     break;
                 case 'select':
-                    if ($dataid == 'student_transfered') {
-                        $gender = block_exastud_get_user_gender($this->_customdata['student']->id);
-                        switch ($gender) {
-                            case 'male':
-                                $input['values'] = array_slice($input['values'], 2); // delete first TWO values from selectbox
-                                break;
-                            case 'female':
-                                $input['values'] = array_slice($input['values'], 0, 2); // use only first TWO values from selectbox
-                                break;
-                        }
+                    switch ($dataid) {
+                        case 'student_transfered':
+                            $gender = block_exastud_get_user_gender($this->_customdata['student']->id);
+                            switch ($gender) {
+                                case 'male':
+                                    $input['values'] = array_slice($input['values'], 2); // delete first TWO values from selectbox
+                                    break;
+                                case 'female':
+                                    $input['values'] = array_slice($input['values'], 0, 2); // use only first TWO values from selectbox
+                                    break;
+                            }
+                            break;
                     }
                     $mform->addElement('select', $dataid, $input['title'], ['' => ''] + $input['values']);
                     $mform->setType($dataid, PARAM_RAW);
@@ -548,7 +565,7 @@ class student_other_data_form extends moodleform {
                     $mform->addElement('header', 'header_'.$dataid, $input['title']);
                     $mform->setExpanded('header_'.$dataid);
             }
-
+            $previousDataid = $dataid;
         };
         
         // grouping by header/body/footer

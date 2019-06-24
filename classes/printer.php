@@ -91,6 +91,8 @@ class printer {
 		 * }
 		 */
 
+        $allinputs = $template->get_inputs('all');
+
 		if (!isset($templateFile)) {
             $templateFile = $template->get_file();
         }
@@ -258,7 +260,12 @@ class printer {
 			foreach ($class_subjects as $subject) {
 				$subjectData = block_exastud_get_graded_review($class->id, $subject->id, $student->id);
 
-				if (!$subjectData || (!$subjectData->review && !$subjectData->grade && !$subjectData->niveau)) {
+                if (!$subjectData || (!$subjectData->grade
+                                && !(array_key_exists('subjects', $allinputs)
+                                        && $subjectData->niveau
+                                        && trim($subjectData->review)
+                                ))
+                ) {
 					continue;
 				}
 
@@ -387,7 +394,12 @@ class printer {
                         // only if there is still no religion set
                         // maybe there are 2 religion gradings? ignore the 2nd one
                     }
-                    if (!$subjectData || (!$subjectData->review && !$subjectData->grade && !$subjectData->niveau)) {
+                    if (!$subjectData || (!$subjectData->grade
+                                    && !(array_key_exists('subjects', $allinputs)
+                                            && $subjectData->niveau
+                                            && trim($subjectData->review)
+                                    ))
+                    ) {
                         continue; // we need to select first graded religion
                     }
                     if ($subject->shorttitle == 'eth') {
@@ -405,7 +417,12 @@ class printer {
                         // only if there is still no $wahlpflichtfach set
                         // maybe there are 2 $wahlpflichtfach gradings? ignore the 2nd one
                     }
-                    if (!$subjectData || (!$subjectData->review && !$subjectData->grade && !$subjectData->niveau)) {
+                    if (!$subjectData || (!$subjectData->grade
+                                    && !(array_key_exists('subjects', $allinputs)
+                                            && $subjectData->niveau
+                                            && trim($subjectData->review)
+                                    ))
+                    ) {
                         continue; // we need to select first graded $wahlpflichtfach
                     }
 					$wahlpflichtfach = trim(preg_replace('!^[^\s]+!', '', $subject->title));
@@ -416,7 +433,12 @@ class printer {
                         // only if there is still no profilfach set
                         // maybe there are 2 profilfach gradings? ignore the 2nd one
                     }
-                    if (!$subjectData || (!$subjectData->review && !$subjectData->grade && !$subjectData->niveau)) {
+                    if (!$subjectData || (!$subjectData->grade
+                                    && !(array_key_exists('subjects', $allinputs)
+                                            && $subjectData->niveau
+                                            && trim($subjectData->review)
+                                    ))
+                    ) {
                         continue; // we need to select first graded profile subject
                     }
                     $profilfachT = preg_replace('!^[^\s]+!', '', $subject->title);
@@ -652,7 +674,12 @@ class printer {
 						// only if there is still no religion set
 						// maybe there are 2 religion gradings? ignore the 2nd one
 					}
-                    if (!$subjectData || (!$subjectData->review && !$subjectData->grade && !$subjectData->niveau)) {
+                    if (!$subjectData || (!$subjectData->grade
+                                    && !(array_key_exists('subjects', $allinputs)
+                                            && $subjectData->niveau
+                                            && trim($subjectData->review)
+                                    ))
+                    ) {
                         continue; // we need to select first graded religion
                     }
 					if ($subject->shorttitle == 'eth') {
@@ -694,7 +721,12 @@ class printer {
                         // only if there is still no $wahlpflichtfach set
                         // maybe there are 2 $wahlpflichtfach gradings? ignore the 2nd one
                     }
-                    if (!$subjectData || (!$subjectData->review && !$subjectData->grade && !$subjectData->niveau)) {
+                    if (!$subjectData || (!$subjectData->grade
+                                    && !(array_key_exists('subjects', $allinputs)
+                                            && $subjectData->niveau
+                                            && trim($subjectData->review)
+                                    ))
+                    ) {
                         continue; // we need to select first graded $wahlpflichtfach
                     }
                     $wahlpflichtfach = trim(preg_replace('!^[^\s]+!', '', $subject->title));
@@ -718,7 +750,12 @@ class printer {
                         // only if there is still no profilfach set
                         // maybe there are 2 profilfach gradings? ignore the 2nd one
                     }
-                    if (!$subjectData || (!trim($subjectData->review) && !$subjectData->grade && !$subjectData->niveau)) {
+                    if (!$subjectData || (!$subjectData->grade
+                                    && !(array_key_exists('subjects', $allinputs)
+                                         && $subjectData->niveau
+                                         && trim($subjectData->review)
+                                        ))
+                                        ) {
                         continue; // we need to select first graded profile subject
                     }
                     $profilfachT = trim(preg_replace('!^[^\s]+!', '', $subject->title));
@@ -728,7 +765,7 @@ class printer {
                         case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_GLEICHWERTIGER_BILDUNGSABSCHLUSS_RSA:
                         case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_GLEICHWERTIGER_BILDUNGSABSCHLUSS_HSA:
                         case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_GLEICHWERTIGER_BILDUNGSABSCHLUSS_RSA:
-                            $gradeSearch = $profilfachT;
+                            $gradeSearch = 'Profilfach '.$profilfachT;
                             break;
                         default:
                             $gradeSearch = 'Profilfach';
@@ -786,7 +823,6 @@ class printer {
                     $replacefilter = false;
                 }
 
-                //echo "<pre>debug:<strong>printer.php:758</strong>\r\n"; print_r($gradeSearch); echo '</pre>'; // !!!!!!!!!! delete it
                 $add_filter([
                         'grade',
                         $gradeSearch,
