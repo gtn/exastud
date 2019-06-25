@@ -545,7 +545,7 @@ function block_exastud_filter_fields_by_prefix($object_or_array, $prefix) {
 
 function block_exastud_get_reviewers_by_category_and_pos($periodid, $studentid, $categoryid, $categorysource, $pos_value) {
     return iterator_to_array(g::$DB->get_recordset_sql("
-			SELECT DISTINCT u.*, s.title AS subject_title, pos.value
+			SELECT DISTINCT u.*, s.title AS subject_title, s.shorttitle as subject_shorttitle, pos.value
 			FROM {block_exastudreview} r
                 JOIN {block_exastudreviewpos} pos ON pos.reviewid = r.id
                 JOIN {user} u ON r.teacherid = u.id
@@ -562,7 +562,7 @@ function block_exastud_get_reviewers_by_category_and_pos($periodid, $studentid, 
 
 function block_exastud_get_category_review_by_subject_and_teacher($periodid, $studentid, $categoryid, $categorysource, $teacherid, $subjectid) {
 	return g::$DB->get_record_sql("
-			SELECT DISTINCT u.*, s.title AS subject_title, r.teacherid as teacherid, r.subjectid as subjectid, pos.value as catreview_value 
+			SELECT DISTINCT u.*, s.title AS subject_title, s.shorttitle as subject_shorttitle, r.teacherid as teacherid, r.subjectid as subjectid, pos.value as catreview_value 
 			FROM {block_exastudreview} r
 			  JOIN {block_exastudreviewpos} pos ON pos.reviewid = r.id
 			  JOIN {user} u ON r.teacherid = u.id

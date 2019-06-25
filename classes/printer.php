@@ -647,6 +647,7 @@ class printer {
             $scnt = 0;
             $rcnt = 0;
             $min = 0;
+            $useRelevantKoef = false;
 			// noten
 			foreach ($class_subjects as $subject) {
 			    $isReligionSubject = false;
@@ -737,7 +738,11 @@ class printer {
                         case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_GLEICHWERTIGER_BILDUNGSABSCHLUSS_HSA:
                         case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_GLEICHWERTIGER_BILDUNGSABSCHLUSS_RSA:
                         case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_HALBJAHR_ZEUGNIS_KL9_10_HSA:
+                        case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_ABSCHLUSSZEUGNIS_HS:
                             $gradeSearch = $wahlpflichtfach;
+                            break;
+                        case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_ABSCHLUSSZEUGNIS_KL10_RSA:
+                            $gradeSearch = 'Wahlpflichtbereich'; // because 'Wahlpflicht' is using in another place
                             break;
                         default:
                             $gradeSearch = 'Wahlpflicht';
@@ -851,10 +856,20 @@ class printer {
                 }
 
                 // The average is counted only for one report (21.01.2019). So use ONLY this list of subjects:
-                $avgCalcSubjects = array('D', 'M', 'E', 'G', 'BK', 'Mu', 'Sp', 'EWG', 'NWA');
+                switch ($templateid) {
+                    case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_ABSCHLUSSZEUGNIS_KL10_RSA:
+                    case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_ABSCHLUSSZEUGNIS_KL9_10_HSA:
+                    case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_ABSCHLUSSZEUGNIS_KL9_10_HSA_2:
+                        $avgCalcSubjects = array('D', 'M', 'E', 'G', 'Geo', 'Gk', 'WBS', 'Ph', 'Ch', 'Bio', 'Mu', 'BK', 'Sp');
+                        $avgCalcSubjectsWPF = array('WPF F', 'WPF AES', 'WPF Te');
+                        $avgCalcSubjectsProfil = array('Profil BK', 'Profil Mu', 'Profil Nwt', 'Profil IMP', 'Profile S', 'Profil Sp');
+                        break;
+                    default:
+                        $avgCalcSubjects = array('D', 'M', 'E', 'G', 'BK', 'Mu', 'Sp', 'EWG', 'NWA');
+                        $avgCalcSubjectsWPF = array('WPF F', 'WPF MuM', 'WPF Te');
+                        $avgCalcSubjectsProfil = array('Profil BK', 'Profil Mu', 'Profil Nut', 'Profil S', 'Profil Sp');
+                }
                 $avgCalcSubjectsRel = array('eth', 'alev', 'ak', 'ev', 'isl', 'jd', 'rk', 'orth', 'syr');
-                $avgCalcSubjectsWPF = array('WPF F', 'WPF MuM', 'WPF Te');
-                $avgCalcSubjectsProfil = array('Profil BK', 'Profil Mu', 'Profil Nut', 'Profil S', 'Profil Sp');
                 $avgCalcAll = array_merge($avgCalcSubjects, $avgCalcSubjectsRel, $avgCalcSubjectsWPF, $avgCalcSubjectsProfil);
                 if (!isset($religionGrade)) {
                     $religionGrade = 0;
@@ -864,20 +879,35 @@ class printer {
                 if (in_array($subject->shorttitle, $avgCalcAll)) {
                     // look on religion (only one or Ethik).
                     // Cause 'Ethik' we need to look not only for first value. So add this value later. now - ignore that
-                    if (in_array($subject->shorttitle, $avgCalcSubjectsRel)) {
-                        $religionGrade = $gradeForCalc;
-                    } else {
-                        if (($subject->not_relevant == 1 && $template->get_rs_hs_category() == 'HS')
-                            || ($subject->not_relevant_rs == 1 && $template->get_rs_hs_category() == 'RS')
-                            ) {
-                            if ($gradeForCalc < $min) {
-                                $min = $gradeForCalc;
+                    switch ($templateid) {
+                        case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_ABSCHLUSSZEUGNIS_KL10_RSA:
+                        case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_ABSCHLUSSZEUGNIS_KL9_10_HSA:
+                        case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_ABSCHLUSSZEUGNIS_KL9_10_HSA_2:
+                            // all subjects has the same weight (25.06.2019)
+                            if (in_array($subject->shorttitle, $avgCalcSubjectsRel)) {
+                                $religionGrade = $gradeForCalc;
+                            } elseif (!in_array($subject->shorttitle, $avgCalcSubjectsProfil)) { // no calculate for Prifolefach
+                                $sum += $gradeForCalc;
+                                $scnt++;
                             }
-                            $rsum += $gradeForCalc;
-                            $rcnt++;
-                        }
-                        $sum += $gradeForCalc;
-                        $scnt++;
+                            break;
+                        default:
+                            if (in_array($subject->shorttitle, $avgCalcSubjectsRel)) {
+                                $religionGrade = $gradeForCalc;
+                            } else {
+                                $useRelevantKoef = true;
+                                if (($subject->not_relevant == 1 && $template->get_rs_hs_category() == 'HS')
+                                        || ($subject->not_relevant_rs == 1 && $template->get_rs_hs_category() == 'RS')
+                                ) {
+                                    if ($gradeForCalc < $min) {
+                                        $min = $gradeForCalc;
+                                    }
+                                    $rsum += $gradeForCalc;
+                                    $rcnt++;
+                                }
+                                $sum += $gradeForCalc;
+                                $scnt++;
+                            }
                     }
                 }
 			}
@@ -892,7 +922,7 @@ class printer {
             } else {
 			    $avg = 0;
             }
-			if ($avg > 4.4) {
+			if ($avg > 4.4 && $useRelevantKoef) {
 			    $avg = (($sum - $rsum) + $min) / (($scnt - $rcnt) + 1);
 			}
 			if (in_array($templateid, [
@@ -1576,16 +1606,72 @@ class printer {
             if (!function_exists('block_exacomp_get_assessment_diffLevel')) { // this function - for example
                 $oldExacomp = true;
             }
-            //$evalopts = g::$DB->get_records('block_exastudevalopt', null, 'sorting', 'id, title, sourceinfo');
             $categories = block_exastud_get_class_categories_for_report($student->id, $class->id);
-            /*$subjects = static::get_exacomp_subjects($student->id);
-            if (!$subjects || count($subjects) == 0) {
-                // no any competences in dakora/exacomp for this student. So - no report
-                return null;
-            }*/
 
             $student_review = block_exastud_get_report($student->id,  $class->periodid, $class->id);
-            
+
+            // get max columns count
+            $maxColumns = 0;
+            switch (block_exastud_get_competence_eval_type()) {
+                case BLOCK_EXASTUD_COMPETENCE_EVALUATION_TYPE_GRADE:
+                    $maxColumns = max($maxColumns, count($class_subjects));
+                    break;
+                case BLOCK_EXASTUD_COMPETENCE_EVALUATION_TYPE_POINT:
+                case BLOCK_EXASTUD_COMPETENCE_EVALUATION_TYPE_TEXT:
+                    foreach ($categories as $category) {
+                        $maxColumns = max($maxColumns, count($category->evaluationOptions));
+                    }
+                    break;
+            }
+
+            // header of table
+            $templateProcessor->duplicateCol('kheader', $maxColumns + 1); // +1 = column for average
+            $templateProcessor->setValue('kheader', block_exastud_get_string('average'), 1);
+            switch (block_exastud_get_competence_eval_type()) {
+                case BLOCK_EXASTUD_COMPETENCE_EVALUATION_TYPE_GRADE:
+                    foreach ($class_subjects as $subject) {
+                        $templateProcessor->setValue('kheader', $subject->title, 1);
+                    }
+                    break;
+                case BLOCK_EXASTUD_COMPETENCE_EVALUATION_TYPE_POINT:
+                case BLOCK_EXASTUD_COMPETENCE_EVALUATION_TYPE_TEXT:
+                    $category = reset($categories);
+                    foreach ($category->evaluationOptions as $option) {
+                        $templateProcessor->setValue('kheader', $option->title, 1);
+                    }
+                    break;
+
+            }
+
+            foreach ($categories as $category) {
+
+                $templateProcessor->cloneRowToEnd('kriterium');
+                $templateProcessor->setValue('kriterium', $category->title, 1);
+
+                $globalAverage = (@$student_review->category_averages[$category->source.'-'.$category->id] ? $student_review->category_averages[$category->source.'-'.$category->id] : 0);
+                $templateProcessor->setValue('kvalue', round($globalAverage, 2), 1);
+                switch (block_exastud_get_competence_eval_type()) {
+                    case BLOCK_EXASTUD_COMPETENCE_EVALUATION_TYPE_GRADE:
+                        foreach ($class_subjects as $subject) {
+                            $templateProcessor->setValue('kvalue', $category->evaluationAverages[$subject->id]->value, 1);
+                        }
+                        break;
+                    case BLOCK_EXASTUD_COMPETENCE_EVALUATION_TYPE_POINT:
+                    case BLOCK_EXASTUD_COMPETENCE_EVALUATION_TYPE_TEXT:
+                    foreach ($category->evaluationOptions as $pos_value => $option) {
+                        $cellOutput = join(', ', array_map(function($reviewer) {
+                            return $reviewer->subject_shorttitle ?: fullname($reviewer);
+                        }, $option->reviewers));
+                        $templateProcessor->setValue('kvalue', $cellOutput, 1);
+                    }
+                    break;
+
+                }
+            }
+            $templateProcessor->deleteRow('kriterium');
+
+            // code for generating table with Teachers in the headers
+            /*
             // get max count of columns
             $maxReviewers = 0;
             $teacherReviews = array();
@@ -1616,9 +1702,6 @@ class printer {
                         if ($evalOption->reviewers && count($evalOption->reviewers)) {
                             //$maxReviewers = max($maxReviewers, count($evalOption->reviewers));
                             foreach ($evalOption->reviewers as $reviewer) {
-                                /*if (!in_array($reviewer->id, $teachersForColumns)) {
-                                    $teachersForColumns[] = $reviewer->id;
-                                }*/
                                 $teacherReviews[$categoryKey]->reviewers[$reviewer->id] = $reviewer;
                             }
                         }
@@ -1636,34 +1719,7 @@ class printer {
                 list($categoryId, $categorySource) = explode('_', $key);
                 $templateProcessor->cloneRowToEnd('kriterium');
                 $templateProcessor->setValue('kriterium', $review->title, 1);
-                //$templateProcessor->setValue('kvalue', $review->average, 1);
-                // TODO: is not clear request...
-                /*$sql = 'SELECT DISTINCT r.id, rp.value, r.subjectid, r.teacherid, ct.classid
-                        FROM {block_exastudreviewpos} rp                        
-                        JOIN {block_exastudreview} r ON r.id = rp.reviewid
-                        JOIN {block_exastudclassteachers} ct ON ct.teacherid = r.teacherid AND ct.classid = ?
-                        JOIN {block_exastudclass} c ON c.id = ct.classid
-                        JOIN {block_exastudsubjects} s ON s.id = ct.subjectid AND c.bpid = s.bpid
-                        WHERE rp.categoryid = ?
-                              AND rp.categorysource = ?
-                              AND r.studentid = ?                                                     
-                              AND r.periodid = ?
-                              AND ct.teacherid IS NOT NULL
-                              AND r.subjectid > 0
-                              AND s.id IS NOT NULL
-                        ';
-                $tempValues = g::$DB->get_records_sql($sql, [
-                        $class->id,
-                        $categoryId,
-                        $categorySource,
-                        $student->id,
-                        $class->periodid]);
-                $tempValues = array_map(function($o) {return $o->value;}, $tempValues);
-                if (count($tempValues)) {
-                    $globalAverage = array_sum($tempValues) / count($tempValues);
-                } else {
-                    $globalAverage = 0;
-                }*/
+
                 $globalAverage = (@$student_review->category_averages[$categorySource.'-'.$categoryId] ? $student_review->category_averages[$categorySource.'-'.$categoryId] : 0);
                 $templateProcessor->setValue('kvalue', round($globalAverage, 2), 1);
                 foreach ($teachersForColumns as $columnTeacher) {
@@ -1676,33 +1732,16 @@ class printer {
                             $teacher_cnt++;
                         }
                     }
-                    /*$sql = 'SELECT AVG(rp.value) as average
-                        FROM {block_exastudreviewpos} rp
-                        JOIN {block_exastudreview} r ON r.id = rp.reviewid
-                        LEFT JOIN {block_exastudclassteachers} ct ON ct.teacherid = r.teacherid AND ct.classid = ?
-                        WHERE rp.categoryid = ?
-                              AND rp.categorysource = ?
-                              AND r.studentid = ?                       
-                              AND r.teacherid = ?
-                              AND r.periodid1 = ?
-                        ';
-                    $value = g::$DB->get_record_sql($sql, [
-                            $class->id,
-                            $categoryId,
-                            $categorySource,
-                            $student->id,
-                            $columnTeacher->id,
-                            $class->periodid]);*/
+
                     $teacher_average = $teacher_cnt > 0 ? round($teacher_total / $teacher_cnt, 2) : 0;
                     if ($teacher_average) {
-                        //$templateProcessor->setValue('kvalue', $teacherReviews[$key]->reviewers[$columnTeacher->id], 1);
                         $templateProcessor->setValue('kvalue', $teacher_average, 1);
                     } else {
                         $templateProcessor->setValue('kvalue', '', 1);
                     }
                 }
             }
-            $templateProcessor->deleteRow('kriterium');
+            $templateProcessor->deleteRow('kriterium');*/
             
             if (!$templateProcessor->addImageToReport('school_logo', 'exastud', 'block_exastud_schoollogo', 0, 1024, 768)) {
                 $templateProcessor->setValue("school_logo", ''); // no logo files
