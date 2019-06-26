@@ -503,6 +503,8 @@ class printer {
 
 			// beiblatt
             if (in_array($templateid, [
+                    BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_HALBJAHR_LERNENTWICKLUNGSBERICHT,
+                    BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_JAHRESZEUGNIS_LERNENTWICKLUNGSBERICHT,
                     BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_HALBJAHR_LERNENTWICKLUNGSBERICHT,
                     BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_JAHRESZEUGNIS_LERNENTWICKLUNGSBERICHT])) {
                 if (!empty($studentdata->lessons_target)) {
@@ -539,7 +541,11 @@ class printer {
                 $data['lessons_target'] = '/--set-empty--/';
                 $studentdata->lessons_target = '';
                 $data['student_name'] = '';
+                $data['first_name'] = '';
                 //$data['comments'] = '';
+                // comment instead student name - for better view
+                $data['first_name'] = $data['comments'];
+                $data['comments'] = '';
             }
 
             // clean bottom notification about grading
