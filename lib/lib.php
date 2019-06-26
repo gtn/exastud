@@ -4199,14 +4199,14 @@ function block_exastud_get_default_templates($templateid = null) {
                             'ags' => [
                                     'title' => 'Teilnahme an Arbeitsgemeinschaften',
                                     'type' => 'textarea',
-                                    'lines' => 5,
+                                    'lines' => 2,
                                     'cols' => 86,
                                     'maxchars' => 500,
                             ],
                             'comments_short' => [
                                     'title' => 'Bemerkungen',
                                     'type' => 'textarea',
-                                    'lines' => 5,
+                                    'lines' => 3,
                                     'cols' => 86,
                                     'maxchars' => 500,
                             ],
