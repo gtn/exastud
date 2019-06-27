@@ -748,15 +748,22 @@ class printer {
                         case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_HALBJAHR_ZEUGNIS_RS:
                         case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_ABSCHLUSSZEUGNIS_RS:
                             $gradeSearch = $wahlpflichtfach;
+                            $dropdownsBetween = 0;
                             break;
                         case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_ABSCHLUSSZEUGNIS_KL10_RSA:
+                        case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_HALBJAHR_ZEUGNIS_KL10_E_NIVEAU:
+                        case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_JAHRESZEUGNIS_KL10_E_NIVEAU:
+                        case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_ABSCHLUSSZEUGNIS_FOE:
+                        case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_HALBJAHR_ZEUGNIS_FOE:
                             $gradeSearch = 'Wahlpflichtbereich'; // because 'Wahlpflicht' is using in another place
+                            $dropdownsBetween = 1;
                             break;
                         default:
                             $gradeSearch = 'Wahlpflicht';
+                            $dropdownsBetween = 0;
                     }
 					// hier ist 1 dropdown dazwischen erlaubt (wahlpflichtfach name dropdown)
-					$dropdownsBetween = 0; // 1?
+					//$dropdownsBetween = 0; // 1?
 				} elseif (strpos($subject->title, 'Profilfach') === 0) {
                     if ($profilfach != static::spacerIfEmpty('')) {
                         continue;
@@ -1808,6 +1815,13 @@ class printer {
         $data['leiter'] = block_exastud_leiter_titles_by_gender('school', @block_exastud_get_class_data($class->id)->schoollieder_gender);
         $data['leiter_name'] = (@block_exastud_get_class_data($class->id)->schoollieder_name ? block_exastud_get_class_data($class->id)->schoollieder_name : ' ');
         $data['chair'] = block_exastud_leiter_titles_by_gender('chair', @block_exastud_get_class_data($class->id)->auditleader_gender);
+        if (in_array($templateid, [
+            BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_ABSCHLUSSZEUGNIS_HS,
+            BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_ABSCHLUSSZEUGNIS_KL9_10_HSA,
+            BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_ABSCHLUSSZEUGNIS_KL9_10_HSA_2,
+        ])){
+            $data['chair'] = block_exastud_leiter_titles_by_gender('audit', @block_exastud_get_class_data($class->id)->auditleader_gender);
+        }
         $data['chair_name'] = (@block_exastud_get_class_data($class->id)->auditleader_name ? block_exastud_get_class_data($class->id)->auditleader_name : ' ');
         $data['gruppen_leiter'] = block_exastud_leiter_titles_by_gender('group', @block_exastud_get_class_data($class->id)->groupleader_gender);
         $data['gruppen_leiter_name'] = (@block_exastud_get_class_data($class->id)->groupleader_name ? block_exastud_get_class_data($class->id)->groupleader_name : ' ');

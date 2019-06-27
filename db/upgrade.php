@@ -1312,6 +1312,17 @@ function xmldb_block_exastud_upgrade($oldversion = 0) {
         upgrade_block_savepoint(true, 2019062600, 'exastud');
     }
 
+    if ($oldversion < 2019062700) {
+        // reset reports
+        foreach([32, 29, 18, 27, 31, 42] as $i) {
+            block_exastud_fill_reportsettingstable($i, true);
+        }
+        // Französich -> Französisch
+        $DB->execute("UPDATE {block_exastudsubjects} SET title = ? WHERE shorttitle = ? ", ['Französisch', 'F']);
+
+        upgrade_block_savepoint(true, 2019062700, 'exastud');
+    }
+
     block_exastud_insert_default_entries();
 	block_exastud_check_profile_fields();
 

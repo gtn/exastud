@@ -3279,8 +3279,8 @@ function block_exastud_get_default_templates($templateid = null) {
                                     'title' => 'Bemerkungen',
                                     'type' => 'textarea',
                                     'lines' => 5,
-                                    'cols' => 81,
-                                    'maxchars' => 200,
+                                    'cols' => 80,
+                                    'maxchars' => 600,
                             ],
                             /*'projekt_thema' => [
                                     'title' => 'Thema',
@@ -3664,9 +3664,9 @@ function block_exastud_get_default_templates($templateid = null) {
                             'comments_short' => [
                                     'title' => 'Bemerkungen',
                                     'type' => 'textarea',
-                                    'lines' => 5,
-                                    'cols' => 81,
-                                    'maxchars' => 500,
+                                    'lines' => 3,
+                                    'cols' => 80,
+                                    'maxchars' => 250,
                             ],
                         /*'projekt_thema' => [
                                 'title' => 'Thema',
@@ -3962,14 +3962,14 @@ function block_exastud_get_default_templates($templateid = null) {
                             ],
                             'ags' => [
                                     'title' => 'Teilnahme an Arbeitsgemeinschaften',
-                                    'lines' => 3,
+                                    'lines' => 2,
                                     'cols' => 88,
                                     'maxchars' => 500,
                             ],
                             'comments_short' => [
                                     'title' => 'Bemerkungen',
                                     'type' => 'textarea',
-                                    'lines' => 3,
+                                    'lines' => 2,
                                     'cols' => 88,
                                     'maxchars' => 500,
                             ],
@@ -4019,7 +4019,7 @@ function block_exastud_get_default_templates($templateid = null) {
                             'ags' => [
                                     'title' => 'Teilnahme an Arbeitsgemeinschaften',
                                     'type' => 'textarea',
-                                    'lines' => 4,
+                                    'lines' => 3,
                                     'cols' => 89,
                                     'maxchars' => 600,
                             ],
@@ -4575,14 +4575,14 @@ function block_exastud_get_default_templates($templateid = null) {
                             ],
                             'ags' => [
                                     'title' => 'Teilnahme an Arbeitsgemeinschaften',
-                                    'lines' => 3,
+                                    'lines' => 2,
                                     'cols' => 88,
                                     'maxchars' => 500,
                             ],
                             'comments_short' => [
                                     'title' => 'Bemerkungen',
                                     'type' => 'textarea',
-                                    'lines' => 3,
+                                    'lines' => 2,
                                     'cols' => 88,
                                     'maxchars' => 500,
                             ],
@@ -5268,6 +5268,7 @@ function block_exastud_leiter_titles_by_gender($level = '', $gender = '', $defau
         'class' => ['male' => 'Klassenlehrer', 'female' => 'Klassenlehrerin'],
         'group' => ['male' => 'Lerngruppenbegleiter', 'female' => 'Lerngruppenbegleiterin'],
         'chair' => ['male' => 'Vorsitzender des Fachausschusses', 'female' => 'Vorsitzende des Fachausschusses'],
+        'audit' => ['male' => 'Vorsitzender des Prüfungsausschusses', 'female' => 'Vorsitzende des Prüfungsausschusses'], // the same as chair, but another wordings
         'school' => ['male' => 'Schulleiter', 'female' => 'Schulleiterin'],
     );
     if (array_key_exists($level, $strings)) {
@@ -5593,11 +5594,12 @@ function block_exastud_crop_value_by_template_input_setting($value, $templateid,
                 if ($lines) {
                     $rows = preg_split("/\r\n|\n|\r/", $value);
                     $rows = array_slice($rows, 0, $lines);
-                    if (array_key_exists('cols', $inputs[$property]) && $inputs[$property]['cols']) {
-                        foreach ($rows as &$row) {
-                            $row = substr($row, 0, $inputs[$property]['cols']);
-                        }
-                    }
+                    // crop by line length. disabled now
+                    //if (array_key_exists('cols', $inputs[$property]) && $inputs[$property]['cols']) {
+                    //    foreach ($rows as &$row) {
+                    //        $row = substr($row, 0, $inputs[$property]['cols']);
+                    //    }
+                    //}
                 }
                 if ($lines == 1 && array_key_exists('cols', $inputs[$property]) && $inputs[$property]['cols']) {
                     $rows[0] = substr($rows[0], 0, $inputs[$property]['cols']);
