@@ -4321,7 +4321,7 @@ function block_exastud_get_default_templates($templateid = null) {
                             'comments_short' => [
                                     'title' => 'Bemerkungen',
                                     'type' => 'textarea',
-                                    'lines' => 5,
+                                    'lines' => 4,
                                     'cols' => 89,
                             ],/*
                             'subject_profile' => [
@@ -4803,14 +4803,14 @@ function block_exastud_get_default_templates($templateid = null) {
                             'ags' => [
                                     'title' => 'Teilnahme an Arbeitsgemeinschaften',
                                     'type' => 'textarea',
-                                    'lines' => 5,
+                                    'lines' => 4,
                                     'cols' => 86,
                                     'maxchars' => 500,
                             ],
                             'comments_short' => [
                                     'title' => 'Bemerkungen',
                                     'type' => 'textarea',
-                                    'lines' => 5,
+                                    'lines' => 4,
                                     'cols' => 86,
                                     'maxchars' => 500,
                             ],/*
@@ -4848,13 +4848,13 @@ function block_exastud_get_default_templates($templateid = null) {
                             'ags' => [
                                     'title' => 'Teilnahme an Arbeitsgemeinschaften',
                                     'type' => 'textarea',
-                                    'lines' => 5,
+                                    'lines' => 4,
                                     'cols' => 89,
                             ],
                             'comments_short' => [
                                     'title' => 'Bemerkungen',
                                     'type' => 'textarea',
-                                    'lines' => 5,
+                                    'lines' => 4,
                                     'cols' => 89,
                             ],/*
                             'subject_profile' => [

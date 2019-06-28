@@ -1160,7 +1160,12 @@ class printer {
             if ($profilfach == self::spacerIfEmpty('')
                     && !in_array($templateid, [
                             BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_HALBJAHR_ZEUGNIS_KL10_E_NIVEAU,
-                            BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_HALBJAHR_ZEUGNIS_KL10_E_NIVEAU]
+                            BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_HALBJAHR_ZEUGNIS_KL10_E_NIVEAU,
+                            BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_HALBJAHRESINFORMATION_KL11,
+                            BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_HALBJAHRESINFORMATION_KL11,
+                            BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_JAHRESZEUGNIS_KL11,
+                            BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_JAHRESZEUGNIS_KL11,
+                                    ]
             )) {
                 $tempProfilfach = '';
             }
