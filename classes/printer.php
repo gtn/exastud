@@ -848,7 +848,7 @@ class printer {
                         $gradeSearch,
                 ], function($content) use ($gradeSearch, $grade, $placeholder, $dropdownsBetween) {
                     if (!preg_match('!('.preg_quote($gradeSearch, '!').'.*)'.$placeholder.'note!U', $content, $matches)) {
-                         var_dump(['fach nicht gefunden', $gradeSearch]);
+                         //var_dump(['fach nicht gefunden', $gradeSearch]);
                         return $content;
                     }
 
@@ -2553,7 +2553,7 @@ class printer {
             $rowi = 0;
             foreach ($student_reviews as $student_review) {
                 $rowi++;
-                $teacher = block_exastud_get_user($student_review->userid);
+                //$teacher = block_exastud_get_user($student_review->userid);
                 $templateProcessor->setValue("teacher#$rowi", fullname($student_review->teacher ), 1);
                 $templateProcessor->setValue("subject#$rowi", $student_review->title, 1);
                 $templateProcessor->setValue("learn_and_sociale#$rowi", $student_review->review, 1);
@@ -2564,7 +2564,7 @@ class printer {
 		$temp_file = tempnam($CFG->tempdir, 'exastud');
 		$templateProcessor->saveAs($temp_file);
 
-		$filename = date('Y-m-d')."-".'Lern_und_Sozialverhalten'."-".(trim($class->title_forreport) ? $class->title_forreport : $class->title).".docx";
+		$filename = date('d-m-y')."-".'Lern_und_Sozialverhalten'."-".(trim($class->title_forreport) ? $class->title_forreport : $class->title).".docx";
         $filename = block_exastud_normalize_filename($filename);
 
         return (object)[
