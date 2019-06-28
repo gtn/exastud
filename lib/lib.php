@@ -2898,8 +2898,8 @@ function block_exastud_get_default_templates($templateid = null) {
                             'comments_short' => [
                                     'title' => 'Bemerkungen',
                                     'type' => 'textarea',
-                                    'lines' => 3,
-                                    'cols' => 81,
+                                    'lines' => 2,
+                                    'cols' => 90,
                                     'maxchars' => 1000,
                             ],
                             'abgangszeugnis_niveau' => [
@@ -3543,8 +3543,8 @@ function block_exastud_get_default_templates($templateid = null) {
                             'comments_short' => [
                                     'title' => 'Bemerkungen',
                                     'type' => 'textarea',
-                                    'lines' => 3,
-                                    'cols' => 80,
+                                    'lines' => 2,
+                                    'cols' => 90,
                                     'maxchars' => 1000,
                             ],
                             'abgangszeugnis_niveau' => [
