@@ -46,7 +46,6 @@ const BLOCK_EXASTUD_DATA_ID_CERTIFICATE = 'certificate';
 const BLOCK_EXASTUD_DATA_ID_ADDITIONAL_INFO = 'additional_info';
 const BLOCK_EXASTUD_DATA_ID_CLASS_DEFAULT_TEMPLATEID = 'default_templateid';
 const BLOCK_EXASTUD_DATA_ID_PROJECT_TEACHER = 'project_teacher';
-const BLOCK_EXASTUD_DATA_ID_HEAD_TEACHER = 'head_teacher';
 const BLOCK_EXASTUD_DATA_ID_BILINGUAL_TEACHER = 'bilingual_teacher';
 const BLOCK_EXASTUD_DATA_ID_BILINGUAL_TEMPLATE = 'bilingual_templateid';
 //const BLOCK_EXASTUD_DATA_ID_ZERTIFIKAT_FUER_PROFILFACH = 4;
@@ -238,21 +237,6 @@ function block_exastud_get_head_teacher_classes_shared($periodid) {
 	*/
 
 	return $classes;
-}
-
-function block_exastud_get_personal_head_teacher($classid, $studentid, $withclassownerteacher = true) {
-	
-	$teacherid = block_exastud_get_class_student_data($classid, $studentid, BLOCK_EXASTUD_DATA_ID_HEAD_TEACHER);
-
-	if (!$teacherid && $withclassownerteacher) {
-	    // get main class teacher if no peronal teacher
-        $teacherid = block_exastud_get_head_teacher_class($classid)->userid;
-    }
-//	if (!$teacherid) {
-//	    $teacherid = 0;
-//    }
-
-	return $teacherid;
 }
 
 function block_exastud_get_head_teacher_classes_all($periodid) {
@@ -561,7 +545,7 @@ function block_exastud_filter_fields_by_prefix($object_or_array, $prefix) {
 
 function block_exastud_get_reviewers_by_category_and_pos($periodid, $studentid, $categoryid, $categorysource, $pos_value) {
     return iterator_to_array(g::$DB->get_recordset_sql("
-			SELECT DISTINCT u.*, s.title AS subject_title, s.shorttitle as subject_shorttitle, pos.value
+			SELECT DISTINCT u.*, s.title AS subject_title, pos.value
 			FROM {block_exastudreview} r
                 JOIN {block_exastudreviewpos} pos ON pos.reviewid = r.id
                 JOIN {user} u ON r.teacherid = u.id
@@ -578,7 +562,7 @@ function block_exastud_get_reviewers_by_category_and_pos($periodid, $studentid, 
 
 function block_exastud_get_category_review_by_subject_and_teacher($periodid, $studentid, $categoryid, $categorysource, $teacherid, $subjectid) {
 	return g::$DB->get_record_sql("
-			SELECT DISTINCT u.*, s.title AS subject_title, s.shorttitle as subject_shorttitle, r.teacherid as teacherid, r.subjectid as subjectid, pos.value as catreview_value 
+			SELECT DISTINCT u.*, s.title AS subject_title, r.teacherid as teacherid, r.subjectid as subjectid, pos.value as catreview_value 
 			FROM {block_exastudreview} r
 			  JOIN {block_exastudreviewpos} pos ON pos.reviewid = r.id
 			  JOIN {user} u ON r.teacherid = u.id
@@ -1641,7 +1625,7 @@ function block_exastud_print_student_report($studentid, $periodid, $class, $pdf 
 	}
 }
 
-function block_exastud_init_js_css($especialities = array()) {
+function block_exastud_init_js_css() {
 	global $PAGE, $CFG;
 
 	// only allowed to be called once
@@ -1655,11 +1639,7 @@ function block_exastud_init_js_css($especialities = array()) {
 	$PAGE->requires->css('/blocks/exastud/css/styles.css');
 	$PAGE->requires->jquery();
 	$PAGE->requires->jquery_plugin('ui');
-
-    $PAGE->requires->css('/blocks/exastud/css/select2.css');
-
-    $PAGE->requires->js('/blocks/exastud/javascript/common.js', true);
-    $PAGE->requires->js('/blocks/exastud/javascript/select2.js', true);
+	$PAGE->requires->js('/blocks/exastud/javascript/common.js', true);
 	$PAGE->requires->js('/blocks/exastud/javascript/exastud.js', true);
 
 	// page specific js/css
@@ -1677,7 +1657,6 @@ function block_exastud_init_js_css($especialities = array()) {
     $PAGE->requires->string_for_js('textarea_charsleft', 'block_exastud');
     $PAGE->requires->string_for_js('textarea_linestomuch', 'block_exastud');
     $PAGE->requires->string_for_js('textarea_charstomuch', 'block_exastud');
-    $PAGE->requires->string_for_js('donotleave_page_message', 'block_exastud');
 }
 
 function block_exastud_get_category($categoryid, $categorysource) {
@@ -2919,8 +2898,8 @@ function block_exastud_get_default_templates($templateid = null) {
                             'comments_short' => [
                                     'title' => 'Bemerkungen',
                                     'type' => 'textarea',
-                                    'lines' => 2,
-                                    'cols' => 90,
+                                    'lines' => 3,
+                                    'cols' => 81,
                                     'maxchars' => 1000,
                             ],
                             'abgangszeugnis_niveau' => [
@@ -3300,8 +3279,8 @@ function block_exastud_get_default_templates($templateid = null) {
                                     'title' => 'Bemerkungen',
                                     'type' => 'textarea',
                                     'lines' => 5,
-                                    'cols' => 80,
-                                    'maxchars' => 600,
+                                    'cols' => 81,
+                                    'maxchars' => 200,
                             ],
                             /*'projekt_thema' => [
                                     'title' => 'Thema',
@@ -3564,8 +3543,8 @@ function block_exastud_get_default_templates($templateid = null) {
                             'comments_short' => [
                                     'title' => 'Bemerkungen',
                                     'type' => 'textarea',
-                                    'lines' => 2,
-                                    'cols' => 90,
+                                    'lines' => 3,
+                                    'cols' => 80,
                                     'maxchars' => 1000,
                             ],
                             'abgangszeugnis_niveau' => [
@@ -3685,9 +3664,9 @@ function block_exastud_get_default_templates($templateid = null) {
                             'comments_short' => [
                                     'title' => 'Bemerkungen',
                                     'type' => 'textarea',
-                                    'lines' => 3,
-                                    'cols' => 80,
-                                    'maxchars' => 250,
+                                    'lines' => 5,
+                                    'cols' => 81,
+                                    'maxchars' => 500,
                             ],
                         /*'projekt_thema' => [
                                 'title' => 'Thema',
@@ -3941,7 +3920,7 @@ function block_exastud_get_default_templates($templateid = null) {
             'BP 2016/GMS Hauptschulabschlusszeugnis Projektarbeit SJ' => [
                     'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_ABSCHLUSSZEUGNIS_KL9_10_HSA,
                     'name' => 'BP 2016 GMS Hauptschulabschlusszeugnis Projektprüfung SJ',
-                    'file' => 'BP 2016/BP2016_GMS_Abschlusszeugnis_KL9_10_HSA_2',
+                    'file' => 'BP 2016/BP2016_GMS_Abschlusszeugnis_KL9_10_HSA',
                     'category' => 'Abschluss',
                     'year' => '1',
                     'report_date' => '1',
@@ -3983,14 +3962,14 @@ function block_exastud_get_default_templates($templateid = null) {
                             ],
                             'ags' => [
                                     'title' => 'Teilnahme an Arbeitsgemeinschaften',
-                                    'lines' => 2,
+                                    'lines' => 3,
                                     'cols' => 88,
                                     'maxchars' => 500,
                             ],
                             'comments_short' => [
                                     'title' => 'Bemerkungen',
                                     'type' => 'textarea',
-                                    'lines' => 2,
+                                    'lines' => 3,
                                     'cols' => 88,
                                     'maxchars' => 500,
                             ],
@@ -4040,7 +4019,7 @@ function block_exastud_get_default_templates($templateid = null) {
                             'ags' => [
                                     'title' => 'Teilnahme an Arbeitsgemeinschaften',
                                     'type' => 'textarea',
-                                    'lines' => 3,
+                                    'lines' => 4,
                                     'cols' => 89,
                                     'maxchars' => 600,
                             ],
@@ -4220,14 +4199,14 @@ function block_exastud_get_default_templates($templateid = null) {
                             'ags' => [
                                     'title' => 'Teilnahme an Arbeitsgemeinschaften',
                                     'type' => 'textarea',
-                                    'lines' => 2,
+                                    'lines' => 5,
                                     'cols' => 86,
                                     'maxchars' => 500,
                             ],
                             'comments_short' => [
                                     'title' => 'Bemerkungen',
                                     'type' => 'textarea',
-                                    'lines' => 3,
+                                    'lines' => 5,
                                     'cols' => 86,
                                     'maxchars' => 500,
                             ],
@@ -4342,7 +4321,7 @@ function block_exastud_get_default_templates($templateid = null) {
                             'comments_short' => [
                                     'title' => 'Bemerkungen',
                                     'type' => 'textarea',
-                                    'lines' => 4,
+                                    'lines' => 5,
                                     'cols' => 89,
                             ],/*
                             'subject_profile' => [
@@ -4554,7 +4533,7 @@ function block_exastud_get_default_templates($templateid = null) {
             'BP 2016/GMS Hauptschulabschlusszeugnis Projektprüfung SJ' => [
                     'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_ABSCHLUSSZEUGNIS_KL9_10_HSA_2,
                     'name' => 'BP 2016 GMS Hauptschulabschlusszeugnis Projektarbeit SJ',
-                    'file' => 'BP 2016/BP2016_GMS_Abschlusszeugnis_KL9_10_HSA',
+                    'file' => 'BP 2016/BP2016_GMS_Abschlusszeugnis_KL9_10_HSA_2',
                     'category' => 'Abschluss',
                     'year' => '1',
                     'report_date' => '1',
@@ -4596,14 +4575,14 @@ function block_exastud_get_default_templates($templateid = null) {
                             ],
                             'ags' => [
                                     'title' => 'Teilnahme an Arbeitsgemeinschaften',
-                                    'lines' => 2,
+                                    'lines' => 3,
                                     'cols' => 88,
                                     'maxchars' => 500,
                             ],
                             'comments_short' => [
                                     'title' => 'Bemerkungen',
                                     'type' => 'textarea',
-                                    'lines' => 2,
+                                    'lines' => 3,
                                     'cols' => 88,
                                     'maxchars' => 500,
                             ],
@@ -4824,14 +4803,14 @@ function block_exastud_get_default_templates($templateid = null) {
                             'ags' => [
                                     'title' => 'Teilnahme an Arbeitsgemeinschaften',
                                     'type' => 'textarea',
-                                    'lines' => 4,
+                                    'lines' => 5,
                                     'cols' => 86,
                                     'maxchars' => 500,
                             ],
                             'comments_short' => [
                                     'title' => 'Bemerkungen',
                                     'type' => 'textarea',
-                                    'lines' => 4,
+                                    'lines' => 5,
                                     'cols' => 86,
                                     'maxchars' => 500,
                             ],/*
@@ -4869,13 +4848,13 @@ function block_exastud_get_default_templates($templateid = null) {
                             'ags' => [
                                     'title' => 'Teilnahme an Arbeitsgemeinschaften',
                                     'type' => 'textarea',
-                                    'lines' => 4,
+                                    'lines' => 5,
                                     'cols' => 89,
                             ],
                             'comments_short' => [
                                     'title' => 'Bemerkungen',
                                     'type' => 'textarea',
-                                    'lines' => 4,
+                                    'lines' => 5,
                                     'cols' => 89,
                             ],/*
                             'subject_profile' => [
@@ -5289,7 +5268,6 @@ function block_exastud_leiter_titles_by_gender($level = '', $gender = '', $defau
         'class' => ['male' => 'Klassenlehrer', 'female' => 'Klassenlehrerin'],
         'group' => ['male' => 'Lerngruppenbegleiter', 'female' => 'Lerngruppenbegleiterin'],
         'chair' => ['male' => 'Vorsitzender des Fachausschusses', 'female' => 'Vorsitzende des Fachausschusses'],
-        'audit' => ['male' => 'Vorsitzender des Prüfungsausschusses', 'female' => 'Vorsitzende des Prüfungsausschusses'], // the same as chair, but another wordings
         'school' => ['male' => 'Schulleiter', 'female' => 'Schulleiterin'],
     );
     if (array_key_exists($level, $strings)) {
@@ -5615,12 +5593,11 @@ function block_exastud_crop_value_by_template_input_setting($value, $templateid,
                 if ($lines) {
                     $rows = preg_split("/\r\n|\n|\r/", $value);
                     $rows = array_slice($rows, 0, $lines);
-                    // crop by line length. disabled now
-                    //if (array_key_exists('cols', $inputs[$property]) && $inputs[$property]['cols']) {
-                    //    foreach ($rows as &$row) {
-                    //        $row = substr($row, 0, $inputs[$property]['cols']);
-                    //    }
-                    //}
+                    if (array_key_exists('cols', $inputs[$property]) && $inputs[$property]['cols']) {
+                        foreach ($rows as &$row) {
+                            $row = substr($row, 0, $inputs[$property]['cols']);
+                        }
+                    }
                 }
                 if ($lines == 1 && array_key_exists('cols', $inputs[$property]) && $inputs[$property]['cols']) {
                     $rows[0] = substr($rows[0], 0, $inputs[$property]['cols']);

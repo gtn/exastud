@@ -29,7 +29,7 @@ bw-bp2016-orth;Religionslehre (orth);orth;0;0;0;0
 bw-bp2016-syr;Religionslehre (syr);syr;0;0;0;0
 bw-bp2016-d;Deutsch;D;1;0;0;0
 bw-bp2016-e;Englisch;E;1;0;0;0
-bw-bp2016-f;Französisch;F;1;0;0;0
+bw-bp2016-f;Französich;F;1;0;0;0
 bw-bp2016-s;Spanisch;S;1;0;0;0
 bw-bp2016-m;Mathematik;M;1;0;0;0
 bw-bp2016-g;Geschichte;G;1;0;0;0
@@ -72,7 +72,7 @@ bw-bp2004-orth;Religionslehre (orth);orth;0;0;0;0
 bw-bp2004-syr;Religionslehre (syr);syr;0;0;0;0
 bw-bp2004-d;Deutsch;D;1;0;0;0
 bw-bp2004-e;Englisch;E;1;0;0;0
-bw-bp2004-f;Französisch;F;1;0;0;0
+bw-bp2004-f;Französich;F;1;0;0;0
 bw-bp2004-s;Spanisch;S;1;0;0;0
 bw-bp2004-m;Mathematik;M;1;0;0;0
 bw-bp2004-ewg;Erdkunde, Wirtschaftskunde, Gemeinschaftskunde;EWG;1;0;0;0
@@ -82,7 +82,6 @@ bw-bp2004-er;Erdkunde;Er;1;0;0;0
 bw-bp2004-ph;Physik;Ph;1;0;0;0
 bw-bp2004-ch;Chemie;Ch;1;0;0;0
 bw-bp2004-bio;Biologie;Bio;1;0;0;0
-bw-bp2004-geo;Geographie;Geo;1;0;0;0
 bw-bp2004-gk;Gemeinschaftskunde;Gk;1;0;0;0
 bw-bp2004-mu;Musik;Mu;1;1;1;1
 bw-bp2004-bk;Bildende Kunst;BK;1;1;1;1
@@ -95,7 +94,6 @@ bw-bp2004-profil-mu;Profilfach Musik;Profil Mu;0;1;1;0
 bw-bp2004-profil-nut;Profilfach Naturwissenschaft und Technik;Profil Nut;0;1;1;0
 bw-bp2004-profil-s;Profilfach Spanisch;Profil S;0;1;1;0
 bw-bp2004-profil-sp;Profilfach Sport;Profil Sp;0;1;1;0
-bw-bp2004-profil-imp;Profilfach Informatik, Mathematik, Physik;Profil IMP;0;1;1;0
 				', ";", true),
 		],
 	],

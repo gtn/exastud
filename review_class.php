@@ -179,7 +179,7 @@ $evaluation_options = block_exastud_get_evaluation_options();
 // hide cross category editing for these categories:
 $hideCrossCategoryFor = array('Abgang', 'Abschluss');
  
-echo '<form action="'.$_SERVER['REQUEST_URI'].'" method="post" class="exastud-review-form">';
+echo '<form action="'.$_SERVER['REQUEST_URI'].'" method="post">';
 echo '<input type="hidden" name="action" value="update" />';
 
 $tableheadernote = block_exastud_get_string('Note');
@@ -286,7 +286,6 @@ if ($isSubjectTeacher) {
         $editSubjectReview = false;
         $editLearnSocialBehavior = false;
         $allinputs = $template->get_inputs('all');
-		$personalHeadTeacher = block_exastud_get_personal_head_teacher($class->id, $classstudent->id, true);
         if ($allinputs) {
             if (array_key_exists('subjects', $allinputs)) {
                 $editSubjectReview = true;
@@ -294,8 +293,7 @@ if ($isSubjectTeacher) {
                 unset($tabledeletecolumns['niveau']);
                 unset($tabledeletecolumns['subjects']);
             }
-			// show learn and social if the report has input for this and if I am a main teacher for the student
-            if ($personalHeadTeacher !== null && $personalHeadTeacher == $USER->id && array_key_exists('learn_social_behavior', $allinputs)) {
+            if (array_key_exists('learn_social_behavior', $allinputs)) {
                 $editLearnSocialBehavior = true;
                 unset($tabledeletecolumns['learnsocial']);
             }
@@ -649,10 +647,8 @@ if ($hiddenclassstudents) {
 }
 
 if ($isSubjectTeacher) {
-    echo '<input type="submit" value="'.block_exastud_get_string('savechanges').'" class="btn btn-default"/>&nbsp;';
+    echo '<input type="submit" value="'.block_exastud_get_string('savechanges').'" class="btn btn-default"/>';
 }
-//echo $output->back_button(new moodle_url('review.php', ['courseid' => $courseid, 'openclass' => $classid]));
-echo '<input type="button" value="'.block_exastud_get_string('back').'" class="btn btn-default" exa-type="link" href="'.new moodle_url('review.php', ['courseid' => $courseid, 'openclass' => $classid]).'"/>';
-
+echo $output->back_button(new moodle_url('review.php', ['courseid' => $courseid, 'openclass' => $classid]));
 echo '</form>';
 echo $output->footer();

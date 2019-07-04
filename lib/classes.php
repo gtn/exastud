@@ -657,7 +657,7 @@ class print_templates {
             if ($bp && $bp->sourceinfo == 'bw-bp2016') {
                 // 2016 Beiblatt zur Projektprüfung
                 $templateids[] = BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_BEIBLATT_PROJEKTARBEIT; // 'BP 2016/Beiblatt zur Projektpruefung HSA';
-                //$templateids[] = BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_BEIBLATT_PROJEKTARBEIT_HSA; // 'BP 2016/Beiblatt zur Projektpruefung HSA';
+                $templateids[] = BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_BEIBLATT_PROJEKTARBEIT_HSA; // 'BP 2016/Beiblatt zur Projektpruefung HSA';
             } else {
                 // 2004 Beiblatt zur Projektprüfung
                 $templateids[] = BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_BEIBLATT_PROJEKTPRUEFUNG_HSA; // 'BP 2004/Beiblatt zur Projektpruefung HSA';

@@ -1299,46 +1299,6 @@ function xmldb_block_exastud_upgrade($oldversion = 0) {
         upgrade_block_savepoint(true, 2019062400, 'exastud');
     }
 
-    if ($oldversion < 2019062500) {
-        // new subjects
-        $DB->insert_record('block_exastudsubjects', array('bpid' => 2, 'sorting' => 760, 'title' => 'Geographie', 'shorttitle' => 'Geo', 'always_print' => 1 , 'sourceinfo' => 'bw-bp2004-geo'));
-        $DB->insert_record('block_exastudsubjects', array('bpid' => 2, 'sorting' => 864, 'title' => 'Profilfach Informatik, Mathematik, Physik', 'shorttitle' => 'Profil IMP', 'not_relevant' => 1, 'not_relevant_rs' => 1, 'sourceinfo' => 'bw-bp2004-profil-imp'));
-        upgrade_block_savepoint(true, 2019062500, 'exastud');
-    }
-
-    if ($oldversion < 2019062600) {
-        // reset reports
-        block_exastud_fill_reportsettingstable(36, true);
-        upgrade_block_savepoint(true, 2019062600, 'exastud');
-    }
-
-    if ($oldversion < 2019062700) {
-        // reset reports
-        foreach([32, 29, 18, 27] as $i) {
-            block_exastud_fill_reportsettingstable($i, true);
-        }
-        // Französich -> Französisch
-        $DB->execute("UPDATE {block_exastudsubjects} SET title = ? WHERE shorttitle = ? ", ['Französisch', 'F']);
-
-        upgrade_block_savepoint(true, 2019062700, 'exastud');
-    }
-
-    if ($oldversion < 2019062701) {
-        // reset reports
-        foreach([31, 42] as $i) {
-            block_exastud_fill_reportsettingstable($i, true);
-        }
-        upgrade_block_savepoint(true, 2019062701, 'exastud');
-    }
-
-    if ($oldversion < 2019062801) {
-        // reset reports
-        foreach([12, 25, 21, 45, 38] as $i) {
-            block_exastud_fill_reportsettingstable($i, true);
-        }
-        upgrade_block_savepoint(true, 2019062801, 'exastud');
-    }
-
     block_exastud_insert_default_entries();
 	block_exastud_check_profile_fields();
 

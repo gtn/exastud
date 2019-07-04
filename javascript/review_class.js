@@ -1,20 +1,4 @@
 
-// message about unsaved changes
-var unsaved = false;
-(function($) {
-    $(function() {
-        $(".exastud-review-form").on('change', 'select', function () {
-            unsaved = true;
-        });
-
-        window.onbeforeunload = function unloadPage() {
-            if (unsaved) {
-                return M.str.block_exastud.textarea_charstomuch + '  ';
-            }
-        };
-    })
-})(block_exastud.jquery);
-
 /*
 (function($) {
     $(function () {
@@ -30,4 +14,3 @@ var unsaved = false;
     });
 });
 */
-

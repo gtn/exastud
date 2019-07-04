@@ -503,8 +503,6 @@ class printer {
 
 			// beiblatt
             if (in_array($templateid, [
-                    BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_HALBJAHR_LERNENTWICKLUNGSBERICHT,
-                    BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_JAHRESZEUGNIS_LERNENTWICKLUNGSBERICHT,
                     BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_HALBJAHR_LERNENTWICKLUNGSBERICHT,
                     BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_JAHRESZEUGNIS_LERNENTWICKLUNGSBERICHT])) {
                 if (!empty($studentdata->lessons_target)) {
@@ -523,7 +521,6 @@ class printer {
                     $studentdata->lessons_target = '';
                     $data['first_name'] = '';
                     //$data['comments'] = '';
-					$showNiveauZComments = false;
                 }
             }
             // clean comments block if at least one subject has Z niveau
@@ -542,15 +539,9 @@ class printer {
                 $data['lessons_target'] = '/--set-empty--/';
                 $studentdata->lessons_target = '';
                 $data['student_name'] = '';
-                $data['first_name'] = '';
                 //$data['comments'] = '';
-                // comment instead student name - for better view
-                $data['first_name'] = $data['comments'];
-				$data['student_name'] = $data['comments'];
-                $data['comments'] = '';
             }
-			
-			
+
             // clean bottom notification about grading
             $data_dropdowns = array_merge($data_dropdowns, array('bottom_note_title_general', 'bottom_note_title', 'bottom_note1', 'bottom_note2'));
             if (in_array($templateid, [
@@ -655,9 +646,7 @@ class printer {
             $rsum = 0.0;
             $scnt = 0;
             $rcnt = 0;
-            $min = 9999;
-			$minForRelevantSubjects = 0;
-            $useRelevantKoef = false;
+            $min = 0;
 			// noten
 			foreach ($class_subjects as $subject) {
 			    $isReligionSubject = false;
@@ -719,7 +708,7 @@ class printer {
                             BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_JAHRESZEUGNIS_KL11,
                             BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_JAHRESZEUGNIS_KL11,
                             //BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_GLEICHWERTIGER_BILDUNGSABSCHLUSS_RSA,
-                            //BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_GLEICHWERTIGER_BILDUNGSABSCHLUSS_RSA,
+                            BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_GLEICHWERTIGER_BILDUNGSABSCHLUSS_RSA,
                             BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_ABSCHLUSSZEUGNIS_KL9_10_HSA,
 					])) {
 					    $religion = 'Religionslehre ('.$subject->shorttitle.')';
@@ -748,26 +737,13 @@ class printer {
                         case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_GLEICHWERTIGER_BILDUNGSABSCHLUSS_HSA:
                         case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_GLEICHWERTIGER_BILDUNGSABSCHLUSS_RSA:
                         case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_HALBJAHR_ZEUGNIS_KL9_10_HSA:
-                        case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_ABSCHLUSSZEUGNIS_HS:
-                        case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_HALBJAHR_ZEUGNIS_RS:
-                        case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_ABSCHLUSSZEUGNIS_RS:
                             $gradeSearch = $wahlpflichtfach;
-                            $dropdownsBetween = 0;
-                            break;
-                        case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_ABSCHLUSSZEUGNIS_KL10_RSA:
-                        case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_HALBJAHR_ZEUGNIS_KL10_E_NIVEAU:
-                        case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_JAHRESZEUGNIS_KL10_E_NIVEAU:
-                        case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_ABSCHLUSSZEUGNIS_FOE:
-                        case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_HALBJAHR_ZEUGNIS_FOE:
-                            $gradeSearch = 'Wahlpflichtbereich'; // because 'Wahlpflicht' is using in another place
-                            $dropdownsBetween = 1;
                             break;
                         default:
                             $gradeSearch = 'Wahlpflicht';
-                            $dropdownsBetween = 0;
                     }
 					// hier ist 1 dropdown dazwischen erlaubt (wahlpflichtfach name dropdown)
-					//$dropdownsBetween = 0; // 1?
+					$dropdownsBetween = 0; // 1?
 				} elseif (strpos($subject->title, 'Profilfach') === 0) {
                     if ($profilfach != static::spacerIfEmpty('')) {
                         continue;
@@ -852,7 +828,7 @@ class printer {
                         $gradeSearch,
                 ], function($content) use ($gradeSearch, $grade, $placeholder, $dropdownsBetween) {
                     if (!preg_match('!('.preg_quote($gradeSearch, '!').'.*)'.$placeholder.'note!U', $content, $matches)) {
-                         //var_dump(['fach nicht gefunden', $gradeSearch]);
+                         var_dump(['fach nicht gefunden', $gradeSearch]);
                         return $content;
                     }
 
@@ -874,20 +850,11 @@ class printer {
                     //echo "<pre>debug:<strong>printer.php:791</strong>\r\n"; print_r($gradeSearch); echo '</pre>'; exit; // !!!!!!!!!! delete it
                 }
 
-                switch ($templateid) {
-                    case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_ABSCHLUSSZEUGNIS_KL10_RSA:
-                    case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_ABSCHLUSSZEUGNIS_KL9_10_HSA:
-                    case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_ABSCHLUSSZEUGNIS_KL9_10_HSA_2:
-                        $avgCalcSubjects = array('D', 'M', 'E', 'G', 'Geo', 'Gk', 'WBS', 'Ph', 'Ch', 'Bio', 'Mu', 'BK', 'Sp');
-                        $avgCalcSubjectsWPF = array('WPF F', 'WPF AES', 'WPF Te');
-                        $avgCalcSubjectsProfil = array('Profil BK', 'Profil Mu', 'Profil Nwt', 'Profil IMP', 'Profile S', 'Profil Sp');
-                        break;
-                    default:
-                        $avgCalcSubjects = array('D', 'M', 'E', 'G', 'BK', 'Mu', 'Sp', 'EWG', 'NWA');
-                        $avgCalcSubjectsWPF = array('WPF F', 'WPF MuM', 'WPF Te');
-                        $avgCalcSubjectsProfil = array('Profil BK', 'Profil Mu', 'Profil Nut', 'Profil S', 'Profil Sp');
-                }
+                // The average is counted only for one report (21.01.2019). So use ONLY this list of subjects:
+                $avgCalcSubjects = array('D', 'M', 'E', 'G', 'BK', 'Mu', 'Sp', 'EWG', 'NWA');
                 $avgCalcSubjectsRel = array('eth', 'alev', 'ak', 'ev', 'isl', 'jd', 'rk', 'orth', 'syr');
+                $avgCalcSubjectsWPF = array('WPF F', 'WPF MuM', 'WPF Te');
+                $avgCalcSubjectsProfil = array('Profil BK', 'Profil Mu', 'Profil Nut', 'Profil S', 'Profil Sp');
                 $avgCalcAll = array_merge($avgCalcSubjects, $avgCalcSubjectsRel, $avgCalcSubjectsWPF, $avgCalcSubjectsProfil);
                 if (!isset($religionGrade)) {
                     $religionGrade = 0;
@@ -897,49 +864,20 @@ class printer {
                 if (in_array($subject->shorttitle, $avgCalcAll)) {
                     // look on religion (only one or Ethik).
                     // Cause 'Ethik' we need to look not only for first value. So add this value later. now - ignore that
-                    switch ($templateid) {
-                        case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_ABSCHLUSSZEUGNIS_KL10_RSA:
-                        case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_ABSCHLUSSZEUGNIS_KL9_10_HSA:
-                        case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_ABSCHLUSSZEUGNIS_KL9_10_HSA_2:
-						case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_ABSCHLUSSZEUGNIS_HS:
-                            // all subjects has the same weight (25.06.2019)
-                            if (in_array($subject->shorttitle, $avgCalcSubjectsRel)) {
-                                $religionGrade = $gradeForCalc;
-                            } elseif (!in_array($subject->shorttitle, $avgCalcSubjectsProfil)) { // no calculate for Prifolefach
-                                $sum += $gradeForCalc;
-                                $scnt++;
-								
-								$useRelevantKoef = true;
-                                if (($subject->not_relevant == 1 && $template->get_rs_hs_category() == 'HS')
-                                        || ($subject->not_relevant_rs == 1 && $template->get_rs_hs_category() == 'RS')
-                                ) {
-                                    if ($gradeForCalc < $min) {
-                                        $min = $gradeForCalc;
-                                    }
-                                    $rsum += $gradeForCalc;
-                                    $rcnt++;
-                                }
-                                $sum += $gradeForCalc;
-                                $scnt++;
+                    if (in_array($subject->shorttitle, $avgCalcSubjectsRel)) {
+                        $religionGrade = $gradeForCalc;
+                    } else {
+                        if (($subject->not_relevant == 1 && $template->get_rs_hs_category() == 'HS')
+                            || ($subject->not_relevant_rs == 1 && $template->get_rs_hs_category() == 'RS')
+                            ) {
+                            if ($gradeForCalc < $min) {
+                                $min = $gradeForCalc;
                             }
-                            break;
-                        default: // may be delete this?
-                            if (in_array($subject->shorttitle, $avgCalcSubjectsRel)) {
-                                $religionGrade = $gradeForCalc;
-                            } else {
-                                $useRelevantKoef = true;
-                                if (($subject->not_relevant == 1 && $template->get_rs_hs_category() == 'HS')
-                                        || ($subject->not_relevant_rs == 1 && $template->get_rs_hs_category() == 'RS')
-                                ) {
-                                    if ($gradeForCalc < $min) {
-                                        $min = $gradeForCalc;
-                                    }
-                                    $rsum += $gradeForCalc;
-                                    $rcnt++;
-                                }
-                                $sum += $gradeForCalc;
-                                $scnt++;
-                            }
+                            $rsum += $gradeForCalc;
+                            $rcnt++;
+                        }
+                        $sum += $gradeForCalc;
+                        $scnt++;
                     }
                 }
 			}
@@ -954,7 +892,7 @@ class printer {
             } else {
 			    $avg = 0;
             }
-			if ($avg > 4.4 && $useRelevantKoef) {
+			if ($avg > 4.4) {
 			    $avg = (($sum - $rsum) + $min) / (($scnt - $rcnt) + 1);
 			}
 			if (in_array($templateid, [
@@ -1177,12 +1115,7 @@ class printer {
             if ($profilfach == self::spacerIfEmpty('')
                     && !in_array($templateid, [
                             BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_HALBJAHR_ZEUGNIS_KL10_E_NIVEAU,
-                            BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_HALBJAHR_ZEUGNIS_KL10_E_NIVEAU,
-                            BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_HALBJAHRESINFORMATION_KL11,
-                            BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_HALBJAHRESINFORMATION_KL11,
-                            BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_JAHRESZEUGNIS_KL11,
-                            BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_JAHRESZEUGNIS_KL11,
-                                    ]
+                            BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_HALBJAHR_ZEUGNIS_KL10_E_NIVEAU]
             )) {
                 $tempProfilfach = '';
             }
@@ -1643,72 +1576,16 @@ class printer {
             if (!function_exists('block_exacomp_get_assessment_diffLevel')) { // this function - for example
                 $oldExacomp = true;
             }
+            //$evalopts = g::$DB->get_records('block_exastudevalopt', null, 'sorting', 'id, title, sourceinfo');
             $categories = block_exastud_get_class_categories_for_report($student->id, $class->id);
+            /*$subjects = static::get_exacomp_subjects($student->id);
+            if (!$subjects || count($subjects) == 0) {
+                // no any competences in dakora/exacomp for this student. So - no report
+                return null;
+            }*/
 
             $student_review = block_exastud_get_report($student->id,  $class->periodid, $class->id);
-
-            // get max columns count
-            $maxColumns = 0;
-            switch (block_exastud_get_competence_eval_type()) {
-                case BLOCK_EXASTUD_COMPETENCE_EVALUATION_TYPE_GRADE:
-                    $maxColumns = max($maxColumns, count($class_subjects));
-                    break;
-                case BLOCK_EXASTUD_COMPETENCE_EVALUATION_TYPE_POINT:
-                case BLOCK_EXASTUD_COMPETENCE_EVALUATION_TYPE_TEXT:
-                    foreach ($categories as $category) {
-                        $maxColumns = max($maxColumns, count($category->evaluationOptions));
-                    }
-                    break;
-            }
-
-            // header of table
-            $templateProcessor->duplicateCol('kheader', $maxColumns + 1); // +1 = column for average
-            $templateProcessor->setValue('kheader', block_exastud_get_string('average'), 1);
-            switch (block_exastud_get_competence_eval_type()) {
-                case BLOCK_EXASTUD_COMPETENCE_EVALUATION_TYPE_GRADE:
-                    foreach ($class_subjects as $subject) {
-                        $templateProcessor->setValue('kheader', $subject->title, 1);
-                    }
-                    break;
-                case BLOCK_EXASTUD_COMPETENCE_EVALUATION_TYPE_POINT:
-                case BLOCK_EXASTUD_COMPETENCE_EVALUATION_TYPE_TEXT:
-                    $category = reset($categories);
-                    foreach ($category->evaluationOptions as $option) {
-                        $templateProcessor->setValue('kheader', $option->title, 1);
-                    }
-                    break;
-
-            }
-
-            foreach ($categories as $category) {
-
-                $templateProcessor->cloneRowToEnd('kriterium');
-                $templateProcessor->setValue('kriterium', $category->title, 1);
-
-                $globalAverage = (@$student_review->category_averages[$category->source.'-'.$category->id] ? $student_review->category_averages[$category->source.'-'.$category->id] : 0);
-                $templateProcessor->setValue('kvalue', round($globalAverage, 2), 1);
-                switch (block_exastud_get_competence_eval_type()) {
-                    case BLOCK_EXASTUD_COMPETENCE_EVALUATION_TYPE_GRADE:
-                        foreach ($class_subjects as $subject) {
-                            $templateProcessor->setValue('kvalue', $category->evaluationAverages[$subject->id]->value, 1);
-                        }
-                        break;
-                    case BLOCK_EXASTUD_COMPETENCE_EVALUATION_TYPE_POINT:
-                    case BLOCK_EXASTUD_COMPETENCE_EVALUATION_TYPE_TEXT:
-                    foreach ($category->evaluationOptions as $pos_value => $option) {
-                        $cellOutput = join(', ', array_map(function($reviewer) {
-                            return $reviewer->subject_shorttitle ?: fullname($reviewer);
-                        }, $option->reviewers));
-                        $templateProcessor->setValue('kvalue', $cellOutput, 1);
-                    }
-                    break;
-
-                }
-            }
-            $templateProcessor->deleteRow('kriterium');
-
-            // code for generating table with Teachers in the headers
-            /*
+            
             // get max count of columns
             $maxReviewers = 0;
             $teacherReviews = array();
@@ -1739,6 +1616,9 @@ class printer {
                         if ($evalOption->reviewers && count($evalOption->reviewers)) {
                             //$maxReviewers = max($maxReviewers, count($evalOption->reviewers));
                             foreach ($evalOption->reviewers as $reviewer) {
+                                /*if (!in_array($reviewer->id, $teachersForColumns)) {
+                                    $teachersForColumns[] = $reviewer->id;
+                                }*/
                                 $teacherReviews[$categoryKey]->reviewers[$reviewer->id] = $reviewer;
                             }
                         }
@@ -1756,7 +1636,34 @@ class printer {
                 list($categoryId, $categorySource) = explode('_', $key);
                 $templateProcessor->cloneRowToEnd('kriterium');
                 $templateProcessor->setValue('kriterium', $review->title, 1);
-
+                //$templateProcessor->setValue('kvalue', $review->average, 1);
+                // TODO: is not clear request...
+                /*$sql = 'SELECT DISTINCT r.id, rp.value, r.subjectid, r.teacherid, ct.classid
+                        FROM {block_exastudreviewpos} rp                        
+                        JOIN {block_exastudreview} r ON r.id = rp.reviewid
+                        JOIN {block_exastudclassteachers} ct ON ct.teacherid = r.teacherid AND ct.classid = ?
+                        JOIN {block_exastudclass} c ON c.id = ct.classid
+                        JOIN {block_exastudsubjects} s ON s.id = ct.subjectid AND c.bpid = s.bpid
+                        WHERE rp.categoryid = ?
+                              AND rp.categorysource = ?
+                              AND r.studentid = ?                                                     
+                              AND r.periodid = ?
+                              AND ct.teacherid IS NOT NULL
+                              AND r.subjectid > 0
+                              AND s.id IS NOT NULL
+                        ';
+                $tempValues = g::$DB->get_records_sql($sql, [
+                        $class->id,
+                        $categoryId,
+                        $categorySource,
+                        $student->id,
+                        $class->periodid]);
+                $tempValues = array_map(function($o) {return $o->value;}, $tempValues);
+                if (count($tempValues)) {
+                    $globalAverage = array_sum($tempValues) / count($tempValues);
+                } else {
+                    $globalAverage = 0;
+                }*/
                 $globalAverage = (@$student_review->category_averages[$categorySource.'-'.$categoryId] ? $student_review->category_averages[$categorySource.'-'.$categoryId] : 0);
                 $templateProcessor->setValue('kvalue', round($globalAverage, 2), 1);
                 foreach ($teachersForColumns as $columnTeacher) {
@@ -1769,16 +1676,33 @@ class printer {
                             $teacher_cnt++;
                         }
                     }
-
+                    /*$sql = 'SELECT AVG(rp.value) as average
+                        FROM {block_exastudreviewpos} rp
+                        JOIN {block_exastudreview} r ON r.id = rp.reviewid
+                        LEFT JOIN {block_exastudclassteachers} ct ON ct.teacherid = r.teacherid AND ct.classid = ?
+                        WHERE rp.categoryid = ?
+                              AND rp.categorysource = ?
+                              AND r.studentid = ?                       
+                              AND r.teacherid = ?
+                              AND r.periodid1 = ?
+                        ';
+                    $value = g::$DB->get_record_sql($sql, [
+                            $class->id,
+                            $categoryId,
+                            $categorySource,
+                            $student->id,
+                            $columnTeacher->id,
+                            $class->periodid]);*/
                     $teacher_average = $teacher_cnt > 0 ? round($teacher_total / $teacher_cnt, 2) : 0;
                     if ($teacher_average) {
+                        //$templateProcessor->setValue('kvalue', $teacherReviews[$key]->reviewers[$columnTeacher->id], 1);
                         $templateProcessor->setValue('kvalue', $teacher_average, 1);
                     } else {
                         $templateProcessor->setValue('kvalue', '', 1);
                     }
                 }
             }
-            $templateProcessor->deleteRow('kriterium');*/
+            $templateProcessor->deleteRow('kriterium');
             
             if (!$templateProcessor->addImageToReport('school_logo', 'exastud', 'block_exastud_schoollogo', 0, 1024, 768)) {
                 $templateProcessor->setValue("school_logo", ''); // no logo files
@@ -1837,13 +1761,6 @@ class printer {
         $data['leiter'] = block_exastud_leiter_titles_by_gender('school', @block_exastud_get_class_data($class->id)->schoollieder_gender);
         $data['leiter_name'] = (@block_exastud_get_class_data($class->id)->schoollieder_name ? block_exastud_get_class_data($class->id)->schoollieder_name : ' ');
         $data['chair'] = block_exastud_leiter_titles_by_gender('chair', @block_exastud_get_class_data($class->id)->auditleader_gender);
-        if (in_array($templateid, [
-            BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_ABSCHLUSSZEUGNIS_HS,
-            BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_ABSCHLUSSZEUGNIS_KL9_10_HSA,
-            BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_ABSCHLUSSZEUGNIS_KL9_10_HSA_2,
-        ])){
-            $data['chair'] = block_exastud_leiter_titles_by_gender('audit', @block_exastud_get_class_data($class->id)->auditleader_gender);
-        }
         $data['chair_name'] = (@block_exastud_get_class_data($class->id)->auditleader_name ? block_exastud_get_class_data($class->id)->auditleader_name : ' ');
         $data['gruppen_leiter'] = block_exastud_leiter_titles_by_gender('group', @block_exastud_get_class_data($class->id)->groupleader_gender);
         $data['gruppen_leiter_name'] = (@block_exastud_get_class_data($class->id)->groupleader_name ? block_exastud_get_class_data($class->id)->groupleader_name : ' ');
@@ -2045,7 +1962,7 @@ class printer {
                 if (trim($data['profilfach_titel']) != '') {
                     $data['profilfach_titel'] = 'Profilfach '.trim($data['profilfach_titel']);
                 } else {
-                    $data['profilfach_titel'] = '---';
+                    $data['profilfach_titel'] = '--';
                 }
                 break;
         }
@@ -2570,7 +2487,7 @@ class printer {
             $rowi = 0;
             foreach ($student_reviews as $student_review) {
                 $rowi++;
-                //$teacher = block_exastud_get_user($student_review->userid);
+                $teacher = block_exastud_get_user($student_review->userid);
                 $templateProcessor->setValue("teacher#$rowi", fullname($student_review->teacher ), 1);
                 $templateProcessor->setValue("subject#$rowi", $student_review->title, 1);
                 $templateProcessor->setValue("learn_and_sociale#$rowi", $student_review->review, 1);
@@ -2581,7 +2498,7 @@ class printer {
 		$temp_file = tempnam($CFG->tempdir, 'exastud');
 		$templateProcessor->saveAs($temp_file);
 
-		$filename = date('d-m-y')."-".'Lern_und_Sozialverhalten'."-".(trim($class->title_forreport) ? $class->title_forreport : $class->title).".docx";
+		$filename = date('Y-m-d')."-".'Lern_und_Sozialverhalten'."-".(trim($class->title_forreport) ? $class->title_forreport : $class->title).".docx";
         $filename = block_exastud_normalize_filename($filename);
 
         return (object)[
@@ -2793,15 +2710,13 @@ class printer {
 
 		foreach ($students as $student) {
             $studentData = block_exastud_get_class_student_data($class->id, $student->id);
-            if (@$studentData->projekt_grade || @$studentData->projekt_thema) {
-                $row = new \html_table_row();
-                $cells = array();
-                $cells[] = fullname($student);
-                $cells[] = @$studentData->projekt_grade;
-                $cells[] = @$studentData->projekt_thema;
-                $row->cells = $cells;
-                $projectTable->data[] = $row;
-            }
+			$row = new \html_table_row();
+			$cells = array();
+            $cells[] = fullname($student);
+            $cells[] = @$studentData->projekt_grade;
+            $cells[] = @$studentData->projekt_thema;
+            $row->cells = $cells;
+            $projectTable->data[] = $row;
 		}
 
 		// table 3: ags
@@ -2815,18 +2730,16 @@ class printer {
         $agsTable->head[] = block_exastud_get_string('ags');
 		foreach ($students as $student) {
 			$studentData = block_exastud_get_class_student_data($class->id, $student->id);
-			if (@$studentData->ags) {
-                $row = new \html_table_row();
-                $cells = array();
-                $cells[] = fullname($student);
-                // crop ags by limits. Limits are got from class template
-                $template = block_exastud_get_student_print_template($class, $student->id);
-                $templateid = $template->get_template_id();
-                $ags = block_exastud_cropStringByInputLimitsFromTemplate(@$studentData->ags, $templateid, 'ags');
-                $cells[] = block_exastud_text_to_html($ags);
-                $row->cells = $cells;
-                $agsTable->data[] = $row;
-            }
+            $row = new \html_table_row();
+            $cells = array();
+            $cells[] = fullname($student);
+			// crop ags by limits. Limits are got from class template
+            $template = block_exastud_get_student_print_template($class, $student->id);
+            $templateid = $template->get_template_id();
+            $ags = block_exastud_cropStringByInputLimitsFromTemplate(@$studentData->ags, $templateid, 'ags');
+            $cells[] = block_exastud_text_to_html($ags);
+            $row->cells = $cells;
+            $agsTable->data[] = $row;
 		}
 
 		// table 4: subjects with teachers

@@ -1355,7 +1355,7 @@ return [
             'chars to much',
     ],
     'textarea_maxchars' => [
-            'Gesamtzeichen',
+            'all characters',
             'all characters',
     ],
     'attention_send_message_to_classteacher' => [
@@ -1560,10 +1560,6 @@ return [
     'info_category_without_cross_competences' => [
             'if category is {$a->categorytitles} - this report does not have &#8221;Überfachliche Kompetenzen&#8220; ',
             'if category is {$a->categorytitles} - this report does not have &#8221;Überfachliche Kompetenzen&#8220; ',
-    ],
-    'donotleave_page_message' => [
-            'You have unsaved changes on this page. Do you want to leave this page and discard your changes or stay on this page?',
-            'You have unsaved changes on this page. Do you want to leave this page and discard your changes or stay on this page?'
     ]
 
 ];

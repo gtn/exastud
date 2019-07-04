@@ -43,23 +43,6 @@
             checkPreview();
         });
 
-        // new tab for some reports
-        $(document).on('submit', '#report', function() {
-            checkedcheckboxes = $('.exastud-report-list input[type="checkbox"][data-reportgroup="2"]:checked');
-           var toNewtab = false;
-           checkedcheckboxes.each(function() {
-               var name = $(this).attr('name');
-               if (name == 'template[html_report]' || name == 'template[grades_report]') {
-                   toNewtab = true;
-               }
-           });
-            if (toNewtab) {
-                $(this).closest('form').find('input[type="submit"]').attr('formtarget', '_blank');
-            } else {
-                $(this).closest('form').find('input[type="submit"]').attr('formtarget', '');;
-            }
-        });
-
         function checkPreview() {
             if ($('.exastud-selecttemplate-checkbox[data-reportgroup=2]:checked').length) {
                 $('#preview_selector').val(1);
