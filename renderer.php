@@ -287,6 +287,7 @@ class block_exastud_renderer extends plugin_renderer_base {
 		$categories = block_exastud_get_class_categories_for_report($student->id, $class->id);
 		$class_subjects = block_exastud_get_class_subjects($class);
 		$lern_soz = block_exastud_get_class_student_data($class->id, $student->id, BLOCK_EXASTUD_DATA_ID_LERN_UND_SOZIALVERHALTEN);
+        $student_review = block_exastud_get_report($student->id,  $class->periodid, $class->id);
 
 		$template = block_exastud_get_student_print_template($class, $student->id);
 
@@ -298,6 +299,7 @@ class block_exastud_renderer extends plugin_renderer_base {
 			if ($current_parent !== $category->parent) {
 				$current_parent = $category->parent;
 				$output .= '<tr><th class="category category-parent" width="25%">'.($category->parent ? $category->parent.':' : '').'</th>';
+				$output .= '<th class="average">'.block_exastud_get_string('average').'</th>';
                 switch (block_exastud_get_competence_eval_type()) {
                     case BLOCK_EXASTUD_COMPETENCE_EVALUATION_TYPE_GRADE:
                         foreach ($class_subjects as $subject) {
@@ -317,6 +319,10 @@ class block_exastud_renderer extends plugin_renderer_base {
 
 			$output .= '<tr><td class="category">'.$category->title.'</td>';
 
+			// average column
+            $globalAverage = (@$student_review->category_averages[$category->source.'-'.$category->id] ? $student_review->category_averages[$category->source.'-'.$category->id] : '');
+            $output .= '<td class="average">'.$globalAverage.'</td>';
+
 			switch (block_exastud_get_competence_eval_type()) {
                 case BLOCK_EXASTUD_COMPETENCE_EVALUATION_TYPE_GRADE:
                     foreach ($class_subjects as $subject) {
@@ -333,7 +339,7 @@ class block_exastud_renderer extends plugin_renderer_base {
                     foreach ($category->evaluationOptions as $pos_value => $option) {
                         $output .= '<td class="evaluation">';
                         $output .= join(', ', array_map(function($reviewer) {
-                            return $reviewer->subject_title ?: fullname($reviewer);
+                            return /*$reviewer->subject_title*/ $reviewer->subject_shorttitle ?: fullname($reviewer);
                         }, $option->reviewers));
                         $output .= '</td>';
                     }

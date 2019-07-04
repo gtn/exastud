@@ -412,3 +412,4 @@ $string['select_another_class'] = 'Select another class';
 $string['this_category_related_to_classes'] = 'This category is related to classe';
 $string['this_category_reviewed_for_student'] = 'This category has reviewed for some students';
 $string['info_category_without_cross_competences'] = 'if category is {$a->categorytitles} - this report does not have &#8221;Überfachliche Kompetenzen&#8220; ';
+$string['donotleave_page_message'] = 'You have unsaved changes on this page. Do you want to leave this page and discard your changes or stay on this page?';

@@ -56,6 +56,7 @@ if ($class->userid && $class->userid != $USER->id && block_exastud_is_siteadmin(
 if ($class->userid && $class->userid == $USER->id) {
     $customdata['is_classowner'] = true;
 }
+$customdata['classid'] = $classid;
 $classform = new class_edit_form(null, $customdata);
 
 if ($classform->is_cancelled()) {

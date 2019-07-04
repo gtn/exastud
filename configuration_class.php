@@ -43,6 +43,8 @@ $showUnlock = $period->endtime < time();
 $url = '/blocks/exastud/configuration_classes.php';
 $PAGE->set_url($url);
 
+block_exastud_init_js_css(['select2']);
+
 if ($action == 'delete') {
 	if (!optional_param('confirm', false, PARAM_BOOL)) {
 		throw new moodle_exception('not confirmed');
