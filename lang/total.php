@@ -1355,7 +1355,7 @@ return [
             'chars to much',
     ],
     'textarea_maxchars' => [
-            'all characters',
+            'Gesamtzeichen',
             'all characters',
     ],
     'attention_send_message_to_classteacher' => [

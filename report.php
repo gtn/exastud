@@ -224,7 +224,7 @@ if ($classid) {
                             $tempFile = tempnam($CFG->tempdir, 'exastud');
                             file_put_contents($tempFile, $reportContent);
                             $files_to_zip[$tempFile] =
-                                    '/'.
+                                    //'/'.
                                     block_exastud_normalize_filename($student->firstname.'-'.$student->lastname.'-'.$student->id).
                                     '/'.$reportFileName;
                         }
@@ -254,7 +254,7 @@ if ($classid) {
                         //$files_to_zip[$file->temp_file] = $file->filename;
                         if ($file) {
                             $files_to_zip[$file->temp_file] =
-                                    '/'.
+                                    //'/'.
                                     block_exastud_normalize_filename($printstudent->firstname.'-'.$printstudent->lastname.'-'.$printstudent->id).
                                     '/'.$file->filename;
                             $temp_files[] = $file->temp_file;
@@ -359,7 +359,7 @@ if ($classid) {
                         $file = \block_exastud\printer::report_to_temp_file($class, $student, $template, $courseid);
                         if ($file) {
                             $files_to_zip[$file->temp_file] =
-                                    '/'.
+                                    //'/'.
                                     block_exastud_normalize_filename($student->firstname.'-'.$student->lastname.'-'.$student->id).
                                     '/'.$file->filename;
                         }
@@ -372,7 +372,7 @@ if ($classid) {
                             $file = \block_exastud\printer::report_to_temp_file($class, $student, $template, $courseid);
                             if ($file) {
                                 $files_to_zip[$file->temp_file] =
-                                        '/'.
+                                        //'/'.
                                         block_exastud_normalize_filename($student->firstname.'-'.$student->lastname.'-'.$student->id).
                                         '/'.$file->filename;
                                 $temp_files[] = $file->temp_file;
