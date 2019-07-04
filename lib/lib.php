@@ -46,6 +46,7 @@ const BLOCK_EXASTUD_DATA_ID_CERTIFICATE = 'certificate';
 const BLOCK_EXASTUD_DATA_ID_ADDITIONAL_INFO = 'additional_info';
 const BLOCK_EXASTUD_DATA_ID_CLASS_DEFAULT_TEMPLATEID = 'default_templateid';
 const BLOCK_EXASTUD_DATA_ID_PROJECT_TEACHER = 'project_teacher';
+const BLOCK_EXASTUD_DATA_ID_HEAD_TEACHER = 'head_teacher';
 const BLOCK_EXASTUD_DATA_ID_BILINGUAL_TEACHER = 'bilingual_teacher';
 const BLOCK_EXASTUD_DATA_ID_BILINGUAL_TEMPLATE = 'bilingual_templateid';
 //const BLOCK_EXASTUD_DATA_ID_ZERTIFIKAT_FUER_PROFILFACH = 4;
@@ -237,6 +238,21 @@ function block_exastud_get_head_teacher_classes_shared($periodid) {
 	*/
 
 	return $classes;
+}
+
+function block_exastud_get_personal_head_teacher($classid, $studentid, $withclassownerteacher = true) {
+	
+	$teacherid = block_exastud_get_class_student_data($classid, $studentid, BLOCK_EXASTUD_DATA_ID_HEAD_TEACHER);
+
+	if (!$teacherid && $withclassownerteacher) {
+	    // get main class teacher if no peronal teacher
+        $teacherid = block_exastud_get_head_teacher_class($classid)->userid;
+    }
+//	if (!$teacherid) {
+//	    $teacherid = 0;
+//    }
+
+	return $teacherid;
 }
 
 function block_exastud_get_head_teacher_classes_all($periodid) {
@@ -1625,7 +1641,7 @@ function block_exastud_print_student_report($studentid, $periodid, $class, $pdf 
 	}
 }
 
-function block_exastud_init_js_css() {
+function block_exastud_init_js_css($especialities = array()) {
 	global $PAGE, $CFG;
 
 	// only allowed to be called once
@@ -1639,7 +1655,11 @@ function block_exastud_init_js_css() {
 	$PAGE->requires->css('/blocks/exastud/css/styles.css');
 	$PAGE->requires->jquery();
 	$PAGE->requires->jquery_plugin('ui');
-	$PAGE->requires->js('/blocks/exastud/javascript/common.js', true);
+
+    $PAGE->requires->css('/blocks/exastud/css/select2.css');
+
+    $PAGE->requires->js('/blocks/exastud/javascript/common.js', true);
+    $PAGE->requires->js('/blocks/exastud/javascript/select2.js', true);
 	$PAGE->requires->js('/blocks/exastud/javascript/exastud.js', true);
 
 	// page specific js/css
@@ -1657,6 +1677,7 @@ function block_exastud_init_js_css() {
     $PAGE->requires->string_for_js('textarea_charsleft', 'block_exastud');
     $PAGE->requires->string_for_js('textarea_linestomuch', 'block_exastud');
     $PAGE->requires->string_for_js('textarea_charstomuch', 'block_exastud');
+    $PAGE->requires->string_for_js('donotleave_page_message', 'block_exastud');
 }
 
 function block_exastud_get_category($categoryid, $categorysource) {

@@ -93,9 +93,8 @@ class class_edit_form extends moodleform {
         $select->setMultiple(true);
         */
 
-
 		// change class owner (only for siteadmin or class owner)
-        if (block_exastud_is_siteadmin() || $this->_customdata['is_classowner']) {
+        if ($this->_customdata['classid'] && (block_exastud_is_siteadmin() || $this->_customdata['is_classowner'] )) {
             $headteachers = block_exastud_get_head_teachers_all();
             $options = array();
             foreach ($headteachers as $teacher) {
@@ -1219,6 +1218,7 @@ class report_settings_filter_form extends moodleform {
 class change_subject_teacher_form extends moodleform {
 
     function definition() {
+        global $DB;
         $mform = $this->_form;
         $courseid = $this->_customdata['courseid'];
         $currentteacher = $this->_customdata['curentteacher'];
@@ -1230,8 +1230,18 @@ class change_subject_teacher_form extends moodleform {
 
         //$mform->addElement('static', 'exastud_description', block_exastud_get_string('form_subject_teacher_form_description', '', $a).':', array('size' => 50));
         $teachers = block_exastud_get_all_teachers($courseid);
-        $teachers = array_map(function($o) {return fullname($o);}, $teachers);
-        natcasesort($teachers);
+        // teachersline in the teacher adding form
+        $select  = " username <> 'guest' AND deleted = 0 AND confirmed = 1 ";
+        $selectsql = "";
+
+        $teachers = $DB->get_records_sql('SELECT id, firstname, lastname, email, '.get_all_user_name_fields(true).'
+									FROM {user}
+									WHERE '.$select.'
+									    AND deleted = 0							
+                                    ORDER BY lastname ASC, firstname ASC');
+
+        $teachers = array_map(function($o) {return fullname($o).', '.$o->email;}, $teachers);
+//        natcasesort($teachers);
         $mform->addElement('select',
                 'newsubjectteacher',
                 block_exastud_get_string('form_subject_teacher_form_select_new_teacher', '', $a).':*',

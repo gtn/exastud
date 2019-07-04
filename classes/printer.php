@@ -523,6 +523,7 @@ class printer {
                     $studentdata->lessons_target = '';
                     $data['first_name'] = '';
                     //$data['comments'] = '';
+					$showNiveauZComments = false;
                 }
             }
             // clean comments block if at least one subject has Z niveau
@@ -545,9 +546,11 @@ class printer {
                 //$data['comments'] = '';
                 // comment instead student name - for better view
                 $data['first_name'] = $data['comments'];
+				$data['student_name'] = $data['comments'];
                 $data['comments'] = '';
             }
-
+			
+			
             // clean bottom notification about grading
             $data_dropdowns = array_merge($data_dropdowns, array('bottom_note_title_general', 'bottom_note_title', 'bottom_note1', 'bottom_note2'));
             if (in_array($templateid, [
@@ -652,7 +655,8 @@ class printer {
             $rsum = 0.0;
             $scnt = 0;
             $rcnt = 0;
-            $min = 0;
+            $min = 9999;
+			$minForRelevantSubjects = 0;
             $useRelevantKoef = false;
 			// noten
 			foreach ($class_subjects as $subject) {
@@ -870,7 +874,6 @@ class printer {
                     //echo "<pre>debug:<strong>printer.php:791</strong>\r\n"; print_r($gradeSearch); echo '</pre>'; exit; // !!!!!!!!!! delete it
                 }
 
-                // The average is counted only for one report (21.01.2019). So use ONLY this list of subjects:
                 switch ($templateid) {
                     case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_ABSCHLUSSZEUGNIS_KL10_RSA:
                     case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_ABSCHLUSSZEUGNIS_KL9_10_HSA:
@@ -898,15 +901,29 @@ class printer {
                         case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_ABSCHLUSSZEUGNIS_KL10_RSA:
                         case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_ABSCHLUSSZEUGNIS_KL9_10_HSA:
                         case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_ABSCHLUSSZEUGNIS_KL9_10_HSA_2:
+						case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_ABSCHLUSSZEUGNIS_HS:
                             // all subjects has the same weight (25.06.2019)
                             if (in_array($subject->shorttitle, $avgCalcSubjectsRel)) {
                                 $religionGrade = $gradeForCalc;
                             } elseif (!in_array($subject->shorttitle, $avgCalcSubjectsProfil)) { // no calculate for Prifolefach
                                 $sum += $gradeForCalc;
                                 $scnt++;
+								
+								$useRelevantKoef = true;
+                                if (($subject->not_relevant == 1 && $template->get_rs_hs_category() == 'HS')
+                                        || ($subject->not_relevant_rs == 1 && $template->get_rs_hs_category() == 'RS')
+                                ) {
+                                    if ($gradeForCalc < $min) {
+                                        $min = $gradeForCalc;
+                                    }
+                                    $rsum += $gradeForCalc;
+                                    $rcnt++;
+                                }
+                                $sum += $gradeForCalc;
+                                $scnt++;
                             }
                             break;
-                        default:
+                        default: // may be delete this?
                             if (in_array($subject->shorttitle, $avgCalcSubjectsRel)) {
                                 $religionGrade = $gradeForCalc;
                             } else {
@@ -2028,7 +2045,7 @@ class printer {
                 if (trim($data['profilfach_titel']) != '') {
                     $data['profilfach_titel'] = 'Profilfach '.trim($data['profilfach_titel']);
                 } else {
-                    $data['profilfach_titel'] = '--';
+                    $data['profilfach_titel'] = '---';
                 }
                 break;
         }
@@ -2776,13 +2793,15 @@ class printer {
 
 		foreach ($students as $student) {
             $studentData = block_exastud_get_class_student_data($class->id, $student->id);
-			$row = new \html_table_row();
-			$cells = array();
-            $cells[] = fullname($student);
-            $cells[] = @$studentData->projekt_grade;
-            $cells[] = @$studentData->projekt_thema;
-            $row->cells = $cells;
-            $projectTable->data[] = $row;
+            if (@$studentData->projekt_grade || @$studentData->projekt_thema) {
+                $row = new \html_table_row();
+                $cells = array();
+                $cells[] = fullname($student);
+                $cells[] = @$studentData->projekt_grade;
+                $cells[] = @$studentData->projekt_thema;
+                $row->cells = $cells;
+                $projectTable->data[] = $row;
+            }
 		}
 
 		// table 3: ags
@@ -2796,16 +2815,18 @@ class printer {
         $agsTable->head[] = block_exastud_get_string('ags');
 		foreach ($students as $student) {
 			$studentData = block_exastud_get_class_student_data($class->id, $student->id);
-            $row = new \html_table_row();
-            $cells = array();
-            $cells[] = fullname($student);
-			// crop ags by limits. Limits are got from class template
-            $template = block_exastud_get_student_print_template($class, $student->id);
-            $templateid = $template->get_template_id();
-            $ags = block_exastud_cropStringByInputLimitsFromTemplate(@$studentData->ags, $templateid, 'ags');
-            $cells[] = block_exastud_text_to_html($ags);
-            $row->cells = $cells;
-            $agsTable->data[] = $row;
+			if (@$studentData->ags) {
+                $row = new \html_table_row();
+                $cells = array();
+                $cells[] = fullname($student);
+                // crop ags by limits. Limits are got from class template
+                $template = block_exastud_get_student_print_template($class, $student->id);
+                $templateid = $template->get_template_id();
+                $ags = block_exastud_cropStringByInputLimitsFromTemplate(@$studentData->ags, $templateid, 'ags');
+                $cells[] = block_exastud_text_to_html($ags);
+                $row->cells = $cells;
+                $agsTable->data[] = $row;
+            }
 		}
 
 		// table 4: subjects with teachers

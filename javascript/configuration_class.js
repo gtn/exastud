@@ -30,4 +30,13 @@
         });
 
     });
+
+    // find in the selectbox
+    $(function() {
+        $('select#id_newsubjectteacher').select2({
+            theme: "classic"
+        });
+    });
+
+
 })(block_exastud.jquery);

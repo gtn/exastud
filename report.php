@@ -679,7 +679,7 @@ if ($classid) {
 //         echo '<hr>';
 //     }
     
-    echo '<input type="submit" value="' . block_exastud_get_string('download'). '" class="btn btn-default"/>';
+    echo '<input type="submit" value="' . block_exastud_get_string('download'). '" class="btn btn-default" />';
     
     echo $output->footer();
 } else {
