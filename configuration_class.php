@@ -463,7 +463,7 @@ switch ($type) {
             $table->data[] = [
                     $subjectCell,
                     $classteacher->lastname,
-                    $classteacher->firstname.$changeTeacherButton,
+                    $classteacher->firstname //.$changeTeacherButton,
             ];
         }
 
