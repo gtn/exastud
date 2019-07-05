@@ -3275,7 +3275,7 @@ function block_exastud_get_default_templates($templateid = null) {
             ],
             'BP 2004/GMS Abschlusszeugnis Förderschwerpunkt SJ' => [
                     'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_ABSCHLUSSZEUGNIS_FOE,
-                    'name' => 'BP 2004 GMS Abschlusszeugnis Förderschwerpunkt SJ',
+                    'name' => 'BP 2004 GMS Abschlusszeugnis Förderschwerpunkt SJ G/L',
                     'file' => 'BP 2004/BP2004_GMS_Abschlusszeugnis_Foe',
                     'category' => 'Abschluss',
                     'year' => '1',
@@ -3348,7 +3348,7 @@ function block_exastud_get_default_templates($templateid = null) {
             ],
             'BP 2004/GMS Abschlusszeugnis Förderschwerpunkt 1. HJ' => [
                     'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_HALBJAHR_ZEUGNIS_FOE,
-                    'name' => 'BP 2004 GMS Abschlusszeugnis Förderschwerpunkt 1. HJ',
+                    'name' => 'BP 2004 GMS Abschlusszeugnis Förderschwerpunkt G/L 1. HJ',
                     'file' => 'BP 2004/BP2004_GMS_Halbjahr_Zeugnis_Foe',
                     'category' => 'Halbjahr',
                     'year' => '1',
@@ -3664,7 +3664,7 @@ function block_exastud_get_default_templates($templateid = null) {
             ],*/
             'BP 2016/GMS Abschlusszeugnis Förderschwerpunkt SJ' => [
                     'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_ABSCHLUSSZEUGNIS_FOE,
-                    'name' => 'BP 2016 GMS Abschlusszeugnis Förderschwerpunkt SJ',
+                    'name' => 'BP 2016 GMS Abschlusszeugnis Förderschwerpunkt G/L SJ',
                     'file' => 'BP 2016/BP2016_GMS_Abschlusszeugnis_Foe',
                     'category' => 'Abschluss',
                     'year' => '1',
@@ -4112,7 +4112,7 @@ function block_exastud_get_default_templates($templateid = null) {
             ],
             'BP 2016/GMS Abschlusszeugnis Förderschwerpunkt 1. HJ' => [
                     'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_HALBJAHR_ZEUGNIS_FOE,
-                    'name' => 'BP 2016 GMS Abschlusszeugnis Förderschwerpunkt 1. HJ',
+                    'name' => 'BP 2016 GMS Abschlusszeugnis Förderschwerpunkt G/L 1. HJ',
                     'file' => 'BP 2016/BP2016_GMS_Halbjahr_Zeugnis_Foe',
                     'category' => 'Halbjahr',
                     'year' => '1',
