@@ -2548,8 +2548,8 @@ function block_exastud_get_default_templates($templateid = null) {
                                     'title' => 'Fächer',
                                     'type' => 'textarea',
                                     'lines' => 8,
-                                    'cols' => 68,
-                                    'maxchars' => 550,
+                                    'cols' => 75,
+                                    'maxchars' => 600,
                             ],
                             'subject_elective' => [ // Wahlpflicht-bereich ?
                                     'title' => 'Wahlpflicht-bereich',
@@ -2598,8 +2598,8 @@ function block_exastud_get_default_templates($templateid = null) {
                                     'title' => 'Fächer',
                                     'type' => 'textarea',
                                     'lines' => 8,
-                                    'cols' => 68,
-                                    'maxchars' => 550,
+                                    'cols' => 75,
+                                    'maxchars' => 600,
                             ],
                             'subject_elective' => [ // Wahlpflicht-bereich ?
                                     'title' => 'Wahlpflicht-bereich',
@@ -2663,8 +2663,8 @@ function block_exastud_get_default_templates($templateid = null) {
                                     'title' => 'Fächer',
                                     'type' => 'textarea',
                                     'lines' => 8,
-                                    'cols' => 68,
-                                    'maxchars' => 550,
+                                    'cols' => 75,
+                                    'maxchars' => 600,
                             ],
                             'subject_elective' => [ // Wahlpflicht-bereich ?
                                     'title' => 'Wahlpflicht-bereich',
@@ -2737,8 +2737,8 @@ function block_exastud_get_default_templates($templateid = null) {
                                     'title' => 'Fächer',
                                     'type' => 'textarea',
                                     'lines' => 8,
-                                    'cols' => 68,
-                                    'maxchars' => 500,
+                                    'cols' => 75,
+                                    'maxchars' => 600,
                             ],
                             'subject_elective' => [ // Wahlpflicht-bereich ?
                                     'title' => 'Wahlpflicht-bereich',
