@@ -1362,9 +1362,12 @@ function xmldb_block_exastud_upgrade($oldversion = 0) {
         upgrade_block_savepoint(true, 2019070505, 'exastud');
     }
      if ($oldversion < 2019070506) {
-        // reset reports
-        $DB->delete_records('block_exastudreportsettings', ['id' => 18,19,27,34]);
-        block_exastud_fill_reportsettingstable(42, true);
+
+        
+         foreach([18,19,27,34] as $i) {
+            block_exastud_fill_reportsettingstable($i, true);
+        }
+        
         upgrade_block_savepoint(true, 2019070506, 'exastud');
     }
 
