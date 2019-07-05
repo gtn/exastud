@@ -181,6 +181,13 @@ foreach ($classstudents as $classstudent) {
             }
             //$hasInputs = !!block_exastud_get_class_bilingual_template($class->id)->get_inputs(BLOCK_EXASTUD_DATA_ID_BILINGUALES);
             break;
+        case BLOCK_EXASTUD_DATA_ID_LERN_UND_SOZIALVERHALTEN:
+            $hasInputs = !!$categories;
+            $personalHeadTeacher = block_exastud_get_personal_head_teacher($class->id, $classstudent->id, true);
+            if ($personalHeadTeacher !== null && $personalHeadTeacher != $USER->id) {
+                $hideReviewButton = true;
+            }
+            break;
         default:
 		    $hasInputs = !!$categories;
 	}

@@ -906,8 +906,8 @@ class printer {
                             if (in_array($subject->shorttitle, $avgCalcSubjectsRel)) {
                                 $religionGrade = $gradeForCalc;
                             } elseif (!in_array($subject->shorttitle, $avgCalcSubjectsProfil)) { // no calculate for Prifolefach
-                                $sum += $gradeForCalc;
-                                $scnt++;
+//                                $sum += $gradeForCalc;
+//                                $scnt++;
 								
 								$useRelevantKoef = true;
                                 if (($subject->not_relevant == 1 && $template->get_rs_hs_category() == 'HS')
@@ -919,6 +919,7 @@ class printer {
                                     $rsum += $gradeForCalc;
                                     $rcnt++;
                                 }
+//                                echo 'added '.$subject->title.': '.$gradeForCalc.'<br>';
                                 $sum += $gradeForCalc;
                                 $scnt++;
                             }
@@ -947,16 +948,30 @@ class printer {
 
 			if (isset($religionGrade) && $religionGrade > 0) {
 			    $sum += $religionGrade;
-			    $scnt++;
+//                echo 'religion: '.$religionGrade.'<br>';
+                $scnt++;
+            }
+            $projekt_grade = (float)block_exastud_get_grade_index_by_value(@$grades[@$studentdata->projekt_grade]);
+            if ($projekt_grade && $projekt_grade > 0) {
+                $sum += $projekt_grade;
+//                echo 'proj: '.$projekt_grade.'<br>';
+                $scnt++;
             }
 			if ($scnt > 0) {
                 $avg = $sum / $scnt;
             } else {
 			    $avg = 0;
             }
+//			echo '::'.$projekt_grade;exit;
+//            echo $sum.'/'.$scnt.'<br>';
+//			echo 'avg: '.$avg;
+//			echo '2: '.($sum - $rsum + $min).'<br>';
+//			echo '3: '.(($scnt - $rcnt) + 1).'<br>';
 			if ($avg > 4.4 && $useRelevantKoef) {
 			    $avg = (($sum - $rsum) + $min) / (($scnt - $rcnt) + 1);
-			}
+            }
+//			echo 'new'.$avg;
+//			exit;
 			if (in_array($templateid, [
                             //BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_ABSCHLUSSZEUGNIS_FOE, // is this need?
                             BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_ABSCHLUSSZEUGNIS_HS,
@@ -985,9 +1000,9 @@ class printer {
                     $avgVerbal = 'mangelhaft';
                 }
                 // other selectboxes
-                if ($templateid == BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_ABSCHLUSSZEUGNIS_KL10_RSA) {
-                    $avgVerbal = block_exastud_get_grades_set('short')[$avgForVerbal];
-                }
+//                if ($templateid == BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_ABSCHLUSSZEUGNIS_KL10_RSA) {
+//                    $avgVerbal = block_exastud_get_grades_set('short')[$avgForVerbal];
+//                }
 
                 if (in_array($templateid, [
                         BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_ABSCHLUSSZEUGNIS_HS,
@@ -2325,7 +2340,8 @@ class printer {
                 $templateProcessor->setValue("gst#$rowi", $value ? $subjectShorttitle : '', 1);
             }
             // add average values
-            $avg = block_exastud_get_grade_average_value($subjectsToAverage);
+            $templateid = block_exastud_get_student_print_template($class, $student->id)->get_template_id();
+            $avg = block_exastud_get_grade_average_value($subjectsToAverage, false, $templateid, $class->id, $student->id);
             //$avgVerbal = block_exastud_get_grade_average_value($subjectsToAverage, true);
             $templateProcessor->setValue("gavg#$rowi", $avg, 1);
             //$templateProcessor->setValue("gst#$rowi", $avgVerbal ? $avgVerbal : '', 1);
@@ -2373,29 +2389,45 @@ class printer {
 		// projekt
 		$templateProcessor->cloneRow('prostudent', count($students));
 		$rowi = 0;
+        $nodata = true;
 		foreach ($students as $student) {
 			$studentData = block_exastud_get_class_student_data($class->id, $student->id);
-			$rowi++;
-
-			$templateProcessor->setValue("prostudent#$rowi", $rowi.'. '.fullname($student));
-			$templateProcessor->setValue("prog#$rowi", @$studentData->projekt_grade);
-			$templateProcessor->setValue("prodescription#$rowi", @$studentData->projekt_thema);
+			if(@$studentData->projekt_grade || @$studentData->projekt_thema) {
+                $rowi++;
+                $nodata = false;
+                $templateProcessor->setValue("prostudent#$rowi", $rowi . '. ' . fullname($student));
+                $templateProcessor->setValue("prog#$rowi", @$studentData->projekt_grade);
+                $templateProcessor->setValue("prodescription#$rowi", @$studentData->projekt_thema);
+            }
 		}
+		if ($nodata) {
+            $templateProcessor->replaceBlock('projects', '');
+        } else {
+            $templateProcessor->cloneBlock('projects', 1, true);
+        }
 
 		// ags
 		$templateProcessor->cloneRow('agstudent', count($students));
 		$rowi = 0;
+        $nodata = true;
 		foreach ($students as $student) {
 			$studentData = block_exastud_get_class_student_data($class->id, $student->id);
-			$rowi++;
-
-			$templateProcessor->setValue("agstudent#$rowi", $rowi.'. '.fullname($student));
-			// crop ags by limits. Limits are got from class template
-            $template = block_exastud_get_student_print_template($class, $student->id);
-            $templateid = $template->get_template_id();
-            $ags = block_exastud_cropStringByInputLimitsFromTemplate(@$studentData->ags, $templateid, 'ags');
-			$templateProcessor->setValue("agdescription#$rowi", $ags);
+			if (@$studentData->ags) {
+                $rowi++;
+                $nodata = false;
+                $templateProcessor->setValue("agstudent#$rowi", $rowi . '. ' . fullname($student));
+                // crop ags by limits. Limits are got from class template
+                $template = block_exastud_get_student_print_template($class, $student->id);
+                $templateid = $template->get_template_id();
+                $ags = block_exastud_cropStringByInputLimitsFromTemplate(@$studentData->ags, $templateid, 'ags');
+                $templateProcessor->setValue("agdescription#$rowi", $ags);
+            }
 		}
+        if ($nodata) {
+            $templateProcessor->replaceBlock('agss', '');
+        } else {
+            $templateProcessor->cloneBlock('agss', 1, true);
+        }
 
 		// page 3
 		$class_teachers = block_exastud_get_class_subject_teachers($class->id);
@@ -2765,10 +2797,11 @@ class printer {
                     }
                 }
             }
+            $templateid = block_exastud_get_student_print_template($class, $student->id)->get_template_id();
             if (array_key_exists($student->id, $subjectsForAvg)) {
-                $avg = block_exastud_get_grade_average_value($subjectsForAvg[$student->id]);
+                $avg = block_exastud_get_grade_average_value($subjectsForAvg[$student->id], false, $templateid, $class->id, $student->id);
             } else {
-                $avg = block_exastud_get_grade_average_value(array());
+                $avg = block_exastud_get_grade_average_value(array(), false, $templateid, $class->id, $student->id);
             }
             //$avgVerbal = block_exastud_get_grade_average_value($subjectsForAvg, true);
             $cells[] = $avg;
@@ -2980,7 +3013,8 @@ class printer {
 
 				$sheet->setCellValueByColumnAndRow($cell++, $rowi, $value);
 			}
-            $avg = block_exastud_get_grade_average_value($subjectsToAverage);
+            $templateid = block_exastud_get_student_print_template($class, $student->id)->get_template_id();
+            $avg = block_exastud_get_grade_average_value($subjectsToAverage, false, $templateid, $class->id, $student->id);
             $sheet->setCellValueByColumnAndRow($cell++, $rowi, ($avg ? $avg : ''));
 
 			$studentData = block_exastud_get_class_student_data($class->id, $student->id);

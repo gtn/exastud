@@ -126,6 +126,24 @@ $reviewdata = $DB->get_record('block_exastudreview',
                                         'periodid' => $actPeriod->id,
                                         'studentid' => $studentid));
 
+// if the student has a review from another teacher - probably this student was hidden and than again shown
+// such student is not able to be review again
+$reports_from_anotherteachers = $DB->get_record_sql('SELECT * FROM {block_exastudreview}
+                                                    WHERE subjectid = ?
+                                                        AND periodid = ?
+                                                        AND studentid = ?
+                                                        AND teacherid != ?',
+    array($subjectid,
+        $actPeriod->id,
+        $studentid,
+        $teacherid),
+    IGNORE_MULTIPLE);
+$canReviewStudent = true;
+if (count($reports_from_anotherteachers) > 0) {
+    $canReviewStudent = false;
+    $reviewdata = $reports_from_anotherteachers;
+};
+
 if ($reviewdata) {
 	foreach ($categories as $category) {
 		$formdata->{$category->id.'_'.$category->source} = $DB->get_field('block_exastudreviewpos',
@@ -135,6 +153,7 @@ if ($reviewdata) {
                                                                                     "categorysource" => $category->source));
 	}
 }
+
 
 $subjectData = block_exastud_get_review($classid, $subjectid, $studentid);
 $formdata = (object)array_merge((array)$formdata, (array)$subjectData);
@@ -154,6 +173,7 @@ $studentform = new student_edit_form(null, [
 	'subjectid' => $subjectid,
 	'exacomp_grades' => $exacomp_grades,
 	'grade_options' => $grade_options,
+	'canReviewStudent' => $canReviewStudent,
 	'reporttype' => $reporttype, // inter - interdisciplinary; social - "learn and social". empty - Notenerfassung/Niveau/Fach
 	'categories.modified' =>
 		$reviewdata

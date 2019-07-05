@@ -268,8 +268,25 @@ if ($isSubjectTeacher) {
         $report = reset($report);
         */
         $report = $DB->get_record('block_exastudreview',
-                array('teacherid' => $teacherid, 'subjectid' => $subjectid, 'periodid' => $actPeriod->id,
-                        'studentid' => $classstudent->id));
+                array('teacherid' => $teacherid,
+                    'subjectid' => $subjectid,
+                    'periodid' => $actPeriod->id,
+                    'studentid' => $classstudent->id));
+        // if the student has a review from another teacher - probably this student was hidden and than again shown
+        // such student is not able to be review again
+        $reports_from_anotherteachers = $DB->get_records_sql('SELECT * FROM {block_exastudreview}
+                                                    WHERE subjectid = ?
+                                                        AND periodid = ?
+                                                        AND studentid = ?
+                                                        AND teacherid != ?',
+                                                array($subjectid,
+                                                    $actPeriod->id,
+                                                    $classstudent->id,
+                                                    $teacherid));
+        $canReviewStudent = true;
+        if (count($reports_from_anotherteachers) > 0) {
+            $canReviewStudent = false;
+        };
 
         $subjectData = block_exastud_get_review($classid, $subjectid, $classstudent->id);
 
@@ -283,6 +300,7 @@ if ($isSubjectTeacher) {
 
         // some columns can be empty because template has not such fields:
         $editSubjectNiveau = false;
+        $editSubjectGrade = true;
         $editSubjectReview = false;
         $editLearnSocialBehavior = false;
         $allinputs = $template->get_inputs('all');
@@ -299,6 +317,14 @@ if ($isSubjectTeacher) {
                 $editLearnSocialBehavior = true;
                 unset($tabledeletecolumns['learnsocial']);
             }
+        }
+
+        if (!$canReviewStudent) {
+            $editSubjectNiveau = false;
+            $editSubjectGrade = false;
+            $editSubjectReview = false;
+            $editLearnSocialBehavior = false;
+            $editCrossCategories = false;
         }
 
         $row = new html_table_row();
@@ -358,20 +384,24 @@ if ($isSubjectTeacher) {
                 $grade_options = [$formdata->grade => $formdata->grade] + $grade_options;
             }
             //$grade_form->addElement('static', 'exacomp_grades', block_exastud_trans('de:Vorschläge aus Exacomp'), $grade_options['exacomp_grades']);
-            if ($grade_options && is_array($grade_options) && count($grade_options) > 0) {
-                $grade_form = '<select name="exastud_grade['.$classstudent->id.']" class="custom-select">';
-                $grade_form .= '<option value=""></option>';
-                foreach ($grade_options as $k => $grade_option) {
-                    if ($formdata->grade == (string) $k) {
-                        $grade_form .= '<option selected="selected" value="'.$k.'">'.$grade_option.'</option>';
-                    } else {
-                        $grade_form .= '<option value="'.$k.'">'.$grade_option.'</option>';
+            if ($editSubjectGrade) {
+                if ($grade_options && is_array($grade_options) && count($grade_options) > 0) {
+                    $grade_form = '<select name="exastud_grade[' . $classstudent->id . ']" class="custom-select">';
+                    $grade_form .= '<option value=""></option>';
+                    foreach ($grade_options as $k => $grade_option) {
+                        if ($formdata->grade == (string)$k) {
+                            $grade_form .= '<option selected="selected" value="' . $k . '">' . $grade_option . '</option>';
+                        } else {
+                            $grade_form .= '<option value="' . $k . '">' . $grade_option . '</option>';
+                        }
                     }
-                }
-                $grade_form .= '</select>';
-            } else {
-                $grade_form = '<input name="exastud_grade['.$classstudent->id.']" class="form-control " value="'.$formdata->grade.
+                    $grade_form .= '</select>';
+                } else {
+                    $grade_form = '<input name="exastud_grade[' . $classstudent->id . ']" class="form-control " value="' . $formdata->grade .
                         '" size="5"/>';
+                }
+            } else {
+                $grade_form = '';
             }
             $row->cells[] = $grade_form;
             // Niveau column
@@ -406,11 +436,19 @@ if ($isSubjectTeacher) {
         }
 
         // Überfachliche Beurteilungen
-        if ($editCrossCategories) {
+        if (!$editCrossCategories && count($reports_from_anotherteachers) > 0) {
+            // if this student has review from another teacher
+            $row->cells[] = ($visible ?
+                $output->link_button($CFG->wwwroot.'/blocks/exastud/review_student.php?courseid='.$courseid.'&classid='.
+                    $classid.'&subjectid='.$subjectid.'&studentid='.$classstudent->id.'&reporttype=inter',
+                    block_exastud_get_string('show'), ['class' => 'btn btn-primary']) : '');
+        } elseif ($editCrossCategories) {
             $row->cells[] = ($visible ?
                     $output->link_button($CFG->wwwroot.'/blocks/exastud/review_student.php?courseid='.$courseid.'&classid='.
                                             $classid.'&subjectid='.$subjectid.'&studentid='.$classstudent->id.'&reporttype=inter',
                             block_exastud_get_string('review_button'), ['class' => 'btn btn-primary']) : '');
+        } else {
+            $row->cells[] = '';
         }
         // Learning and social behavior column
         if ($editLearnSocialBehavior) {
@@ -573,7 +611,7 @@ if ($isSubjectTeacher) {
 }
 
 // clean empty columns
-// get column indexes. They can be different via exastud configuration ot via logged in user
+// get column indexes. They can be different via exastud configuration or via logged in user
 $tablecolumns = array();
 foreach ($table->head as $k => $headitem) {
     switch ($headitem) {

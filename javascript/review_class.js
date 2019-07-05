@@ -7,11 +7,11 @@ var unsaved = false;
             unsaved = true;
         });
 
-        window.onbeforeunload = function unloadPage() {
-            if (unsaved) {
-                return M.str.block_exastud.textarea_charstomuch + '  ';
-            }
-        };
+        // window.onbeforeunload = function unloadPage() {
+        //     if (unsaved) {
+        //         return M.str.block_exastud.textarea_charstomuch + '  ';
+        //     }
+        // };
     })
 })(block_exastud.jquery);
 

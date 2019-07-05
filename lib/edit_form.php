@@ -230,17 +230,31 @@ class student_edit_form extends moodleform {
                 $categories = $this->_customdata['categories'];
                 foreach ($categories as $category) {
                     $id = $category->id.'_'.$category->source;
-                    switch ($compeval_type) {
-                        case BLOCK_EXASTUD_COMPETENCE_EVALUATION_TYPE_GRADE:
-                            $mform->addElement('text', $id, $category->title);
-                            $mform->setType($id, PARAM_FLOAT);
-                            break;
-                        case BLOCK_EXASTUD_COMPETENCE_EVALUATION_TYPE_TEXT:
-                        case BLOCK_EXASTUD_COMPETENCE_EVALUATION_TYPE_POINT:
-                            $mform->addElement('select', $id, $category->title, $selectoptions);
-                            $mform->setType($id, PARAM_INT);
-                            $mform->setDefault($id, key($selectoptions));
-                            break;
+                    if (@$this->_customdata['canReviewStudent']) {
+                        switch ($compeval_type) {
+                            case BLOCK_EXASTUD_COMPETENCE_EVALUATION_TYPE_GRADE:
+                                $mform->addElement('text', $id, $category->title);
+                                $mform->setType($id, PARAM_FLOAT);
+                                break;
+                            case BLOCK_EXASTUD_COMPETENCE_EVALUATION_TYPE_TEXT:
+                            case BLOCK_EXASTUD_COMPETENCE_EVALUATION_TYPE_POINT:
+                                $mform->addElement('select', $id, $category->title, $selectoptions);
+                                $mform->setType($id, PARAM_INT);
+                                $mform->setDefault($id, key($selectoptions));
+                                break;
+                        }
+                    } else {
+                        switch ($compeval_type) {
+                            case BLOCK_EXASTUD_COMPETENCE_EVALUATION_TYPE_GRADE:
+                                $mform->addElement('static', $id, $category->title);
+                                break;
+                            case BLOCK_EXASTUD_COMPETENCE_EVALUATION_TYPE_TEXT:
+                            case BLOCK_EXASTUD_COMPETENCE_EVALUATION_TYPE_POINT:
+                                $mform->addElement('static', $id, $category->title);
+//                                print_r($mform);
+//                                $mform->setDefault($id, $selectoptions);
+                                break;
+                        }
                     }
                 }
                 break;

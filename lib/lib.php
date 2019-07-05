@@ -25,6 +25,7 @@ require_once __DIR__.'/common.php';
 require_once __DIR__.'/classes.php';
 
 use block_exastud\globals as g;
+use block_exastud\print_template;
 
 const BLOCK_EXASTUD_CAP_HEAD_TEACHER = 'head_teacher';
 // const BLOCK_EXASTUD_CAP_SUBJECT_TEACHER = 'subject_teacher';
@@ -243,15 +244,19 @@ function block_exastud_get_head_teacher_classes_shared($periodid) {
 function block_exastud_get_personal_head_teacher($classid, $studentid, $withclassownerteacher = true) {
 	
 	$teacherid = block_exastud_get_class_student_data($classid, $studentid, BLOCK_EXASTUD_DATA_ID_HEAD_TEACHER);
-
 	if (!$teacherid && $withclassownerteacher) {
 	    // get main class teacher if no peronal teacher
-        $teacherid = block_exastud_get_head_teacher_class($classid)->userid;
+//        $teacherid = block_exastud_get_head_teacher_class($classid)->userid;
+        $class = g::$DB->get_record_sql("
+			SELECT c.*
+			FROM {block_exastudclass} c
+			WHERE c.id = ?
+		", array($classid));
+        $teacherid = $class->userid;
     }
 //	if (!$teacherid) {
 //	    $teacherid = 0;
 //    }
-
 	return $teacherid;
 }
 
@@ -271,6 +276,7 @@ function block_exastud_get_head_teacher_class($classid) {
             }
         }
 	}
+
 	// only for Admin access.
     if (block_exastud_is_siteadmin()) {
         $classes = block_exastud_get_classes_all();
@@ -5168,34 +5174,116 @@ function block_exastud_cropStringByInputLimitsFromTemplate($string, $templateid,
     return implode("\r\n", $tempContentRows);
 }
 
-function block_exastud_get_grade_average_value($subjects = array(), $verbal = false) {
+function block_exastud_get_grade_average_value($subjects = array(), $verbal = false, $templateid, $classid, $studentid) {
     global $DB;
-    $min = 6; // TODO: or 0 or 6 or 7?
+    $min = 999;
     $rsum = 0.0;
     $rcnt = 0;
     $sum = 0.0;
     $scnt = 0;
+    $template = block_exastud\print_template::create($templateid);
+    switch ($templateid) {
+        case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_ABSCHLUSSZEUGNIS_KL10_RSA:
+        case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_ABSCHLUSSZEUGNIS_KL9_10_HSA:
+        case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_ABSCHLUSSZEUGNIS_KL9_10_HSA_2:
+            $avgCalcSubjects = array('D', 'M', 'E', 'G', 'Geo', 'Gk', 'WBS', 'Ph', 'Ch', 'Bio', 'Mu', 'BK', 'Sp');
+            $avgCalcSubjectsWPF = array('WPF F', 'WPF AES', 'WPF Te');
+            $avgCalcSubjectsProfil = array('Profil BK', 'Profil Mu', 'Profil Nwt', 'Profil IMP', 'Profile S', 'Profil Sp');
+            break;
+        default:
+            $avgCalcSubjects = array('D', 'M', 'E', 'G', 'BK', 'Mu', 'Sp', 'EWG', 'NWA');
+            $avgCalcSubjectsWPF = array('WPF F', 'WPF MuM', 'WPF Te');
+            $avgCalcSubjectsProfil = array('Profil BK', 'Profil Mu', 'Profil Nut', 'Profil S', 'Profil Sp');
+    }
+    $avgCalcSubjectsRel = array('eth', 'alev', 'ak', 'ev', 'isl', 'jd', 'rk', 'orth', 'syr');
+    $avgCalcAll = array_merge($avgCalcSubjects, $avgCalcSubjectsRel, $avgCalcSubjectsWPF, $avgCalcSubjectsProfil);
+    if (!isset($religionGrade)) {
+        $religionGrade = 0;
+    }
+
     foreach ($subjects as $sId => $grade) {
         $subject = $DB->get_record('block_exastudsubjects', ['id' => $sId]);
-        if ($subject) {
-            $gradeForCalc = (float) block_exastud_get_grade_index_by_value($grade);
-            if ($subject->not_relevant == 1 || $subject->not_relevant_rs == 1) {
-                if ($gradeForCalc < $min) {
-                    $min = $gradeForCalc;
-                }
-                $rsum += $gradeForCalc;
-                $rcnt++;
+        $gradeForCalc = (float) block_exastud_get_grade_index_by_value($grade);
+        if (in_array($subject->shorttitle, $avgCalcAll)) {
+            // look on religion (only one or Ethik).
+            // Cause 'Ethik' we need to look not only for first value. So add this value later. now - ignore that
+            switch ($templateid) {
+                case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_ABSCHLUSSZEUGNIS_KL10_RSA:
+                case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_ABSCHLUSSZEUGNIS_KL9_10_HSA:
+                case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_ABSCHLUSSZEUGNIS_KL9_10_HSA_2:
+                case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_ABSCHLUSSZEUGNIS_HS:
+                    // all subjects has the same weight (25.06.2019)
+                    if (in_array($subject->shorttitle, $avgCalcSubjectsRel)) {
+                        $religionGrade = $gradeForCalc;
+                    } elseif (!in_array($subject->shorttitle, $avgCalcSubjectsProfil)) { // no calculate for Prifolefach
+//                        $sum += $gradeForCalc;
+//                        $scnt++;
+
+                        $useRelevantKoef = true;
+                        if (($subject->not_relevant == 1 && $template->get_rs_hs_category() == 'HS')
+                            || ($subject->not_relevant_rs == 1 && $template->get_rs_hs_category() == 'RS')
+                        ) {
+                            if ($gradeForCalc < $min) {
+                                $min = $gradeForCalc;
+                            }
+                            $rsum += $gradeForCalc;
+                            $rcnt++;
+                        }
+                        $sum += $gradeForCalc;
+                        $scnt++;
+                    }
+                    break;
+                default: // may be delete this?
+                    if (in_array($subject->shorttitle, $avgCalcSubjectsRel)) {
+                        $religionGrade = $gradeForCalc;
+                    } else {
+                        $useRelevantKoef = true;
+                        if (($subject->not_relevant == 1 && $template->get_rs_hs_category() == 'HS')
+                            || ($subject->not_relevant_rs == 1 && $template->get_rs_hs_category() == 'RS')
+                        ) {
+                            if ($gradeForCalc < $min) {
+                                $min = $gradeForCalc;
+                            }
+                            $rsum += $gradeForCalc;
+                            $rcnt++;
+                        }
+                        $sum += $gradeForCalc;
+                        $scnt++;
+                    }
             }
-            $sum += $gradeForCalc;
-            $scnt++;
+            /*if ($subject) {
+                $gradeForCalc = (float) block_exastud_get_grade_index_by_value($grade);
+                if ($subject->not_relevant == 1 || $subject->not_relevant_rs == 1) {
+                    if ($gradeForCalc < $min) {
+                        $min = $gradeForCalc;
+                    }
+                    $rsum += $gradeForCalc;
+                    $rcnt++;
+                }
+                $sum += $gradeForCalc;
+                $scnt++;
+            }*/
         }
+    }
+    $grades = $template->get_grade_options();
+    $studentdata = block_exastud_get_class_student_data($classid, $studentid);
+    $projekt_grade = (float)block_exastud_get_grade_index_by_value(@$grades[@$studentdata->projekt_grade]);
+//    echo $projekt_grade;
+    if ($projekt_grade && $projekt_grade > 0) {
+        $sum += $projekt_grade;
+        $scnt++;
+    }
+
+    if (isset($religionGrade) && $religionGrade > 0) {
+        $sum += $religionGrade;
+        $scnt++;
     }
     if ($scnt > 0) {
         $avg = $sum / $scnt;
     } else {
         $avg = 0;
     }
-    if ($avg > 4.4) {
+    if ($avg > 4.4 && $useRelevantKoef) {
         $avg = (($sum - $rsum) + $min) / (($scnt - $rcnt) + 1);
     }
     //$avg = round($avg, 1, PHP_ROUND_HALF_DOWN); // not always correct. ???

@@ -154,7 +154,6 @@ function block_exastud_print_period($courseid, $period, $type, $openclass) {
                 $dRow->cells[] = $hCell;
 				$table->data[] = $dRow;
 			} else {
-
                 $subjectsData = array();
                 //if (!block_exastud_get_only_learnsociale_reports()) {
                     foreach ($myclass->subjects as $subject) {

@@ -58,6 +58,8 @@
             } else {
                 $(this).closest('form').find('input[type="submit"]').attr('formtarget', '');;
             }
+            // hide alerts
+            $(this).find('.alert-danger').remove();
         });
 
         function checkPreview() {
