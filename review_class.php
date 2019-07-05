@@ -287,7 +287,7 @@ if ($isSubjectTeacher) {
         if (count($reports_from_anotherteachers) > 0) {
             $canReviewStudent = false;
         };
-
+//var_dump($canReviewStudent).'<br>';
         $subjectData = block_exastud_get_review($classid, $subjectid, $classstudent->id);
 
         $template = block_exastud_get_student_print_template($class, $classstudent->id);

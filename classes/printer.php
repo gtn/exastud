@@ -963,7 +963,7 @@ class printer {
 			    $avg = 0;
             }
 //			echo '::'.$projekt_grade;exit;
-//            echo $sum.'/'.$scnt.'<br>';
+//            echo $sum.'/'.$scnt.'<br>'; exit;
 //			echo 'avg: '.$avg;
 //			echo '2: '.($sum - $rsum + $min).'<br>';
 //			echo '3: '.(($scnt - $rcnt) + 1).'<br>';

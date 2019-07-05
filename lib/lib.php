@@ -5204,6 +5204,7 @@ function block_exastud_get_grade_average_value($subjects = array(), $verbal = fa
         $religionGrade = 0;
     }
 
+    $WPFadded = false;
     foreach ($subjects as $sId => $grade) {
         $subject = $DB->get_record('block_exastudsubjects', ['id' => $sId]);
         $gradeForCalc = (float) block_exastud_get_grade_index_by_value($grade);
@@ -5221,7 +5222,12 @@ function block_exastud_get_grade_average_value($subjects = array(), $verbal = fa
                     } elseif (!in_array($subject->shorttitle, $avgCalcSubjectsProfil)) { // no calculate for Prifolefach
 //                        $sum += $gradeForCalc;
 //                        $scnt++;
-
+                        if (in_array($subject->shorttitle, $avgCalcSubjectsWPF)) {
+                            if ($WPFadded) { // only first WPF subject
+                                continue;
+                            }
+                            $WPFadded = true;
+                        }
                         $useRelevantKoef = true;
                         if (($subject->not_relevant == 1 && $template->get_rs_hs_category() == 'HS')
                             || ($subject->not_relevant_rs == 1 && $template->get_rs_hs_category() == 'RS')
@@ -5234,12 +5240,19 @@ function block_exastud_get_grade_average_value($subjects = array(), $verbal = fa
                         }
                         $sum += $gradeForCalc;
                         $scnt++;
+//                        echo $subject->title.' added with '.$gradeForCalc.'<br>';
                     }
                     break;
                 default: // may be delete this?
                     if (in_array($subject->shorttitle, $avgCalcSubjectsRel)) {
                         $religionGrade = $gradeForCalc;
                     } else {
+                        if (in_array($subject->shorttitle, $avgCalcSubjectsWPF)) {
+                            if ($WPFadded) { // only first WPF subject
+                                continue;
+                            }
+                            $WPFadded = true;
+                        }
                         $useRelevantKoef = true;
                         if (($subject->not_relevant == 1 && $template->get_rs_hs_category() == 'HS')
                             || ($subject->not_relevant_rs == 1 && $template->get_rs_hs_category() == 'RS')
@@ -5276,7 +5289,6 @@ function block_exastud_get_grade_average_value($subjects = array(), $verbal = fa
         $sum += $projekt_grade;
         $scnt++;
     }
-
     if (isset($religionGrade) && $religionGrade > 0) {
         $sum += $religionGrade;
         $scnt++;
@@ -5289,6 +5301,8 @@ function block_exastud_get_grade_average_value($subjects = array(), $verbal = fa
     if ($avg > 4.4 && $useRelevantKoef) {
         $avg = (($sum - $rsum) + $min) / (($scnt - $rcnt) + 1);
     }
+//    echo $sum.'/'.$scnt.'<br>'; exit;
+
     //$avg = round($avg, 1, PHP_ROUND_HALF_DOWN); // not always correct. ???
     $fig = (int) str_pad('1', 2, '0'); // 2 (second parameter) - precision
     $avg  = (floor($avg * $fig) / $fig); // - ALWAYS round down!

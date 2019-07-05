@@ -361,7 +361,7 @@ class student_edit_form extends moodleform {
                 }
                 $niveauarray=array();
 
-                $niveauarray[] =& $mform->createElement('select', 'niveau', block_exastud_get_string('Niveau'), ['' => ''] + block_exastud\global_config::get_niveau_options($subjectObjData->no_niveau));
+                $niveauarray[] =& $mform->createElement('select', 'niveau', block_exastud_get_string('Niveau'), ['' => ''] + block_exastud\global_config::get_niveau_options($subjectObjData->no_niveau), $tagatributes);
                 $niveauarray[] =& $mform->createElement('static', '', "", "");
                 $niveauarray[] =& $mform->createElement('static', 'lastPeriodNiveau', "", block_exastud_trans('de:lastPeriodNiveau'));
                 $niveauarray[] =& $mform->createElement('static', '', "", ")");
@@ -370,9 +370,9 @@ class student_edit_form extends moodleform {
                 $gradearray = array();
                 if ($this->_customdata['grade_options'] && is_array($this->_customdata['grade_options'])) {
                     $gradearray[] =& $mform->createElement('select', 'grade', block_exastud_get_string('Note'),
-                            ['' => ''] + $this->_customdata['grade_options']);
+                            ['' => ''] + $this->_customdata['grade_options'], $tagatributes);
                 } else {
-                    $grade = $mform->createElement('text', 'grade', block_exastud_get_string('Note'));
+                    $grade = $mform->createElement('text', 'grade', block_exastud_get_string('Note'), $tagatributes);
                     $mform->setType('grade', PARAM_RAW);
                     $gradearray[] =& $grade;
                 }
