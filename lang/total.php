@@ -1497,15 +1497,15 @@ return [
         'School director',
     ],
     'groupleader_fieldtitle' => [
-        'Lerngruppenbegleiter',
+        'Lerngruppenbegleiter/-In',
         'Group head',
     ],
     'auditleader_fieldtitle' => [
-        'Vorsitzender des Prüfungsausschusses',
+        'Vorsitzende(r) des Prüfungsausschusses',
         'Chairman of the Audit Committee',
     ],
     'classleader_fieldtitle' => [
-        'Klassenlehrer',
+        'Klassenlehrer/-In',
         'Class head',
     ],
 

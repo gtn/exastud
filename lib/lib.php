@@ -4206,26 +4206,6 @@ function block_exastud_get_default_templates($templateid = null) {
                     'rs_hs' => 'RS',
                     'grades' => block_exastud_get_grades_set('lang'),
                     'inputs' => [
-                            'projekt_thema' => [
-                                    'title' => 'Thema',
-                                    'type' => 'textarea',
-                                    'lines' => 3,
-                                    'cols' => 65,
-                            ],
-                            'projekt_grade' => [
-                                    'title' => 'Note',
-                                    'type' => 'select',
-                                    'values' => ['sehr gut' => 'sehr gut',
-                                            'gut' => 'gut',
-                                            'befriedigend' => 'befriedigend',
-                                            'ausreichend' => 'ausreichend',
-                                            'mangelhaft' => 'mangelhaft',
-                                            'ungenügend' => 'ungenügend'],
-                            ],
-                            'projekt_verbalbeurteilung' => [
-                                    'title' => 'Verbalbeurteilung',
-                                    'type' => 'textarea',
-                            ],
                             'ags' => [
                                     'title' => 'Teilnahme an Arbeitsgemeinschaften',
                                     'type' => 'textarea',

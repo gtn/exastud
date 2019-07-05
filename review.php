@@ -202,6 +202,7 @@ function block_exastud_print_period($courseid, $period, $type, $openclass) {
                                         'classid' => $myclass->id,
                                         'type' => BLOCK_EXASTUD_DATA_ID_CROSS_COMPETENCES,
                                 ]), block_exastud_get_string('report_cross_competences'));
+                       //head teacher lern- und sozialverhalten
                         $generaldata[] =
                                 html_writer::link(new moodle_url('/blocks/exastud/review_class_other_data.php', [
                                         'courseid' => $courseid,
