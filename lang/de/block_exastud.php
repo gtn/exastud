@@ -412,3 +412,4 @@ $string['this_category_related_to_classes'] = 'Diese Kategorie wird in folgenden
 $string['this_category_reviewed_for_student'] = 'Zu dieser Kategorie gibt es Schülerbeurteilungen';
 $string['info_category_without_cross_competences'] = 'if category is {$a->categorytitles} - this report does not have &#8221;Überfachliche Kompetenzen&#8220; ';
 $string['donotleave_page_message'] = 'You have unsaved changes on this page. Do you want to leave this page and discard your changes or stay on this page?';
+$string['please_enter_group_name'] = 'Bitte geben Sie die Klassen/Lerngruppenbezeichnung ein!';

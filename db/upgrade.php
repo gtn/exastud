@@ -1345,6 +1345,22 @@ function xmldb_block_exastud_upgrade($oldversion = 0) {
         }
         upgrade_block_savepoint(true, 2019070502, 'exastud');
     }
+//    if ($oldversion < 2019070503) {
+//        $DB->delete_records('block_exastudreportsettings', ['id' => 42]);
+//        upgrade_block_savepoint(true, 2019070503, 'exastud');
+//    }
+    if ($oldversion < 2019070504) {
+        // reset reports
+            block_exastud_fill_reportsettingstable(41, true);
+
+        upgrade_block_savepoint(true, 2019070504, 'exastud');
+    }
+    if ($oldversion < 2019070505) {
+        // reset reports
+        $DB->delete_records('block_exastudreportsettings', ['id' => 31]);
+        block_exastud_fill_reportsettingstable(42, true);
+        upgrade_block_savepoint(true, 2019070505, 'exastud');
+    }
 
     block_exastud_insert_default_entries();
 	block_exastud_check_profile_fields();

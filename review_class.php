@@ -425,7 +425,13 @@ if ($isSubjectTeacher) {
                 $row->cells[] = '';
             }
             // Fachkompetenzen column
-            if ($editSubjectReview) {
+            if (!$editSubjectReview && count($reports_from_anotherteachers) > 0) {
+                // if this student has review from another teacher
+                $row->cells[] = ($visible ?
+                    $output->link_button($CFG->wwwroot.'/blocks/exastud/review_student.php?courseid='.$courseid.'&classid='.
+                        $classid.'&subjectid='.$subjectid.'&studentid='.$classstudent->id,
+                        block_exastud_get_string('show'), ['class' => 'btn btn-primary']) : '');
+            } elseif ($editSubjectReview) {
                 $row->cells[] = ($visible ?
                         $output->link_button($CFG->wwwroot.'/blocks/exastud/review_student.php?courseid='.$courseid.'&classid='.
                                 $classid.'&subjectid='.$subjectid.'&studentid='.$classstudent->id,
@@ -687,7 +693,7 @@ if ($hiddenclassstudents) {
 }
 
 if ($isSubjectTeacher) {
-    echo '<input type="submit" value="'.block_exastud_get_string('savechanges').'" class="btn btn-default"/>&nbsp;';
+    echo '<input type="submit" value="'.block_exastud_get_string('savechanges').'" class="btn btn-default exastud-submit-button"/>&nbsp;';
 }
 //echo $output->back_button(new moodle_url('review.php', ['courseid' => $courseid, 'openclass' => $classid]));
 echo '<input type="button" value="'.block_exastud_get_string('back').'" class="btn btn-default" exa-type="link" href="'.new moodle_url('review.php', ['courseid' => $courseid, 'openclass' => $classid]).'"/>';

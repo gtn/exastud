@@ -137,10 +137,11 @@ $periodClasses = $output->table($tablePeriods);
 
 $templates = array();
 
-if ($classid) {
+$class = block_exastud_get_head_teacher_class($classid, true);
+if ($class !== null) {
+//if ($classid) {
+//    $class = block_exastud_get_head_teacher_class($classid, true);
 
-    $class = block_exastud_get_head_teacher_class($classid);
-    
     if (! $classstudents = block_exastud_get_class_students($class->id)) {
         echo $output->header('report');
         echo $output->heading(block_exastud_get_string('nostudentsfound'));

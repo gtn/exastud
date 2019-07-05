@@ -216,6 +216,13 @@ class student_edit_form extends moodleform {
             $mform->setDefault('reporttype', $this->_customdata['reporttype']);
         }
 
+        $tagatributes = array();
+        $tagattributestext = '';
+        if (!@$this->_customdata['canReviewStudent']) {
+            $tagatributes['disabled'] = 'disabled';
+            $tagattributestext = ' readonly ';
+        }
+
 		switch ($this->_customdata['reporttype']) {
             case 'inter':
                 // interdisciplinary reviews
@@ -228,34 +235,21 @@ class student_edit_form extends moodleform {
                     $mform->addElement('static', '', '', $this->_customdata['categories.modified']);
                 }
                 $categories = $this->_customdata['categories'];
+
                 foreach ($categories as $category) {
                     $id = $category->id.'_'.$category->source;
-                    if (@$this->_customdata['canReviewStudent']) {
                         switch ($compeval_type) {
                             case BLOCK_EXASTUD_COMPETENCE_EVALUATION_TYPE_GRADE:
-                                $mform->addElement('text', $id, $category->title);
+                                $mform->addElement('text', $id, $category->title, $tagatributes);
                                 $mform->setType($id, PARAM_FLOAT);
                                 break;
                             case BLOCK_EXASTUD_COMPETENCE_EVALUATION_TYPE_TEXT:
                             case BLOCK_EXASTUD_COMPETENCE_EVALUATION_TYPE_POINT:
-                                $mform->addElement('select', $id, $category->title, $selectoptions);
+                                $mform->addElement('select', $id, $category->title, $selectoptions, $tagatributes);
                                 $mform->setType($id, PARAM_INT);
                                 $mform->setDefault($id, key($selectoptions));
                                 break;
                         }
-                    } else {
-                        switch ($compeval_type) {
-                            case BLOCK_EXASTUD_COMPETENCE_EVALUATION_TYPE_GRADE:
-                                $mform->addElement('static', $id, $category->title);
-                                break;
-                            case BLOCK_EXASTUD_COMPETENCE_EVALUATION_TYPE_TEXT:
-                            case BLOCK_EXASTUD_COMPETENCE_EVALUATION_TYPE_POINT:
-                                $mform->addElement('static', $id, $category->title);
-//                                print_r($mform);
-//                                $mform->setDefault($id, $selectoptions);
-                                break;
-                        }
-                    }
                 }
                 break;
             case 'social':
@@ -271,11 +265,12 @@ class student_edit_form extends moodleform {
                         'chars_per_row' => @$template_inputparams['cols'] ? $template_inputparams['cols'] : 80,
                         'rows' => @$template_inputparams['lines'] ? $template_inputparams['lines'] : 8
                 );
+
                 $mform->addElement('header', 'vorschlag_header',
                         block_exastud_get_string("learn_and_sociale"));
                 $mform->setExpanded('vorschlag_header');
                 $mform->addElement('textarea', 'vorschlag', '',
-                        [   //'cols' => $vorschlag_limits['cols'],
+                        array_merge([   //'cols' => $vorschlag_limits['cols'],
                             'cols' => $vorschlag_limits['chars_per_row'] + 3,
                             'rows' => $vorschlag_limits['rows'],
                             'class' => 'limit-input-length',
@@ -284,7 +279,7 @@ class student_edit_form extends moodleform {
                             'data-rowslimit' => $vorschlag_limits['rows'],
                             'data-charsperrowlimit' => $vorschlag_limits['chars_per_row'],
                             'style' => "width: auto; height: 160px; resize: none; font-family: Arial !important; font-size: 11pt !important;",
-                        ]);
+                        ], $tagatributes));
                 $mform->setType('vorschlag', PARAM_RAW);
                 $mform->addElement('static', '', '',
                         block_exastud_get_string('textarea_max').
@@ -336,7 +331,7 @@ class student_edit_form extends moodleform {
                 }
 
                 $mform->addElement('textarea', 'review', '',
-                        [   //'cols' => $subject_limits['cols'],
+                    array_merge([   //'cols' => $subject_limits['cols'],
                             'cols' => $subject_limits['chars_per_row'] + 3,
                             'rows' => $subject_limits['rows'],
                             //'wrap' => 'off',
@@ -345,7 +340,7 @@ class student_edit_form extends moodleform {
                             'data-rowslimit' => $subject_limits['rows'],
                             'data-charsperrowlimit' => $subject_limits['chars_per_row'],
                             'style' => "width: auto; height: 160px; resize: none; font-family: Arial !important; font-size: 11pt !important;",
-                ]);
+                ], $tagatributes));
                 $mform->setType('review', PARAM_RAW);
                 $mform->addElement('static', 'hint', "",
                         block_exastud_get_string('textarea_max').
@@ -389,7 +384,9 @@ class student_edit_form extends moodleform {
                 $mform->addElement('static', 'exacomp_grades', block_exastud_get_string('suggestions_from_exacomp'), $this->_customdata['exacomp_grades']);
         }
 
-		$this->add_action_buttons(false);
+        if (@$this->_customdata['canReviewStudent']) {
+            $this->add_action_buttons(false);
+        }
 	}
 
     function validation($data, $files) {

@@ -1564,6 +1564,10 @@ return [
     'donotleave_page_message' => [
             'You have unsaved changes on this page. Do you want to leave this page and discard your changes or stay on this page?',
             'You have unsaved changes on this page. Do you want to leave this page and discard your changes or stay on this page?'
+    ],
+    'please_enter_group_name' => [
+        'Bitte geben Sie die Klassen/Lerngruppenbezeichnung ein!',
+        'Please enter the class / group name!'
     ]
 
 ];

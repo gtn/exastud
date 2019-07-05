@@ -138,9 +138,10 @@ $reports_from_anotherteachers = $DB->get_record_sql('SELECT * FROM {block_exastu
         $studentid,
         $teacherid),
     IGNORE_MULTIPLE);
-$canReviewStudent = true;
-if (count($reports_from_anotherteachers) > 0) {
+$canReviewStudent = true; // I can review by default
+if ($reports_from_anotherteachers && count($reports_from_anotherteachers) > 0) {
     $canReviewStudent = false;
+    // change review data to data frm another teacher (first, it must be single?)
     $reviewdata = $reports_from_anotherteachers;
 };
 

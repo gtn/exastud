@@ -93,7 +93,7 @@ const BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_ABSCHLUSSZEUGNIS_FOE = 27;
 const BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_BEIBLATT_PROJEKTARBEIT_HSA = 28;
 const BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_JAHRESZEUGNIS_KL10_E_NIVEAU = 29;
 const BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_GLEICHWERTIGER_BILDUNGSABSCHLUSS_RSA = 30;
-const BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_ABSCHLUSSZEUGNIS_KL9_10_HSA = 31;
+//const BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_ABSCHLUSSZEUGNIS_KL9_10_HSA_2 = 31;
 const BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_HALBJAHR_ZEUGNIS_KL10_E_NIVEAU = 32;
 const BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_HALBJAHR_ZEUGNIS_KL9_10_HSA = 33;
 const BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_HALBJAHR_ZEUGNIS_FOE = 34;
@@ -104,7 +104,7 @@ const BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_JAHRESZEUGNIS_KL11 = 38;
 const BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_16_GMS_TESTAT_BILINGUALES_PROFIL_KL_8 = 39;
 const BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_16_GMS_ZERTIFIKAT_BILINGUALES_PROFIL_KL_10 = 40;
 const BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_LERN_UND_SOZIALVERHALTEN = 41;
-const BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_ABSCHLUSSZEUGNIS_KL9_10_HSA_2 = 42;
+const BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_ABSCHLUSSZEUGNIS_KL9_10_HSA = 42;
 const BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_GLEICHWERTIGER_BILDUNGSABSCHLUSS_HSA = 43;
 const BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_GLEICHWERTIGER_BILDUNGSABSCHLUSS_RSA = 44;
 const BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_JAHRESZEUGNIS_KL11 = 45;
@@ -264,7 +264,7 @@ function block_exastud_get_head_teacher_classes_all($periodid) {
 	return block_exastud_get_head_teacher_classes_owner($periodid) + block_exastud_get_head_teacher_classes_shared($periodid);
 }
 
-function block_exastud_get_head_teacher_class($classid) {
+function block_exastud_get_head_teacher_class($classid, $nullifnoclass = false) {
 	$periods = g::$DB->get_records_sql('SELECT * FROM {block_exastudperiod}');
 
 	foreach ($periods as $period) {
@@ -285,6 +285,9 @@ function block_exastud_get_head_teacher_class($classid) {
         } else if ($classid == '-all-') {
             return $classes;
         }
+    }
+    if ($nullifnoclass) {
+        return null;
     }
 
 	throw new moodle_exception('class ('.$classid.') not found');
@@ -3944,8 +3947,8 @@ function block_exastud_get_default_templates($templateid = null) {
                     'inputs_footer' => ['eng_niveau', 'fra_niveau', 'spa_niveau', 'ags', 'comments_short'], // inputs in the footer of template
                     'inputs_order' => ['cert_level', 'class_level', 'education_standard', 'ags', 'comments_short'], // special ordering of inputs (makes similar to docx template)
             ],
-            'BP 2016/GMS Hauptschulabschlusszeugnis Projektarbeit SJ' => [
-                    'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_ABSCHLUSSZEUGNIS_KL9_10_HSA,
+            /*'BP 2016/GMS Hauptschulabschlusszeugnis Projektarbeit SJ' => [
+                    'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_ABSCHLUSSZEUGNIS_KL9_10_HSA_2,
                     'name' => 'BP 2016 GMS Hauptschulabschlusszeugnis Projektprüfung SJ',
                     'file' => 'BP 2016/BP2016_GMS_Abschlusszeugnis_KL9_10_HSA_2',
                     'category' => 'Abschluss',
@@ -3958,14 +3961,14 @@ function block_exastud_get_default_templates($templateid = null) {
                     'rs_hs' => 'HS',
                     'grades' => block_exastud_get_grades_set('lang'),
                     'inputs' => [
-                            /*'abgelegt' => [
-                                    'title' => 'Hat die Hauptschulabschlussprüfung nach',
-                                    'type' => 'select',
-                                    'values' => [
-                                            'Hat die Hauptschulabschlussprüfung nach Klasse 9 der Gemeinschaftsschule mit Erfolg abgelegt.' => 'Hat die Hauptschulabschlussprüfung nach Klasse 9 der Gemeinschaftsschule mit Erfolg abgelegt.',
-                                            'Hat die Hauptschulabschlussprüfung nach Klasse 10 der Gemeinschaftsschule mit Erfolg abgelegt.' => 'Hat die Hauptschulabschlussprüfung nach Klasse 10 der Gemeinschaftsschule mit Erfolg abgelegt.',
-                                    ],
-                            ],*/
+//                            'abgelegt' => [
+//                                    'title' => 'Hat die Hauptschulabschlussprüfung nach',
+//                                    'type' => 'select',
+//                                    'values' => [
+//                                            'Hat die Hauptschulabschlussprüfung nach Klasse 9 der Gemeinschaftsschule mit Erfolg abgelegt.' => 'Hat die Hauptschulabschlussprüfung nach Klasse 9 der Gemeinschaftsschule mit Erfolg abgelegt.',
+//                                            'Hat die Hauptschulabschlussprüfung nach Klasse 10 der Gemeinschaftsschule mit Erfolg abgelegt.' => 'Hat die Hauptschulabschlussprüfung nach Klasse 10 der Gemeinschaftsschule mit Erfolg abgelegt.',
+//                                    ],
+//                            ],
                             'projekt_thema' => [
                                     'title' => 'Thema',
                                     'type' => 'textarea',
@@ -4020,16 +4023,16 @@ function block_exastud_get_default_templates($templateid = null) {
                                     'lines' => 1,
                                     'cols' => 20,
                                     'maxchars' => 20,
-                            ],/*
-                            'subject_profile' => [
-                                    'title' => 'Profil-fach',
-                                    'type' => 'textarea',
-                            ],*/
+                            ],
+//                            'subject_profile' => [
+//                                    'title' => 'Profil-fach',
+//                                    'type' => 'textarea',
+//                            ],
                     ],
                     'inputs_header' => ['abgelegt'],
                     'inputs_footer' => ['ags', 'comments_short', 'eng_niveau', 'fra_niveau', 'spa_niveau'], // inputs in the footer of template
                     'inputs_order' => ['abgelegt', 'ags', 'comments_short'], // special ordering of inputs (makes similar to docx template)
-            ],
+            ],*/
             'BP 2016/GMS Zeugnis Klasse 10 E-Niveau 1. HJ' => [
                     'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_HALBJAHR_ZEUGNIS_KL10_E_NIVEAU,
                     'name' => 'BP 2016 GMS Zeugnis Klasse 10 E-Niveau 1. HJ',
@@ -4545,9 +4548,9 @@ function block_exastud_get_default_templates($templateid = null) {
                     'inputs_footer' => ['leiter'],
                     'inputs_order' => ['eng_subjects_5', 'eng_lessons_5', 'eng_subjects_6', 'eng_lessons_6', 'eng_subjects_7', 'eng_lessons_7', 'eng_subjects_8', 'eng_lessons_8', 'eng_subjects_9', 'eng_lessons_9', 'eng_subjects_10', 'eng_lessons_10'],
             ],
-            'Lern. und Sozialverhalten' => [
+            'Lern- und Sozialverhalten' => [
                     'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_LERN_UND_SOZIALVERHALTEN,
-                    'name' => 'Lern. und Sozialverhalten',
+                    'name' => 'Lern- und Sozialverhalten',
                     'file' => 'Lern_und_Sozialverhalten',
                     'category' => 'Anlage',
                     'year' => '1',
@@ -4558,7 +4561,7 @@ function block_exastud_get_default_templates($templateid = null) {
                     'learning_group' => '1',
             ],
             'BP 2016/GMS Hauptschulabschlusszeugnis Projektprüfung SJ' => [
-                    'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_ABSCHLUSSZEUGNIS_KL9_10_HSA_2,
+                    'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_ABSCHLUSSZEUGNIS_KL9_10_HSA,
                     'name' => 'BP 2016 GMS Hauptschulabschlusszeugnis Projektarbeit SJ',
                     'file' => 'BP 2016/BP2016_GMS_Abschlusszeugnis_KL9_10_HSA',
                     'category' => 'Abschluss',
@@ -4571,14 +4574,14 @@ function block_exastud_get_default_templates($templateid = null) {
                     'rs_hs' => 'HS',
                     'grades' => block_exastud_get_grades_set('lang'),
                     'inputs' => [
-                            /*'abgelegt' => [
-                                    'title' => 'Hat die Hauptschulabschlussprüfung nach',
-                                    'type' => 'select',
-                                    'values' => [
-                                            'Hat die Hauptschulabschlussprüfung nach Klasse 9 der Gemeinschaftsschule mit Erfolg abgelegt.' => 'Hat die Hauptschulabschlussprüfung nach Klasse 9 der Gemeinschaftsschule mit Erfolg abgelegt.',
-                                            'Hat die Hauptschulabschlussprüfung nach Klasse 10 der Gemeinschaftsschule mit Erfolg abgelegt.' => 'Hat die Hauptschulabschlussprüfung nach Klasse 10 der Gemeinschaftsschule mit Erfolg abgelegt.',
-                                    ],
-                            ],*/
+//                            'abgelegt' => [
+//                                    'title' => 'Hat die Hauptschulabschlussprüfung nach',
+//                                    'type' => 'select',
+//                                    'values' => [
+//                                            'Hat die Hauptschulabschlussprüfung nach Klasse 9 der Gemeinschaftsschule mit Erfolg abgelegt.' => 'Hat die Hauptschulabschlussprüfung nach Klasse 9 der Gemeinschaftsschule mit Erfolg abgelegt.',
+//                                            'Hat die Hauptschulabschlussprüfung nach Klasse 10 der Gemeinschaftsschule mit Erfolg abgelegt.' => 'Hat die Hauptschulabschlussprüfung nach Klasse 10 der Gemeinschaftsschule mit Erfolg abgelegt.',
+//                                    ],
+//                            ],
                             'projekt_thema' => [
                                     'title' => 'Thema',
                                     'type' => 'textarea',
@@ -4633,11 +4636,11 @@ function block_exastud_get_default_templates($templateid = null) {
                                     'lines' => 1,
                                     'cols' => 20,
                                     'maxchars' => 20,
-                            ],/*
-                            'subject_profile' => [
-                                    'title' => 'Profil-fach',
-                                    'type' => 'textarea',
-                            ],*/
+                            ],
+//                            'subject_profile' => [
+//                                    'title' => 'Profil-fach',
+//                                    'type' => 'textarea',
+//                            ],
                     ],
                     'inputs_header' => ['abgelegt'],
                     'inputs_footer' => ['ags', 'comments_short', 'eng_niveau', 'fra_niveau', 'spa_niveau'], // inputs in the footer of template
@@ -5184,8 +5187,8 @@ function block_exastud_get_grade_average_value($subjects = array(), $verbal = fa
     $template = block_exastud\print_template::create($templateid);
     switch ($templateid) {
         case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_ABSCHLUSSZEUGNIS_KL10_RSA:
-        case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_ABSCHLUSSZEUGNIS_KL9_10_HSA:
         case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_ABSCHLUSSZEUGNIS_KL9_10_HSA_2:
+        case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_ABSCHLUSSZEUGNIS_KL9_10_HSA:
             $avgCalcSubjects = array('D', 'M', 'E', 'G', 'Geo', 'Gk', 'WBS', 'Ph', 'Ch', 'Bio', 'Mu', 'BK', 'Sp');
             $avgCalcSubjectsWPF = array('WPF F', 'WPF AES', 'WPF Te');
             $avgCalcSubjectsProfil = array('Profil BK', 'Profil Mu', 'Profil Nwt', 'Profil IMP', 'Profile S', 'Profil Sp');
@@ -5209,8 +5212,8 @@ function block_exastud_get_grade_average_value($subjects = array(), $verbal = fa
             // Cause 'Ethik' we need to look not only for first value. So add this value later. now - ignore that
             switch ($templateid) {
                 case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_ABSCHLUSSZEUGNIS_KL10_RSA:
-                case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_ABSCHLUSSZEUGNIS_KL9_10_HSA:
                 case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_ABSCHLUSSZEUGNIS_KL9_10_HSA_2:
+                case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_ABSCHLUSSZEUGNIS_KL9_10_HSA:
                 case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_ABSCHLUSSZEUGNIS_HS:
                     // all subjects has the same weight (25.06.2019)
                     if (in_array($subject->shorttitle, $avgCalcSubjectsRel)) {

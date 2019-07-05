@@ -6,12 +6,17 @@ var unsaved = false;
         $(".exastud-review-form").on('change', 'select', function () {
             unsaved = true;
         });
+        // var reviewForm = $('.exastud-review-form').first();
+        $('.exastud-review-form .exastud-submit-button').on('click', function() {
+            unsaved = false; // do not shown the message if save button is pressed
+        });
+        // var submitButton = reviewForm.find('.exastud-submit-button');
 
-        // window.onbeforeunload = function unloadPage() {
-        //     if (unsaved) {
-        //         return M.str.block_exastud.textarea_charstomuch + '  ';
-        //     }
-        // };
+        window.onbeforeunload = function unloadPage() {
+            if (unsaved) {
+                return M.str.block_exastud.textarea_charstomuch + '  ';
+            }
+        };
     })
 })(block_exastud.jquery);
 
