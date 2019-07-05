@@ -592,7 +592,7 @@ switch ($type) {
         echo '</form>';
 
         if ($showUnlock) {
-            echo $output->heading2(block_exastud_trans(['de:Bewertung erneuet freigeben', 'en:Allow reviewing this class']));
+            echo $output->heading2(block_exastud_trans(['de:Bewertung erneut freigeben', 'en:Allow reviewing this class']));
 
             $unlocked_teachers =
                     (array) json_decode(block_exastud_get_class_data($class->id, BLOCK_EXASTUD_DATA_ID_UNLOCKED_TEACHERS), true);
