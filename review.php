@@ -203,12 +203,25 @@ function block_exastud_print_period($courseid, $period, $type, $openclass) {
                                         'type' => BLOCK_EXASTUD_DATA_ID_CROSS_COMPETENCES,
                                 ]), block_exastud_get_string('report_cross_competences'));
                        //head teacher lern- und sozialverhalten
-                        $generaldata[] =
+                        // only for list of reports
+                        $classHasNeededReport = false;
+                        $learnSocReports = block_exastud_getlearnandsocialreports();
+                        $classObj = block_exastud_get_class($myclass->id);
+                        foreach ($classstudents as $clstudent) {
+                            $studtemplate = block_exastud_get_student_print_template($classObj, $clstudent->id)->get_template_id();
+                            if (in_array($studtemplate, $learnSocReports)) {
+                                $classHasNeededReport = true;
+                                break;
+                            }
+                        }
+                        if ($classHasNeededReport) {
+                            $generaldata[] =
                                 html_writer::link(new moodle_url('/blocks/exastud/review_class_other_data.php', [
-                                        'courseid' => $courseid,
-                                        'classid' => $myclass->id,
-                                        'type' => BLOCK_EXASTUD_DATA_ID_LERN_UND_SOZIALVERHALTEN,
+                                    'courseid' => $courseid,
+                                    'classid' => $myclass->id,
+                                    'type' => BLOCK_EXASTUD_DATA_ID_LERN_UND_SOZIALVERHALTEN,
                                 ]), block_exastud_get_string('report_learn_and_sociale'));
+                        }
                     }
                     if (!block_exastud_get_only_learnsociale_reports() && $myclass->is_head_teacher) {
                         $generaldata[] =

@@ -136,6 +136,8 @@ if (true) { // block_exastud_can_edit_class($reviewclass)) {
 }
 
 foreach ($classstudents as $classstudent) {
+    $studenttemplateid =  block_exastud_get_student_print_template($class, $classstudent->id)->get_template_id();
+
     $hideReviewButton = false;
 
 	$icons = '<img src="'.$CFG->wwwroot.'/pix/i/edit.gif" width="16" height="16" alt="'.block_exastud_get_string('edit').'" />';
@@ -182,6 +184,11 @@ foreach ($classstudents as $classstudent) {
             //$hasInputs = !!block_exastud_get_class_bilingual_template($class->id)->get_inputs(BLOCK_EXASTUD_DATA_ID_BILINGUALES);
             break;
         case BLOCK_EXASTUD_DATA_ID_LERN_UND_SOZIALVERHALTEN:
+            // learn and social report must be only for 6,7,8,9 reports
+            $learnSocReports = block_exastud_getlearnandsocialreports();
+            if (!in_array($studenttemplateid, $learnSocReports)) {
+                $hideReviewButton = ' ';
+            }
             $hasInputs = !!$categories;
             $personalHeadTeacher = block_exastud_get_personal_head_teacher($class->id, $classstudent->id, true);
             if ($personalHeadTeacher !== null && $personalHeadTeacher != $USER->id) {

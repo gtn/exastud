@@ -1929,7 +1929,7 @@ class printer {
                 // replace default marker
                 if (in_array($dItem, ['---', '/--empty--/', '/--set-empty--/'])) {
                     if (in_array($dKey, ['profilfach_titel', 'wahlfach_titel'])) {
-                        $select_text = '--';
+                        $select_text = '---';
                     } else {
                         $select_text = 'Wählen Sie ein Element aus.';
                     }

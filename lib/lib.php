@@ -5721,6 +5721,15 @@ function block_exastud_crop_value_by_template_input_setting($value, $templateid,
     return $result;
 }
 
+function block_exastud_getlearnandsocialreports() {
+    return [
+        BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_HALBJAHR_LERNENTWICKLUNGSBERICHT,
+        BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_JAHRESZEUGNIS_LERNENTWICKLUNGSBERICHT,
+        BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_HALBJAHR_LERNENTWICKLUNGSBERICHT,
+        BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_JAHRESZEUGNIS_LERNENTWICKLUNGSBERICHT,
+    ];
+}
+
 
 /*
 function block_exastud_encrypt_raw($value, $secret) {

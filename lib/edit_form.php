@@ -455,11 +455,18 @@ class student_other_data_form extends moodleform {
         $tempCurrentElementGroup = '';
         $addFormElement = function($dataid, $input, $pObj) use ($mform, $defaulttemplatesettings, $bilingualTemplates, &$tempCurrentElementGroup) {
             static $previousDataid;
+            $activate_close_before_modifiedfield = false; // we need it because 'static' element does not have relation by element id (isn't ?)
 
-            // close header before current if it was a language niveaus
+            // close header before new element if before it was a language niveaus (spa)
             if ($previousDataid == 'spa_niveau') {
                 if ($mform->elementExists('header_'.$previousDataid)) {
-                    $mform->closeHeaderBefore($dataid);
+                    if (@$pObj->_customdata['modified'] && $input['type'] == 'textarea') {
+                        // if 'modified' exists - next element will be closed autmatically.
+                        // now - only for textareas !!!!!
+                        $activate_close_before_modifiedfield = true;
+                    } else {
+                        $mform->closeHeaderBefore($dataid);
+                    }
                 }
             }
 
@@ -482,7 +489,7 @@ class student_other_data_form extends moodleform {
                     }
                     $maxchars = '550';
                     if (@$pObj->_customdata['modified']) {
-                        $mform->addElement('static', '', '', $pObj->_customdata['modified']);
+                        $mform->addElement('static', 'modified_'.$dataid, '', $pObj->_customdata['modified']);
                     }
 
                     if (empty($input['lines'])) {
@@ -505,7 +512,7 @@ class student_other_data_form extends moodleform {
                         }
                     }
 
-                    $height = $input['lines'] * 20;
+                    $height = $input['lines'] * 22;
                     if ($input['lines'] == 1) {
                         $height = 35;
                     }
@@ -569,8 +576,8 @@ class student_other_data_form extends moodleform {
                                     'accepted_types' => array('web_image'))
                     );
                     break;
-                case 'textarea':
-                    break;
+//                case 'textarea':
+//                    break;
                 default:
                     $mform->addElement('header', 'header_'.$dataid, $input['title']);
                     $mform->setExpanded('header_'.$dataid);
