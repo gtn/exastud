@@ -862,15 +862,7 @@ class printer {
                     }
 
                     if (!trim($grade)) {
-                        $grade = '--';
-                        if (in_array($templateid, [ // change -- to ---
-                            BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_HALBJAHRESINFORMATION_KL11,
-                            BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_JAHRESZEUGNIS_KL11,
-                            BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_HALBJAHRESINFORMATION_KL11,
-                            BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_JAHRESZEUGNIS_KL11,
-                        ])) {
-                            $grade = '---';
-                        }
+                        $grade = '---';
                     }
                     $ret = preg_replace('!('.preg_quote($gradeSearch, '!').'.*)'.$placeholder.'note!U', '${1}'.$grade, $content,
                             1, $count);
@@ -1267,15 +1259,8 @@ class printer {
 
 			// alle restlichen noten dropdowns zurücksetzen
 			$add_filter(function($content) use ($placeholder, $templateid) {
-                $replaceTo = '--';
-                if (in_array($templateid, [ // change -- to ---
-                    BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_HALBJAHRESINFORMATION_KL11,
-                    BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_JAHRESZEUGNIS_KL11,
-                    BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_HALBJAHRESINFORMATION_KL11,
-                    BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_JAHRESZEUGNIS_KL11,
-                ])) {
-                    $replaceTo = '---';
-                }
+                $replaceTo = '---';
+               
 				return str_replace($placeholder.'note', $replaceTo, $content);
 			});
 		} else if (in_array($templateid, [
