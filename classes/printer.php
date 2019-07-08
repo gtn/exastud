@@ -850,7 +850,7 @@ class printer {
                 $add_filter([
                         'grade',
                         $gradeSearch,
-                ], function($content) use ($gradeSearch, $grade, $placeholder, $dropdownsBetween) {
+                ], function($content) use ($gradeSearch, $grade, $placeholder, $dropdownsBetween, $templateid) {
                     if (!preg_match('!('.preg_quote($gradeSearch, '!').'.*)'.$placeholder.'note!U', $content, $matches)) {
                          //var_dump(['fach nicht gefunden', $gradeSearch]);
                         return $content;
@@ -863,6 +863,14 @@ class printer {
 
                     if (!trim($grade)) {
                         $grade = '--';
+                        if (in_array($templateid, [ // change -- to ---
+                            BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_HALBJAHRESINFORMATION_KL11,
+                            BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_JAHRESZEUGNIS_KL11,
+                            BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_HALBJAHRESINFORMATION_KL11,
+                            BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_JAHRESZEUGNIS_KL11,
+                        ])) {
+                            $grade = '---';
+                        }
                     }
                     $ret = preg_replace('!('.preg_quote($gradeSearch, '!').'.*)'.$placeholder.'note!U', '${1}'.$grade, $content,
                             1, $count);
@@ -1258,8 +1266,17 @@ class printer {
 			});
 
 			// alle restlichen noten dropdowns zurücksetzen
-			$add_filter(function($content) use ($placeholder) {
-				return str_replace($placeholder.'note', '--', $content);
+			$add_filter(function($content) use ($placeholder, $templateid) {
+                $replaceTo = '--';
+                if (in_array($templateid, [ // change -- to ---
+                    BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_HALBJAHRESINFORMATION_KL11,
+                    BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_JAHRESZEUGNIS_KL11,
+                    BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_HALBJAHRESINFORMATION_KL11,
+                    BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_JAHRESZEUGNIS_KL11,
+                ])) {
+                    $replaceTo = '---';
+                }
+				return str_replace($placeholder.'note', $replaceTo, $content);
 			});
 		} else if (in_array($templateid, [
 		        BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_ANLAGE_ZUM_LERNENTWICKLUNGSBERICHT
@@ -1953,12 +1970,22 @@ class printer {
                                                 <w:color w:val="555555" />
 										        <w:sz w:val="14" />
 										        ${6}'.$select_text.'${7}', $content, -1, $count);*/
+                                // something wrong with next reports. use anoher sttyle for them
+                                $styleFor = '<w:color w:val="555555" />
+										        <w:sz w:val="14" />';
+                                if ($dKey == 'profilfach_titel' && array($templateid, [
+                                        BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_HALBJAHRESINFORMATION_KL11,
+                                        BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_JAHRESZEUGNIS_KL11,
+                                        BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_HALBJAHRESINFORMATION_KL11,
+                                        BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_JAHRESZEUGNIS_KL11,
+                                ])) {
+                                    $styleFor = '<w:rStyle w:val="Formatvorlage108"/>';
+                                }
                                 // next trying: the sdtContent always after dropdown items?
                                 $ret = preg_replace('~(\${'.$dKey.'}.*)(<w:sdtContent>.*)(<w:pPr>.*<\/w:pPr>)(.*)(<w:rPr>)(.*)(<\/w:rPr>[^\/]*)\${'.$dKey.'}(.*<\/w:sdtContent>)~Us',
-                                                '${1}${2}${3}${4}${5}
-                                                <w:color w:val="555555" />
-										        <w:sz w:val="14" />
-										        ${7}'.$select_text.'${8}', $content, -1, $count);
+                                                '${1}${2}${3}${4}${5}'.
+                                                $styleFor.
+                                                '${7}'.$select_text.'${8}', $content, -1, $count);
                             }
                             if (!$count) { // another dropdown
                                 $ret = preg_replace('~(<w:sdtContent>[^\/]*)\${'.$dKey.'}(.*<\/w:sdtContent>)~Us',
