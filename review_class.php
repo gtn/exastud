@@ -284,9 +284,7 @@ if ($isSubjectTeacher) {
                                                     $classstudent->id,
                                                     $teacherid));
         $canReviewStudent = true;
-        if (count($reports_from_anotherteachers) > 0) {
-            $canReviewStudent = false;
-        };
+
 //var_dump($canReviewStudent).'<br>';
         $subjectData = block_exastud_get_review($classid, $subjectid, $classstudent->id);
 
@@ -425,13 +423,7 @@ if ($isSubjectTeacher) {
                 $row->cells[] = '';
             }
             // Fachkompetenzen column
-            if (!$editSubjectReview && count($reports_from_anotherteachers) > 0) {
-                // if this student has review from another teacher
-                $row->cells[] = ($visible ?
-                    $output->link_button($CFG->wwwroot.'/blocks/exastud/review_student.php?courseid='.$courseid.'&classid='.
-                        $classid.'&subjectid='.$subjectid.'&studentid='.$classstudent->id,
-                        block_exastud_get_string('show'), ['class' => 'btn btn-primary']) : '');
-            } elseif ($editSubjectReview) {
+            if ($editSubjectReview) {
                 $row->cells[] = ($visible ?
                         $output->link_button($CFG->wwwroot.'/blocks/exastud/review_student.php?courseid='.$courseid.'&classid='.
                                 $classid.'&subjectid='.$subjectid.'&studentid='.$classstudent->id,
@@ -442,13 +434,7 @@ if ($isSubjectTeacher) {
         }
 
         // Überfachliche Beurteilungen
-        if (!$editCrossCategories && count($reports_from_anotherteachers) > 0) {
-            // if this student has review from another teacher
-            $row->cells[] = ($visible ?
-                $output->link_button($CFG->wwwroot.'/blocks/exastud/review_student.php?courseid='.$courseid.'&classid='.
-                    $classid.'&subjectid='.$subjectid.'&studentid='.$classstudent->id.'&reporttype=inter',
-                    block_exastud_get_string('show'), ['class' => 'btn btn-primary']) : '');
-        } elseif ($editCrossCategories) {
+        if ($editCrossCategories) {
             $row->cells[] = ($visible ?
                     $output->link_button($CFG->wwwroot.'/blocks/exastud/review_student.php?courseid='.$courseid.'&classid='.
                                             $classid.'&subjectid='.$subjectid.'&studentid='.$classstudent->id.'&reporttype=inter',
