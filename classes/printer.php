@@ -1941,6 +1941,7 @@ class printer {
 
                     // delete stdContent
                     $add_filter(function($content) use ($dKey, $templateid, $select_text) {
+//                        $ret = '';
                         //try {
                             //$ret = preg_replace('!(<w:sdtContent>.*)\${'.$dKey.'}(.*<\/w:sdtContent>)!Us', '${1}Wählen Sie ein Element aus.${2}', $content, -1, $count);
                             // add custom style to Placeholder
@@ -1958,14 +1959,19 @@ class printer {
                                 // something wrong with next reports. use anoher sttyle for them
                                 $styleFor = '<w:color w:val="555555" />
 										        <w:sz w:val="14" />';
-                                if ($dKey == 'profilfach_titel' && array($templateid, [
+                                if ($dKey == 'profilfach_titel' /*&& in_array($templateid, [
                                         BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_HALBJAHRESINFORMATION_KL11,
                                         BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_JAHRESZEUGNIS_KL11,
                                         BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_HALBJAHRESINFORMATION_KL11,
                                         BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_JAHRESZEUGNIS_KL11,
-                                ])) {
+                                ])*/)  {
                                     $styleFor = '<w:rStyle w:val="Formatvorlage108"/>';
-                                }
+                                } /*elseif ($dKey = 'wahlfach_titel' && in_array($templateid, [
+                                        BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_GLEICHWERTIGER_BILDUNGSABSCHLUSS_RSA
+                                    ])) {
+                                    $styleFor = '<w:color w:val="555555" />
+										        <w:sz w:val="20" />';
+                                }*/
                                 // next trying: the sdtContent always after dropdown items?
                                 $ret = preg_replace('~(\${'.$dKey.'}.*)(<w:sdtContent>.*)(<w:pPr>.*<\/w:pPr>)(.*)(<w:rPr>)(.*)(<\/w:rPr>[^\/]*)\${'.$dKey.'}(.*<\/w:sdtContent>)~Us',
                                                 '${1}${2}${3}${4}${5}'.

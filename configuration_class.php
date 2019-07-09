@@ -176,34 +176,39 @@ echo $output->header(['configuration_classes', $type], ['class' => $class]);
 switch ($type) {
     /* Print the Students */
     case 'students':
-        require_once($CFG->dirroot.'/blocks/exastud/lib/edit_form.php');
-        $addFromClassForm = new add_students_via_class_parameter_form(
-                'configuration_class.php?courseid='.$courseid.'&classid='.$class->id.'&type=students'
-        );
-        if ($addFromClassForm->is_cancelled()) {
-            redirect(new moodle_url('/blocks/exastud/configuration_class.php?courseid='.$courseid.'&classid='.$class->id.'&type=students'));
-        } else if ($classToAdd = $addFromClassForm->get_data()) {
-            $fieldId = $DB->get_field('user_info_field', 'id', ['shortname' => 'class'], IGNORE_MULTIPLE);
-            if (!$fieldId) {
-                throw new moodle_exception('no Klasse/Lerngruppe field for user!');
-            }
-            $searchValue = trim(@$classToAdd->class_toadd);
-            if ($searchValue) {
-                $users = $DB->get_fieldset_select('user_info_data', 'userid', 'fieldid = ? AND data = ?', [$fieldId, $searchValue]);
-                if ($users && count($users)) {
-                    $existingusers = block_exastud_get_class_students($class->id);
-                    foreach ($users as $user) {
-                        if (!array_key_exists($user, $existingusers)) {
-                            $newuser = new stdClass();
-                            $newuser->studentid = $user;
-                            $newuser->classid = $class->id;
-                            $newuser->timemodified = time();
-                            $DB->insert_record('block_exastudclassstudents', $newuser);
+        $showaddtoclassform = false;
+        $classstudents = block_exastud_get_class_students($class->id);
+        if (!$classstudents) {
+            $showaddtoclassform = true;
+            require_once($CFG->dirroot . '/blocks/exastud/lib/edit_form.php');
+            $addFromClassForm = new add_students_via_class_parameter_form(
+                'configuration_class.php?courseid=' . $courseid . '&classid=' . $class->id . '&type=students'
+            );
+            if ($addFromClassForm->is_cancelled()) {
+                redirect(new moodle_url('/blocks/exastud/configuration_class.php?courseid=' . $courseid . '&classid=' . $class->id . '&type=students'));
+            } else if ($classToAdd = $addFromClassForm->get_data()) {
+                $fieldId = $DB->get_field('user_info_field', 'id', ['shortname' => 'class'], IGNORE_MULTIPLE);
+                if (!$fieldId) {
+                    throw new moodle_exception('no Klasse/Lerngruppe field for user!');
+                }
+                $searchValue = trim(@$classToAdd->class_toadd);
+                if ($searchValue) {
+                    $users = $DB->get_fieldset_select('user_info_data', 'userid', 'fieldid = ? AND data = ?', [$fieldId, $searchValue]);
+                    if ($users && count($users)) {
+                        $existingusers = block_exastud_get_class_students($class->id);
+                        foreach ($users as $user) {
+                            if (!array_key_exists($user, $existingusers)) {
+                                $newuser = new stdClass();
+                                $newuser->studentid = $user;
+                                $newuser->classid = $class->id;
+                                $newuser->timemodified = time();
+                                $DB->insert_record('block_exastudclassstudents', $newuser);
+                            }
                         }
                     }
+                } else {
+                    echo $output->notification(block_exastud_get_string('please_enter_group_name'), 'warning');
                 }
-            } else {
-                echo $output->notification(block_exastud_get_string('please_enter_group_name'), 'warning');
             }
         }
 
@@ -257,7 +262,9 @@ switch ($type) {
 
             echo $buttons_left;
 
-            // add students via profile field 'class'
+        }
+        // add students via profile field 'class'
+        if ($showaddtoclassform) {
             echo $addFromClassForm->display();
         }
         break;
