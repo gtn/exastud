@@ -311,7 +311,7 @@ if ($isSubjectTeacher) {
                 unset($tabledeletecolumns['subjects']);
             }
 			// show learn and social if the report has input for this and if I am a main teacher for the student
-            if ($personalHeadTeacher !== null && $personalHeadTeacher == $USER->id && array_key_exists('learn_social_behavior', $allinputs)) {
+            if (array_key_exists('learn_social_behavior', $allinputs)) {
                 $editLearnSocialBehavior = true;
                 unset($tabledeletecolumns['learnsocial']);
             }
