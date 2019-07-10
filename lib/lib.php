@@ -5219,15 +5219,17 @@ function block_exastud_get_grade_average_value($subjects = array(), $verbal = fa
                             $rsum += $gradeForCalc;
                             $rcnt++;
                         }
-                        $sum += $gradeForCalc;
-                        $scnt++;
+                        if (!empty ($gradeForCalc)){
+	                        $sum += $gradeForCalc;
+	                        $scnt++;
+	                      }
 //                        echo $subject->title.' added with '.$gradeForCalc.'<br>';
                     }
                     break;
-                default: // may be delete this?
+                default: 
                     if (in_array($subject->shorttitle, $avgCalcSubjectsRel)) {
                         $religionGrade = $gradeForCalc;
-                    } else {
+                    } elseif (!in_array($subject->shorttitle, $avgCalcSubjectsProfil)) { //do not count profilfach
                         if (in_array($subject->shorttitle, $avgCalcSubjectsWPF)) {
                             if ($WPFadded) { // only first WPF subject
                                 continue;
@@ -5244,8 +5246,10 @@ function block_exastud_get_grade_average_value($subjects = array(), $verbal = fa
                             $rsum += $gradeForCalc;
                             $rcnt++;
                         }
-                        $sum += $gradeForCalc;
-                        $scnt++;
+                        if (!empty ($gradeForCalc)){
+	                        $sum += $gradeForCalc;
+	                        $scnt++;
+	                      }
                     }
             }
             /*if ($subject) {
@@ -5267,8 +5271,8 @@ function block_exastud_get_grade_average_value($subjects = array(), $verbal = fa
     $projekt_grade = (float)block_exastud_get_grade_index_by_value(@$grades[@$studentdata->projekt_grade]);
 //    echo $projekt_grade;
     if ($projekt_grade && $projekt_grade > 0) {
-        $sum += $projekt_grade;
-        $scnt++;
+	    $sum += $projekt_grade;
+	    $scnt++;
     }
     if (isset($religionGrade) && $religionGrade > 0) {
         $sum += $religionGrade;
