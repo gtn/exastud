@@ -99,7 +99,7 @@ return [
 		'Reports',
 	],
 	'reports_server_notification' => [
-		'Falls der Bericht nicht ordnungsgemäß generiert wird, könnte dies auf eine zu große Datenmenge bzw. eine zu geringe Server-Einstellung hinweisen. Bitte kontaktieren Sie in diesem Fall den Administrator des Servers.',
+		'Falls der Bericht nicht ordnungsgemäß generiert wird, könnte dies auf eine zu große Datenmenge (timeout) hinweisen. Bitte drucken Sie in diesem Fall nicht die ganze Klasse, sondern jeweils nur eine Teilauswahl.',
 		'If the report is not generated correctly, it could indicate an excessive amount of data or a server setting that is too low. Please contact the administrator of the server in this case.',
 	],
 	'periods' => [
