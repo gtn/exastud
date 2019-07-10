@@ -128,7 +128,7 @@ $reviewdata = $DB->get_record('block_exastudreview',
 
 // if the student has a review from another teacher - probably this student was hidden and than again shown
 // such student is not able to be review again
-$reports_from_anotherteachers = $DB->get_record_sql('SELECT * FROM {block_exastudreview}
+/*$reports_from_anotherteachers = $DB->get_record_sql('SELECT * FROM {block_exastudreview}
                                                     WHERE subjectid = ?
                                                         AND periodid = ?
                                                         AND studentid = ?
@@ -137,13 +137,13 @@ $reports_from_anotherteachers = $DB->get_record_sql('SELECT * FROM {block_exastu
         $actPeriod->id,
         $studentid,
         $teacherid),
-    IGNORE_MULTIPLE);
+    IGNORE_MULTIPLE);*/
 $canReviewStudent = true; // I can review by default
-if ($reports_from_anotherteachers && count($reports_from_anotherteachers) > 0) {
+/*if ($reports_from_anotherteachers && count($reports_from_anotherteachers) > 0) {
     //$canReviewStudent = false;
     // change review data to data frm another teacher (first, it must be single?)
     $reviewdata = $reports_from_anotherteachers;
-};
+};*/
 
 if ($reviewdata) {
 	foreach ($categories as $category) {
