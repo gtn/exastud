@@ -2590,17 +2590,30 @@ class printer {
             }*/
 
             // 2. subject by subject
+						 $zu="
+	              ";//linebreak in word
             foreach (block_exastud_get_class_subjects($class) as $class_subject) {
-                $class_subject->teacher = block_exastud_get_class_teacher_by_subject($class->id, $class_subject->id);
-                $class_subject->review = g::$DB->get_field('block_exastudreview', 'review', [
-                        'studentid' => $student->id,
-                        'subjectid' => $class_subject->id,
-                        'periodid' => $class->periodid,
-                        'teacherid' => $class_subject->teacher->id,
-                ]);
-                if ($class_subject->review) {
-                    $reviews[$class_subject->id] = $class_subject;
-                }
+                $steachers = block_exastud_get_class_teachers_by_subject($class->id, $class_subject->id);
+             		$tempreview="";
+                foreach ($steachers as  $steacher){
+	                $class_subject->review = g::$DB->get_field('block_exastudreview', 'review', [
+	                        'studentid' => $student->id,
+	                        'subjectid' => $class_subject->id,
+	                        'periodid' => $class->periodid,
+	                        'teacherid' => $steacher->id,
+	                ]);
+	                if ($class_subject->review) {
+	                    $tempreview .= fullname($steacher).":<br>".$class_subject->review."<br><br>";	                  
+	                }
+	              }
+	             
+	                if ($tempreview!="") {
+	                	$tempreview=preg_replace('/^<br><br>/','',$tempreview);
+	                	$class_subject->review=str_replace ("<br>",$zu,$tempreview);
+	                  $reviews[$class_subject->id] = $class_subject;
+	                }
+	                
+	              
             }
 
             if (count($reviews)) {
