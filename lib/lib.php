@@ -359,8 +359,8 @@ function block_exastud_get_class_teacher_by_subject($classid, $subjectid) {
 			    ORDER BY u.lastname, u.firstname',
         [$classid, $subjectid], IGNORE_MULTIPLE);
 }
-function block_exastud_get_class_teacher_by_subject($classid, $subjectid) {
-	return g::$DB->get_record_sql('
+function block_exastud_get_class_teachers_by_subject($classid, $subjectid) {
+	return g::$DB->get_records_sql('
 			SELECT u.*
 			    FROM {user} u
 			        JOIN {block_exastudclassteachers} ct ON ct.teacherid=u.id
@@ -368,7 +368,7 @@ function block_exastud_get_class_teacher_by_subject($classid, $subjectid) {
 			        JOIN {block_exastudsubjects} s ON ct.subjectid = s.id AND s.bpid=c.bpid
 			    WHERE c.id = ? AND u.deleted = 0 AND s.id = ?
 			    ORDER BY u.lastname, u.firstname',
-        [$classid, $subjectid], IGNORE_MULTIPLE);
+        [$classid, $subjectid]);
 }
 function block_exastud_is_profilesubject_teacher($classid, $userid = null) {
     global $USER;
