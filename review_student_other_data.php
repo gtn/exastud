@@ -290,6 +290,7 @@ if ($type == BLOCK_EXASTUD_DATA_ID_CROSS_COMPETENCES) {
     echo $OUTPUT->heading($studentdesc);
 
     $vorschlaege = [];
+
     // 1. if the teacher can review Learn only ONE time for all own subjects
     /*	foreach (block_exastud_get_class_teachers($classid) as $class_teacher) {
             if ($class_teacher->subjectid == BLOCK_EXASTUD_SUBJECT_ID_ADDITIONAL_HEAD_TEACHER) {
@@ -316,26 +317,30 @@ if ($type == BLOCK_EXASTUD_DATA_ID_CROSS_COMPETENCES) {
 
     // 2. the teacher can review different subjects with different results
     foreach (block_exastud_get_class_subjects($class) as $class_subject) {
-        $class_subject->teacher = block_exastud_get_class_teacher_by_subject($classid, $class_subject->id);
-        $class_subject->vorschlag = $DB->get_field('block_exastudreview', 'review', [
-                'studentid' => $studentid,
-                'subjectid' => $class_subject->id,
-                'periodid' => $actPeriod->id,
-                'teacherid' => $class_subject->teacher->id,
-        ]);
-        if ($class_subject->vorschlag) {
-            $vorschlaege[$class_subject->id] = $class_subject;
-        }
+        $steachers = block_exastud_get_class_teachers_by_subject($classid, $class_subject->id);
+        foreach ($steachers as  $steacher){
+	        $class_subject->vorschlag = $DB->get_field('block_exastudreview', 'review', [
+	                'studentid' => $studentid,
+	                'subjectid' => $class_subject->id,
+	                'periodid' => $actPeriod->id,
+	                'teacherid' => $steacher->id,
+	        ]);
+	        if ($class_subject->vorschlag) {
+	            $vorschlaege[$class_subject->id]["subjecttitle"] = $class_subject->title;
+	            $vorschlaege[$class_subject->id]["subjectvorschlag"][$steacher->id]["vorschlag"] = $class_subject->vorschlag;
+	            $vorschlaege[$class_subject->id]["subjectvorschlag"][$steacher->id]["teacher"] = fullname($steacher);
+	        }
+	      }
     }
 
     echo '<legend>'.block_exastud_get_string("textblock").'</legend>';
-
     if ($vorschlaege) {
-        foreach ($vorschlaege as $vorschlag) {
-            //echo '<div style="font-weight: bold;">'.$vorschlag->subject_title.':</div>'.$vorschlag->vorschlag;
-            echo '<div style="font-weight: bold;">'.$vorschlag->title.' ('.fullname($vorschlag->teacher).'):</div>'.$vorschlag->vorschlag;
-            echo '<hr>';
-        }
+    	 foreach ($vorschlaege as $subjecta) {
+    	 		echo '<div style="font-weight: bold;">'.$subjecta["subjecttitle"].':</div>';
+    	 		foreach ($subjecta["subjectvorschlag"] as $vorschlag) {
+    	 			echo '<div style="padding-left:10px;"><b>'.$vorschlag["teacher"].': </b>'.$vorschlag["vorschlag"]."</div>";
+    	 		}
+       }
     } else {
         echo block_exastud_trans('de:Keine Vorschläge gefunden');
     }
