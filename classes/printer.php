@@ -975,7 +975,8 @@ class printer {
 //			echo '3: '.(($scnt - $rcnt) + 1).'<br>';
 			if ($avg > 4.4 && $useRelevantKoef) {
 			    $avg = (($sum - $rsum) + $min) / (($scnt - $rcnt) + 1);
-            }
+			    $avg = 0; //customer request 11.7.2019, additional conditions will be necessary
+      }
 //			echo 'new'.$avg;
 //			exit;
 			if (in_array($templateid, [
