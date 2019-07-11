@@ -920,14 +920,16 @@ class printer {
                                     $rcnt++;
                                 }
 //                                echo 'added '.$subject->title.': '.$gradeForCalc.'<br>';
-                                $sum += $gradeForCalc;
-                                $scnt++;
+	                              if (!empty ($gradeForCalc)){
+	                                $sum += $gradeForCalc;
+	                                $scnt++;
+	                              }
                             }
                             break;
-                        default: // may be delete this?
+                        default:
                             if (in_array($subject->shorttitle, $avgCalcSubjectsRel)) {
                                 $religionGrade = $gradeForCalc;
-                            } else {
+                            } elseif (!in_array($subject->shorttitle, $avgCalcSubjectsProfil)) { // no calculate for Prifolefach
                                 $useRelevantKoef = true;
                                 if (($subject->not_relevant == 1 && $template->get_rs_hs_category() == 'HS')
                                         || ($subject->not_relevant_rs == 1 && $template->get_rs_hs_category() == 'RS')
@@ -935,11 +937,15 @@ class printer {
                                     if ($gradeForCalc < $min) {
                                         $min = $gradeForCalc;
                                     }
-                                    $rsum += $gradeForCalc;
-                                    $rcnt++;
+                                    if (!empty ($gradeForCalc)){
+	                                    $rsum += $gradeForCalc;
+	                                    $rcnt++;
+	                                  }
                                 }
-                                $sum += $gradeForCalc;
-                                $scnt++;
+	                        			if (!empty ($gradeForCalc)){
+	                                $sum += $gradeForCalc;
+	                                $scnt++;
+	                              }
                             }
                     }
                 }
