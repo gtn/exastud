@@ -5341,6 +5341,8 @@ function block_exastud_get_grade_average_value($subjects = array(), $verbal = fa
             $avgVerbal = 'ausreichend';
         } else if ($avg >= 4.5) {
             $avgVerbal = 'mangelhaft';
+        } else if ($avg == 0) {
+            $avgVerbal = '';
         }
         return $avgVerbal;
     }

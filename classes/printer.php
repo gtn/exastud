@@ -1005,6 +1005,9 @@ class printer {
                 } else if ($avg >= 4.5) {
                     $avgForVerbal = '5';
                     $avgVerbal = 'mangelhaft';
+                }else if ($avg == 0) {
+                    $avgForVerbal = '0';
+                    $avgVerbal = '';
                 }
                 // other selectboxes
 //                if ($templateid == BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_ABSCHLUSSZEUGNIS_KL10_RSA) {
