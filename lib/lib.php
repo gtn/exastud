@@ -6004,6 +6004,62 @@ function block_exastud_upgrade_old_lern_social_reviews_temporary_function() {
 
 }
 
+function block_exastud_export_mysql_table($table = '', $filename = false) {
+    global $DB;
+
+    $queryTables = $DB->get_records_sql('SHOW TABLES');
+    $target_tables = array_keys($queryTables);
+    $table = $DB->get_prefix().$table;
+
+    if (!in_array($table, $target_tables)) {
+        return '';
+    }
+
+    $result = $DB->get_records_sql('SELECT * FROM '.$table);
+    $fields = array_keys((array)reset($result));
+    $fields_amount = count($fields);
+    $rows_num = count($result);
+    $res = $DB->get_records_sql('SHOW CREATE TABLE '.$table);
+    $TableMLine = $res[$table]->{'create table'};
+    $content = "\n\n".$TableMLine.";\n\n";
+    $i = 0;
+    $st_counter = 0;
+    foreach ($result as $row) {
+        $row = (array)$row;
+        // when started (and every after 100 command cycle):
+        if ($st_counter%100 == 0 || $st_counter == 0 ) {
+            $content .= "\nINSERT INTO ".$table." VALUES";
+        }
+        $content .= "\n(";
+        foreach ($fields as $j => $field) {
+            $row[$field] = str_replace("\n","\\n", addslashes($row[$field]) );
+            if (isset($row[$field])) {
+                $content .= '"'.$row[$field].'"';
+            } else {
+                $content .= '""';
+            }
+            if ($j < ($fields_amount - 1)) {
+                $content .= ',';
+            }
+        }
+        $content .= ")";
+        //every after 100 command cycle [or at last line] ....p.s. but should be inserted 1 cycle eariler
+        if ( (($st_counter+1)%100==0 && $st_counter!=0) || $st_counter+1 == $rows_num) {
+            $content .= ";";
+        } else {
+            $content .= ",";
+        }
+        $st_counter++;
+    }
+    $content .="\n\n\n";
+
+    $filename = $filename ? $filename : $table.'__'.date('d-m-Y-H-i-s').'.sql';
+    header('Content-Type: application/octet-stream');
+    header("Content-Transfer-Encoding: Binary");
+    header("Content-disposition: attachment; filename=\"".$filename."\"");
+    echo $content; exit;
+}
+
 
 /*
 function block_exastud_encrypt_raw($value, $secret) {

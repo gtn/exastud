@@ -298,28 +298,33 @@ if ($ADMIN->fulltree) {
     if (optional_param('upgradedb', 0, PARAM_INT)) {
         // do upgrading!!!!!!
         block_exastud_upgrade_old_lern_social_reviews_temporary_function();
+        block_exastud_export_mysql_table('block_exastudreview');
     }
     $pluginupgr_tstamp = $DB->get_records('upgrade_log', ['plugin' => 'block_exastud',
             'targetversion' => '2019070509', //'2019052700',
     ]);
-    $pluginupgr_tstamp = end($pluginupgr_tstamp);
-    $pluginupgr_tstamp = $pluginupgr_tstamp->timemodified;
-    if ($pluginupgr_tstamp > 0) {
-        $oldLernExisting = $DB->get_records_sql('SELECT * 
+    if ($pluginupgr_tstamp) {
+        $pluginupgr_tstamp = end($pluginupgr_tstamp);
+        $pluginupgr_tstamp = $pluginupgr_tstamp->timemodified;
+        if ($pluginupgr_tstamp > 0) {
+            $oldLernExisting = $DB->get_records_sql('SELECT * 
                                             FROM {block_exastudreview}
                                             WHERE timemodified < ? 
                                               AND subjectid = ? ',
-                [$pluginupgr_tstamp, BLOCK_EXASTUD_SUBJECT_ID_LERN_UND_SOZIALVERHALTEN_VORSCHLAG]);
-        if (count($oldLernExisting) > 0) {
-            $settings->add(new block_exastud_link_to('link_to_update_db',
-                    'Datenupdate nach Pluginupdate 8. Juli 2019',
-                    'Lern und Sozialverhalten Daten vor 8.Juli 2019 sind nach dem PluginUpdate eventuell nicht mehr sichtbar, dieses Update behebt das Problem. Bitte vorher Datensicherung durchführen!',
-                    '',
-                    'settings.php',
-                    'Upgrade',
-                    ['section' => 'blocksettingexastud', 'upgradedb' => 1],
-                    ['class' => 'btn btn-default'],
-                    true));
+                    [$pluginupgr_tstamp, BLOCK_EXASTUD_SUBJECT_ID_LERN_UND_SOZIALVERHALTEN_VORSCHLAG]);
+            if (count($oldLernExisting) > 0) {
+                $settings->add(new block_exastud_link_to('link_to_update_db',
+                        'Datenupdate nach Pluginupdate 8. Juli 2019',
+                        'Lern und Sozialverhalten Daten vor 8.Juli 2019 sind nach dem PluginUpdate eventuell nicht mehr sichtbar, dieses Update behebt das Problem. Bitte vorher Datensicherung durchführen!',
+                        '',
+                        'settings.php',
+                        'Upgrade',
+                        ['section' => 'blocksettingexastud', 'upgradedb' => 1],
+                        [   'class' => 'btn btn-default',
+                            'id' => 'backupDBbtn',
+                            'onclick' => 'var newText = document.createElement(\'p\'); newText.innerHTML = \'<strong>Done! Save backup!</strong>\'; var btn = document.getElementById(\'backupDBbtn\'); btn.parentNode.replaceChild(newText, btn); return true;'],
+                        true));
+            }
         }
     }
 }
