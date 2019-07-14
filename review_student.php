@@ -34,6 +34,7 @@ setcookie('lastclass', $classid);
 
 block_exastud_require_login($courseid);
 
+
 if (!$returnurl) {
 	$returnurl = new moodle_url('/blocks/exastud/review_class.php?courseid='.$courseid.'&classid='.$classid.'&subjectid='.$subjectid.'&openclass='.$classid);
 }
@@ -402,7 +403,6 @@ if ($lastPeriodClass) {
                     }
                 }
         }
-
 
         if (!$formdata->review) {
             $formdata->review = ''; // if no data from last period

@@ -5776,6 +5776,226 @@ function block_exastud_getlearnandsocialreports() {
     ];
 }
 
+// temp function
+// update DB data for some installations, where is wrong 'Lern und...'
+// look a button in plugin settings
+function block_exastud_upgrade_old_lern_social_reviews_temporary_function() {
+    global $DB;
+    // 1. get time of plugin upgrading top version 2019052700
+    // it is a version where was deleted subjectid = -3
+    $pluginupgr_tstamp = $DB->get_records('upgrade_log', ['plugin' => 'block_exastud',
+                                                    'targetversion' => '2019070509', //'2019052700',
+                                                    ]);
+    $pluginupgr_tstamp = end($pluginupgr_tstamp);
+    $pluginupgr_tstamp = $pluginupgr_tstamp->timemodified;
+    if ($pluginupgr_tstamp > 0) {
+        // if we are adding Lern to All subjects - we also need to look on mdl_block_exastuddata records for get subject relations
+        // it is for 1. way of adding Lern information (look below)
+        $subjectreviewedstudents = array();
+        $subjectreviewed = $DB->get_records_sql('SELECT DISTINCT d.id, c.periodid as periodid, d.subjectid as subjectid, d.studentid as studentid  
+                                            FROM {block_exastuddata} d
+                                                LEFT JOIN {block_exastudclass} c ON c.id = d.classid
+                                            WHERE d.name = ?
+                                              AND d.value < ? ',
+                [   'review.timemodified',
+                        $pluginupgr_tstamp  ]);
+        foreach ($subjectreviewed as $sreview) {
+            @$subjectreviewedstudents[$sreview->periodid][$sreview->studentid][] = $sreview->subjectid;
+        }
+
+        // get all old subjectid = -3 'Lern' reviews
+        $reviewsOldLern = $DB->get_records_sql('SELECT * 
+                                            FROM {block_exastudreview}
+                                            WHERE timemodified < ? 
+                                              AND subjectid = ? ', [$pluginupgr_tstamp, BLOCK_EXASTUD_SUBJECT_ID_LERN_UND_SOZIALVERHALTEN_VORSCHLAG]);
+        // it is possible that the subject has no any -3 subjectid, so we need to delete such reviews also
+        $workedreviews = array();
+        $learnreviewedArr = array(); // needed for Learn values, which not was reviewed at all, except -3. Later we add this to all subjects
+        foreach ($reviewsOldLern as $reviewOldLern) {
+            $learnreviewedArr[] = $reviewOldLern->id;
+            $lernText = $reviewOldLern->review;
+            $workedreviews[] = $reviewOldLern->id;
+            $firstChanged = false;
+            // get all reviews for this student. with PERIOD!!!!
+            $reviews = $DB->get_records_sql('SELECT * 
+                                              FROM {block_exastudreview} r                                              
+                                              WHERE studentid = ?                                                
+                                                  AND periodid = ?
+                                                  AND teacherid = ?
+                                                  AND subjectid != ?',
+                                            [       $reviewOldLern->studentid,
+                                                    $reviewOldLern->periodid,
+                                                    $reviewOldLern->teacherid,
+                                                    BLOCK_EXASTUD_SUBJECT_ID_LERN_UND_SOZIALVERHALTEN_VORSCHLAG,
+                                                    ]);
+            foreach ($reviews as $review) {
+                // this Lern review was added to records
+                if (($key = array_search($reviewOldLern->id, $learnreviewedArr)) !== false) {
+                    unset($learnreviewedArr[$key]);
+                }
+                $workedreviews[] = $review->id;
+                // way 1 - change to LERN text of ALL subjects
+                $DB->execute('UPDATE {block_exastudreview}
+                                            SET review = ?                                               
+                                              WHERE id = ?',
+                        [       $lernText,
+                                $review->id
+                        ]);
+                // or way 2 - change only first, other - delete
+                /*if (!$firstChanged) {
+                    $DB->execute('UPDATE {block_exastudreview}
+                                            SET review = ?                                               
+                                              WHERE id = ?',
+                            [       $lernText,
+                                    $review->id
+                            ]);
+                    $firstChanged = true;
+                } else {
+                    $posrelations = $DB->get_records('block_exastudreviewpos', ['reviewid' => $review->id]);
+                    if (count($posrelations) > 0) { // can not delete. only make empty - it has relation to category grading!
+                        $DB->execute('UPDATE {block_exastudreview}
+                                            SET review = ?                                               
+                                              WHERE id = ?',
+                                [       '',
+                                        $review->id
+                                ]);
+                    } else {
+                        //$DB->execute('DELETE FROM {block_exastudreview} WHERE id = ?',
+                        //        [
+                        //                $review->id
+                        //        ]);
+                        $invertid = -1 * abs($review->subjectid);
+                        $DB->execute('UPDATE {block_exastudreview}
+                                            SET subjectid = ?                                               
+                                              WHERE id = ?',
+                                [       $invertid,
+                                        $review->id
+                                ]);
+                    }
+                }*/
+            }
+            // adding for 1th way - add new records with Learn info
+            if (count(@$subjectreviewedstudents[$reviewOldLern->periodid][$reviewOldLern->studentid]) > 0) {
+                foreach ($subjectreviewedstudents[$reviewOldLern->periodid][$reviewOldLern->studentid] as $subjid) {
+                    if (($key = array_search($reviewOldLern->id, $learnreviewedArr)) !== false) {
+                        unset($learnreviewedArr[$key]);
+                    }
+                    $existing = $DB->record_exists_sql('SELECT DISTINCT * 
+                                              FROM {block_exastudreview} r                                              
+                                              WHERE studentid = ?                                                
+                                                  AND periodid = ?
+                                                  AND teacherid = ?
+                                                  AND subjectid = ?',
+                            [       $reviewOldLern->studentid,
+                                    $reviewOldLern->periodid,
+                                    $reviewOldLern->teacherid,
+                                    $subjid,
+                            ]);
+                    if (!$existing) {
+                        $newRec = (object)array(
+                            'timemodified' => time(),
+                            'studentid' => $reviewOldLern->studentid,
+                            'periodid' => $reviewOldLern->periodid,
+                            'teacherid' => $reviewOldLern->teacherid,
+                            'subjectid' => $subjid,
+                            'review' => $lernText
+                        );
+                        $newid = $DB->insert_record('block_exastudreview', $newRec);
+                        $workedreviews[] = $newid;
+                    }
+                }
+            }
+            // delete -3 from DB
+            /*$DB->execute('DELETE FROM {block_exastudreview} WHERE id = ?',
+                    [
+                            $reviewOldLern->id
+                    ]);*/
+            $DB->execute('UPDATE {block_exastudreview}
+                                            SET subjectid = ?                                               
+                                              WHERE id = ?',
+                    [       '-333333', // -3
+                            $reviewOldLern->id
+                    ]);
+
+
+        }
+
+        // check reviews, which not were checked (not in $workedreviews)
+        $reviewsAgain = $DB->get_records_sql('SELECT * 
+                                            FROM {block_exastudreview}
+                                            WHERE timemodified < ?',
+                                        [$pluginupgr_tstamp]);
+        foreach ($reviewsAgain as $review) {
+            if (!in_array($review->id, $workedreviews)) {
+                $posrelations = $DB->get_records('block_exastudreviewpos', ['reviewid' => $review->id]);
+                if (count($posrelations) > 0) { // can not delete. only make empty!
+                    $DB->execute('UPDATE {block_exastudreview}
+                                            SET review = ?                                               
+                                              WHERE id = ?',
+                            ['',
+                                    $review->id
+                            ]);
+                } else {
+                    /*$DB->execute('DELETE FROM {block_exastudreview} WHERE id = ?',
+                            [
+                                    $review->id
+                            ]);*/
+                    $invertid = -1 * abs($review->subjectid);
+                    $DB->execute('UPDATE {block_exastudreview}
+                                            SET subjectid = ?                                               
+                                              WHERE id = ?',
+                            [$invertid,
+                                    $review->id
+                            ]);
+                }
+            }
+        }
+        // if the Learn is exists, but not added to any subject for student - add it to ALL subjects
+        if (count($learnreviewedArr) > 0) {
+            foreach ($learnreviewedArr as $recid) {
+                $lernRec = $DB->get_record('block_exastudreview', ['id' => $recid]);
+                // get all subjects from this class (period) for this teacher
+                $subjects = $DB->get_records_sql('SELECT DISTINCT ct.subjectid
+                                                    FROM {block_exastudclassteachers} ct
+                                                      JOIN {block_exastudclass} c ON c.id = ct.classid
+                                                      JOIN {block_exastudperiod} p ON p.id = c.periodid 
+                                                    WHERE ct.teacherid = ? 
+                                                      AND p.id = ?
+                                                      ',
+                        [$lernRec->teacherid,
+                            $lernRec->periodid]);
+                foreach ($subjects as $subject) {
+                    // add new record for subject+student+teacher
+                    $existing = $DB->record_exists_sql('SELECT DISTINCT * 
+                                              FROM {block_exastudreview} r                                              
+                                              WHERE studentid = ?                                                
+                                                  AND periodid = ?
+                                                  AND teacherid = ?
+                                                  AND subjectid = ?',
+                            [       $lernRec->studentid,
+                                    $lernRec->periodid,
+                                    $lernRec->teacherid,
+                                    $subject->subjectid,
+                            ]);
+                    if (!$existing) {
+                        $newRec = (object)array(
+                                'timemodified' => time(),
+                                'studentid' => $lernRec->studentid,
+                                'periodid' => $lernRec->periodid,
+                                'teacherid' => $lernRec->teacherid,
+                                'subjectid' => $subject->subjectid,
+                                'review' => $lernRec->review
+                        );
+                        $newid = $DB->insert_record('block_exastudreview', $newRec);
+                    }
+                }
+            }
+        }
+
+    }
+
+}
+
 
 /*
 function block_exastud_encrypt_raw($value, $secret) {

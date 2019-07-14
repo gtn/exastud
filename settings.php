@@ -292,4 +292,34 @@ if ($ADMIN->fulltree) {
                                     'accepted_types' => array('web_image'))));
 
 	$settings->add(new admin_setting_configcheckbox('exastud/export_class_password', block_exastud_get_string('backup_class_protection'), '', 0));
+
+
+	// button for servers with wrong updated plugins
+    if (optional_param('upgradedb', 0, PARAM_INT)) {
+        // do upgrading!!!!!!
+        block_exastud_upgrade_old_lern_social_reviews_temporary_function();
+    }
+    $pluginupgr_tstamp = $DB->get_records('upgrade_log', ['plugin' => 'block_exastud',
+            'targetversion' => '2019070509', //'2019052700',
+    ]);
+    $pluginupgr_tstamp = end($pluginupgr_tstamp);
+    $pluginupgr_tstamp = $pluginupgr_tstamp->timemodified;
+    if ($pluginupgr_tstamp > 0) {
+        $oldLernExisting = $DB->get_records_sql('SELECT * 
+                                            FROM {block_exastudreview}
+                                            WHERE timemodified < ? 
+                                              AND subjectid = ? ',
+                [$pluginupgr_tstamp, BLOCK_EXASTUD_SUBJECT_ID_LERN_UND_SOZIALVERHALTEN_VORSCHLAG]);
+        if (count($oldLernExisting) > 0) {
+            $settings->add(new block_exastud_link_to('link_to_update_db',
+                    'Upgrade DB',
+                    'Be careful! Use this button only if you understand it! Please make a backup of DB before using this button!',
+                    '',
+                    'settings.php',
+                    'Upgrade',
+                    ['section' => 'blocksettingexastud', 'upgradedb' => 1],
+                    ['class' => 'btn btn-default'],
+                    true));
+        }
+    }
 }
