@@ -312,8 +312,7 @@ if ($ADMIN->fulltree) {
                 [$pluginupgr_tstamp, BLOCK_EXASTUD_SUBJECT_ID_LERN_UND_SOZIALVERHALTEN_VORSCHLAG]);
         if (count($oldLernExisting) > 0) {
             $settings->add(new block_exastud_link_to('link_to_update_db',
-                    'Upgrade DB',
-                    'Be careful! Use this button only if you understand it! Please make a backup of DB before using this button!',
+                    'Datenupdate nach Pluginupdate 8. Juli 2019',
                     '',
                     'settings.php',
                     'Upgrade',
