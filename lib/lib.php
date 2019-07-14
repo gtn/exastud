@@ -5807,7 +5807,9 @@ function block_exastud_upgrade_old_lern_social_reviews_temporary_function() {
         $reviewsOldLern = $DB->get_records_sql('SELECT * 
                                             FROM {block_exastudreview}
                                             WHERE timemodified < ? 
-                                              AND subjectid = ? ', [$pluginupgr_tstamp, BLOCK_EXASTUD_SUBJECT_ID_LERN_UND_SOZIALVERHALTEN_VORSCHLAG]);
+                                              AND subjectid = ? ',
+                [   $pluginupgr_tstamp,
+                    BLOCK_EXASTUD_SUBJECT_ID_LERN_UND_SOZIALVERHALTEN_VORSCHLAG]);
         // it is possible that the subject has no any -3 subjectid, so we need to delete such reviews also
         $workedreviews = array();
         $learnreviewedArr = array(); // needed for Learn values, which not was reviewed at all, except -3. Later we add this to all subjects
@@ -5822,11 +5824,13 @@ function block_exastud_upgrade_old_lern_social_reviews_temporary_function() {
                                               WHERE studentid = ?                                                
                                                   AND periodid = ?
                                                   AND teacherid = ?
-                                                  AND subjectid != ?',
+                                                  AND subjectid != ?
+                                                  ',
                                             [       $reviewOldLern->studentid,
                                                     $reviewOldLern->periodid,
                                                     $reviewOldLern->teacherid,
                                                     BLOCK_EXASTUD_SUBJECT_ID_LERN_UND_SOZIALVERHALTEN_VORSCHLAG,
+                                                    //$pluginupgr_tstamp
                                                     ]);
             foreach ($reviews as $review) {
                 // this Lern review was added to records
@@ -5835,12 +5839,14 @@ function block_exastud_upgrade_old_lern_social_reviews_temporary_function() {
                 }
                 $workedreviews[] = $review->id;
                 // way 1 - change to LERN text of ALL subjects
-                $DB->execute('UPDATE {block_exastudreview}
+                if ($review->timemodified < $pluginupgr_tstamp) {
+                    $DB->execute('UPDATE {block_exastudreview}
                                             SET review = ?                                               
                                               WHERE id = ?',
-                        [       $lernText,
-                                $review->id
-                        ]);
+                            [       $lernText,
+                                    $review->id
+                            ]);
+                }
                 // or way 2 - change only first, other - delete
                 /*if (!$firstChanged) {
                     $DB->execute('UPDATE {block_exastudreview}
@@ -5880,17 +5886,17 @@ function block_exastud_upgrade_old_lern_social_reviews_temporary_function() {
                     if (($key = array_search($reviewOldLern->id, $learnreviewedArr)) !== false) {
                         unset($learnreviewedArr[$key]);
                     }
-                    $existing = $DB->record_exists_sql('SELECT DISTINCT * 
+                    $existing = $DB->get_record_sql('SELECT DISTINCT * 
                                               FROM {block_exastudreview} r                                              
                                               WHERE studentid = ?                                                
                                                   AND periodid = ?
                                                   AND teacherid = ?
-                                                  AND subjectid = ?',
+                                                  AND subjectid = ?                                                  ',
                             [       $reviewOldLern->studentid,
                                     $reviewOldLern->periodid,
                                     $reviewOldLern->teacherid,
-                                    $subjid,
-                            ]);
+                                    $subjid
+                            ], IGNORE_MULTIPLE);
                     if (!$existing) {
                         $newRec = (object)array(
                             'timemodified' => time(),
@@ -5902,6 +5908,8 @@ function block_exastud_upgrade_old_lern_social_reviews_temporary_function() {
                         );
                         $newid = $DB->insert_record('block_exastudreview', $newRec);
                         $workedreviews[] = $newid;
+                    } else {
+                        $workedreviews[] = $existing->id;
                     }
                 }
             }

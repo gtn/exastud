@@ -313,6 +313,7 @@ if ($ADMIN->fulltree) {
         if (count($oldLernExisting) > 0) {
             $settings->add(new block_exastud_link_to('link_to_update_db',
                     'Datenupdate nach Pluginupdate 8. Juli 2019',
+                    'Lern und Sozialverhalten Daten vor 8.Juli 2019 sind nach dem PluginUpdate eventuell nicht mehr sichtbar, dieses Update behebt das Problem. Bitte vorher Datensicherung durchführen!',
                     '',
                     'settings.php',
                     'Upgrade',
