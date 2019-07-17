@@ -89,7 +89,7 @@ class block_exastud extends block_list {
 			$icon = '<img src="'.$output->image_url('head_teachers', 'block_exastud').'" class="icon" alt="" />';
 			$this->content->items[] = '<a title="'.block_exastud_get_string('new_head_teacher').'" href="'.$CFG->wwwroot.'/cohort/assign.php?id='.block_exastud_get_head_teacher_cohort()->id.'">'.$icon.block_exastud_get_string('new_head_teacher').'</a>';
             $icon = '<img src="'.$output->image_url('calendar', 'block_exastud').'" class="icon" alt="" />';
-            $this->content->items[] = '<a title="'.block_exastud_get_string('periods').'" href="'.$CFG->wwwroot.'/blocks/exastud/periods.php?courseid='.block_exastud_get_head_teacher_cohort()->id.'">'.$icon.block_exastud_get_string('periods').'</a>';
+            $this->content->items[] = '<a title="'.block_exastud_get_string('periods').'" href="'.$CFG->wwwroot.'/blocks/exastud/periods.php?courseid='.$COURSE->id.'">'.$icon.block_exastud_get_string('periods').'</a>';
 		}
 
 		return $this->content;
