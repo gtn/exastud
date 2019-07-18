@@ -5161,7 +5161,7 @@ function block_exastud_cropStringByInputLimitsFromTemplate($string, $templateid,
         if ($i > $rows) {
             $line = false;
         } else {
-            $tempContentRows[] = trim(substr($line, 0, $chars_per_row));
+            $tempContentRows[] = trim(mb_substr($line, 0, $chars_per_row));
             $line = strtok("\r\n");
         }
     }
@@ -5754,13 +5754,13 @@ function block_exastud_crop_value_by_template_input_setting($value, $templateid,
                     //}
                 }
                 if ($lines == 1 && array_key_exists('cols', $inputs[$property]) && $inputs[$property]['cols']) {
-                    $rows[0] = substr($rows[0], 0, $inputs[$property]['cols']);
+                    $rows[0] = mb_substr($rows[0], 0, $inputs[$property]['cols']);
                 }
                 $result = implode("\r\n", $rows);
             }
             // whole length
             if (array_key_exists('maxchars', $inputs[$property]) && $inputs[$property]['maxchars']) {
-                $result = substr($result, 0, $inputs[$property]['maxchars']);
+                $result = mb_substr($result, 0, $inputs[$property]['maxchars']);
             }
         }
     }
@@ -6004,7 +6004,7 @@ function block_exastud_upgrade_old_lern_social_reviews_temporary_function() {
 
 }
 
-function block_exastud_export_mysql_table($table = '', $filename = false) {
+function block_exastud_export_mysql_table($table = '', $filename = false, $functionBeforeDownload = null) {
     global $DB;
 
     $queryTables = $DB->get_records_sql('SHOW TABLES');
@@ -6054,6 +6054,12 @@ function block_exastud_export_mysql_table($table = '', $filename = false) {
     $content .="\n\n\n";
 
     $filename = $filename ? $filename : $table.'__'.date('d-m-Y-H-i-s').'.sql';
+
+    // call function after backup, but before downloading
+    if ($functionBeforeDownload && function_exists($functionBeforeDownload)) {
+        call_user_func($functionBeforeDownload);
+    }
+
     header('Content-Type: application/octet-stream');
     header("Content-Transfer-Encoding: Binary");
     header("Content-disposition: attachment; filename=\"".$filename."\"");

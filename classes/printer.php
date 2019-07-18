@@ -3667,9 +3667,9 @@ class printer {
 class Slice {
 
 	function __construct($string, $start, $end) {
-		$this->before = substr($string, 0, $start);
-		$this->slice = substr($string, $start, $end - $start);
-		$this->after = substr($string, $end);
+		$this->before = mb_substr($string, 0, $start);
+		$this->slice = mb_substr($string, $start, $end - $start);
+		$this->after = mb_substr($string, $end);
 	}
 
 	function get() {
@@ -3912,7 +3912,7 @@ class TemplateProcessor extends \PhpOffice\PhpWord\TemplateProcessor {
 	}
 
 	function tagPos($search) {
-		if ('${' !== substr($search, 0, 2) && '}' !== substr($search, -1)) {
+		if ('${' !== mb_substr($search, 0, 2) && '}' !== mb_substr($search, -1)) {
 			$search = '${'.$search.'}';
 		}
 
@@ -4015,7 +4015,7 @@ class TemplateProcessor extends \PhpOffice\PhpWord\TemplateProcessor {
 			}
 			$parts[] = $matches['tag'];
 
-			$rest = substr($rest, strlen($matches[0]));
+			$rest = mb_substr($rest, strlen($matches[0]));
 		}
 
 		return $parts;
@@ -4071,7 +4071,7 @@ class TemplateProcessor extends \PhpOffice\PhpWord\TemplateProcessor {
      */
     function duplicateCell($search, $numberOfCells = 1)
     {
-        if ('${' !== substr($search, 0, 2) && '}' !== substr($search, - 1)) {
+        if ('${' !== mb_substr($search, 0, 2) && '}' !== mb_substr($search, - 1)) {
             $search = '${' . $search . '}';
         }
 

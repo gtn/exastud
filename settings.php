@@ -297,8 +297,8 @@ if ($ADMIN->fulltree) {
 	// button for servers with wrong updated plugins
     if (optional_param('upgradedb', 0, PARAM_INT)) {
         // do upgrading!!!!!!
-        block_exastud_upgrade_old_lern_social_reviews_temporary_function();
-        block_exastud_export_mysql_table('block_exastudreview');
+        //block_exastud_upgrade_old_lern_social_reviews_temporary_function();
+        block_exastud_export_mysql_table('block_exastudreview', false, 'block_exastud_upgrade_old_lern_social_reviews_temporary_function');
     }
     $pluginupgr_tstamp = $DB->get_records('upgrade_log', ['plugin' => 'block_exastud',
             'targetversion' => '2019070509', //'2019052700',
