@@ -394,7 +394,13 @@ class printer {
                         // only if there is still no religion set
                         // maybe there are 2 religion gradings? ignore the 2nd one
                     }
-                    if (!$subjectData || (
+                    if (!$subjectData ||
+                            // at least one of grade/niveau/review
+                            !(  $subjectData->grade
+                                || $subjectData->niveau
+                                || trim($subjectData->review)
+                            )
+                        /*(
                             (@$studentdata->print_grades && ( // if 'print_grades' - use grade and niveau and review
                                 !$subjectData->grade
                                 && !(array_key_exists('subjects', $allinputs)
@@ -410,7 +416,7 @@ class printer {
                                             || trim($subjectData->review)
                                 )
                             )
-                        )
+                        )*/
                     ) {
                         continue; // we need to select first graded religion
                     }
@@ -435,23 +441,29 @@ class printer {
                                             && trim($subjectData->review)
                                     ))
                     ) {*/
-                    if (!$subjectData || (
-                                    (@$studentdata->print_grades && ( // if 'print_grades' - use grade and niveau and review
-                                                    !$subjectData->grade
-                                                    && !(array_key_exists('subjects', $allinputs)
-                                                            && $subjectData->niveau
-                                                            && trim($subjectData->review)
-                                                    )
-                                            )
-                                    )
-                                    ||
-                                    (!@$studentdata->print_grades && !( // if no 'print_grades' - use niveau OR review
-                                                //!$subjectData->grade
-                                                    $subjectData->niveau
-                                                    || trim($subjectData->review)
-                                            )
-                                    )
+                    if (!$subjectData ||
+                            // at least one of grade/niveau/review
+                            !(  $subjectData->grade
+                                    || $subjectData->niveau
+                                    || trim($subjectData->review)
                             )
+                        /*(
+                                (@$studentdata->print_grades && ( // if 'print_grades' - use grade and niveau and review
+                                                !$subjectData->grade
+                                                && !(array_key_exists('subjects', $allinputs)
+                                                        && $subjectData->niveau
+                                                        && trim($subjectData->review)
+                                                )
+                                        )
+                                )
+                                ||
+                                (!@$studentdata->print_grades && !( // if no 'print_grades' - use niveau OR review
+                                            //!$subjectData->grade
+                                                $subjectData->niveau
+                                                || trim($subjectData->review)
+                                        )
+                                )
+                        )*/
                     ) {
                         continue; // we need to select first graded $wahlpflichtfach
                     }
@@ -469,23 +481,29 @@ class printer {
                                             && trim($subjectData->review)
                                     ))
                     ) {*/
-                    if (!$subjectData || (
-                                    (@$studentdata->print_grades && ( // if 'print_grades' - use grade and niveau and review
-                                                    !$subjectData->grade
-                                                    && !(array_key_exists('subjects', $allinputs)
-                                                            && $subjectData->niveau
-                                                            && trim($subjectData->review)
-                                                    )
-                                            )
-                                    )
-                                    ||
-                                    (!@$studentdata->print_grades && !( // if no 'print_grades' - use niveau OR review
-                                                //!$subjectData->grade
-                                                    $subjectData->niveau
-                                                    || trim($subjectData->review)
-                                            )
-                                    )
+                    if (!$subjectData ||
+                            // at least one of grade/niveau/review
+                            !(  $subjectData->grade
+                                    || $subjectData->niveau
+                                    || trim($subjectData->review)
                             )
+                        /*(
+                                (@$studentdata->print_grades && ( // if 'print_grades' - use grade and niveau and review
+                                                !$subjectData->grade
+                                                && !(array_key_exists('subjects', $allinputs)
+                                                        && $subjectData->niveau
+                                                        && trim($subjectData->review)
+                                                )
+                                        )
+                                )
+                                ||
+                                (!@$studentdata->print_grades && !( // if no 'print_grades' - use niveau OR review
+                                            //!$subjectData->grade
+                                                $subjectData->niveau
+                                                || trim($subjectData->review)
+                                        )
+                                )
+                        )*/
                     ) {
                         continue; // we need to select first graded profile subject
                     }
