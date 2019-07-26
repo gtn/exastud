@@ -243,7 +243,7 @@ function block_exastud_get_head_teacher_classes_shared($periodid) {
 }
 
 function block_exastud_get_personal_head_teacher($classid, $studentid, $withclassownerteacher = true) {
-	
+
 	$teacherid = block_exastud_get_class_student_data($classid, $studentid, BLOCK_EXASTUD_DATA_ID_HEAD_TEACHER);
 	if (!$teacherid && $withclassownerteacher) {
 	    // get main class teacher if no peronal teacher
@@ -1446,7 +1446,7 @@ function block_exastud_get_report($studentid, $periodid, $classid) {
                     WHERE r.studentid = ? 
                           AND r.periodid = ?",
         array($studentid, $periodid));
-		
+
 	$report->category_averages = [];
 
     $classteachers = array();
@@ -4947,7 +4947,7 @@ function block_exastud_fill_reportsettingstable($id = 0, $update = false) {
             $reporttemplates = $needed;
         } else {
             return true; // not found any template with this id
-        } 
+        }
     }
     $allBPs = g::$DB->get_records('block_exastudbp');
     if (count($allBPs) == 0) {
@@ -5114,6 +5114,8 @@ function block_exastud_menu_for_settings() {
     if (block_exastud_has_global_cap(BLOCK_EXASTUD_CAP_ADMIN)) {
         $tabs[] = new tabobject('backup', new moodle_url('/blocks/exastud/backup.php', ['courseid' => g::$COURSE->id]), block_exastud_get_string("backup"), '', true);
     }
+
+    //here the cohort gets created if it does not exist
     $tabs[] = new tabobject('head_teachers', 'javascript:void window.open(\''.\block_exastud\url::create('/cohort/assign.php', ['id' => block_exastud_get_head_teacher_cohort()->id])->out(false).'\');', block_exastud_get_string('head_teachers'), '', true);
     $tabs[] = new tabobject('report_settings', new moodle_url('/blocks/exastud/report_settings.php'), block_exastud_get_string("report_settings_edit"), '', true);
     return new tabtree($tabs);
@@ -5264,7 +5266,7 @@ function block_exastud_get_grade_average_value($subjects = array(), $verbal = fa
 //                        echo $subject->title.' added with '.$gradeForCalc.'<br>';
                     }
                     break;
-                default: 
+                default:
                     if (in_array($subject->shorttitle, $avgCalcSubjectsRel)) {
                         $religionGrade = $gradeForCalc;
                     } elseif (!in_array($subject->shorttitle, $avgCalcSubjectsProfil)) { //do not count profilfach
@@ -5850,7 +5852,7 @@ function block_exastud_upgrade_old_lern_social_reviews_temporary_function() {
                 // or way 2 - change only first, other - delete
                 /*if (!$firstChanged) {
                     $DB->execute('UPDATE {block_exastudreview}
-                                            SET review = ?                                               
+                                            SET review = ?
                                               WHERE id = ?',
                             [       $lernText,
                                     $review->id
@@ -5860,7 +5862,7 @@ function block_exastud_upgrade_old_lern_social_reviews_temporary_function() {
                     $posrelations = $DB->get_records('block_exastudreviewpos', ['reviewid' => $review->id]);
                     if (count($posrelations) > 0) { // can not delete. only make empty - it has relation to category grading!
                         $DB->execute('UPDATE {block_exastudreview}
-                                            SET review = ?                                               
+                                            SET review = ?
                                               WHERE id = ?',
                                 [       '',
                                         $review->id
@@ -5872,7 +5874,7 @@ function block_exastud_upgrade_old_lern_social_reviews_temporary_function() {
                         //        ]);
                         $invertid = -1 * abs($review->subjectid);
                         $DB->execute('UPDATE {block_exastudreview}
-                                            SET subjectid = ?                                               
+                                            SET subjectid = ?
                                               WHERE id = ?',
                                 [       $invertid,
                                         $review->id
