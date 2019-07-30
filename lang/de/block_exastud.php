@@ -216,6 +216,7 @@ $string['report_setting_type_image_maxbytes'] = 'Max size (bytes)';
 $string['report_setting_type_image_width'] = 'Breite';
 $string['report_setting_type_image_height'] = 'Höhe';
 $string['reset_report_templates'] = 'Standardvorlagen auf Originalwerte zurücksetzen';
+$string['reinstall_report_templates'] = 'Standardvorlagen neu installieren';
 $string['reset_report_selected_templates'] = 'Ausgewählte Vorlagen auf Originalwerte zurücksetzen';
 $string['reset_report_templates_description'] = 'Sind Sie sicher? Standardvorlagen werden auf die Originalwerte zurückgesetzt. Benutzerdefinierte Vorlagen bleiben unverändert.';
 $string['report_setting_current_title'] = 'Bisheriger Name';

@@ -790,6 +790,10 @@ return [
             'Standardvorlagen auf Originalwerte zurücksetzen',
             'Reset default templates to default state',
     ],
+    'reinstall_report_templates' => [
+            'Standardvorlagen neu installieren',
+            'Reinstall all default templates',
+    ],
     'reset_report_selected_templates' => [
             'Ausgewählte Vorlagen auf Originalwerte zurücksetzen',
             'Reset selected templates to default state',

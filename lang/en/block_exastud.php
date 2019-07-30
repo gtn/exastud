@@ -216,6 +216,7 @@ $string['report_setting_type_image_maxbytes'] = 'Max size (bytes)';
 $string['report_setting_type_image_width'] = 'Width';
 $string['report_setting_type_image_height'] = 'Height';
 $string['reset_report_templates'] = 'Reset default templates to default state';
+$string['reinstall_report_templates'] = 'Reinstall all default templates';
 $string['reset_report_selected_templates'] = 'Reset selected templates to default state';
 $string['reset_report_templates_description'] = 'Are you sure? Default templates will be reset to default state. Custom templates will not be changed';
 $string['report_setting_current_title'] = 'Current title';

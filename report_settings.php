@@ -211,9 +211,18 @@ if ($action && (($settingsid > 0 && $action == 'edit') || $action == 'new')) {
     // reset default templates
     $defaulttemplates = block_exastud_get_default_templates();
     $output = block_exastud_get_renderer();
-    if ($doit = optional_param('doit', 0, PARAM_INT)) {
-        $templateids = optional_param_array('templateid', null, PARAM_INT);
-        if ($templateids) {
+    $doit = optional_param('doit', 0, PARAM_INT);
+    if ($doit == '1') {
+        if ($reinstall = optional_param('reinstall', null, PARAM_TEXT)) {
+            // reset as during installation
+            $allDefaultIds = array_map(function($o) {return $o['id'];}, $defaulttemplates);
+            $allDefaultIds = array_values($allDefaultIds);
+            $templateids = $allDefaultIds;
+        } else {
+            // reset selected
+            $templateids = optional_param_array('templateid', null, PARAM_INT);
+        }
+        if ($templateids && is_array($templateids)) {
             foreach ($templateids as $tid) {
                 block_exastud_fill_reportsettingstable($tid, true);
             }
@@ -305,6 +314,12 @@ if ($action && (($settingsid > 0 && $action == 'edit') || $action == 'new')) {
     $formcontent .= '&nbsp;&nbsp;&nbsp;'.html_writer::tag('button', block_exastud_get_string('reset_report_selected_templates'), [
         'type' => 'submit',
         'class' => 'btn btn-danger',
+    ]);
+    $formcontent .= '&nbsp;&nbsp;&nbsp;'.html_writer::tag('button', block_exastud_get_string('reinstall_report_templates'), [
+        'type' => 'submit',
+        'class' => 'btn btn-danger',
+        'name' => 'reinstall',
+        'value' => 'reinstall'
     ]);
     $content .= html_writer::tag('form', $formcontent, [
         'id' => 'form-templatelist',
