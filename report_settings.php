@@ -528,6 +528,22 @@ if ($action && (($settingsid > 0 && $action == 'edit') || $action == 'new')) {
         $content .= html_writer::div($buttons, 'buttons');
     } else {
         $content .= block_exastud_get_string('not_found_report');
+        $formcontent = '';
+        $formcontent .= html_writer::tag('input', '', ['type' => 'hidden', 'name' => 'doit', 'value' => 1]);
+        $formcontent .= html_writer::tag('input', '', ['type' => 'hidden', 'name' => 'action', 'value' => 'reset_default']);
+        if ($tokenparam) {
+            $formcontent .= html_writer::tag('input', '', ['type' => 'hidden', 'name' => 'token', 'value' => $tokenparam]);
+        }
+        $formcontent .= '&nbsp;&nbsp;&nbsp;'.html_writer::tag('button', block_exastud_get_string('reinstall_report_templates'), [
+                        'type' => 'submit',
+                        'class' => 'btn btn-danger',
+                        'name' => 'reinstall',
+                        'value' => 'reinstall'
+                ]);
+        $content .= html_writer::tag('form', $formcontent, [
+                'id' => 'form-templatelist',
+                'method' => 'post'
+        ]);
     }
 
     echo $content;

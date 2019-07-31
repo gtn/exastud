@@ -1391,7 +1391,7 @@ return [
         'Filter',
     ],
     'filter_search' => [
-        'Title search',
+        'Suche',
         'Title search',
     ],
     'filter_bp' => [
@@ -1411,15 +1411,15 @@ return [
         'Filter',
     ],
     'clear_filter' => [
-        'Clear filters',
+        'Filter zurücksetzen',
         'Clear filters',
     ],
     'not_found_report' => [
-        'No any report found',
+        'Keine Berichtsvorlagen vorhanden',
         'No any report found',
     ],
     'filter_show_fulltable' => [
-        'Show full table',
+        'Gesamt-Tabelle anzeigen',
         'Show full table',
     ],
     'temporary_hidden' => [
