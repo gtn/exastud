@@ -112,6 +112,7 @@ $settingsform = new reportsettings_edit_form(null, [
         'category_infomessage' => $categoryinfo_text
 ]);
 
+
 if ($action && (($settingsid > 0 && $action == 'edit') || $action == 'new')) {
 
     //Form processing and displaying is done here
@@ -327,6 +328,24 @@ if ($action && (($settingsid > 0 && $action == 'edit') || $action == 'new')) {
     ]);
     echo $content;
 
+} elseif ($action && $action == 'delete') { // DELETE
+    $reportid = required_param('id', PARAM_INT);
+    if (optional_param('doit', 0, PARAM_INT)) {
+        $DB->delete_records('block_exastudreportsettings', ['id' => $reportid]);
+        redirect($PAGE->url);
+    }
+    $output = block_exastud_get_renderer();
+    echo $output->header(['report_settings'], ['content_title' => block_exastud_get_string('pluginname')], true);
+    echo $output->heading(block_exastud_get_string('report_settings'));
+    $report = $DB->get_record('block_exastudreportsettings', ['id' => $reportid]);
+    echo $OUTPUT->box(block_exastud_get_string('report_delete_confirm_message', null, $report->title), 'alert alert-warning');
+    $formcontent = '';
+    $formcontent .= html_writer::tag('input', '', ['type' => 'hidden', 'name' => 'doit', 'value' => 1]);
+    $formcontent .= html_writer::tag('button', block_exastud_get_string('back'), ['type' => 'button', 'class' => 'btn btn-default', 'onclick' => 'location.href="'.$PAGE->url.'";']);
+    $formcontent .= '&nbsp;'.html_writer::tag('button', block_exastud_get_string('delete'), ['type' => 'submit', 'class' => 'btn btn-danger']);
+    echo html_writer::tag('form', $formcontent, [
+            'method' => 'post'
+    ]);
 } else {
     // template list
     $output = block_exastud_get_renderer();
@@ -460,6 +479,10 @@ if ($action && (($settingsid > 0 && $action == 'edit') || $action == 'new')) {
                 $hideLink = html_writer::link(new moodle_url('/blocks/exastud/report_settings.php', $params),
                         html_writer::tag("img", '', array('src' => 'pix/hide.png')), array('title' => ' hide report '));
             }
+            // delete button
+            $params['action'] = 'delete';
+            $deleteLink = html_writer::link(new moodle_url('/blocks/exastud/report_settings.php', $params),
+                    html_writer::tag("img", '', array('src' => 'pix/del.png')), array('title' => block_exastud_get_string('report_delete', null, $report->title)));
             // is relevant subjects report?
             /*if ($report->relevant_subjects) {
                 $relevantSubject = new html_table_cell();
@@ -478,7 +501,7 @@ if ($action && (($settingsid > 0 && $action == 'edit') || $action == 'new')) {
             }
             $row = array(
                     $editLink. ' :'.$report->id,
-                    $hideLink,
+                    $hideLink.'&nbsp;'.$deleteLink,
                     //$relevantSubject,
                     '<strong>'.$report->title.'</strong>',
                     $bpData ? $bpData->title : '',

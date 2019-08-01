@@ -578,6 +578,14 @@ return [
             'alle einblenden',
             'show all'
     ],
+    'report_delete' => [
+        'Delete report: {$a}',
+        'Delete report: {$a}',
+    ],
+    'report_delete_confirm_message' => [
+        'Are you sure that you want to delete report "{$a}"',
+        'Are you sure that you want to delete report "{$a}"',
+    ],
     'report_selectdeselect_all' => [
             'Alles aus-/abwählen',
             'select/deselect all',
@@ -713,6 +721,10 @@ return [
     'report_settings_countinrow_short' => [
             'zu je {$a} Zeichen',
             '{$a} chars ',
+    ],
+    'report_settings_maxchars_short' => [
+            '{$a} z.',
+            'max {$a} chars',
     ],
     'report_settings_maxchars' => [
             '{$a} Zeichen',
