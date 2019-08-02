@@ -2234,14 +2234,14 @@ function block_exastud_get_reportsettings_all($sortByPlans = false, $filter = ar
 
 function block_exastud_get_report_templates($class) {
     $templates = [];
-    if (!block_exastud_get_only_learnsociale_reports()) {
+    //if (!block_exastud_get_only_learnsociale_reports()) {
         $templates['grades_report'] = 'Notenübersicht (docx)';
         $templates['grades_report_xls'] = 'Notenübersicht (xlsx)';
         $templates['html_report'] = block_exastud_get_string('html_report');
         $templates[BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_GMS_LERNENTWICKLUNGSBERICHT_DECKBLATT_UND_1_INNENSEITE] = 'Deckblatt und 1. Innenseite LEB';
         $templates[BLOCK_EXASTUD_DATA_ID_PRINT_TEMPLATE] = block_exastud_is_bw_active() ? block_exastud_trans('de:Zeugnis / Abgangszeugnis') : block_exastud_trans('de:Zeugnis');
-    }
-    if (block_exastud_is_exacomp_installed() && !block_exastud_get_only_learnsociale_reports()) {
+    //}
+    if (block_exastud_is_exacomp_installed() /*&& !block_exastud_get_only_learnsociale_reports()*/) {
         $templates[BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_ANLAGE_ZUM_LERNENTWICKLUNGSBERICHT] = 'Überfachliche Kompetenzen und Fachkompetenzen';
         $templates[BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_ANLAGE_ZUM_LERNENTWICKLUNGSBERICHTALT] = 'Anlage zum Lernentwicklungsbericht (GMS)';
     }
@@ -5130,7 +5130,8 @@ function block_exastud_get_competence_eval_typeevalpoints_limit() {
 }
 
 function block_exastud_get_only_learnsociale_reports() {
-    return get_config('exastud', 'only_learnsociale_reports');
+    return false; // this settings is deleted. FALSE - was a default value
+    //return get_config('exastud', 'only_learnsociale_reports');
 }
 
 function block_exastud_get_exacomp_assessment_categories() {

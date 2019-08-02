@@ -201,11 +201,11 @@ $hideAllButton = '<span class="exastud-hidebutton">
                     '</a></span>';
 $table->head[] = $hideAllButton; // hide button
 $table->head[] = block_exastud_get_string('gender'); // gender
-if (!block_exastud_get_only_learnsociale_reports()) {
+//if (!block_exastud_get_only_learnsociale_reports()) {
     $table->head[] = $tableheadernote; // note
     $table->head[] = $tableheaderniveau; // niveau
     $table->head[] = $tableheadersubjects; // fachcompetenzen
-}
+//}
 if ($isSubjectTeacher) {
     // if at least student has tamplate with a category not in $hideCrossCategoryFor
     $editCrossCategories = false;
@@ -370,7 +370,7 @@ if ($isSubjectTeacher) {
         }
         $row->cells[] = $gendercolumn;
 
-        if (!block_exastud_get_only_learnsociale_reports()) {
+        //if (!block_exastud_get_only_learnsociale_reports()) {
             // Grades column
             $formdata = new stdClass();
             $formdata = (object) array_merge((array) $formdata, (array) $subjectData);
@@ -431,7 +431,7 @@ if ($isSubjectTeacher) {
             } else {
                 $row->cells[] = '';
             }
-        }
+        //}
 
         // Überfachliche Beurteilungen
         if ($editCrossCategories) {
@@ -484,7 +484,7 @@ if ($isSubjectTeacher) {
 
         if ($visible) {
             $cell = new html_table_cell();
-            if (!block_exastud_get_only_learnsociale_reports()) {
+            //if (!block_exastud_get_only_learnsociale_reports()) {
                 if ($editSubjectReview) {
                     $cell->text = '<p>'.
                             ((trim(@$subjectData->review) ? block_exastud_text_to_html(trim($subjectData->review)) : '') ?: '---').
@@ -502,7 +502,7 @@ if ($isSubjectTeacher) {
                     $value = @$template->get_grade_options()[$subjectData->grade] ?: $subjectData->grade;
                     $cell->text .= '<p><b>'.block_exastud_get_string('Note').':</b> '.$value.'</p>';
                 }
-            } else {
+            /*} else {
                 $learnReview = g::$DB->get_field('block_exastudreview', 'review', [
                                 'studentid' => $classstudent->id,
                                 //'subjectid' => BLOCK_EXASTUD_SUBJECT_ID_LERN_UND_SOZIALVERHALTEN_VORSCHLAG,
@@ -511,7 +511,7 @@ if ($isSubjectTeacher) {
                                 'teacherid' => $teacherid]
                 );
                 $cell->text = '<p>'.((trim(@$learnReview) ? block_exastud_text_to_html($learnReview) : '') ?: '---').'</p>';
-            }
+            }*/
             $cell->colspan = count($categories) + 5;
             $cell->style = 'text-align: left;';
 
@@ -563,7 +563,7 @@ if ($isSubjectTeacher) {
         $userdatacell->text = '<div class="cell-content">'.$userdata.'</div>';
         $row->cells[] = $userdatacell;
 
-        if (!block_exastud_get_only_learnsociale_reports()) {
+        //if (!block_exastud_get_only_learnsociale_reports()) {
             // Grades column
             if (!empty($subjectData->grade)) {
                 $template = block_exastud_get_student_print_template($class, $classstudent->id);
@@ -582,7 +582,7 @@ if ($isSubjectTeacher) {
             $row->cells[] = '<p>'.
                     ((trim(@$subjectData->review) ? block_exastud_text_to_html(trim($subjectData->review)) : '') ?: '---').
                     '</p>';
-        }
+        //}
         $learnReview = g::$DB->get_field('block_exastudreview', 'review', [
                         'studentid' => $classstudent->id,
                         //'subjectid' => BLOCK_EXASTUD_SUBJECT_ID_LERN_UND_SOZIALVERHALTEN_VORSCHLAG,
