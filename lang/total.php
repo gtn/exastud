@@ -876,8 +876,8 @@ return [
                 'comma seperated list',
     ],
     'settings_bw_reports' => [
-                'Baden-Württemberg Berichte',
-                'Baden-Württemberg templates for reports',
+                'Gemeinschaftsschulen Berichte',
+                'Community schools templates for reports',
     ],
     'settings_exacomp_verbeval' => [
                 'Exabis Kompetenzraster Notenverbalisierung verwenden',

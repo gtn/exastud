@@ -30,7 +30,7 @@ if (!block_exastud_is_siteadmin()) {
 
 // for development!!!
 $tokenparam = optional_param('token', 0, PARAM_INT);
-if ($tokenparam != 12345) {
+if (block_exastud_is_bw_active() && $tokenparam != 12345) {
     echo block_exastud_get_string('temporary_hidden');
     exit;
 }
@@ -210,7 +210,11 @@ if ($action && (($settingsid > 0 && $action == 'edit') || $action == 'new')) {
 
 } else if ($action && $action == 'reset_default') {
     // reset default templates
-    $defaulttemplates = block_exastud_get_default_templates();
+    if (block_exastud_is_bw_active()) {
+        $defaulttemplates = block_exastud_get_default_templates(null, false);
+    } else {
+        $defaulttemplates = block_exastud_get_default_templates(null, true);
+    }
     $output = block_exastud_get_renderer();
     $doit = optional_param('doit', 0, PARAM_INT);
     if ($doit == '1') {

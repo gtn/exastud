@@ -29,12 +29,16 @@ if (!class_exists('block_exastud_admin_setting_bwactivecheckbox')) {
             // if this param does NOT exist - it is first installation
             //$existing = get_config('exastud', 'bw_active');
             // use SQL-request instead moodle api function! (possible cache, history....)
-            $existing = $DB->record_exists_sql('SELECT * FROM {config_plugins} WHERE plugin = \'exastud\' AND name=\'bw_active\'');
+            //$existing = $DB->record_exists_sql('SELECT * FROM {config_plugins} WHERE plugin = \'exastud\' AND name=\'bw_active\'');
             parent::write_setting($data);
-            if ($existing === false) {
+            //if ($existing === false) {
+            //    block_exastud_insert_default_entries();
+            //    block_exastud_fill_reportsettingstable();
+            //}
+            if (block_exastud_is_bw_active()) {
                 block_exastud_insert_default_entries();
-                block_exastud_fill_reportsettingstable();
             }
+            block_exastud_fill_reportsettingstable();
             return '';
         }
     }

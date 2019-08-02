@@ -338,11 +338,17 @@ switch ($type) {
                     block_exastud_get_string('lastname'),
                     block_exastud_get_string('firstname'),
                     block_exastud_trans('de:Zeugnisformular'),
+            ];
+            if (block_exastud_is_bw_active()) {
+                $table->head = array_merge($table->head, [
                     block_exastud_trans('de:LEB: Note ausweisen').$selectall,
                     block_exastud_trans('de:LEB-Anlage: Note ausweisen').$selectall,
-                    block_exastud_trans('de:Bildungsstandard erreicht'),
+                    block_exastud_trans('de:Bildungsstandard erreicht')
+                ]);
+            }
+            $table->head = array_merge($table->head, [
                     block_exastud_trans('de:Ausgeschieden').$selectall,
-            ];
+                    ]);
 
             $available_templates = \block_exastud\print_templates::get_class_available_print_templates($class);
             $default_templateid = block_exastud_get_class_data($class->id, BLOCK_EXASTUD_DATA_ID_CLASS_DEFAULT_TEMPLATEID);
@@ -363,19 +369,21 @@ switch ($type) {
                 $i++;
                 $userdata = block_exastud_get_class_student_data($class->id, $classstudent->id);
 
-                $print_grades = '<input name="userdatas['.$classstudent->id.'][print_grades]" type="hidden" value="0"/>'.
-                        html_writer::checkbox('userdatas['.$classstudent->id.'][print_grades]', 1, @$userdata->print_grades);
+                if (block_exastud_is_bw_active()) {
+                    $print_grades = '<input name="userdatas['.$classstudent->id.'][print_grades]" type="hidden" value="0"/>'.
+                            html_writer::checkbox('userdatas['.$classstudent->id.'][print_grades]', 1, @$userdata->print_grades);
 
-                $print_grades_anlage_leb =
-                        '<input name="userdatas['.$classstudent->id.'][print_grades_anlage_leb]" type="hidden" value="0"/>'.
-                        html_writer::checkbox('userdatas['.$classstudent->id.'][print_grades_anlage_leb]', 1,
-                                @$userdata->print_grades_anlage_leb);
-                $bildungsstandard = html_writer::select(block_exastud_get_bildungsstandards(),
-                        'userdatas['.$classstudent->id.'][bildungsstandard_erreicht]', @$userdata->bildungsstandard_erreicht,
-                        ['' => '']);
-                $bildungsstandard = $bildungsstandard.
-                        (!empty($userdata->bildungsstandard_erreicht) ? ' '.userdate($userdata->bildungsstandard_erreicht_time,
-                                        block_exastud_get_string('strftimedate', 'langconfig')) : '');
+                    $print_grades_anlage_leb =
+                            '<input name="userdatas['.$classstudent->id.'][print_grades_anlage_leb]" type="hidden" value="0"/>'.
+                            html_writer::checkbox('userdatas['.$classstudent->id.'][print_grades_anlage_leb]', 1,
+                                    @$userdata->print_grades_anlage_leb);
+                    $bildungsstandard = html_writer::select(block_exastud_get_bildungsstandards(),
+                            'userdatas['.$classstudent->id.'][bildungsstandard_erreicht]', @$userdata->bildungsstandard_erreicht,
+                            ['' => '']);
+                    $bildungsstandard = $bildungsstandard.
+                            (!empty($userdata->bildungsstandard_erreicht) ? ' '.userdate($userdata->bildungsstandard_erreicht_time,
+                                            block_exastud_get_string('strftimedate', 'langconfig')) : '');
+                }
 
                 $ausgeschieden = '<input name="userdatas['.$classstudent->id.'][dropped_out]" type="hidden" value="0"/>'.
                         '<input name="userdatas['.$classstudent->id.'][dropped_out]" type="checkbox" value="1"'.
@@ -394,11 +402,17 @@ switch ($type) {
                         $classstudent->firstname,
                         html_writer::select($available_templates, 'userdatas['.$classstudent->id.'][print_template]', $templateid,
                                 false),
-                        $print_grades,
-                        $print_grades_anlage_leb,
-                        $bildungsstandard,
+                    ];
+                if (block_exastud_is_bw_active()) {
+                    $row = array_merge($row, [
+                            $print_grades,
+                            $print_grades_anlage_leb,
+                            $bildungsstandard,
+                    ]);
+                }
+                $row = array_merge($row, [
                         $ausgeschieden,
-                ];
+                ]);
 
                 $table->data[] = $row;
             }

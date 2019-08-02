@@ -647,6 +647,14 @@ class print_templates {
 		}
 		$templateids = [];
 
+		// check on bw_active
+        if (block_exastud_is_bw_active()) {
+            $notpossibledefaulttemplates = block_exastud_get_default_templates(null, true);
+        } else {
+            $notpossibledefaulttemplates = block_exastud_get_default_templates(null, false);
+        }
+        $notpossibledefaulttemplatesids = array_map(function($r) {return $r['id'];}, $notpossibledefaulttemplates);
+
 		if (block_exastud_is_bw_active() /*&& !block_exastud_get_only_learnsociale_reports()*/) {
 		    // templates for "Reports" page
 
@@ -662,7 +670,14 @@ class print_templates {
                 // 2004 Beiblatt zur Projektprüfung
                 $templateids[] = BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_BEIBLATT_PROJEKTPRUEFUNG_HSA; // 'BP 2004/Beiblatt zur Projektpruefung HSA';
             }
-		}
+		} else {
+		    $templates = g::$DB->get_records('block_exastudreportsettings', ['bpid' => 0, 'hidden' => 0]);
+		    foreach ($templates as $tmpl) {
+		        if (!in_array($tmpl->id, $notpossibledefaulttemplatesids)) {
+                    $templateids[] = $tmpl->id;
+                }
+            }
+        }
 		return static::get_template_name_array($templateids);
 	}
 
@@ -716,13 +731,23 @@ class print_templates {
 
     static function get_bp_available_print_templates($bp) {
         $templateids = [];
+        // check on bw_active
+        if (block_exastud_is_bw_active()) {
+            $notpossibledefaulttemplates = block_exastud_get_default_templates(null, true);
+        } else {
+            $notpossibledefaulttemplates = block_exastud_get_default_templates(null, false);
+        }
+        $notpossibledefaulttemplatesids = array_map(function($r) {return $r['id'];}, $notpossibledefaulttemplates);
         if ($bp) {
             $templates = g::$DB->get_records('block_exastudreportsettings', ['bpid' => $bp->id]);
         } else {
             $templates = g::$DB->get_records('block_exastudreportsettings');
         }
         foreach ($templates as $templ) {
-            if (!in_array($templ->id, $templateids) && !$templ->hidden) {
+            if (!in_array($templ->id, $templateids) // not a double
+                && !$templ->hidden // not hidden
+                && !in_array($templ->id, $notpossibledefaulttemplatesids) // not in another bw_active
+                ) {
                 $templateids[] = $templ->id;
             }
         }

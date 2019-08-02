@@ -48,7 +48,7 @@ class class_edit_form extends moodleform {
             $mform->addElement('text',
                     'title_forreport',
                     block_exastud_get_string('class_title_for_report').':',
-                    array('size' => 50,
+                    array('size' => 250,
                             'class' => 'exastud-review-message',
                             'data-exastudmessage' => block_exastud_get_string('class_title_for_report_description')));
         } else {
@@ -61,12 +61,18 @@ class class_edit_form extends moodleform {
         $bps = g::$DB->get_records_menu('block_exastudbp', null, 'sorting', 'id, title');
         $bps = ['' => ''] + $bps;
         if (!$this->_customdata['for_siteadmin']) {
-            $mform->addElement('select',
-                    'bpid',
-                    block_exastud_get_string('class_educationplan').':',
-                    $bps,
-                    ['class' => 'exastud-review-message',
-                     'data-exastudmessage' => block_exastud_get_string('attention_plan_will_change')]);
+            if (block_exastud_is_bw_active()) {
+                $mform->addElement('select',
+                        'bpid',
+                        block_exastud_get_string('class_educationplan').':',
+                        $bps,
+                        ['class' => 'exastud-review-message',
+                                'data-exastudmessage' => block_exastud_get_string('attention_plan_will_change')]);
+            } else {
+                $mform->addElement('hidden', 'bpid');
+                $mform->setType('bpid', PARAM_INT);
+                $mform->setDefault('bpid', 0);
+            }
         } else {
             $mform->addElement('hidden', 'bpid');
             $mform->setType('bpid', PARAM_INT);

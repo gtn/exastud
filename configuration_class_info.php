@@ -71,7 +71,11 @@ if ($classform->is_cancelled()) {
 	$newclass->title = $classedit->title;
 	$newclass->title_forreport = $classedit->title_forreport;
 	if(!$classedit->bpid){
-	    $classedit->bpid = 1;
+	    if (block_exastud_is_bw_active()) {
+            $classedit->bpid = 1;
+        } else {
+            $classedit->bpid = 0;
+        }
 	}
 	$newclass->bpid = $classedit->bpid;
 
@@ -240,7 +244,11 @@ if ($class->id) {
 	$templates = \block_exastud\print_templates::get_all_default_print_templates();
 }
 
-$bps = $DB->get_records('block_exastudbp', [], 'sorting');
+if (block_exastud_is_bw_active()) {
+    $bps = $DB->get_records('block_exastudbp', [], 'sorting');
+} else {
+    $bps = array();
+}
 $templates_by_bp = [];
 $tempbp = (object)['id' => 0];
 $templates_by_bp[''] = \block_exastud\print_templates::get_bp_available_print_templates($tempbp);
@@ -248,7 +256,6 @@ foreach ($bps as $bp) {
 	$templates_by_bp[$bp->id] = \block_exastud\print_templates::get_bp_available_print_templates($bp);
 }
 $templates_by_bp = block_exastud_clean_templatelist_for_classconfiguration($templates_by_bp, 'class');
-
 ?>
 	<script>
 			var templates_by_bp = <?php echo json_encode($templates_by_bp); ?>;
@@ -262,7 +269,15 @@ $templates_by_bp = block_exastud_clean_templatelist_for_classconfiguration($temp
 				var $select = $('<select/>', {name: name, class: 'custom-select'});
 				$select.attr('data-exastudmessage', '<?php echo block_exastud_get_string('attention_template_will_change'); ?>');
 
-				$.each(templates_by_bp[$('select[name=bpid]').val()], function (id, title) {
+				if ($('select[name="bpid"]').length) {
+                    var bpselected = $('select[name="bpid"]').val();
+                } else {
+                    var bpselected = $('input[name="bpid"]').val();
+                }
+				if (bpselected == 0) {
+                    bpselected = '';
+                }
+				$.each(templates_by_bp[bpselected], function (id, title) {
 					$select.append($('<option/>', {
 						value: id,
 						text: title
