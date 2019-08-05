@@ -139,7 +139,7 @@
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
         <FIELD NAME="reviewid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="Review Foreign Key"/>
         <FIELD NAME="categoryid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="Category Foreign Key"/>
-        <FIELD NAME="categorysource" TYPE="char" LENGTH="7" NOTNULL="true" DEFAULT="exastud" SEQUENCE="false" COMMENT="Category Foreign Key"/><
+        <FIELD NAME="categorysource" TYPE="char" LENGTH="7" NOTNULL="true" DEFAULT="exastud" SEQUENCE="false" COMMENT="Category Foreign Key"/>
         <FIELD NAME="value" TYPE="char" LENGTH="255" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="value"/>
       </FIELDS>
       <KEYS>
