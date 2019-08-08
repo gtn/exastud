@@ -2195,6 +2195,7 @@ class printer {
                 $data[$key] = block_exastud_get_report_userdata_value($templateProcessor, $key, $student->id, $input['userdatakey']);
             }
         }
+        //echo "<pre>debug:<strong>printer.php:2198</strong>\r\n"; print_r($data); echo '</pre>'; exit; // !!!!!!!!!! delete it
         // add school logo
         $data['school_logo'] = '';
         if (!$templateProcessor->addImageToReport(null, 'school_logo', 'exastud', 'block_exastud_schoollogo', 0, 100, 100)) {

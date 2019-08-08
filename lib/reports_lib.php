@@ -86,7 +86,7 @@ function block_exastud_get_report_user_fields($getAll = false) {
             return $result;
         }
         // filter not needed fields
-        $toDelete = array('deletepicture', 'auth', 'imagefile'/*, 'currentpicture'*/); // imagefile,currentpicture -> TODO: add user's photo!
+        $toDelete = array('deletepicture', 'auth', 'maildisplay', 'imagefile'/*, 'currentpicture'*/); // imagefile,currentpicture -> TODO: add user's photo!
         foreach ($toDelete as $delKey) {
             if (array_key_exists($delKey, $result)) {
                 unset($result[$delKey]);
@@ -139,6 +139,18 @@ function block_exastud_get_report_userdata_value(&$templateProcessor, $datakey, 
             // timezone
             if ($fieldname == 'timezone') {
                 return core_date::get_localised_timezone($user->{$fieldname});
+            }
+            // email hide if hidding is setted up
+            if ($fieldname == 'email') {
+                $maildisplay = $user->maildisplay;
+                // hide email
+                if (!($maildisplay == 1 || $maildisplay == 2)) { // may be add "only for users from this course?" ($maildisplay == 2 && enrol_sharing_course($user, $USER))
+                    return '';
+                }
+            }
+            // country
+            if ($fieldname == 'country') {
+                return get_string($user->country, 'countries');
             }
             // user's picture
             if ($fieldname == 'currentpicture') {
