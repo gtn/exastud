@@ -582,8 +582,6 @@ class student_other_data_form extends moodleform {
                                     'accepted_types' => array('web_image'))
                     );
                     break;
-//                case 'textarea':
-//                    break;
                 default:
                     $mform->addElement('header', 'header_'.$dataid, $input['title']);
                     $mform->setExpanded('header_'.$dataid);
@@ -716,7 +714,7 @@ class reportsettings_edit_form extends moodleform {
         'ags',
     );
 
-    protected $input_types = array('textarea', 'text', 'select', 'header', 'image');
+    protected $input_types = array('textarea', 'text', 'select', 'header', 'image', 'userdata');
     protected $radioattributes = array(); // html tag attributes for radiobuttons
 
     protected $additionalData = null;
@@ -840,6 +838,13 @@ class reportsettings_edit_form extends moodleform {
                 $mform->setType($field.'_height', PARAM_INT);
                 $mform->addGroup($tempGroup, $field.'_imageparams', '', ' ', false);
 
+                // params for user's data
+                $tempGroup = array();
+                //$tempGroup[] =& $mform->createElement('exastud_htmltag', block_exastud_get_string('report_setting_type_userdata_datakey'));
+                $tempGroup[] =& $mform->createElement('select', $field.'_userdatakey', block_exastud_get_string('report_setting_type_userdata_datakey'));
+                $mform->setType($field.'_userdatakey', PARAM_RAW);
+                $mform->addGroup($tempGroup, $field.'_userdataparams', '', ' ', false);
+
                 //$mform->addElement('exastud_htmltag', '</div>');
             } else {
                 // only checkbox
@@ -877,6 +882,7 @@ class reportsettings_edit_form extends moodleform {
             if (!empty($fieldData['type'])) {
                 $result->{$field.'_type'} = $fieldData['type'];
             }
+            // textarea
             if (!empty($fieldData['rows'])) {
                 $result->{$field.'_rows'} = $fieldData['rows'];
             }
@@ -886,9 +892,11 @@ class reportsettings_edit_form extends moodleform {
             if (!empty($fieldData['maxchars'])) {
                 $result->{$field.'_maxchars'} = $fieldData['maxchars'];
             }
+            // selectbox
             if (!empty($fieldData['values'])) {
                 $result->{$field.'_values'} = $fieldData['values'];
             }
+            // image
             if (!empty($fieldData['maxbytes'])) {
                 $result->{$field.'_maxbytes'} = $fieldData['maxbytes'];
             }
@@ -897,6 +905,10 @@ class reportsettings_edit_form extends moodleform {
             }
             if (!empty($fieldData['height'])) {
                 $result->{$field.'_height'} = $fieldData['height'];
+            }
+            // user's data
+            if (!empty($fieldData['userdatakey'])) {
+                $result->{$field.'_userdatakey'} = $fieldData['userdatakey'];
             }
         }
         $result->additional_params = unserialize($data->additional_params);
@@ -959,7 +971,7 @@ class reportsettings_edit_form extends moodleform {
         }
 
         if (!empty($mform->_defaultValues['additional_params']) && count($mform->_defaultValues['additional_params']) > 0) {
-            //print_r($mform->_defaultValues['additional_params']);
+            //echo "<pre>debug:<strong>edit_form.php:974</strong>\r\n"; print_r($mform->_defaultValues['additional_params']); echo '</pre>'; exit; // !!!!!!!!!! delete it
             //$count_additional = count($mform->_defaultValues['additional_params']);
             // add additional_params to the form
             foreach ($mform->_defaultValues['additional_params'] as $param_key => $param_settings) {
@@ -1061,6 +1073,17 @@ class reportsettings_edit_form extends moodleform {
                 }
                 $mform->addGroup($imageParams, 'additional_params_imageparams['.$i.']', '', ' ', false);
 
+                // parameters for user's data
+                require_once($CFG->dirroot . '/blocks/exastud/lib/reports_lib.php');
+                $userDataParams = array();
+                $selectboxparameters = block_exastud_get_report_user_fields();
+                //$userDataParams[] = $mform->createElement('exastud_htmltag', block_exastud_get_string('report_setting_type_userdata_datakey'));
+                $userDataParams[] = $mform->createElement('select', 'additional_params_userdatakey['.$i.']', block_exastud_get_string('report_setting_type_userdata_datakey'), $selectboxparameters);
+                $mform->setType('additional_params_userdatakey['.$i.']', PARAM_RAW);
+                if (!empty($param_settings['userdatakey'])) {
+                    $mform->setDefault('additional_params_userdatakey['.$i.']', $param_settings['userdatakey']);
+                }
+                $mform->addGroup($userDataParams, 'additional_params_userdataparams['.$i.']', '', ' ', false);
 
                 $mform->addElement('exastud_htmltag', '</div>');
                 $i++;
@@ -1157,6 +1180,17 @@ class reportsettings_edit_form extends moodleform {
             $image_settings->_attributes['class'] = 'exastud-template-settings-group group-'.$field.' image-settings '.$addclass4;
             $image_settings_elements = $image_settings->getElements();
             foreach ($image_settings_elements as $element) {
+                $element->_attributes['class'] = 'exastud-template-settings-param';
+            }
+            // users data params
+            $userdata_settings = $mform->getElement($field.'_userdataparams'.$arr);
+            $addclass5 = '';
+            if ($i !== null) {
+                $addclass5 .= ' userdata-settings-'.$i;
+            }
+            $userdata_settings->_attributes['class'] = 'exastud-template-settings-group group-'.$field.' userdata-settings '.$addclass5;
+            $userdata_settings_elements = $userdata_settings->getElements();
+            foreach ($userdata_settings_elements as $element) {
                 $element->_attributes['class'] = 'exastud-template-settings-param';
             }
         };

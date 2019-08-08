@@ -118,6 +118,9 @@ const BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_UEBERFACHLICHE_KOMPETENZEN_COMMON = 102;
 const BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_ANLAGE_ZUM_LERNENTWICKLUNGSBERICHTALT_COMMON = 103;
 const BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_DEFAULT_REPORT_COMMON = 104;
 
+// example of report
+const BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_STUDENT_CARD = 999;
+
 const BLOCK_EXASTUD_SESSION_TIMEOUT = 10*60 + 1;
 
 class block_exastud_permission_exception extends moodle_exception {
@@ -2458,6 +2461,56 @@ function block_exastud_get_default_templates($templateid = null, $common = true)
                                 ],
                         ],
                         'inputs_footer' => ['comments'], // inputs in the footer of template
+                ],
+                'student_card' => [
+                        'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_STUDENT_CARD,
+                        'name' => 'Student card',
+                        'file' => 'student_card',
+                        'category' => 'Default',
+                        'inputs' => [
+                                'fname' => [
+                                        'title' => 'first name',
+                                        'type' => 'userdata',
+                                        'userdatakey' => 'firstname',
+                                ],
+                                'sname' => [
+                                        'title' => 'second name',
+                                        'type' => 'userdata',
+                                        'userdatakey' => 'lastname',
+                                ],
+                                'birth_day' => [
+                                        'title' => 'day of birth',
+                                        'type' => 'userdata',
+                                        'userdatakey' => 'profile_field_dateofbirth',
+                                ],
+                                'birth_city' => [
+                                        'title' => 'city of birth',
+                                        'type' => 'userdata',
+                                        'userdatakey' => 'profile_field_placeofbirth',
+                                ],
+                                'student_photo' => [
+                                        'title' => 'student\'s photo',
+                                        'type' => 'userdata',
+                                        'userdatakey' => 'currentpicture',
+                                ],
+                                'schule_address1' => [
+                                        'title' => 'GTN school',
+                                        'type' => 'header',
+                                ],
+                                'schule_address2' => [
+                                        'title' => 'Linz, main square',
+                                        'type' => 'header',
+                                ],
+                                'schule_phone' => [
+                                        'title' => '222-22-22',
+                                        'type' => 'header',
+                                ],
+                                'schule_web' => [
+                                        'title' => 'www.gtn-solutions.com',
+                                        'type' => 'header',
+                                ],
+
+                        ],
                 ]
         ];
     } else {
@@ -5169,8 +5222,11 @@ function block_exastud_fill_reportsettingstable($id = 0, $update = false) {
                     $fielddata['count_in_row'] = @$inputconfig['cols'] ? $inputconfig['cols'] : "999";
                     $fielddata['maxchars'] = @$inputconfig['maxchars'] ? $inputconfig['maxchars'] : "0";
                 }
-                if (!empty($inputconfig['type']) && $inputconfig['type'] == 'select' && !empty($inputconfig['values'])) {
+                if ($fielddata['type'] == 'select' && !empty($inputconfig['values'])) {
                     $fielddata['values'] = $inputconfig['values'];
+                }
+                if ($fielddata['type'] == 'userdata' ) {
+                    $fielddata['userdatakey'] = @$inputconfig['userdatakey'] ? $inputconfig['userdatakey'] : "username";
                 }
                 if (in_array($inputname, $tablecolumns)) {
                     // add value to concrete field
@@ -6224,7 +6280,6 @@ function block_exastud_export_mysql_table($table = '', $filename = false, $funct
     header("Content-disposition: attachment; filename=\"".$filename."\"");
     echo $content; exit;
 }
-
 
 /*
 function block_exastud_encrypt_raw($value, $secret) {

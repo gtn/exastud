@@ -226,6 +226,9 @@ class print_templates {
                         $inputs[$field]['width'] = ($fieldData['width'] > 0 ? $fieldData['width'] : 800);
                         $inputs[$field]['height'] = ($fieldData['height'] > 0 ? $fieldData['height'] : 600);
                         break;
+                    case 'userdata':
+                        $inputs[$field]['userdatakey'] = ($fieldData['userdatakey'] != '' ? $fieldData['userdatakey'] : '');
+                        break;
                 }
             }
         }
@@ -817,7 +820,7 @@ class print_templates {
         $checkboxes = array(
             'year' => array('schuljahr'),
             'report_date' => array('datum'),
-            'student_name' => array('name'),
+            'student_name' => array('name'), // do we need to have checkboxes for 'name', 'class', 'dates'....?
             'date_of_birth' => array('geburtsdatum', 'geburt'),
             'place_of_birth' => array('gebort'),
             'learning_group' => array(),
@@ -834,19 +837,30 @@ class print_templates {
             }
         };
         foreach (array_keys($checkboxes) as $fieldname) {
+            $fieldValue = '';
             $fieldData = unserialize($tableData->{$fieldname});
-            if ($fieldData['checked']) {
+            // without checkboxes?
+            switch ($fieldname) {
+                case 'report_date':
+                    $fieldValue = date('d.m.Y');
+                    break;
+                case 'student_name':
+                    $fieldValue = $student->firstname.' '.$student->lastname;
+                    break;
+            }
+            // with checkboxes
+            if ($fieldData['checked'] && !$fieldValue) {
                 $fieldValue = ' ---VAL--- '; // temporary
                 switch ($fieldname) {
                     case 'year':
                         $fieldValue = block_exastud_get_year_for_report($class);
                         break;
-                    case 'report_date':
-                        $fieldValue = date('d.m.Y');
-                        break;
-                    case 'student_name':
-                        $fieldValue = $student->firstname.' '.$student->lastname;
-                        break;
+                    //case 'report_date':
+                    //    $fieldValue = date('d.m.Y');
+                    //    break;
+                    //case 'student_name':
+                    //    $fieldValue = $student->firstname.' '.$student->lastname;
+                    //    break;
                     case 'date_of_birth':
                         $fieldValue = block_exastud_get_date_of_birth($student->id);
                         break;
@@ -867,7 +881,11 @@ class print_templates {
                 }
                 $valueInsert($fieldname, $fieldValue);
             } else {
-                $valueInsert($fieldname, '');
+                if (!$fieldValue) {
+                    $valueInsert($fieldname, '');
+                } else {
+                    $valueInsert($fieldname, $fieldValue);
+                }
             }
         }
         // inputs
@@ -882,6 +900,9 @@ class print_templates {
         if (is_array($inputs)) {
             foreach ($inputs as $key => $input) {
                 switch ($input['type']) {
+                    case 'header':
+                        $markers[$key] = $input['title'];
+                        break;
                     case 'image':
                         break;
                     default:

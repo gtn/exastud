@@ -453,6 +453,10 @@ if ($action && (($settingsid > 0 && $action == 'edit') || $action == 'new')) {
                             $result .= '&nbsp;'.block_exastud_get_string('report_setting_type_image_height').': '.$resArr['height'];
                             $result = '<small>'.$result.'</small>';
                             break;
+                        case 'userdata':
+                            $result .= block_exastud_get_string('report_setting_type_userdata').': '.$resArr['userdatakey'];
+                            $result = '<small>'.$result.'</small>';
+                            break;
                     }
                 }
                 return $result;
@@ -647,6 +651,10 @@ function block_exastud_report_templates_prepare_serialized_data($settingsform, $
                     $element_data['height'] = (isset($settingsedit->{$field.'_height'}) && $settingsedit->{$field.'_height'} > 0 ?
                             $settingsedit->{$field.'_height'} : 600);
                     break;
+                case 'userdata':
+                    $element_data['userdatakey'] = (isset($settingsedit->{$field.'_userdatakey'}) && $settingsedit->{$field.'_userdatakey'} != '' ?
+                            $settingsedit->{$field.'_userdatakey'} : '');
+                    break;
             }
         } else {
             $element_data = array(
@@ -660,17 +668,23 @@ function block_exastud_report_templates_prepare_serialized_data($settingsform, $
     $aparams_GP = optional_param_array('additional_params', '', PARAM_RAW);
     $additional_params = array();
     if ($aparams_GP && is_array($aparams_GP) && count($aparams_GP) > 0) {
+        // main params
         $aparams_titles = optional_param_array('additional_params_title', '', PARAM_RAW);
         $aparams_keys = optional_param_array('additional_params_key', '', PARAM_RAW);
         $aparams_types = optional_param_array('additional_params_type', '', PARAM_RAW);
+        // textarea
         $aparams_rows = optional_param_array('additional_params_rows', '', PARAM_INT);
         $aparams_count_in_rows = optional_param_array('additional_params_count_in_row', '', PARAM_INT);
         $aparams_maxchars = optional_param_array('additional_params_maxchars', '', PARAM_INT);
+        // image
         $aparams_maxbytes = optional_param_array('additional_params_maxbytes', '', PARAM_INT);
         $aparams_width = optional_param_array('additional_params_width', '', PARAM_INT);
         $aparams_height = optional_param_array('additional_params_height', '', PARAM_INT);
+        // selectbox
         $aparams_selectboxvalues_key = block_exastud_optional_param_array('additional_params_selectboxvalues_key', '', PARAM_RAW);
         $aparams_selectboxvalues_value = block_exastud_optional_param_array('additional_params_selectboxvalues_value', '', PARAM_RAW);
+        // for userdata
+        $aparams_userdatakey = optional_param_array('additional_params_userdatakey', '', PARAM_RAW);
         foreach ($aparams_GP as $pIndex => $checked) {
             if ($pIndex > -1) {
                 if ($aparams_keys[$pIndex] != '') {
@@ -712,6 +726,11 @@ function block_exastud_report_templates_prepare_serialized_data($settingsform, $
                             $additional_params[$aparams_keys[$pIndex]]['height'] =
                                     (isset($aparams_height[$pIndex]) && $aparams_height[$pIndex] > 0 ?
                                             $aparams_height[$pIndex] : 600);
+                            break;
+                        case 'userdata':
+                            $additional_params[$aparams_keys[$pIndex]]['userdatakey'] =
+                                    (isset($aparams_userdatakey[$pIndex]) && $aparams_userdatakey[$pIndex] != '' ?
+                                            $aparams_userdatakey[$pIndex] : '');
                             break;
 
                     }

@@ -16,6 +16,7 @@
 //
 // This copyright notice MUST APPEAR in all copies of the script!
 (function($) {
+
     function additionalGroupToggle(field, for_additional) {
         // if no any checked radio - set 'textarea' default
         if ($(':radio[name="' + field + '_type"]').length) {
@@ -43,12 +44,13 @@
     }
 
     function additionalSettingsToggle(field) {
-        // console.log(field);
+        console.log(field);
         var isAdditional = false;
         var checkboxSelector = ':checkbox.exastud-template-settings-param[name="' + field + '"]';
         var textareaGroupSelector = '.exastud-template-settings-group.group-' + field + '.textarea-settings';
         var selectboxGroupSelector = '.exastud-template-settings-group.group-' + field + '.selectbox-settings';
         var imageGroupSelector = '.exastud-template-settings-group.group-' + field + '.image-settings';
+        var userdataGroupSelector = '.exastud-template-settings-group.group-' + field + '.userdata-settings';
         var radioButtonSelector = ':radio[name="' + field + '_type"]:checked';
         if (!$(radioButtonSelector).length) { // it is additional param
             //var regex = /\[(\d*)\]/;
@@ -58,11 +60,15 @@
             textareaGroupSelector = '.exastud-template-settings-group.group-additional_params.textarea-settings.textarea-settings-'+index;
             selectboxGroupSelector = $(radioButtonSelector).closest('.exastud-setting-block').find('.exastud-template-settings-group.group-additional_params.selectbox-settings');
             imageGroupSelector = '.exastud-template-settings-group.group-additional_params.image-settings.image-settings-'+index;
+            userdataGroupSelector = '.exastud-template-settings-group.group-additional_params.userdata-settings.userdata-settings-'+index;
         }
+        // console.log(imageGroupSelector);
+        // console.log(userdataGroupSelector);
         // hide all groups at first
         $(textareaGroupSelector).hide();
         $(selectboxGroupSelector).hide();
         $(imageGroupSelector).hide();
+        $(userdataGroupSelector).hide();
         if (isAdditional || $(checkboxSelector).is(':checked')) {
             // console.log(textareaGroupSelector);
             // console.log(imageGroupSelector);
@@ -80,6 +86,11 @@
             if ($(radioButtonSelector).length && $(radioButtonSelector).val() == 'image') {
                 // show image group
                 $(imageGroupSelector).show();
+                return true;
+            }
+            if ($(radioButtonSelector).length && $(radioButtonSelector).val() == 'userdata') {
+                // show userdata group
+                $(userdataGroupSelector).show();
                 return true;
             }
 
@@ -107,9 +118,15 @@
             $(this).removeClass('textarea-settings-' + old_index);
             $(this).addClass('textarea-settings-' + new_index);
         })
+        // images
         newBlock.find('[class*=image-settings-' + old_index + ']').each(function() {
             $(this).removeClass('image-settings-' + old_index);
             $(this).addClass('image-settings-' + new_index);
+        })
+        // userdata
+        newBlock.find('[class*=userdata-settings-' + old_index + ']').each(function() {
+            $(this).removeClass('userdata-settings-' + old_index);
+            $(this).addClass('userdata-settings-' + new_index);
         })
         newBlock.find(':input').each(function () {
             switch (this.type) {

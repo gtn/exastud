@@ -27,6 +27,12 @@ block_exastud_check_memory_limit(536870912, '512M'); // 512
 $courseid = optional_param('courseid', 1, PARAM_INT); // Course ID
 $periodid = optional_param('periodid', 0, PARAM_INT); // Period ID
 $classid = optional_param('classid', 0, PARAM_INT); // Class ID
+$templatesFromForm = optional_param_array('template', [], PARAM_TEXT);
+// no errors if it is form submit! Disable it if you need to debug
+if (count($templatesFromForm)) {
+    error_reporting(0);
+    @ini_set('display_errors', 0);
+}
 
 if (!$classid) {
     if (isset($_COOKIE['lastclass']) && $_COOKIE['lastclass'] > 0) {
@@ -58,7 +64,7 @@ $output = block_exastud_get_renderer();
 $url = '/blocks/exastud/report.php?courseid='.$courseid.'&classid='.$classid;
 $PAGE->set_url($url);
 
-set_time_limit(600);
+//set_time_limit(600);
 
 ob_clean();
 
@@ -173,7 +179,6 @@ if ($class !== null) {
     $pleaseselectstudent = '';
     $messagebeforetables = '';
     //$template = optional_param('template', '', PARAM_TEXT);
-    $templatesFromForm = optional_param_array('template', [], PARAM_TEXT);
     if (count($templatesFromForm) > 0) {
         $zipfilename = tempnam($CFG->tempdir, "zip");
         $zip = new \ZipArchive();
@@ -342,8 +347,10 @@ if ($class !== null) {
                             }
                             break;
                         default:
-                            if (!in_array($student->id, $studentsGraded)) {
-                                $doit = false;
+                            if (block_exastud_is_bw_active()) { // check only if BW is activated
+                                if (!in_array($student->id, $studentsGraded)) {
+                                    $doit = false;
+                                }
                             }
                             break;
                     }

@@ -50,8 +50,9 @@ class printer {
 
     static function report_to_temp_file($class, $student, $templateid, $courseid) {
 		global $CFG, $USER;
+        require_once($CFG->dirroot . '/blocks/exastud/lib/reports_lib.php');
 
-		$certificate_issue_date_text = block_exastud_get_certificate_issue_date_text($class);
+        $certificate_issue_date_text = block_exastud_get_certificate_issue_date_text($class);
 		$certificate_issue_date_timestamp = block_exastud_get_certificate_issue_date_timestamp($class);
 		$studentdata = block_exastud_get_class_student_data($class->id, $student->id);
 		$period = block_exastud_get_period($class->periodid);
@@ -208,7 +209,7 @@ class printer {
             $marker_configurations = $template->get_marker_configurations('all', $class, $student);
             $data = array_merge($data, $marker_configurations);
         }
-
+        //echo "<pre>debug:<strong>printer.php:186</strong>\r\n"; print_r($data); echo '</pre>'; exit; // !!!!!!!!!! delete it
         // preparation data from images
         if ($template) {
             $inputs = print_templates::get_template_inputs($templateid, 'all');
@@ -219,7 +220,7 @@ class printer {
             $context = \context_system::instance();
             foreach ($inputs as $dataKey => $input) {
                 if ($input['type'] == 'image') {
-                    if (!$templateProcessor->addImageToReport($dataKey, 'block_exastud', 'report_image_'.$dataKey, $student->id, $input['width'], $input['height'], true)) {
+                    if (!$templateProcessor->addImageToReport(null, $dataKey, 'block_exastud', 'report_image_'.$dataKey, $student->id, $input['width'], $input['height'], true)) {
                         $data[$dataKey] = ''; // empty image
                     }
                     /*$files = $fs->get_area_files($context->id, 'block_exastud', 'report_image_'.$dataKey, $student->id, 'itemid', false);
@@ -1362,7 +1363,7 @@ class printer {
                 }*/
             //}
 
-            if (!$templateProcessor->addImageToReport('school_logo', 'exastud', 'block_exastud_schoollogo', 0, 1024, 768)) {
+            if (!$templateProcessor->addImageToReport(null, 'school_logo', 'exastud', 'block_exastud_schoollogo', 0, 1024, 768)) {
                 $templateProcessor->setValue("school_logo", ''); // no logo files
             };
 
@@ -1873,7 +1874,7 @@ class printer {
             }
             $templateProcessor->deleteRow('kriterium');*/
             
-            if (!$templateProcessor->addImageToReport('school_logo', 'exastud', 'block_exastud_schoollogo', 0, 1024, 768)) {
+            if (!$templateProcessor->addImageToReport(null, 'school_logo', 'exastud', 'block_exastud_schoollogo', 0, 1024, 768)) {
                 $templateProcessor->setValue("school_logo", ''); // no logo files
             };
         }
@@ -1999,6 +2000,7 @@ class printer {
         if ($template) {
             $inputs = print_templates::get_template_inputs($templateid, 'all');
         }
+
         foreach ($data as $dKey => $dItem) {
             $select_text = '';
             // it is selectbox
@@ -2185,12 +2187,26 @@ class printer {
                 }
                 break;
         }
+        
+        // user's data markers
+        //echo "<pre>debug:<strong>printer.php:2191</strong>\r\n"; print_r($inputs); echo '</pre>'; exit; // !!!!!!!!!! delete it
+        foreach ($inputs as $key => $input) {
+            if ($input['type'] == 'userdata' && $input['userdatakey']) {
+                $data[$key] = block_exastud_get_report_userdata_value($templateProcessor, $key, $student->id, $input['userdatakey']);
+            }
+        }
+        // add school logo
+        $data['school_logo'] = '';
+        if (!$templateProcessor->addImageToReport(null, 'school_logo', 'exastud', 'block_exastud_schoollogo', 0, 100, 100)) {
+            $data['school_logo'] = ''; // no logo files
+        };
 
         // crop by input limits: TODO: check!!!!
         foreach ($data as $d => $value) {
             $data[$d] = block_exastud_crop_value_by_template_input_setting($value, $templateid, $d);
         }
 
+        //echo "<pre>debug:<strong>printer.php:2196</strong>\r\n"; print_r($data); echo '</pre>'; exit; // !!!!!!!!!! delete it
 		// zuerst filters
 		$templateProcessor->applyFilters($filters);
 		$templateProcessor->setValues($data);
@@ -2288,7 +2304,7 @@ class printer {
 		}
 
         // school logo: ${school_logo}
-        if (!$templateProcessor->addImageToReport('school_logo', 'exastud', 'block_exastud_schoollogo', 0, 1024, 768)) {
+        if (!$templateProcessor->addImageToReport(null, 'school_logo', 'exastud', 'block_exastud_schoollogo', 0, 1024, 768)) {
             $templateProcessor->setValue("school_logo", ''); // no logo files
         };
         //class logo: ${class_logo}
@@ -2606,7 +2622,7 @@ class printer {
 		$templateProcessor->setValue('datum', date('d.m.Y'));
 
 		// school logo: ${school_logo}
-        if (!$templateProcessor->addImageToReport('school_logo', 'exastud', 'block_exastud_schoollogo', 0, 1024, 768)) {
+        if (!$templateProcessor->addImageToReport(null, 'school_logo', 'exastud', 'block_exastud_schoollogo', 0, 1024, 768)) {
             $templateProcessor->setValue("school_logo", ''); // no logo files
         };
 
@@ -4325,10 +4341,13 @@ class TemplateProcessor extends \PhpOffice\PhpWord\TemplateProcessor {
     }
 
     // Main function to add images to template
-    public function addImageToReport($stringKey, $component="block_exastud", $filearea, $modelid, $w, $h, $fileFromLoggedInUser = false) {
+    public function addImageToReport($context, $stringKey, $component="block_exastud", $filearea, $modelid = false, $w = 1024, $h = 768, $fileFromLoggedInUser = false) {
         global $USER;
         $fs = get_file_storage();
-        $files = $fs->get_area_files(\context_system::instance()->id, $component, $filearea, $modelid, 'itemid', false);
+        if (!$context) {
+            $context = \context_system::instance()->id;
+        }
+        $files = $fs->get_area_files($context, $component, $filearea, $modelid, 'itemid', false);
         if ($files && count($files) > 0) {
             foreach ($files as $file) {
                 if ($fileFromLoggedInUser && $file->get_userid() != $USER->id) {
@@ -4336,6 +4355,10 @@ class TemplateProcessor extends \PhpOffice\PhpWord\TemplateProcessor {
                 }
                 $file_content = $file->get_content();
                 $file_info = $file->get_imageinfo();
+                if (!$w && !$h) {
+                    $w = (array_key_exists('width', $file_info) ? $file_info['width'] : 1024);
+                    $h = (array_key_exists('height', $file_info) ? $file_info['height'] : 768);
+                }
                 $fileExt = pathinfo($file->get_filename(), PATHINFO_EXTENSION);
                 $this->setMarkerImages($stringKey, $file_content, $fileExt, $w, $h, $file_info);
             }

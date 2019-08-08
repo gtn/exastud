@@ -798,6 +798,14 @@ return [
             'Höhe',
             'Height',
     ],
+    'report_setting_type_userdata' => [
+            'Student data',
+            'Student data',
+    ],
+    'report_setting_type_userdata_datakey' => [
+            'Choose user\'s field',
+            'Choose user\'s field',
+    ],
     'reset_report_templates' => [
             'Standardvorlagen auf Originalwerte zurücksetzen',
             'Reset default templates to default state',
