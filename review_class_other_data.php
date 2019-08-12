@@ -92,7 +92,11 @@ switch ($type) {
                             'title' => block_exastud_get_string('report_other_report_fields'),
                     ],
             ];
-            $classheader = $reviewclass->title.' - '.block_exastud_get_string('report_other_report_fields');
+            if (block_exastud_is_bw_active()) {
+                $classheader = $reviewclass->title.' - '.block_exastud_get_string('report_other_report_fields');
+            } else {
+                $classheader = $reviewclass->title.' - '.block_exastud_get_string('report_report_fields');
+            }
             /*// additional info - like BLOCK_EXASTUD_DATA_ID_PRINT_TEMPLATE, but used another fields
             $template = \block_exastud\print_template::create($type);
             //$categories = $template->get_inputs($type);

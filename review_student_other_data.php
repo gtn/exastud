@@ -101,7 +101,21 @@ switch ($type) {
     case BLOCK_EXASTUD_DATA_ID_PRINT_TEMPLATE:
         $template = block_exastud_get_student_print_template($class, $student->id);
         $categories = $template->get_inputs($type);
-        $classheader = $reviewclass->title.' - '.block_exastud_get_string('report_other_report_fields');
+        if (block_exastud_is_bw_active()) {
+            $classheader = $reviewclass->title.' - '.block_exastud_get_string('report_other_report_fields');
+        } else {
+            $classheader = $reviewclass->title.' - '.block_exastud_get_string('report_report_fields');
+        }
+        // add Learn if BW is not active
+        if (!block_exastud_is_bw_active()) {
+            $learnInputs = $template->get_inputs(BLOCK_EXASTUD_DATA_ID_LERN_UND_SOZIALVERHALTEN);
+            if (is_array($learnInputs) && array_key_exists('learn_social_behavior', $learnInputs)) {
+                if (!is_array($categories)) {
+                    $categories = array();
+                }
+                $categories = array_merge($categories, $learnInputs);
+            }
+        }
         break;
     case BLOCK_EXASTUD_DATA_ID_ADDITIONAL_INFO:
         $template = block_exastud_get_student_print_template($class, $student->id);
@@ -125,7 +139,12 @@ switch ($type) {
 }
 $olddata = (array)block_exastud_get_class_student_data($classid, $studentid);
 
-$dataid = key($categories);
+if (!is_array($categories) || !count($categories)) {
+    $categories = array();
+    $dataid = '';
+} else {
+    $dataid = key($categories);
+}
 $studentform = new student_other_data_form($PAGE->url, [
 	'categories' => $categories,
 	'templateid' => $template->get_template_id(),
@@ -167,7 +186,9 @@ echo $output->header(array('review',
 
 echo $output->heading($classheader);
 
-if ($type == BLOCK_EXASTUD_DATA_ID_CROSS_COMPETENCES) {
+if ($type == BLOCK_EXASTUD_DATA_ID_CROSS_COMPETENCES
+        || (!block_exastud_is_bw_active() && $type == BLOCK_EXASTUD_DATA_ID_PRINT_TEMPLATE)
+) {
 	$user = $student;
 	$userReport = block_exastud_get_report($user->id, $actPeriod->id, $class->id);
 	//$userCategoryReviews = block_exastud_get_reviewers_by_category($actPeriod->id, $user->id, false);

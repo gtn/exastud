@@ -22,6 +22,7 @@ error_reporting(E_ALL);
 
 require __DIR__.'/inc.php';
 require_once($CFG->dirroot . '/blocks/exastud/lib/edit_form.php');
+require_once($CFG->dirroot . '/blocks/exastud/lib/reports_lib.php');
 
 if (!block_exastud_is_siteadmin()) {
     echo 'Only for site admins!';
@@ -350,6 +351,63 @@ if ($action && (($settingsid > 0 && $action == 'edit') || $action == 'new')) {
     echo html_writer::tag('form', $formcontent, [
             'method' => 'post'
     ]);
+} else if ($action && $action == 'export') {
+    // EXPORT
+    if (optional_param('doit', 0, PARAM_INT)) {
+        $templateids = optional_param_array('templateid', null, PARAM_INT);
+        if ($templateids && is_array($templateids)) {
+            $withFiles = optional_param('withfiles', 0, PARAM_INT);
+            block_exastud_export_reports($templateids, $withFiles);
+        }
+        $params = array('sesskey' => sesskey());
+        if ($tokenparam) {
+            $params['token'] = $tokenparam;
+        }
+        redirect(new moodle_url('/blocks/exastud/report_settings.php', $params));
+    }
+    $output = block_exastud_get_renderer();
+    echo $output->header(['report_settings'], ['content_title' => block_exastud_get_string('pluginname')], true);
+    echo $output->heading(block_exastud_get_string('report_settings'));
+    $content = '';
+    $formcontent = '';
+    $table = new html_table();
+    $table->head = array(
+            'id',
+            '<span class="small"><a href="#" id="exastud-reset-template-selectall" data-curr="0">'.block_exastud_get_string('report_selectdeselect_all').'</a></span>',
+            block_exastud_get_string('report_settings_setting_title'),
+            block_exastud_get_string('report_settings_setting_template')
+    );
+    $mytemplates = block_exastud_templates_get_templates();
+    $rows = array();
+    foreach ($mytemplates as $template) {
+        $row = new html_table_row();
+        $row->cells[] = $template->id;
+        //$addmessage = '';
+        $row->cells[] = html_writer::checkbox('templateid[]', $template->id, false, '', ['id' => 'template_'.$template->id, 'class' => 'template-id']);
+        $row->cells[] = html_writer::tag('label', $template->title, ['for' => 'template_'.$template->id]);
+        //$addmessage = '';
+        $row->cells[] = $template->template; // filename
+        $rows[] = $row;
+    }
+    $table->data = $rows;
+    $formcontent .= html_writer::table($table);
+    $formcontent .= html_writer::checkbox('withfiles', 1, false, '&nbsp'.block_exastud_get_string('report_export_with_files')).'<br>';
+    $formcontent .= html_writer::tag('input', '', ['type' => 'hidden', 'name' => 'doit', 'value' => 1]);
+    if ($tokenparam) {
+        $formcontent .= html_writer::tag('input', '', ['type' => 'hidden', 'name' => 'token', 'value' => $tokenparam]);
+    }
+    $formcontent .= html_writer::link(new moodle_url('/blocks/exastud/report_settings.php', ['sesskey' => sesskey(), 'token' => ($tokenparam ? $tokenparam : '')]),
+            block_exastud_get_string('back'),
+            ['class' => 'btn btn-default']);
+    $formcontent .= '&nbsp;&nbsp;&nbsp;'.html_writer::tag('button', block_exastud_get_string('report_export_selected_templates'), [
+                    'type' => 'submit',
+                    'class' => 'btn btn-info',
+            ]);
+    $content .= html_writer::tag('form', $formcontent, [
+            'id' => 'form-templatelist',
+            'method' => 'post'
+    ]);
+    echo $content;
 } else {
     // template list
     $output = block_exastud_get_renderer();
@@ -576,6 +634,19 @@ if ($action && (($settingsid > 0 && $action == 'edit') || $action == 'new')) {
                 'method' => 'post'
         ]);
     }
+    // import / export buttons
+    $ie_buttons = '<br /><br />';
+    $params = [
+            'action' => 'import',
+            'sesskey' => sesskey()
+    ];
+    $ie_buttons .= html_writer::link(new moodle_url('/blocks/exastud/report_settings.php', $params),
+            block_exastud_get_string('report_button_import'), ['class' => 'btn btn-default']);
+    $ie_buttons .= '&nbsp;&nbsp;&nbsp;';
+    $params['action'] = 'export';
+    $ie_buttons .= html_writer::link(new moodle_url('/blocks/exastud/report_settings.php', $params),
+            block_exastud_get_string('report_button_export'), ['class' => 'btn btn-default']);
+    //$content .= html_writer::div($ie_buttons , 'buttons');
 
     echo $content;
 }

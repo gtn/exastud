@@ -2464,7 +2464,7 @@ function block_exastud_get_default_templates($templateid = null, $common = true)
                 ],
                 'student_card' => [
                         'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_STUDENT_CARD,
-                        'name' => 'Student card',
+                        'name' => 'Konfigurierbarer Bericht',
                         'file' => 'student_card',
                         'category' => 'Default',
                         'inputs' => [
@@ -5650,6 +5650,10 @@ function block_exastud_leiter_titles_by_gender($level = '', $gender = '', $defau
 }
 
 function block_exastud_get_bilingual_reports($withempty = false) {
+    // only for BW
+    if (!block_exastud_is_bw_active()) {
+        return array();
+    }
     $alltemplates = [
         BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_16_GMS_TESTAT_BILINGUALES_PROFIL_KL_8,
         BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_16_GMS_ZERTIFIKAT_BILINGUALES_PROFIL_KL_10,
@@ -6279,6 +6283,10 @@ function block_exastud_export_mysql_table($table = '', $filename = false, $funct
     header("Content-Transfer-Encoding: Binary");
     header("Content-disposition: attachment; filename=\"".$filename."\"");
     echo $content; exit;
+}
+
+function block_exastud_get_my_source() {
+    return get_config('exastud', 'mysource');
 }
 
 /*

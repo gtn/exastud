@@ -799,8 +799,8 @@ return [
             'Height',
     ],
     'report_setting_type_userdata' => [
-            'Student data',
-            'Student data',
+            'Profilfeld',
+            'Profile field',
     ],
     'report_setting_type_userdata_datakey' => [
             'Choose user\'s field',
@@ -833,6 +833,22 @@ return [
     'report_setting_willbe_added' => [
             'Vorlage existiert nicht und wird hinzugefügt. Falls die Vorlage gelöscht wurde kann der Administrator diese erneut hinzufügen.',
             'Does not exist now. Will be added.',
+    ],
+    'report_button_import' => [
+        'Import reports',
+        'Import reports',
+    ],
+    'report_button_export' => [
+        'Export reports',
+        'Export reports',
+    ],
+    'report_export_selected_templates' => [
+        'Export selected',
+        'Export selected',
+    ],
+    'report_export_with_files' => [
+        'Add sources of template files to export',
+        'Add sources of template files to export',
     ],
     'select_student' => [
         'Bitte wählen Sie zumindest einen Schüler/eine Schülerin aus',
@@ -895,6 +911,14 @@ return [
                 'Kompetenzraster für Beurteilungskategorien verwenden',
                 'Use competence grids for assessment categories',
     ],
+    'settings_sourceId' => [
+            'Source ID',
+            'Source ID',
+    ],
+    'settings_sourceId_description' => [
+            'Automatisch generierte ID dieser Exastud Installation. Diese kann nicht geändert werden',
+            'Automatically generated ID of this Exastud installation. This ID can not be changed',
+    ],
 
     'report_learn_and_sociale' => [
             'Lern- und Sozialverhalten',
@@ -907,6 +931,10 @@ return [
     'report_other_report_fields' => [
             'Weitere Daten/Formularfelder',
             'Other report fields',
+    ],
+    'report_report_fields' => [
+            'Daten/Formularfelder',
+            'Report fields',
     ],
     'report_bilinguales' => [
             'Bilingualer Unterricht',

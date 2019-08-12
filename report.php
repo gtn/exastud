@@ -160,6 +160,7 @@ if ($class !== null) {
     }
 
     $templates = block_exastud_get_report_templates($class);
+    //echo "<pre>debug:<strong>report.php:163</strong>\r\n"; print_r($templates); echo '</pre>'; exit; // !!!!!!!!!! delete it
 
     $studentsWithExacompGraded = array(); // graded students (exacomp)
     $studentsGraded = array(); // graded students (exastud)
@@ -253,10 +254,13 @@ if ($class !== null) {
                     $files_to_zip[$file->temp_file] = $file->filename;
                     continue; // go to the next template
                 }
-                if ($printStudents && $template == BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_LERN_UND_SOZIALVERHALTEN) {
+                if ($printStudents && in_array($template, array(
+                        BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_LERN_UND_SOZIALVERHALTEN,
+                        BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_LERN_UND_SOZIALVERHALTEN_COMMON
+                        ))) {
                     foreach ($printStudents as $printstudent) {
                         $tempPrintStudents = array($printstudent);
-                        $file = \block_exastud\printer::lern_und_social_report($class, $tempPrintStudents);
+                        $file = \block_exastud\printer::lern_und_social_report($template, $class, $tempPrintStudents);
                         //$files_to_zip[$file->temp_file] = $file->filename;
                         if ($file) {
                             $files_to_zip[$file->temp_file] =

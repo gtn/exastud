@@ -241,7 +241,9 @@ class printer {
             }
         }
 
-		if ($templateid == BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_DEFAULT_REPORT) { // default_report
+		if (in_array($templateid, array(BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_DEFAULT_REPORT,
+                BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_DEFAULT_REPORT_COMMON
+        ))) { // default_report
 			//$class_subjects = block_exastud_get_class_subjects($class);
 			//$lern_soz = block_exastud_get_class_student_data($class->id, $student->id, BLOCK_EXASTUD_DATA_ID_LERN_UND_SOZIALVERHALTEN);
 
@@ -1448,10 +1450,10 @@ class printer {
 						$templateProcessor->duplicateRow("descriptor");
 						$templateProcessor->setValue("descriptor", ($descriptor->niveau_title ? $descriptor->niveau_title.': ' : '').$descriptor->title, 1);
 						$grading = @$studentdata->print_grades_anlage_leb ? $descriptor->teacher_eval_additional_grading : null;
-						if(get_config('exacomp', 'assessment_comp_diffLevel') == 1){
+						if (get_config('exacomp', 'assessment_comp_diffLevel') == 1){
 						    $niveau = @$studentdata->print_grades_anlage_leb ? $descriptor->teacher_eval_niveau_text : null;
 						    $templateProcessor->setValue("dvalue", $niveau, 1);
-						}else if(get_config('exacomp', 'assessment_topic_diffLevel') == 1){
+						} elseif (get_config('exacomp', 'assessment_topic_diffLevel') == 1){
 						    $templateProcessor->setValue("dvalue", null, 1);
 						}
                         if ($oldExacomp) {
@@ -1466,7 +1468,10 @@ class printer {
 				$templateProcessor->deleteRow("topic");
 				$templateProcessor->deleteRow("descriptor");
 			}
-		} elseif ($templateid == BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_ANLAGE_ZUM_LERNENTWICKLUNGSBERICHTALT) {
+		} elseif (in_array($templateid, array(
+		        BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_ANLAGE_ZUM_LERNENTWICKLUNGSBERICHTALT,
+                BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_ANLAGE_ZUM_LERNENTWICKLUNGSBERICHTALT_COMMON
+        ))) {
 
             // very old exacomp?
             $oldExacomp = false;
@@ -1730,7 +1735,8 @@ class printer {
 		    }
 		    //exit; // delete it
 		} else if (in_array($templateid, [
-                BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_UEBERFACHLICHE_KOMPETENZEN
+                BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_UEBERFACHLICHE_KOMPETENZEN,
+                BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_UEBERFACHLICHE_KOMPETENZEN_COMMON
         ])) {
             // very old exacomp?
             $oldExacomp = false;
@@ -2596,10 +2602,10 @@ class printer {
 		//send_temp_file($temp_file, $filename);
 	}
 
-	static function lern_und_social_report($class, $students) {
+	static function lern_und_social_report($templateid, $class, $students) {
 		global $CFG;
 
-		$templateid = BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_LERN_UND_SOZIALVERHALTEN;
+		//$templateid = BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_LERN_UND_SOZIALVERHALTEN;
         $templateFile = \block_exastud\print_templates::get_template_file($templateid);
 
 		if (!file_exists($templateFile)) {
@@ -2641,16 +2647,32 @@ class printer {
             $headTeacherObject = block_exastud_get_user($headTeacher);
 			$headLernReview = $studentData->learning_and_social_behavior;
 			// get reviews from teachers
-            if (@$studentData->learning_and_social_behavior) {
-                $reviews = ['head' => (object)[
-                        'userid' => $headTeacher,
-                        'teacher' => $headTeacherObject,
-                        'subject_title' => block_exastud_trans('de:Zuständiger Klassenlehrer'),
-                        'title' => block_exastud_trans('de:Zuständiger Klassenlehrer'), // subject title
-                        'review' => $headLernReview
-                ]];
+            if (block_exastud_is_bw_active()) {
+                // get from main userdata
+                if (@$studentData->learning_and_social_behavior) {
+                    $reviews = ['head' => (object)[
+                            'userid' => $headTeacher,
+                            'teacher' => $headTeacherObject,
+                            'subject_title' => block_exastud_trans('de:Zuständiger Klassenlehrer'),
+                            'title' => block_exastud_trans('de:Zuständiger Klassenlehrer'), // subject title
+                            'review' => $headLernReview
+                    ]];
+                } else {
+                    $reviews = array();
+                }
             } else {
-                $reviews = array();
+                // get from report configurable
+                if (@$studentData->learn_social_behavior) {
+                    $reviews = ['head' => (object)[
+                            'userid' => $headTeacher,
+                            'teacher' => $headTeacherObject,
+                            'subject_title' => block_exastud_trans('de:Zuständiger Klassenlehrer'),
+                            'title' => block_exastud_trans('de:Zuständiger Klassenlehrer'), // subject title
+                            'review' => $studentData->learn_social_behavior
+                    ]];
+                } else {
+                    $reviews = array();
+                }
             }
 
             // 1. teacher by teacher:
@@ -2677,8 +2699,8 @@ class printer {
             }*/
 
             // 2. subject by subject
-						 $zu="
-	              ";//linebreak in word
+             $zu="
+                ";//linebreak in word
             foreach (block_exastud_get_class_subjects($class) as $class_subject) {
                 $steachers = block_exastud_get_class_teachers_by_subject($class->id, $class_subject->id);
              		$tempreview="";

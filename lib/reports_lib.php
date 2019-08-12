@@ -167,3 +167,112 @@ function block_exastud_get_report_userdata_value(&$templateProcessor, $datakey, 
     return $value;
 }
 
+/**
+ * get all reports
+ * @return array
+ * @throws dml_exception
+ */
+function block_exastud_templates_get_templates() {
+    global $DB;
+    $result = $DB->get_records('block_exastudreportsettings');
+    return $result;
+}
+
+function block_exastud_export_reports($templateids = array(), $withFiles = false) {
+    global $CFG;
+    $resultXML = '<?xml version="1.0" encoding="UTF-8"?>';
+    $resultXML .= "\r\n".'<reports>'."\r\n";
+    $addFiles = array();
+    foreach ($templateids as $tid) {
+        $repfilename = '';
+        $resultXML .= block_exastud_report_get_xmlSettings($tid, $repfilename);
+        if ($repfilename) {
+            $addFiles[] = $repfilename;
+        }
+    }
+    $resultXML .= "\r\n".'</reports>';
+    $resultFilename = 'exastud-reports-'.date('Y-m-d-H-i');
+    if ($withFiles) {
+        // add all files to ZIP
+        $zipfilename = tempnam($CFG->tempdir, "zip");
+        $zip = new \ZipArchive();
+        $zip->open($zipfilename, \ZipArchive::OVERWRITE);
+        // main xml file
+        $temp_file = tempnam($CFG->tempdir, 'exastud');
+        file_put_contents($temp_file, $resultXML);
+        $zip->addFile($temp_file, 'reports.xml');
+        // sources of reports
+        foreach ($addFiles as $file) {
+            // docx or dotx
+            $fullPath = $CFG->dirroot.'/blocks/exastud/template/'.$file;
+            $exts = array('dotx', 'docx');
+            $exists = false;
+            foreach ($exts as $ext) {
+                if (file_exists($fullPath.'.'.$ext)) {
+                    $fullPath = $fullPath.'.'.$ext;
+                    $exists = true;
+                    break;
+                }
+            }
+            if (!$exists) {
+                continue;
+            }
+            // new file - file in folder
+            $newFilename = 'sources/'.basename($fullPath);
+            $zip->addFile($fullPath, $newFilename);
+        }
+        $zip->close();
+        $newZipFilename = $resultFilename.'.zip';
+        send_temp_file($zipfilename, $newZipFilename);
+        exit();
+    } else {
+        $temp_file = tempnam($CFG->tempdir, 'exastud');
+        file_put_contents($temp_file, $resultXML);
+        send_temp_file($temp_file, $resultFilename.'.xml');
+        exit;
+    }
+}
+
+function block_exastud_report_get_xmlSettings($templateid, &$repfilename) {
+    global $DB;
+    $template = $DB->get_record('block_exastudreportsettings', ['id' => $templateid]);
+    if ($template) {
+        $repfilename = $template->template;
+        $formatXml = function ($simpleXMLElement) {
+            $xmlDocument = new DOMDocument();
+            $xmlDocument->preserveWhiteSpace = false;
+            $xmlDocument->formatOutput = true;
+            $xmlDocument->loadXML($simpleXMLElement->asXML());
+            return $xmlDocument->saveXML();
+        };
+        $arrayToXml = function ($array, $rootElement = null, $xml = null, $rootattributes = array()) use ($formatXml) {
+            $xml_clone = $xml;
+            if ($xml_clone === null) {
+                $xml_clone = new SimpleXMLElement($rootElement !== null ? '<'.$rootElement.'/>' : '<report/>');
+            }
+            if (count($rootattributes)) {
+                foreach ($rootattributes as $attrname => $attrvalue) {
+                    $xml_clone->addAttribute($attrname, $attrvalue);
+                }
+            }
+
+            foreach ($array as $key => $val) {
+                $xml_clone->addChild($key, $val);
+            }
+            $res = $formatXml($xml_clone);
+            // delete first line with version of xml
+            $res = substr($res, strpos($res, "\n")+1);
+            return $res;
+        };
+        $templateArr = (array)$template;
+        $source = block_exastud_get_my_source();
+        // clean result array from redundant fields
+        $redFields = array('id', 'source', 'sourceid');
+        $templateArr = array_diff_key($templateArr, array_flip($redFields));
+        $resultXml = $arrayToXml($templateArr, 'report', null, array('id' => $templateid, 'source' => $source));
+        return $resultXml;
+    } else {
+        return '';
+    }
+}
+
