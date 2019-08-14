@@ -2297,7 +2297,7 @@ function block_exastud_get_report_templates($class) {
     if (array_key_exists(BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_STUDENT_CARD, $templates)) {
         $tel = $templates[BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_STUDENT_CARD];
         unset($templates[BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_STUDENT_CARD]);
-        $templates[] = $tel;
+        $templates[BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_STUDENT_CARD] = $tel;
     }
     return $templates;
 }
