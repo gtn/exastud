@@ -483,7 +483,10 @@ if ($class !== null) {
             "courseid" => $courseid
         ));
         $data[] = html_writer::tag('label', $studentdesc, ['for' => 'student_'.$classstudent->id]);
-        $data[] = block_exastud_get_student_print_template($class, $classstudent->id)->get_name();
+        $ptemplate = block_exastud_get_student_print_template($class, $classstudent->id);
+        if ($ptemplate) {
+            $data[] = $ptemplate->get_name();
+        }
         
         $table->data[] = $data;
     }

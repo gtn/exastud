@@ -752,31 +752,38 @@ class reportsettings_edit_form extends moodleform {
         $mform->addRule('title', block_exastud_get_string('error'), 'required', null, 'server', false, false);
 
         // BP
-        $bpList = g::$DB->get_records_menu('block_exastudbp', null, 'sorting', '*');
-        $bpList = array(0 => '') + $bpList;
-        $mform->addElement('select', 'bpid', block_exastud_get_string('report_settings_setting_bp'), $bpList);
-        $mform->setType('bpid', PARAM_RAW);
+        if (block_exastud_is_bw_active()) {
+            $bpList = g::$DB->get_records_menu('block_exastudbp', null, 'sorting', '*');
+            $bpList = array(0 => '') + $bpList;
+            $mform->addElement('select', 'bpid', block_exastud_get_string('report_settings_setting_bp'), $bpList);
+            $mform->setType('bpid', PARAM_RAW);
+        }
 
         // hidden
         $mform->addElement('advcheckbox', 'hidden', block_exastud_get_string('report_settings_setting_hidden'));
         $mform->setType('hidden', PARAM_INT);
 
         // RS or HS
-        $rs_hs = array('' => '', 'RS' => 'RS', 'HS' => 'HS');
-        $mform->addElement('select', 'rs_hs', block_exastud_get_string('report_settings_setting_rs_hs'), $rs_hs);
-        $mform->setType('rs_hs', PARAM_TEXT);
+        if (block_exastud_is_bw_active()) {
+            $rs_hs = array('' => '', 'RS' => 'RS', 'HS' => 'HS');
+            $mform->addElement('select', 'rs_hs', block_exastud_get_string('report_settings_setting_rs_hs'), $rs_hs);
+            $mform->setType('rs_hs', PARAM_TEXT);
+        }
 
         // category
-        //$mform->addElement('text', 'category', block_exastud_get_string('report_settings_setting_category'), array('size' => 50));
-        // --- $mform->addRule('category', block_exastud_get_string('error'), 'required', null, 'server', false, false);
-        $categoryGroup = array();
-        $categoryGroup[] = $mform->createElement('text', 'category', block_exastud_trans('report_settings_setting_category'), array('size' => 50));
-        $mform->setType('category', PARAM_TEXT);
-        $infoicon = '<img class=""
+        if (block_exastud_is_bw_active()) {
+            //$mform->addElement('text', 'category', block_exastud_get_string('report_settings_setting_category'), array('size' => 50));
+            // --- $mform->addRule('category', block_exastud_get_string('error'), 'required', null, 'server', false, false);
+            $categoryGroup = array();
+            $categoryGroup[] = $mform->createElement('text', 'category', block_exastud_trans('report_settings_setting_category'),
+                    array('size' => 50));
+            $mform->setType('category', PARAM_TEXT);
+            $infoicon = '<img class=""
                         src="'.$CFG->wwwroot.'/blocks/exastud/pix/info.png"                          
                         title="'.$this->_customdata['category_infomessage'].'" />';
-        $categoryGroup[] =& $mform->createElement('static', 'infocategory', '', $infoicon);
-        $mform->addGroup($categoryGroup, 'category',  block_exastud_trans('report_settings_setting_category'), ' ', false);
+            $categoryGroup[] =& $mform->createElement('static', 'infocategory', '', $infoicon);
+            $mform->addGroup($categoryGroup, 'category', block_exastud_trans('report_settings_setting_category'), ' ', false);
+        }
 
         // template
         //$templateList = block_exastud_get_report_templates('-all-');
@@ -785,8 +792,11 @@ class reportsettings_edit_form extends moodleform {
         $mform->setType('template', PARAM_RAW);
 
         // grades
-        $mform->addElement('textarea', 'grades', block_exastud_get_string('report_settings_setting_grades'), array('rows' => 3, 'cols' => 50));
-        $mform->setType('grades', PARAM_TEXT);
+        if (block_exastud_is_bw_active()) {
+            $mform->addElement('textarea', 'grades', block_exastud_get_string('report_settings_setting_grades'),
+                    array('rows' => 3, 'cols' => 50));
+            $mform->setType('grades', PARAM_TEXT);
+        }
 
         foreach ($this->allSecondaryFields as $field) {
             $mform->addElement('exastud_htmltag', '<div id="exastud-additional-params-block-'.$field.'" class="exastud-setting-block" data-field="'.$field.'">');

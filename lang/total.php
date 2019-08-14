@@ -615,7 +615,7 @@ return [
             'Curriculum',
     ],
     'report_settings_setting_hidden' => [
-            'Hidden',
+            'Versteckt',
             'Hidden',
     ],
     'report_settings_setting_rs_hs' => [

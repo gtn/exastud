@@ -2005,6 +2005,13 @@ function block_exastud_get_student_print_templateid($class, $userid) {
  */
 function block_exastud_get_student_print_template($class, $userid) {
 	$templateid = block_exastud_get_student_print_templateid($class, $userid);
+	if (!$templateid) {
+	    if (block_exastud_is_bw_active()) {
+            throw new moodle_exception('Template for class not found. Probably you want to use class for non-active "exastud | bw_active"');
+        } else {
+            throw new moodle_exception('Template for class not found. Probably you want to use class for active "exastud | bw_active"');
+        }
+    }
 	return block_exastud\print_template::create($templateid);
 }
 
@@ -2286,6 +2293,12 @@ function block_exastud_get_report_templates($class) {
             $templates += \block_exastud\print_templates::get_class_other_print_templates($class);
         }
     }
+    // put 999 to last position
+    if (array_key_exists(BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_STUDENT_CARD, $templates)) {
+        $tel = $templates[BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_STUDENT_CARD];
+        unset($templates[BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_STUDENT_CARD]);
+        $templates[] = $tel;
+    }
     return $templates;
 }
 
@@ -2423,7 +2436,7 @@ function block_exastud_get_default_templates($templateid = null, $common = true)
                 ],
                 'Anlage' => [
                         'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_ANLAGE_ZUM_LERNENTWICKLUNGSBERICHTALT_COMMON,
-                        'name' => 'Lern und Sozialverhalten und überfachliche Kompetenzen',
+                        'name' => 'Überfachliche Kompetenzen',
                         'file' => 'Anlage_common',
                         'category' => 'Anlage',
                         'year' => '1',
@@ -2464,7 +2477,7 @@ function block_exastud_get_default_templates($templateid = null, $common = true)
                 ],
                 'student_card' => [
                         'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_STUDENT_CARD,
-                        'name' => 'Konfigurierbarer Bericht',
+                        'name' => 'Schülerprofil (Demo)',
                         'file' => 'student_card',
                         'category' => 'Default',
                         'inputs' => [

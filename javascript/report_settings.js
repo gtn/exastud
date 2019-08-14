@@ -44,7 +44,7 @@
     }
 
     function additionalSettingsToggle(field) {
-        console.log(field);
+        // console.log(field);
         var isAdditional = false;
         var checkboxSelector = ':checkbox.exastud-template-settings-param[name="' + field + '"]';
         var textareaGroupSelector = '.exastud-template-settings-group.group-' + field + '.textarea-settings';

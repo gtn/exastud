@@ -1378,11 +1378,13 @@ function xmldb_block_exastud_upgrade($oldversion = 0) {
         upgrade_block_savepoint(true, 2019080200, 'exastud');
     }
 
-    if ($oldversion < 2019081200) {
+    if ($oldversion < 2019081300) {
         if (!block_exastud_is_bw_active()) {
-            block_exastud_fill_reportsettingstable(BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_STUDENT_CARD, true);
+            foreach ([999, 102] as $rid) {
+                block_exastud_fill_reportsettingstable($rid, true);
+            }
         }
-        upgrade_block_savepoint(true, 2019081200, 'exastud');
+        upgrade_block_savepoint(true, 2019081300, 'exastud');
     }
 
     block_exastud_insert_default_entries();

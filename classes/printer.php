@@ -241,7 +241,8 @@ class printer {
             }
         }
 
-		if (in_array($templateid, array(BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_DEFAULT_REPORT,
+		if (in_array($templateid, array(
+		        BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_DEFAULT_REPORT,
                 BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_DEFAULT_REPORT_COMMON
         ))) { // default_report
 			//$class_subjects = block_exastud_get_class_subjects($class);
