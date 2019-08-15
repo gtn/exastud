@@ -53,6 +53,28 @@ class exastud_user_formedit extends user_editadvanced_form {
     }
 }
 
+class block_exastud_import_report_form extends moodleform {
+    function definition() {
+        $mform = &$this->_form;
+
+        $mform->addElement('filepicker', 'datafile', block_exastud_get_string("file"), null, array('accepted_types' => array('.xml', '.zip')));
+        $mform->addRule('datafile', block_exastud_get_string('report_import_file_shouldnotbeempty'), 'required');
+
+        $mform->addElement('checkbox', 'updatereports', block_exastud_get_string('report_export_update_reports'), ' ');
+        $mform->addElement('checkbox', 'updatefiles', block_exastud_get_string('report_export_update_files'), ' ');
+
+        $mform->addElement('hidden', 'action');
+        $mform->setType('action', PARAM_ALPHA);
+        $mform->setDefault('action', 'import');
+
+        $mform->addElement('hidden', 'doit');
+        $mform->setType('doit', PARAM_INT);
+        $mform->setDefault('doit', 1);
+
+        $this->add_action_buttons(block_exastud_get_string('back'), block_exastud_get_string('report_import_templates'));
+    }
+}
+
 function block_exastud_get_report_user_fields($getAll = false) {
     global $CFG;
     static $resultArr = null;
@@ -180,8 +202,11 @@ function block_exastud_templates_get_templates() {
 
 function block_exastud_export_reports($templateids = array(), $withFiles = false) {
     global $CFG;
+    $pluginmanager = core_plugin_manager::instance();
+    $plugininfo = $pluginmanager->get_plugin_info('block_exastud');
+    $exastudversion = @$plugininfo->versiondb;
     $resultXML = '<?xml version="1.0" encoding="UTF-8"?>';
-    $resultXML .= "\r\n".'<reports>'."\r\n";
+    $resultXML .= "\r\n".'<reports exastud-version="'.$exastudversion.'">'."\r\n";
     $addFiles = array();
     foreach ($templateids as $tid) {
         $repfilename = '';
@@ -202,9 +227,10 @@ function block_exastud_export_reports($templateids = array(), $withFiles = false
         file_put_contents($temp_file, $resultXML);
         $zip->addFile($temp_file, 'reports.xml');
         // sources of reports
+        $path_to_files = $CFG->dirroot.'/blocks/exastud/template/';
         foreach ($addFiles as $file) {
             // docx or dotx
-            $fullPath = $CFG->dirroot.'/blocks/exastud/template/'.$file;
+            $fullPath = $path_to_files.$file;
             $exts = array('dotx', 'docx');
             $exists = false;
             foreach ($exts as $ext) {
@@ -218,7 +244,10 @@ function block_exastud_export_reports($templateids = array(), $withFiles = false
                 continue;
             }
             // new file - file in folder
-            $newFilename = 'sources/'.basename($fullPath);
+            $filePathParts = explode($path_to_files, $fullPath);
+            $basenameWithSubfolder = end($filePathParts);
+            //$newFilename = 'sources/'.basename($fullPath);
+            $newFilename = 'sources/'.$basenameWithSubfolder;
             $zip->addFile($fullPath, $newFilename);
         }
         $zip->close();
@@ -267,7 +296,7 @@ function block_exastud_report_get_xmlSettings($templateid, &$repfilename) {
         $templateArr = (array)$template;
         $source = block_exastud_get_my_source();
         // clean result array from redundant fields
-        $redFields = array('id', 'source', 'sourceid');
+        $redFields = array('id', 'source', 'source_id');
         $templateArr = array_diff_key($templateArr, array_flip($redFields));
         $resultXml = $arrayToXml($templateArr, 'report', null, array('id' => $templateid, 'source' => $source));
         return $resultXml;
@@ -276,3 +305,83 @@ function block_exastud_report_get_xmlSettings($templateid, &$repfilename) {
     }
 }
 
+function block_exastud_report_exists_by_source($source, $source_id) {
+    global $DB;
+    $mysource = block_exastud_get_my_source();
+    if ($source == $mysource) {
+        $rec = $DB->get_record('block_exastudreportsettings', ['id' => $source_id]);
+    } else {
+        $rec = $DB->get_record('block_exastudreportsettings', ['source' => $source, 'source_id' => $source_id]);
+    }
+    if ($rec) {
+        return $rec->id;
+    }
+    return false;
+}
+
+function block_exastud_import_report_xml($xmlcontent, $updatereports = false, $updatefiles = false) {
+    global $DB;
+    $inserted = array();
+    $updated = array();
+    $ignored = array();
+    $filelist = array();
+    $mysource = block_exastud_get_my_source();
+    $xml = block_exastud_load_xml_data($xmlcontent, true, 'reports');
+    $reports = $xml['reports']['#']['report'];
+    $reportData = function($repXmlArr = array()) use ($mysource) {
+        $resArr = array();
+        if ($mysource == $repXmlArr['@']['source']) {
+            $resArr['id'] = $repXmlArr['@']['id'];
+        } else {
+            $resArr['source_id'] = $repXmlArr['@']['id'];
+            $resArr['source'] = $repXmlArr['@']['source'];
+        }
+        $props = $repXmlArr['#'];
+        foreach ($props as $propName => $propVal) {
+            $resArr[$propName] = $propVal[0]['#'];
+        }
+        return $resArr;
+    };
+    foreach ($reports as $i => $reportXml) {
+        $attributes = $reportXml['@'];
+        //$reportValues = $reportXml['#'];
+        $existsid = block_exastud_report_exists_by_source($attributes['source'], $attributes['id']);
+        $resData = (object)$reportData($reportXml);
+        //echo "<pre>debug:<strong>reports_lib.php:320</strong>\r\n"; print_r($existsid); echo '</pre>'; // !!!!!!!!!! delete it
+        //echo "<pre>debug:<strong>reports_lib.php:320</strong>\r\n"; print_r($reportXml); echo '</pre>'; // !!!!!!!!!! delete it
+        if ($existsid) {
+            if ($updatereports) {
+                // update reports is selected
+                $resData->id = $existsid;
+                $DB->update_record_raw('block_exastudreportsettings', $resData);
+                //$DB->execute('UPDATE {block_exastudreportsettings} ', $resData);
+                $updated[$existsid] = $resData->title.' (id: '.$existsid.')';
+            } else {
+                // ignore this report!
+                $ignored[$existsid] = $resData->title.' (id: '.$existsid.')';
+            }
+        } else {
+            // insert new report
+            //echo "<pre>debug:<strong>reports_lib.php:363</strong>\r\n"; print_r($resData); echo '</pre>'; exit; // !!!!!!!!!! delete it
+            if ($mysource == $attributes['source']) {
+                $resData->id = $attributes['id'];
+                $newid = $DB->insert_record_raw('block_exastudreportsettings', $resData, true, false, true);
+                $newid = $resData->id;
+            } else {
+                $newid = $DB->insert_record('block_exastudreportsettings', $resData);
+            }
+
+            $inserted[$newid] = $resData->title.' (id: '.$newid.')';
+        }
+        $filelist[] = $resData->template;
+    }
+
+    $result = array(
+            'inserted' => $inserted,
+            'updated' => $updated,
+            'ignored' => $ignored
+    );
+    $result['filelist'] = $filelist;
+
+    return $result;
+}

@@ -5215,8 +5215,9 @@ function block_exastud_fill_reportsettingstable($id = 0, $update = false) {
         $data['additional_params'] = '';
         // default values for columns
         $tablecolumns = array_keys(g::$DB->get_columns('block_exastudreportsettings'));
+        $service_fields = array('source', 'source_id');
         foreach ($tablecolumns as $column) {
-            if (!array_key_exists($column, $data)) {
+            if (!array_key_exists($column, $data) && !in_array($column, $service_fields)) {
                 $data[$column] = serialize(array('checked' => "0"));
             }
         }
@@ -6301,6 +6302,48 @@ function block_exastud_export_mysql_table($table = '', $filename = false, $funct
 function block_exastud_get_my_source() {
     return get_config('exastud', 'mysource');
 }
+
+function block_exastud_load_xml_data($xmlcontent, $onlyFromExastud = false, $root = '') {
+    global $CFG;
+    require_once($CFG->dirroot.'/lib/xmlize.php');
+
+    if (!$xmlcontent = block_exastud_check_xml_utf8($xmlcontent)) {
+        return false;
+    }
+
+    $data = xmlize($xmlcontent, 1, 'UTF-8');
+
+    // must be exastud data with exastud version
+    if ($onlyFromExastud && $root) {
+        if (!intval(@$data[$root]['@']['exastud-version'])) {
+            return false;
+        }
+    }
+    return $data;
+}
+
+function block_exastud_check_xml_utf8($text) {
+    //find the encoding
+    $searchpattern = '/^\<\?xml.+(encoding=\"([a-z0-9-]*)\").*\?\>/is';
+
+    if (!preg_match($searchpattern, $text, $match)) {
+        return false; //no xml-file
+    }
+
+    //$match[0] = \<\? xml ... \?\> (without \)
+    //$match[1] = encoding="...."
+    //$match[2] = ISO-8859-1 or so on
+    if (isset($match[0]) AND !isset($match[1])) { //no encoding given. we assume utf-8
+        return $text;
+    }
+
+    //encoding is given in $match[2]
+    if (isset($match[0]) AND isset($match[1]) AND isset($match[2])) {
+        $enc = $match[2];
+        return core_text::convert($text, $enc);
+    }
+}
+
 
 /*
 function block_exastud_encrypt_raw($value, $secret) {

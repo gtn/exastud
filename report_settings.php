@@ -408,6 +408,109 @@ if ($action && (($settingsid > 0 && $action == 'edit') || $action == 'new')) {
             'method' => 'post'
     ]);
     echo $content;
+} else if ($action && $action == 'import') {
+    // IMPORT
+    /*if (optional_param('doit', 0, PARAM_INT)) {
+        $templateids = optional_param_array('templateid', null, PARAM_INT);
+        if ($templateids && is_array($templateids)) {
+            $withFiles = optional_param('withfiles', 0, PARAM_INT);
+            block_exastud_export_reports($templateids, $withFiles);
+        }
+        $params = array('sesskey' => sesskey());
+        if ($tokenparam) {
+            $params['token'] = $tokenparam;
+        }
+        redirect(new moodle_url('/blocks/exastud/report_settings.php', $params));
+    }*/
+    $returnurl = new moodle_url('/blocks/exastud/report_settings.php', ['sesskey' => sesskey(), 'token' => ($tokenparam ? $tokenparam : '')]);
+    $content = '';
+
+    $import_form = new block_exastud_import_report_form();
+
+    if ($import_form->is_cancelled()) {
+        redirect($returnurl);
+    } else if ($import_data = $import_form->get_data()) {
+        $updatereports = (@$import_data->updatereports ? true : false);
+        $updatefiles = (@$import_data->updatefiles ? true : false);
+        $tmpFile = $import_form->save_temp_file('datafile');
+        $zip = new ZipArchive;
+        $res = $zip->open($tmpFile);
+        $message = '';
+        $mesageFromImport = function ($resArr) {
+            $message = '';
+            foreach ($resArr as $resKey => $reports) {
+                if (count($reports)) {
+                    $message .= '<p>'.block_exastud_get_string('report_import_'.$resKey.'_list');
+                    $message .= '<ul>';
+                    foreach ($reports as $rid => $rtitle) {
+                        $message .= '<li>'.$rtitle.'</li>';
+                    }
+                    $message .= '</ul>';
+                }
+            }
+            return $message;
+        };
+        if ($res === TRUE) {
+            // is this .zip
+            $tmpdir = make_temp_directory('exastud_'.time());
+            //$content .= 'ZIP';
+            $zip->extractTo($tmpdir);
+            // main xml file
+            $mainXml = $tmpdir.'/reports.xml';
+            if (file_exists($mainXml)) {
+                $fileData = file_get_contents($mainXml);
+                $importRes = block_exastud_import_report_xml($fileData, $updatereports, $updatefiles);
+                // update files from zip
+                if (array_key_exists('filelist', $importRes)) {
+                    $filelist = $importRes['filelist'];
+                    unset($importRes['filelist']);
+                    foreach ($filelist as $file) {
+                        $copyTo = '';
+                        // docx or dotx
+                        $fullPath = $tmpdir.'/sources/'.$file;
+                        $exts = array('dotx', 'docx');
+                        $exists = false;
+                        foreach ($exts as $ext) {
+                            if (file_exists($fullPath.'.'.$ext)) {
+                                $fullPath = $fullPath.'.'.$ext;
+                                $copyTo = BLOCK_EXASTUD_TEMPLATE_DIR.'/'.$file.'.'.$ext;
+                                $exists = true;
+                                break;
+                            }
+                        }
+                        if (!$exists || !$copyTo) {
+                            continue;
+                        }
+                        if ($updatefiles // overwrite
+                            || (!$updatefiles && !file_exists($copyTo)) // only if does not exist
+                        ) {
+                            copy($fullPath, $copyTo);
+                        }
+                    }
+                }
+                $message .= $mesageFromImport($importRes);
+            }
+            $zip->close();
+            remove_dir($tmpdir);
+        } else {
+            // it is not a zip
+            $fileData = $import_form->get_file_content('datafile');
+            $importRes = block_exastud_import_report_xml($fileData, $updatereports, $updatefiles);
+            $message .= $mesageFromImport($importRes);
+        }
+        if ($message) {
+            redirect($returnurl, $message, null, \core\output\notification::NOTIFY_INFO);
+        } else {
+            redirect($returnurl);
+        }
+    }
+    $output = block_exastud_get_renderer();
+    echo $output->header(['report_settings'], ['content_title' => block_exastud_get_string('pluginname')], true);
+    echo $output->heading(block_exastud_get_string('report_settings'));
+
+    $content .= $import_form->display();
+
+    echo $content;
 } else {
     // template list
     $output = block_exastud_get_renderer();
@@ -646,7 +749,7 @@ if ($action && (($settingsid > 0 && $action == 'edit') || $action == 'new')) {
     $params['action'] = 'export';
     $ie_buttons .= html_writer::link(new moodle_url('/blocks/exastud/report_settings.php', $params),
             block_exastud_get_string('report_button_export'), ['class' => 'btn btn-default']);
-    //$content .= html_writer::div($ie_buttons , 'buttons');
+    $content .= html_writer::div($ie_buttons , 'buttons');
 
     echo $content;
 }

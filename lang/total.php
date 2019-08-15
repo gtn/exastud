@@ -847,8 +847,36 @@ return [
         'Export selected',
     ],
     'report_export_with_files' => [
-        'Add sources of template files to export',
-        'Add sources of template files to export',
+        'Add sources (files) of templates',
+        'Add sources (files) of templates',
+    ],
+    'report_export_update_reports' => [
+        'Update reports if exist',
+        'Update reports if exist',
+    ],
+    'report_export_update_files' => [
+        'Update files if exist',
+        'Update files if exist',
+    ],
+    'report_import_templates' => [
+        'Import',
+        'Import',
+    ],
+    'report_import_file_shouldnotbeempty' => [
+            'File should not be empty.',
+            'File should not be empty.',
+    ],
+    'report_import_inserted_list' => [
+            'These reports were inserted',
+            'These reports were inserted',
+    ],
+    'report_import_updated_list' => [
+            'These reports were updated',
+            'These reports were updated',
+    ],
+    'report_import_ignored_list' => [
+            'These reports were ignored',
+            'These reports were ignored',
     ],
     'select_student' => [
         'Bitte wählen Sie zumindest einen Schüler/eine Schülerin aus',
