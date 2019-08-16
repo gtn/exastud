@@ -1688,7 +1688,9 @@ function block_exastud_init_js_css($especialities = array()) {
 	$PAGE->requires->jquery_plugin('ui');
 
     $PAGE->requires->css('/blocks/exastud/css/select2.css');
+    //$PAGE->requires->css('/blocks/exastud/css/smartselect.css');
 
+    //$PAGE->requires->js('/blocks/exastud/javascript/jquery.smartselect.min.js', true);
     $PAGE->requires->js('/blocks/exastud/javascript/common.js', true);
     $PAGE->requires->js('/blocks/exastud/javascript/select2.js', true);
 	$PAGE->requires->js('/blocks/exastud/javascript/exastud.js', true);
@@ -1709,6 +1711,8 @@ function block_exastud_init_js_css($especialities = array()) {
     $PAGE->requires->string_for_js('textarea_linestomuch', 'block_exastud');
     $PAGE->requires->string_for_js('textarea_charstomuch', 'block_exastud');
     $PAGE->requires->string_for_js('donotleave_page_message', 'block_exastud');
+    $PAGE->requires->string_for_js('upload_new_templatefile', 'block_exastud');
+    $PAGE->requires->string_for_js('hide_uploadform', 'block_exastud');
 }
 
 function block_exastud_get_category($categoryid, $categorysource) {
@@ -6343,6 +6347,32 @@ function block_exastud_check_xml_utf8($text) {
         return core_text::convert($text, $enc);
     }
 }
+
+function block_exastud_get_unique_filename($origfilename, $dir) {
+    $maxIndex = 10000;
+    // Check if the file exists and if not - return the filename...
+    $destFile = $dir.$origfilename;
+    if (!file_exists($destFile)) {
+        return $destFile;
+    }
+    $origFileData = pathinfo($origfilename);
+    for ($a = 1; $a <= ($maxIndex + 1); $a++) {
+        if ($a <= $maxIndex) {
+            // First we try to append numbers
+            $insert = '_'.sprintf('%02d', $a);
+        } else {
+            // .. then we try unique-strings...
+            $insert = '_' .substr(md5(uniqId('')), 0, 2);
+        }
+        $testFile = $origFileData['filename'].$insert.'.'.$origFileData['extension'];
+        $destFile = $dir.$testFile;
+        if (!file_exists($destFile)) {
+            // If the file does NOT exist we return this filename
+            return $testFile;
+        }
+    }
+}
+
 
 
 /*

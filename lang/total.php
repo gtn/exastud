@@ -878,6 +878,22 @@ return [
             'These reports were ignored',
             'These reports were ignored',
     ],
+    'report_settings_upload_new_filetemplate' => [
+        'Upload new template file',
+        'Upload new template file',
+    ],
+    'report_settings_upload_new_filetemplate_overwrite' => [
+        'Overwrite file if exists',
+        'Overwrite file if exists',
+    ],
+    'upload_new_templatefile' => [
+        'Upload new',
+        'Upload new',
+    ],
+    'hide_uploadform' => [
+        'Hide upload form',
+        'Hide upload form',
+    ],
     'select_student' => [
         'Bitte wählen Sie zumindest einen Schüler/eine Schülerin aus',
         'Please select at least one student',

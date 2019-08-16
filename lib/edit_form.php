@@ -790,6 +790,10 @@ class reportsettings_edit_form extends moodleform {
         $templateList = block_exastud_get_template_files();
         $mform->addElement('select', 'template', block_exastud_get_string('report_settings_setting_template'), $templateList);
         $mform->setType('template', PARAM_RAW);
+        // upload new file
+        $mform->addElement('checkbox', 'overwritefile', block_exastud_get_string('report_settings_upload_new_filetemplate_overwrite'));
+        $mform->addElement('filepicker', 'newfileupload', block_exastud_get_string('report_settings_upload_new_filetemplate'),
+                null, array('accepted_types' => array('.docx', '.dotx')));
 
         // grades
         if (block_exastud_is_bw_active()) {
@@ -1114,7 +1118,7 @@ class reportsettings_edit_form extends moodleform {
             if ($i !== null) {
                 $arr = '['.$i.']';
             }
-
+            
             // main params (title, key)
             $main_settings = $mform->getElement($field.'_mainparams'.$arr);
             $main_settings->_attributes['class'] = 'exastud-template-settings-group group-'.$field.' main-params';

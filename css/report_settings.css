@@ -77,3 +77,8 @@
 .exa_table .info-icon {
     float: right;
 }
+
+.block-exastud-upload-template-toggler {
+    margin: 0 15px;
+    cursor: pointer;
+}

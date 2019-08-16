@@ -337,4 +337,46 @@
         });
 
     });
+
+    // report edit form: show/hide filepicker for upload new template file
+    function toggleUploadForm() {
+        var overwriteBlock = $('#id_overwritefile').closest('.form-group');
+        var filepickerBlock = $('#id_newfileupload').closest('.form-group');
+        if (filepickerBlock.attr('data-hidden') == 1) {
+            overwriteBlock.show();
+            filepickerBlock.show();
+            filepickerBlock.attr('data-hidden', 0);
+            // disable selectbox
+            $('#id_template').attr('disabled', 'disabled');
+            return 1;
+        } else {
+            overwriteBlock.hide();
+            filepickerBlock.hide();
+            filepickerBlock.attr('data-hidden', 1);
+            // disable selected file
+            $('input[name="newfileupload"]').val('');
+            $('#id_template').removeAttr('disabled');
+            return 0;
+        }
+    }
+    $(function() {
+        // at first hide upload form
+        toggleUploadForm();
+
+        // show form button
+        var templateSelect = $('#id_template');
+        var pix = '<img src="' + M.cfg.wwwroot + '/blocks/exastud/pix/add_file.png"/>';
+        var linktoUpload = '<span class="block-exastud-upload-template-toggler">' + pix + '&nbsp;' + M.str.block_exastud.upload_new_templatefile + '</span>';
+        templateSelect.after(linktoUpload);
+        $(document).on('click', '.block-exastud-upload-template-toggler', function() {
+            $res = toggleUploadForm();
+            if ($res == 1) {
+                buttonContent = pix + '&nbsp;' + M.str.block_exastud.hide_uploadform;
+            } else {
+                buttonContent = pix + '&nbsp;' + M.str.block_exastud.upload_new_templatefile;
+            }
+            $('.block-exastud-upload-template-toggler').html(buttonContent);
+        })
+    });
+
 })(block_exastud.jquery);

@@ -1400,6 +1400,15 @@ function xmldb_block_exastud_upgrade($oldversion = 0) {
         upgrade_block_savepoint(true, 2019081400, 'exastud');
     }
 
+    if ($oldversion < 2019081600) {
+        // create directory for template uploading
+        $dir = BLOCK_EXASTUD_TEMPLATE_DIR.'/upload/';
+        if (!is_dir($dir)) {
+            mkdir($dir, 0755);
+        }
+        upgrade_block_savepoint(true, 2019081600, 'exastud');
+    }
+
     block_exastud_insert_default_entries();
 	block_exastud_check_profile_fields();
 

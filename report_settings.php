@@ -410,18 +410,6 @@ if ($action && (($settingsid > 0 && $action == 'edit') || $action == 'new')) {
     echo $content;
 } else if ($action && $action == 'import') {
     // IMPORT
-    /*if (optional_param('doit', 0, PARAM_INT)) {
-        $templateids = optional_param_array('templateid', null, PARAM_INT);
-        if ($templateids && is_array($templateids)) {
-            $withFiles = optional_param('withfiles', 0, PARAM_INT);
-            block_exastud_export_reports($templateids, $withFiles);
-        }
-        $params = array('sesskey' => sesskey());
-        if ($tokenparam) {
-            $params['token'] = $tokenparam;
-        }
-        redirect(new moodle_url('/blocks/exastud/report_settings.php', $params));
-    }*/
     $returnurl = new moodle_url('/blocks/exastud/report_settings.php', ['sesskey' => sesskey(), 'token' => ($tokenparam ? $tokenparam : '')]);
     $content = '';
 
@@ -782,7 +770,41 @@ function block_exastud_get_reportsettings_additional_description($report) {
     return $content;
 }
 
+/**
+ * @param reportsettings_edit_form $settingsform
+ * @param $settingsedit
+ * @return mixed
+ * @throws coding_exception
+ */
 function block_exastud_report_templates_prepare_serialized_data($settingsform, $settingsedit) {
+    // main properties
+    // template file
+    if ($tmpNewFile = $settingsform->save_temp_file('newfileupload')) {
+        $uploadFolder = BLOCK_EXASTUD_TEMPLATE_DIR.'/upload/';
+        if (!is_dir($uploadFolder)) {
+            mkdir($uploadFolder, 0755);
+        }
+        $newfilename = $settingsform->get_new_filename('newfileupload');
+        $copyTo = $uploadFolder.$newfilename;
+        if (!file_exists($copyTo)
+                || (file_exists($copyTo) && @$settingsedit->overwritefile)
+        ) {
+            copy($tmpNewFile, $copyTo);
+        } else {
+            // if file exists - get new filename
+            $newfilename = block_exastud_get_unique_filename($newfilename, $uploadFolder);
+            $copyTo = $uploadFolder.$newfilename;
+            copy($tmpNewFile, $copyTo);
+        }
+        unlink($tmpNewFile);
+        // get new filename for report configurations
+        $tmpInfo = pathinfo($copyTo);
+        $newTemplateValue = str_replace(BLOCK_EXASTUD_TEMPLATE_DIR.'/', '', $copyTo);
+        $rTrimLength = strlen($tmpInfo['extension']) + 1; // plus '.'
+        $newTemplateValue = substr($newTemplateValue, 0, -$rTrimLength);
+        $settingsedit->template = $newTemplateValue;
+    }
+    // template markers
     foreach ($settingsform->getAllSecondaryFields() as $field) {
         if (in_array($field, $settingsform->getFieldsWithAdditionalParams())) {
             $element_data = array(
