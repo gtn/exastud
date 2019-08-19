@@ -1664,6 +1664,10 @@ return [
     'please_enter_group_name' => [
         'Bitte geben Sie die Klassen/Lerngruppenbezeichnung ein!',
         'Please enter the class / group name!'
-    ]
+    ],
+    'mixed_bw_nonbw_class_error_2' => [
+        'Template for class not found. Probably you want to use class for active "exastud | bw_active"',
+        'Template for class not found. Probably you want to use class for active "exastud | bw_active"',
+    ],
 
 ];

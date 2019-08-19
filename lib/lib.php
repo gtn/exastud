@@ -2013,8 +2013,17 @@ function block_exastud_get_student_print_template($class, $userid) {
 	    if (block_exastud_is_bw_active()) {
             throw new moodle_exception('Template for class not found. Probably you want to use class for non-active "exastud | bw_active"');
         } else {
-            throw new moodle_exception('Template for class not found. Probably you want to use class for active "exastud | bw_active"');
+            //throw new moodle_exception('Template for class not found. Probably you want to use class for active "exastud | bw_active"');
+            $message = block_exastud_get_string('mixed_bw_nonbw_class_error_2');
         }
+        $message .= '<br>'.block_exastud_get_string('select_another_class');
+        $params = array(
+                'classid' => -1,
+                'courseid' => optional_param('courseid', 1, PARAM_INT)
+        );
+        echo $message;
+        $url = new moodle_url('/blocks/exastud/report.php', $params);
+        redirect($url, $message, null, \core\output\notification::NOTIFY_ERROR);
     }
 	return block_exastud\print_template::create($templateid);
 }
