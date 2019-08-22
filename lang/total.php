@@ -835,11 +835,11 @@ return [
             'Does not exist now. Will be added.',
     ],
     'report_button_import' => [
-        'Import reports',
+        'Vorlagen importieren',
         'Import reports',
     ],
     'report_button_export' => [
-        'Export reports',
+        'Vorlagen exportieren',
         'Export reports',
     ],
     'report_export_selected_templates' => [
@@ -879,7 +879,7 @@ return [
             'These reports were ignored',
     ],
     'report_settings_upload_new_filetemplate' => [
-        'Upload new template file',
+        'Neue Vorlage hochladen',
         'Upload new template file',
     ],
     'report_settings_upload_new_filetemplate_overwrite' => [
@@ -887,8 +887,8 @@ return [
         'Overwrite file if exists',
     ],
     'upload_new_templatefile' => [
-        'Upload new',
-        'Upload new',
+        'Neue Vorlage hochladen',
+        'Upload new template',
     ],
     'hide_uploadform' => [
         'Hide upload form',
