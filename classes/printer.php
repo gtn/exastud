@@ -1569,7 +1569,6 @@ class printer {
             if ($templateid == BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_ANLAGE_ZUM_LERNENTWICKLUNGSBERICHTALT_COMMON) {
                 $student_review = block_exastud_get_report($student->id,  $class->periodid, $class->id);
                 foreach ($categories as $category) {
-
                     $templateProcessor->cloneRowToEnd('kriterium');
                     $templateProcessor->setValue('kriterium', $category->title, 1);
 
@@ -1584,7 +1583,7 @@ class printer {
                             break;
                         case BLOCK_EXASTUD_COMPETENCE_EVALUATION_TYPE_POINT:
                         case BLOCK_EXASTUD_COMPETENCE_EVALUATION_TYPE_TEXT:
-                            foreach ($category->evaluationOptions as $pos_value => $option) {
+                            foreach ($category->evaluationOptions as $pos_value => $option) {                                
                                 $cellOutput = join(', ', array_map(function($reviewer) {
                                     return $reviewer->subject_shorttitle ?: fullname($reviewer);
                                 }, $option->reviewers));
@@ -1594,6 +1593,7 @@ class printer {
 
                     }
                 }
+                exit;
             } else {
                 foreach ($categories as $category) {
                     $templateProcessor->cloneRowToEnd('kriterium');
@@ -1856,7 +1856,6 @@ class printer {
             }
 
             foreach ($categories as $category) {
-
                 $templateProcessor->cloneRowToEnd('kriterium');
                 $templateProcessor->setValue('kriterium', $category->title, 1);
 

@@ -713,6 +713,9 @@ class reportsettings_edit_form extends moodleform {
         'projekt_thema',
         'ags',
     );
+    protected $notForNonBW = array(
+        'ags'
+    );
 
     protected $input_types = array('textarea', 'text', 'select', 'header', 'image', 'userdata');
     protected $radioattributes = array(); // html tag attributes for radiobuttons
@@ -728,7 +731,11 @@ class reportsettings_edit_form extends moodleform {
     }
 
     public function getAllSecondaryFields() {
-        return $this->allSecondaryFields;
+        $allSecondaryFields = $this->allSecondaryFields;
+        if (!block_exastud_is_bw_active()) {
+            $allSecondaryFields = array_diff($allSecondaryFields, $this->notForNonBW);
+        }
+        return $allSecondaryFields;
     }
 
     public function getFieldsWithAdditionalParams() {
@@ -802,7 +809,7 @@ class reportsettings_edit_form extends moodleform {
             $mform->setType('grades', PARAM_TEXT);
         }
 
-        foreach ($this->allSecondaryFields as $field) {
+        foreach ($this->getAllSecondaryFields() as $field) {
             $mform->addElement('exastud_htmltag', '<div id="exastud-additional-params-block-'.$field.'" class="exastud-setting-block" data-field="'.$field.'">');
             if (in_array($field, $this->fieldsWithAdditionalParams)) {
                 $mform->addElement('exastud_htmltag', '<hr />');
@@ -888,7 +895,7 @@ class reportsettings_edit_form extends moodleform {
         if (is_array($data->grades)) {
             $result->grades = implode('; ', $data->grades);
         }
-        foreach ($this->allSecondaryFields as $field) {
+        foreach ($this->getAllSecondaryFields() as $field) {
             $fieldData = unserialize($data->{$field});
             $result->{$field} = $fieldData['checked'];
             $result->{$field.'_title'} = @$fieldData['title'] ? $fieldData['title'] : '';
@@ -937,7 +944,7 @@ class reportsettings_edit_form extends moodleform {
 
         $mform =& $this->_form;
 
-        foreach ($this->allSecondaryFields as $field) {
+        foreach ($this->getAllSecondaryFields() as $field) {
             if (in_array($field, $this->fieldsWithAdditionalParams)) {
                 // parameters for selectbox
                 //$selectboxes[$i] = array();
@@ -1209,7 +1216,7 @@ class reportsettings_edit_form extends moodleform {
             }
         };
 
-        foreach ($this->allSecondaryFields as $field) {
+        foreach ($this->getAllSecondaryFields() as $field) {
             $formelement = $group = $mform->getElement($field);
             $formelement->_attributes['class'] = 'exastud-template-settings-param param-'.$field;
             if (in_array($field, $this->fieldsWithAdditionalParams)) {
@@ -1250,21 +1257,25 @@ class report_settings_filter_form extends moodleform {
         $mform->addElement('text', 'search', block_exastud_get_string('filter_search').':', array('size' => 50));
         $mform->setType('search', PARAM_TEXT);
         // BPs
-        $bps = g::$DB->get_records_menu('block_exastudbp', null, 'sorting', 'id, title');
-        // add empty
-        $bps = ['' => '', '0' => block_exastud_get_string('filter_empty')] + $bps;
-        $mform->addElement('select',
-                'bpid',
-                block_exastud_get_string('filter_bp').':',
-                $bps);
+        if (block_exastud_is_bw_active()) {
+            $bps = g::$DB->get_records_menu('block_exastudbp', null, 'sorting', 'id, title');
+            // add empty
+            $bps = ['' => '', '0' => block_exastud_get_string('filter_empty')] + $bps;
+            $mform->addElement('select',
+                    'bpid',
+                    block_exastud_get_string('filter_bp').':',
+                    $bps);
+        }
         // Categories
-        $categories = g::$DB->get_records_sql_menu(' SELECT DISTINCT category, category as value FROM {block_exastudreportsettings} WHERE category != \'\'');
-        // add empty
-        $categories = ['--notselected--' => '', '' => block_exastud_get_string('filter_empty')] + $categories;
-        $mform->addElement('select',
-                'category',
-                block_exastud_get_string('filter_category').':',
-                $categories);
+        if (block_exastud_is_bw_active()) {
+            $categories = g::$DB->get_records_sql_menu(' SELECT DISTINCT category, category as value FROM {block_exastudreportsettings} WHERE category != \'\'');
+            // add empty
+            $categories = ['--notselected--' => '', '' => block_exastud_get_string('filter_empty')] + $categories;
+            $mform->addElement('select',
+                    'category',
+                    block_exastud_get_string('filter_category').':',
+                    $categories);
+        }
 
         $mform->addElement('hidden', 'token');
         $mform->setType('token', PARAM_INT);

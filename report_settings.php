@@ -548,34 +548,62 @@ if ($action && (($settingsid > 0 && $action == 'edit') || $action == 'new')) {
                         src="'.$CFG->wwwroot.'/blocks/exastud/pix/comment.png"                          
                         title="'.$categoryinfo_text.'" />';
 
-        $table->head = array(
-                '',
-                '',
-                block_exastud_get_string('report_settings_setting_title'),
-                block_exastud_get_string('report_settings_setting_bp'),
-                block_exastud_get_string('report_settings_setting_category').html_writer::span($infoicon, 'info-icon'),
-                block_exastud_get_string('report_settings_setting_template')
-        );
-        if ($showfulltable) {
-            $table->head = array_merge($table->head, array(
-                    block_exastud_get_string('report_settings_setting_grades'),
-                    block_exastud_get_string('report_settings_setting_year'),
-                    block_exastud_get_string('report_settings_setting_reportdate'),
-                    block_exastud_get_string('report_settings_setting_studentname'),
-                    block_exastud_get_string('report_settings_setting_dateofbirth'),
-                    block_exastud_get_string('report_settings_setting_placeofbirth'),
-                    block_exastud_get_string('report_settings_setting_learninggroup'),
-                    block_exastud_get_string('report_settings_setting_class'),
-                    block_exastud_get_string('report_settings_setting_focus'),
-                    block_exastud_get_string('report_settings_setting_learnsocialbehavior'),
-                    block_exastud_get_string('report_settings_setting_subjects'),
-                    block_exastud_get_string('report_settings_setting_comments'),
-                    block_exastud_get_string('report_settings_setting_subjectelective'),
-                    block_exastud_get_string('report_settings_setting_subjectprofile'),
-                    block_exastud_get_string('report_settings_setting_projektthema'),
-                    block_exastud_get_string('report_settings_setting_ags'),
-                    block_exastud_get_string('report_settings_setting_additional_params'),
-            ));
+        if (block_exastud_is_bw_active()) {
+            $table->head = array(
+                    '',
+                    '',
+                    block_exastud_get_string('report_settings_setting_title'),
+                    block_exastud_get_string('report_settings_setting_bp'),
+                    block_exastud_get_string('report_settings_setting_category').html_writer::span($infoicon, 'info-icon'),
+                    block_exastud_get_string('report_settings_setting_template')
+            );
+            if ($showfulltable) {
+                $table->head = array_merge($table->head, array(
+                        block_exastud_get_string('report_settings_setting_grades'),
+                        block_exastud_get_string('report_settings_setting_year'),
+                        block_exastud_get_string('report_settings_setting_reportdate'),
+                        block_exastud_get_string('report_settings_setting_studentname'),
+                        block_exastud_get_string('report_settings_setting_dateofbirth'),
+                        block_exastud_get_string('report_settings_setting_placeofbirth'),
+                        block_exastud_get_string('report_settings_setting_learninggroup'),
+                        block_exastud_get_string('report_settings_setting_class'),
+                        block_exastud_get_string('report_settings_setting_focus'),
+                        block_exastud_get_string('report_settings_setting_learnsocialbehavior'),
+                        block_exastud_get_string('report_settings_setting_subjects'),
+                        block_exastud_get_string('report_settings_setting_comments'),
+                        block_exastud_get_string('report_settings_setting_subjectelective'),
+                        block_exastud_get_string('report_settings_setting_subjectprofile'),
+                        block_exastud_get_string('report_settings_setting_projektthema'),
+                        block_exastud_get_string('report_settings_setting_ags'),
+                        block_exastud_get_string('report_settings_setting_additional_params'),
+                ));
+            }
+        } else {
+            $table->head = array(
+                    '',
+                    '',
+                    block_exastud_get_string('report_settings_setting_title'),
+                    block_exastud_get_string('report_settings_setting_template')
+            );
+            if ($showfulltable) {
+                $table->head = array_merge($table->head, array(
+                        block_exastud_get_string('report_settings_setting_year'),
+                        block_exastud_get_string('report_settings_setting_reportdate'),
+                        block_exastud_get_string('report_settings_setting_studentname'),
+                        block_exastud_get_string('report_settings_setting_dateofbirth'),
+                        block_exastud_get_string('report_settings_setting_placeofbirth'),
+                        block_exastud_get_string('report_settings_setting_learninggroup'),
+                        block_exastud_get_string('report_settings_setting_class'),
+                        block_exastud_get_string('report_settings_setting_focus'),
+                        block_exastud_get_string('report_settings_setting_learnsocialbehavior'),
+                        block_exastud_get_string('report_settings_setting_subjects'),
+                        block_exastud_get_string('report_settings_setting_comments'),
+                        block_exastud_get_string('report_settings_setting_subjectelective'),
+                        block_exastud_get_string('report_settings_setting_subjectprofile'),
+                        block_exastud_get_string('report_settings_setting_projektthema'),
+                        block_exastud_get_string('report_settings_setting_additional_params'),
+                ));
+            }
         }
         $table->align = array("left");
         // function for getting human value of field
@@ -656,34 +684,63 @@ if ($action && (($settingsid > 0 && $action == 'edit') || $action == 'new')) {
             if ($report->hidden) {
                 $tableRow->attributes['class'] .= ' exastud-hidden-report ';
             }
-            $row = array(
-                    $editLink. ' :'.$report->id,
-                    $hideLink.'&nbsp;'.$deleteLink,
+            if (block_exastud_is_bw_active()) {
+                $row = array(
+                        $editLink.' :'.$report->id,
+                        $hideLink.'&nbsp;'.$deleteLink,
                     //$relevantSubject,
-                    '<strong>'.$report->title.'</strong>',
-                    $bpData ? $bpData->title : '',
-                    $report->category.(in_array(trim($report->category), $categories_withoutcross_competences) ? html_writer::span($commenticon, 'info-icon') : ''),
-                    array_key_exists($report->template, $templateList) ? $templateList[$report->template] : $report->template,);
-            if ($showfulltable) {
-                $row = array_merge($row, array(
-                        $report->grades,
-                        $call_setting_marker('year'),
-                        $call_setting_marker('report_date'),
-                        $call_setting_marker('student_name'),
-                        $call_setting_marker('date_of_birth'),
-                        $call_setting_marker('place_of_birth'),
-                        $call_setting_marker('learning_group'),
-                        $call_setting_marker('class'),
-                        $call_setting_marker('focus'),
-                        $call_setting_marker('learn_social_behavior'),
-                        $call_setting_marker('subjects'),
-                        $call_setting_marker('comments'),
-                        $call_setting_marker('subject_elective'),
-                        $call_setting_marker('subject_profile'),
-                        $call_setting_marker('projekt_thema'),
-                        $call_setting_marker('ags'),
-                        block_exastud_get_reportsettings_additional_description($report)
-                ));
+                        '<strong>'.$report->title.'</strong>',
+                        $bpData ? $bpData->title : '',
+                        $report->category.(in_array(trim($report->category), $categories_withoutcross_competences) ?
+                                html_writer::span($commenticon, 'info-icon') : ''),
+                        array_key_exists($report->template, $templateList) ? $templateList[$report->template] : $report->template,);
+                if ($showfulltable) {
+                    $row = array_merge($row, array(
+                            $report->grades,
+                            $call_setting_marker('year'),
+                            $call_setting_marker('report_date'),
+                            $call_setting_marker('student_name'),
+                            $call_setting_marker('date_of_birth'),
+                            $call_setting_marker('place_of_birth'),
+                            $call_setting_marker('learning_group'),
+                            $call_setting_marker('class'),
+                            $call_setting_marker('focus'),
+                            $call_setting_marker('learn_social_behavior'),
+                            $call_setting_marker('subjects'),
+                            $call_setting_marker('comments'),
+                            $call_setting_marker('subject_elective'),
+                            $call_setting_marker('subject_profile'),
+                            $call_setting_marker('projekt_thema'),
+                            $call_setting_marker('ags'),
+                            block_exastud_get_reportsettings_additional_description($report)
+                    ));
+                }
+            } else {
+                $row = array(
+                        $editLink.' :'.$report->id,
+                        $hideLink.'&nbsp;'.$deleteLink,
+                    //$relevantSubject,
+                        '<strong>'.$report->title.'</strong>',
+                        array_key_exists($report->template, $templateList) ? $templateList[$report->template] : $report->template,);
+                if ($showfulltable) {
+                    $row = array_merge($row, array(
+                            $call_setting_marker('year'),
+                            $call_setting_marker('report_date'),
+                            $call_setting_marker('student_name'),
+                            $call_setting_marker('date_of_birth'),
+                            $call_setting_marker('place_of_birth'),
+                            $call_setting_marker('learning_group'),
+                            $call_setting_marker('class'),
+                            $call_setting_marker('focus'),
+                            $call_setting_marker('learn_social_behavior'),
+                            $call_setting_marker('subjects'),
+                            $call_setting_marker('comments'),
+                            $call_setting_marker('subject_elective'),
+                            $call_setting_marker('subject_profile'),
+                            $call_setting_marker('projekt_thema'),
+                            block_exastud_get_reportsettings_additional_description($report)
+                    ));
+                }
             }
             $tableRow->cells = $row;
 

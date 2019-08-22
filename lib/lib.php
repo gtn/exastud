@@ -283,18 +283,17 @@ function block_exastud_get_head_teacher_class($classid, $nullifnoclass = false) 
 		$classes = block_exastud_get_head_teacher_classes_all($period->id);
 
 		if ($classid != '-all-') {
-            if (isset($classes[$classid])) {
+            if (array_key_exists($classid, $classes) && $classes[$classid]) {
                 return $classes[$classid];
             }
         }
 	}
-
 	// only for Admin access.
     if (block_exastud_is_siteadmin()) {
         $classes = block_exastud_get_classes_all();
-        if (isset($classes[$classid])) {
+        if (array_key_exists($classid, $classes) && $classes[$classid]) {
             return $classes[$classid];
-        } else if ($classid == '-all-') {
+        } elseif ($classid === '-all-') {
             return $classes;
         }
     }
@@ -2423,9 +2422,9 @@ function block_exastud_get_default_templates($templateid = null, $common = true)
         $templates = [
                 'Lern- und Sozialverhalten' => [
                         'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_LERN_UND_SOZIALVERHALTEN_COMMON,
-                        'name' => 'Lern- und Sozialverhalten',
-                        'file' => 'Lern_und_Sozialverhalten_common',
-                        'category' => 'Anlage',
+                        'name' => 'Lern- und Sozialverhalten Übersicht',
+                        'file' => 'lern_und_sozialverhalten_uebersicht',
+                        //'category' => 'Anlage',
                         'year' => '1',
                         'report_date' => '1',
                         'student_name' => '1',
@@ -2437,7 +2436,7 @@ function block_exastud_get_default_templates($templateid = null, $common = true)
                         'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_UEBERFACHLICHE_KOMPETENZEN_COMMON,
                         'name' => 'Überfachliche Kompetenzen',
                         'file' => 'Ueberfachliche_Kompetenzen_common',
-                        'category' => 'Anlage',
+                        //'category' => 'Anlage',
                         'year' => '1',
                         'report_date' => '1',
                         'student_name' => '1',
@@ -2451,7 +2450,7 @@ function block_exastud_get_default_templates($templateid = null, $common = true)
                         'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_ANLAGE_ZUM_LERNENTWICKLUNGSBERICHTALT_COMMON,
                         'name' => 'Überfachliche Kompetenzen',
                         'file' => 'Anlage_common',
-                        'category' => 'Anlage',
+                        //'category' => 'Anlage',
                         'year' => '1',
                         'report_date' => '1',
                         'student_name' => '1',
@@ -2462,9 +2461,9 @@ function block_exastud_get_default_templates($templateid = null, $common = true)
                 ],
                 'default_report' => [
                         'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_DEFAULT_REPORT_COMMON,
-                        'name' => 'Lern und Sozialverhalten, überfachliche Kompetenzen und subject grading',
-                        'file' => 'default_report_common',
-                        'category' => 'Default',
+                        'name' => 'Lern- und Sozialverhalten, überfachliche Kompetenzen und Schulnoten',
+                        'file' => 'gesamtzeugnis',
+                        //'category' => 'Default',
                         'year' => '1',
                         'report_date' => '1',
                         'student_name' => '1',
@@ -2492,7 +2491,7 @@ function block_exastud_get_default_templates($templateid = null, $common = true)
                         'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_STUDENT_CARD,
                         'name' => 'Schülerprofil (Demo)',
                         'file' => 'student_card',
-                        'category' => 'Default',
+                        //'category' => 'Default',
                         'inputs' => [
                                 'fname' => [
                                         'title' => 'first name',

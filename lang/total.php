@@ -843,7 +843,7 @@ return [
         'Export reports',
     ],
     'report_export_selected_templates' => [
-        'Export selected',
+        'Ausgewählte Vorlagen exportieren',
         'Export selected',
     ],
     'report_export_with_files' => [
@@ -851,11 +851,11 @@ return [
         'Add sources (files) of templates',
     ],
     'report_export_update_reports' => [
-        'Update reports if exist',
+        'vorhandene Vorlagen aktualisieren',
         'Update reports if exist',
     ],
     'report_export_update_files' => [
-        'Update files if exist',
+        'vorhandene Vorlage-Dateien aktualisieren',
         'Update files if exist',
     ],
     'report_import_templates' => [
@@ -863,19 +863,19 @@ return [
         'Import',
     ],
     'report_import_file_shouldnotbeempty' => [
-            'File should not be empty.',
+            'Dateiname fehlt.',
             'File should not be empty.',
     ],
     'report_import_inserted_list' => [
-            'These reports were inserted',
+            'Folgende Vorlagen wurden hinzugefügt',
             'These reports were inserted',
     ],
     'report_import_updated_list' => [
-            'These reports were updated',
+            'Folgende Vorlagen wurden aktualisiert',
             'These reports were updated',
     ],
     'report_import_ignored_list' => [
-            'These reports were ignored',
+            'Folgende Vorlagen wurden nicht berücksichtigt',
             'These reports were ignored',
     ],
     'report_settings_upload_new_filetemplate' => [
@@ -883,7 +883,7 @@ return [
         'Upload new template file',
     ],
     'report_settings_upload_new_filetemplate_overwrite' => [
-        'Overwrite file if exists',
+        'bestehende Datei überschreiben',
         'Overwrite file if exists',
     ],
     'upload_new_templatefile' => [
@@ -1173,7 +1173,7 @@ return [
         'Use two-factor-authentication',
     ],
     'settings_a2fa_requirement_description' => [
-        'Exa2fa Plugin is not installed',
+        'Das 2-Faktoren-Authentifizierungs-Modul exa2fa ist nicht installiert',
         'Exa2fa Plugin is not installed',
     ],
     'settings_a2fa_requirement_def' => [
