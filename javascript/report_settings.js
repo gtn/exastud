@@ -339,7 +339,7 @@
     });
 
     // report edit form: show/hide filepicker for upload new template file
-    function toggleUploadForm() {
+    function toggleUploadForm(onlyfirsthide) {
         var overwriteBlock = $('#id_overwritefile').closest('.form-group');
         var filepickerBlock = $('#id_newfileupload').closest('.form-group');
         if (filepickerBlock.attr('data-hidden') == 1) {
@@ -354,14 +354,17 @@
             filepickerBlock.hide();
             filepickerBlock.attr('data-hidden', 1);
             // disable selected file
-            $('input[name="newfileupload"]').val('');
+            if (!onlyfirsthide) {
+                $('input[name="newfileupload"]').val('');
+                $('.filepicker-filename a').remove();
+            }
             $('#id_template').removeAttr('disabled');
             return 0;
         }
     }
     $(function() {
         // at first hide upload form
-        toggleUploadForm();
+        toggleUploadForm(true);
 
         // show form button
         var templateSelect = $('#id_template');

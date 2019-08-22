@@ -61,18 +61,18 @@ class class_edit_form extends moodleform {
         $bps = g::$DB->get_records_menu('block_exastudbp', null, 'sorting', 'id, title');
         $bps = ['' => ''] + $bps;
         if (!$this->_customdata['for_siteadmin']) {
-            if (block_exastud_is_bw_active()) {
+            //if (block_exastud_is_bw_active()) {
                 $mform->addElement('select',
                         'bpid',
                         block_exastud_get_string('class_educationplan').':',
                         $bps,
                         ['class' => 'exastud-review-message',
                                 'data-exastudmessage' => block_exastud_get_string('attention_plan_will_change')]);
-            } else {
-                $mform->addElement('hidden', 'bpid');
-                $mform->setType('bpid', PARAM_INT);
-                $mform->setDefault('bpid', 0);
-            }
+            //} else {
+            //    $mform->addElement('hidden', 'bpid');
+            //    $mform->setType('bpid', PARAM_INT);
+            //    $mform->setDefault('bpid', 0);
+            //}
         } else {
             $mform->addElement('hidden', 'bpid');
             $mform->setType('bpid', PARAM_INT);

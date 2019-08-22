@@ -252,13 +252,19 @@ if (block_exastud_is_bw_active()) {
 $templates_by_bp = [];
 $tempbp = (object)['id' => 0];
 $templates_by_bp[''] = \block_exastud\print_templates::get_bp_available_print_templates($tempbp);
-foreach ($bps as $bp) {
-	$templates_by_bp[$bp->id] = \block_exastud\print_templates::get_bp_available_print_templates($bp);
+if (block_exastud_is_bw_active()) {
+    foreach ($bps as $bp) {
+	    $templates_by_bp[$bp->id] = \block_exastud\print_templates::get_bp_available_print_templates($bp);
+    }
+} else {
+    // all templates if no BW
+    $templates_by_bp[''] = \block_exastud\print_templates::get_bp_available_print_templates(null);
 }
 $templates_by_bp = block_exastud_clean_templatelist_for_classconfiguration($templates_by_bp, 'class');
 ?>
 	<script>
 			var templates_by_bp = <?php echo json_encode($templates_by_bp); ?>;
+			var isBW = <?php echo (block_exastud_is_bw_active() ? 'true;' : 'false;')?>
 
 			function populate_select(name) {
 				var $input = $('input,select').filter('[name=' + name + ']');
@@ -276,6 +282,9 @@ $templates_by_bp = block_exastud_clean_templatelist_for_classconfiguration($temp
                 }
 				if (bpselected == 0) {
                     bpselected = '';
+                }
+                if (!isBW) {
+                    bpselected = ''; // if no BW = always all reports
                 }
 				$.each(templates_by_bp[bpselected], function (id, title) {
 					$select.append($('<option/>', {
