@@ -431,7 +431,7 @@ if ($ADMIN->fulltree) {
 	// mysource
     // generate source id if it is not existing yet
     $sid = get_config('exastud', 'mysource');
-    if (!$sid || !\exabis_special_id_generator::validate_id($sid)) {
+    if (!$sid || !\exastud_exabis_special_id_generator::validate_id($sid)) {
         set_config('mysource', \exastud_exabis_special_id_generator::generate_random_id('EXASTUD'), 'exastud');
     }
 
