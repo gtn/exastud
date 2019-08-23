@@ -891,7 +891,7 @@ return [
         'Upload new template',
     ],
     'hide_uploadform' => [
-        'Hide upload form',
+        'Schließen',
         'Hide upload form',
     ],
     'select_student' => [

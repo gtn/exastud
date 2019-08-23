@@ -403,8 +403,10 @@ if ($action == 'subjects') {
 }
 
 if ($action == 'evalopts') {
+    foreach ($availableevalopts as $opt) {
+        $opt->canDelete = true;
+    }
 	echo $output->header(['grading'], ['content_title' => block_exastud_get_string('pluginname')], true/*['settings', ['id' => 'evalopts', 'name' => block_exastud_trans("de:Bewertungsskala")]]*/);
-
 	?>
 	<script>
 		var exa_list_items = <?php echo json_encode(array_values($availableevalopts) /* use array_values, because else the array gets sorted by key and not by sorting */); ?>

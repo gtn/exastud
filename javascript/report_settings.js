@@ -382,4 +382,29 @@
         })
     });
 
+    // links to selected template files
+    function activateLinkToTemplate() {
+        // at first - delete existing url
+        $('#block_exastud #link_to_template').remove();
+        var current = $('#id_template').val();
+        var url = '';
+        if (current) {
+            var linksArr = JSON.parse(templateLinks);
+            existsinarray = current in linksArr;
+            if (existsinarray) {
+                url = linksArr[current];
+            }
+        }
+        if (url != '') {
+            $('#id_template').before('<span id="link_to_template">' +
+                '<a href="' + url + '" title="' + M.str.block_exastud.download + '" target="_blank"><img src="' + M.cfg.wwwroot + '/blocks/exastud/pix/document-24.png" /></a>' +
+                '</span>');
+        }
+    }
+
+    $(function() {
+        activateLinkToTemplate();
+        $('#id_template').on('change', activateLinkToTemplate);
+    });
+
 })(block_exastud.jquery);

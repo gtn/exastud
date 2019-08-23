@@ -727,6 +727,8 @@ class reportsettings_edit_form extends moodleform {
         global $CFG;
         require_once($CFG->dirroot.'/blocks/exastud/classes/exastud_htmltag.php');
         MoodleQuickForm::registerElementType('exastud_htmltag', $CFG->dirroot.'/blocks/exastud/classes/exastud_htmltag.php', 'block_exastud_htmltag');
+        //require_once($CFG->dirroot.'/blocks/exastud/classes/exastud_select.php');
+        //MoodleQuickForm::registerElementType('exastud_select', $CFG->dirroot.'/blocks/exastud/classes/exastud_select.php', 'block_exastud_select');
         parent::__construct($action, $customdata, $method, $target, $attributes, $editable, $ajaxformdata);
     }
 
@@ -797,6 +799,27 @@ class reportsettings_edit_form extends moodleform {
         $templateList = block_exastud_get_template_files();
         $mform->addElement('select', 'template', block_exastud_get_string('report_settings_setting_template'), $templateList);
         $mform->setType('template', PARAM_RAW);
+        // templates for JS
+        // add link to "template" selectbox
+        $filelinks = array();
+        $pathTo = $CFG->wwwroot;
+        if (count($templateList)) {
+            $exts = array('dotx', 'docx');
+            foreach ($templateList as $tmpl) {
+                $realfilename = '';
+                foreach ($exts as $ext) {
+                    if (file_exists(BLOCK_EXASTUD_TEMPLATE_DIR.'/'.$tmpl.'.'.$ext)) {
+                        $realfilename = $tmpl.'.'.$ext;
+                        break;
+                    }
+                }
+                if ($realfilename) {
+                    $filelinks[$tmpl] = $pathTo.'/blocks/exastud/template/'.$realfilename;
+                }
+            }
+        }
+        //echo "<pre>debug:<strong>edit_form.php:821</strong>\r\n"; print_r($filelinks); echo '</pre>'; exit; // !!!!!!!!!! delete it
+        $mform->addElement('exastud_htmltag', '<script>var templateLinks = \''.json_encode($filelinks).'\';</script>');
         // upload new file
         $mform->addElement('checkbox', 'overwritefile', block_exastud_get_string('report_settings_upload_new_filetemplate_overwrite'));
         $mform->addElement('filepicker', 'newfileupload', block_exastud_get_string('report_settings_upload_new_filetemplate'),

@@ -1712,6 +1712,7 @@ function block_exastud_init_js_css($especialities = array()) {
     $PAGE->requires->string_for_js('donotleave_page_message', 'block_exastud');
     $PAGE->requires->string_for_js('upload_new_templatefile', 'block_exastud');
     $PAGE->requires->string_for_js('hide_uploadform', 'block_exastud');
+    $PAGE->requires->string_for_js('download', 'block_exastud');
 }
 
 function block_exastud_get_category($categoryid, $categorysource) {
@@ -2315,7 +2316,8 @@ function block_exastud_get_report_templates($class) {
 }
 
 function block_exastud_get_template_files() {
-    $filelist = get_directory_list(BLOCK_EXASTUD_TEMPLATE_DIR);
+    $excludefiles = array('info.txt');
+    $filelist = get_directory_list(BLOCK_EXASTUD_TEMPLATE_DIR, $excludefiles);
     // delete extensions from file
     foreach ($filelist as $k => $file) {
         $filelist[$k] = preg_replace('/\\.[^.\\s]{3,4}$/', '', $file);
@@ -2434,7 +2436,7 @@ function block_exastud_get_default_templates($templateid = null, $common = true)
                 ],
                 'Überfachliche Kompetenzen' => [
                         'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_UEBERFACHLICHE_KOMPETENZEN_COMMON,
-                        'name' => 'Überfachliche Kompetenzen',
+                        'name' => 'Überfachliche Kompetenzen (old)',
                         'file' => 'Ueberfachliche_Kompetenzen_common',
                         //'category' => 'Anlage',
                         'year' => '1',
