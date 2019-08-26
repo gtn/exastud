@@ -18,6 +18,7 @@
 // This copyright notice MUST APPEAR in all copies of the script!
 
 require __DIR__.'/inc.php';
+require_once($CFG->dirroot . '/blocks/exastud/lib/reports_lib.php');
 
 $courseid = optional_param('courseid', 1, PARAM_INT); // Course ID
 $classid = required_param('classid', PARAM_INT);
@@ -314,6 +315,13 @@ foreach ($classstudents as $classstudent) {
                                 $value = implode($br, $filesOut);
                                 //$value = file_rewrite_pluginfile_urls('sss', 'pluginfile.php',
                                 //        $context->id, 'block_exastud', 'report_image_'.$dataid, $classstudent->id);
+                                break;
+                            case 'userdata':
+                                //echo "<pre>debug:<strong>review_class_other_data.php:319</strong>\r\n"; print_r($dataid); echo '</pre>'; // !!!!!!!!!! delete it
+                                //echo "<pre>debug:<strong>review_class_other_data.php:319</strong>\r\n"; print_r(); echo '</pre>'; // !!!!!!!!!! delete it
+                                //echo "<pre>debug:<strong>review_class_other_data.php:319</strong>\r\n"; print_r($inputs); echo '</pre>'; exit; // !!!!!!!!!! delete it
+                                $tempNull = null;
+                                $value = block_exastud_get_report_userdata_value($tempNull, $dataid, $classstudent->id, $form_input['userdatakey']);
                                 break;
                             default:
                                 $value = !empty($data[$dataid]) ? block_exastud_text_to_html($data[$dataid]) : '';

@@ -115,6 +115,8 @@ switch ($type) {
                 }
                 $categories = array_merge($categories, $learnInputs);
             }
+            // filter from user profile markers
+            $categories = array_filter($categories, function($m) {return $m['type'] != 'userdata';});
         }
         break;
     case BLOCK_EXASTUD_DATA_ID_ADDITIONAL_INFO:
@@ -371,7 +373,6 @@ if ($type == BLOCK_EXASTUD_DATA_ID_CROSS_COMPETENCES
 	echo $OUTPUT->heading($studentdesc);
 }
 $formdata = $olddata;
-
 if (count($categories) > 0) {
     $context = context_system::instance(); // TODO: which context to use?
     foreach ($categories as $dataid => $category) {

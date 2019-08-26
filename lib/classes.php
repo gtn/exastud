@@ -724,7 +724,11 @@ class print_templates {
 	 */
 	protected static function _get_class_available_print_templates($class) {
 		if ($class) {
-			$bp = g::$DB->get_record('block_exastudbp', ['id' => $class->bpid]);
+		    if (block_exastud_is_bw_active()) {
+                $bp = g::$DB->get_record('block_exastudbp', ['id' => $class->bpid]);
+            } else {
+		        $bp = null; // TODO: is this ok?
+            }
 		} else {
 			$bp = null;
 		}

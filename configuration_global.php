@@ -361,9 +361,11 @@ if ($action == 'subjects') {
 		<div class="header">
 			<div for-field="title"><?php echo block_exastud_trans(['de:Bezeichnung', 'en:Name']); ?></div>
 			<div for-field="shorttitle"><?php echo block_exastud_trans(['de:Kurzbezeichnung', 'en:Shortname']); ?></div>
+            <?php if (block_exastud_is_bw_active()) { ?>
 			<div for-field="relevant"><?php echo block_exastud_get_string('subject_category_m'); ?><br>
                 <span for-field="HS">(HS)</span><span for-field="RS">(RS)</span>
             </div>
+            <?php } ?>
 <!--			<div for-field="relevant_rs">--><?php //echo block_exastud_get_string('subject_category_m_rs'); ?><!--</div>-->
 			<!-- div for-field="always_print"><?php echo block_exastud_trans(['de:Immer im LEB drucken', 'en:Always print']); ?></div -->
 		</div>
@@ -371,8 +373,13 @@ if ($action == 'subjects') {
 			<li>
 				<input type="text" name="title"/>
 				<input type="text" name="shorttitle"/>
-				<input type="checkbox" name="relevant" value="1" />
-				<input type="checkbox" name="relevant_rs" value="1" />
+                <?php if (block_exastud_is_bw_active()) { ?>
+                    <input type="checkbox" name="relevant" value="1" />
+                    <input type="checkbox" name="relevant_rs" value="1" />
+				<?php } else { ?>
+                    <input type="hidden" name="relevant" value="0" />
+                    <input type="hidden" name="relevant_rs" value="0" />
+                <?php } ?>
 				<!-- input type="checkbox" name="always_print" value="1"/ -->
 				<button exa="delete-button" class="btn btn-default"><?php echo block_exastud_get_string('delete'); ?></button>
 			</li>
@@ -381,8 +388,13 @@ if ($action == 'subjects') {
 		<div exa="new-item">
 			<input type="text" name="title"/>
 			<input type="text" name="shorttitle"/>
-            <input type="checkbox" name="relevant" value="1" />
-            <input type="checkbox" name="relevant_rs" value="1" />
+            <?php if (block_exastud_is_bw_active()) { ?>
+                <input type="checkbox" name="relevant" value="1" />
+                <input type="checkbox" name="relevant_rs" value="1" />
+            <?php } else { ?>
+                <input type="hidden" name="relevant" value="0" />
+                <input type="hidden" name="relevant_rs" value="0" />
+            <?php } ?>
 			<!-- input type="checkbox" name="always_print" value="1"/ -->
 			<input type="button" exa="new-button" class="btn btn-default" value="<?php echo block_exastud_get_string('add'); ?>">
 		</div>

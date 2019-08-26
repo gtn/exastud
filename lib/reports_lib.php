@@ -120,8 +120,8 @@ function block_exastud_get_report_user_fields($getAll = false) {
     return $resultArr;
 }
 
-function block_exastud_get_report_userdata_value(&$templateProcessor, $datakey, $userid, $fieldname) {
-    global $DB, $CFG;
+function block_exastud_get_report_userdata_value(&$templateProcessor = null, $datakey, $userid, $fieldname) {
+    global $DB, $CFG, $OUTPUT;
     static $users = array();
     static $checkboxes = array();
     if (!count($checkboxes)) {
@@ -177,8 +177,13 @@ function block_exastud_get_report_userdata_value(&$templateProcessor, $datakey, 
             // user's picture
             if ($fieldname == 'currentpicture') {
                 $contextuser = context_user::instance($userid, MUST_EXIST)->id;
-                if (!$templateProcessor->addImageToReport($contextuser, $datakey, 'user', 'icon', false, 100, 100, false)) {
-                    return ''; // empty image
+                if ($templateProcessor) {
+                    if (!$templateProcessor->addImageToReport($contextuser, $datakey, 'user', 'icon', false, 100, 100, false)) {
+                        return ''; // empty image
+                    }
+                } else {
+                    return $OUTPUT->user_picture($user);
+                    //return '<img src="http://www.utzacademyonline.com/user/pix.php/'.$userid.'/f2.jpg">';
                 }
                 return '';
             }
