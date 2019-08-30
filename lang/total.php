@@ -1023,8 +1023,8 @@ return [
         'last period:',
     ],
     'periods_incorrect' => [
-        'You have not active period or you have more than one active periods!',
-        'You have not active period or you have more than one active periods!',
+        'Eingabe-Periode nicht korrekt',
+        'Period defined is not correct',
     ],
     'suggestions_from_exacomp' => [
         'Vorschläge aus Exacomp',

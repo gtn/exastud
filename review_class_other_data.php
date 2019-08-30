@@ -247,10 +247,12 @@ foreach ($classstudents as $classstudent) {
     $context = context_system::instance();
 	foreach ($categories as $dataid => $category) {
 
-		if ($dataid === BLOCK_EXASTUD_DATA_ID_PRINT_TEMPLATE
-                || $dataid === BLOCK_EXASTUD_DATA_ID_ADDITIONAL_INFO
-                || $dataid === BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_16_ZERTIFIKAT_FUER_PROFILFACH
-                || $dataid === BLOCK_EXASTUD_DATA_ID_BILINGUALES
+		if (in_array($dataid, [
+		        BLOCK_EXASTUD_DATA_ID_PRINT_TEMPLATE,
+                BLOCK_EXASTUD_DATA_ID_ADDITIONAL_INFO,
+                BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_16_ZERTIFIKAT_FUER_PROFILFACH,
+                BLOCK_EXASTUD_DATA_ID_BILINGUALES
+                ])
         ) {
 		    switch ($dataid) {
                 case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_16_ZERTIFIKAT_FUER_PROFILFACH:
