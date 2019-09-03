@@ -401,10 +401,26 @@
                 '</span>');
         }
     }
-
     $(function() {
         activateLinkToTemplate();
         $('#id_template').on('change', activateLinkToTemplate);
+    });
+
+    // notifications ablut wrongs in markers
+    // TODO: only on page loading?
+    $(function() {
+        $('*[data-exastud-report-marker-wrong]').each(function () {
+            var message = $(this).attr('data-exastud-report-marker-wrong');
+            var after = '&nbsp;<img src="' + M.cfg.wwwroot + '/blocks/exastud/pix/attention.png" title="' + message + '"/>';
+            if ($(this).attr('data-exastud-report-marker-addurl')) {
+                var url_type = $(this).attr('data-exastud-report-marker-addurl_type');
+                var tempurl = $(this).attr('data-exastud-report-marker-addurl');
+                if (url_type == 'edit') {
+                    after += '&nbsp;<a href="' + $(this).attr('data-exastud-report-marker-addurl') + '" title="' + $(this).attr('data-exastud-report-marker-addurltitle') + '" target="_blank"><img src="' + M.cfg.wwwroot + '/blocks/exastud/pix/edit.png" /></a>';
+                }
+            }
+            $(this).after(after);
+        });
     });
 
 })(block_exastud.jquery);

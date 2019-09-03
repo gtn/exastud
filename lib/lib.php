@@ -6383,6 +6383,37 @@ function block_exastud_get_unique_filename($origfilename, $dir) {
     }
 }
 
+function block_exastud_global_useredit_link($userid, $courseid) {
+    global $DB, $USER;
+    $user = $DB->get_record('user', array('id' => $userid), '*', MUST_EXIST);
+    $iscurrentuser = ($user->id == $USER->id);
+    $systemcontext = context_system::instance();
+    $usercontext   = context_user::instance($user->id, IGNORE_MISSING);
+    $url = '';
+    if (isloggedin() && !isguestuser($user) && !is_mnet_remote_user($user)) {
+        if (($iscurrentuser || is_siteadmin($USER) || !is_siteadmin($user)) && has_capability('moodle/user:update', $systemcontext)) {
+            $url = new moodle_url('/user/editadvanced.php', array('id' => $user->id, 'course' => $courseid));
+        } else if ((has_capability('moodle/user:editprofile', $usercontext) && !is_siteadmin($user))
+                || ($iscurrentuser && has_capability('moodle/user:editownprofile', $systemcontext))) {
+            $userauthplugin = false;
+            if (!empty($user->auth)) {
+                $userauthplugin = get_auth_plugin($user->auth);
+            }
+            if ($userauthplugin && $userauthplugin->can_edit_profile()) {
+                $url = $userauthplugin->edit_profile_url();
+                if (empty($url)) {
+                    if (empty($course)) {
+                        $url = new moodle_url('/user/edit.php', array('id' => $user->id));
+                    } else {
+                        $url = new moodle_url('/user/edit.php', array('id' => $user->id, 'course' => $course->id));
+                    }
+                }
+            }
+        }
+    }
+    return $url;
+}
+
 
 
 /*

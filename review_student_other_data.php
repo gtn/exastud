@@ -116,7 +116,11 @@ switch ($type) {
                 $categories = array_merge($categories, $learnInputs);
             }
             // filter from user profile markers
-            $categories = array_filter($categories, function($m) {return $m['type'] != 'userdata';});
+            /*if (is_array($categories)) {
+                $categories = array_filter($categories, function($m) {
+                    return $m['type'] != 'userdata';
+                });
+            }*/
         }
         break;
     case BLOCK_EXASTUD_DATA_ID_ADDITIONAL_INFO:
@@ -152,6 +156,7 @@ $studentform = new student_other_data_form($PAGE->url, [
 	'templateid' => $template->get_template_id(),
     'type' => $type,
 	'student' => $student,
+	'courseid' => $courseid,
 	'modified' =>
 		@$olddata[$dataid.'.modifiedby'] ?
 			block_exastud_get_renderer()->last_modified(@$olddata[$dataid.'.modifiedby'], @$olddata[$dataid.'.timemodified'])

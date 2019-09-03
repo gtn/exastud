@@ -716,12 +716,32 @@ if ($action && (($settingsid > 0 && $action == 'edit') || $action == 'new')) {
                     ));
                 }
             } else {
+                // if template has userdata marker with non existing custom user field
+                $userselectboxparameters = block_exastud_get_report_user_fields();
+                $curr_template_inputs = \block_exastud\print_templates::get_template_inputs($report->id, 'all');
+                $wrongUserdataMarker = '';
+                if (is_array($curr_template_inputs)) {
+                    foreach ($curr_template_inputs as $key => $param_settings) {
+                        if ($param_settings['type'] == 'userdata') {
+                            if (!empty($param_settings['userdatakey']) &&
+                                    !array_key_exists($param_settings['userdatakey'], $userselectboxparameters)) {
+                                $wrongUserdataMarker = '<img src="'.$CFG->wwwroot.'/blocks/exastud/pix/attention.png" title="'.
+                                        block_exastud_get_string('report_settings_userdata_wrong_user_parameter_in_reports_list').
+                                        '"/>&nbsp;';
+                                break;
+                            }
+                        }
+                    }
+                }
+                // if no file template
+                $a = (object)['filename' => $report->template];
+                $fileNoExistsMessage = block_exastud_get_string('report_settings_no_template_file', 'block_exastud', $a);
                 $row = array(
                         $editLink.' :'.$report->id,
                         $hideLink.'&nbsp;'.$deleteLink,
                     //$relevantSubject,
-                        '<strong>'.$report->title.'</strong>',
-                        array_key_exists($report->template, $templateList) ? $templateList[$report->template] : $report->template,);
+                        $wrongUserdataMarker.'<strong>'.$report->title.'</strong>',
+                        array_key_exists($report->template, $templateList) ? $templateList[$report->template] : '<img src="'.$CFG->wwwroot.'/blocks/exastud/pix/attention.png" title="'.$fileNoExistsMessage.'"/>&nbsp;'.$report->template);
                 if ($showfulltable) {
                     $row = array_merge($row, array(
                             $call_setting_marker('year'),

@@ -447,19 +447,33 @@ class student_other_data_form extends moodleform {
         global $CFG;
         require_once($CFG->dirroot.'/blocks/exastud/classes/exastud_htmltag.php');
         MoodleQuickForm::registerElementType('exastud_htmltag', $CFG->dirroot.'/blocks/exastud/classes/exastud_htmltag.php', 'block_exastud_htmltag');
+        require_once($CFG->dirroot.'/blocks/exastud/lib/reports_lib.php');
         parent::__construct($action, $customdata, $method, $target, $attributes, $editable, $ajaxformdata);
     }
 
 	function definition() {
+        global $CFG;
 		$mform = &$this->_form;
 		if (array_key_exists('templateid', $this->_customdata)) {
-            $defaulttemplatesettings = block_exastud_get_default_templates($this->_customdata['templateid']);
+            //$defaulttemplatesettings = block_exastud_get_default_templates($this->_customdata['templateid']);
+            if (!$defaulttemplatesettings = block_exastud_get_default_templates($this->_customdata['templateid'])) {
+                $defaulttemplatesettings = array();
+            }
         } else {
             $defaulttemplatesettings = array();
         }
+        $student = null;
+        if (array_key_exists('student', $this->_customdata)) {
+            $student = $this->_customdata['student'];
+        }
+        $courseid = 1;
+        if (array_key_exists('courseid', $this->_customdata)) {
+            $courseid = $this->_customdata['courseid'];
+        }
+
         $bilingualTemplates = array_keys(block_exastud_get_bilingual_reports());
         $tempCurrentElementGroup = '';
-        $addFormElement = function($dataid, $input, $pObj) use ($mform, $defaulttemplatesettings, $bilingualTemplates, &$tempCurrentElementGroup) {
+        $addFormElement = function($dataid, $input, $pObj) use ($mform, $defaulttemplatesettings, $bilingualTemplates, &$tempCurrentElementGroup, $student, $courseid, $CFG) {
             static $previousDataid;
             $activate_close_before_modifiedfield = false; // we need it because 'static' element does not have relation by element id (isn't ?)
 
@@ -581,6 +595,19 @@ class student_other_data_form extends moodleform {
                                     'maxfiles' => 1,
                                     'accepted_types' => array('web_image'))
                     );
+                    break;
+                case 'userdata':
+                    $tempObj = new stdClass();
+                    $realvalue = block_exastud_get_report_userdata_value($tempObj, '---', $student->id, $input['userdatakey']);
+                    $url = block_exastud_global_useredit_link($student->id, $courseid);
+
+                    if ($url) {
+                        $edit_message = '<a href="'.$url.'" target="_blank" title="'.block_exastud_get_string('report_edit_userprofile').'"><img src="'.$CFG->wwwroot.'/blocks/exastud/pix/edit.png" /></a>&nbsp;';
+                    } else {
+                        $edit_message = '<img src="'.$CFG->wwwroot.'/blocks/exastud/pix/info.png" title="'.block_exastud_get_string('report_userprofile_field_info').' '.block_exastud_get_string('report_edit_userprofile_noaccess').'"/>&nbsp;';
+                    }
+                    $realvalue = $edit_message.$realvalue;
+                    $mform->addElement('static', 'static_'.$dataid, $input['title'], $realvalue);
                     break;
                 default:
                     $mform->addElement('header', 'header_'.$dataid, $input['title']);
@@ -961,6 +988,7 @@ class reportsettings_edit_form extends moodleform {
 
     public function definition_after_data() {
         global $CFG;
+        $elements_with_wrongs = array();
         //parent::definition_after_data();
         //require_once($CFG->dirroot.'/blocks/exastud/classes/exastud_htmltag.php');
         //MoodleQuickForm::registerElementType('exastud_htmltag', $CFG->dirroot.'/blocks/exastud/classes/exastud_htmltag.php', 'block_exastud_htmltag');
@@ -1121,6 +1149,11 @@ class reportsettings_edit_form extends moodleform {
                 require_once($CFG->dirroot . '/blocks/exastud/lib/reports_lib.php');
                 $userDataParams = array();
                 $selectboxparameters = block_exastud_get_report_user_fields();
+                if (!empty($param_settings['userdatakey']) && !array_key_exists($param_settings['userdatakey'], $selectboxparameters)) {
+                    $selectboxparameters[$param_settings['userdatakey']] = '-- ${'.$param_settings['userdatakey'].'} --';
+                    //$elements_with_wrongs[] = 'additional_params_userdatakey['.$i.']';
+                    $elements_with_wrongs[$param_settings['userdatakey']] = 'additional_params_userdataparams['.$i.']';
+                }
                 //$userDataParams[] = $mform->createElement('exastud_htmltag', block_exastud_get_string('report_setting_type_userdata_datakey'));
                 $userDataParams[] = $mform->createElement('select', 'additional_params_userdatakey['.$i.']', block_exastud_get_string('report_setting_type_userdata_datakey'), $selectboxparameters);
                 $mform->setType('additional_params_userdatakey['.$i.']', PARAM_RAW);
@@ -1252,6 +1285,21 @@ class reportsettings_edit_form extends moodleform {
                 }
             }
 
+        }
+
+        $urlToUserFieldsEdit = (new moodle_url($CFG->httpswwwroot . '/user/profile/index.php', []))->out(false);
+        foreach ($elements_with_wrongs as $fieldname => $elementname) {
+            $param = $mform->getElement($elementname);
+            $userdata_settings_elements = $param->getElements();
+            foreach ($userdata_settings_elements as $element) {
+                $shortfieldname = str_replace('profile_field_', '', $fieldname);
+                $a = (object)['fieldname' => $shortfieldname];
+                $element->_attributes['data-exastud-report-marker-wrong'] = block_exastud_get_string('report_settings_userdata_wrong_user_parameter', 'block_exastud', $a);
+                $element->_attributes['data-exastud-report-marker-addurl'] = $urlToUserFieldsEdit;
+                $element->_attributes['data-exastud-report-marker-addurl_type'] = 'edit';
+                $element->_attributes['data-exastud-report-marker-addurltitle'] = block_exastud_get_string('report_settings_userdata_wrong_user_parameter_editurl_title');
+            }
+            //}
         }
 
     }

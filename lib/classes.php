@@ -801,7 +801,7 @@ class print_templates {
         $available_templates = \block_exastud\print_templates::get_all_template_configs('all');
         $ids = array();
         foreach ($available_templates as $tmplid => $template) {
-            if (array_key_exists('inputs', $template) && count($template['inputs']) > 0) {
+            if (array_key_exists('inputs', $template) && is_array($template['inputs']) && count($template['inputs']) > 0) {
                 if (array_key_exists('projekt_thema', $template['inputs'])
                         && count($template['inputs']['projekt_thema']) > 0) {
                     $ids[] = $tmplid;

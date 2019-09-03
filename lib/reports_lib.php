@@ -108,7 +108,7 @@ function block_exastud_get_report_user_fields($getAll = false) {
             return $result;
         }
         // filter not needed fields
-        $toDelete = array('deletepicture', 'auth', 'maildisplay', 'imagefile'/*, 'currentpicture'*/); // imagefile,currentpicture -> TODO: add user's photo!
+        $toDelete = array('deletepicture', 'auth', 'maildisplay', 'imagefile'/*, 'currentpicture'*/);
         foreach ($toDelete as $delKey) {
             if (array_key_exists($delKey, $result)) {
                 unset($result[$delKey]);
@@ -152,7 +152,7 @@ function block_exastud_get_report_userdata_value(&$templateProcessor = null, $da
         if (property_exists($user, $fieldname) || in_array($fieldname, ['currentpicture'])) {
             // is a checkbox
             if (in_array($fieldname, $checkboxes)) {
-                return ($user->{$fieldname} ? 'V': '-'); // char: '+' 'X' ????
+                return ($user->{$fieldname} ? 'V' : '-'); // char: '+' 'X' ????
             }
             // gender
             if ($fieldname == 'profile_field_gender') {
@@ -185,6 +185,9 @@ function block_exastud_get_report_userdata_value(&$templateProcessor = null, $da
                     return $OUTPUT->user_picture($user);
                     //return '<img src="http://www.utzacademyonline.com/user/pix.php/'.$userid.'/f2.jpg">';
                 }
+                return '';
+            }
+            if (strpos($fieldname, 'profile_field_') !== false && empty($user->{$fieldname})) {
                 return '';
             }
             return $user->{$fieldname};

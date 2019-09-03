@@ -1669,5 +1669,33 @@ return [
         'Template for class not found. Probably you want to use class for active "exastud | bw_active"',
         'Template for class not found. Probably you want to use class for active "exastud | bw_active"',
     ],
+    'report_settings_userdata_wrong_user_parameter' => [
+        'User profile field \'{$a->fieldname}\' does not exist. Create it or change value to existing field.',
+        'User profile field \'{$a->fieldname}\' does not exist. Create it or change value to existing field.',
+    ],
+    'report_settings_userdata_wrong_user_parameter_editurl_title' => [
+        'Edit user profile fields',
+        'Edit user profile fields',
+    ],
+    'report_settings_no_template_file' => [
+        'No template file: {$a->filename}',
+        'No template file: {$a->filename}',
+    ],
+    'report_settings_userdata_wrong_user_parameter_in_reports_list' => [
+        'This report has wrong userdata marker. Please edit this report to resolve this error.',
+        'This report has wrong userdata marker. Please edit this report to resolve this error.',
+    ],
+    'report_edit_userprofile' => [
+        'Edit user profile',
+        'Edit user profile',
+    ],
+    'report_userprofile_field_info' => [
+        'User\'s property.',
+        'User\'s property.',
+    ],
+    'report_edit_userprofile_noaccess' => [
+        'You have not privilege to edit user\'s profile',
+        'You have not privilege to edit user\'s profile',
+    ],
 
 ];
