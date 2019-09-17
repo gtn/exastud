@@ -229,6 +229,11 @@ class print_templates {
                     case 'userdata':
                         $inputs[$field]['userdatakey'] = ($fieldData['userdatakey'] != '' ? $fieldData['userdatakey'] : '');
                         break;
+                    case 'matrix':
+                        $inputs[$field]['matrixtype'] = ($fieldData['matrixtype'] != '' ? $fieldData['matrixtype'] : 'radio');
+                        $inputs[$field]['matrixrows'] = (count($fieldData['matrixrows']) > 0 ? $fieldData['matrixrows'] : array());
+                        $inputs[$field]['matrixcols'] = (count($fieldData['matrixcols']) > 0 ? $fieldData['matrixcols'] : array());
+                        break;
                 }
             }
         }

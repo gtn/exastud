@@ -229,6 +229,14 @@ class student_edit_form extends moodleform {
             $tagattributestext = ' readonly ';
         }
 
+        if (array_key_exists('additionalHidden', $this->_customdata) && is_array($this->_customdata['additionalHidden'])) {
+            foreach ($this->_customdata['additionalHidden'] as $paramname => $paramvalue) {
+                $mform->addElement('hidden', $paramname);
+                $mform->setType($paramname, PARAM_RAW);
+                $mform->setDefault($paramname, $paramvalue);
+            }
+        }
+
 		switch ($this->_customdata['reporttype']) {
             case 'inter':
                 // interdisciplinary reviews
@@ -441,6 +449,8 @@ class student_edit_form extends moodleform {
 }
 
 class student_other_data_form extends moodleform {
+    
+    private $list_matrix_checkboxes = array(); // for html changes
 
     public function __construct($action = null, $customdata = null, $method = 'post', $target = '', $attributes = null,
             $editable = true, $ajaxformdata = null) {
@@ -448,6 +458,7 @@ class student_other_data_form extends moodleform {
         require_once($CFG->dirroot.'/blocks/exastud/classes/exastud_htmltag.php');
         MoodleQuickForm::registerElementType('exastud_htmltag', $CFG->dirroot.'/blocks/exastud/classes/exastud_htmltag.php', 'block_exastud_htmltag');
         require_once($CFG->dirroot.'/blocks/exastud/lib/reports_lib.php');
+        require_once($CFG->dirroot.'/blocks/exastud/classes/exastud_reportmatrix.php');
         parent::__construct($action, $customdata, $method, $target, $attributes, $editable, $ajaxformdata);
     }
 
@@ -470,13 +481,54 @@ class student_other_data_form extends moodleform {
         if (array_key_exists('courseid', $this->_customdata)) {
             $courseid = $this->_customdata['courseid'];
         }
+        $tagatributes = array();
+        $tagattributestext = '';
+        if (!@$this->_customdata['canReviewStudent']) {
+            $tagatributes['disabled'] = 'disabled';
+            $tagattributestext = ' readonly ';
+        }
+
+        // cross reviews if it is not for BW
+        if (@$this->_customdata['cross_review'] && is_array(@$this->_customdata['cross_categories'])) {
+            $cross_categories = $this->_customdata['cross_categories'];
+            if (count($cross_categories)) {
+                $compeval_type = block_exastud_get_competence_eval_type();
+                $selectoptions = block_exastud_get_evaluation_options(true);
+                $mform->addElement('header', 'categories', block_exastud_get_string("interdisciplinary_competences"));
+                $mform->setExpanded('categories');
+                if (array_key_exists('categories.modified', $this->_customdata) && $this->_customdata['categories.modified']) {
+                    $mform->addElement('static', '', '', $this->_customdata['categories.modified']);
+                }
+                foreach ($cross_categories as $category) {
+                    $id = $category->id.'_'.$category->source;
+                    switch ($compeval_type) {
+                        case BLOCK_EXASTUD_COMPETENCE_EVALUATION_TYPE_GRADE:
+                            $mform->addElement('text', $id, $category->title, $tagatributes);
+                            $mform->setType($id, PARAM_FLOAT);
+                            break;
+                        case BLOCK_EXASTUD_COMPETENCE_EVALUATION_TYPE_TEXT:
+                        case BLOCK_EXASTUD_COMPETENCE_EVALUATION_TYPE_POINT:
+                            $mform->addElement('select', $id, $category->title, $selectoptions, $tagatributes);
+                            $mform->setType($id, PARAM_INT);
+                            $mform->setDefault($id, key($selectoptions));
+                            break;
+                    }
+                }
+            }
+        }
 
         $bilingualTemplates = array_keys(block_exastud_get_bilingual_reports());
         $tempCurrentElementGroup = '';
         $addFormElement = function($dataid, $input, $pObj) use ($mform, $defaulttemplatesettings, $bilingualTemplates, &$tempCurrentElementGroup, $student, $courseid, $CFG) {
             static $previousDataid;
+            static $previousType;
             $activate_close_before_modifiedfield = false; // we need it because 'static' element does not have relation by element id (isn't ?)
 
+            // close header after matrix
+            if ($previousType == 'matrix' && $input['type'] != 'matrix') {
+                //echo "<pre>debug:<strong>edit_form.php:529</strong>\r\n"; print_r($dataid); echo '</pre>'; // !!!!!!!!!! delete it
+                $mform->closeHeaderBefore($dataid);
+            }
             // close header before new element if before it was a language niveaus (spa)
             if ($previousDataid == 'spa_niveau') {
                 if ($mform->elementExists('header_'.$previousDataid)) {
@@ -489,7 +541,6 @@ class student_other_data_form extends moodleform {
                     }
                 }
             }
-
             switch ($input['type']) {
                 case '':
                 case 'textarea':
@@ -609,11 +660,66 @@ class student_other_data_form extends moodleform {
                     $realvalue = $edit_message.$realvalue;
                     $mform->addElement('static', 'static_'.$dataid, $input['title'], $realvalue);
                     break;
+                case 'matrix':
+                    $mform->addElement('header', 'header_'.$dataid, $input['title']);
+                    $mform->addElement('exastud_reportmatrix', $dataid, $input);
+/*                    switch ($input['matrixtype']) {
+                        case 'checkbox':
+                            // table with checkboxes
+                            $headercells = array();
+                            foreach ($input['matrixcols'] as $colTitle) {
+                                $headercells[] = $mform->createElement('text', $colTitle, '');
+                                $mform->setType($dataid.'[matrixheader]['.$colTitle.']', PARAM_RAW);
+                                $mform->setDefault($dataid.'[matrixheader]['.$colTitle.']', $colTitle);
+                            }
+                            $mform->addGroup($headercells, $dataid.'[matrixheader]', ' ');
+                            $mform->freeze($dataid.'[matrixheader]'); // make them readonly
+                            foreach ($input['matrixrows'] as $rowTitle) {
+                                $cells = array();
+                                foreach ($input['matrixcols'] as $colTitle) {
+                                    $cells[] = $mform->createElement('checkbox', $colTitle);
+                                    $mform->setType($dataid.'['.$rowTitle.']['.$colTitle.']', PARAM_RAW);
+                                    $this->list_matrix_checkboxes[] = $dataid.'['.$rowTitle.']['.$colTitle.']';
+                                }
+                                $mform->addGroup($cells, $dataid.'['.$rowTitle.']', $rowTitle);
+                            }
+                            break;
+                        case 'text':
+                            // table with text inputs
+                            $headercells = array();
+                            foreach ($input['matrixcols'] as $colTitle) {
+                                //$headercells[] = $mform->createElement('static', 'static_'.$dataid.'_'.$colTitle, $colTitle, $colTitle);
+                                $headercells[] = $mform->createElement('text', $colTitle, '');
+                                $mform->setType($dataid.'[matrixheader]['.$colTitle.']', PARAM_RAW);
+                                $mform->setDefault($dataid.'[matrixheader]['.$colTitle.']', $colTitle);
+                            }
+                            $mform->addGroup($headercells, $dataid.'[matrixheader]', ' ');
+                            $mform->freeze($dataid.'[matrixheader]'); // make them readonly
+                            foreach ($input['matrixrows'] as $rowTitle) {
+                                $cells = array();
+                                //$cells[] = $mform->createElement('static', 'static_'.$dataid.'['.$rowTitle.']', $rowTitle, $rowTitle);
+                                foreach ($input['matrixcols'] as $colTitle) {
+                                    $cells[] = $mform->createElement('text', $colTitle, '');
+                                    $mform->setType($dataid.'['.$rowTitle.']['.$colTitle.']', PARAM_RAW);
+                                }
+                                $mform->addGroup($cells, $dataid.'['.$rowTitle.']', $rowTitle);
+                            }
+                            break;
+                        case 'radio':
+                        default:
+                            // every row has selectboxes from columns
+                            $options = $input['matrixcols'];
+                            foreach ($input['matrixrows'] as $row) {
+                                $mform->addElement('select', $dataid.'['.$row.']', $row, $options);
+                            }
+                    }*/
+                    break;
                 default:
                     $mform->addElement('header', 'header_'.$dataid, $input['title']);
                     $mform->setExpanded('header_'.$dataid);
             }
             $previousDataid = $dataid;
+            $previousType = $input['type'];
         };
         
         // grouping by header/body/footer
@@ -707,6 +813,16 @@ class student_other_data_form extends moodleform {
         $parent_result = parent::validation($data, $files);
         return $parent_result + $custom_errors;
     }
+/*
+    public function definition_after_data() {
+        global $CFG;
+        parent::definition_after_data();
+        $mform =& $this->_form;
+        foreach ($this->list_matrix_checkboxes as $checkboxname) {
+            $checkbox = $mform->getElement($checkboxname);
+            echo "<pre>debug:<strong>edit_form.php:814</strong>\r\n"; print_r($checkbox); echo '</pre>'; // !!!!!!!!!! delete it
+        }
+    }*/
 
 }
 
@@ -744,7 +860,7 @@ class reportsettings_edit_form extends moodleform {
         'ags'
     );
 
-    protected $input_types = array('textarea', 'text', 'select', 'header', 'image', 'userdata');
+    protected $input_types = array('textarea', 'text', 'select', 'header', 'image', 'userdata', 'matrix');
     protected $radioattributes = array(); // html tag attributes for radiobuttons
 
     protected $additionalData = null;
@@ -916,6 +1032,10 @@ class reportsettings_edit_form extends moodleform {
                 $mform->setType($field.'_userdatakey', PARAM_RAW);
                 $mform->addGroup($tempGroup, $field.'_userdataparams', '', ' ', false);
 
+                // params for matrixes
+                $mform->addGroup(array(), $field.'_matrixtype', '', ' ', false);
+                $mform->addGroup(array(), $field.'_matrixparams', '', ' ', false);
+
                 //$mform->addElement('exastud_htmltag', '</div>');
             } else {
                 // only checkbox
@@ -981,6 +1101,16 @@ class reportsettings_edit_form extends moodleform {
             if (!empty($fieldData['userdatakey'])) {
                 $result->{$field.'_userdatakey'} = $fieldData['userdatakey'];
             }
+            // matrix
+            if (!empty($fieldData['matrixtype'])) {
+                $result->{$field.'_matrixtype'} = $fieldData['matrixtype'];
+            }
+            if (!empty($fieldData['matrixrows'])) {
+                $result->{$field.'_matrixrows'} = $fieldData['matrixrows'];
+            }
+            if (!empty($fieldData['matrixcols'])) {
+                $result->{$field.'_matrixcols'} = $fieldData['matrixcols'];
+            }
         }
         $result->additional_params = unserialize($data->additional_params);
         return $result;
@@ -1032,7 +1162,11 @@ class reportsettings_edit_form extends moodleform {
         $i = 0;
         $i_from_zero = true;
 
-        $mform->addElement('exastud_htmltag', '<script>var additional_params_last_index_for_selectbox = new Array();</script>');
+        $mform->addElement('exastud_htmltag', '<script>
+                    var additional_params_last_index_for_selectbox = new Array();
+                    var additional_params_last_index_for_matrixrows = new Array();
+                    var additional_params_last_index_for_matrixcols = new Array();
+        </script>');
 
         //echo '<pre>';print_r($mform->_defaultValues['additional_params']);exit;
         //array_unshift($mform->_defaultValues['additional_params'], array('-1' => array())); // for empty block (template for new first record)
@@ -1042,6 +1176,7 @@ class reportsettings_edit_form extends moodleform {
             $mform->_defaultValues['additional_params'] = array('-1' => array());  // for empty block (template for new first record)
         }
 
+        $matrixRowsCount = array();
         if (!empty($mform->_defaultValues['additional_params']) && count($mform->_defaultValues['additional_params']) > 0) {
             //echo "<pre>debug:<strong>edit_form.php:974</strong>\r\n"; print_r($mform->_defaultValues['additional_params']); echo '</pre>'; exit; // !!!!!!!!!! delete it
             //$count_additional = count($mform->_defaultValues['additional_params']);
@@ -1162,6 +1297,53 @@ class reportsettings_edit_form extends moodleform {
                 }
                 $mform->addGroup($userDataParams, 'additional_params_userdataparams['.$i.']', '', ' ', false);
 
+                // parameters for matrix
+                $matrixes[$i] = array();
+                $matrixtypes = array('checkbox', 'radio', 'text');
+                $matrixTypesElements = array();
+                $matrixTypesElements[] = $mform->createElement('exastud_htmltag', block_exastud_get_string('report_setting_type_matrix_type').': ');
+                foreach ($matrixtypes as $type) {
+                    $matrixTypesElements[] = $mform->createElement('radio', 'additional_params_matrixtype['.$i.']', '', block_exastud_get_string('report_setting_type_matrix_type_'.$type), $type);
+                    if (!empty($param_settings['matrixtype'])) {
+                        $mform->setDefault('additional_params_matrixtype['.$i.']', $param_settings['matrixtype']);
+                    }
+                }
+                $mform->addGroup($matrixTypesElements, 'additional_params_matrixtype['.$i.']', '', array(' '), false);
+                $j = 0;
+                if (empty($param_settings['matrixrows'])) {
+                    $param_settings['matrixrows'] = array('' => '');  // for empty block (template for new first record)
+                }
+                $matrixRows = array();
+                foreach ($param_settings['matrixrows'] as $sKey => $sValue) {
+                    //$matrixes[$i][] = $j;
+                    $matrixRows[] = $mform->createElement('text', 'additional_params_matrixrows['.$i.']['.$j.']',
+                            '', array('size' => 15));
+                    $mform->setType('additional_params_matrixrows['.$i.']['.$j.']', PARAM_RAW);
+                    $mform->setDefault('additional_params_matrixrows['.$i.']['.$j.']', $sValue);
+                    //$mform->addGroup($matrixRows, 'additional_params_matrixparams['.$i.']', '', ' ', false);
+                    $j++;
+                }
+                $mform->addElement('exastud_htmltag', '<script>additional_params_last_index_for_matrixrows['.$i.'] = '.($j - 1).';</script>');
+                $matrixRowsCount['additional_params'][$i] = $j-1; // need later for dividing rows and cols
+                $j = 0;
+                if (empty($param_settings['matrixcols'])) {
+                    $param_settings['matrixcols'] = array('' => '');  // for empty block (template for new first record)
+                }
+                $matrixCols = array();
+                foreach ($param_settings['matrixcols'] as $sKey => $sValue) {
+                    //$matrixes[$i][] = $j;
+                    $matrixCols[] = $mform->createElement('text', 'additional_params_matrixcols['.$i.']['.$j.']',
+                            '', array('size' => 15));
+                    $mform->setType('additional_params_matrixcols['.$i.']['.$j.']', PARAM_RAW);
+                    $mform->setDefault('additional_params_matrixcols['.$i.']['.$j.']', $sValue);
+                    $j++;
+                }
+                $mform->addElement('exastud_htmltag', '<script>additional_params_last_index_for_matrixcols['.$i.'] = '.($j - 1).';</script>');
+                $resultGroupElements = array_merge($matrixRows, $matrixCols);
+                $matrixGroups[] = $mform->addGroup($resultGroupElements, 'additional_params_matrixparams['.$i.']', '', ' ', false);
+                // next template changing is in JS
+
+                // end div
                 $mform->addElement('exastud_htmltag', '</div>');
                 $i++;
             }
@@ -1176,7 +1358,7 @@ class reportsettings_edit_form extends moodleform {
         $this->add_action_buttons();
 
         // additional changing in html of elements (needs for JS)
-        $field_working = function ($field, $i = null) use ($mform, $selectboxes) {
+        $field_working = function ($field, $i = null) use ($mform, $selectboxes, $matrixRowsCount) {
             $arr = '';
             if ($i !== null) {
                 $arr = '['.$i.']';
@@ -1269,6 +1451,28 @@ class reportsettings_edit_form extends moodleform {
             $userdata_settings_elements = $userdata_settings->getElements();
             foreach ($userdata_settings_elements as $element) {
                 $element->_attributes['class'] = 'exastud-template-settings-param';
+            }
+            // matrix params
+            $addclass6 = '';
+            if ($i !== null) {
+                $addclass6 .= ' matrix-settings-'.$i;
+            }
+            $matrix_settingstype = $mform->getElement($field.'_matrixtype'.$arr);
+            $matrix_settingstype->_attributes['class'] = 'exastud-template-settings-group group-'.$field.' matrix-settings '.$addclass6.' matrix-type';
+            $matrix_settings = $mform->getElement($field.'_matrixparams'.$arr);
+            $matrix_settings->_attributes['class'] = 'exastud-template-settings-group group-'.$field.' matrix-settings '.$addclass6;
+            $matrix_settings_elements = $matrix_settings->getElements();
+            foreach ($matrix_settings_elements as $k => $element) {
+                $element->_attributes['class'] = 'exastud-template-settings-param';
+                // add additional data to html tags
+                if (array_key_exists($field, $matrixRowsCount)) {
+                    //echo "<pre>debug:<strong>edit_form.php:1469</strong>\r\n"; print_r($matrixRowsCount[$field][$i]); echo '---'.$k; echo '</pre>'; // !!!!!!!!!! delete it
+                    if ($k <= @$matrixRowsCount[$field][$i]) { // it is row (1 element is a type of matrix!!!!)
+                        $element->_attributes['class'] .= ' matrix-row ';
+                    } else { // it is column
+                        $element->_attributes['class'] .= ' matrix-col ';
+                    }
+                }
             }
         };
 

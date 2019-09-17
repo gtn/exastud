@@ -51,6 +51,7 @@
         var selectboxGroupSelector = '.exastud-template-settings-group.group-' + field + '.selectbox-settings';
         var imageGroupSelector = '.exastud-template-settings-group.group-' + field + '.image-settings';
         var userdataGroupSelector = '.exastud-template-settings-group.group-' + field + '.userdata-settings';
+        var matrixGroupSelector = '.exastud-template-settings-group.group-' + field + '.matrix-settings';
         var radioButtonSelector = ':radio[name="' + field + '_type"]:checked';
         if (!$(radioButtonSelector).length) { // it is additional param
             //var regex = /\[(\d*)\]/;
@@ -61,6 +62,7 @@
             selectboxGroupSelector = $(radioButtonSelector).closest('.exastud-setting-block').find('.exastud-template-settings-group.group-additional_params.selectbox-settings');
             imageGroupSelector = '.exastud-template-settings-group.group-additional_params.image-settings.image-settings-'+index;
             userdataGroupSelector = '.exastud-template-settings-group.group-additional_params.userdata-settings.userdata-settings-'+index;
+            matrixGroupSelector = '.exastud-template-settings-group.group-additional_params.matrix-settings.matrix-settings-'+index;
         }
         // console.log(imageGroupSelector);
         // console.log(userdataGroupSelector);
@@ -69,6 +71,7 @@
         $(selectboxGroupSelector).hide();
         $(imageGroupSelector).hide();
         $(userdataGroupSelector).hide();
+        $(matrixGroupSelector).hide();
         if (isAdditional || $(checkboxSelector).is(':checked')) {
             // console.log(textareaGroupSelector);
             // console.log(imageGroupSelector);
@@ -91,6 +94,11 @@
             if ($(radioButtonSelector).length && $(radioButtonSelector).val() == 'userdata') {
                 // show userdata group
                 $(userdataGroupSelector).show();
+                return true;
+            }
+            if ($(radioButtonSelector).length && $(radioButtonSelector).val() == 'matrix') {
+                // show userdata group
+                $(matrixGroupSelector).show();
                 return true;
             }
 
@@ -127,6 +135,11 @@
         newBlock.find('[class*=userdata-settings-' + old_index + ']').each(function() {
             $(this).removeClass('userdata-settings-' + old_index);
             $(this).addClass('userdata-settings-' + new_index);
+        })
+        // matrix
+        newBlock.find('[class*=matrix-settings-' + old_index + ']').each(function() {
+            $(this).removeClass('matrix-settings-' + old_index);
+            $(this).addClass('matrix-settings-' + new_index);
         })
         newBlock.find(':input').each(function () {
             switch (this.type) {
@@ -362,6 +375,128 @@
             return 0;
         }
     }
+
+    // change some templating of form (impossible with the moodle api form)
+    $(function() {
+        function updateMatrixButtons(targetTable) {
+            $(['row', 'col']).each(function(i, type){
+                targetTable.find('.add_matrix_' + type + ', .delete_matrix_' + type).remove();
+                // rows
+                targetTable.find('.matrix-' + type + ' input').each(function (j) {
+                    var field = $(this).closest('.exastud-setting-block').attr('data-field');
+                    if (field !== undefined) {
+                        var img_add = '<img class="add_matrix_' + type + '" data-field="' + field + '" data-itemid="' + j + '" src="' + M.cfg.wwwroot + '/blocks/exastud/pix/add.png" title="add"/>';
+                        var img_delete = '<img class="delete_matrix_' + type + '" data-field="' + field + '" data-itemid="' + j + '" src="' + M.cfg.wwwroot + '/blocks/exastud/pix/del.png" title="delete"/>';
+                        $(this).after(img_delete);
+                        $(this).after(img_add);
+                    } else {
+                        // get index of additional param from delete button
+                        var i = $(this).closest('.exastud-setting-block').find('.delete_param_button').first().attr('data-paramid');
+                        if (i !== undefined) {
+                            var img_add = '<img class="add_matrix_' + type + '" data-paramid="' + i + '" data-optionid="' + j + '" src="' + M.cfg.wwwroot + '/blocks/exastud/pix/add.png" title="add"/>';
+                            var img_delete = '<img class="delete_matrix_' + type + '" data-paramid="' + i + '" data-optionid="' + j + '" src="' + M.cfg.wwwroot + '/blocks/exastud/pix/del.png" title="delete"/>';
+                            $(this).after(img_delete);
+                            $(this).after(img_add);
+                        }
+                    }
+                })
+                targetTable.find('.add_matrix_' + type).show();
+                targetTable.find('.add_matrix_' + type + ':not(:last)').hide();
+                if (targetTable.find('.delete_matrix_' + type).length == 1) {
+                    targetTable.find('.delete_matrix_' + type).hide(); // hide delete button if the block is only one
+                } else {
+                    targetTable.find('.delete_matrix_' + type).show();
+                }
+
+            });
+        }
+
+        // for matrix type
+        $('.matrix-settings:not(.matrix-type)').each(function () {
+            var currentGroup = $(this);
+            var currentRows = currentGroup.find('.matrix-row'); // elements to first column
+            var currentCols = currentGroup.find('.matrix-col'); // elements to second columns
+            var newTemplateOfGroup = '<table class="matrix_description_table">' +
+                    '<tr><td class="header">Row titles</td><td class="header">Column titles</td></tr>' +
+                    '<tr><td class="row_titles" valign="top"></td><td class="col_titles" valign="top"></td></tr>' +
+                '</table>';
+            var insertTo = currentGroup.find('.felement').first();
+            if (!insertTo.length) {
+                insertTo = currentGroup;
+            };
+            insertTo.append(newTemplateOfGroup);
+            var descriptionTable = currentGroup.find('.matrix_description_table').first();
+            // row titles to first column
+            currentRows.each(function () {
+                $(this).find('label').remove();
+                $(this).removeClass('fitem form-group');
+                $(this).appendTo(descriptionTable.find('.row_titles').first());
+            })
+            // column titles to second column
+            currentCols.each(function () {
+                $(this).find('label').remove();
+                $(this).removeClass('fitem form-group');
+                $(this).appendTo(descriptionTable.find('.col_titles').first());
+            })
+            // buttons
+            updateMatrixButtons(descriptionTable);
+
+        })
+        // add new matrix row/column
+        $(document).on('click', '.add_matrix_row, .add_matrix_col', function (event) {
+            event.preventDefault();
+            var field = $(this).attr('data-field');
+            var type = '---';
+            var type2 = '---';
+            if ($(this).hasClass('add_matrix_row')) {
+                type = 'rows';
+                type2 = 'row';
+            };
+            if ($(this).hasClass('add_matrix_col')) {
+                type = 'cols';
+                type2 = 'col';
+            };
+            var paramid = $(this).attr('data-paramid');
+            var itemid = $(this).attr('data-itemid');
+            var lastItem = $(this).closest('.exastud-setting-block').find('.exastud-template-settings-param.matrix-' + type2 + ':last').first();
+            var newItem = lastItem.clone();
+            console.log('additional_params_last_index_for_matrix' + type);
+            console.log(window['additional_params_last_index_for_matrix' + type][paramid]);
+            if (field == undefined) {
+                window['additional_params_last_index_for_matrix' + type][paramid] = window['additional_params_last_index_for_matrix' + type][paramid] + 1;
+            } else {
+                window[field + '_last_index_for_matrix' + type] = window[field + '_last_index_for_matrix' + type] + 1;
+            };
+            newItem.find(':input').val('');
+            newItem.find('[name*="_matrix' + type + '"]').each(function() {
+                if (field == undefined) {
+                    var new_name = 'additional_params_matrix' + type + '[' + paramid + '][' + window['additional_params_last_index_for_matrix' + type][paramid] + ']';
+                } else {
+                    var new_name = field + '_matrix' + type + '[' + window[field + '_last_index_for_matrix' + type] + ']';
+                }
+                $(this).attr('name', new_name);
+            })
+            newItem.insertAfter(lastItem);
+            var descriptionTable = $(this).closest('.matrix_description_table');
+            updateMatrixButtons(descriptionTable);
+        });
+        // delete selectbox option
+        $(document).on('click', '.delete_matrix_row, .delete_matrix_col', function (event) {
+            var descriptionTable = $(this).closest('.matrix_description_table');
+            $(this).closest('.exastud-template-settings-param').remove();
+            updateMatrixButtons(descriptionTable);
+        });
+        // delete selectbox option :hover
+        $(document).on({
+            mouseenter: function () {
+                $(this).closest('.exastud-template-settings-param').addClass('block_hover');
+            },
+            mouseleave: function () {
+                $(this).closest('.exastud-template-settings-param').removeClass('block_hover');
+            }
+        }, '.delete_matrix_row, .delete_matrix_col');
+    });
+
     $(function() {
         // at first hide upload form
         toggleUploadForm(true);
@@ -406,7 +541,7 @@
         $('#id_template').on('change', activateLinkToTemplate);
     });
 
-    // notifications ablut wrongs in markers
+    // notifications about wrongs in markers
     // TODO: only on page loading?
     $(function() {
         $('*[data-exastud-report-marker-wrong]').each(function () {

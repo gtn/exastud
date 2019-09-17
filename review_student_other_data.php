@@ -20,6 +20,8 @@
 require __DIR__.'/inc.php';
 require_once($CFG->dirroot.'/blocks/exastud/lib/edit_form.php');
 
+use block_exastud\globals as g;
+
 $courseid = optional_param('courseid', 1, PARAM_INT); // Course ID
 $classid = required_param('classid', PARAM_INT);
 $type = required_param('type', PARAM_TEXT);
@@ -145,6 +147,25 @@ switch ($type) {
 }
 $olddata = (array)block_exastud_get_class_student_data($classid, $studentid);
 
+if (!block_exastud_is_bw_active()) {
+    // add reviews for subjectid 0
+    $reviewdata = $DB->get_record('block_exastudreview',
+            array('teacherid' => $USER->id,
+                    'subjectid' => 0,
+                    'periodid' => $actPeriod->id,
+                    'studentid' => $studentid));
+    if ($reviewdata) {
+        $crosscategories = block_exastud_get_class_categories($classid);
+        foreach ($crosscategories as $crosscategory) {
+            $olddata[$crosscategory->id.'_'.$crosscategory->source] = $DB->get_field('block_exastudreviewpos',
+                    'value',
+                    array("categoryid" => $crosscategory->id,
+                            "reviewid" => $reviewdata->id,
+                            "categorysource" => $crosscategory->source));
+        }
+    }
+}
+
 if (!is_array($categories) || !count($categories)) {
     $categories = array();
     $dataid = '';
@@ -161,26 +182,83 @@ $studentform = new student_other_data_form($PAGE->url, [
 		@$olddata[$dataid.'.modifiedby'] ?
 			block_exastud_get_renderer()->last_modified(@$olddata[$dataid.'.modifiedby'], @$olddata[$dataid.'.timemodified'])
 			: '',
+    'canReviewStudent' => true,
+    'cross_review' => !block_exastud_is_bw_active() ? true : false,
+    'cross_categories' => (!block_exastud_is_bw_active() ?  block_exastud_get_class_categories($classid) : null),
 ]);
 
 if ($fromform = $studentform->get_data()) {
     $context = context_system::instance(); // TODO: which context to use?
 	foreach ($categories as $dataid => $category) {
+        $savemodifiedproperties = true;
 	    if (array_key_exists('type', $category)) {
             switch ($category['type']) {
                 case 'image':
                     file_save_draft_area_files($fromform->images[$dataid], $context->id, 'block_exastud', 'report_image_'.$dataid,
                             $student->id, array('subdirs' => 0, 'maxbytes' => $category['maxbytes'], 'maxfiles' => 1));
                     break;
+                case 'userdata':
+                    // do not save any user profile data from here
+                    $savemodifiedproperties = false;
+                    break;
+                case 'matrix':
+                    $matrixdata = block_exastud_optional_param_array_keyfree($dataid, array(), PARAM_RAW);
+                    $matrixdata = '==matrix==:'.serialize($matrixdata);
+                    block_exastud_set_class_student_data($classid, $studentid, $dataid, $matrixdata);
+                    break;
                 default:
-                    block_exastud_set_class_student_data($classid, $studentid, $dataid, $fromform->{$dataid});
+                    if (property_exists($fromform, $dataid)) {
+                        block_exastud_set_class_student_data($classid, $studentid, $dataid, $fromform->{$dataid});
+                    }
             }
         } else {
-            block_exastud_set_class_student_data($classid, $studentid, $dataid, $fromform->{$dataid});
+            if (property_exists($fromform, $dataid)) {
+                block_exastud_set_class_student_data($classid, $studentid, $dataid, $fromform->{$dataid});
+            }
         }
-        block_exastud_set_class_student_data($classid, $studentid, $dataid.'.modifiedby', $USER->id);
-        block_exastud_set_class_student_data($classid, $studentid, $dataid.'.timemodified', time());
+        if ($savemodifiedproperties) {
+            block_exastud_set_class_student_data($classid, $studentid, $dataid.'.modifiedby', $USER->id);
+            block_exastud_set_class_student_data($classid, $studentid, $dataid.'.timemodified', time());
+        }
 	}
+
+	// save cross categories reviews (if no BW)
+    if (!block_exastud_is_bw_active()) {
+        $newreview = new stdClass();
+        $newreview->timemodified = time();
+        $crosscategories = block_exastud_get_class_categories($classid);
+        $crosssubjectid = 0; // TODO: check this
+        if (count($crosscategories)) {
+            $existingReview = $DB->get_record('block_exastudreview',
+                        ['studentid' => $studentid, 'subjectid' => $crosssubjectid,
+                                'periodid' => $actPeriod->id, 'teacherid' => $USER->id,]);
+                if ($existingReview && $existingReview->review) {
+                    $newreview->review = $existingReview->review;
+                } else {
+                    $newreview->review = '';
+                }
+                $newreview = g::$DB->insert_or_update_record('block_exastudreview', $newreview, [
+                        'studentid' => $studentid,
+                        'subjectid' => $crosssubjectid,
+                        'periodid' => $actPeriod->id,
+                        'teacherid' => $USER->id,
+                ]);
+                foreach ($crosscategories as $crosscategory) {
+                    if (!isset($fromform->{$crosscategory->id.'_'.$crosscategory->source})) {
+                        continue;
+                    }
+                    $newvalue = $fromform->{$crosscategory->id.'_'.$crosscategory->source};
+                    $existing = $DB->get_record('block_exastudreviewpos', ["reviewid" => $newreview->id,
+                            "categoryid" => $crosscategory->id,
+                            "categorysource" => $crosscategory->source]);
+                    g::$DB->insert_or_update_record('block_exastudreviewpos',
+                            ["value" => $newvalue],
+                            ["reviewid" => $newreview->id, "categoryid" => $crosscategory->id, "categorysource" => $crosscategory->source]);
+                }
+        }
+    }
+
+
     if ($type == BLOCK_EXASTUD_DATA_ID_BILINGUALES) {
         $returnurl .= '&templateid='.$template->get_template_id();
     }
@@ -196,88 +274,104 @@ echo $output->heading($classheader);
 if ($type == BLOCK_EXASTUD_DATA_ID_CROSS_COMPETENCES
         || (!block_exastud_is_bw_active() && $type == BLOCK_EXASTUD_DATA_ID_PRINT_TEMPLATE)
 ) {
-	$user = $student;
-	$userReport = block_exastud_get_report($user->id, $actPeriod->id, $class->id);
-	//$userCategoryReviews = block_exastud_get_reviewers_by_category($actPeriod->id, $user->id, false);
-	//$userCategoryReviews = block_exastud_get_reviewers_by_category($class->periodid, $user->id, false);
-    $teachersForColumns = block_exastud_get_class_subject_teachers($class->id);
-    $teachers = array();
-    $subjectsOfTeacher = array();
-    $teachersForColumns = array_filter($teachersForColumns, function($o) use (&$teachers, &$subjectsOfTeacher) {
-        if (!in_array($o->id, $teachers)) {
-            $teachers[] = $o->id;
-        }
-        if ($o->subjectid > 0) {
-            $subjectsOfTeacher[$o->id][] = $o->subjectid;
-        }
-        return null;
-    });
-    $teachers = array_map(function($o) {return block_exastud_get_user($o);}, $teachers);
-    usort($teachers, function($a, $b) {return strcmp(fullname($a), fullname($b));});
-	/*$teachers = array();
-	foreach ($userCategoryReviews as $rid => $r) {
-        $tmpUser = block_exastud_get_user($rid);
-        $teachers[$rid] = fullname($tmpUser);
-    }
-    asort($teachers);*/
 
-	$table = new html_table();
-	$headerrow = new html_table_row();
-	$userData = new html_table_cell();
-    $userData->rowspan = 2;
-    $userData->header = true;
-    $userData->text = $OUTPUT->user_picture($user, array("courseid" => $courseid)).fullname($user);
-    $headerrow->cells[] = $userData;
-    $average = new html_table_cell();
-    $average->header = true;
-    $average->rowspan = 2;
-    $average->text = block_exastud_get_string('average');
-    $headerrow->cells[] = $average;
-    // teachers
-    foreach ($teachers as $teacher) {
-        $hCell = new html_table_cell();
-        $hCell->header = true;
-        $hCell->text = fullname($teacher);
-        $hCell->colspan = count($subjectsOfTeacher[$teacher->id]);
-        $headerrow->cells[] = $hCell;
-    }
-    $table->data[] = $headerrow;
-    // subjects
-    $subjectsRow = new html_table_row();
-    foreach ($teachers as $teacher) {
-        foreach ($subjectsOfTeacher[$teacher->id] as $subjectId) {
-            $subj = new html_table_cell();
-            $subj->header = true;
-            $subj->text = /*$subjectId.'='.*/$DB->get_field('block_exastudsubjects', 'title', ['id' => $subjectId]);
-            $subjectsRow->cells[] = $subj;
+    // if it is for BW - only disaplay cross competencies (readonly)
+    if (block_exastud_is_bw_active()) {
+        $user = $student;
+        $userReport = block_exastud_get_report($user->id, $actPeriod->id, $class->id);
+        //$userCategoryReviews = block_exastud_get_reviewers_by_category($actPeriod->id, $user->id, false);
+        //$userCategoryReviews = block_exastud_get_reviewers_by_category($class->periodid, $user->id, false);
+        $teachersForColumns = block_exastud_get_class_subject_teachers($class->id);
+        $teachers = array();
+        $subjectsOfTeacher = array();
+        $teachersForColumns = array_filter($teachersForColumns, function($o) use (&$teachers, &$subjectsOfTeacher) {
+            if (!in_array($o->id, $teachers)) {
+                $teachers[] = $o->id;
+            }
+            if ($o->subjectid > 0) {
+                $subjectsOfTeacher[$o->id][] = $o->subjectid;
+            }
+            return null;
+        });
+        $teachers = array_map(function($o) {
+            return block_exastud_get_user($o);
+        }, $teachers);
+        usort($teachers, function($a, $b) {
+            return strcmp(fullname($a), fullname($b));
+        });
+        /*$teachers = array();
+        foreach ($userCategoryReviews as $rid => $r) {
+            $tmpUser = block_exastud_get_user($rid);
+            $teachers[$rid] = fullname($tmpUser);
         }
-    }
-    $table->data[] = $subjectsRow;
+        asort($teachers);*/
 
-    $reviewcategories = block_exastud_get_class_categories($classid);
-    foreach ($reviewcategories as $category) {
-        $row = array();
-        $categoryCell = new html_table_cell();
-        $categoryCell->text = $category->title;
-        $row[] = $categoryCell;
-        $cat_key = $category->source.'-'.$category->id;
-        $row[] = (array_key_exists($cat_key, $userReport->category_averages) ? block_exastud_get_verbal_category_by_value($userReport->category_averages[$cat_key]) : '');
+        $table = new html_table();
+        $headerrow = new html_table_row();
+        $userData = new html_table_cell();
+        $userData->rowspan = 2;
+        $userData->header = true;
+        $userData->text = $OUTPUT->user_picture($user, array("courseid" => $courseid)).fullname($user);
+        $headerrow->cells[] = $userData;
+        $average = new html_table_cell();
+        $average->header = true;
+        $average->rowspan = 2;
+        $average->text = block_exastud_get_string('average');
+        $headerrow->cells[] = $average;
+        // teachers
         foreach ($teachers as $teacher) {
-                foreach ($subjectsOfTeacher[$teacher->id] as $subjectId) {
-                    $cateReview = block_exastud_get_category_review_by_subject_and_teacher($actPeriod->id, $student->id, $category->id, $category->source, $teacher->id, $subjectId);
-                    $row[] = (@$cateReview->catreview_value ? block_exastud_get_verbal_category_by_value($cateReview->catreview_value) : ' ');
-/*                    if (array_key_exists($subjectId, $userCategoryReviews[$teacher->id])
-                            && array_key_exists($category->source, $userCategoryReviews[$teacher->id][$subjectId])
-                            && array_key_exists($category->id, $userCategoryReviews[$teacher->id][$subjectId][$category->source])) {
-                        $row[] = $userCategoryReviews[$teacher->id][$subjectId][$category->source][$category->id];
-                    } else {
-                        $row[] = '';
-                    }*/
-                }
+            $hCell = new html_table_cell();
+            $hCell->header = true;
+            $hCell->text = fullname($teacher);
+            $hCell->colspan = count($subjectsOfTeacher[$teacher->id]);
+            $headerrow->cells[] = $hCell;
         }
-        $table->data[] = $row;
+        $table->data[] = $headerrow;
+        // subjects
+        $subjectsRow = new html_table_row();
+        foreach ($teachers as $teacher) {
+            foreach ($subjectsOfTeacher[$teacher->id] as $subjectId) {
+                $subj = new html_table_cell();
+                $subj->header = true;
+                $subj->text = /*$subjectId.'='.*/
+                        $DB->get_field('block_exastudsubjects', 'title', ['id' => $subjectId]);
+                $subjectsRow->cells[] = $subj;
+            }
+        }
+        $table->data[] = $subjectsRow;
+
+        $reviewcategories = block_exastud_get_class_categories($classid);
+        foreach ($reviewcategories as $category) {
+            $row = array();
+            $categoryCell = new html_table_cell();
+            $categoryCell->text = $category->title;
+            $row[] = $categoryCell;
+            $cat_key = $category->source.'-'.$category->id;
+            $row[] = (array_key_exists($cat_key, $userReport->category_averages) ?
+                    block_exastud_get_verbal_category_by_value($userReport->category_averages[$cat_key]) : '');
+            foreach ($teachers as $teacher) {
+                foreach ($subjectsOfTeacher[$teacher->id] as $subjectId) {
+                    $cateReview =
+                            block_exastud_get_category_review_by_subject_and_teacher($actPeriod->id, $student->id, $category->id,
+                                    $category->source, $teacher->id, $subjectId);
+                    $row[] = (@$cateReview->catreview_value ?
+                            block_exastud_get_verbal_category_by_value($cateReview->catreview_value) : ' ');
+                    /*                    if (array_key_exists($subjectId, $userCategoryReviews[$teacher->id])
+                                                && array_key_exists($category->source, $userCategoryReviews[$teacher->id][$subjectId])
+                                                && array_key_exists($category->id, $userCategoryReviews[$teacher->id][$subjectId][$category->source])) {
+                                            $row[] = $userCategoryReviews[$teacher->id][$subjectId][$category->source][$category->id];
+                                        } else {
+                                            $row[] = '';
+                                        }*/
+                }
+            }
+            $table->data[] = $row;
+        }
+        echo $output->table($table);
+    } else {
+        // if no BW
+        // the review parameters will be shown in the edit_form.php
     }
-    echo $output->table($table);
 
 	/*$table = new html_table();
 
@@ -311,6 +405,7 @@ if ($type == BLOCK_EXASTUD_DATA_ID_CROSS_COMPETENCES
 	$table->data[] = $row;
 
 	echo $output->table($table);*/
+
 
 } elseif ($type == BLOCK_EXASTUD_DATA_ID_LERN_UND_SOZIALVERHALTEN) {
 

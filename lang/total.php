@@ -806,6 +806,26 @@ return [
             'Choose user\'s field',
             'Choose user\'s field',
     ],
+    'report_setting_type_matrix' => [
+            'Matrix',
+            'Matrix',
+    ],
+    'report_setting_type_matrix_type' => [
+        'Matrix type',
+        'Matrix type',
+    ],
+    'report_setting_type_matrix_type_checkbox' => [
+        'checkbox',
+        'checkbox',
+    ],
+    'report_setting_type_matrix_type_radio' => [
+        'radio',
+        'radio',
+    ],
+    'report_setting_type_matrix_type_text' => [
+        'text',
+        'text',
+    ],
     'reset_report_templates' => [
             'Standardvorlagen auf Originalwerte zurücksetzen',
             'Reset default templates to default state',
@@ -893,6 +913,18 @@ return [
     'hide_uploadform' => [
         'Schließen',
         'Hide upload form',
+    ],
+    'report_settings_copy' => [
+        'Copy report',
+        'Copy report',
+    ],
+    'report_settings_copy_newtitle' => [
+        '{$a->title} - COPY !!!',
+        '{$a->title} - COPY !!!',
+    ],
+    'report_settings_copy_done' => [
+        'Created a new report "{$a->newtitle}" (id: {$a->newid}) from "{$a->sourcetitle}" (id: {$a->sourceid})',
+        'Created a new report "{$a->newtitle}" (id: {$a->newid}) from "{$a->sourcetitle}" (id: {$a->sourceid})',
     ],
     'select_student' => [
         'Bitte wählen Sie zumindest einen Schüler/eine Schülerin aus',

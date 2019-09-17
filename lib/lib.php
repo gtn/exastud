@@ -832,9 +832,21 @@ function block_exastud_get_subject_student_data($classid, $subjectid, $userid, $
 		'subjectid' => $subjectid,
 	], 'name', 'name, value');
 
+	$convertMatrix = function($value) {
+        if (strpos($value, '==matrix==:') === 0) { // it is a matrix - return unserialized array
+            return unserialize(substr($value, 11));
+        } else {
+            return $value;
+        }
+    };
+	
 	if ($name) {
-		return @$data->$name;
+	    return $convertMatrix(@$data->$name);
 	} else {
+	    $properties = get_object_vars($data);
+	    foreach ($properties as $propName => $propValue) {
+	        $data->$propName = $convertMatrix(@$propValue);
+        }
 		return $data;
 	}
 }
@@ -1849,6 +1861,9 @@ function block_exastud_str_to_csv($string, $delimiter, $has_header) {
 }
 
 function block_exastud_html_to_text($html) {
+    if (is_array($html)) {
+        return $html;
+    }
 	if (preg_match('!</p>|<br\s*/?>!', $html)) {
 		// is html
 		$html = html_to_text($html, 0);
@@ -5318,6 +5333,35 @@ function block_exastud_optional_param_array($parname, $default, $type) {
             continue;
         }
         $result[$key] = clean_param_array($value, $type, true);
+    }
+    return $result;
+}
+
+// be free with the keys of array
+// but be careful with using
+function block_exastud_optional_param_array_keyfree($parname, $default, $type) {
+    if (func_num_args() != 3 or empty($parname) or empty($type)) {
+        throw new coding_exception('optional_param_array requires $parname, $default + $type to be specified (parameter: '.$parname.')');
+    }
+    // POST has precedence.
+    if (isset($_POST[$parname])) {
+        $param = $_POST[$parname];
+    } else if (isset($_GET[$parname])) {
+        $param = $_GET[$parname];
+    } else {
+        return $default;
+    }
+    if (!is_array($param)) {
+        debugging('optional_param_array() expects array parameters only: '.$parname);
+        return $default;
+    }
+    $result = array();
+    foreach ($param as $key => $value) {
+        if (is_array($value)) {
+            $result[$key] = clean_param_array($value, $type, true);
+        } else {
+            $result[$key] = clean_param($value, $type);
+        }
     }
     return $result;
 }

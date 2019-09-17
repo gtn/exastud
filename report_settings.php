@@ -171,7 +171,6 @@ if ($action && (($settingsid > 0 && $action == 'edit') || $action == 'new')) {
             $reportsetting = $settingsform->prepare_formdata($settingsedit);
         }
     }
-
     if ($action == 'edit' && !$settingsform->is_submitted()) {
         require_sesskey();
         $reportsetting = $DB->get_record('block_exastudreportsettings', array('id' => $settingsid));
@@ -351,6 +350,23 @@ if ($action && (($settingsid > 0 && $action == 'edit') || $action == 'new')) {
     echo html_writer::tag('form', $formcontent, [
             'method' => 'post'
     ]);
+} elseif ($action && $action == 'copy') { // COPY
+    $reportid = required_param('id', PARAM_INT);
+    $sourceReport = $DB->get_record('block_exastudreportsettings', ['id' => $reportid]);
+    $newReport = clone($sourceReport);
+    $newReport->hidden = 1;
+    $newReport->source_id = 0;
+    $newReport->source = '';
+    $newReport->title = block_exastud_get_string('report_settings_copy_newtitle', null, $sourceReport);
+    $newReport->id = $DB->insert_record('block_exastudreportsettings', $newReport);
+    $aParam = (object) array(
+        'newtitle' => $newReport->title,
+        'newid' => $newReport->id,
+        'sourcetitle' => $sourceReport->title,
+        'sourceid' => $sourceReport->id
+    );
+    $message = block_exastud_get_string('report_settings_copy_done', null, $aParam);
+    redirect($PAGE->url, $message, null, \core\output\notification::NOTIFY_INFO);
 } else if ($action && $action == 'export') {
     // EXPORT
     if (optional_param('doit', 0, PARAM_INT)) {
@@ -664,6 +680,11 @@ if ($action && (($settingsid > 0 && $action == 'edit') || $action == 'new')) {
                 $hideLink = html_writer::link(new moodle_url('/blocks/exastud/report_settings.php', $params),
                         html_writer::tag("img", '', array('src' => 'pix/hide.png')), array('title' => ' hide report '));
             }
+            // copy button
+            $params['action'] = 'copy';
+            $copyLink = html_writer::link(new moodle_url('/blocks/exastud/report_settings.php', $params),
+                    html_writer::tag("img", '', array('src' => 'pix/copy.png')), array('title' => block_exastud_get_string('report_settings_copy')));
+
             // delete button
             $params['action'] = 'delete';
             $deleteLink = html_writer::link(new moodle_url('/blocks/exastud/report_settings.php', $params),
@@ -687,7 +708,7 @@ if ($action && (($settingsid > 0 && $action == 'edit') || $action == 'new')) {
             if (block_exastud_is_bw_active()) {
                 $row = array(
                         $editLink.' :'.$report->id,
-                        $hideLink.'&nbsp;'.$deleteLink,
+                        $hideLink.'&nbsp;'.$copyLink.'&nbsp;'.$deleteLink,
                     //$relevantSubject,
                         '<strong>'.$report->title.'</strong>',
                         $bpData ? $bpData->title : '',
@@ -738,7 +759,7 @@ if ($action && (($settingsid > 0 && $action == 'edit') || $action == 'new')) {
                 $fileNoExistsMessage = block_exastud_get_string('report_settings_no_template_file', 'block_exastud', $a);
                 $row = array(
                         $editLink.' :'.$report->id,
-                        $hideLink.'&nbsp;'.$deleteLink,
+                        $hideLink.'&nbsp;'.$copyLink.'&nbsp;'.$deleteLink,
                     //$relevantSubject,
                         $wrongUserdataMarker.'<strong>'.$report->title.'</strong>',
                         array_key_exists($report->template, $templateList) ? $templateList[$report->template] : '<img src="'.$CFG->wwwroot.'/blocks/exastud/pix/attention.png" title="'.$fileNoExistsMessage.'"/>&nbsp;'.$report->template);
@@ -928,6 +949,22 @@ function block_exastud_report_templates_prepare_serialized_data($settingsform, $
                     $element_data['userdatakey'] = (isset($settingsedit->{$field.'_userdatakey'}) && $settingsedit->{$field.'_userdatakey'} != '' ?
                             $settingsedit->{$field.'_userdatakey'} : '');
                     break;
+                case 'matrix':
+                    $element_data['matrixtype'] = (isset($settingsedit->{$field.'_matrixtype'}) && $settingsedit->{$field.'_matrixtype'} != '' ?
+                            $settingsedit->{$field.'_matrixtype'} : 'checkbox');
+                    $matrix_rows = optional_param_array($field.'_matrixrows', '', PARAM_RAW);
+                    if (!empty($matrix_rows) && count($matrix_rows) > 0) {
+                        foreach ($matrix_rows as $iIndex => $iTitle) {
+                            $element_data['matrixrows'][] = $iTitle;
+                        };
+                    }
+                    $matrix_cols = optional_param_array($field.'_matrixcols', '', PARAM_RAW);
+                    if (!empty($matrix_cols) && count($matrix_cols) > 0) {
+                        foreach ($matrix_cols as $iIndex => $iTitle) {
+                            $element_data['matrixcols'][] = $iTitle;
+                        };
+                    }
+                    break;
             }
         } else {
             $element_data = array(
@@ -958,6 +995,10 @@ function block_exastud_report_templates_prepare_serialized_data($settingsform, $
         $aparams_selectboxvalues_value = block_exastud_optional_param_array('additional_params_selectboxvalues_value', '', PARAM_RAW);
         // for userdata
         $aparams_userdatakey = optional_param_array('additional_params_userdatakey', '', PARAM_RAW);
+        // matrix
+        $aparams_matrixtype = optional_param_array('additional_params_matrixtype', '', PARAM_RAW);
+        $aparams_matrixrows = block_exastud_optional_param_array('additional_params_matrixrows', '', PARAM_RAW);
+        $aparams_matrixcols = block_exastud_optional_param_array('additional_params_matrixcols', '', PARAM_RAW);
         foreach ($aparams_GP as $pIndex => $checked) {
             if ($pIndex > -1) {
                 if ($aparams_keys[$pIndex] != '') {
@@ -1005,13 +1046,27 @@ function block_exastud_report_templates_prepare_serialized_data($settingsform, $
                                     (isset($aparams_userdatakey[$pIndex]) && $aparams_userdatakey[$pIndex] != '' ?
                                             $aparams_userdatakey[$pIndex] : '');
                             break;
+                        case 'matrix':
+                            $additional_params[$aparams_keys[$pIndex]]['matrixtype'] =
+                                    (isset($aparams_matrixtype[$pIndex]) && $aparams_matrixtype[$pIndex] != '' ?
+                                            $aparams_matrixtype[$pIndex] : 'checkbox');
+                            if (array_key_exists($pIndex, $aparams_matrixrows) && count($aparams_matrixrows[$pIndex]) > 0) {
+                                foreach ($aparams_matrixrows[$pIndex] as $rIndex => $rTitle) {
+                                    $additional_params[$aparams_keys[$pIndex]]['matrixrows'][] = $rTitle;
+                                };
+                            }
+                            if (array_key_exists($pIndex, $aparams_matrixcols) && count($aparams_matrixcols[$pIndex]) > 0) {
+                                foreach ($aparams_matrixcols[$pIndex] as $rIndex => $rTitle) {
+                                    $additional_params[$aparams_keys[$pIndex]]['matrixcols'][] = $rTitle;
+                                };
+                            }
+                            break;
 
                     }
                 }
             }
         }
     }
-
     if (count($additional_params) > 0) {
         $settingsedit->additional_params = serialize($additional_params);
     } else {

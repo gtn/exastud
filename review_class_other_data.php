@@ -325,6 +325,39 @@ foreach ($classstudents as $classstudent) {
                                 $tempNull = null;
                                 $value = block_exastud_get_report_userdata_value($tempNull, $dataid, $classstudent->id, $form_input['userdatakey']);
                                 break;
+                            case 'matrix':
+                                $value = '<table width="100%" border="1" style="border-color: #555555; font-size: 0.65em;">';
+                                $value .= '<tr><td></td>';
+                                foreach ($form_input['matrixcols'] as $coltitle) {
+                                    $value .= '<td>'.$coltitle.'</td>';
+                                }
+                                $value .= '</tr>';
+                                foreach ($form_input['matrixrows'] as $rowtitle) {
+                                    $value .= '<tr>';
+                                    $value .= '<td>'.$rowtitle.'</td>';
+                                    foreach ($form_input['matrixcols'] as $coltitle) {
+                                        $value .= '<td>';
+                                        switch ($form_input['matrixtype']) {
+                                            case 'text':
+                                                $value .= @$data[$dataid][$rowtitle][$coltitle];
+                                                break;
+                                            case 'radio':
+                                                if (@$data[$dataid][$rowtitle] == $coltitle) {
+                                                    $value .= 'X';
+                                                }
+                                                break;
+                                            case 'checkbox':
+                                                if (@$data[$dataid][$rowtitle][$coltitle]) {
+                                                    $value .= 'X';
+                                                }
+                                                break;
+                                        }
+                                        $value .= '</td>';
+                                    }
+                                    $value .= '</tr>';
+                                }
+                                $value .= '</table>';
+                                break;
                             default:
                                 $value = !empty($data[$dataid]) ? block_exastud_text_to_html($data[$dataid]) : '';
                         }

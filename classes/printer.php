@@ -168,7 +168,9 @@ class printer {
                 'name' => $student->firstname.' '.$student->lastname,
                 'student_name' => $student->firstname.' '.$student->lastname,
                 'first_name' => $student->firstname,
+                'firstname' => $student->firstname,
                 'last_name' => $student->lastname,
+                'lastname' => $student->lastname,
                 'geburtsdatum' => block_exastud_get_date_of_birth($student->id),
                 'klasse' => (trim($class->title_forreport) ? $class->title_forreport : $class->title),
                 'kla' => (trim($class->title_forreport) ? $class->title_forreport : $class->title),
@@ -2271,8 +2273,44 @@ class printer {
         // user's data markers
         //echo "<pre>debug:<strong>printer.php:2191</strong>\r\n"; print_r($inputs); echo '</pre>'; exit; // !!!!!!!!!! delete it
         foreach ($inputs as $key => $input) {
-            if ($input['type'] == 'userdata' && $input['userdatakey']) {
-                $data[$key] = block_exastud_get_report_userdata_value($templateProcessor, $key, $student->id, $input['userdatakey']);
+            switch ($input['type']) {
+                case 'userdata':
+                    if ($input['userdatakey']) {
+                        $data[$key] = block_exastud_get_report_userdata_value($templateProcessor, $key, $student->id, $input['userdatakey']);
+                    }
+                    break;
+                case 'matrix':
+                    foreach ($input['matrixrows'] as $rindex => $row) {
+                        foreach ($input['matrixcols'] as $cindex => $col) {
+                            $key_index = $key.'_'.($rindex + 1).'_'.($cindex + 1);
+                            $stdataarr = $studentdata->$key;
+                            switch ($input['matrixtype']) {
+                                case 'radio':
+                                    if (@$stdataarr[$row] == $col) {
+                                        $data[$key_index] = 'X';
+                                    } else {
+                                        $data[$key_index] = '';
+                                    }
+                                    break;
+                                case 'checkbox':
+                                    if (@$stdataarr[$row][$col]) {
+                                        $data[$key_index] = 'X';
+                                    } else {
+                                        $data[$key_index] = '';
+                                    }
+                                    break;
+                                case 'text':
+                                    if (@$stdataarr[$row][$col]) {
+                                        $data[$key_index] = $stdataarr[$row][$col];
+                                    } else {
+                                        $data[$key_index] = '';
+                                    }
+                                    break;
+                            }
+                        }                         
+                    }
+                    //echo "<pre>debug:<strong>printer.php:2281</strong>\r\n"; print_r($data); echo '</pre>'; exit; // !!!!!!!!!! delete it
+                    break;
             }
         }
         //echo "<pre>debug:<strong>printer.php:2198</strong>\r\n"; print_r($data); echo '</pre>'; exit; // !!!!!!!!!! delete it
