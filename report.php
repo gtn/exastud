@@ -33,6 +33,9 @@ if (count($templatesFromForm)) {
     error_reporting(0);
     @ini_set('display_errors', 0);
 }
+// for development
+//ini_set('display_errors', 1);
+//error_reporting(E_ALL);
 
 if (!$classid) {
     if (isset($_COOKIE['lastclass']) && $_COOKIE['lastclass'] > 0) {
@@ -128,6 +131,7 @@ for ($i = 0; $i <= $max_classes; $i++) {
     }
     $tablePeriods->data[] = $classes_row;
 }
+
 // add prev period link
 if ($startPeriod > 0) {
     $link = \html_writer::link($CFG->wwwroot.'/blocks/exastud/report.php?courseid='.$courseid.'&classid=-1&startPeriod='.($startPeriod - $countOfShownPeriods), ' << ');
@@ -360,7 +364,6 @@ if ($class !== null) {
                     }
                     return $doit;
                 };
-
                 if (!$printStudents) {
                     // do nothing
                 } else if (count($printStudents) == 1) {

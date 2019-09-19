@@ -23,6 +23,7 @@ defined('MOODLE_INTERNAL') || die();
 require_once __DIR__.'/../inc.php';
 require_once __DIR__.'/../../exacomp/inc.php';
 
+use block_exacomp\cross_subject;
 use block_exastud\globals as g;
 use core\plugininfo\search;
 use PhpOffice\PhpWord\Escaper\RegExp;
@@ -66,7 +67,6 @@ class printer {
         ])) {
             $templateid = block_exastud_get_class_bilingual_template($class->id, $student->id)->get_template_id();
         }
-
 		if ($templateid == BLOCK_EXASTUD_DATA_ID_PRINT_TEMPLATE) {
 			$template = block_exastud_get_student_print_template($class, $student->id);
             $forminputs = $template->get_inputs(BLOCK_EXASTUD_DATA_ID_PRINT_TEMPLATE);
@@ -1417,7 +1417,6 @@ class printer {
 
 			// subjects
 			$templateProcessor->cloneBlock('subjectif', count($subjects), true);
-
 			foreach ($subjects as $subject) {
 				$templateProcessor->setValue("subject", $subject->title, 1);
 
@@ -1595,7 +1594,7 @@ class printer {
 
                     }
                 }
-                exit;
+                //exit;
             } else {
                 foreach ($categories as $category) {
                     $templateProcessor->cloneRowToEnd('kriterium');
@@ -1663,13 +1662,20 @@ class printer {
 		    foreach ($subjects as $subject) {
 		        $templateProcessor->setValue("subject", $subject->title, 1);
 
+                if (get_config('exacomp', 'assessment_topic_diffLevel') == 1 || get_config('exacomp', 'assessment_comp_diffLevel') == 1) {
+                    $templateProcessor->duplicateCol('compheader', 2);
+                    $templateProcessor->setValue("compheader", "Niveau", 1);
+
+                }
+                $templateProcessor->setValue("compheader", "Note", 1);
+
 		        foreach ($subject->topics as $topic) {
 		            $templateProcessor->cloneRowToEnd("topic");
 		            $templateProcessor->cloneRowToEnd("descriptor");
 		            $templateProcessor->setValue("topic", html_entity_decode($topic->title), 1);
 		            
                     $templateProcessor->setValue("n", $topic->teacher_eval_niveau_text, 1);
-                    if (@$studentdata->print_grades_anlage_leb) {
+                    if (@$studentdata->print_grades_anlage_leb || $templateid == BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_ANLAGE_ZUM_LERNENTWICKLUNGSBERICHTALT_COMMON) {
                         if (isset($topic->teacher_eval_additional_grading_real)) {
                             $grading = $topic->teacher_eval_additional_grading_real;
                         } else {
@@ -1715,6 +1721,20 @@ class printer {
 		             * $templateProcessor->setValue("ue", $x === 2 ? 'X' : '', 1);
 		             * $templateProcessor->setValue("ve", $x === 3 ? 'X' : '', 1);
 		             */
+		            if ($templateid == BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_ANLAGE_ZUM_LERNENTWICKLUNGSBERICHTALT_COMMON) {
+                        //$grading = @$studentdata->print_grades_anlage_leb ? $topic->teacher_eval_additional_grading : null;
+                        if (get_config('exacomp', 'assessment_topic_diffLevel') == 1) {
+                            $niveau = @$topic->teacher_eval_niveau_text ? $topic->teacher_eval_niveau_text : null;
+                            $templateProcessor->setValue("tvalue", $niveau, 1);
+                        } else if (get_config('exacomp', 'assessment_comp_diffLevel') == 1) {
+                            $templateProcessor->setValue("tvalue", null, 1);
+                        }
+                        if ($crossGrading != -1) {
+                            $templateProcessor->setValue("tvalue", $grading, 1);
+                        } else {
+                            $templateProcessor->setValue("tvalue", '', 1);
+                        }
+                    }
 		            
 		            foreach ($topic->descriptors as $descriptor) {
 		                $grading = null;
@@ -1722,7 +1742,7 @@ class printer {
 		                $templateProcessor->setValue("descriptor", ($descriptor->niveau_title ? html_entity_decode($descriptor->niveau_title).': ' : '').html_entity_decode($descriptor->title), 1);
 
                         $templateProcessor->setValue("n", $descriptor->teacher_eval_niveau_text, 1);
-		                if (@$studentdata->print_grades_anlage_leb) {
+		                if (@$studentdata->print_grades_anlage_leb || $templateid == BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_ANLAGE_ZUM_LERNENTWICKLUNGSBERICHTALT_COMMON) {
                             if (isset($descriptor->teacher_eval_additional_grading_real)) {
                                 $grading = $descriptor->teacher_eval_additional_grading_real;
                             } else {
@@ -1791,7 +1811,21 @@ class printer {
                         $templateProcessor->setValue("tw", $crossGrading == 1 ? 'X' : '', 1);
                         $templateProcessor->setValue("ue", $crossGrading == 2 ? 'X' : '', 1);
                         $templateProcessor->setValue("ve", $crossGrading == 3 ? 'X' : '', 1);
-		                
+
+                        if ($templateid == BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_ANLAGE_ZUM_LERNENTWICKLUNGSBERICHTALT_COMMON) {
+                            if (get_config('exacomp', 'assessment_topic_diffLevel') == 1) {
+                                $niveau = @$descriptor->teacher_eval_niveau_text ? $descriptor->teacher_eval_niveau_text : null;
+                                $templateProcessor->setValue("dvalue", $niveau, 1);
+                            } else if (get_config('exacomp', 'assessment_comp_diffLevel') == 1) {
+                                $templateProcessor->setValue("dvalue", null, 1);
+                            }
+                            if ($crossGrading != -1) {
+                                $templateProcessor->setValue("dvalue", $grading, 1);
+                            } else {
+                                $templateProcessor->setValue("dvalue", '', 1);
+                            }
+                        }
+
 		                /*
 		                 * $gme = ['G', 'M', 'E'][$test % 3];
 		                 * $x = $test % 4;

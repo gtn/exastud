@@ -859,6 +859,7 @@ class reportsettings_edit_form extends moodleform {
     protected $notForNonBW = array(
         'ags'
     );
+    protected $errorsInForm = array();
 
     protected $input_types = array('textarea', 'text', 'select', 'header', 'image', 'userdata', 'matrix');
     protected $radioattributes = array(); // html tag attributes for radiobuttons
@@ -896,7 +897,7 @@ class reportsettings_edit_form extends moodleform {
     }
 
     function definition() {
-        global $CFG;
+        global $CFG, $DB;
         $mform = $this->_form;
 
         $mform->addElement('text', 'title', block_exastud_get_string('report_settings_setting_title'), array('size' => 50));
@@ -940,6 +941,15 @@ class reportsettings_edit_form extends moodleform {
         // template
         //$templateList = block_exastud_get_report_templates('-all-');
         $templateList = block_exastud_get_template_files();
+        if ($this->_customdata['report_id'] > 0) {
+            $reportsetting = $DB->get_record('block_exastudreportsettings', array('id' => $this->_customdata['report_id']));
+            $currentTemplate = $reportsetting->template;
+            if (!array_key_exists($currentTemplate, $templateList)) {
+                $templateList[$currentTemplate] = $currentTemplate;
+                $errA = (object)array('filename' => $currentTemplate);
+                $this->errorsInForm['template'] = block_exastud_get_string('report_settings_no_template_file', null, $errA);
+            }
+        }
         $mform->addElement('select', 'template', block_exastud_get_string('report_settings_setting_template'), $templateList);
         $mform->setType('template', PARAM_RAW);
         // templates for JS
@@ -1491,6 +1501,7 @@ class reportsettings_edit_form extends moodleform {
 
         }
 
+        // errors in the specific parameters
         $urlToUserFieldsEdit = (new moodle_url($CFG->httpswwwroot . '/user/profile/index.php', []))->out(false);
         foreach ($elements_with_wrongs as $fieldname => $elementname) {
             $param = $mform->getElement($elementname);
@@ -1504,6 +1515,12 @@ class reportsettings_edit_form extends moodleform {
                 $element->_attributes['data-exastud-report-marker-addurltitle'] = block_exastud_get_string('report_settings_userdata_wrong_user_parameter_editurl_title');
             }
             //}
+        }
+
+        // error in main fields
+        foreach ($this->errorsInForm as $field => $errorText) {
+            $element = $mform->getElement($field);
+            $element->_attributes['data-exastud-report-field-wrong'] = $errorText;
         }
 
     }

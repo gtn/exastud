@@ -51,6 +51,11 @@ block_exastud_require_login(1);
 //$lastPeriodClasses = $lastPeriod ? block_exastud_get_head_teacher_classes_owner($lastPeriod->id) : [];
 //$shownClasses = array(); // Which ckasses already shown on the page
 
+$uploadFolder = BLOCK_EXASTUD_TEMPLATE_DIR.'/upload/';
+if (!file_exists($uploadFolder) || !is_dir($uploadFolder)) {
+    mkdir($uploadFolder, 0755);
+}
+
 $url = '/blocks/exastud/report_settings.php'.($tokenparam ? '?token='.$tokenparam : '');
 $PAGE->set_url($url);
 $PAGE->set_pagelayout('admin'); // Needed for admin menu block
@@ -110,7 +115,8 @@ $categoryinfo_text = block_exastud_get_string('info_category_without_cross_compe
 $reportsetting = new stdClass();
 $settingsform = new reportsettings_edit_form(null, [
         //'classid' => $classid,
-        'category_infomessage' => $categoryinfo_text
+        'category_infomessage' => $categoryinfo_text,
+        'report_id' => $settingsid
 ]);
 
 
@@ -876,12 +882,9 @@ function block_exastud_get_reportsettings_additional_description($report) {
  */
 function block_exastud_report_templates_prepare_serialized_data($settingsform, $settingsedit) {
     // main properties
+    $uploadFolder = BLOCK_EXASTUD_TEMPLATE_DIR.'/upload/';
     // template file
     if ($tmpNewFile = $settingsform->save_temp_file('newfileupload')) {
-        $uploadFolder = BLOCK_EXASTUD_TEMPLATE_DIR.'/upload/';
-        if (!is_dir($uploadFolder)) {
-            mkdir($uploadFolder, 0755);
-        }
         $newfilename = $settingsform->get_new_filename('newfileupload');
         $copyTo = $uploadFolder.$newfilename;
         if (!file_exists($copyTo)

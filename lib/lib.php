@@ -2466,7 +2466,7 @@ function block_exastud_get_default_templates($templateid = null, $common = true)
                 'Anlage' => [
                         'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_ANLAGE_ZUM_LERNENTWICKLUNGSBERICHTALT_COMMON,
                         'name' => 'Überfachliche Kompetenzen',
-                        'file' => 'Anlage_common',
+                        'file' => 'Allgemeine Anlage',
                         //'category' => 'Anlage',
                         'year' => '1',
                         'report_date' => '1',
