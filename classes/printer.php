@@ -1570,12 +1570,14 @@ class printer {
             if ($templateid == BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_ANLAGE_ZUM_LERNENTWICKLUNGSBERICHTALT_COMMON) {
                 $student_review = block_exastud_get_report($student->id,  $class->periodid, $class->id);
                 foreach ($categories as $category) {
+                    //echo "<pre>debug:<strong>printer.php:1573</strong>\r\n"; print_r('!!!!!!!!!!!!!!!!!!!!'); echo '</pre>'; // !!!!!!!!!! delete it
+                    //echo "<pre>debug:<strong>printer.php:1574</strong>\r\n"; print_r($category->title); echo '</pre>'; // !!!!!!!!!! delete it
                     $templateProcessor->cloneRowToEnd('kriterium');
                     $templateProcessor->setValue('kriterium', $category->title, 1);
 
-                    $globalAverage = (@$student_review->category_averages[$category->source.'-'.$category->id] ?
+                    /*$globalAverage = (@$student_review->category_averages[$category->source.'-'.$category->id] ?
                             $student_review->category_averages[$category->source.'-'.$category->id] : 0);
-                    $templateProcessor->setValue('kvalue', round($globalAverage, 2), 1);
+                    $templateProcessor->setValue('kvalue', round($globalAverage, 2), 1);*/
                     switch (block_exastud_get_competence_eval_type()) {
                         case BLOCK_EXASTUD_COMPETENCE_EVALUATION_TYPE_GRADE:
                             foreach ($class_subjects as $subject) {
@@ -1584,10 +1586,17 @@ class printer {
                             break;
                         case BLOCK_EXASTUD_COMPETENCE_EVALUATION_TYPE_POINT:
                         case BLOCK_EXASTUD_COMPETENCE_EVALUATION_TYPE_TEXT:
-                            foreach ($category->evaluationOptions as $pos_value => $option) {                                
-                                $cellOutput = join(', ', array_map(function($reviewer) {
+                            foreach ($category->evaluationOptions as $pos_value => $option) {
+                                $cellOutput = '';
+                                //echo "<pre>debug:<strong>printer.php:1590</strong>\r\n"; print_r($option->title); echo '</pre>'; // !!!!!!!!!! delete it
+                                //echo "<pre>debug:<strong>printer.php:1591</strong>\r\n"; print_r($option->reviewers); echo '</pre>';  // !!!!!!!!!! delete it
+                                $subjectsList = array_map(function($reviewer) {
                                     return $reviewer->subject_shorttitle ?: fullname($reviewer);
-                                }, $option->reviewers));
+                                }, $option->reviewers);
+                                //echo "<pre>debug:<strong>printer.php:1595</strong>\r\n"; print_r($subjectsList); echo '</pre>';  // !!!!!!!!!! delete it
+                                if (count($subjectsList)) {
+                                    $cellOutput = join(', ', $subjectsList);
+                                }
                                 $templateProcessor->setValue('kvalue', $cellOutput, 1);
                             }
                             break;
