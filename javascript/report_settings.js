@@ -65,7 +65,7 @@
             matrixGroupSelector = '.exastud-template-settings-group.group-additional_params.matrix-settings.matrix-settings-'+index;
         }
         // console.log(imageGroupSelector);
-        // console.log(userdataGroupSelector);
+        // console.log(matrixGroupSelector);
         // hide all groups at first
         $(textareaGroupSelector).hide();
         $(selectboxGroupSelector).hide();
@@ -99,6 +99,9 @@
             if ($(radioButtonSelector).length && $(radioButtonSelector).val() == 'matrix') {
                 // show userdata group
                 $(matrixGroupSelector).show();
+                var descriptionTable = $(radioButtonSelector).closest('.exastud-additional-params-block').find('.matrix_description_table').first();
+                // console.log(descriptionTable);
+                updateMatrixButtons(descriptionTable);
                 return true;
             }
 
@@ -334,6 +337,8 @@
             // var field = newBlock.find('[class*="_type"]').first().attr('data-field');
             additionalSettingsToggle('additional_params[' + additional_params_last_index + ']', true);
             updateOptionButtons();
+            var descriptionTable = $('.exastud-additional-params-block:last').find('.matrix_description_table').first();
+            updateMatrixButtons(descriptionTable);
         });
 
         // button "select/deselect all" - reset templates to defaults
@@ -376,41 +381,45 @@
         }
     }
 
-    // change some templating of form (impossible with the moodle api form)
-    $(function() {
-        function updateMatrixButtons(targetTable) {
-            $(['row', 'col']).each(function(i, type){
-                targetTable.find('.add_matrix_' + type + ', .delete_matrix_' + type).remove();
-                // rows
-                targetTable.find('.matrix-' + type + ' input').each(function (j) {
-                    var field = $(this).closest('.exastud-setting-block').attr('data-field');
-                    if (field !== undefined) {
-                        var img_add = '<img class="add_matrix_' + type + '" data-field="' + field + '" data-itemid="' + j + '" src="' + M.cfg.wwwroot + '/blocks/exastud/pix/add.png" title="add"/>';
-                        var img_delete = '<img class="delete_matrix_' + type + '" data-field="' + field + '" data-itemid="' + j + '" src="' + M.cfg.wwwroot + '/blocks/exastud/pix/del.png" title="delete"/>';
+    function updateMatrixButtons(targetTable) {
+        if (targetTable === undefined) {
+            console.log('here is undefined table');
+            return true;
+        }
+        $(['row', 'col']).each(function(i, type){
+            targetTable.find('.add_matrix_' + type + ', .delete_matrix_' + type).remove();
+            // rows
+            targetTable.find('.' + type + '_titles input').each(function (j) {
+                var field = $(this).closest('.exastud-setting-block').attr('data-field');
+                if (field !== undefined) {
+                    var img_add = '<img class="add_matrix_' + type + '" data-field="' + field + '" data-itemid="' + j + '" src="' + M.cfg.wwwroot + '/blocks/exastud/pix/add.png" title="add"/>';
+                    var img_delete = '<img class="delete_matrix_' + type + '" data-field="' + field + '" data-itemid="' + j + '" src="' + M.cfg.wwwroot + '/blocks/exastud/pix/del.png" title="delete"/>';
+                    $(this).after(img_delete);
+                    $(this).after(img_add);
+                } else {
+                    // get index of additional param from delete button
+                    var i = $(this).closest('.exastud-setting-block').find('.delete_param_button').first().attr('data-paramid');
+                    if (i !== undefined) {
+                        var img_add = '<img class="add_matrix_' + type + '" data-paramid="' + i + '" data-optionid="' + j + '" src="' + M.cfg.wwwroot + '/blocks/exastud/pix/add.png" title="add"/>';
+                        var img_delete = '<img class="delete_matrix_' + type + '" data-paramid="' + i + '" data-optionid="' + j + '" src="' + M.cfg.wwwroot + '/blocks/exastud/pix/del.png" title="delete"/>';
                         $(this).after(img_delete);
                         $(this).after(img_add);
-                    } else {
-                        // get index of additional param from delete button
-                        var i = $(this).closest('.exastud-setting-block').find('.delete_param_button').first().attr('data-paramid');
-                        if (i !== undefined) {
-                            var img_add = '<img class="add_matrix_' + type + '" data-paramid="' + i + '" data-optionid="' + j + '" src="' + M.cfg.wwwroot + '/blocks/exastud/pix/add.png" title="add"/>';
-                            var img_delete = '<img class="delete_matrix_' + type + '" data-paramid="' + i + '" data-optionid="' + j + '" src="' + M.cfg.wwwroot + '/blocks/exastud/pix/del.png" title="delete"/>';
-                            $(this).after(img_delete);
-                            $(this).after(img_add);
-                        }
                     }
-                })
-                targetTable.find('.add_matrix_' + type).show();
-                targetTable.find('.add_matrix_' + type + ':not(:last)').hide();
-                if (targetTable.find('.delete_matrix_' + type).length == 1) {
-                    targetTable.find('.delete_matrix_' + type).hide(); // hide delete button if the block is only one
-                } else {
-                    targetTable.find('.delete_matrix_' + type).show();
                 }
+            })
+            targetTable.find('.add_matrix_' + type).show();
+            targetTable.find('.add_matrix_' + type + ':not(:last)').hide();
+            if (targetTable.find('.delete_matrix_' + type).length == 1) {
+                targetTable.find('.delete_matrix_' + type).hide(); // hide delete button if the block is only one
+            } else {
+                targetTable.find('.delete_matrix_' + type).show();
+            }
 
-            });
-        }
+        });
+    }
 
+    // change some templating of form (impossible with the moodle api form)
+    $(function() {
         // for matrix type
         $('.matrix-settings:not(.matrix-type)').each(function () {
             var currentGroup = $(this);
@@ -431,14 +440,21 @@
                 $(this).find('label').remove();
                 $(this).removeClass('fitem form-group');
                 $(this).appendTo(descriptionTable.find('.row_titles').first());
+                if ($(this).prop("tagName") == 'INPUT') { // for different themes
+                    $('<br>').appendTo(descriptionTable.find('.row_titles').first());
+                }
             })
             // column titles to second column
             currentCols.each(function () {
                 $(this).find('label').remove();
                 $(this).removeClass('fitem form-group');
                 $(this).appendTo(descriptionTable.find('.col_titles').first());
+                if ($(this).prop("tagName") == 'INPUT') { // for different themes
+                    $('<br>').appendTo(descriptionTable.find('.col_titles').first());
+                }
             })
             // buttons
+            // console.log(descriptionTable);
             updateMatrixButtons(descriptionTable);
 
         })
@@ -460,8 +476,8 @@
             var itemid = $(this).attr('data-itemid');
             var lastItem = $(this).closest('.exastud-setting-block').find('.exastud-template-settings-param.matrix-' + type2 + ':last').first();
             var newItem = lastItem.clone();
-            console.log('additional_params_last_index_for_matrix' + type);
-            console.log(window['additional_params_last_index_for_matrix' + type][paramid]);
+            // console.log('additional_params_last_index_for_matrix' + type);
+            // console.log(window['additional_params_last_index_for_matrix' + type][paramid]);
             if (field == undefined) {
                 window['additional_params_last_index_for_matrix' + type][paramid] = window['additional_params_last_index_for_matrix' + type][paramid] + 1;
             } else {
@@ -477,13 +493,21 @@
                 $(this).attr('name', new_name);
             })
             newItem.insertAfter(lastItem);
+            if ($(lastItem).prop("tagName") == 'INPUT') { // for different themes
+                $('<br>').insertAfter(lastItem);
+            }
             var descriptionTable = $(this).closest('.matrix_description_table');
             updateMatrixButtons(descriptionTable);
         });
         // delete selectbox option
         $(document).on('click', '.delete_matrix_row, .delete_matrix_col', function (event) {
             var descriptionTable = $(this).closest('.matrix_description_table');
-            $(this).closest('.exastud-template-settings-param').remove();
+            var target = $(this).closest('.exastud-template-settings-param');
+            if (!target.length) {
+                target = $(this).prevAll('.exastud-template-settings-param').first();
+                $(this).prevAll('br').first().remove();
+            }
+            target.remove();
             updateMatrixButtons(descriptionTable);
         });
         // delete selectbox option :hover
