@@ -1868,6 +1868,9 @@ function block_exastud_html_to_text($html) {
 		// is html
 		$html = html_to_text($html, 0);
 	}
+	if (!$html) {
+	    $html = ''; // we need string type
+    }
 
 	return $html;
 }

@@ -424,7 +424,6 @@ if ($lastPeriodClass) {
 		echo $output->link_button($url, block_exastud_get_string('load_last_period'), ['class' => 'btn btn-default']);
 	}
 }
-
 $formdata->review = block_exastud_html_to_text(@$formdata->review);
 $formdata->vorschlag = block_exastud_html_to_text(@$formdata->vorschlag);
 

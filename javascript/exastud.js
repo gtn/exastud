@@ -346,11 +346,6 @@ $.extend(window.block_exastud, {
             } else {
                 var currentText = textarea.val();
             }
-            // if (/class="?Mso|style="[^"]*\bmso-|style='[^'']*\bmso-|w:WordDocument/i.test( currentText )) {
-            //     console.log('!!!!!');
-            // }
-            // console.log(window.clipboardData.getData('Text'));
-            // console.log(currentText);
 
             // var currentText = textarea.val();
             var itIsPaste = false;

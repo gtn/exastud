@@ -199,7 +199,9 @@ $hideAllButton = '<span class="exastud-hidebutton">
                         $OUTPUT->pix_icon('i/hide', block_exastud_get_string('hide')).
                         '&nbsp;'.block_exastud_get_string('hide_all').
                     '</a></span>';
-$table->head[] = $hideAllButton; // hide button
+if ($isSubjectTeacher) {
+    $table->head[] = $hideAllButton; // hide button
+}
 $table->head[] = block_exastud_get_string('gender'); // gender
 //if (!block_exastud_get_only_learnsociale_reports()) {
     $table->head[] = $tableheadernote; // note
@@ -316,7 +318,6 @@ if ($isSubjectTeacher) {
                 unset($tabledeletecolumns['learnsocial']);
             }
         }
-
         if (!$canReviewStudent) {
             $editSubjectNiveau = false;
             $editSubjectGrade = false;
@@ -563,6 +564,9 @@ if ($isSubjectTeacher) {
         $userdatacell->text = '<div class="cell-content">'.$userdata.'</div>';
         $row->cells[] = $userdatacell;
 
+        // gender
+        $row->cells[] = block_exastud_get_user_gender_string($classstudent->id);
+
         //if (!block_exastud_get_only_learnsociale_reports()) {
             // Grades column
             if (!empty($subjectData->grade)) {
@@ -590,7 +594,12 @@ if ($isSubjectTeacher) {
                         'periodid' => $actPeriod->id,
                         'teacherid' => $teacherid]
         );
-        $row->cells[] = ($visible ? $learnReview : '');
+        if ($learnReview) {
+            $row->cells[] = ($visible ? $learnReview : '');
+            unset($tabledeletecolumns['learnsocial']);
+        } else {
+            $row->cells[] = '';
+        }
 
         // intermediate data
         //$row->cells[] = '';
