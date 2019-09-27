@@ -183,8 +183,10 @@ $studentform = new student_other_data_form($PAGE->url, [
 			block_exastud_get_renderer()->last_modified(@$olddata[$dataid.'.modifiedby'], @$olddata[$dataid.'.timemodified'])
 			: '',
     'canReviewStudent' => true,
-    'cross_review' => !block_exastud_is_bw_active() ? true : false,
-    'cross_categories' => (!block_exastud_is_bw_active() ?  block_exastud_get_class_categories($classid) : null),
+    //'cross_review' => !block_exastud_is_bw_active() ? true : false,
+    //'cross_categories' => (!block_exastud_is_bw_active() ?  block_exastud_get_class_categories($classid) : null),
+    'cross_review' => $type == BLOCK_EXASTUD_DATA_ID_CROSS_COMPETENCES && block_exastud_get_plugin_config('grade_interdisciplinary_competences') ? true : false,
+    'cross_categories' => $type == BLOCK_EXASTUD_DATA_ID_CROSS_COMPETENCES && block_exastud_get_plugin_config('grade_interdisciplinary_competences') ?  block_exastud_get_class_categories($classid) : null,
 ]);
 
 if ($fromform = $studentform->get_data()) {
@@ -272,7 +274,7 @@ echo $output->header(array('review',
 echo $output->heading($classheader);
 
 if ($type == BLOCK_EXASTUD_DATA_ID_CROSS_COMPETENCES
-        || (!block_exastud_is_bw_active() && $type == BLOCK_EXASTUD_DATA_ID_PRINT_TEMPLATE)
+        /*|| (!block_exastud_is_bw_active() && $type == BLOCK_EXASTUD_DATA_ID_PRINT_TEMPLATE)*/
 ) {
 
     // if it is for BW - only disaplay cross competencies (readonly)

@@ -267,6 +267,7 @@ $string['settings_exacomp_verbeval'] = 'Verbalized assessment from exabis compet
 $string['settings_exacomp_assessment_categories'] = 'Use competence grids for assessment categories';
 $string['settings_sourceId'] = 'Source ID';
 $string['settings_sourceId_description'] = 'Automatically generated ID of this Exastud installation. This ID can not be changed';
+$string['settings_grade_interdisciplinary_competences'] = 'überfachliche Komptenzen für Klassenlehrer freischalten';
 $string['report_learn_and_sociale'] = 'Learning and social behavior';
 $string['report_cross_competences'] = 'Cross competences';
 $string['report_other_report_fields'] = 'Other report fields';

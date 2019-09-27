@@ -245,6 +245,13 @@ function block_exastud_print_period($courseid, $period, $type, $openclass) {
                                 'classid' => $myclass->id,
                                 'type' => BLOCK_EXASTUD_DATA_ID_PRINT_TEMPLATE,
                         ]), block_exastud_get_string('report_report_fields'));
+				        if (block_exastud_get_plugin_config('grade_interdisciplinary_competences')) {
+                            $generaldata[] = html_writer::link(new moodle_url('/blocks/exastud/review_class_other_data.php', [
+                                    'courseid' => $courseid,
+                                    'classid' => $myclass->id,
+                                    'type' => BLOCK_EXASTUD_DATA_ID_CROSS_COMPETENCES,
+                            ]), block_exastud_get_string('report_cross_competences'));
+                        }
                     }
                     if (block_exastud_is_bw_active() && (
                             /*!block_exastud_get_only_learnsociale_reports() &&*/

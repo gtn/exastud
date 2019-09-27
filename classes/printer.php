@@ -1505,6 +1505,7 @@ class printer {
                         $maxColumns = max($maxColumns, count($evalopts));
                         break;
                 }
+                $maxColumns++; // average value
             } else {
                 $maxColumns = count($evalopts);
             }
@@ -1512,6 +1513,7 @@ class printer {
 		    $templateProcessor->duplicateCol('kheader', $maxColumns);
 
             if ($templateid == BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_ANLAGE_ZUM_LERNENTWICKLUNGSBERICHTALT_COMMON) {
+                $templateProcessor->setValue('kheader', block_exastud_get_string('average'), 1);
                 switch (block_exastud_get_competence_eval_type()) {
                     case BLOCK_EXASTUD_COMPETENCE_EVALUATION_TYPE_GRADE:
                         foreach ($class_subjects as $subject) {
@@ -1570,14 +1572,13 @@ class printer {
             if ($templateid == BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_ANLAGE_ZUM_LERNENTWICKLUNGSBERICHTALT_COMMON) {
                 $student_review = block_exastud_get_report($student->id,  $class->periodid, $class->id);
                 foreach ($categories as $category) {
-                    //echo "<pre>debug:<strong>printer.php:1573</strong>\r\n"; print_r('!!!!!!!!!!!!!!!!!!!!'); echo '</pre>'; // !!!!!!!!!! delete it
-                    //echo "<pre>debug:<strong>printer.php:1574</strong>\r\n"; print_r($category->title); echo '</pre>'; // !!!!!!!!!! delete it
                     $templateProcessor->cloneRowToEnd('kriterium');
                     $templateProcessor->setValue('kriterium', $category->title, 1);
 
-                    /*$globalAverage = (@$student_review->category_averages[$category->source.'-'.$category->id] ?
+                    $globalAverage = (@$student_review->category_averages[$category->source.'-'.$category->id] ?
                             $student_review->category_averages[$category->source.'-'.$category->id] : 0);
-                    $templateProcessor->setValue('kvalue', round($globalAverage, 2), 1);*/
+                    //$globalAverage = $category->average;
+                    $templateProcessor->setValue('kvalue', round($globalAverage, 2), 1);
                     switch (block_exastud_get_competence_eval_type()) {
                         case BLOCK_EXASTUD_COMPETENCE_EVALUATION_TYPE_GRADE:
                             foreach ($class_subjects as $subject) {

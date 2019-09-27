@@ -21,6 +21,20 @@ defined('MOODLE_INTERNAL') || die;
 
 require_once __DIR__.'/inc.php';
 
+if (!class_exists('block_exastud_admin_setting_bildungsstandards')) {
+    class block_exastud_admin_setting_bildungsstandards extends admin_setting_configtext {
+
+        public function output_html($data, $query = '') {
+            $output = parent::output_html($data, $query);
+            $output .= '<script>
+                            bwCheckboxActivities(); // for default value
+                        </script>';
+            return $output;
+        }
+    }
+}
+
+
 if (!class_exists('block_exastud_admin_setting_bwactivecheckbox')) {
     class block_exastud_admin_setting_bwactivecheckbox extends admin_setting_configcheckbox {
 
@@ -40,6 +54,28 @@ if (!class_exists('block_exastud_admin_setting_bwactivecheckbox')) {
             }
             block_exastud_fill_reportsettingstable();
             return '';
+        }
+        public function output_html($data, $query = '') {
+            $output = parent::output_html($data, $query);
+            $doc = new DOMDocument();
+            $doc->loadHTML(utf8_decode($output), LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD);
+            $selector = new DOMXPath($doc);
+            foreach($selector->query('//input') as $e ) {
+                $e->setAttribute('onChange', $e->getAttribute('onChange').'; if (typeof bwCheckboxActivities === "function") {bwCheckboxActivities();};');
+            }
+            $output = $doc->saveHTML($doc->documentElement);
+            $output .= '<script>                       
+                        function bwCheckboxActivities() {
+                            var currentValueBW = document.getElementById(\'id_s_exastud_bw_active\').checked;
+                            var bildungsstandardsInput = document.getElementById(\'id_s_exastud_bildungsstandards\');
+                            if (currentValueBW) {
+                                bildungsstandardsInput.disabled = true;                               
+                            } else {
+                                bildungsstandardsInput.disabled = false;
+                            }
+                        } 
+                        </script>';
+            return $output;
         }
     }
 }
@@ -361,10 +397,10 @@ if ($ADMIN->fulltree) {
 	$settings->add(new admin_setting_configtext('exastud/school_name', block_exastud_get_string('settings_shoolname'), '', '', PARAM_TEXT));
 	$settings->add(new admin_setting_configtext('exastud/school_type', block_exastud_get_string('settings_shooltype'), '', '', PARAM_TEXT));
 	$settings->add(new admin_setting_configtext('exastud/school_location', block_exastud_get_string('settings_city'), '', '', PARAM_TEXT));
-	$settings->add(new admin_setting_configtext('exastud/bildungsstandards', block_exastud_get_string('settings_edustandarts'),
-		block_exastud_get_string('settings_edustandarts_description'), '5,6,7,8,9,10', PARAM_TEXT));
 	//$settings->add(new admin_setting_configcheckbox('exastud/bw_active', block_exastud_get_string('settings_bw_reports'), '', 0));
 	$settings->add(new block_exastud_admin_setting_bwactivecheckbox('exastud/bw_active', block_exastud_get_string('settings_bw_reports'), '', 0));
+    $settings->add(new block_exastud_admin_setting_bildungsstandards('exastud/bildungsstandards', block_exastud_get_string('settings_edustandarts'),
+            block_exastud_get_string('settings_edustandarts_description'), '5,6,7,8,9,10', PARAM_TEXT));
 	$settings->add(new admin_setting_configcheckbox('exastud/use_exacomp_grade_verbose', block_exastud_get_string('settings_exacomp_verbeval'), '', 0));
 	$settings->add(new admin_setting_configcheckbox('exastud/use_exacomp_assessment_categories', block_exastud_get_string('settings_exacomp_assessment_categories'), '', 0));
     $settings->add(new admin_setting_configcheckbox('exastud/logging', block_exastud_get_string('logging'), '', 0));
@@ -402,6 +438,8 @@ if ($ADMIN->fulltree) {
     */
     // template configurations
     //$settings->add(new block_exastud_link_to('link_to_settings_report_templates', block_exastud_get_string('report_settings_edit'), '', '', '/blocks/exastud/report_settings.php', block_exastud_get_string('report_settings_edit'), [], ['class' => 'btn btn-default', 'target' => '_blank']));
+
+    $settings->add(new admin_setting_configcheckbox('exastud/grade_interdisciplinary_competences', block_exastud_get_string('settings_grade_interdisciplinary_competences'), '', 0));
 
 	if (block_exastud_is_a2fa_installed()) {
 		$description = '';

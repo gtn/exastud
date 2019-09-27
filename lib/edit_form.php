@@ -766,7 +766,8 @@ class student_other_data_form extends moodleform {
                 unset($mform->_elements[$elementKey]);
             }
         }
-        if ($this->_customdata['type'] != 'cross_competences') {
+        if ($this->_customdata['type'] != BLOCK_EXASTUD_DATA_ID_CROSS_COMPETENCES
+                || ($this->_customdata['type'] == BLOCK_EXASTUD_DATA_ID_CROSS_COMPETENCES && block_exastud_get_plugin_config('grade_interdisciplinary_competences'))) {
             $this->add_action_buttons(false);
         }
 	}
@@ -857,7 +858,13 @@ class reportsettings_edit_form extends moodleform {
         'ags',
     );
     protected $notForNonBW = array(
-        'ags'
+        'ags',
+        'subjects',
+        'subject_elective',
+        'subject_profile',
+        'projekt_thema',
+        'focus',
+        'class',
     );
     protected $errorsInForm = array();
 

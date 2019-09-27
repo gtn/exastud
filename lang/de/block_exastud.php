@@ -267,6 +267,7 @@ $string['settings_exacomp_verbeval'] = 'Exabis Kompetenzraster Notenverbalisieru
 $string['settings_exacomp_assessment_categories'] = 'Kompetenzraster für Beurteilungskategorien verwenden';
 $string['settings_sourceId'] = 'Source ID';
 $string['settings_sourceId_description'] = 'Automatisch generierte ID dieser Exastud Installation. Diese kann nicht geändert werden';
+$string['settings_grade_interdisciplinary_competences'] = 'show \'Interdisciplinary competences\' for class teacher';
 $string['report_learn_and_sociale'] = 'Lern- und Sozialverhalten';
 $string['report_cross_competences'] = 'Überfachliche Kompetenzen';
 $string['report_other_report_fields'] = 'Weitere Daten/Formularfelder';

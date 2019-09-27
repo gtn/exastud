@@ -995,7 +995,10 @@ return [
             'Automatisch generierte ID dieser Exastud Installation. Diese kann nicht geändert werden',
             'Automatically generated ID of this Exastud installation. This ID can not be changed',
     ],
-
+    'settings_grade_interdisciplinary_competences' => [
+        'show \'Interdisciplinary competences\' for class teacher',
+        'überfachliche Komptenzen für Klassenlehrer freischalten',
+    ],
     'report_learn_and_sociale' => [
             'Lern- und Sozialverhalten',
             'Learning and social behavior',

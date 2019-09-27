@@ -663,7 +663,18 @@ if ($action && (($settingsid > 0 && $action == 'edit') || $action == 'new')) {
             return '';
         };
         $templateList = block_exastud_get_template_files();
+        $templateExcluded = block_exastud_get_template_files(true);
         foreach ($reports as $report) {
+            // filtering reports by active BW or not: filter only by possible report filenames
+            if (in_array($report->template, $templateExcluded)) {
+                continue;
+            }
+            foreach ($templateExcluded as $excl) {
+                if (strpos($report->template, $excl.'/') === 0
+                    || $report->template == $excl) {
+                    continue 2;
+                }
+            }
             $bpData = $DB->get_record('block_exastudbp', ['id' => $report->bpid]);
             $params = [
                     'action' => 'edit',

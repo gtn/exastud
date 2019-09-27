@@ -2333,8 +2333,31 @@ function block_exastud_get_report_templates($class) {
     return $templates;
 }
 
-function block_exastud_get_template_files() {
+function block_exastud_get_template_files($getExcludeFiles = false) {
     $excludefiles = array('info.txt');
+    if (!block_exastud_is_bw_active()) {
+        $excludefiles = array_merge($excludefiles, array(
+            'BP 2004',
+            'BP 2016',
+            'BP 2004_16',
+            'Anlage zum Lernentwicklungsbericht.docx',
+            'Anlage zum LernentwicklungsberichtAlt.docx',
+            'default_report.docx',
+            'Einfache Anlage.docx',
+            'GMS_Lernentwicklungsbericht_Deckblatt_und_1_Innenseite.docx',
+            'Lern_und_Sozialverhalten.docx',
+            'Ueberfachliche_Kompetenzen.docx',
+            'grades_report.docx',
+                ));
+    }
+    if ($getExcludeFiles) {
+        // we need to have a list of excluded files (without etensions)
+        $res = array();
+        foreach ($excludefiles as $file) {
+            $res[] = preg_replace('/\\.[^.\\s]{3,4}$/', '', $file);
+        }
+        return $res;
+    }
     $filelist = get_directory_list(BLOCK_EXASTUD_TEMPLATE_DIR, $excludefiles);
     // delete extensions from file
     foreach ($filelist as $k => $file) {
@@ -2454,7 +2477,7 @@ function block_exastud_get_default_templates($templateid = null, $common = true)
                 ],
                 'Überfachliche Kompetenzen' => [
                         'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_UEBERFACHLICHE_KOMPETENZEN_COMMON,
-                        'name' => 'Überfachliche Kompetenzen (old)',
+                        'name' => 'Überfachliche Kompetenzen',
                         'file' => 'Ueberfachliche_Kompetenzen_common',
                         //'category' => 'Anlage',
                         'year' => '1',
@@ -2468,7 +2491,7 @@ function block_exastud_get_default_templates($templateid = null, $common = true)
                 ],
                 'Anlage' => [
                         'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_ANLAGE_ZUM_LERNENTWICKLUNGSBERICHTALT_COMMON,
-                        'name' => 'Überfachliche Kompetenzen',
+                        'name' => 'Überfachliche Kompetenzen und Kompetenzraster',
                         'file' => 'Allgemeine Anlage',
                         //'category' => 'Anlage',
                         'year' => '1',
