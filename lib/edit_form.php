@@ -866,6 +866,10 @@ class reportsettings_edit_form extends moodleform {
         'focus',
         'class',
     );
+    protected $fieldGroups = array(
+            'default' => array('year', 'report_date', 'student_name', 'date_of_birth', 'place_of_birth', 'learning_group', 'class'), // markers, which do not need to be checked. If this marker is exists in template - it will be changed
+            'classTeacher' => array('comments'),
+    );
     protected $errorsInForm = array();
 
     protected $input_types = array('textarea', 'text', 'select', 'header', 'image', 'userdata', 'matrix');
@@ -992,12 +996,71 @@ class reportsettings_edit_form extends moodleform {
             $mform->setType('grades', PARAM_TEXT);
         }
 
-        foreach ($this->getAllSecondaryFields() as $field) {
+        $fieldlist = $this->getAllSecondaryFields();
+
+        // for non BW we need special ordering and grouping. Prepare them
+        if (!block_exastud_is_bw_active()) {
+            $orderedInputs = array();
+            // at first - all elements from groupe
+            foreach ($this->fieldGroups as $gkey => $gfields) {
+                foreach ($gfields as $f) {
+                    if (in_array($f, $fieldlist)) {
+                        $orderedInputs[] = $f;
+                    }
+                }
+            }
+            // add other elements (not in grouped list)
+            foreach ($fieldlist as $field) {
+                if (!in_array($field, $orderedInputs)) {
+                    $orderedInputs[] = $field;
+                }
+            }
+            $fieldlist = $orderedInputs;
+        }
+
+        $currentGroup = '----';
+        $otherStarted = false;
+
+        foreach ($fieldlist as $field) {
+            $newGroup = null;
+            if (!block_exastud_is_bw_active()) {
+                foreach ($this->fieldGroups as $gk => $gfields) {
+                    if (in_array($field, $gfields)) {
+                        $newGroup = $gk;
+                    }
+                }
+                if ($newGroup && $currentGroup != $newGroup) {
+                    $mform->addElement('static', '', '', '<h2 class="exastud-report-settings-group">'.
+                            block_exastud_get_string('report_settings_group_title_'.$newGroup).'</h2>
+                                                      <span class="exastud-report-settings-group-description">'.
+                            block_exastud_get_string('report_settings_group_description_'.$newGroup).'</span>');
+                    $currentGroup = $newGroup;
+                }
+                // if element is not in a group at all - after all kwnown groups
+                if ($newGroup === null && !$otherStarted) {
+                    $mform->addElement('static', '', '', '<h2 class="exastud-report-settings-group">'.
+                            block_exastud_get_string('report_settings_group_title_other').'</h2>
+                            <span class="exastud-report-settings-group-description">'.
+                            block_exastud_get_string('report_settings_group_description_other').'</span>');
+                    $otherStarted = true;
+                }
+            }
             $mform->addElement('exastud_htmltag', '<div id="exastud-additional-params-block-'.$field.'" class="exastud-setting-block" data-field="'.$field.'">');
             if (in_array($field, $this->fieldsWithAdditionalParams)) {
                 $mform->addElement('exastud_htmltag', '<hr />');
             }
-            $mform->addElement('advcheckbox', $field, block_exastud_get_string('report_settings_setting_'.str_replace('_', '', $field)), '', null, array(0, 1));
+
+            if ($newGroup == 'default') {
+                $mform->addElement('static', '', '', '
+                    <span class="exastud-report-settings-default-marker">${'.$field.'}:</span>
+                    <span class="exastud-report-settings-default-marker">'.block_exastud_get_string('report_settings_setting_'.str_replace('_', '', $field)).'</span>
+                    ');
+                $mform->addElement('hidden', $field);
+                $mform->setType($field, PARAM_INT);
+                $mform->setDefault($field, 1);
+            } else {
+                $mform->addElement('advcheckbox', $field, block_exastud_get_string('report_settings_setting_'.str_replace('_', '', $field)), '', null, array(0, 1));
+            }
             if (in_array($field, $this->fieldsWithAdditionalParams)) {
                 // show with additional params
                 $input_size = 5;

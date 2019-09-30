@@ -1732,5 +1732,29 @@ return [
         'You have not privilege to edit user\'s profile',
         'You have not privilege to edit user\'s profile',
     ],
+    'report_settings_group_title_default' => [
+        'Default',
+        'Default'
+    ],
+    'report_settings_group_title_classTeacher' => [
+        'Klassenlehrer Eingabefelder',
+        'For class teacher'
+    ],
+    'report_settings_group_title_other' => [
+        'Different parameters',
+        'Different parameters',
+    ],
+    'report_settings_group_description_default' => [
+        'These markers are fixed and will be filled with own values if they are in the report',
+        'These markers are fixed and will be filled with own values if they are in the report',
+    ],
+    'report_settings_group_description_classTeacher' => [
+        'Fields for filling by class teacher',
+        'Fields for filling by class teacher'
+    ],
+    'report_settings_group_description_other' => [
+        '',
+        ''
+    ],
 
 ];
