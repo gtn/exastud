@@ -589,4 +589,21 @@
         });
     });
 
+    // groups of fields
+    $(function() {
+        // fields
+        $('*[data-groupToggler]').on('click', function () {
+            var group = $(this).attr('data-groupToggler');
+            if ($(this).attr('data-groupHidden') == 1) {
+                $('*[data-fieldgroup="' + group + '"]').show();
+                $(this).attr('data-groupHidden', 0);
+            } else {
+                $('*[data-fieldgroup="' + group + '"]').hide();
+                $(this).attr('data-groupHidden', 1);
+            }
+        });
+        // set 'default' group hidden
+        $('*[data-groupToggler="default"]').trigger('click');
+    });
+
 })(block_exastud.jquery);
