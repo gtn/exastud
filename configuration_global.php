@@ -33,7 +33,7 @@ $output = block_exastud_get_renderer();
 
 block_exastud_insert_default_entries();
 
-$availablecategories = $DB->get_records_sql('SELECT id, title
+$availablecategories = $DB->get_records_sql('SELECT id, title, parent
 	FROM {block_exastudcate}
 	ORDER BY sorting');
 
@@ -59,13 +59,17 @@ if ($action == 'save-categories') {
 		die(block_exastud_get_string('badsessionkey'));
 	}
 
+	$required_params = array(
+            'id' => PARAM_INT,
+            'title' => PARAM_TEXT,
+    );
+	if (!block_exastud_is_bw_active()) {
+	    $required_params['parent'] = PARAM_INT;
+    }
 	$items = block_exastud\param::required_array('items',
-		array(PARAM_INT => (object)array(
-			'id' => PARAM_INT,
-			'title' => PARAM_TEXT,
-		),
-		));
-
+		array(PARAM_INT => (object)$required_params,
+    ));
+	
 	$todelete = $availablecategories;
 	$sorting = 0;
 	$newAddToClasses = array();
@@ -300,9 +304,27 @@ if ($action == 'categories') {
 		var exa_list_items = <?php echo json_encode(array_values($availablecategories) /* use array_values, because else the array gets sorted by key and not by sorting */); ?>
 	</script>
 	<div id="exa-list">
-		<ul exa="items">
+		<ul exa="items" data-titles="<?php
+                $column_titles = json_encode(array('111', '2222')/*, JSON_HEX_QUOT|JSON_HEX_APOS */);
+                //$column_titles = str_replace("\u0022", "\\\"", $column_titles);
+                //$column_titles = str_replace("\u0027", "\\'", $column_titles);
+                echo htmlspecialchars($column_titles, ENT_QUOTES);
+                ?>">
 			<li>
 				<input type="text" name="title"/>
+                <?php
+                if (!block_exastud_is_bw_active()) {
+                    // main functionality in JS
+                    echo '<select exa="parent-select" name="parent" title="'.block_exastud_get_string('parent').'">';
+                    echo '<option value=""></option>';
+                    $sql = 'SELECT * FROM {block_exastudcate} WHERE parent = 0 OR parent IS NULL';
+                    $rootCategories = $DB->get_records_sql($sql);
+                    foreach ($rootCategories as $rcat) {
+                        echo '<option value="'.$rcat->id.'">'.$rcat->title.'</option>';
+                    }
+                    echo '</select>';
+                }
+                ?>
 				<button exa="delete-button" class="btn btn-default"><?php echo block_exastud_get_string('delete'); ?></button>
 			</li>
 		</ul>

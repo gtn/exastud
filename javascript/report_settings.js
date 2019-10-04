@@ -426,7 +426,7 @@
             var currentRows = currentGroup.find('.matrix-row'); // elements to first column
             var currentCols = currentGroup.find('.matrix-col'); // elements to second columns
             var newTemplateOfGroup = '<table class="matrix_description_table">' +
-                    '<tr><td class="header">Row titles</td><td class="header">Column titles</td></tr>' +
+                    '<tr><td class="header">' + M.str.block_exastud.report_setting_type_matrix_row_titles + '</td><td class="header">' + M.str.block_exastud.report_setting_type_matrix_column_titles + '</td></tr>' +
                     '<tr><td class="row_titles" valign="top"></td><td class="col_titles" valign="top"></td></tr>' +
                 '</table>';
             var insertTo = currentGroup.find('.felement').first();
@@ -483,15 +483,20 @@
             } else {
                 window[field + '_last_index_for_matrix' + type] = window[field + '_last_index_for_matrix' + type] + 1;
             };
-            newItem.find(':input').val('');
-            newItem.find('[name*="_matrix' + type + '"]').each(function() {
-                if (field == undefined) {
-                    var new_name = 'additional_params_matrix' + type + '[' + paramid + '][' + window['additional_params_last_index_for_matrix' + type][paramid] + ']';
-                } else {
-                    var new_name = field + '_matrix' + type + '[' + window[field + '_last_index_for_matrix' + type] + ']';
-                }
-                $(this).attr('name', new_name);
-            })
+            if (field == undefined) {
+                var new_name = 'additional_params_matrix' + type + '[' + paramid + '][' + window['additional_params_last_index_for_matrix' + type][paramid] + ']';
+            } else {
+                var new_name = field + '_matrix' + type + '[' + window[field + '_last_index_for_matrix' + type] + ']';
+            }
+            if ($(newItem).is('input')) {
+                newItem.val('');
+                newItem.attr('name', new_name);
+            } else {
+                newItem.find(':input').val('');
+                newItem.find('[name*="_matrix' + type + '"]').each(function () {
+                    $(this).attr('name', new_name);
+                })
+            }
             newItem.insertAfter(lastItem);
             if ($(lastItem).prop("tagName") == 'INPUT') { // for different themes
                 $('<br>').insertAfter(lastItem);

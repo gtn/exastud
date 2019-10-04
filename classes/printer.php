@@ -2369,6 +2369,68 @@ class printer {
             $data[$d] = block_exastud_crop_value_by_template_input_setting($value, $templateid, $d);
         }
 
+        // grouped competences (categories)
+        if ($templateProcessor->blockExists('grouped_competences')) {
+            $competenceTree = block_exastud_competence_tree($class->id);
+            // generate correct template table (columns)
+            $evalopts = g::$DB->get_records('block_exastudevalopt', null, 'sorting', 'id, title, sourceinfo');
+            //$categories = block_exastud_get_class_categories_for_report($student->id, $class->id);
+            //$subjects = static::get_exacomp_subjects($student->id);
+            $templateProcessor->duplicateCol('kheader', count($evalopts));
+            foreach ($evalopts as $evalopt) {
+                $templateProcessor->setValue('kheader', $evalopt->title, 1);
+            }
+
+            $classteachers = array();
+            $subjectsOfTeacher = array();
+            $teachers = array_filter(block_exastud_get_class_subject_teachers($class->id), function($o) use (&$classteachers, &$subjectsOfTeacher) {
+                if (!in_array($o->id, $classteachers)) {
+                    $classteachers[] = $o->id;
+                }
+                if ($o->subjectid > 0) {
+                    $subjectsOfTeacher[$o->id][] = $o->subjectid;
+                }
+                return null;
+            });
+            $classteachers = array_map(function($o) {return block_exastud_get_user($o);}, $classteachers);
+            // clone tables for every group
+            $templateProcessor->exastud_cloneBlock('grouped_competences', count($competenceTree), true);
+            foreach ($competenceTree as $parentId => $group) {
+                if (count($group['children'])) {
+                    $templateProcessor->setValue('group_title', $group['title'], 1);
+                    foreach ($group['children'] as $category) {
+                        // get average value
+                        //$category_cnt = 0;
+                        //$category_total = 0;
+                        //foreach ($classteachers as $teacher) {
+                        //    foreach ($subjectsOfTeacher[$teacher->id] as $subjectId) {
+                                //$cateReview = block_exastud_get_category_review_by_subject_and_teacher($class->periodid, $student->id, $category->id, $category->source, $teacher->id, $subjectId);
+                                //$cateReview = block_exastud_get_category_review_by_subject_and_teacher($class->periodid, $student->id, $category->id, $category->source, $teacher->id, 0);
+                                $cateReview = block_exastud_get_average_evaluation_by_category($class->periodid, $student->id, $category->id, $category->source, true);
+                                //if (@$cateReview->catreview_value) {
+                                //    $category_total += (@$cateReview->catreview_value ? $cateReview->catreview_value : 0);
+                                //    $category_cnt++;
+                                //}
+                            //}
+                        //}
+                        //$catAverage = $category_cnt > 0 ? round($category_total / $category_cnt, 2) : 0;
+                        if (array_key_exists('average', (array)$cateReview)) {
+                            $catAverage = $cateReview->average;
+                        } else {
+                            $catAverage = null;
+                        }
+
+                        $templateProcessor->cloneRowToEnd('ktitle');
+                        $templateProcessor->setValue('ktitle', $category->title, 1);
+                        for ($i = 0; $i < count($evalopts); $i++) {
+                            $templateProcessor->setValue('kvalue', $catAverage !== null && round($catAverage) == ($i + 1) ? 'X' : '', 1);
+                        }
+                    }
+                    $templateProcessor->deleteRow('ktitle');
+                }
+            }
+        }
+//exit;
         //echo "<pre>debug:<strong>printer.php:2196</strong>\r\n"; print_r($data); echo '</pre>'; exit; // !!!!!!!!!! delete it
 		// zuerst filters
 		$templateProcessor->applyFilters($filters);
@@ -4569,6 +4631,56 @@ class TemplateProcessor extends \PhpOffice\PhpWord\TemplateProcessor {
         $result .= $this->getSlice($sboxEnd);
 
         $this->tempDocumentMainPart = $result;
+    }
+
+    public function blockExists($search, $searchEnd = '') {
+        $searchStart = $search;
+        if (!$searchEnd) {
+            $searchEnd = $search;
+        }
+        if ('${' !== mb_substr($search, 0, 2) && '}' !== mb_substr($search, -1)) {
+            $searchStart = '${'.$search.'}';
+        }
+        if ('${/' !== mb_substr($searchEnd, 0, 2) && '}' !== mb_substr($searchEnd, -1)) {
+            $searchEnd = '${/'.$searchEnd.'}';
+        }
+        $startPos = strpos($this->tempDocumentMainPart, $searchStart);
+        $endPos = strpos($this->tempDocumentMainPart, $searchEnd);
+        if ($startPos && $endPos && $endPos > $startPos) {
+            // block is here!
+            return true;
+        }
+        return false;
+    }
+
+    public function exastud_cloneBlock($blockname, $clones = 1, $replace = true) {
+        $xmlBlock = null;
+        $reg = '/(<\?xml.*)(<w:p.*>\${' . $blockname . '}<\/w:.*?p>)(.*)(<w:p.*\${\/' . $blockname . '}<\/w:.*?p>)/is';
+        $reg = '/(<\?xml.*)(<w:p[^a-zA-Z].*>\${' . $blockname . '}<\/w:.*?p>)(.*)(<w:p[^a-zA-Z].*\${\/' . $blockname . '}<\/w:.*?p>)/is';
+        //echo "<pre>debug:<strong>printer.php:4603</strong>\r\n"; print_r($reg); echo '</pre>'; exit; // !!!!!!!!!! delete it
+        preg_match(
+                $reg,
+                $this->tempDocumentMainPart,
+                $matches
+        );
+
+        if (isset($matches[3])) {
+            $xmlBlock = $matches[3];
+            $cloned = array();
+            for ($i = 1; $i <= $clones; $i++) {
+                $cloned[] = $xmlBlock;
+            }
+
+            if ($replace) {
+                $this->tempDocumentMainPart = str_replace(
+                        $matches[2] . $matches[3] . $matches[4],
+                        implode('', $cloned),
+                        $this->tempDocumentMainPart
+                );
+            }
+        }
+
+        return $xmlBlock;
     }
 
 }

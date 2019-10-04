@@ -811,20 +811,28 @@ return [
             'Matrix',
     ],
     'report_setting_type_matrix_type' => [
-        'Matrix type',
+        'Matrix-Art',
         'Matrix type',
     ],
     'report_setting_type_matrix_type_checkbox' => [
-        'checkbox',
-        'checkbox',
+        'Checkbox',
+        'Checkbox',
     ],
     'report_setting_type_matrix_type_radio' => [
-        'radio',
-        'radio',
+        'Radio-Button',
+        'Radio button',
     ],
     'report_setting_type_matrix_type_text' => [
-        'text',
-        'text',
+        'Text',
+        'Text',
+    ],
+    'report_setting_type_matrix_row_titles' => [
+        'Zeilen-Inhalte',
+        'Row titles',
+    ],
+    'report_setting_type_matrix_column_titles' => [
+        'Spalten-Inhalte',
+        'Column titles',
     ],
     'reset_report_templates' => [
             'Standardvorlagen auf Originalwerte zurücksetzen',
@@ -1755,6 +1763,10 @@ return [
     'report_settings_group_description_other' => [
         '',
         ''
+    ],
+    'parent' => [
+        'Parent',
+        'Parent',
     ],
 
 ];

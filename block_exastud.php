@@ -76,12 +76,12 @@ class block_exastud extends block_list {
             if (block_exastud_get_active_period() && block_exastud_has_global_cap(BLOCK_EXASTUD_CAP_REVIEW)) {
                 $icon = '<img src="'.$output->image_url('beurteilung', 'block_exastud').'" class="icon" alt="" />';
                 $this->content->items[] = '<a title="'.block_exastud_get_string('review').'" href="'.$CFG->wwwroot.
-                        '/blocks/exastud/review.php?courseid='.$COURSE->id.'">'.$icon.block_exastud_get_string('review').'</a>';
+                        '/blocks/exastud/review.php'./*?courseid='.$COURSE->id.*/'">'.$icon.block_exastud_get_string('review').'</a>';
             }
             if (block_exastud_get_active_or_last_period() && block_exastud_has_global_cap(BLOCK_EXASTUD_CAP_VIEW_REPORT)) {
                 $icon = '<img src="'.$output->image_url('zeugnisse', 'block_exastud').'" class="icon" alt="" />';
                 $this->content->items[] = '<a title="'.block_exastud_get_string('reports').'" href="'.$CFG->wwwroot.
-                        '/blocks/exastud/report.php?courseid='.$COURSE->id.'">'.$icon.block_exastud_get_string('reports').'</a>';
+                        '/blocks/exastud/report.php'./*?courseid='.$COURSE->id.*/'">'.$icon.block_exastud_get_string('reports').'</a>';
             }
         }
 
@@ -92,7 +92,7 @@ class block_exastud extends block_list {
 			$icon = '<img src="'.$output->image_url('head_teachers', 'block_exastud').'" class="icon" alt="" />';
 			$this->content->items[] = '<a title="'.block_exastud_get_string('new_head_teacher').'" href="'.$CFG->wwwroot.'/cohort/assign.php?id='.block_exastud_get_head_teacher_cohort()->id.'">'.$icon.block_exastud_get_string('new_head_teacher').'</a>';
             $icon = '<img src="'.$output->image_url('calendar', 'block_exastud').'" class="icon" alt="" />';
-            $this->content->items[] = '<a title="'.block_exastud_get_string('periods').'" href="'.$CFG->wwwroot.'/blocks/exastud/periods.php?courseid='.$COURSE->id.'">'.$icon.block_exastud_get_string('periods').'</a>';
+            $this->content->items[] = '<a title="'.block_exastud_get_string('periods').'" href="'.$CFG->wwwroot.'/blocks/exastud/periods.php'./*.?courseid='.$COURSE->id.*/'">'.$icon.block_exastud_get_string('periods').'</a>';
 		}
 
 		return $this->content;

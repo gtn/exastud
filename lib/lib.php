@@ -702,6 +702,9 @@ function block_exastud_get_average_evaluation_by_category($periodid, $studentid,
                 'reviewers' => $avg->reviewers
             ];
     }
+    if ($averageForAllSubjects) {
+        return array_shift($average); // TODO: check - must be only one array item
+    }
 	return $average;
 
 }
@@ -1725,6 +1728,8 @@ function block_exastud_init_js_css($especialities = array()) {
     $PAGE->requires->string_for_js('upload_new_templatefile', 'block_exastud');
     $PAGE->requires->string_for_js('hide_uploadform', 'block_exastud');
     $PAGE->requires->string_for_js('download', 'block_exastud');
+    $PAGE->requires->string_for_js('report_setting_type_matrix_row_titles', 'block_exastud');
+    $PAGE->requires->string_for_js('report_setting_type_matrix_column_titles', 'block_exastud');
 }
 
 function block_exastud_get_category($categoryid, $categorysource) {
@@ -6482,6 +6487,25 @@ function block_exastud_global_useredit_link($userid, $courseid) {
         }
     }
     return $url;
+}
+
+function block_exastud_competence_tree($classid) {
+    global $DB;
+    $competenceTree = array();
+    $allCategories = $DB->get_records('block_exastudcate');
+    $classCompetences = block_exastud_get_class_categories($classid);
+    foreach ($classCompetences as $competence) {
+        if ($competence->parent && array_key_exists($competence->parent, $allCategories)) {
+            if (!array_key_exists($competence->parent, $competenceTree)) {
+                $competenceTree[$competence->parent] = array(
+                        'title' => $allCategories[$competence->parent]->title,
+                        'children' => array()
+                );
+            }
+            $competenceTree[$competence->parent]['children'][] = $competence;
+        }
+    }
+    return $competenceTree;
 }
 
 

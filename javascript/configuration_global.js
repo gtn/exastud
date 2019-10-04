@@ -33,6 +33,7 @@
 		$.each(exa_list_items, function () {
 			var item = this;
 			var $item = $itemTemplate.clone();
+
 			$item.data('id', this.id);
 
 			$item.find(':text').each(function () {
@@ -41,6 +42,12 @@
 			$item.find(':checkbox').each(function () {
 				$(this).prop('checked', item[this.name]*1);
 			});
+			if ($item.find('*[exa="parent-select"]').length) {
+                $item.find('*[exa="parent-select"]').each(function () {
+                    $(this).val(item.parent);
+                    $item.data('parent', item.parent);
+                });
+            }
 
 			$item.appendTo($items);
 
@@ -56,6 +63,8 @@
                 }
 			}
 		});
+
+        reloadParentSelectboxes();
 
 		if (sorting) {
 			$items.sortable({
@@ -104,7 +113,75 @@
 					return textA.localeCompare(textB);
 				}).appendTo($items);
 			}
+			reloadParentSelectboxes();
 		});
+
+		function reloadParentSelectboxes() {
+            if (!($itemTemplate.find('*[exa="parent-select"]').length > 0)) {
+            	// if no any parent selectbox - return false
+            	return false;
+			}
+            // walk across all items and get all items without parent
+            // only items without a parent can be a parent!
+            var $newRoots = new Object();
+            $items.find('li').each(function () {
+                var $item = $(this);
+                var title = '';
+                $item.find(':text').each(function(){
+                    title = $(this).val();
+                });
+                $item.find('*[exa="parent-select"]').each(function() {
+                	// console.log(title);
+                	// console.log($(this).val());
+                    if (!($(this).val() > 0) && $item.data('id') > 0) {
+                        $newRoots[""+$item.data('id')] = title;
+                    }
+                });
+            });
+            // get all selectedParents
+            var $selectedRoots = new Object();
+            $items.find('li').each(function () {
+                var $item = $(this);
+                $item.find('*[exa="parent-select"]').each(function(){
+                    if ($(this).val() > 0 /*&& $item.data('id') > 0*/) {
+                        $selectedRoots[$(this).val()] = $(this).val();
+                    }
+                });
+            });
+            // set new parent options for every item
+            $items.find('li').each(function () {
+                var $item = $(this);
+                var currentValue = ''
+				// console.log($newRoots);
+                // console.log($item.data('id'));
+                $item.find('*[exa="parent-select"]').each(function(){
+                    currentValue = $(this).val();
+                    $(this).find('option').remove();
+                    // $(this).append('<option value="" disabled selected>Parent</option>');
+                    $(this).append('<option value=""></option>');
+                    for (var i in $newRoots) {
+                        if (i != $item.data('id')) {
+                            $(this).append('<option value="' + i + '">' + $newRoots[i] + '</option>');
+                        }
+                    };
+                    if ($item.data('id') in $selectedRoots) {
+                    	// if the category is already selected as a parent - it can not have own parent
+						// so - disable it
+                        currentValue = '';
+                        $(this).attr('disabled', 'disabled');
+					} else {
+                        $(this).removeAttr('disabled');
+                    };
+                    $(this).val(currentValue);
+                });
+            });
+		}
+
+		// parent changed - reload parent selectboxes
+		// $container.find('[exa="parent-select"]').change(function () {
+		$container.on('change', '[exa="parent-select"]', function () {
+            reloadParentSelectboxes();
+        });
 
 		// save
 		$container.find("[exa=save-button]").click(function () {
@@ -124,6 +201,9 @@
 				});
 				$item.find(':checkbox').each(function(){
 					data[this.name] = $(this).prop('checked') ? $(this).val() : '';
+				});
+				$item.find('*[exa="parent-select"]').each(function(){
+					data[this.name] = $(this).val();
 				});
 
 				items.push(data);
