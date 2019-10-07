@@ -803,7 +803,7 @@ return [
             'Profile field',
     ],
     'report_setting_type_userdata_datakey' => [
-            'Choose user\'s field',
+            'Voranngelegtes Profilfeld auswählen',
             'Choose user\'s field',
     ],
     'report_setting_type_matrix' => [
@@ -1741,7 +1741,7 @@ return [
         'You have not privilege to edit user\'s profile',
     ],
     'report_settings_group_title_default' => [
-        'Default',
+        'Standardeinstellung',
         'Default'
     ],
     'report_settings_group_title_classTeacher' => [
@@ -1749,16 +1749,16 @@ return [
         'For class teacher'
     ],
     'report_settings_group_title_other' => [
-        'Different parameters',
-        'Different parameters',
+        'Weitere Felder',
+        'Additional fields',
     ],
     'report_settings_group_description_default' => [
         'These markers are fixed and will be filled with own values if they are in the report',
         'These markers are fixed and will be filled with own values if they are in the report',
     ],
     'report_settings_group_description_classTeacher' => [
-        'Fields for filling by class teacher',
-        'Fields for filling by class teacher'
+        'Felder, die von der Klassenlehrkraft ausgefüllt werden können',
+        'Fields to be filled in by the class teacher'
     ],
     'report_settings_group_description_other' => [
         '',
