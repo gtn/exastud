@@ -1416,6 +1416,9 @@ return [
         'Achtung, wenn sie eine neue Klassenlehrkraft zuteilen, haben sie keine Rechte mehr diese Klasse zu bearbeiten.',
         'Please note: if you will change the teacher of own class - you will not have access to edit this class!',
     ],
+    /*'classteacher_grade_interdisciplinary_competences' => [
+
+    ],*/
 
     'backup_class_protection' => [
         'Sicherung von Klassen mit Passwort schützen',

@@ -1780,8 +1780,9 @@ function block_exastud_get_class_categories($classid) {
 		SELECT classcate.*
 		FROM {block_exastudclasscate} classcate
 		LEFT JOIN {block_exastudcate} cate ON classcate.categorysource='exastud' AND classcate.categoryid=cate.id
+		LEFT JOIN {block_exastudcate} cateparent ON cateparent.id = cate.parent
 		WHERE classcate.classid = ?
-		ORDER BY cate.id IS NULL, cate.sorting, classcate.id
+		ORDER BY cateparent.parent IS NULL, cateparent.sorting, cate.id IS NULL, cate.sorting, classcate.id
 	", array($classid));
 
 

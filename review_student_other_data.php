@@ -277,7 +277,7 @@ if ($type == BLOCK_EXASTUD_DATA_ID_CROSS_COMPETENCES
         /*|| (!block_exastud_is_bw_active() && $type == BLOCK_EXASTUD_DATA_ID_PRINT_TEMPLATE)*/
 ) {
 
-    // if it is for BW - only disaplay cross competencies (readonly)
+    // if it is for BW - only display cross competencies (readonly)
     if (block_exastud_is_bw_active()) {
         $user = $student;
         $userReport = block_exastud_get_report($user->id, $actPeriod->id, $class->id);
