@@ -209,21 +209,25 @@ $table->head[] = block_exastud_get_string('gender'); // gender
     $table->head[] = $tableheadersubjects; // fachcompetenzen
 //}
 if ($isSubjectTeacher) {
-    // if at least student has tamplate with a category not in $hideCrossCategoryFor
+    // if at least one student has tamplate with a category not in $hideCrossCategoryFor
     $editCrossCategories = false;
-    foreach ($classstudents as $classstudent) {
-        $template = block_exastud_get_student_print_template($class, $classstudent->id);
-        $template_category = $template->get_category();
-        if (!in_array($template_category, $hideCrossCategoryFor)) {
-            $editCrossCategories = true;
-            break;
+    if (block_exastud_can_edit_crosscompetences_subjectteacher($classid)) {
+        foreach ($classstudents as $classstudent) {
+            $template = block_exastud_get_student_print_template($class, $classstudent->id);
+            $template_category = $template->get_category();
+            if (!in_array($template_category, $hideCrossCategoryFor)) {
+                $editCrossCategories = true;
+                break;
+            }
         }
     }
     if ($editCrossCategories) {
         $table->head[] = $tableheadercategories; // Interdisciplinary competences
     }
 }
-$table->head[] = $tableheaderlearnsocial; // learn and social
+if (block_exastud_can_edit_learnsocial_subjectteacher($classid)) {
+    $table->head[] = $tableheaderlearnsocial; // learn and social
+}
 
 $table->align = array();
 $table->align[] = 'left';
@@ -294,8 +298,10 @@ if ($isSubjectTeacher) {
         
         $template_category = $template->get_category();
         $editCrossCategories = false;
-        if (!in_array($template_category, $hideCrossCategoryFor)) {
-            $editCrossCategories = true;
+        if (block_exastud_can_edit_crosscompetences_subjectteacher($classid)) {
+            if (!in_array($template_category, $hideCrossCategoryFor)) {
+                $editCrossCategories = true;
+            }
         }
 
         // some columns can be empty because template has not such fields:
@@ -435,22 +441,26 @@ if ($isSubjectTeacher) {
         //}
 
         // Überfachliche Beurteilungen
-        if ($editCrossCategories) {
-            $row->cells[] = ($visible ?
-                    $output->link_button($CFG->wwwroot.'/blocks/exastud/review_student.php?courseid='.$courseid.'&classid='.
-                                            $classid.'&subjectid='.$subjectid.'&studentid='.$classstudent->id.'&reporttype=inter',
-                            block_exastud_get_string('review_button'), ['class' => 'btn btn-primary']) : '');
-        } else {
-            $row->cells[] = '';
+        if (block_exastud_can_edit_crosscompetences_subjectteacher($classid)) {
+            if ($editCrossCategories) {
+                $row->cells[] = ($visible ?
+                        $output->link_button($CFG->wwwroot.'/blocks/exastud/review_student.php?courseid='.$courseid.'&classid='.
+                                $classid.'&subjectid='.$subjectid.'&studentid='.$classstudent->id.'&reporttype=inter',
+                                block_exastud_get_string('review_button'), ['class' => 'btn btn-primary']) : '');
+            } else {
+                $row->cells[] = '';
+            }
         }
         // Learning and social behavior column
-        if ($editLearnSocialBehavior) {
-            $row->cells[] = ($visible ?
-                    $output->link_button($CFG->wwwroot.'/blocks/exastud/review_student.php?courseid='.$courseid.'&classid='.
-                            $classid.'&subjectid='.$subjectid.'&studentid='.$classstudent->id.'&reporttype=social',
-                            block_exastud_get_string('review_button'), ['class' => 'btn btn-primary']) : '');
-        } else {
-            $row->cells[] = '';
+        if (block_exastud_can_edit_learnsocial_subjectteacher($classid)) {
+            if ($editLearnSocialBehavior) {
+                $row->cells[] = ($visible ?
+                        $output->link_button($CFG->wwwroot.'/blocks/exastud/review_student.php?courseid='.$courseid.'&classid='.
+                                $classid.'&subjectid='.$subjectid.'&studentid='.$classstudent->id.'&reporttype=social',
+                                block_exastud_get_string('review_button'), ['class' => 'btn btn-primary']) : '');
+            } else {
+                $row->cells[] = '';
+            }
         }
 
         /* if (!$visible) {

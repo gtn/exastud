@@ -189,15 +189,22 @@ foreach ($classstudents as $classstudent) {
             //$hasInputs = !!block_exastud_get_class_bilingual_template($class->id)->get_inputs(BLOCK_EXASTUD_DATA_ID_BILINGUALES);
             break;
         case BLOCK_EXASTUD_DATA_ID_LERN_UND_SOZIALVERHALTEN:
-            // learn and social report must be only for 6,7,8,9 reports
-            $learnSocReports = block_exastud_getlearnandsocialreports();
-            if (!in_array($studenttemplateid, $learnSocReports)) {
-                $hideReviewButton = ' ';
-            }
-            $hasInputs = !!$categories;
-            $personalHeadTeacher = block_exastud_get_personal_head_teacher($class->id, $classstudent->id, true);
-            if ($personalHeadTeacher !== null && $personalHeadTeacher != $USER->id) {
-                $hideReviewButton = true;
+            if (block_exastud_is_bw_active()) {
+                // learn and social report must be only for 6,7,8,9 reports
+                $learnSocReports = block_exastud_getlearnandsocialreports();
+                if (!in_array($studenttemplateid, $learnSocReports)) {
+                    $hideReviewButton = ' ';
+                }
+                $hasInputs = !!$categories;
+                $personalHeadTeacher = block_exastud_get_personal_head_teacher($class->id, $classstudent->id, true);
+                if ($personalHeadTeacher !== null && $personalHeadTeacher != $USER->id) {
+                    $hideReviewButton = true;
+                }
+            } else {
+                if (!block_exastud_can_edit_learnsocial_classteacher($class->id)) {
+                    $hideReviewButton = ' ';
+                    $hasInputs = true;
+                }
             }
             break;
         default:

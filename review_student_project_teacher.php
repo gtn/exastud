@@ -89,6 +89,7 @@ if (@$categories['projekt_verbalbeurteilung']['lines'] == 999 || @$categories['p
 $classheader = $class->title.' - '.block_exastud_trans('de:Projektprüfung');
 
 $studentform = new student_other_data_form($PAGE->url, [
+    'classid' => $classid,
 	'categories' => $categories,
 ]);
 

@@ -6509,7 +6509,56 @@ function block_exastud_competence_tree($classid) {
     return $competenceTree;
 }
 
+function block_exastud_can_edit_crosscompetences_classteacher($classid) {
+    if (block_exastud_is_bw_active()) {
+        // always can
+        return true;
+    }
+    return block_exastud_get_class_data($classid, 'classteacher_grade_interdisciplinary_competences');
+}
 
+function block_exastud_can_edit_crosscompetences_subjectteacher($classid) {
+    if (block_exastud_is_bw_active()) {
+        // always can
+        return true;
+    }
+    return block_exastud_get_class_data($classid, 'subjectteacher_grade_interdisciplinary_competences');
+}
+
+function block_exastud_can_edit_learnsocial_classteacher($classid) {
+    if (block_exastud_is_bw_active()) {
+        // always can
+        return true;
+    }
+    return block_exastud_get_class_data($classid, 'classteacher_grade_learn_and_social_behaviour');
+}
+
+function block_exastud_can_edit_learnsocial_subjectteacher($classid) {
+    if (block_exastud_is_bw_active()) {
+        // always can
+        return true;
+    }
+    return block_exastud_get_class_data($classid, 'subjectteacher_grade_learn_and_social_behaviour');
+}
+
+function block_exastud_fill_crosscompetece_reviews(&$returnArray, $classid, $teacherid, $studentid, $periodid) {
+    global $DB;
+    $reviewdata = $DB->get_record('block_exastudreview',
+            array('teacherid' => $teacherid,
+                    'subjectid' => 0,
+                    'periodid' => $periodid,
+                    'studentid' => $studentid));
+    if ($reviewdata) {
+        $crosscategories = block_exastud_get_class_categories($classid);
+        foreach ($crosscategories as $crosscategory) {
+            $returnArray[$crosscategory->id.'_'.$crosscategory->source] = $DB->get_field('block_exastudreviewpos',
+                    'value',
+                    array("categoryid" => $crosscategory->id,
+                            "reviewid" => $reviewdata->id,
+                            "categorysource" => $crosscategory->source));
+        }
+    }
+}
 
 /*
 function block_exastud_encrypt_raw($value, $secret) {

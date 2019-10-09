@@ -59,7 +59,7 @@ class exastud_reportmatrix extends HTML_QuickForm_element {
 
     function toHtml() {
         global $CFG, $OUTPUT;
-
+        
         $htmltable = new html_table();
 
         $htmltable->head = array_merge(array(''), $this->input['matrixcols']);

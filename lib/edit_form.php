@@ -129,12 +129,22 @@ class class_edit_form extends moodleform {
                         'accepted_types' => array('web_image'))
         );*/
 
-/*        if (!block_exastud_is_bw_active()) {
+        if (!block_exastud_is_bw_active()) {
             // Überfachliche Kompetenzen
-            $mform->addElement('checkbox', 'classteacher_grade_interdisciplinary_competences',  block_exastud_get_string('classteacher_grade_interdisciplinary_competences'));
-            $mform->addElement('checkbox', 'subjectteacher_grade_interdisciplinary_competences',  block_exastud_get_string('subjectteacher_grade_interdisciplinary_competences'));
-
-        }*/
+            //$mform->addElement('checkbox', 'classteacher_grade_interdisciplinary_competences',  block_exastud_get_string('classteacher_grade_interdisciplinary_competences'));
+            //$mform->addElement('checkbox', 'subjectteacher_grade_interdisciplinary_competences',  block_exastud_get_string('subjectteacher_grade_interdisciplinary_competences'));
+            $group = array();
+            $group[] = $mform->createElement('checkbox', 'classteacher_grade_interdisciplinary_competences', block_exastud_get_string('class_settings_class_teacher'));
+            $group[] = $mform->createElement('checkbox', 'subjectteacher_grade_interdisciplinary_competences', block_exastud_get_string('class_settings_subject_teacher'));
+            $mform->addGroup($group, 'edit_interdisciplinary_competences', block_exastud_get_string('class_settings_can_edit_crosscompetencies'), '&nbsp;&nbsp;&nbsp;', false);
+            // Learning and social behavior
+            //$mform->addElement('checkbox', 'classteacher_grade_learn_and_social_behaviour',  block_exastud_get_string('classteacher_grade_learn_and_social_behaviour'));
+            //$mform->addElement('checkbox', 'subjectteacher_grade_learn_and_social_behaviour',  block_exastud_get_string('subjectteacher_grade_learn_and_social_behaviour'));
+            $group = array();
+            $group[] = $mform->createElement('checkbox', 'classteacher_grade_learn_and_social_behaviour', block_exastud_get_string('class_settings_class_teacher'));
+            $group[] = $mform->createElement('checkbox', 'subjectteacher_grade_learn_and_social_behaviour', block_exastud_get_string('class_settings_subject_teacher'));
+            $mform->addGroup($group, 'edit_learnsocial', block_exastud_get_string('class_settings_can_edit_learnsocial'), '&nbsp;&nbsp;&nbsp;', false);
+        }
 
         $genders = array(
             'male' => block_exastud_get_string('man'),
@@ -203,7 +213,13 @@ class period_edit_form extends moodleform {
 
 class student_edit_form extends moodleform {
 
-	function definition() {
+    function __construct($action = null, $customdata = null, $method = 'post', $target = '', $attributes = null, $editable = true, array $ajaxformdata = null) {
+        global $CFG;
+        require_once($CFG->dirroot.'/blocks/exastud/classes/exastud_competencetable.php');
+        parent::__construct($action, $customdata, $method, $target, $attributes, $editable, $ajaxformdata);
+    }
+
+    function definition() {
 	    global $DB;
 		$mform = &$this->_form;
 
@@ -257,16 +273,18 @@ class student_edit_form extends moodleform {
                 }
                 $categories = $this->_customdata['categories'];
 
-                $curr_group = '!!--!!';
-                foreach ($categories as $category) {
-                    if (isset($category->parent) && $category->parent) {
-                        if ($category->parent != $curr_group) {
-                            $curr_group = $category->parent;
-                            $parent_title = $DB->get_field('block_exastudcate', 'title', ['id' => $curr_group]);
-                            $mform->addElement('static', '', '<h3>'.$parent_title.'</h3>', '');
+                if (block_exastud_is_bw_active() || $compeval_type == BLOCK_EXASTUD_COMPETENCE_EVALUATION_TYPE_GRADE) {
+
+                    $curr_group = '!!--!!';
+                    foreach ($categories as $category) {
+                        if (isset($category->parent) && $category->parent) {
+                            if ($category->parent != $curr_group) {
+                                $curr_group = $category->parent;
+                                $parent_title = $DB->get_field('block_exastudcate', 'title', ['id' => $curr_group]);
+                                $mform->addElement('static', '', '<h3>'.$parent_title.'</h3>', '');
+                            }
                         }
-                    }
-                    $id = $category->id.'_'.$category->source;
+                        $id = $category->id.'_'.$category->source;
                         switch ($compeval_type) {
                             case BLOCK_EXASTUD_COMPETENCE_EVALUATION_TYPE_GRADE:
                                 $mform->addElement('text', $id, $category->title, $tagatributes);
@@ -279,6 +297,9 @@ class student_edit_form extends moodleform {
                                 $mform->setDefault($id, key($selectoptions));
                                 break;
                         }
+                    }
+                } else {
+                    $mform->addElement('exastud_competencetable', 'radio', $categories, $selectoptions, $this->_customdata['temp_formdata']);
                 }
                 break;
             case 'social':
@@ -474,6 +495,7 @@ class student_other_data_form extends moodleform {
         MoodleQuickForm::registerElementType('exastud_htmltag', $CFG->dirroot.'/blocks/exastud/classes/exastud_htmltag.php', 'block_exastud_htmltag');
         require_once($CFG->dirroot.'/blocks/exastud/lib/reports_lib.php');
         require_once($CFG->dirroot.'/blocks/exastud/classes/exastud_reportmatrix.php');
+        require_once($CFG->dirroot.'/blocks/exastud/classes/exastud_competencetable.php');
         parent::__construct($action, $customdata, $method, $target, $attributes, $editable, $ajaxformdata);
     }
 
@@ -496,6 +518,11 @@ class student_other_data_form extends moodleform {
         if (array_key_exists('courseid', $this->_customdata)) {
             $courseid = $this->_customdata['courseid'];
         }
+
+        if (array_key_exists('classid', $this->_customdata)) {
+            $classid = $this->_customdata['classid'];
+        }
+
         $tagatributes = array();
         $tagattributestext = '';
         if (!@$this->_customdata['canReviewStudent']) {
@@ -515,29 +542,24 @@ class student_other_data_form extends moodleform {
                     $mform->addElement('static', '', '', $this->_customdata['categories.modified']);
                 }
 
-                $curr_group = '!!--!!';
-                foreach ($cross_categories as $category) {
-                    if (isset($category->parent) && $category->parent) {
-                        if ($category->parent != $curr_group) {
-                            $curr_group = $category->parent;
-                            $parent_title = $DB->get_field('block_exastudcate', 'title', ['id' => $curr_group]);
-                            $mform->addElement('static', '', '<h3>'.$parent_title.'</h3>', '');
+                if ($compeval_type == BLOCK_EXASTUD_COMPETENCE_EVALUATION_TYPE_GRADE) {
+                    $curr_group = '!!--!!';
+                    foreach ($cross_categories as $category) {
+                        if (isset($category->parent) && $category->parent) {
+                            if ($category->parent != $curr_group) {
+                                $curr_group = $category->parent;
+                                $parent_title = $DB->get_field('block_exastudcate', 'title', ['id' => $curr_group]);
+                                $mform->addElement('static', '', '<h3>'.$parent_title.'</h3>', '');
+                            }
                         }
+                        $id = $category->id.'_'.$category->source;
+                        $mform->addElement('text', $id, $category->title, $tagatributes);
+                        $mform->setType($id, PARAM_FLOAT);
                     }
-                    $id = $category->id.'_'.$category->source;
-                    switch ($compeval_type) {
-                        case BLOCK_EXASTUD_COMPETENCE_EVALUATION_TYPE_GRADE:
-                            $mform->addElement('text', $id, $category->title, $tagatributes);
-                            $mform->setType($id, PARAM_FLOAT);
-                            break;
-                        case BLOCK_EXASTUD_COMPETENCE_EVALUATION_TYPE_TEXT:
-                        case BLOCK_EXASTUD_COMPETENCE_EVALUATION_TYPE_POINT:
-                            $mform->addElement('select', $id, $category->title, $selectoptions, $tagatributes);
-                            $mform->setType($id, PARAM_INT);
-                            $mform->setDefault($id, key($selectoptions));
-                            break;
-                    }
+                } else {
+                    $mform->addElement('exastud_competencetable', 'radio', $cross_categories, $selectoptions, $this->_customdata['temp_formdata']);
                 }
+
             }
         }
 
@@ -791,7 +813,7 @@ class student_other_data_form extends moodleform {
             }
         }
         if ($this->_customdata['type'] != BLOCK_EXASTUD_DATA_ID_CROSS_COMPETENCES
-                || ($this->_customdata['type'] == BLOCK_EXASTUD_DATA_ID_CROSS_COMPETENCES && block_exastud_get_plugin_config('grade_interdisciplinary_competences'))) {
+                || ($this->_customdata['type'] == BLOCK_EXASTUD_DATA_ID_CROSS_COMPETENCES && block_exastud_can_edit_crosscompetences_classteacher($classid))) {
             $this->add_action_buttons(false);
         }
 	}

@@ -149,7 +149,8 @@ $olddata = (array)block_exastud_get_class_student_data($classid, $studentid);
 
 if (!block_exastud_is_bw_active()) {
     // add reviews for subjectid 0
-    $reviewdata = $DB->get_record('block_exastudreview',
+    block_exastud_fill_crosscompetece_reviews($olddata, $classid, $USER->id, $studentid, $actPeriod->id);
+/*    $reviewdata = $DB->get_record('block_exastudreview',
             array('teacherid' => $USER->id,
                     'subjectid' => 0,
                     'periodid' => $actPeriod->id,
@@ -163,7 +164,7 @@ if (!block_exastud_is_bw_active()) {
                             "reviewid" => $reviewdata->id,
                             "categorysource" => $crosscategory->source));
         }
-    }
+    }*/
 }
 
 if (!is_array($categories) || !count($categories)) {
@@ -178,15 +179,17 @@ $studentform = new student_other_data_form($PAGE->url, [
     'type' => $type,
 	'student' => $student,
 	'courseid' => $courseid,
+	'classid' => $classid,
 	'modified' =>
 		@$olddata[$dataid.'.modifiedby'] ?
 			block_exastud_get_renderer()->last_modified(@$olddata[$dataid.'.modifiedby'], @$olddata[$dataid.'.timemodified'])
 			: '',
     'canReviewStudent' => true,
+    'temp_formdata' => $olddata,
     //'cross_review' => !block_exastud_is_bw_active() ? true : false,
     //'cross_categories' => (!block_exastud_is_bw_active() ?  block_exastud_get_class_categories($classid) : null),
-    'cross_review' => $type == BLOCK_EXASTUD_DATA_ID_CROSS_COMPETENCES && block_exastud_get_plugin_config('grade_interdisciplinary_competences') ? true : false,
-    'cross_categories' => $type == BLOCK_EXASTUD_DATA_ID_CROSS_COMPETENCES && block_exastud_get_plugin_config('grade_interdisciplinary_competences') ?  block_exastud_get_class_categories($classid) : null,
+    'cross_review' => $type == BLOCK_EXASTUD_DATA_ID_CROSS_COMPETENCES && block_exastud_can_edit_crosscompetences_classteacher($classid) ? true : false,
+    'cross_categories' => $type == BLOCK_EXASTUD_DATA_ID_CROSS_COMPETENCES && block_exastud_can_edit_crosscompetences_classteacher($classid) ?  block_exastud_get_class_categories($classid) : null,
 ]);
 
 if ($fromform = $studentform->get_data()) {
@@ -246,10 +249,20 @@ if ($fromform = $studentform->get_data()) {
                         'teacherid' => $USER->id,
                 ]);
                 foreach ($crosscategories as $crosscategory) {
-                    if (!isset($fromform->{$crosscategory->id.'_'.$crosscategory->source})) {
-                        continue;
+                    //if (!isset($fromform->{$crosscategory->id.'_'.$crosscategory->source})) {
+                    //    continue;
+                    //}
+                    if (isset($fromform->{$crosscategory->id.'_'.$crosscategory->source})) {
+                        $newvalue = $fromform->{$crosscategory->id.'_'.$crosscategory->source};
+                    } else {
+                        $nv = optional_param($crosscategory->id.'_'.$crosscategory->source, null, PARAM_RAW); // for custom form element.
+                        if ($nv) {
+                            $newvalue = $nv;
+                        } else {
+                            continue;
+                        }
                     }
-                    $newvalue = $fromform->{$crosscategory->id.'_'.$crosscategory->source};
+                    //$newvalue = $fromform->{$crosscategory->id.'_'.$crosscategory->source};
                     $existing = $DB->get_record('block_exastudreviewpos', ["reviewid" => $newreview->id,
                             "categoryid" => $crosscategory->id,
                             "categorysource" => $crosscategory->source]);
@@ -475,6 +488,7 @@ if ($type == BLOCK_EXASTUD_DATA_ID_CROSS_COMPETENCES
 	echo $OUTPUT->heading($studentdesc);
 }
 $formdata = $olddata;
+//echo "<pre>debug:<strong>review_student_other_data.php:480</strong>\r\n"; print_r($olddata); echo '</pre>'; exit; // !!!!!!!!!! delete it
 if (count($categories) > 0) {
     $context = context_system::instance(); // TODO: which context to use?
     foreach ($categories as $dataid => $category) {

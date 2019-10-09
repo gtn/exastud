@@ -136,6 +136,13 @@ if ($classform->is_cancelled()) {
             block_exastud_set_class_data($newclass->id, $field.'_name', $classedit->{$field.'_name'});
         }
     }
+    // additional checkboxes
+    $checkboxes = ['classteacher_grade_interdisciplinary_competences', 'subjectteacher_grade_interdisciplinary_competences',
+                    'classteacher_grade_learn_and_social_behaviour', 'subjectteacher_grade_learn_and_social_behaviour'];
+    foreach ($checkboxes as $chname) {
+        $v = optional_param($chname, 0, PARAM_INT);
+        block_exastud_set_class_data($newclass->id, $chname, $v);
+    }
 
 	if ($class->id) {
 		// standard zeugnis zurücksetzen (wegen alter version wo es kein standard zeugnis gab)

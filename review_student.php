@@ -156,7 +156,6 @@ if ($reviewdata) {
 	}
 }
 
-
 $subjectData = block_exastud_get_review($classid, $subjectid, $studentid);
 $formdata = (object)array_merge((array)$formdata, (array)$subjectData);
 
@@ -177,6 +176,7 @@ $studentform = new student_edit_form(null, [
 	'grade_options' => $grade_options,
 	'canReviewStudent' => $canReviewStudent,
 	'reporttype' => $reporttype, // inter - interdisciplinary; social - "learn and social". empty - Notenerfassung/Niveau/Fach
+    'temp_formdata' => $formdata,
 	'categories.modified' =>
 		$reviewdata
 			? block_exastud_get_renderer()->last_modified($reviewdata->teacherid, $reviewdata->timemodified)
@@ -208,10 +208,17 @@ if ($fromform = $studentform->get_data()) {
                     'teacherid' => $teacherid,
             ]);
             foreach ($categories as $category) {
-                if (!isset($fromform->{$category->id.'_'.$category->source})) {
-                    continue;
+                if (isset($fromform->{$category->id.'_'.$category->source})) {
+                    $newvalue = $fromform->{$category->id.'_'.$category->source};
+                } else {
+                    $nv = optional_param($category->id.'_'.$category->source, null, PARAM_RAW); // for custom form element.
+                    if ($nv) {
+                        $newvalue = $nv;
+                    } else {
+                        continue;
+                    }
                 }
-                $newvalue = $fromform->{$category->id.'_'.$category->source};
+
                 $existing = $DB->get_record('block_exastudreviewpos', ["reviewid" => $newreview->id,
                         "categoryid" => $category->id,
                         "categorysource" => $category->source] );
@@ -314,6 +321,10 @@ if ($fromform = $studentform->get_data()) {
 }
 
 $classheader = $reviewclass->title.($reviewclass->subject_title ? ' - '.$reviewclass->subject_title : '').' - '.$template->get_name();
+
+if (block_exastud_is_bw_active()) {
+    echo '<script>var is_bw_activated = true;</script>'; // for activate some JS functions
+}
 
 echo $output->header(array('review',
 	array('name' => $classheader, 'link' => $CFG->wwwroot.'/blocks/exastud/review_class.php?courseid='.$courseid.

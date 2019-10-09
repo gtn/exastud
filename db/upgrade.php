@@ -1458,6 +1458,18 @@ function xmldb_block_exastud_upgrade($oldversion = 0) {
         upgrade_block_savepoint(true, 2019100100, 'exastud');
     }
 
+    if ($oldversion < 2019100700) {
+        if (block_exastud_get_plugin_config('grade_interdisciplinary_competences')) {
+            // get all classes and set true
+            $classes = $DB->get_records('block_exastudclass');
+            foreach ($classes as $class) {
+                block_exastud_set_class_data($class->id, 'classteacher_grade_interdisciplinary_competences', 1);
+                block_exastud_set_class_data($class->id, 'subjectteacher_grade_interdisciplinary_competences', 1);
+            }
+        }
+        upgrade_block_savepoint(true, 2019100700, 'exastud');
+    }
+
     block_exastud_insert_default_entries();
 	block_exastud_check_profile_fields();
 

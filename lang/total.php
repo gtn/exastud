@@ -1416,9 +1416,38 @@ return [
         'Achtung, wenn sie eine neue Klassenlehrkraft zuteilen, haben sie keine Rechte mehr diese Klasse zu bearbeiten.',
         'Please note: if you will change the teacher of own class - you will not have access to edit this class!',
     ],
-    /*'classteacher_grade_interdisciplinary_competences' => [
-
-    ],*/
+    'classteacher_grade_interdisciplinary_competences' => [
+        'Klassenlehrkraft kann Überfachliche Kompetenzen erfassen',
+        'Class teacher can edit cross-competences'
+    ],
+    'subjectteacher_grade_interdisciplinary_competences' => [
+        'Fachlehrer kann Überfachliche Kompetenzen erfassen',
+        'Subject teacher can edit cross-competences'
+    ],
+    'classteacher_grade_learn_and_social_behaviour' => [
+        'Klassenlehrkraft kann Lern- und Sozialverhalten erfassen',
+        'Class teacher can edit Learning and social behaviour'
+    ],
+    'subjectteacher_grade_learn_and_social_behaviour' => [
+        'Fachlehrer kann Lern- und Sozialverhalten erfassen',
+        'Subject teacher can edit Learning and social behavior '
+    ],
+    'class_settings_can_edit_crosscompetencies' => [
+        'kann Überfachliche Kompetenzen erfassen',
+        'can cross-competences edit:'
+    ],
+    'class_settings_can_edit_learnsocial' => [
+        'kann Lern- und Sozialverhalten erfassen:',
+        'can Learning and social edit:'
+    ],
+    'class_settings_class_teacher' => [
+        'Klassenlehrkraft',
+        'class teacher'
+    ],
+    'class_settings_subject_teacher' => [
+        'Fachlehrer',
+        'subject teacher'
+    ],
 
     'backup_class_protection' => [
         'Sicherung von Klassen mit Passwort schützen',
