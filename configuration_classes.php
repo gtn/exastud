@@ -103,7 +103,8 @@ for ($i = 0; $i <= $max_classes; $i++) {
             if (block_exastud_is_siteadmin() || $tempClass->userid == $USER->id) {
                 $img = '<img src="'.$CFG->wwwroot.'/blocks/exastud/pix/trash.png" title="'.block_exastud_get_string('class_delete').'"/>';
                 if (isset($tempClass->to_delete) && $tempClass->to_delete) {
-                    $img = '<img src="'.$CFG->wwwroot.'/blocks/exastud/pix/trash2.png" title="'.block_exastud_get_string('unmark_to_delete_go').'"/>';
+                    $img = '<img src="'.$CFG->wwwroot.'/blocks/exastud/pix/trash2.png" title="'.block_exastud_get_string('class_marked_as_todelete_hover').'"/>';
+                    $img .= '<img src="'.$CFG->wwwroot.'/blocks/exastud/pix/attention.png" title="'.block_exastud_get_string('class_marked_as_todelete_hover').'"/>';;
                 }
                 if (!block_exastud_get_class_students($tempClass->id) || block_exastud_is_siteadmin()) {
                     $buttons .= html_writer::link($CFG->wwwroot.'/blocks/exastud/configuration_class.php?courseid='.$courseid.'&action=delete&classid='.$tempClass->id.'&confirm=1',
@@ -114,9 +115,6 @@ for ($i = 0; $i <= $max_classes; $i++) {
                             $img,
                             ['title' => block_exastud_get_string('class_delete'), 'class' => '']
                     );
-                }
-                if (isset($tempClass->to_delete) && $tempClass->to_delete) {
-                    $buttons .= '<img src="'.$CFG->wwwroot.'/blocks/exastud/pix/attention.png" title="'.block_exastud_get_string('class_marked_as_todelete').'"/>';;
                 }
 
                 $periodCell->text .= '<span class="exastud-class-buttons">'.$buttons.'</span>';

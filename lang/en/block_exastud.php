@@ -303,6 +303,7 @@ $string['already_marked'] = 'This class already marked';
 $string['mark_to_delete_go'] = 'Mark to delete by admin';
 $string['unmark_to_delete_go'] = 'Unmark to delete by admin';
 $string['class_marked_as_todelete'] = 'This class marked to delete by site-admin';
+$string['class_marked_as_todelete_hover'] = 'This class marked to delete by site-admin. Click to redo deleting request.';
 $string['interdisciplinary_competences'] = 'Interdisciplinary competences';
 $string['average'] = 'Average';
 

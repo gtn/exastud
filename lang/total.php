@@ -1126,7 +1126,7 @@ return [
         'Only classes without students can be deleted. But you can mark this class to deleting by site-admin'
     ],
     'already_marked' => [
-        'This class already marked',
+        'diese Klasse ist bereits zur Löschung vorgemerkt',
         'This class already marked'
     ],
     'mark_to_delete_go' => [
@@ -1138,8 +1138,12 @@ return [
         'Unmark to delete by admin'
     ],
     'class_marked_as_todelete' => [
+        'Diese Klasse ist zum Löschen durch den Administrator vorgemerkt.',
         'This class marked to delete by site-admin',
-        'This class marked to delete by site-admin',
+    ],
+    'class_marked_as_todelete_hover' => [
+            'Diese Klasse ist zum Löschen durch den Administrator vorgemerkt. Um die Vormerkung zu löschen hier klicken.',
+            'This class marked to delete by site-admin. Click to redo deleting request.',
     ],
     'interdisciplinary_competences' => [
         'Überfachliche Kompetenzen',

@@ -299,10 +299,11 @@ $string['de:Liste, mit Kommata getrennt'] = 'Liste, mit Kommata getrennt';
 $string['de:Lernentwicklungsbericht: Zeugnisausgabedatum'] = 'Lernentwicklungsbericht: Zeugnisausgabedatum';
 $string['delete_class_only_without_users'] = 'Es können nur Klassen ohne Schüler gelöscht werden';
 $string['force_class_to_delete'] = 'Es können nur Klassen ohne Schüler gelöscht werden. Klassen, die durch ein Häkchen zur Löschung freigegeben sind, können vom Administrator gelöscht werden.';
-$string['already_marked'] = 'This class already marked';
+$string['already_marked'] = 'diese Klasse ist bereits zur Löschung vorgemerkt';
 $string['mark_to_delete_go'] = 'Markieren zur Löschung durch den Administrator.';
 $string['unmark_to_delete_go'] = 'Markierung für die Löschung aufheben';
-$string['class_marked_as_todelete'] = 'This class marked to delete by site-admin';
+$string['class_marked_as_todelete'] = 'Diese Klasse ist zum Löschen durch den Administrator vorgemerkt.';
+$string['class_marked_as_todelete_hover'] = 'Diese Klasse ist zum Löschen durch den Administrator vorgemerkt. Um die Vormerkung zu löschen hier klicken.';
 $string['interdisciplinary_competences'] = 'Überfachliche Kompetenzen';
 $string['average'] = 'Durchschnitt';
 

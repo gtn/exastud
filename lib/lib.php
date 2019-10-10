@@ -589,8 +589,14 @@ function block_exastud_filter_fields_by_prefix($object_or_array, $prefix) {
 }
 */
 
-function block_exastud_get_reviewers_by_category_and_pos($periodid, $studentid, $categoryid, $categorysource, $pos_value) {
-    return iterator_to_array(g::$DB->get_recordset_sql("
+function block_exastud_get_reviewers_by_category_and_pos($periodid, $studentid, $categoryid, $categorysource, $pos_value, $classid) {
+    // review data has relation to period, so it is more global, than class+subject relations (this review can be used for all classes in this period)
+    $class = block_exastud_get_class($classid);
+    $classSubjects = block_exastud_get_class_subjects($class);
+    $result = array();
+    if (count($classSubjects)) {
+        // if the class has subjects - we need to get data with related subjects
+        $result = iterator_to_array(g::$DB->get_recordset_sql("
 			SELECT DISTINCT u.*, s.title AS subject_title, s.shorttitle as subject_shorttitle, pos.value
 			FROM {block_exastudreview} r
                 JOIN {block_exastudreviewpos} pos ON pos.reviewid = r.id
@@ -604,10 +610,49 @@ function block_exastud_get_reviewers_by_category_and_pos($periodid, $studentid, 
 			".($pos_value !== null ? "AND pos.value = ?" : "AND pos.value > 0")."
 			-- GROUP BY r.teacherid, s.id, pos.value
 		", [$periodid, $studentid, $categoryid, $categorysource, $pos_value]), false);
+    } else {
+        // if no subjects - get data without subjects
+        $result = array(); // no subjects - no reviewers: true?
+       /* return iterator_to_array(g::$DB->get_recordset_sql("
+			SELECT DISTINCT u.*, s.title AS subject_title, s.shorttitle as subject_shorttitle, pos.value
+			FROM {block_exastudreview} r
+                JOIN {block_exastudreviewpos} pos ON pos.reviewid = r.id
+                JOIN {user} u ON r.teacherid = u.id
+                JOIN {block_exastudclass} c ON c.periodid = r.periodid
+                JOIN {block_exastudclassteachers} ct ON ct.classid=c.id AND ct.teacherid=r.teacherid AND ct.subjectid=r.subjectid
+                LEFT JOIN {block_exastudsubjects} s ON r.subjectid = s.id
+			WHERE 
+			    s.id IS NOT NULL
+			    AND c.periodid = ? AND r.studentid = ?
+				AND pos.categoryid = ? AND pos.categorysource = ?
+				AND u.deleted = 0				
+			".($pos_value !== null ? "AND pos.value = ?" : "AND pos.value > 0")."
+			-- GROUP BY r.teacherid, s.id, pos.value
+		", [$periodid, $studentid, $categoryid, $categorysource, $pos_value]), false);*/
+    }
+    // add review from class teacher (subject = 0)
+    $resultClassTeacher = iterator_to_array(g::$DB->get_recordset_sql("
+			SELECT DISTINCT u.*, 'Class teacher review' AS subject_title, 'KL' as subject_shorttitle, pos.value
+			FROM {block_exastudreview} r
+                JOIN {block_exastudreviewpos} pos ON pos.reviewid = r.id
+                JOIN {user} u ON r.teacherid = u.id
+                JOIN {block_exastudclass} c ON c.periodid = r.periodid                                 
+			WHERE
+			    r.subjectid = 0 
+			    AND c.periodid = ? AND r.studentid = ?
+				AND pos.categoryid = ? AND pos.categorysource = ?
+				AND u.deleted = 0				
+			".($pos_value !== null ? "AND pos.value = ?" : "AND pos.value > 0")."		  
+		", [$periodid, $studentid, $categoryid, $categorysource, $pos_value]), false);
+    if (count($resultClassTeacher)) {
+        $result = array_merge($result, $resultClassTeacher);
+    }
+    return $result;
 }
 
 function block_exastud_get_category_review_by_subject_and_teacher($periodid, $studentid, $categoryid, $categorysource, $teacherid, $subjectid) {
-	return g::$DB->get_record_sql("
+    if ($subjectid) {
+        return g::$DB->get_record_sql("
 			SELECT DISTINCT u.*, s.title AS subject_title, s.shorttitle as subject_shorttitle, r.teacherid as teacherid, r.subjectid as subjectid, pos.value as catreview_value 
 			FROM {block_exastudreview} r
 			  JOIN {block_exastudreviewpos} pos ON pos.reviewid = r.id
@@ -623,6 +668,23 @@ function block_exastud_get_category_review_by_subject_and_teacher($periodid, $st
 				AND r.subjectid = ?
 				AND u.deleted = 0							
 		", [$periodid, $studentid, $categoryid, $categorysource, $teacherid, $subjectid]);
+    } else {
+        // for class teacher review: subjectid = 0
+        return g::$DB->get_record_sql("
+			SELECT DISTINCT u.*, 'Class teacher review' AS subject_title, 'KL' as subject_shorttitle, r.teacherid as teacherid, r.subjectid as subjectid, pos.value as catreview_value 
+			FROM {block_exastudreview} r
+			  JOIN {block_exastudreviewpos} pos ON pos.reviewid = r.id
+			  JOIN {user} u ON r.teacherid = u.id
+			  JOIN {block_exastudclass} c ON c.periodid = r.periodid			
+			WHERE c.periodid = ? 
+			    AND r.studentid = ?
+				AND pos.categoryid = ? 
+				AND pos.categorysource = ?
+				AND r.teacherid = ?
+				AND r.subjectid = ?
+				AND u.deleted = 0							
+		", [$periodid, $studentid, $categoryid, $categorysource, $teacherid, $subjectid]);
+    }
 }
 
 function block_exastud_get_reviewers_by_category($periodid, $studentid, $averageBySubject = true) {
@@ -735,7 +797,7 @@ function block_exastud_get_class_categories_for_report($studentid, $classid) {
             $i = 0;
             foreach ($evaluationOptions as $pos_value => $option) {
                 $reviewers = block_exastud_get_reviewers_by_category_and_pos(block_exastud_get_active_or_last_period()->id,
-                                $studentid, $category->id, $category->source, $pos_value);
+                                $studentid, $category->id, $category->source, $pos_value, $classid);
                 $category->evaluationOptions[$pos_value] = (object) [
                         'value' => $pos_value,
                         'title' => $option,
@@ -1454,6 +1516,7 @@ function block_exastud_get_report($studentid, $periodid, $classid) {
 	global $DB;
 
 	$report = new stdClass();
+	$class = block_exastud_get_class($classid);
 
 	$totalvalue = $DB->get_record_sql('SELECT sum(rp.value) as total 
                                           FROM {block_exastudreview} r, 
@@ -1486,7 +1549,6 @@ function block_exastud_get_report($studentid, $periodid, $classid) {
         return null;
     });
     $classteachers = array_map(function($o) {return block_exastud_get_user($o);}, $classteachers);
-
 	foreach ($reviewcategories as $rcat) {
 		if ($category = block_exastud_get_category($rcat->categoryid, $rcat->categorysource)) {
 			$catid = $rcat->categorysource.'-'.$rcat->categoryid;
@@ -1508,6 +1570,13 @@ function block_exastud_get_report($studentid, $periodid, $classid) {
                     }
                 }
             }
+            // add classteacher review
+            $reviewClassTeacher = block_exastud_get_category_review_by_subject_and_teacher($periodid, $studentid, $rcat->categoryid, $rcat->categorysource, $class->userid, 0);
+            if (count($reviewClassTeacher)) {
+                $category_total += (@$reviewClassTeacher->catreview_value ? $reviewClassTeacher->catreview_value : 0);
+                $category_cnt++;
+            }
+
 			$average = $category_cnt > 0 ? round($category_total / $category_cnt, 2) : 0;
 			$report->category_averages[$category->title] = $average; // wird das noch benötigt?
 			$report->category_averages[$catid] = $average;

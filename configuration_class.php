@@ -96,7 +96,7 @@ if ($action == 'to_delete') {
         echo $output->header(['configuration_classes']);
         echo $OUTPUT->notification(block_exastud_get_string('force_class_to_delete'), 'notifymessage');
         if ($classData->to_delete) {
-            echo $OUTPUT->notification(block_exastud_get_string('already_marked'), 'warning');
+            //echo $OUTPUT->notification(block_exastud_get_string('already_marked'), 'warning');
             echo html_writer::link($CFG->wwwroot.'/blocks/exastud/configuration_class.php?courseid='.$courseid.
                     '&action=to_delete&classid='.$classData->id.'&confirm=1&unmark=1startPeriod='.$startPeriod,
                     block_exastud_get_string('unmark_to_delete_go'),

@@ -1866,7 +1866,7 @@ class printer {
             }
             $categories = block_exastud_get_class_categories_for_report($student->id, $class->id);
 
-            $student_review = block_exastud_get_report($student->id,  $class->periodid, $class->id);
+            $student_review = block_exastud_get_report($student->id, $class->periodid, $class->id);
 
             // get max columns count
             $maxColumns = 0;
@@ -1901,6 +1901,7 @@ class printer {
 
             }
 
+            //echo "<pre>debug:<strong>printer.php:1904</strong>\r\n"; print_r($student_review->category_averages); echo '</pre>'; exit; // !!!!!!!!!! delete it
             foreach ($categories as $category) {
                 $templateProcessor->cloneRowToEnd('kriterium');
                 $templateProcessor->setValue('kriterium', $category->title, 1);
@@ -1915,12 +1916,12 @@ class printer {
                         break;
                     case BLOCK_EXASTUD_COMPETENCE_EVALUATION_TYPE_POINT:
                     case BLOCK_EXASTUD_COMPETENCE_EVALUATION_TYPE_TEXT:
-                    foreach ($category->evaluationOptions as $pos_value => $option) {
-                        $cellOutput = join(', ', array_map(function($reviewer) {
-                            return $reviewer->subject_shorttitle ?: fullname($reviewer);
-                        }, $option->reviewers));
-                        $templateProcessor->setValue('kvalue', $cellOutput, 1);
-                    }
+                        foreach ($category->evaluationOptions as $pos_value => $option) {
+                            $cellOutput = join(', ', array_map(function($reviewer) {
+                                return $reviewer->subject_shorttitle ?: fullname($reviewer);
+                            }, $option->reviewers));
+                            $templateProcessor->setValue('kvalue', $cellOutput, 1);
+                        }
                     break;
 
                 }
