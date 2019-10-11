@@ -203,11 +203,11 @@ if ($isSubjectTeacher) {
     $table->head[] = $hideAllButton; // hide button
 }
 $table->head[] = block_exastud_get_string('gender'); // gender
-//if (!block_exastud_get_only_learnsociale_reports()) {
+if (block_exastud_is_bw_active()) {
     $table->head[] = $tableheadernote; // note
     $table->head[] = $tableheaderniveau; // niveau
     $table->head[] = $tableheadersubjects; // fachcompetenzen
-//}
+}
 if ($isSubjectTeacher) {
     // if at least one student has tamplate with a category not in $hideCrossCategoryFor
     $editCrossCategories = false;
@@ -332,6 +332,15 @@ if ($isSubjectTeacher) {
             $editCrossCategories = false;
         }
 
+        if (!block_exastud_is_bw_active()) {
+            $editSubjectGrade = false;
+            $editSubjectReview = false;
+            $editSubjectNiveau = false;
+            // return to delete :-)
+            $tabledeletecolumns['niveau'] = 'niveau';
+            $tabledeletecolumns['subjects'] = 'subjects';
+        }
+
         $row = new html_table_row();
         $row->attributes['data-studentid'] = $classstudent->id;
         // user data
@@ -342,7 +351,9 @@ if ($isSubjectTeacher) {
         $userdatacell->attributes['class'] .= 'exastud-userdata-cell';
         $userdatacell->text = '<div class="cell-content">'.$userdata.'</div>';
         $userdatacell->text .= '<span class="exastud-template-title">'.block_exastud_trans('de:Zeugnisformular').': '.$template->get_name().'</span>';
-        $userdatacell->rowspan = 2;
+        if (block_exastud_is_bw_active()) {
+            $userdatacell->rowspan = 2;
+        }
         $row->cells[] = $userdatacell;
 
         // hide button
@@ -354,14 +365,18 @@ if ($isSubjectTeacher) {
             $show_hide_icon = $OUTPUT->pix_icon('i/show', block_exastud_get_string('show'));
         }
         $hidecolumn = new html_table_cell();
-        $hidecolumn->rowspan = 2;
+        if (block_exastud_is_bw_active()) {
+            $hidecolumn->rowspan = 2;
+        }
         $hidecolumn->style .= ' vertical-align: top; ';
         $hidecolumn->text = '<span class="exastud-hidebutton"><a style="padding-right: 15px;" href="'.$show_hide_url.'">'.$show_hide_icon.'</a></span>';
         $row->cells[] = $hidecolumn;
 
         // gender
         $gendercolumn = new html_table_cell();
-        $gendercolumn->rowspan = 2;
+        if (block_exastud_is_bw_active()) {
+            $gendercolumn->rowspan = 2;
+        }
         $gendercolumn->style .= ' vertical-align: top; ';
         $gender = block_exastud_get_user_gender_string($classstudent->id);
         if ($gender) {
@@ -377,7 +392,7 @@ if ($isSubjectTeacher) {
         }
         $row->cells[] = $gendercolumn;
 
-        //if (!block_exastud_get_only_learnsociale_reports()) {
+        if (block_exastud_is_bw_active()) {
             // Grades column
             $formdata = new stdClass();
             $formdata = (object) array_merge((array) $formdata, (array) $subjectData);
@@ -438,7 +453,7 @@ if ($isSubjectTeacher) {
             } else {
                 $row->cells[] = '';
             }
-        //}
+        }
 
         // Überfachliche Beurteilungen
         if (block_exastud_can_edit_crosscompetences_subjectteacher($classid)) {
@@ -463,37 +478,11 @@ if ($isSubjectTeacher) {
             }
         }
 
-        /* if (!$visible) {
-            $cell = new html_table_cell();
-            $cell->text = '';
-            $cell->colspan = count($categories);
-            $row->cells[] = $cell;
-        } else */
-
-        //     if ($report) {
-        //         foreach ($categories as $category) {
-        //             $bewertung = $DB->get_field('block_exastudreviewpos', 'value',
-        //                     array("categoryid" => $category->id, "reviewid" => $report->id, "categorysource" => $category->source));
-        //             switch (block_exastud_get_competence_eval_type()) {
-        //                 case BLOCK_EXASTUD_COMPETENCE_EVALUATION_TYPE_TEXT:
-        //                 case BLOCK_EXASTUD_COMPETENCE_EVALUATION_TYPE_POINT:
-        //                     $row->cells[] = $bewertung && isset($evaluation_options[$bewertung]) ? $evaluation_options[$bewertung] : '';
-        //                     break;
-        //                 case BLOCK_EXASTUD_COMPETENCE_EVALUATION_TYPE_GRADE:
-        //                     $row->cells[] = $bewertung && $bewertung > 0 ? $bewertung : '';
-        //                     break;
-        //             }
-        //         }
-        //     } else {
-        //         for ($i = 0; $i < count($categories); $i++) {
-        //             $row->cells[] = '';
-        //         }
-        //     }
-
         $row->attributes['class'] = 'oddeven'.(int) $oddeven;
         $table->data[] = $row;
 
-        if ($visible) {
+        // preview of reviews
+        if ($visible && block_exastud_is_bw_active()) {
             $cell = new html_table_cell();
             //if (!block_exastud_get_only_learnsociale_reports()) {
                 if ($editSubjectReview) {
@@ -577,7 +566,7 @@ if ($isSubjectTeacher) {
         // gender
         $row->cells[] = block_exastud_get_user_gender_string($classstudent->id);
 
-        //if (!block_exastud_get_only_learnsociale_reports()) {
+        if (block_exastud_is_bw_active()) {
             // Grades column
             if (!empty($subjectData->grade)) {
                 $template = block_exastud_get_student_print_template($class, $classstudent->id);
@@ -596,7 +585,7 @@ if ($isSubjectTeacher) {
             $row->cells[] = '<p>'.
                     ((trim(@$subjectData->review) ? block_exastud_text_to_html(trim($subjectData->review)) : '') ?: '---').
                     '</p>';
-        //}
+        }
         $learnReview = g::$DB->get_field('block_exastudreview', 'review', [
                         'studentid' => $classstudent->id,
                         //'subjectid' => BLOCK_EXASTUD_SUBJECT_ID_LERN_UND_SOZIALVERHALTEN_VORSCHLAG,
@@ -610,9 +599,6 @@ if ($isSubjectTeacher) {
         } else {
             $row->cells[] = '';
         }
-
-        // intermediate data
-        //$row->cells[] = '';
 
         $row->attributes['class'] = 'oddeven'.(int) $oddeven;
         $table->data[] = $row;

@@ -572,7 +572,6 @@ class student_other_data_form extends moodleform {
 
             // close header after matrix
             if ($previousType == 'matrix' && $input['type'] != 'matrix') {
-                //echo "<pre>debug:<strong>edit_form.php:529</strong>\r\n"; print_r($dataid); echo '</pre>'; // !!!!!!!!!! delete it
                 $mform->closeHeaderBefore($dataid);
             }
             // close header before new element if before it was a language niveaus (spa)
@@ -860,16 +859,6 @@ class student_other_data_form extends moodleform {
         $parent_result = parent::validation($data, $files);
         return $parent_result + $custom_errors;
     }
-/*
-    public function definition_after_data() {
-        global $CFG;
-        parent::definition_after_data();
-        $mform =& $this->_form;
-        foreach ($this->list_matrix_checkboxes as $checkboxname) {
-            $checkbox = $mform->getElement($checkboxname);
-            echo "<pre>debug:<strong>edit_form.php:814</strong>\r\n"; print_r($checkbox); echo '</pre>'; // !!!!!!!!!! delete it
-        }
-    }*/
 
 }
 
@@ -1038,7 +1027,6 @@ class reportsettings_edit_form extends moodleform {
                 }
             }
         }
-        //echo "<pre>debug:<strong>edit_form.php:821</strong>\r\n"; print_r($filelinks); echo '</pre>'; exit; // !!!!!!!!!! delete it
         $mform->addElement('exastud_htmltag', '<script>var templateLinks = \''.json_encode($filelinks).'\';</script>');
         // upload new file
         $mform->addElement('checkbox', 'overwritefile', block_exastud_get_string('report_settings_upload_new_filetemplate_overwrite'));
@@ -1314,8 +1302,6 @@ class reportsettings_edit_form extends moodleform {
 
         $matrixRowsCount = array();
         if (!empty($mform->_defaultValues['additional_params']) && count($mform->_defaultValues['additional_params']) > 0) {
-            //echo "<pre>debug:<strong>edit_form.php:974</strong>\r\n"; print_r($mform->_defaultValues['additional_params']); echo '</pre>'; exit; // !!!!!!!!!! delete it
-            //$count_additional = count($mform->_defaultValues['additional_params']);
             // add additional_params to the form
             foreach ($mform->_defaultValues['additional_params'] as $param_key => $param_settings) {
                 $main_block = array();
@@ -1602,7 +1588,6 @@ class reportsettings_edit_form extends moodleform {
                 $element->_attributes['class'] = 'exastud-template-settings-param';
                 // add additional data to html tags
                 if (array_key_exists($field, $matrixRowsCount)) {
-                    //echo "<pre>debug:<strong>edit_form.php:1469</strong>\r\n"; print_r($matrixRowsCount[$field][$i]); echo '---'.$k; echo '</pre>'; // !!!!!!!!!! delete it
                     if ($k <= @$matrixRowsCount[$field][$i]) { // it is row (1 element is a type of matrix!!!!)
                         $element->_attributes['class'] .= ' matrix-row ';
                     } else { // it is column

@@ -115,7 +115,6 @@ function block_exastud_get_report_user_fields($getAll = false) {
             }
         }
         $resultArr = $result;
-        //echo "<pre>debug:<strong>reports_lib.php:88</strong>\r\n"; print_r($resultArr); echo '</pre>'; // !!!!!!!!!! delete it
     }
     return $resultArr;
 }
@@ -145,7 +144,6 @@ function block_exastud_get_report_userdata_value(&$templateProcessor = null, $da
             $users[$userid] = $user;
         }
     }
-    //echo "<pre>debug:<strong>reports_lib.php:126</strong>\r\n"; print_r($users); echo '</pre>'; exit; // !!!!!!!!!! delete it
     // get needed value
     if (array_key_exists($userid, $users) && $users[$userid]) {
         $user = $users[$userid];
@@ -355,8 +353,6 @@ function block_exastud_import_report_xml($xmlcontent, $updatereports = false, $u
         //$reportValues = $reportXml['#'];
         $existsid = block_exastud_report_exists_by_source($attributes['source'], $attributes['id']);
         $resData = (object)$reportData($reportXml);
-        //echo "<pre>debug:<strong>reports_lib.php:320</strong>\r\n"; print_r($existsid); echo '</pre>'; // !!!!!!!!!! delete it
-        //echo "<pre>debug:<strong>reports_lib.php:320</strong>\r\n"; print_r($reportXml); echo '</pre>'; // !!!!!!!!!! delete it
         if ($existsid) {
             if ($updatereports) {
                 // update reports is selected
@@ -370,7 +366,6 @@ function block_exastud_import_report_xml($xmlcontent, $updatereports = false, $u
             }
         } else {
             // insert new report
-            //echo "<pre>debug:<strong>reports_lib.php:363</strong>\r\n"; print_r($resData); echo '</pre>'; exit; // !!!!!!!!!! delete it
             if ($mysource == $attributes['source']) {
                 $resData->id = $attributes['id'];
                 $newid = $DB->insert_record_raw('block_exastudreportsettings', $resData, true, false, true);

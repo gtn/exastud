@@ -164,7 +164,6 @@ if ($class !== null) {
     }
 
     $templates = block_exastud_get_report_templates($class);
-    //echo "<pre>debug:<strong>report.php:163</strong>\r\n"; print_r($templates); echo '</pre>'; exit; // !!!!!!!!!! delete it
 
     $studentsWithExacompGraded = array(); // graded students (exacomp)
     $studentsGraded = array(); // graded students (exastud)

@@ -211,7 +211,6 @@ class printer {
             $marker_configurations = $template->get_marker_configurations('all', $class, $student);
             $data = array_merge($data, $marker_configurations);
         }
-        //echo "<pre>debug:<strong>printer.php:186</strong>\r\n"; print_r($data); echo '</pre>'; exit; // !!!!!!!!!! delete it
         // preparation data from images
         if ($template) {
             $inputs = print_templates::get_template_inputs($templateid, 'all');
@@ -546,7 +545,6 @@ class printer {
 				};
 			}
 
-			//echo "<pre>debug:<strong>printer.php:455</strong>\r\n"; print_r($religion); echo '</pre>'; exit; // !!!!!!!!!! delete it
 			if ($religion != self::spacerIfEmpty('')) {
                 $dataTextReplacer['Ethik'] = $religion;
             } else {
@@ -941,10 +939,6 @@ class printer {
 
                     return $ret;
                 }, $replacefilter);
-                if ($wahlpflichtfach != static::spacerIfEmpty('')) {
-                    //echo "<pre>debug:<strong>printer.php:791</strong>\r\n"; print_r($grade); echo '</pre>'; // !!!!!!!!!! delete it
-                    //echo "<pre>debug:<strong>printer.php:791</strong>\r\n"; print_r($gradeSearch); echo '</pre>'; exit; // !!!!!!!!!! delete it
-                }
 
                 switch ($templateid) {
                     case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_ABSCHLUSSZEUGNIS_KL10_RSA:
@@ -1357,7 +1351,6 @@ class printer {
 			$categories = block_exastud_get_class_categories_for_report($student->id, $class->id);
 			$subjects = static::get_exacomp_subjects($student->id);
 			// <!------------- from here!!!!!!!!!!!!!!!
-			//echo "<pre>debug:<strong>printer.php:1119</strong>\r\n"; print_r($subjects); echo '</pre>'; exit; // !!!!!!!!!! delete it
 			/*if ($templateid == BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_UEBERFACHLICHE_KOMPETENZEN) {
                 $subjects = array();
             } else {*/
@@ -1589,12 +1582,9 @@ class printer {
                         case BLOCK_EXASTUD_COMPETENCE_EVALUATION_TYPE_TEXT:
                             foreach ($category->evaluationOptions as $pos_value => $option) {
                                 $cellOutput = '';
-                                //echo "<pre>debug:<strong>printer.php:1590</strong>\r\n"; print_r($option->title); echo '</pre>'; // !!!!!!!!!! delete it
-                                //echo "<pre>debug:<strong>printer.php:1591</strong>\r\n"; print_r($option->reviewers); echo '</pre>';  // !!!!!!!!!! delete it
                                 $subjectsList = array_map(function($reviewer) {
                                     return $reviewer->subject_shorttitle ?: fullname($reviewer);
                                 }, $option->reviewers);
-                                //echo "<pre>debug:<strong>printer.php:1595</strong>\r\n"; print_r($subjectsList); echo '</pre>';  // !!!!!!!!!! delete it
                                 if (count($subjectsList)) {
                                     $cellOutput = join(', ', $subjectsList);
                                 }
@@ -1668,7 +1658,6 @@ class printer {
             }*/
             // to this (for grading)
 		    $test = 0;
-		    //echo "<pre>debug:<strong>printer.php:1345</strong>\r\n"; print_r($subjects); echo '</pre>'; exit; // !!!!!!!!!! delete it
 		    foreach ($subjects as $subject) {
 		        $templateProcessor->setValue("subject", $subject->title, 1);
 
@@ -1799,7 +1788,6 @@ class printer {
                             } else {
                                 $crossGrading = self::get_exacomp_crossgrade($grading, 'comp', 4);
                             }
-                            //echo "<pre>debug:<strong>printer.php:1414</strong>\r\n"; echo $descriptor->title.'==='.$grading.'==='.$crossGrading; echo '</pre>'; // !!!!!!!!!! delete it
                         } else {
                             $grading = -1;
                             $crossGrading = -1; // do not show at all
@@ -1901,7 +1889,6 @@ class printer {
 
             }
 
-            //echo "<pre>debug:<strong>printer.php:1904</strong>\r\n"; print_r($student_review->category_averages); echo '</pre>'; exit; // !!!!!!!!!! delete it
             foreach ($categories as $category) {
                 $templateProcessor->cloneRowToEnd('kriterium');
                 $templateProcessor->setValue('kriterium', $category->title, 1);
@@ -2316,7 +2303,6 @@ class printer {
         }
         
         // user's data markers
-        //echo "<pre>debug:<strong>printer.php:2191</strong>\r\n"; print_r($inputs); echo '</pre>'; exit; // !!!!!!!!!! delete it
         foreach ($inputs as $key => $input) {
             switch ($input['type']) {
                 case 'userdata':
@@ -2354,11 +2340,9 @@ class printer {
                             }
                         }                         
                     }
-                    //echo "<pre>debug:<strong>printer.php:2281</strong>\r\n"; print_r($data); echo '</pre>'; exit; // !!!!!!!!!! delete it
                     break;
             }
         }
-        //echo "<pre>debug:<strong>printer.php:2198</strong>\r\n"; print_r($data); echo '</pre>'; exit; // !!!!!!!!!! delete it
         // add school logo
         $data['school_logo'] = '';
         if (!$templateProcessor->addImageToReport(null, 'school_logo', 'exastud', 'block_exastud_schoollogo', 0, 100, 100)) {
@@ -2432,7 +2416,6 @@ class printer {
             }
         }
 //exit;
-        //echo "<pre>debug:<strong>printer.php:2196</strong>\r\n"; print_r($data); echo '</pre>'; exit; // !!!!!!!!!! delete it
 		// zuerst filters
 		$templateProcessor->applyFilters($filters);
 		$templateProcessor->setValues($data);
@@ -4658,7 +4641,6 @@ class TemplateProcessor extends \PhpOffice\PhpWord\TemplateProcessor {
         $xmlBlock = null;
         $reg = '/(<\?xml.*)(<w:p.*>\${' . $blockname . '}<\/w:.*?p>)(.*)(<w:p.*\${\/' . $blockname . '}<\/w:.*?p>)/is';
         $reg = '/(<\?xml.*)(<w:p[^a-zA-Z].*>\${' . $blockname . '}<\/w:.*?p>)(.*)(<w:p[^a-zA-Z].*\${\/' . $blockname . '}<\/w:.*?p>)/is';
-        //echo "<pre>debug:<strong>printer.php:4603</strong>\r\n"; print_r($reg); echo '</pre>'; exit; // !!!!!!!!!! delete it
         preg_match(
                 $reg,
                 $this->tempDocumentMainPart,

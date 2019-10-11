@@ -488,7 +488,6 @@ if ($type == BLOCK_EXASTUD_DATA_ID_CROSS_COMPETENCES
 	echo $OUTPUT->heading($studentdesc);
 }
 $formdata = $olddata;
-//echo "<pre>debug:<strong>review_student_other_data.php:480</strong>\r\n"; print_r($olddata); echo '</pre>'; exit; // !!!!!!!!!! delete it
 if (count($categories) > 0) {
     $context = context_system::instance(); // TODO: which context to use?
     foreach ($categories as $dataid => $category) {

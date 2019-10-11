@@ -326,9 +326,6 @@ foreach ($classstudents as $classstudent) {
                                 //        $context->id, 'block_exastud', 'report_image_'.$dataid, $classstudent->id);
                                 break;
                             case 'userdata':
-                                //echo "<pre>debug:<strong>review_class_other_data.php:319</strong>\r\n"; print_r($dataid); echo '</pre>'; // !!!!!!!!!! delete it
-                                //echo "<pre>debug:<strong>review_class_other_data.php:319</strong>\r\n"; print_r(); echo '</pre>'; // !!!!!!!!!! delete it
-                                //echo "<pre>debug:<strong>review_class_other_data.php:319</strong>\r\n"; print_r($inputs); echo '</pre>'; exit; // !!!!!!!!!! delete it
                                 $tempNull = null;
                                 $value = block_exastud_get_report_userdata_value($tempNull, $dataid, $classstudent->id, $form_input['userdatakey']);
                                 break;
