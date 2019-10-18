@@ -5491,11 +5491,11 @@ function block_exastud_menu_for_settings() {
     if (block_exastud_get_plugin_config('can_edit_bps_and_subjects')) {
         $tabs[] = new tabobject('education_plans', new moodle_url('/blocks/exastud/configuration_global.php', ['courseid' => g::$COURSE->id]).'&action=bps', block_exastud_get_string("education_plans"), '', true);
     }
-    if (!block_exastud_is_bw_active()) {
+    /*if (!block_exastud_is_bw_active()) {
         if (block_exastud_has_global_cap(BLOCK_EXASTUD_CAP_UPLOAD_PICTURE)) {
             $tabs[] = new tabobject('pictureupload', new moodle_url('/blocks/exastud/pictureupload.php', ['courseid' => g::$COURSE->id]), block_exastud_get_string('pictureupload'), '', true);
         }
-    }
+    }*/
     if (block_exastud_has_global_cap(BLOCK_EXASTUD_CAP_ADMIN)) {
         $tabs[] = new tabobject('backup', new moodle_url('/blocks/exastud/backup.php', ['courseid' => g::$COURSE->id]), block_exastud_get_string("backup"), '', true);
     }

@@ -297,8 +297,7 @@ class printer {
 				}
 			}
 
-
-			if ($logo = block_exastud_get_main_logo()) {
+			if ($templateid != BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_DEFAULT_REPORT_COMMON && $logo = block_exastud_get_main_logo()) {
 				$image = $logo->copy_content_to_temp();
 				$size = @getimagesize($image);
 
