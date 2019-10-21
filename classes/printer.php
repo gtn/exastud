@@ -184,6 +184,7 @@ class printer {
                 'comments_short' => static::spacerIfEmpty(block_exastud_crop_value_by_template_input_setting(@$studentdata->comments_short, $templateid, 'comments_short')),
                 'ags' => static::spacerIfEmpty(block_exastud_crop_value_by_template_input_setting(@$studentdata->ags, $templateid, 'ags')),
                 'lern_und_sozialverhalten' => static::spacerIfEmpty($lern_soz),
+                'learn_social_behavior' => static::spacerIfEmpty($lern_soz),
         ];
         // gender
         $gender = block_exastud_get_user_gender($student->id);
@@ -1479,6 +1480,7 @@ class printer {
 
 		    $evalopts = g::$DB->get_records('block_exastudevalopt', null, 'sorting', 'id, title, sourceinfo');
 		    $categories = block_exastud_get_class_categories_for_report($student->id, $class->id);
+		    //echo "<pre>debug:<strong>printer.php:1483</strong>\r\n"; print_r($categories); echo '</pre>'; exit; // !!!!!!!!!! delete it
 		    $subjects = static::get_exacomp_subjects($student->id);
             if (!$subjects || count($subjects) == 0) {
                 // no any competences in dakora/exacomp for this student. So - no report
@@ -1560,16 +1562,15 @@ class printer {
                 $category->average = $average;
             }
 
-
             if ($templateid == BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_ANLAGE_ZUM_LERNENTWICKLUNGSBERICHTALT_COMMON) {
                 $student_review = block_exastud_get_report($student->id,  $class->periodid, $class->id);
                 foreach ($categories as $category) {
                     $templateProcessor->cloneRowToEnd('kriterium');
                     $templateProcessor->setValue('kriterium', $category->title, 1);
-
                     $globalAverage = (@$student_review->category_averages[$category->source.'-'.$category->id] ?
                             $student_review->category_averages[$category->source.'-'.$category->id] : 0);
                     //$globalAverage = $category->average;
+                    //echo "<pre>debug:<strong>printer.php:1573</strong>\r\n"; print_r($globalAverage); echo '</pre>'; // !!!!!!!!!! delete it
                     $templateProcessor->setValue('kvalue', round($globalAverage, 2), 1);
                     switch (block_exastud_get_competence_eval_type()) {
                         case BLOCK_EXASTUD_COMPETENCE_EVALUATION_TYPE_GRADE:
@@ -2301,15 +2302,17 @@ class printer {
                 break;
         }
         
-        // user's data markers
+        // go throw inputs 
         foreach ($inputs as $key => $input) {
             switch ($input['type']) {
                 case 'userdata':
+                    // user's data markers
                     if ($input['userdatakey']) {
                         $data[$key] = block_exastud_get_report_userdata_value($templateProcessor, $key, $student->id, $input['userdatakey']);
                     }
                     break;
                 case 'matrix':
+                    // matrix type
                     foreach ($input['matrixrows'] as $rindex => $row) {
                         foreach ($input['matrixcols'] as $cindex => $col) {
                             $key_index = $key.'_'.($rindex + 1).'_'.($cindex + 1);
@@ -2342,6 +2345,7 @@ class printer {
                     break;
             }
         }
+        
         // add school logo
         $data['school_logo'] = '';
         if (!$templateProcessor->addImageToReport(null, 'school_logo', 'exastud', 'block_exastud_schoollogo', 0, 100, 100)) {
@@ -2390,7 +2394,7 @@ class printer {
                         //    foreach ($subjectsOfTeacher[$teacher->id] as $subjectId) {
                                 //$cateReview = block_exastud_get_category_review_by_subject_and_teacher($class->periodid, $student->id, $category->id, $category->source, $teacher->id, $subjectId);
                                 //$cateReview = block_exastud_get_category_review_by_subject_and_teacher($class->periodid, $student->id, $category->id, $category->source, $teacher->id, 0);
-                                $cateReview = block_exastud_get_average_evaluation_by_category($class->periodid, $student->id, $category->id, $category->source, true);
+                                $cateReview = block_exastud_get_average_evaluation_by_category($class->id, $class->periodid, $student->id, $category->id, $category->source, true);
                                 //if (@$cateReview->catreview_value) {
                                 //    $category_total += (@$cateReview->catreview_value ? $cateReview->catreview_value : 0);
                                 //    $category_cnt++;
@@ -2414,6 +2418,13 @@ class printer {
                 }
             }
         }
+        
+        // learn and social behaviour in reports can have different settings for BW and non-BW.  
+        // non-BW has class-setting, BW has report-settings
+        //if (!block_exastud_is_bw_active() && block_exastud_can_edit_learnsocial_classteacher($class->id)) {
+        //    $data['learn_social_behavior'] = $studentData->learn_social_behavior;
+        //}
+        
 //exit;
 		// zuerst filters
 		$templateProcessor->applyFilters($filters);

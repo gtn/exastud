@@ -229,7 +229,11 @@ class student_edit_form extends moodleform {
 
 		$mform->addElement('hidden', 'classid');
 		$mform->setType('classid', PARAM_INT);
-		$mform->setDefault('classid', 0);
+		if ($this->_customdata['classid']) {
+            $mform->setDefault('classid', $this->_customdata['classid']);
+        } else {
+            $mform->setDefault('classid', 0);
+        }
 
 		$mform->addElement('hidden', 'subjectid');
 		$mform->setType('subjectid', PARAM_INT);
@@ -305,7 +309,9 @@ class student_edit_form extends moodleform {
             case 'social':
                 // learn and social
                 $inputs = $this->_customdata['template']->get_inputs('all');
-                if (is_array($inputs) && array_key_exists('learn_social_behavior', $inputs)) {
+                if (!block_exastud_is_bw_active() && block_exastud_can_edit_learnsocial_classteacher($this->_customdata['classid'])) {
+                    $template_inputparams = $inputs['learn_social_behavior'];
+                } elseif (is_array($inputs) && array_key_exists('learn_social_behavior', $inputs)) {
                     $template_inputparams = $inputs['learn_social_behavior'];
                 } else {
                     $template_inputparams = array();
@@ -900,6 +906,7 @@ class reportsettings_edit_form extends moodleform {
         'projekt_thema',
         'focus',
         'class',
+        'learn_social_behavior',
     );
     protected $fieldGroups = array(
             'default' => array('year', 'report_date', 'student_name', 'date_of_birth', 'place_of_birth', 'learning_group', 'class'), // markers, which do not need to be checked. If this marker is exists in template - it will be changed

@@ -171,6 +171,7 @@ if (count($grade_options) > 0) {
 $studentform = new student_edit_form(null, [
     'template' => $template,
 	'categories' => $categories,
+	'classid' => $classid,
 	'subjectid' => $subjectid,
 	'exacomp_grades' => $exacomp_grades,
 	'grade_options' => $grade_options,

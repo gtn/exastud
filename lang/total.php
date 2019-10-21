@@ -1789,7 +1789,7 @@ return [
         'Additional fields',
     ],
     'report_settings_group_description_default' => [
-        'These markers are fixed and will be filled with own values if they are in the report',
+        'Diese Markierungen sind bereits im Modul enthalten und werden mit den Werten der entsprechenden Eingabefelder befüllt, falls sie im Bericht enthalten sind.',
         'These markers are fixed and will be filled with own values if they are in the report',
     ],
     'report_settings_group_description_classTeacher' => [

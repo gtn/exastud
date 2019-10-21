@@ -69,9 +69,11 @@ if (!class_exists('block_exastud_admin_setting_bwactivecheckbox')) {
                             var currentValueBW = document.getElementById(\'id_s_exastud_bw_active\').checked;
                             var bildungsstandardsInput = document.getElementById(\'id_s_exastud_bildungsstandards\');
                             if (currentValueBW) {
-                                bildungsstandardsInput.disabled = true;                               
+                                // if BW is activated
+                                bildungsstandardsInput.disabled = false;                                                               
                             } else {
-                                bildungsstandardsInput.disabled = false;
+                                // if BW is disabled
+                                bildungsstandardsInput.disabled = true;                                
                             }
                         } 
                         </script>';

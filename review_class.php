@@ -319,7 +319,10 @@ if ($isSubjectTeacher) {
                 unset($tabledeletecolumns['subjects']);
             }
 			// show learn and social if the report has input for this and if I am a main teacher for the student
-            if (array_key_exists('learn_social_behavior', $allinputs)) {
+            if (!block_exastud_is_bw_active() && block_exastud_can_edit_learnsocial_classteacher($class->id)) {
+                $editLearnSocialBehavior = true;
+                unset($tabledeletecolumns['learnsocial']);
+            } elseif (array_key_exists('learn_social_behavior', $allinputs)) {
                 $editLearnSocialBehavior = true;
                 unset($tabledeletecolumns['learnsocial']);
             }
