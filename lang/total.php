@@ -1421,11 +1421,11 @@ return [
         'Please note: if you will change the teacher of own class - you will not have access to edit this class!',
     ],
     'classteacher_grade_interdisciplinary_competences' => [
-        'Klassenlehrkraft kann Überfachliche Kompetenzen erfassen',
+        'Klassenlehrkraft kann überfachliche Kompetenzen erfassen',
         'Class teacher can edit cross-competences'
     ],
     'subjectteacher_grade_interdisciplinary_competences' => [
-        'Fachlehrer kann Überfachliche Kompetenzen erfassen',
+        'Fachlehrer kann überfachliche Kompetenzen erfassen',
         'Subject teacher can edit cross-competences'
     ],
     'classteacher_grade_learn_and_social_behaviour' => [
@@ -1437,7 +1437,7 @@ return [
         'Subject teacher can edit Learning and social behavior '
     ],
     'class_settings_can_edit_crosscompetencies' => [
-        'kann Überfachliche Kompetenzen erfassen',
+        'kann überfachliche Kompetenzen erfassen',
         'can cross-competences edit:'
     ],
     'class_settings_can_edit_learnsocial' => [
