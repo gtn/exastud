@@ -5380,7 +5380,7 @@ function block_exastud_fill_reportsettingstable($id = 0, $update = false) {
         $data['additional_params'] = '';
         // default values for columns
         $tablecolumns = array_keys(g::$DB->get_columns('block_exastudreportsettings'));
-        $service_fields = array('source', 'source_id');
+        $service_fields = array('source', 'source_id', 'sorting');
         foreach ($tablecolumns as $column) {
             if (!array_key_exists($column, $data) && !in_array($column, $service_fields)) {
                 $data[$column] = serialize(array('checked' => "0"));
