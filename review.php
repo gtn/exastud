@@ -23,27 +23,36 @@ use block_exastud\globals as g;
 
 $courseid = optional_param('courseid', 1, PARAM_INT);
 $openclass = optional_param('openclass', 0, PARAM_INT);
+$classid = optional_param('classid', 0, PARAM_INT); // need for reset selected class in some cases
 
 if (!$openclass) {
     if (isset($_COOKIE['lastclass']) && $_COOKIE['lastclass'] > 0) {
         $openclass = $_COOKIE['lastclass'];
     }
 }
-
+if ($classid == -1) {
+    // reset preselected course
+    $openclass = 0;
+    setcookie('lastclass', null);
+} 
+//echo "<pre>debug:<strong>review.php:38</strong>\r\n"; print_r($openclass); echo '</pre>'; exit;// !!!!!!!!!! delete it
 block_exastud_require_login($courseid);
 
 block_exastud_require_global_cap(BLOCK_EXASTUD_CAP_REVIEW);
 
-$url = '/blocks/exastud/review.php';
+$url = '/blocks/exastud/review.php?courseid='.$courseid.'&openclass='.$openclass;
 $PAGE->set_url($url);
 $output = block_exastud_get_renderer();
 echo $output->header('review');
 
 $actPeriod = block_exastud_check_active_period();
 
+//echo "<pre>debug:<strong>review.php:50</strong>\r\n"; print_r($actPeriod); echo '</pre>'; exit; // !!!!!!!!!! delete it
+
 function block_exastud_print_period($courseid, $period, $type, $openclass) {
     global $CFG, $USER;
 	$reviewclasses = block_exastud_get_head_teacher_classes_all($period->id);
+
 	$output = block_exastud_get_renderer();
 
 	// first headteacher classes
@@ -167,7 +176,6 @@ function block_exastud_print_period($courseid, $period, $type, $openclass) {
                                 ]), $subject->subject_title ?: block_exastud_get_string('not_assigned'));
                     }
                 //}
-                
                 // add all subjects from Subject teachers (for readonly via class teacher)
                 $subjectsFromOtherData = array();
                 //if (block_exastud_is_bw_active()) {
@@ -214,11 +222,13 @@ function block_exastud_print_period($courseid, $period, $type, $openclass) {
                             $learnSocReports = block_exastud_getlearnandsocialreports();
                             $classObj = block_exastud_get_class($myclass->id);
                             foreach ($classstudents as $clstudent) {
-                                $studtemplate =
-                                        block_exastud_get_student_print_template($classObj, $clstudent->id)->get_template_id();
-                                if (in_array($studtemplate, $learnSocReports)) {
-                                    $classHasNeededReport = true;
-                                    break;
+                                $studtemplate = block_exastud_get_student_print_template($classObj, $clstudent->id);
+                                if ($studtemplate) {
+                                    $studtemplateid = $studtemplate->get_template_id();
+                                    if (in_array($studtemplateid, $learnSocReports)) {
+                                        $classHasNeededReport = true;
+                                        break;
+                                    }
                                 }
                             }
                             if ($classHasNeededReport) {

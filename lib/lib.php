@@ -2127,7 +2127,10 @@ function block_exastud_get_student_print_templateid($class, $userid) {
 	if (isset($available_templates[$default_templateid])) {
 		return $default_templateid;
 	}
-	return key($available_templates);
+	if (count($available_templates)) {
+        return key($available_templates);
+    }
+    return 0;
 }
 
 /**
@@ -2136,10 +2139,12 @@ function block_exastud_get_student_print_templateid($class, $userid) {
  * @return block_exastud\print_template
  */
 function block_exastud_get_student_print_template($class, $userid) {
+    global $PAGE;
 	$templateid = block_exastud_get_student_print_templateid($class, $userid);
 	if (!$templateid) {
+	    return null; // test
 	    if (block_exastud_is_bw_active()) {
-            throw new moodle_exception('Template for class not found. Probably you want to use class for non-active "exastud | bw_active"');
+            $message = 'Template for class not found. Probably you want to use class for non-active "exastud | bw_active"';
         } else {
             //throw new moodle_exception('Template for class not found. Probably you want to use class for active "exastud | bw_active"');
             $message = block_exastud_get_string('mixed_bw_nonbw_class_error_2');
@@ -2150,7 +2155,7 @@ function block_exastud_get_student_print_template($class, $userid) {
                 'courseid' => optional_param('courseid', 1, PARAM_INT)
         );
         echo $message;
-        $url = new moodle_url('/blocks/exastud/report.php', $params);
+        $url = new moodle_url($PAGE->url, $params);
         redirect($url, $message, null, \core\output\notification::NOTIFY_ERROR);
     }
 	return block_exastud\print_template::create($templateid);
@@ -2398,10 +2403,12 @@ function block_exastud_get_report_templates($class) {
     $templates['grades_report'] = 'Notenübersicht (docx)';
     $templates['grades_report_xls'] = 'Notenübersicht (xlsx)';
     $templates['html_report'] = block_exastud_get_string('html_report');
-    $templates[BLOCK_EXASTUD_DATA_ID_PRINT_TEMPLATE] =
-            block_exastud_is_bw_active() ? block_exastud_trans('de:Zeugnis / Abgangszeugnis') :
-                    block_exastud_trans('de:Zeugnis');
+    if (block_exastud_is_bw_active()) {
+        $templates[BLOCK_EXASTUD_DATA_ID_PRINT_TEMPLATE] =
+                block_exastud_is_bw_active() ? block_exastud_trans('de:Zeugnis / Abgangszeugnis') :
+                        block_exastud_trans('de:Zeugnis');
         //}
+    }
     if (block_exastud_is_bw_active()) {
         $templates[BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_GMS_LERNENTWICKLUNGSBERICHT_DECKBLATT_UND_1_INNENSEITE] =
                 (\block_exastud\print_templates::get_template_name(BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_GMS_LERNENTWICKLUNGSBERICHT_DECKBLATT_UND_1_INNENSEITE) ?:
@@ -2614,7 +2621,7 @@ function block_exastud_get_default_templates($templateid = null, $common = true)
                 ],
                 'default_report' => [
                         'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_DEFAULT_REPORT_COMMON,
-                        'name' => 'Lern- und Sozialverhalten, überfachliche Kompetenzen und Schulnoten',
+                        'name' => 'überfachliche Kompetenzen und Lern- und Sozialverhalten',
                         'file' => 'gesamtzeugnis',
                         //'category' => 'Default',
                         'year' => '1',

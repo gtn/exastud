@@ -245,7 +245,7 @@ class printer {
 
 		if (in_array($templateid, array(
 		        BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_DEFAULT_REPORT,
-                BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_DEFAULT_REPORT_COMMON
+                //BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_DEFAULT_REPORT_COMMON
         ))) { // default_report
 			//$class_subjects = block_exastud_get_class_subjects($class);
 			//$lern_soz = block_exastud_get_class_student_data($class->id, $student->id, BLOCK_EXASTUD_DATA_ID_LERN_UND_SOZIALVERHALTEN);
@@ -298,7 +298,8 @@ class printer {
 				}
 			}
 
-			if ($templateid != BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_DEFAULT_REPORT_COMMON && $logo = block_exastud_get_main_logo()) {
+			// if ($templateid != BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_DEFAULT_REPORT_COMMON && $logo = block_exastud_get_main_logo()) {
+			if ($logo = block_exastud_get_main_logo()) {
 				$image = $logo->copy_content_to_temp();
 				$size = @getimagesize($image);
 
@@ -1847,12 +1848,8 @@ class printer {
                 BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_UEBERFACHLICHE_KOMPETENZEN,
                 BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_UEBERFACHLICHE_KOMPETENZEN_COMMON
         ])) {
-            // very old exacomp?
-            $oldExacomp = false;
-            if (!function_exists('block_exacomp_get_assessment_diffLevel')) { // this function - for example
-                $oldExacomp = true;
-            }
-            $categories = block_exastud_get_class_categories_for_report($student->id, $class->id);
+            self::cross_competences_for_report($templateProcessor, $templateid, $class, $student, $class_subjects);
+            /*$categories = block_exastud_get_class_categories_for_report($student->id, $class->id);
 
             $student_review = block_exastud_get_report($student->id, $class->periodid, $class->id);
 
@@ -1913,7 +1910,7 @@ class printer {
 
                 }
             }
-            $templateProcessor->deleteRow('kriterium');
+            $templateProcessor->deleteRow('kriterium');*/
 
             // code for generating table with Teachers in the headers
             /*
@@ -1991,6 +1988,11 @@ class printer {
             if (!$templateProcessor->addImageToReport(null, 'school_logo', 'exastud', 'block_exastud_schoollogo', 0, 1024, 768)) {
                 $templateProcessor->setValue("school_logo", ''); // no logo files
             };
+        } else if ($templateid == BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_DEFAULT_REPORT_COMMON) {
+            // "überfachliche Kompetenzen" part
+            self::cross_competences_for_report($templateProcessor, $templateid, $class, $student, $class_subjects);
+            $students = [$student];
+            self::learn_sozial_for_report($templateProcessor, $templateid, $class, $students);
         }
 
 		// projekt_ingroup property
@@ -2459,6 +2461,69 @@ class printer {
 		];
 	}
 
+	static function cross_competences_for_report(&$templateProcessor, $templateid, $class, $student, $class_subjects) {
+        $categories = block_exastud_get_class_categories_for_report($student->id, $class->id);
+        $student_review = block_exastud_get_report($student->id, $class->periodid, $class->id);
+        // get max columns count
+        $maxColumns = 0;
+        switch (block_exastud_get_competence_eval_type()) {
+            case BLOCK_EXASTUD_COMPETENCE_EVALUATION_TYPE_GRADE:
+                $maxColumns = max($maxColumns, count($class_subjects));
+                break;
+            case BLOCK_EXASTUD_COMPETENCE_EVALUATION_TYPE_POINT:
+            case BLOCK_EXASTUD_COMPETENCE_EVALUATION_TYPE_TEXT:
+                foreach ($categories as $category) {
+                    $maxColumns = max($maxColumns, count($category->evaluationOptions));
+                }
+                break;
+        }
+
+        // header of table
+        $templateProcessor->duplicateCol('kheader', $maxColumns + 1); // +1 = column for average
+        $templateProcessor->setValue('kheader', block_exastud_get_string('average'), 1);
+        switch (block_exastud_get_competence_eval_type()) {
+            case BLOCK_EXASTUD_COMPETENCE_EVALUATION_TYPE_GRADE:
+                foreach ($class_subjects as $subject) {
+                    $templateProcessor->setValue('kheader', $subject->title, 1);
+                }
+                break;
+            case BLOCK_EXASTUD_COMPETENCE_EVALUATION_TYPE_POINT:
+            case BLOCK_EXASTUD_COMPETENCE_EVALUATION_TYPE_TEXT:
+                $category = reset($categories);
+                foreach ($category->evaluationOptions as $option) {
+                    $templateProcessor->setValue('kheader', $option->title, 1);
+                }
+                break;
+
+        }
+
+        foreach ($categories as $category) {
+            $templateProcessor->cloneRowToEnd('kriterium');
+            $templateProcessor->setValue('kriterium', $category->title, 1);
+
+            $globalAverage = (@$student_review->category_averages[$category->source.'-'.$category->id] ? $student_review->category_averages[$category->source.'-'.$category->id] : 0);
+            $templateProcessor->setValue('kvalue', round($globalAverage, 2), 1);
+            switch (block_exastud_get_competence_eval_type()) {
+                case BLOCK_EXASTUD_COMPETENCE_EVALUATION_TYPE_GRADE:
+                    foreach ($class_subjects as $subject) {
+                        $templateProcessor->setValue('kvalue', $category->evaluationAverages[$subject->id]->value, 1);
+                    }
+                    break;
+                case BLOCK_EXASTUD_COMPETENCE_EVALUATION_TYPE_POINT:
+                case BLOCK_EXASTUD_COMPETENCE_EVALUATION_TYPE_TEXT:
+                    foreach ($category->evaluationOptions as $pos_value => $option) {
+                        $cellOutput = join(', ', array_map(function($reviewer) {
+                            return $reviewer->subject_shorttitle ?: fullname($reviewer);
+                        }, $option->reviewers));
+                        $templateProcessor->setValue('kvalue', $cellOutput, 1);
+                    }
+                    break;
+
+            }
+        }
+        $templateProcessor->deleteRow('kriterium');
+    }
+
 	static function grades_report($class, $students) {
 		global $CFG;
 
@@ -2847,10 +2912,15 @@ class printer {
 
         //$class_subjects = block_exastud_get_class_subjects($class);
 
-        // prepare reviews
+        if (!self::learn_sozial_for_report($templateProcessor, $templateid, $class, $students)) {
+            return null;
+        };
+
+        /*// prepare reviews
 		$class_reviews = array();
 		foreach ($students as $student) {
-			$studentData = block_exastud_get_class_student_data($class->id, $student->id);
+            $studentData = block_exastud_get_class_student_data($class->id, $student->id);
+            // class teacher review
 			if ($studentData->head_teacher) {
                 $headTeacher = $studentData->head_teacher;
             } else {
@@ -2874,41 +2944,18 @@ class printer {
                 }
             } else {
                 // get from report configurable
-                if (@$studentData->learn_social_behavior) {
+                if (@$studentData->learn_social_behavior || @($studentData->learning_and_social_behavior)) {
                     $reviews = ['head' => (object)[
                             'userid' => $headTeacher,
                             'teacher' => $headTeacherObject,
-                            'subject_title' => block_exastud_trans('de:Zuständiger Klassenlehrer'),
-                            'title' => block_exastud_trans('de:Zuständiger Klassenlehrer'), // subject title
-                            'review' => $studentData->learn_social_behavior
+                            'subject_title' => block_exastud_trans('de:Klassenlehrer'),
+                            'title' => block_exastud_trans('de:Klassenlehrer'),
+                            'review' => $studentData->learn_social_behavior ? $studentData->learn_social_behavior : $studentData->learning_and_social_behavior
                     ]];
                 } else {
                     $reviews = array();
                 }
             }
-
-            // 1. teacher by teacher:
-            /*foreach (block_exastud_get_class_teachers($class->id) as $class_teacher) {
-                if ($class_teacher->subjectid == BLOCK_EXASTUD_SUBJECT_ID_ADDITIONAL_HEAD_TEACHER) {
-                    continue;
-                }
-
-                if (isset($reviews[$class_teacher->userid])) {
-                    $reviews[$class_teacher->userid]->subject_title .= ', '.$class_teacher->subject_title;
-                    continue;
-                }
-
-                $class_teacher->review = g::$DB->get_field('block_exastudreview', 'review', [
-                        'studentid' => $student->id,
-                        'subjectid' => BLOCK_EXASTUD_SUBJECT_ID_LERN_UND_SOZIALVERHALTEN_VORSCHLAG,
-                        'periodid' => $class->periodid,
-                        'teacherid' => $class_teacher->userid,
-                ]);
-
-                if ($class_teacher->review) {
-                    $reviews[$class_teacher->userid] = $class_teacher;
-                }
-            }*/
 
             // 2. subject by subject
              $zu="
@@ -2965,7 +3012,7 @@ class printer {
                 $templateProcessor->setValue("subject#$rowi", $student_review->title, 1);
                 $templateProcessor->setValue("learn_and_sociale#$rowi", $student_review->review, 1);
             }
-        }
+        }*/
 
 		// save as a random file in temp file
 		$temp_file = tempnam($CFG->tempdir, 'exastud');
@@ -3978,6 +4025,106 @@ class printer {
         }
         return $result;
 	}
+
+	static function learn_sozial_for_report(&$templateProcessor, $tamplateid, $class, $students) {
+        $class_reviews = array();
+        foreach ($students as $student) {
+            $studentData = block_exastud_get_class_student_data($class->id, $student->id);
+            // class teacher review
+            if ($studentData->head_teacher) {
+                $headTeacher = $studentData->head_teacher;
+            } else {
+                $headTeacher = $class->userid; // class owner as head teacher
+            }
+            $headTeacherObject = block_exastud_get_user($headTeacher);
+            $headLernReview = $studentData->learning_and_social_behavior;
+            // get reviews from teachers
+            if (block_exastud_is_bw_active()) {
+                // get from main userdata
+                if (@$studentData->learning_and_social_behavior) {
+                    $reviews = ['head' => (object)[
+                            'userid' => $headTeacher,
+                            'teacher' => $headTeacherObject,
+                            'subject_title' => block_exastud_trans('de:Zuständiger Klassenlehrer'),
+                            'title' => block_exastud_trans('de:Zuständiger Klassenlehrer'), // subject title
+                            'review' => $headLernReview
+                    ]];
+                } else {
+                    $reviews = array();
+                }
+            } else {
+                // get from report configurable
+                if (@$studentData->learn_social_behavior || @($studentData->learning_and_social_behavior)) {
+                    $reviews = ['head' => (object)[
+                            'userid' => $headTeacher,
+                            'teacher' => $headTeacherObject,
+                            'subject_title' => block_exastud_trans('de:Klassenlehrer'),
+                            'title' => block_exastud_trans('de:Klassenlehrer'),
+                            'review' => $studentData->learn_social_behavior ? $studentData->learn_social_behavior : $studentData->learning_and_social_behavior
+                    ]];
+                } else {
+                    $reviews = array();
+                }
+            }
+
+            // 2. subject by subject
+            $zu="
+                ";//linebreak in word
+            foreach (block_exastud_get_class_subjects($class) as $class_subject) {
+                $steachers = block_exastud_get_class_teachers_by_subject($class->id, $class_subject->id);
+                $tempreview="";
+                foreach ($steachers as  $steacher){
+                    $class_subject->review = g::$DB->get_field('block_exastudreview', 'review', [
+                            'studentid' => $student->id,
+                            'subjectid' => $class_subject->id,
+                            'periodid' => $class->periodid,
+                            'teacherid' => $steacher->id,
+                    ]);
+                    if ($class_subject->review) {
+                        $tempreview .= "***".fullname($steacher)."***:<br>".$class_subject->review."<br><br>";
+                    }
+                }
+
+                if ($tempreview!="") {
+                    $tempreview=preg_replace('/^<br><br>/','',$tempreview);
+                    $class_subject->review=str_replace ("<br>",$zu,$tempreview);
+                    $reviews[$class_subject->id] = $class_subject;
+                }
+
+
+            }
+
+            if (count($reviews)) {
+                $class_reviews[$student->id] = $reviews;
+            }
+        }
+        if (!count($class_reviews)) {
+            // no any review = no any report
+            return null;
+        }
+
+        $templateProcessor->cloneBlock('studentblock', count($class_reviews), true);
+
+        $s = 0;
+        foreach ($class_reviews as $review_studentid => $student_reviews) {
+            $s++;
+            $student = block_exastud_get_user($review_studentid);
+            $templateProcessor->setValue("student_number", $s, 1);
+            $templateProcessor->setValue("student_name", fullname($student), 1);
+            $templateProcessor->setValue("birthday", block_exastud_get_date_of_birth($review_studentid), 1);
+
+            $templateProcessor->cloneRow('teacher', count($student_reviews));
+            $rowi = 0;
+            foreach ($student_reviews as $student_review) {
+                $rowi++;
+                //$teacher = block_exastud_get_user($student_review->userid);
+                $templateProcessor->setValue("teacher#$rowi", fullname($student_review->teacher ), 1);
+                $templateProcessor->setValue("subject#$rowi", $student_review->title, 1);
+                $templateProcessor->setValue("learn_and_sociale#$rowi", $student_review->review, 1);
+            }
+        }
+        return true;
+    }
 
 }
 
