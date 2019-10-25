@@ -1662,12 +1662,14 @@ class printer {
 		    foreach ($subjects as $subject) {
 		        $templateProcessor->setValue("subject", $subject->title, 1);
 
-                if (get_config('exacomp', 'assessment_topic_diffLevel') == 1 || get_config('exacomp', 'assessment_comp_diffLevel') == 1) {
-                    $templateProcessor->duplicateCol('compheader', 2);
-                    $templateProcessor->setValue("compheader", "Niveau", 1);
+		        if ($templateid == BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_ANLAGE_ZUM_LERNENTWICKLUNGSBERICHTALT_COMMON) {
+                    if (get_config('exacomp', 'assessment_topic_diffLevel') == 1 || get_config('exacomp', 'assessment_comp_diffLevel') == 1) {
+                        $templateProcessor->duplicateCol('compheader', 2);
+                        $templateProcessor->setValue("compheader", "Niveau", 1);
 
+                    }
+                    $templateProcessor->setValue("compheader", "Note", 1);
                 }
-                $templateProcessor->setValue("compheader", "Note", 1);
 
 		        foreach ($subject->topics as $topic) {
 		            $templateProcessor->cloneRowToEnd("topic");
