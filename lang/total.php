@@ -49,11 +49,11 @@ return [
 	],
 	'exastud:addinstance' => [
 		'Student Review auf Kursseite anlegen',
-		'add Exabis Student Review to the course',
+		'Add Exabis Student Review to the course',
 	],
 	'exastud:myaddinstance' => [
 		'Student Review auf Startseite anlegen',
-		'add Exabis Student Review on My home',
+		'Add Exabis Student Review on My home',
 	],
 
 
@@ -144,11 +144,11 @@ return [
 	],
     'attention_plan_will_change' => [
         'Bitte beachten Sie: Bei einer Änderung des Bildungsplans müssen alle Bewertungen erneut eingegeben werden.',
-        'Please note: If the education plan is changed, all ratings must be re-entered',
+        'Please note: if the education plan is changed, all ratings must be re-entered',
     ],
     'attention_template_will_change' => [
         'Bitte beachten Sie: Bei einer Änderung des Standard Zeugnisformulars wird für alle Schüler das Zeugnisformular geändert. Bestehende Formulareinstellungen wie z.B. Abgangszeugnis werden beibehalten.',
-        'Please note: Changing the standard certificate form will change the certificate form for all students.',
+        'Please note: changing the standard certificate form will change the certificate form for all students.',
     ],
 	'class_info' => [
 		'Klasseneinstellungen',
@@ -252,19 +252,19 @@ return [
 	],
 	'errorinsertingstudents' => [
 		'Fehler beim Hinzufügen eines Schülers im Kurs',
-		'Error when adding student to a course',
+		'Error occured when adding student to a course',
 	],
 	'errorinsertingcategories' => [
 		'Fehler beim Hinzufügen einer Kategorie im Kurs',
-		'Error when adding categorie to a course',
+		'Error occured when adding categorie to a course',
 	],
 	'errorremovingstudents' => [
 		'Fehler beim Löschen eines Schülers im Kurs',
-		'Error when removing student from a course',
+		'Error occured when removing student from a course',
 	],
 	'errorremovingcategories' => [
 		'Fehler beim Löschen von Kategorien aus einem Kurs',
-		'Error when removing categories from a course',
+		'Error occured when removing categories from a course',
 	],
 	'back' => [
 		'zurück',
@@ -284,11 +284,11 @@ return [
 	],
 	'starttime' => [
 		'Startdatum',
-		'Starttime',
+		'Start time',
 	],
 	'endtime' => [
 		'Enddatum',
-		'Endtime',
+		'End time',
 	],
 	'newperiod' => [
 		'Neuer Beurteilungszeitraum',
@@ -296,7 +296,7 @@ return [
 	],
 	'invalidperiodid' => [
 		'Falsche Beurteilungszeitraums-ID',
-		'Invalid period id',
+		'Invalid period-ID',
 	],
 	'certificate_issue_date' => [
 		'Zeugnisausgabedatum',
@@ -316,7 +316,7 @@ return [
 	],
     'class_title_for_report' => [
         'Klassenname im Zeugnis',
-        'Classname in Report'
+        'Class name in Report'
     ],
     'class_title_for_report_description' => [
         'Dieser Klassenname wird im Zeugnis angezeigt. Wenn hier kein Wert eingefügt wird, wird obige Klassenbezeichnung verwendet.',
@@ -324,7 +324,7 @@ return [
     ],
     'class_educationplan' => [
         'Bildungsplan',
-        'Education plan'
+        'Educational plan'
     ],
     'class_default_template' => [
         'Standard Zeugnisformular',
@@ -336,7 +336,7 @@ return [
 	],
 	'class_logo' => [
 		'Class logo',
-		'Klassenlogo',
+		'Class logo',
 	],
 	'school_logo' => [
 		'Schullogo',
@@ -344,7 +344,7 @@ return [
 	],
 	'school_logo_description' => [
 		'maximale Bildgröße: {$a->width}x{$a->height} Pixel',
-		'max size of Image: {$a->width}x{$a->height} Pixel',
+		'Maximum size of image: {$a->width}x{$a->height} pixels',
 	],
 	'class_delete' => [
 		'Klasse löschen',
@@ -424,23 +424,23 @@ return [
 	],
 	'errorupdatingstudent' => [
 		'Fehler beim Aktualisierung des Schülers',
-		'Error when updating student',
+		'Error occured when updating student',
 	],
 	'errorinsertingstudent' => [
 		'Fehler beim Einfügen des Schülers',
-		'Error when inserting student',
+		'Error occured when inserting student',
 	],
 	'nostudentstoreport' => [
 		'Kein Schüler zu beurteilen',
-		'No students to report.',
+		'No students to report',
 	],
 	'nostudentsfound' => [
 		'Keine Schüler gefunden.',
-		'No students found.',
+		'No students found',
 	],
 	'errorstarttimebeforeendtime' => [
 		'Eingabezeitraum {$a->description} hat ein Enddatum vor dem Startdatum!',
-		'Period {$a->description} has its starttime before its endtime!',
+		'Period {$a->description} has a start time before an end time!',
 	],
 	'printversion' => [
 		'Druckversion',
@@ -456,7 +456,7 @@ return [
 	],
 	'periodserror' => [
 		'Fehler bei der Konfiguration der Eingabezeiträume',
-		'Error at the configuration of the periods',
+		'Error with the configuration of periods',
 	],
 	'evaluation1' => [
 		'1 - unzureichend',
@@ -500,7 +500,7 @@ return [
 	],
 	'explainclassname' => [
 		'Hier können Sie den Klassennamen editieren und löschen',
-		'Here to edit the class name',
+		'Edit class name here',
 	],
 	'project_based_explainclassname' => [
 		'Hier können Sie den Projektnamen editieren',
@@ -528,7 +528,7 @@ return [
 	],
 	'name' => [
 		'Name',
-		'name',
+		'Name',
 	],
 	'periodreview' => [
 		'Bewertung für den Eingabezeitraum',
@@ -540,11 +540,11 @@ return [
 	],
 	'print' => [
 		'Drucken',
-		'print',
+		'Print',
 	],
 	'perioddesc' => [
 		'Beschreibung des Eingabezeitraums',
-		'description of the period: ',
+		'Description of the period: ',
 	],
 	'noperiods' => [
 		'Es gibt noch keinen Eingabezeitraum. Bitte wenden Sie sich an den Administrator.',
@@ -572,11 +572,11 @@ return [
     ],
     'hide_all' => [
             'alle ausblenden',
-            'hide all'
+            'Hide all'
     ],
     'show_all' => [
             'alle einblenden',
-            'show all'
+            'Show all'
     ],
     'report_delete' => [
         'Delete report: {$a}',
@@ -588,7 +588,7 @@ return [
     ],
     'report_selectdeselect_all' => [
             'Alles aus-/abwählen',
-            'select/deselect all',
+            'Select/Deselect all',
     ],
     'report_settings' => [
             'Berichtskonfiguration',
@@ -636,7 +636,7 @@ return [
     ],
     'report_settings_setting_grades_rules' => [
             'Delimeter \';\'',
-            'Delimeter \';\'',
+            'Delimiter \';\'',
     ],
     'report_settings_setting_year' => [
             'Schuljahr',
@@ -668,7 +668,7 @@ return [
     ],
     'report_settings_setting_focus' => [
             'Schwerpunkt',
-            'focus',
+            'Focus',
     ],
     'report_settings_setting_learnsocialbehavior' => [
             'Lern- u. Sozialverhalten',
@@ -696,11 +696,11 @@ return [
     ],
     'report_settings_setting_ags' => [
             'AGs',
-            'AGs',
+            'Team',
     ],
     'report_settings_setting_additional_params' => [
             'weitere Parameter',
-            'Additional params',
+            'Additional parameters',
     ],
     'report_settings_no' => [
             'nein',
@@ -744,7 +744,7 @@ return [
     ],
     'report_settings_button_add_additional_param' => [
             'Neuen Parameter hinzufügen',
-            'Add a new param',
+            'Add a new parameter',
     ],
     'report_settings_selectboxkey_fieldtitle' => [
             'Schlüssel',
@@ -880,11 +880,11 @@ return [
     ],
     'report_export_update_reports' => [
         'vorhandene Vorlagen aktualisieren',
-        'Update reports if exist',
+        'Update reports if existant',
     ],
     'report_export_update_files' => [
         'vorhandene Vorlage-Dateien aktualisieren',
-        'Update files if exist',
+        'Update files if existant',
     ],
     'report_import_templates' => [
         'Import',
@@ -912,7 +912,7 @@ return [
     ],
     'report_settings_upload_new_filetemplate_overwrite' => [
         'bestehende Datei überschreiben',
-        'Overwrite file if exists',
+        'Overwrite file if existant',
     ],
     'upload_new_templatefile' => [
         'Neue Vorlage hochladen',
@@ -940,7 +940,7 @@ return [
     ],
     'not_enough_data_for_report' => [
         'Für den Schüler/die Schülerin wurden noch keine Bewertungen für das Zeugnis erfasst!',
-        'Not enough data for report generation for selected students',
+        'Not enough data for generating reports for selected students',
     ],
     'review_table_part_subjects' => [
             'Eingaben als Fachlehrkraft',
@@ -961,7 +961,7 @@ return [
 
     'settings_only_learnsoziale' => [
             'nur überfachliche Kompetenzen erfassen',
-            'assessment of learning and social behavior only',
+            'Assessment of learning and social behavior only',
     ],
     'settings_shoolname' => [
                 'Lernentwicklungsbericht: Schulname',
@@ -977,15 +977,15 @@ return [
     ],
     'settings_edustandarts' => [
                 'Bildungsstandards',
-                'Educational standards',
+                'Fulfillable educational standards',
     ],
     'settings_edustandarts_description' => [
                 'Liste, mit Kommata getrennt',
-                'comma seperated list',
+                'Comma seperated list',
     ],
     'settings_bw_reports' => [
                 'Gemeinschaftsschulen Berichte',
-                'Community schools templates for reports',
+                'Use interdenominational schools reports',
     ],
     'settings_exacomp_verbeval' => [
                 'Exabis Kompetenzraster Notenverbalisierung verwenden',
@@ -1005,7 +1005,7 @@ return [
     ],
     'settings_grade_interdisciplinary_competences' => [
         'show \'Interdisciplinary competences\' for class teacher',
-        'überfachliche Komptenzen für Klassenlehrer freischalten',
+        'activate interdisciplinary competences for class teacher',
     ],
     'report_learn_and_sociale' => [
             'Lern- und Sozialverhalten',
@@ -1013,7 +1013,7 @@ return [
     ],
     'report_cross_competences' => [
             'Überfachliche Kompetenzen',
-            'Cross competences',
+            'Interdisciplinary competences',
     ],
     'report_other_report_fields' => [
             'Weitere Daten/Formularfelder',
@@ -1046,7 +1046,7 @@ return [
 
     'not_assigned' => [
         'nicht zugeordnet',
-        'not assigned',
+        'Not assigned',
     ],
 
 	'competencies' => [
@@ -1063,7 +1063,7 @@ return [
 	],
     'last_period' => [
         'letztes Halbjahr:',
-        'last period:',
+        'Last period:',
     ],
     'periods_incorrect' => [
         'Eingabe-Periode nicht korrekt',
@@ -1071,19 +1071,19 @@ return [
     ],
     'suggestions_from_exacomp' => [
         'Vorschläge aus Exacomp',
-        'Suggestions from Exacomp',
+        'Grade suggestions from competence grid (exacomp)',
     ],
     'grade_and_difflevel' => [
         'Note und Niveau',
-        'Grade and Difficulty level'
+        'Grade and difficulty level'
     ],
     'load_last_period' => [
         'Eingaben von der letzten Periode/Halbjahr übernehmen',
-        'load last period',
+        'Load last period',
     ],
     'de:Daten der letzten Periode/Halbjahr wurden übernommen' => [
         null,
-        'last period is adapted',
+        'Last period is adapted',
     ],
 	'grading' => [
 		'Bewertungsskala',
@@ -1099,23 +1099,23 @@ return [
 	],
     'de:Lernentwicklungsbericht: Schulname' => [
         null,
-        'report: name of organization',
+        'Report: name of organization',
     ],
     'de:Lernentwicklungsbericht: Ort' => [
         null,
-        'report: city',
+        'Report: city',
     ],
     'de:Bildungsstandards' => [
         null,
-        'educational standards',
+        'Fulfillable educational standards',
     ],
     'de:Liste, mit Kommata getrennt' => [
         null,
-        'comma seperated list',
+        'Comma seperated list',
     ],
     'de:Lernentwicklungsbericht: Zeugnisausgabedatum' => [
         null,
-        'report: date',
+        'Report: date',
     ],
     'delete_class_only_without_users' => [
         'Es können nur Klassen ohne Schüler gelöscht werden',
@@ -1123,11 +1123,11 @@ return [
     ],
     'force_class_to_delete' => [
         'Es können nur Klassen ohne Schüler gelöscht werden. Klassen, die durch ein Häkchen zur Löschung freigegeben sind, können vom Administrator gelöscht werden.',
-        'Only classes without students can be deleted. But you can mark this class to deleting by site-admin'
+        'Only classes without students can be deleted. But you can mark this class to deleting by site admin'
     ],
     'already_marked' => [
         'diese Klasse ist bereits zur Löschung vorgemerkt',
-        'This class already marked'
+        'This class is already marked'
     ],
     'mark_to_delete_go' => [
         'Markieren zur Löschung durch den Administrator.',
@@ -1143,7 +1143,7 @@ return [
     ],
     'class_marked_as_todelete_hover' => [
             'Diese Klasse ist zum Löschen durch den Administrator vorgemerkt. Um die Vormerkung zu löschen hier klicken.',
-            'This class marked to delete by site-admin. Click to redo deleting request.',
+            'This class marked to delete by site admin. Click to redo deleting request.',
     ],
     'interdisciplinary_competences' => [
         'Überfachliche Kompetenzen',
@@ -1166,11 +1166,11 @@ return [
 	],
 	'settings_project_based_assessment' => [
 		'Beurteilung auf Projekt-Basis',
-		'Project-based assessment',
+		'Project based assessment',
 	],
 	'settings_project_based_assessment_body' => [
 		'Diese Einstellung erlaubt es statt Klassen Projekte zu verwalten und zu beurteilen',
-		'This setting allows you to use project-based assessment instead of class-assessment',
+		'This setting allows you to use project based assessment instead of class assessment',
 	],
 	'blocksettings' => [
 		'Deckblattdaten'
@@ -1205,7 +1205,7 @@ return [
 	],
 	'settings_competence_evalpoints_limit_description' => [
 		'Wenn als Bewertungsschema "Punkte" gewählt ist.',
-        'If exastud/competence_evaltype is Points',
+        'If value of exastud/competence_evaltype is based upon points',
 	],
 	'settings_eval_setup' => [
 		'Bewertungsschema Texteintrag',
@@ -1229,22 +1229,22 @@ return [
     ],
     'settings_a2fa_requirement_user_a2fa' => [
         'A2fa für Benutzer erforderlich (z.B. Lehrernetz)',
-        'A2fa für Benutzer erforderlich (z.B. Lehrernetz)',
+        'A2fa required for user',
     ],
     'settings_a2fa_requirement_a2fa_timeout' => [
         'A2fa für Benutzer erforderlich und erneute A2fa für LEB notwendig (z.B. päd. Netz)',
-        'A2fa für Benutzer erforderlich und erneute A2fa für LEB notwendig (z.B. päd. Netz)',
+        'A2fa required for user - timeout',
     ],
 
 
 	// === grp3 ===
 	'total' => [
 		'Gesamtpunkte',
-		'total score',
+		'Total score',
 	],
 	'project_based_total' => [
 		'Gesamtpunkte',
-		'total score',
+		'Total score',
 	],
 	/*
 	'subjects_taught_by_me' => [
@@ -1254,11 +1254,11 @@ return [
 	*/
 	'project_based_upload_picture' => [
 		null,
-		'You can upload a logo for a project-specific report',
+		'You can upload a logo for a project specific report',
 	],
 	'project_based_errorinsertingclass' => [
 		null,
-		'Error when inserting project',
+		'Error occured while inserting project',
 	],
 
     'html_report' => [
@@ -1357,15 +1357,15 @@ return [
     ],
     'event_educationplancreated_name' => [
             'Education plan created',
-            'Education plan created'
+            'Educational plan created'
     ],
     'event_educationplanupdated_name' => [
             'Education plan updated',
-            'Education plan updated'
+            'Educational plan updated'
     ],
     'event_educationplandeleted_name' => [
             'Education plan deleted',
-            'Education plan deleted'
+            'Educational plan deleted'
     ],
     'event_subjectcreated_name' => [
             'Subject created',
@@ -1389,11 +1389,11 @@ return [
     ],
     'event_studentreviewcategorychanged_name' => [
             'Student category review changed',
-            'Student category review changed'
+            'Student category assessment changed'
     ],
     'event_studentreviewchanged_name' => [
             'Student review changed',
-            'Student review changed'
+            'Student assessment changed'
     ],
     'event_classownerupdated_name' => [
             'Class teacher updated',
@@ -1422,35 +1422,35 @@ return [
     ],
     'classteacher_grade_interdisciplinary_competences' => [
         'Klassenlehrkraft kann überfachliche Kompetenzen erfassen',
-        'Class teacher can edit cross-competences'
+        'Class teacher can edit interdisciplinary competences'
     ],
     'subjectteacher_grade_interdisciplinary_competences' => [
         'Fachlehrer kann überfachliche Kompetenzen erfassen',
-        'Subject teacher can edit cross-competences'
+        'Subject teacher can edit interdisciplinary competences'
     ],
     'classteacher_grade_learn_and_social_behaviour' => [
         'Klassenlehrkraft kann Lern- und Sozialverhalten erfassen',
-        'Class teacher can edit Learning and social behaviour'
+        'Class teacher can edit learning and social behaviour'
     ],
     'subjectteacher_grade_learn_and_social_behaviour' => [
         'Fachlehrer kann Lern- und Sozialverhalten erfassen',
-        'Subject teacher can edit Learning and social behavior '
+        'Subject teacher can edit learning and social behavior '
     ],
     'class_settings_can_edit_crosscompetencies' => [
         'kann überfachliche Kompetenzen erfassen',
-        'can cross-competences edit:'
+        'can edit interdisciplinary competences'
     ],
     'class_settings_can_edit_learnsocial' => [
         'kann Lern- und Sozialverhalten erfassen:',
-        'can Learning and social edit:'
+        'can edit learning and social competences'
     ],
     'class_settings_class_teacher' => [
         'Klassenlehrkraft',
-        'class teacher'
+        'Class teacher'
     ],
     'class_settings_subject_teacher' => [
         'Fachlehrer',
-        'subject teacher'
+        'Subject teacher'
     ],
 
     'backup_class_protection' => [
@@ -1495,7 +1495,7 @@ return [
     ],
     'cross_competences_for_head' => [
             'Überfachliche Kompetenzen',
-            'Cross competences',
+            'Interdisciplinary competences',
     ],
     'learn_and_sociale_for_head' => [
             'Lern- und Sozialverhalten',
@@ -1507,7 +1507,7 @@ return [
     ],
     'textarea_max' => [
             'Max.',
-            'Max.',
+            'Maximum',
     ],
     'textarea_rows' => [
             'Zeilen',
@@ -1519,19 +1519,19 @@ return [
     ],
     'textarea_charsleft' => [
             'Zeichen verfügbar',
-            'characters left',
+            'Characters left',
     ],
     'textarea_linestomuch' => [
             'Zeilen zuviel',
-            'lines to much',
+            'Lines too much',
     ],
     'textarea_charstomuch' => [
             'Zeichen zuviel',
-            'chars to much',
+            'Characters too much',
     ],
     'textarea_maxchars' => [
             'Gesamtzeichen',
-            'all characters',
+            'All characters',
     ],
     'attention_send_message_to_classteacher' => [
         'Bitte <a id="exastud_link_to_class_teacher" href="{$a->messagehref}" target="_blank">benachrichtigen</a> Sie die neue Klassenlehrkraft über die Neuzuteilung.',
@@ -1547,7 +1547,7 @@ return [
     ],
     'subject_category_m' => [
         'maßgebliches Fach',
-        'relevant Subject'
+        'Relevant Subject'
     ],
     //'subject_category_m_rs' => [
     //    'maßgebliches Fach',
@@ -1555,7 +1555,7 @@ return [
     //],
     'subject_category_b' => [
         'beste Note of "Fächer"',
-        'best grade'
+        'Best grade'
     ],
     'filter_fieldset' => [
         'Filter',
@@ -1571,7 +1571,7 @@ return [
     ],
     'filter_empty' => [
         'keine',
-        'empty',
+        'Empty',
     ],
     'filter_category' => [
         'Kategorie',
@@ -1595,7 +1595,7 @@ return [
     ],
     'temporary_hidden' => [
         'vorübergehend deaktiviert',
-        'temporarily unavailable',
+        'Temporarily unavailable',
     ],
     'add_class' => [
         'Klasse hinzufügen',
@@ -1603,11 +1603,11 @@ return [
     ],
     'copy_class_from_last_period' => [
         'Klasse vom vorigen Eingabezeitraum kopieren',
-        'Copy Class from last Period',
+        'Copy class from last period',
     ],
     'import_class_from_backup' => [
         'Klasse von Sicherung wiederherstellen',
-        'Import Class from Backup',
+        'Import class from backup',
     ],
     'only_profilesubject_teacher' => [
         'Nur Profilfach-Lehrkräfte können diesen Eintrag bearbeiten.',
@@ -1665,15 +1665,15 @@ return [
 
     'leaders' => [
         'Unterzeichnende',
-        'sign'
+        'Signatures'
     ],
     'schoollieder_fieldtitle' => [
         'Schulleiterin',
-        'School director',
+        'School principal',
     ],
     'groupleader_fieldtitle' => [
         'Lerngruppenbegleiter/-In',
-        'Group head',
+        'Learning group tutor',
     ],
     'auditleader_fieldtitle' => [
         'Vorsitzende(r) des Prüfungsausschusses',
@@ -1681,20 +1681,20 @@ return [
     ],
     'classleader_fieldtitle' => [
         'Klassenlehrer/-In',
-        'Class head',
+        'Head of class',
     ],
 
     'subjectteacher_change_button' => [
         'neue Lehrerkraft zuordnen und Bewertungen übernehmen',
-        'match a new teacher and transmit his grading'
+        'Match a new teacher and transmit his grading'
     ],
     'form_subject_teacher_form_header' => [
         'Fach an andere Lehrkraft übertragen',
-        'Transmit subject to other teacher'
+        'Transfer subject to other teacher'
     ],
     'form_subject_teacher_form_description' => [
         'Sie können das Fach {$a->subjecttitle} einer anderen Lehrkraft übertragen. Die bisherige Lehrkraft ist {$a->currentteacher_name}. Alle Eingaben und Bewertungen von {$a->currentteacher_name} werden der neuen Lehrkraft übertragen.',
-        'You can transmit the subject {$a->subjecttitle} to another teacher. The current teacher is {$a->currentteacher_name}. All gradings from {$a->currentteacher_name} are transmitted to new teacher.'
+        'You can transfer the subject {$a->subjecttitle} to another teacher. The current teacher is {$a->currentteacher_name}. All gradings from {$a->currentteacher_name} are transferred to new teacher.'
     ],
     'form_subject_teacher_form_select_new_teacher' => [
         'Neue Lehrkraft für {$a->subjecttitle}',
@@ -1702,11 +1702,11 @@ return [
     ],
     'form_subject_teacher_form_select_new_teacher_docu' => [
         'In der Auswahl sind Benutzer aufgelistet, welche in diversen Zusammenhängen die Lehrerrolle innehaben (Klassenlehrer, Kurslehrer, Klassenersteller, Fachlehrer, zusätzlicher Klassenlehrer, Projekt- oder bilungualer Lehrer)',
-        'In this Dropdown are Users listed, who have teacher role in some context (classteacher, teacher in this course, classowner, teacher in a subject, additional class teacher, teacher for project, bilingual teacher)',
+        'In this Dropdown Users are listed, who have a teacher role in some context (classteacher, teacher in this course, classowner, teacher in a subject, additional class teacher, teacher for project, bilingual teacher)',
     ],
     'form_subject_teacher_form_save' => [
         'Lehrkraft jetzt übertragen.',
-        'Transmit subject now.',
+        'Transfer subject now.',
     ],
 
     'button_interdisciplinary_skills' => [
@@ -1726,15 +1726,15 @@ return [
 
     'this_category_related_to_classes' => [
             'Diese Kategorie wird in folgenden Klassen verwendet',
-            'This category is related to classe',
+            'This category is related to class',
     ],
     'this_category_reviewed_for_student' => [
             'Zu dieser Kategorie gibt es Schülerbeurteilungen',
-            'This category has reviewed for some students',
+            'This category has been reviewed for some students',
     ],
     'info_category_without_cross_competences' => [
             'if category is {$a->categorytitles} - this report does not have &#8221;Überfachliche Kompetenzen&#8220; ',
-            'if category is {$a->categorytitles} - this report does not have &#8221;Überfachliche Kompetenzen&#8220; ',
+            'if category is {$a->categorytitles} - this report does not have &#8221;interdisciplinary competences&#8220; ',
     ],
     'donotleave_page_message' => [
             'You have unsaved changes on this page. Do you want to leave this page and discard your changes or stay on this page?',
@@ -1742,11 +1742,11 @@ return [
     ],
     'please_enter_group_name' => [
         'Bitte geben Sie die Klassen/Lerngruppenbezeichnung ein!',
-        'Please enter the class / group name!'
+        'Please enter the class/group name!'
     ],
     'mixed_bw_nonbw_class_error_2' => [
         'Template for class not found. Probably you want to use class for active "exastud | bw_active"',
-        'Template for class not found. Probably you want to use class for active "exastud | bw_active"',
+        'Template for class not found. Please check the option of interdenominational schools - "exastud | bw_active"',
     ],
     'report_settings_userdata_wrong_user_parameter' => [
         'User profile field \'{$a->fieldname}\' does not exist. Create it or change value to existing field.',
@@ -1762,7 +1762,7 @@ return [
     ],
     'report_settings_userdata_wrong_user_parameter_in_reports_list' => [
         'This report has wrong userdata marker. Please edit this report to resolve this error.',
-        'This report has wrong userdata marker. Please edit this report to resolve this error.',
+        'This report has wrong userdata markers. Please edit this report to resolve this error.',
     ],
     'report_edit_userprofile' => [
         'Edit user profile',
@@ -1774,7 +1774,7 @@ return [
     ],
     'report_edit_userprofile_noaccess' => [
         'You have not privilege to edit user\'s profile',
-        'You have not privilege to edit user\'s profile',
+        'You do not have the rights to edit user\'s profile',
     ],
     'report_settings_group_title_default' => [
         'Standardeinstellung',
