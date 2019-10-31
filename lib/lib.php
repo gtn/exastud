@@ -2621,7 +2621,7 @@ function block_exastud_get_default_templates($templateid = null, $common = true)
                 ],
                 'default_report' => [
                         'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_DEFAULT_REPORT_COMMON,
-                        'name' => 'überfachliche Kompetenzen und Lern- und Sozialverhalten',
+                        'name' => 'Lern- und Sozialverhalten, überfachliche Kompetenzen',
                         'file' => 'gesamtzeugnis',
                         //'category' => 'Default',
                         'year' => '1',

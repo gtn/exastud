@@ -1488,13 +1488,13 @@ function xmldb_block_exastud_upgrade($oldversion = 0) {
         upgrade_block_savepoint(true, 2019102401, 'exastud');
     }
 
-    if ($oldversion < 2019102402) {
+    if ($oldversion < 2019103100) {
         if (!block_exastud_is_bw_active()) {
             foreach ([104] as $rid) {
                 block_exastud_fill_reportsettingstable($rid, true);
             }
         }
-        upgrade_block_savepoint(true, 2019102402, 'exastud');
+        upgrade_block_savepoint(true, 2019103100, 'exastud');
     }
 
     block_exastud_insert_default_entries();
