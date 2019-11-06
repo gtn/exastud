@@ -699,7 +699,7 @@ class student_other_data_form extends moodleform {
                     );
                     break;
                 case 'userdata':
-                    $tempObj = new stdClass();
+                    $tempObj = null;//new stdClass();
                     $realvalue = block_exastud_get_report_userdata_value($tempObj, '---', $student->id, $input['userdatakey']);
                     $url = block_exastud_global_useredit_link($student->id, $courseid);
 
