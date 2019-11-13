@@ -109,7 +109,8 @@ function block_exastud_print_period($courseid, $period, $type, $openclass) {
 				// unlocked
 			} else {
 				// locked
-				unset($reviewsubjects[$key]);
+                // TODO: check. With commented this part it is possible to make a reaquest to unlock
+				//unset($reviewsubjects[$key]);
 			}
 		}
 	}
