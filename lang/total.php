@@ -158,6 +158,10 @@ return [
 		'Sicherung der Klasse erstellen',
 		'Backup assessment data of class',
 	],
+	'export_class_password_message' => [
+		'Bitte notieren Sie sich das Passwort "<strong>{$a}</strong>", bevor Sie fortfahren',
+		'Please remember the password "<strong>{$a}</strong>" before proceeding',
+	],
 	'students' => [
 		'Schülerinnen und Schüler',
 		'Students',
@@ -1004,8 +1008,8 @@ return [
             'Automatically generated ID of this Exastud installation. This ID can not be changed',
     ],
     'settings_grade_interdisciplinary_competences' => [
-        'show \'Interdisciplinary competences\' for class teacher',
-        'activate interdisciplinary competences for class teacher',
+        'Überfachliche Kompetenzen für Klassenlehrkraft freischalten',
+        'Show interdisciplinary competences to class teachers',
     ],
     'report_learn_and_sociale' => [
             'Lern- und Sozialverhalten',
@@ -1051,7 +1055,7 @@ return [
 
 	'competencies' => [
 		'Überfachliche Kompetenzen',
-		'Competences',
+		'Interdisciplinary competences',
 	],
 	'Note' => [
 		'Note',
@@ -1803,6 +1807,78 @@ return [
     'parent' => [
         'Parent',
         'Parent',
+    ],
+    'allow_review_until' => [
+        'bis',
+        'until',
+    ],
+    'allow_review_admin_approved' => [
+        'approved',
+        'approved',
+    ],
+    'allow_review_admin_approved_for_all' => [
+        'für alle',
+        'for all',
+    ],
+    'allow_review_make_request' => [
+        'make a request to admin for unlock editing',
+        'make a request to admin for unlock editing',
+    ],
+    'allow_review_make_request_already' => [
+        'already requested for unlock editing',
+        'already requested for unlock editing',
+    ],
+    'admin_requests' => [
+        'System requests',
+        'System requests',
+    ],
+    'admin_requests_class_delete_list' => [
+        'Classes delete',
+        'Classes delete',
+    ],
+    'admin_requests_class_title' => [
+        'Klasse',
+        'Class',
+    ],
+    'admin_requests_class_teacher' => [
+        'Klassenlehrkraft',
+        'Class teacher',
+    ],
+    'admin_requests_class_delete' => [
+        'Löschen',
+        'Delete',
+    ],
+    'admin_requests_unlock_review_list' => [
+        'Unlock to review',
+        'Unlock to review',
+    ],
+    'admin_requests_unlock_requested_teacher' => [
+        'request for teacher',
+        'request for teacher',
+    ],
+    'admin_requests_unlock_request_until' => [
+        'bis',
+        'until',
+    ],
+    'admin_requests_unlock_approve_button' => [
+        'Approve',
+        'Approve',
+    ],
+    'admin_requests_unlock_prolong_button' => [
+        'Prolong',
+        'Prolong',
+    ],
+    'admin_requests_unlock_delete_button' => [
+        'Refuse',
+        'Refuse',
+    ],
+    'admin_requests_unlock_request_created' => [
+        'Request created',
+        'Request created',
+    ],
+    'admin_requests_no_any' => [
+        'No any requests',
+        'No any requests',
     ],
 
 ];

@@ -77,6 +77,13 @@ $strclassreview = block_exastud_get_string('reviewclass');
 $strreview = block_exastud_get_string('review');
 
 $actPeriod = block_exastud_check_active_period();
+// if class is from old period - check access for teacher and change $actPeriod to needed
+if ($class->periodid != $actPeriod->id) {
+    $unlocked = block_exastud_teacher_is_unlocked_for_old_class_review($classid, $USER->id, BLOCK_EXASTUD_DATA_ID_UNLOCKED_TEACHERS);
+    if ($unlocked) {
+        $actPeriod = block_exastud_get_period($class->periodid);
+    }
+}
 
 switch ($type) {
     case BLOCK_EXASTUD_DATA_ID_CROSS_COMPETENCES:
@@ -188,8 +195,8 @@ $studentform = new student_other_data_form($PAGE->url, [
     'temp_formdata' => $olddata,
     //'cross_review' => !block_exastud_is_bw_active() ? true : false,
     //'cross_categories' => (!block_exastud_is_bw_active() ?  block_exastud_get_class_categories($classid) : null),
-    'cross_review' => $type == BLOCK_EXASTUD_DATA_ID_CROSS_COMPETENCES && block_exastud_can_edit_crosscompetences_classteacher($classid) ? true : false,
-    'cross_categories' => $type == BLOCK_EXASTUD_DATA_ID_CROSS_COMPETENCES && block_exastud_can_edit_crosscompetences_classteacher($classid) ?  block_exastud_get_class_categories($classid) : null,
+    'cross_review' => !block_exastud_is_bw_active() && $type == BLOCK_EXASTUD_DATA_ID_CROSS_COMPETENCES && block_exastud_can_edit_crosscompetences_classteacher($classid) ? true : false,
+    'cross_categories' => !block_exastud_is_bw_active() && $type == BLOCK_EXASTUD_DATA_ID_CROSS_COMPETENCES && block_exastud_can_edit_crosscompetences_classteacher($classid) ?  block_exastud_get_class_categories($classid) : null,
 ]);
 
 if ($fromform = $studentform->get_data()) {

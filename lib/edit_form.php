@@ -818,7 +818,10 @@ class student_other_data_form extends moodleform {
             }
         }
         if ($this->_customdata['type'] != BLOCK_EXASTUD_DATA_ID_CROSS_COMPETENCES
-                || ($this->_customdata['type'] == BLOCK_EXASTUD_DATA_ID_CROSS_COMPETENCES && block_exastud_can_edit_crosscompetences_classteacher($classid))) {
+                //|| ($this->_customdata['type'] == BLOCK_EXASTUD_DATA_ID_CROSS_COMPETENCES && block_exastud_can_edit_crosscompetences_classteacher($classid))
+                || ($this->_customdata['type'] == BLOCK_EXASTUD_DATA_ID_CROSS_COMPETENCES && !block_exastud_is_bw_active() && @$classid && block_exastud_can_edit_crosscompetences_classteacher($classid))
+                || (@$this->_customdata['class_review'])
+        ) {
             $this->add_action_buttons(false);
         }
 	}

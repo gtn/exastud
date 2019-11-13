@@ -44,7 +44,7 @@ function block_exastud_randomPassword() {
     return implode($pass); //turn the array into a string
 }
 
-if (block_exastud_get_plugin_config('export_class_password') && !$secret) {
+if (/*block_exastud_get_plugin_config('export_class_password') &&*/ !$secret) {
 	$url = "/blocks/exastud/export_class.php?courseid=".$courseid.'&classid='.$classid;
 	$PAGE->set_url($url);
 
@@ -52,7 +52,7 @@ if (block_exastud_get_plugin_config('export_class_password') && !$secret) {
 	echo $output->header(['configuration_classes', 'class_info'], ['class' => $class]);
 
 	$secret = block_exastud_randomPassword();
-	echo block_exastud_trans('de:Bitte notieren Sie sich das Passwort "{$a}", bevor Sie fortfahren', $secret);
+	echo block_exastud_get_string('export_class_password_message', null, $secret);
 	echo '<br/><br/>';
 
     echo $output->link_button('export_class.php?courseid='.$COURSE->id.'&classid='.$class->id.'&secret='.$secret,
@@ -134,13 +134,14 @@ $file = tempnam($CFG->tempdir, "zip");
 
 require_once($CFG->libdir.'/filelib.php');
 
-if (block_exastud_get_plugin_config('export_class_password')) {
+//if (block_exastud_get_plugin_config('export_class_password')) {
+// encrypt the content
 	$iv = openssl_random_pseudo_bytes(openssl_cipher_iv_length('aes-256-cbc'));
 	$data->iv = base64_encode($iv);
 	$data->encrypted = base64_encode(openssl_encrypt(json_encode($privateData), 'aes-256-cbc', $secret, OPENSSL_RAW_DATA, $iv));
-} else {
+/*} else {
 	$data = (object)array_merge((array)$data, (array)$privateData);
-}
+}*/
 
 file_put_contents($file, gzencode(json_encode($data, JSON_PRETTY_PRINT)));
 send_temp_file($file, 'backup_exastud_class_'.clean_filename($class->title).'_'.date('Y-m-d').'.gz');

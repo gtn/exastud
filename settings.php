@@ -441,7 +441,7 @@ if ($ADMIN->fulltree) {
     // template configurations
     //$settings->add(new block_exastud_link_to('link_to_settings_report_templates', block_exastud_get_string('report_settings_edit'), '', '', '/blocks/exastud/report_settings.php', block_exastud_get_string('report_settings_edit'), [], ['class' => 'btn btn-default', 'target' => '_blank']));
 
-    $settings->add(new admin_setting_configcheckbox('exastud/grade_interdisciplinary_competences', block_exastud_get_string('settings_grade_interdisciplinary_competences'), '', 0));
+    //$settings->add(new admin_setting_configcheckbox('exastud/grade_interdisciplinary_competences', block_exastud_get_string('settings_grade_interdisciplinary_competences'), '', 0));
 
 	if (block_exastud_is_a2fa_installed()) {
 		$description = '';
@@ -466,7 +466,7 @@ if ($ADMIN->fulltree) {
                                     'maxfiles' => 1,
                                     'accepted_types' => array('web_image'))));
 
-	$settings->add(new admin_setting_configcheckbox('exastud/export_class_password', block_exastud_get_string('backup_class_protection'), '', 0));
+	//$settings->add(new admin_setting_configcheckbox('exastud/export_class_password', block_exastud_get_string('backup_class_protection'), '', 0));
 
 	// mysource
     // generate source id if it is not existing yet

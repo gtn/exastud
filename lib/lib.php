@@ -42,6 +42,7 @@ const BLOCK_EXASTUD_DATA_ID_LERN_UND_SOZIALVERHALTEN = 'learning_and_social_beha
 const BLOCK_EXASTUD_DATA_ID_CROSS_COMPETENCES = 'cross_competences';
 const BLOCK_EXASTUD_DATA_ID_BILINGUALES = 'bilinguales';
 const BLOCK_EXASTUD_DATA_ID_UNLOCKED_TEACHERS = 'unlocked_teachers';
+const BLOCK_EXASTUD_DATA_ID_UNLOCKED_TEACHERS_TO_APPROVE = 'unlocked_teachers_to_approve';
 const BLOCK_EXASTUD_DATA_ID_PRINT_TEMPLATE = 'print_template'; // TODO: change to id of 'block_exastudreportsettings' record?
 const BLOCK_EXASTUD_DATA_ID_CERTIFICATE = 'certificate';
 const BLOCK_EXASTUD_DATA_ID_ADDITIONAL_INFO = 'additional_info';
@@ -494,8 +495,8 @@ function block_exastud_get_teacher_classes($userid) {
     return array_merge($ownclasses, $classesforteaching, $classesforprojects);
 }
 
-function block_exastud_get_head_teacher_lern_und_sozialverhalten_classes() {
-	$classes = block_exastud_get_head_teacher_classes_all(block_exastud_get_active_or_next_period()->id);
+function block_exastud_get_head_teacher_lern_und_sozialverhalten_classes($periodid = null) {
+	$classes = block_exastud_get_head_teacher_classes_all($periodid);
 
 	$ret = [];
 	foreach ($classes as $class) {
@@ -534,8 +535,16 @@ function block_exastud_get_review_subjects($periodid) {
 function block_exastud_get_review_class($classid, $subjectid) {
 	global $DB, $USER;
 	if ($subjectid == BLOCK_EXASTUD_SUBJECT_ID_LERN_UND_SOZIALVERHALTEN) {
-		$classes = block_exastud_get_head_teacher_lern_und_sozialverhalten_classes();
-
+	    $class = block_exastud_get_class($classid);
+	    $periodid = $class->periodid;
+        if ($periodid != block_exastud_get_active_or_next_period()->id) {
+            // check to unlock editing
+            if (!block_exastud_teacher_is_unlocked_for_old_class_review($classid, $USER->id, BLOCK_EXASTUD_DATA_ID_UNLOCKED_TEACHERS)) {
+                // if the user is NOT unlocked - set period as current
+                $periodid = block_exastud_get_active_or_next_period()->id;
+            }
+        }
+		$classes = block_exastud_get_head_teacher_lern_und_sozialverhalten_classes($periodid);
 		return isset($classes[$classid]) ? $classes[$classid] : null;
 	//} else if ($subjectid == BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_16_ZERTIFIKAT_FUER_PROFILFACH) {
 	} else if ($subjectid == BLOCK_EXASTUD_DATA_ID_CERTIFICATE) {
@@ -2101,7 +2110,7 @@ function block_exastud_get_bildungsstandards() {
 	return $bildungsstandards;
 }
 
-function block_exastud_get_class_title($classid) {
+function block_exastud_get_class_title($classid, $periodtype, $unlocked) {
     global $USER, $CFG;
 	$class = block_exastud_get_class($classid);
 
@@ -2109,6 +2118,24 @@ function block_exastud_get_class_title($classid) {
     // Mark own classes.
     if ($class->userid == $USER->id) {
         $classTitle .= '&nbsp;<img class="exastud-my-class" src="'.$CFG->wwwroot.'/blocks/exastud/pix/star.png" width="16" height="16" title="'.block_exastud_get_string('it_is_my_class').'" />';
+        if ($periodtype == 'last') {
+            if (!$unlocked) {
+                if (block_exastud_teacher_is_unlocked_for_old_class_review($classid, $USER->id, BLOCK_EXASTUD_DATA_ID_UNLOCKED_TEACHERS_TO_APPROVE)) {
+                    // already requested
+                    $classTitle .= '&nbsp;<img class="" src="'.$CFG->wwwroot.'/blocks/exastud/pix/unlock_review_done.png" width="20" height="20" title="'.block_exastud_get_string('allow_review_make_request_already').'" />';
+                } else {
+                    // not requested yet
+                    $classTitle .= '&nbsp;';
+                    $params = array(
+                        'courseid' => optional_param('courseid', 1, PARAM_INT),
+                        'action' => 'unlock_request',
+                        'classid' => $classid
+                    );
+                    $classTitle .= html_writer::link(new moodle_url('/blocks/exastud/review.php', $params),
+                            html_writer::tag("img", '', array('src' => 'pix/unlock_review.png')), array('title' => block_exastud_get_string('allow_review_make_request')));
+                }
+            }
+        }
     } else if ($head_teacher = g::$DB->get_record('user', array('id' => $class->userid, 'deleted' => 0))) {
 		$classTitle .= ' ('.fullname($head_teacher).')';
 	}
@@ -6669,6 +6696,85 @@ function block_exastud_fill_crosscompetece_reviews(&$returnArray, $classid, $tea
                             "categorysource" => $crosscategory->source));
         }
     }
+}
+
+function block_exastud_update_allow_review_times($classid = null, $target = BLOCK_EXASTUD_DATA_ID_UNLOCKED_TEACHERS) {
+    global $DB;
+    if ($classid) {
+        $teachers = (array) json_decode(block_exastud_get_class_data($classid, $target), true);
+        if (count($teachers)) {
+            $changed = false;
+            foreach ($teachers as $teacherid => $teacherData) {
+                if ($teacherData < time()) {
+                    $changed = true;
+                    unset($teachers[$teacherid]);
+                }
+            }
+            if ($changed) {
+                block_exastud_set_class_data($classid, $target, json_encode($teachers));
+            }
+        }
+    } else {
+        // update all classes
+        $sql = 'SELECT d.* 
+              FROM {block_exastuddata} d 
+              WHERE d.classid > 0 
+                AND d.name = ?
+                AND value != ? ';
+        $classesData = $DB->get_records_sql($sql, [$target, '']);
+        foreach ($classesData as $cData) {
+            $changed = false;
+            $times = (array) json_decode($cData->value);
+            foreach($times as $teacherId => $time) {
+                if ($time < time()) {
+                    $changed = true;
+                    unset($times[$teacherId]);
+                }
+            }
+            if ($changed) {
+                block_exastud_set_class_data($cData->classid, $target, json_encode($times));
+            }
+        }
+    }
+}
+
+// unlocked or not.
+// also using for get requested or not (before admins approving)
+function block_exastud_teacher_is_unlocked_for_old_class_review($classid, $teacherid, $target = BLOCK_EXASTUD_DATA_ID_UNLOCKED_TEACHERS) {
+    block_exastud_update_allow_review_times($classid, $target);
+    $unlocked_teachers = (array) json_decode(block_exastud_get_class_data($classid, $target), true);
+    if (array_key_exists(0, $unlocked_teachers)) {
+        // for ALL teachers of this class
+        return true;
+    }
+    if (array_key_exists($teacherid, $unlocked_teachers)) {
+        return true;
+    }
+    return false;
+}
+
+// get count (only) of requests to admin
+function block_exastud_get_admin_requests_count() {
+    global $DB;
+    $count = 0;
+    // delete classes
+    $count += $DB->count_records('block_exastudclass', ['to_delete' => 1]);
+    // unlock old class editing
+    block_exastud_update_allow_review_times(null, BLOCK_EXASTUD_DATA_ID_UNLOCKED_TEACHERS_TO_APPROVE);
+    $sql = 'SELECT d.* 
+              FROM {block_exastuddata} d 
+              WHERE d.classid > 0 
+                AND d.name = ?';
+    $classesData = $DB->get_records_sql($sql, [BLOCK_EXASTUD_DATA_ID_UNLOCKED_TEACHERS_TO_APPROVE]);
+    foreach ($classesData as $cData) {
+        $times = (array) json_decode($cData->value);
+        foreach ($times as $teacherId => $time) {
+            if ($time >= time()) {
+                $count++;
+            }
+        }
+    }
+    return $count;
 }
 
 /*

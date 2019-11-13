@@ -28,6 +28,8 @@ if (!in_array($type, ['categories', 'teachers', 'teachers_options', 'studentgrad
 	$type = 'students';
 }
 
+$notification = '';
+
 block_exastud_require_login($courseid);
 
 block_exastud_require_global_cap(BLOCK_EXASTUD_CAP_MANAGE_CLASSES);
@@ -65,10 +67,29 @@ if ($action == 'delete') {
 
     \block_exastud\event\class_deleted::log(['objectid' => $class->id, 'other' => ['classtitle' => $classData->title]]);
 
-	redirect(new moodle_url('/blocks/exastud/configuration_classes.php?courseid='.$courseid));
+    // redirects
+    $backTo = optional_param('backTo', '', PARAM_RAW);
+    switch ($backTo) {
+        case 'admin_requests':
+            redirect(new moodle_url('/blocks/exastud/admin_requests.php'));
+            break;
+        default:
+            redirect(new moodle_url('/blocks/exastud/configuration_classes.php?courseid='.$courseid));
+    }
 }
 
 $output = block_exastud_get_renderer();
+
+if ($showUnlock && $action == 'unlock') {
+    require_sesskey();
+    $teacherid = required_param('teacherid', PARAM_INT);
+
+    $notification = $output->notification(block_exastud_get_string('admin_requests_unlock_request_created'));
+
+    $toapprove_teachers = (array) json_decode(block_exastud_get_class_data($class->id, BLOCK_EXASTUD_DATA_ID_UNLOCKED_TEACHERS_TO_APPROVE), true);
+    $toapprove_teachers[$teacherid] = strtotime('+1day');
+    block_exastud_set_class_data($classid, BLOCK_EXASTUD_DATA_ID_UNLOCKED_TEACHERS_TO_APPROVE, json_encode($toapprove_teachers));
+}
 
 // redirect to edit class form if it is not a class owner, but is site admin
 if (block_exastud_is_siteadmin() && $class->userid != $USER->id && !in_array($type, ['categories'])) {
@@ -615,40 +636,47 @@ switch ($type) {
         if ($showUnlock) {
             echo $output->heading2(block_exastud_trans(['de:Bewertung erneut freigeben', 'en:Allow reviewing this class']));
 
-            $unlocked_teachers =
-                    (array) json_decode(block_exastud_get_class_data($class->id, BLOCK_EXASTUD_DATA_ID_UNLOCKED_TEACHERS), true);
+            echo $notification;
 
-            if ($action == 'unlock') {
-                require_sesskey();
-                $teacherid = required_param('teacherid', PARAM_INT);
+            $toapprove_teachers = (array) json_decode(block_exastud_get_class_data($class->id, BLOCK_EXASTUD_DATA_ID_UNLOCKED_TEACHERS_TO_APPROVE), true);
+            $unlocked_teachers = (array) json_decode(block_exastud_get_class_data($class->id, BLOCK_EXASTUD_DATA_ID_UNLOCKED_TEACHERS), true);
+            $all_teachers_list = $toapprove_teachers + $unlocked_teachers;
 
-                echo $output->notification(block_exastud_trans(['de:freigegeben', 'en:unlocked']));
-
-                $unlocked_teachers[$teacherid] = strtotime('+1day');
-                block_exastud_set_class_data($class->id, BLOCK_EXASTUD_DATA_ID_UNLOCKED_TEACHERS, json_encode($unlocked_teachers));
-            }
-
-            $teachers = [0 => block_exastud_trans(['de:für alle', 'en:for all'])];
+            $teachers = [0 => block_exastud_get_string('allow_review_admin_approved_for_all')];
             foreach (array_merge($additional_head_teachers, $classteachers) as $classteacher) {
                 $teachers[$classteacher->id] = fullname($classteacher);
             }
-
-            foreach ($teachers as $teacherid => $teacherName) {
-                if (isset($unlocked_teachers[$teacherid]) && $unlocked_teachers[$teacherid] > time()) {
-                    echo '<div>'.$teacherName.' '.
-                            block_exastud_trans(['de:bis', 'en:until']).' '.userdate($unlocked_teachers[$teacherid]).'</div>';
+            if (count($teachers)) {
+                $teachersTable = new html_table();
+                $teachersTable->head = array(
+                        block_exastud_get_string('teacher'),
+                        block_exastud_get_string('allow_review_until'),
+                        block_exastud_get_string('allow_review_admin_approved'),
+                );
+                foreach ($teachers as $teacherid => $teacherName) {
+                    if (isset($all_teachers_list[$teacherid]) && $all_teachers_list[$teacherid] > time()) {
+                        $row = new html_table_row();
+                        $row->cells = array(
+                            $teacherName,
+                            userdate($all_teachers_list[$teacherid]),
+                            array_key_exists($teacherid, $unlocked_teachers) ? '<img class="" src="'.$CFG->wwwroot.'/blocks/exastud/pix/valid.png" title="'.block_exastud_get_string('allow_review_make_request_already').'" />' : ''
+                        );
+                        $teachersTable->data[] = $row;
+                    }
                 }
+                echo html_writer::table($teachersTable);
             }
 
+            // disabled now
             echo '<form method="post">';
             echo '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
             echo '<input type="hidden" name="action" value="unlock" />';
+            echo '<input type="hidden" name="type" value="teachers_options" />';
+            echo '<input type="hidden" name="classid" value="'.$class->id.'" />';
+            echo '<input type="hidden" name="courseid" value="'.$courseid.'" />';
             echo '<div>';
             echo html_writer::select($teachers, 'teacherid', '', false);
-            echo $output->link_button($CFG->wwwroot.'/blocks/exastud/configuration_classmembers_courses.php?courseid='.$courseid.
-                    '&classid='.$class->id,
-                    block_exastud_get_string('go'),
-                    ['class' => 'btn btn-default']);
+            echo '&nbsp;<input type="submit" name="submit" value="'.block_exastud_get_string('allow_review_make_request').'" class="btn btn-default">';
             echo '</div>';
             echo '</form>';
         }

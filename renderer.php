@@ -79,6 +79,15 @@ class block_exastud_renderer extends plugin_renderer_base {
 				$tabs['blockconfig'] = new tabobject('blockconfig', 'javascript:void window.open(\''.\block_exastud\url::create('/admin/settings.php?section=blocksettingexastud')->out(false).'\');', $title, '', true);
 			}
 /*			$tabs['head_teachers'] = new tabobject('head_teachers', 'javascript:void window.open(\''.\block_exastud\url::create('/cohort/assign.php', ['id' => block_exastud_get_head_teacher_cohort()->id])->out(false).'\');', block_exastud_get_string('head_teachers'), '', true);*/
+            if ($requests_count = block_exastud_get_admin_requests_count()) {
+                $admin_requests_tabtitle = html_writer::tag("img", '', array('src' => 'pix/attention.png')).'&nbsp;'.
+                        block_exastud_get_string('admin_requests').'&nbsp;('.$requests_count.')';
+            } else {
+                $admin_requests_tabtitle = block_exastud_get_string('admin_requests');
+            }
+            $tabs['admin_requests'] = new tabobject('admin_requests', new moodle_url('/blocks/exastud/admin_requests.php'),
+                        $admin_requests_tabtitle, '', true);
+
 		}
 
 		$class = @$options['class'];

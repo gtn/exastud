@@ -71,6 +71,15 @@ $strclassreview = block_exastud_get_string('reviewclass');
 $strreview = block_exastud_get_string('review');
 
 $actPeriod = block_exastud_check_active_period();
+
+// if class is from old period - check access for teacher and change $actPeriod to needed
+if ($class->periodid != $actPeriod->id) {
+    $unlocked = block_exastud_teacher_is_unlocked_for_old_class_review($classid, $USER->id, BLOCK_EXASTUD_DATA_ID_UNLOCKED_TEACHERS);
+    if ($unlocked) {
+        $actPeriod = block_exastud_get_period($class->periodid);
+    }
+}
+
 $categories = block_exastud_get_class_categories($classid);
 
 $lastPeriod = block_exastud_get_last_period();
