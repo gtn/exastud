@@ -2118,27 +2118,27 @@ function block_exastud_get_class_title($classid, $periodtype, $unlocked) {
     // Mark own classes.
     if ($class->userid == $USER->id) {
         $classTitle .= '&nbsp;<img class="exastud-my-class" src="'.$CFG->wwwroot.'/blocks/exastud/pix/star.png" width="16" height="16" title="'.block_exastud_get_string('it_is_my_class').'" />';
-        if ($periodtype == 'last') {
-            if (!$unlocked) {
-                if (block_exastud_teacher_is_unlocked_for_old_class_review($classid, $USER->id, BLOCK_EXASTUD_DATA_ID_UNLOCKED_TEACHERS_TO_APPROVE)) {
-                    // already requested
-                    $classTitle .= '&nbsp;<img class="" src="'.$CFG->wwwroot.'/blocks/exastud/pix/unlock_review_done.png" width="20" height="20" title="'.block_exastud_get_string('allow_review_make_request_already').'" />';
-                } else {
-                    // not requested yet
-                    $classTitle .= '&nbsp;';
-                    $params = array(
-                        'courseid' => optional_param('courseid', 1, PARAM_INT),
-                        'action' => 'unlock_request',
-                        'classid' => $classid
-                    );
-                    $classTitle .= html_writer::link(new moodle_url('/blocks/exastud/review.php', $params),
-                            html_writer::tag("img", '', array('src' => 'pix/unlock_review.png')), array('title' => block_exastud_get_string('allow_review_make_request')));
-                }
-            }
-        }
     } else if ($head_teacher = g::$DB->get_record('user', array('id' => $class->userid, 'deleted' => 0))) {
 		$classTitle .= ' ('.fullname($head_teacher).')';
 	}
+    if ($periodtype == 'last') {
+        if (!$unlocked) {
+            if (block_exastud_teacher_is_unlocked_for_old_class_review($classid, $USER->id, BLOCK_EXASTUD_DATA_ID_UNLOCKED_TEACHERS_TO_APPROVE)) {
+                // already requested
+                $classTitle .= '&nbsp;<img class="" src="'.$CFG->wwwroot.'/blocks/exastud/pix/unlock_review_done.png" width="20" height="20" title="'.block_exastud_get_string('allow_review_make_request_already').'" />';
+            } else {
+                // not requested yet
+                $classTitle .= '&nbsp;';
+                $params = array(
+                        'courseid' => optional_param('courseid', 1, PARAM_INT),
+                        'action' => 'unlock_request',
+                        'classid' => $classid
+                );
+                $classTitle .= html_writer::link(new moodle_url('/blocks/exastud/review.php', $params),
+                        html_writer::tag("img", '', array('src' => 'pix/unlock_review.png')), array('title' => block_exastud_get_string('allow_review_make_request')));
+            }
+        }
+    }
 
 	return $classTitle;
 }

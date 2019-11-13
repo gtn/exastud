@@ -100,8 +100,10 @@ function block_exastud_print_period($courseid, $period, $type, $openclass) {
 		// if teacher is not in unlocked - clear all subjects
 		foreach ($reviewsubjects as $key => $reviewsubject) {
 			$unlocked_teachers = (array)json_decode(block_exastud_get_class_data($reviewsubject->classid, BLOCK_EXASTUD_DATA_ID_UNLOCKED_TEACHERS), true);
+			$unlockrequested_teachers = (array)json_decode(block_exastud_get_class_data($reviewsubject->classid, BLOCK_EXASTUD_DATA_ID_UNLOCKED_TEACHERS_TO_APPROVE), true);
 
 			if ((isset($unlocked_teachers[g::$USER->id]) && $unlocked_teachers[g::$USER->id] > time())
+                || (isset($unlockrequested_teachers[g::$USER->id]) && $unlockrequested_teachers[g::$USER->id] > time())
 				|| (isset($unlocked_teachers[0]) && $unlocked_teachers[0] > time())
 			) {
 				// unlocked
