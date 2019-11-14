@@ -460,13 +460,13 @@ function block_exastud_get_bilingual_teacher($classid, $studentid = null) {
 function block_exastud_get_class_additional_head_teachers($classid) {
 	$classteachers = g::$DB->get_records_sql("
 			SELECT u.*, ct.id AS record_id, ct.subjectid
-			FROM {user} u
-			JOIN {block_exastudclassteachers} ct ON ct.teacherid=u.id
-			JOIN {block_exastudclass} c ON c.id=ct.classid
-			WHERE c.id=? AND ct.subjectid=?
-			AND c.userid<>u.id
-			AND u.deleted = 0
-			ORDER BY u.lastname, u.firstname
+                FROM {user} u
+                    JOIN {block_exastudclassteachers} ct ON ct.teacherid = u.id
+                    JOIN {block_exastudclass} c ON c.id = ct.classid
+			    WHERE c.id = ? AND ct.subjectid = ?
+                    AND c.userid <> u.id
+                    AND u.deleted = 0
+			    ORDER BY u.lastname, u.firstname
 		", [$classid, BLOCK_EXASTUD_SUBJECT_ID_ADDITIONAL_HEAD_TEACHER]);
 
 	foreach ($classteachers as $classteacher) {
@@ -6080,6 +6080,24 @@ function block_exastud_get_all_teachers($courseid = null) {
             [$cohort->id]);
     $teachers = $teachers + $addTeachers + $headTeachers + $subjectTeachers + $cohortTeachers;
     //$headteachers = block_exastud_get_class_teachers();
+    return $teachers;
+}
+
+function block_exastud_get_class_diff_teachers($classid, $type = null) {
+    global $DB;
+    if (!$type) {
+        $types = ['head_teacher', 'project_teacher', 'bilingual_teacher'];
+    } else {
+        $types = [$type];
+    }
+    $teachers = $DB->get_records_sql('SELECT DISTINCT u.* 
+                                          FROM {block_exastuddata} d
+                                            JOIN {user} u ON u.id = d.value
+                                          WHERE u.deleted = 0
+                                            AND d.classid = ? 
+                                            AND d.value > 0                                            
+                                            AND d.name IN (\''.implode('\', \'', $types).'\') ',
+                                    [$classid]);
     return $teachers;
 }
 

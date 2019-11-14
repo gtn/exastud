@@ -149,8 +149,9 @@ if ($action == 'changesubjectteacher') {
     $subject = $DB->get_record('block_exastudsubjects', ['id' => $subjectid]);
     $teacherform = new change_subject_teacher_form('configuration_class.php?courseid='.$courseid.'&classid='.$class->id.'&action=changesubjectteacher&type=teachers&subjectid='.$subjectid,
             ['courseid' => $courseid,
-            'curentteacher' => $currentTeacher,
-            'subject' => $subject
+            'currentteacher' => $currentTeacher,
+            'subject' => $subject,
+            'classid' => $class->id
     ]);
     $redirectparams = array(
             'courseid' => $courseid,
@@ -164,7 +165,7 @@ if ($action == 'changesubjectteacher') {
         $oldTeacherid = $currentTeacher->id;
         if ($newteacher->newsubjectteacher > 0) {
             // subject realation
-            $DB->execute('UPDATE {block_exastudclassteachers} 
+            $DB->execute('UPDATE {block_exastudclassteachers}
                             SET teacherid = ? 
                             WHERE teacherid = ? 
                               AND classid = ?
@@ -177,6 +178,27 @@ if ($action == 'changesubjectteacher') {
                               AND periodid = ?                            
                               AND subjectid = ?
                           ', [$newteacher->newsubjectteacher, $oldTeacherid, $class->periodid, $subjectid]);
+            // change project teacher
+            $DB->execute('UPDATE {block_exastuddata} 
+                            SET value = ? 
+                            WHERE value = ? 
+                              AND classid = ?
+                              AND subjectid = 0
+                              AND name = \'project_teacher\'
+                          ', [$newteacher->newsubjectteacher, $oldTeacherid, $classid]);
+            // change head teachers
+            if (@$newteacher->no_head_class_teacher) {
+                //$classOwnerId = block_exastud_get_class($classid)->userid;
+                $classOwnerId = 0; // zero - becaus it is default for any students
+                // change to class teacher (owner)
+                $DB->execute('UPDATE {block_exastuddata} 
+                            SET value = ? 
+                            WHERE value = ? 
+                              AND classid = ?
+                              AND subjectid = 0
+                              AND name = \'head_teacher\'
+                          ', [$classOwnerId, $oldTeacherid, $classid]);
+            }
             redirect(new moodle_url('/blocks/exastud/configuration_class.php', $redirectparams));
         }
     }
@@ -505,7 +527,7 @@ switch ($type) {
             $table->data[] = [
                     $subjectCell,
                     $classteacher->lastname,
-                    $classteacher->firstname //.$changeTeacherButton,
+                    $classteacher->firstname.$changeTeacherButton,
             ];
         }
 
@@ -560,12 +582,11 @@ switch ($type) {
         ];
 
         if ($additional_head_teachers) {
-            $table->head[] = block_exastud_trans('de:Zuständiger Klassenlehrer');
+            $table->head[] = block_exastud_get_string('head_teacher');
             $additional_head_teachers_select = array_map(function($teacher) {
                 return fullname($teacher);
             }, $additional_head_teachers);
         }
-
         $table->head = array_merge($table->head, [
                 block_exastud_get_string('teacher_for_project'),
         ]);

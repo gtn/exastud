@@ -1477,6 +1477,10 @@ return [
         'Fachbezeichnung / Rolle',
         'Description of subject/role of teacher',
     ],
+    'head_teacher' => [
+        'Zuständiger Klassenlehrer',
+        'Head teacher',
+    ],
     'teacher_for_project' => [
         'Lehrkraft für Projektprüfung',
         'Teacher for project assessment',
@@ -1707,6 +1711,10 @@ return [
     'form_subject_teacher_form_select_new_teacher_docu' => [
         'In der Auswahl sind Benutzer aufgelistet, welche in diversen Zusammenhängen die Lehrerrolle innehaben (Klassenlehrer, Kurslehrer, Klassenersteller, Fachlehrer, zusätzlicher Klassenlehrer, Projekt- oder bilungualer Lehrer)',
         'In this Dropdown Users are listed, who have a teacher role in some context (classteacher, teacher in this course, classowner, teacher in a subject, additional class teacher, teacher for project, bilingual teacher)',
+    ],
+    'form_subject_teacher_form_no_head_class_teacher' => [
+            'Also remove from head class teacher',
+            'Also remove from head class teacher',
     ],
     'form_subject_teacher_form_save' => [
         'Lehrkraft jetzt übertragen.',

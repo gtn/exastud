@@ -817,9 +817,9 @@ class student_other_data_form extends moodleform {
                 unset($mform->_elements[$elementKey]);
             }
         }
-        if ($this->_customdata['type'] != BLOCK_EXASTUD_DATA_ID_CROSS_COMPETENCES
+        if (@$this->_customdata['type'] != BLOCK_EXASTUD_DATA_ID_CROSS_COMPETENCES
                 //|| ($this->_customdata['type'] == BLOCK_EXASTUD_DATA_ID_CROSS_COMPETENCES && block_exastud_can_edit_crosscompetences_classteacher($classid))
-                || ($this->_customdata['type'] == BLOCK_EXASTUD_DATA_ID_CROSS_COMPETENCES && !block_exastud_is_bw_active() && @$classid && block_exastud_can_edit_crosscompetences_classteacher($classid))
+                || (@$this->_customdata['type'] == BLOCK_EXASTUD_DATA_ID_CROSS_COMPETENCES && !block_exastud_is_bw_active() && @$classid && block_exastud_can_edit_crosscompetences_classteacher($classid))
                 || (@$this->_customdata['class_review'])
         ) {
             $this->add_action_buttons(false);
@@ -1719,8 +1719,9 @@ class change_subject_teacher_form extends moodleform {
         global $DB;
         $mform = $this->_form;
         $courseid = $this->_customdata['courseid'];
-        $currentteacher = $this->_customdata['curentteacher'];
+        $currentteacher = $this->_customdata['currentteacher'];
         $subject = $this->_customdata['subject'];
+        $classid = $this->_customdata['classid'];
         $a = (object)[
             'subjecttitle' => $subject->title,
             'currentteacher_name' => fullname($currentteacher),
@@ -1747,6 +1748,11 @@ class change_subject_teacher_form extends moodleform {
         $mform->setType('newsubjectteacher', PARAM_INT);
         $mform->setDefault('newsubjectteacher', $currentteacher->id);
 
+        // if current teacher is also "Additional class teacher"
+        $headTeachers = block_exastud_get_class_diff_teachers($classid, 'head_teacher');
+        if (array_key_exists($currentteacher->id, $headTeachers)) {
+            $mform->addElement('checkbox', 'no_head_class_teacher', block_exastud_get_string('form_subject_teacher_form_no_head_class_teacher'), ' ');
+        }
 
         $buttons = array();
         $buttons[] = $mform->createElement('submit', 'gochange', block_exastud_get_string('form_subject_teacher_form_save'));

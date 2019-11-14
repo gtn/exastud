@@ -116,7 +116,7 @@ switch ($type) {
             $classheader = $reviewclass->title.' - '.block_exastud_get_string('report_report_fields');
         }
         // add Learn if BW is not active
-        if (!block_exastud_is_bw_active()) {
+        if (!block_exastud_is_bw_active() && block_exastud_can_edit_learnsocial_classteacher($class->id)) {
             $learnInputs = $template->get_inputs(BLOCK_EXASTUD_DATA_ID_LERN_UND_SOZIALVERHALTEN);
             if (is_array($learnInputs) && array_key_exists('learn_social_behavior', $learnInputs)) {
                 if (!is_array($categories)) {
@@ -469,7 +469,7 @@ if ($type == BLOCK_EXASTUD_DATA_ID_CROSS_COMPETENCES
 	                'subjectid' => $class_subject->id,
 	                'periodid' => $actPeriod->id,
 	                'teacherid' => $steacher->id,
-	        ]);
+	        ], IGNORE_MULTIPLE);
 	        if ($class_subject->vorschlag) {
 	            $vorschlaege[$class_subject->id]["subjecttitle"] = $class_subject->title;
 	            $vorschlaege[$class_subject->id]["subjectvorschlag"][$steacher->id]["vorschlag"] = $class_subject->vorschlag;

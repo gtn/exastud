@@ -33,7 +33,7 @@ $string['exastud:myaddinstance'] = 'Student Review auf Startseite anlegen';
 
 
 // === grp2 ===
-$string['head_teacher'] = 'Klassenlehrkraft';
+$string['head_teacher'] = 'Zuständiger Klassenlehrer';
 $string['head_teachers'] = 'Klassenlehrkräfte';
 $string['new_head_teacher'] = 'Neue Klassenlehrkraft zuweisen';
 $string['additional_head_teacher'] = 'Zusätzliche Klassenlehrkraft';
@@ -449,6 +449,7 @@ $string['form_subject_teacher_form_header'] = 'Fach an andere Lehrkraft übertra
 $string['form_subject_teacher_form_description'] = 'Sie können das Fach {$a->subjecttitle} einer anderen Lehrkraft übertragen. Die bisherige Lehrkraft ist {$a->currentteacher_name}. Alle Eingaben und Bewertungen von {$a->currentteacher_name} werden der neuen Lehrkraft übertragen.';
 $string['form_subject_teacher_form_select_new_teacher'] = 'Neue Lehrkraft für {$a->subjecttitle}';
 $string['form_subject_teacher_form_select_new_teacher_docu'] = 'In der Auswahl sind Benutzer aufgelistet, welche in diversen Zusammenhängen die Lehrerrolle innehaben (Klassenlehrer, Kurslehrer, Klassenersteller, Fachlehrer, zusätzlicher Klassenlehrer, Projekt- oder bilungualer Lehrer)';
+$string['form_subject_teacher_form_no_head_class_teacher'] = 'Also remove from head class teacher';
 $string['form_subject_teacher_form_save'] = 'Lehrkraft jetzt übertragen.';
 $string['button_interdisciplinary_skills'] = 'Überfachliche Kompetenzen bearbeiten';
 $string['profilesubject'] = 'Profilfach';

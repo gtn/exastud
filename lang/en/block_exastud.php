@@ -33,7 +33,7 @@ $string['exastud:myaddinstance'] = 'Add Exabis Student Review on My home';
 
 
 // === grp2 ===
-$string['head_teacher'] = 'Class teacher';
+$string['head_teacher'] = 'Head teacher';
 $string['head_teachers'] = 'Class teachers';
 $string['new_head_teacher'] = 'New class teachers';
 $string['additional_head_teacher'] = 'Additional class teacher';
@@ -450,6 +450,7 @@ $string['form_subject_teacher_form_header'] = 'Transfer subject to other teacher
 $string['form_subject_teacher_form_description'] = 'You can transfer the subject {$a->subjecttitle} to another teacher. The current teacher is {$a->currentteacher_name}. All gradings from {$a->currentteacher_name} are transferred to new teacher.';
 $string['form_subject_teacher_form_select_new_teacher'] = 'New teacher for {$a->subjecttitle}';
 $string['form_subject_teacher_form_select_new_teacher_docu'] = 'In this Dropdown Users are listed, who have a teacher role in some context (classteacher, teacher in this course, classowner, teacher in a subject, additional class teacher, teacher for project, bilingual teacher)';
+$string['form_subject_teacher_form_no_head_class_teacher'] = 'Also remove from head class teacher';
 $string['form_subject_teacher_form_save'] = 'Transfer subject now.';
 $string['button_interdisciplinary_skills'] = 'Interdisciplinary skills';
 $string['profilesubject'] = 'Profile subject';
