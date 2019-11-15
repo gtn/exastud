@@ -1713,7 +1713,7 @@ return [
         'In this Dropdown Users are listed, who have a teacher role in some context (classteacher, teacher in this course, classowner, teacher in a subject, additional class teacher, teacher for project, bilingual teacher)',
     ],
     'form_subject_teacher_form_no_head_class_teacher' => [
-            'Also remove from head class teacher',
+            'Klassenlehrkraft Funktion auch an die neue Fachlehrkraft übertragen.',
             'Also remove from head class teacher',
     ],
     'form_subject_teacher_form_save' => [
