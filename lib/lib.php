@@ -4301,7 +4301,7 @@ function block_exastud_get_default_templates($templateid = null, $common = true)
                                         'type' => 'textarea',
                                         'lines' => 1,
                                         'cols' => 80,
-                                        'maxchars' => 500,
+                                        'maxchars' => 80,
                                 ],
                                 'comments_short' => [
                                         'title' => 'Bemerkungen',
