@@ -277,7 +277,7 @@ if ($isSubjectTeacher) {
                 array('teacherid' => $teacherid,
                     'subjectid' => $subjectid,
                     'periodid' => $actPeriod->id,
-                    'studentid' => $classstudent->id));
+                    'studentid' => $classstudent->id), '*', IGNORE_MULTIPLE);
         // if the student has a review from another teacher - probably this student was hidden and than again shown
         // such student is not able to be review again
         $reports_from_anotherteachers = $DB->get_records_sql('SELECT * FROM {block_exastudreview}

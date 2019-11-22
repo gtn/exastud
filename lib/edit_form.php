@@ -26,6 +26,7 @@ use block_exastud\globals as g;
 class class_edit_form extends moodleform {
 
 	function definition() {
+	    global $USER;
 		$mform = &$this->_form;
         // if it is not a class owner, but siteadmin - use hidden form fields instead of usual
 
@@ -99,8 +100,8 @@ class class_edit_form extends moodleform {
         $select->setMultiple(true);
         */
 
-		// change class owner (only for siteadmin or class owner)
-        if ($this->_customdata['classid'] && (block_exastud_is_siteadmin() || $this->_customdata['is_classowner'] )) {
+		// change class owner  (only for siteadmin // deleted ==> or class owner)
+        if ($this->_customdata['classid'] && (block_exastud_is_siteadmin()/* || $this->_customdata['is_classowner'] */)) {
             $headteachers = block_exastud_get_head_teachers_all();
             $options = array();
             foreach ($headteachers as $teacher) {
@@ -120,6 +121,15 @@ class class_edit_form extends moodleform {
                     block_exastud_get_string('class_owner'),
                     $options,
                     $selectboxoptions);
+        } else {
+            $mform->addElement('hidden', 'userid', null);
+            $mform->setType('userid', PARAM_INT);
+            if ($this->_customdata['classid'] && $this->_customdata['classid'] > 0) {
+                $class = block_exastud_get_class($this->_customdata['classid']);
+                $mform->setDefault('userid', $class->userid);
+            } else {
+                $mform->setDefault('userid', $USER->id);
+            }
         }
 
 /*        $mform->addElement('filemanager', 'class_logo', block_exastud_get_string('class_logo'), null,

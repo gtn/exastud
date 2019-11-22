@@ -33,9 +33,21 @@
 
     // find in the selectbox
     $(function() {
+        $('select#id_newsubjectteacher').removeClass('select custom-select');
         $('select#id_newsubjectteacher').select2({
+            width: 'resolve',
             theme: "classic"
         });
+        if ($('select.projectteacherslist').length) {
+            // the selectboxes are the same , so use only first for condition
+            if ($('select.projectteacherslist:first option').length > 15) {
+                $('select.projectteacherslist').removeClass('select custom-select');
+                $('select.projectteacherslist').select2({
+                    width: 'resolve',
+                    theme: "classic"
+                });
+            }
+        }
     });
 
 

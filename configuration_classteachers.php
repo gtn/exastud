@@ -42,6 +42,9 @@ $PAGE->set_url($url);
 $output = block_exastud_get_renderer();
 echo $output->header(['configuration_classes', 'teachers'], ['class' => $class]);
 
+$addmessage = '';
+$notDeletedUsers = array();
+
 if ($frm = data_submitted()) {
 	require_sesskey();
 
@@ -83,7 +86,11 @@ if ($frm = data_submitted()) {
             }
             $existingrecord = $DB->get_record('block_exastudclassteachers', ['id' => $record_id]);
 
-            $DB->delete_records('block_exastudclassteachers', array('id' => $record_id, 'classid' => $class->id));
+            if (!block_exastud_teacher_has_gradings_for_class($existingrecord->teacherid, $class->id, $existingrecord->subjectid)) {
+                $DB->delete_records('block_exastudclassteachers', array('id' => $record_id, 'classid' => $class->id));
+            } else {
+                $notDeletedUsers[$existingrecord->teacherid] = $existingrecord->subjectid;
+            }
 
             if ($existingrecord) {
                 $userData = $DB->get_record('user', ['id' => $existingrecord->teacherid, 'deleted' => 0]);
@@ -130,6 +137,20 @@ $availableusers = $DB->get_records_sql('SELECT id, firstname, lastname, email, '
 									 ORDER BY lastname ASC, firstname ASC');
 
 $classstudents = block_exastud_get_class_teachers($class->id);
+
+if (count($notDeletedUsers) > 0) {
+    $message = block_exastud_get_string('can_not_delete_subject_teacher_because_has_grading');
+    $message .= '<ul>';
+    foreach ($notDeletedUsers as $teacherid => $subjectid) {
+        $message .= '<li>';
+        $subjObj = $DB->get_record('block_exastudsubjects', ['id' => $subjectid]);
+        $message .= fullname(block_exastud_get_user($teacherid)).' => '.$subjObj->title;
+        $message .= '</li>';
+    }
+    $message .= '</ul>';
+    echo $OUTPUT->notification($message, 'notifyproblem');
+}
+
 
 echo $OUTPUT->box_start();
 $userlistType = 'teachers';

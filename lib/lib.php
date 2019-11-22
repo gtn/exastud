@@ -381,6 +381,19 @@ function block_exastud_get_class_teachers_by_subject($classid, $subjectid) {
 			    ORDER BY u.lastname, u.firstname',
         [$classid, $subjectid]);
 }
+function block_exastud_get_class_subjects_by_teacher($classid, $teacherid) {
+    return g::$DB->get_records_sql('
+			SELECT s.*
+			    FROM {block_exastudsubjects} s             			    			
+			        JOIN {block_exastudclassteachers} ct ON ct.subjectid = s.id
+			        JOIN {user} u ON u.id = ct.teacherid 
+			        JOIN {block_exastudclass} c ON c.id = ct.classid			        
+			    WHERE c.id = ?
+			        AND s.bpid = c.bpid 
+			        AND u.deleted = 0 
+			        AND u.id = ?',
+            [$classid, $teacherid]);
+}
 function block_exastud_is_profilesubject_teacher($classid, $userid = null) {
     global $USER;
     if (!$userid) {
@@ -6793,6 +6806,27 @@ function block_exastud_get_admin_requests_count() {
         }
     }
     return $count;
+}
+
+function block_exastud_teacher_has_gradings_for_class($teacherid, $classid, $subjectid = null) {
+    global $DB;
+    $result = false;
+    if (!$subjectid) {
+        $relatedSubjects = block_exastud_get_class_subjects_by_teacher($classid, $teacherid);
+        $subjectIds = array_keys($relatedSubjects);
+    } else {
+        $subjectIds = array(intval($subjectid));
+    }
+    if (count($subjectIds) > 0) {
+        $sql = 'SELECT * FROM {block_exastuddata}
+                    WHERE classid = ?
+                      AND subjectid IN ('.implode(',', $subjectIds).')
+                      AND name IN (\'grade\', \'niveau\', \'review\')
+                      AND value != \'\'
+                      ';
+        $result = $DB->record_exists_sql($sql, [$classid]);
+    }
+    return $result;
 }
 
 /*

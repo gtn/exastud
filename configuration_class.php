@@ -138,6 +138,14 @@ if ($action == 'to_delete') {
     }
 }
 
+if ($action == 'delsubjectteacher') {
+    $subjectid = required_param('subjectid', PARAM_INT);
+    $teacherid = required_param('teacherid', PARAM_INT);
+    if (!block_exastud_teacher_has_gradings_for_class($teacherid, $class->id, $subjectid)) {
+        $DB->delete_records('block_exastudclassteachers', array('teacherid' => $teacherid, 'classid' => $class->id, 'subjectid' => $subjectid));
+    }
+}
+
 if ($action == 'changesubjectteacher') {
     require_once($CFG->dirroot . '/blocks/exastud/lib/edit_form.php');
     // confirmation message
@@ -163,6 +171,7 @@ if ($action == 'changesubjectteacher') {
         redirect(new moodle_url('/blocks/exastud/configuration_class.php', $redirectparams));
     } else if ($newteacher = $teacherform->get_data()) {
         $oldTeacherid = $currentTeacher->id;
+        $message = '';
         if ($newteacher->newsubjectteacher > 0) {
             // subject realation
             $DB->execute('UPDATE {block_exastudclassteachers}
@@ -179,13 +188,28 @@ if ($action == 'changesubjectteacher') {
                               AND subjectid = ?
                           ', [$newteacher->newsubjectteacher, $oldTeacherid, $class->periodid, $subjectid]);
             // change project teacher
-            $DB->execute('UPDATE {block_exastuddata} 
+            $projectteahcerscount = $DB->count_records_select('block_exastuddata', $DB->sql_compare_text('value').' = :value 
+                                                                    AND classid = :classid
+                                                                    AND subjectid = 0
+                                                                    AND name = :name ',
+                                                    array(  'value' => $oldTeacherid,
+                                                            'classid' => $classid,
+                                                            'name' => 'project_teacher')); // Count is needed for showing/not message
+
+            if ($projectteahcerscount > 0) {
+                $DB->execute('UPDATE {block_exastuddata} 
                             SET value = ? 
                             WHERE value = ? 
                               AND classid = ?
                               AND subjectid = 0
                               AND name = \'project_teacher\'
                           ', [$newteacher->newsubjectteacher, $oldTeacherid, $classid]);
+                $a = (object)array(
+                        'newteachername' => fullname(block_exastud_get_user($newteacher->newsubjectteacher)),
+                        'oldteachername' => fullname(block_exastud_get_user($oldTeacherid)),
+                );
+                $message .= block_exastud_get_string('project_teacher_also_was_changed', null, $a);
+            }
             // change head teachers
             if (@$newteacher->no_head_class_teacher) {
                 //$classOwnerId = block_exastud_get_class($classid)->userid;
@@ -199,7 +223,7 @@ if ($action == 'changesubjectteacher') {
                               AND name = \'head_teacher\'
                           ', [$classOwnerId, $oldTeacherid, $classid]);
             }
-            redirect(new moodle_url('/blocks/exastud/configuration_class.php', $redirectparams));
+            redirect(new moodle_url('/blocks/exastud/configuration_class.php', $redirectparams), $message);
         }
     }
     echo $output->header(['configuration_classes', $type], ['class' => $class]);
@@ -512,10 +536,27 @@ switch ($type) {
             $params = [
                     'courseid' => $courseid,
                     'classid' => $class->id,
-                    'action' => 'changesubjectteacher',
+                    'action' => 'delsubjectteacher',
                     'type' => 'teachers',
                     'subjectid' => $classteacher->subjectid,
             ];
+            if (block_exastud_teacher_has_gradings_for_class($classteacher->userid, $class->id, $classteacher->subjectid)) {
+                $deleteTeacherButton = html_writer::span(
+                        html_writer::link('#',
+                                html_writer::tag("img", '', array('src' => 'pix/del.png')),
+                                array(  'style' => 'opacity: 0.25;',
+                                        'title' => block_exastud_get_string('can_not_delete_subject_teacher_because_has_grading'))),
+                        'exastud-buttons');
+            } else {
+                $deleteTeacherButton = html_writer::span(
+                        html_writer::link(new moodle_url('/blocks/exastud/configuration_class.php', $params + ['teacherid' => $classteacher->userid]),
+                                html_writer::tag("img", '', array('src' => 'pix/del.png')),
+                                array(  'exa-confirm' => block_exastud_get_string('delete_subjectteacher_confirmation'),
+                                        'exa-type' => 'link',
+                                        'title' => block_exastud_get_string('subjectteacher_delete_button'))),
+                        'exastud-buttons');
+            }
+            $params['action'] = 'changesubjectteacher';
             $changeTeacherButton = html_writer::span(
                     html_writer::link(new moodle_url('/blocks/exastud/configuration_class.php', $params),
                             html_writer::tag("img", '', array('src' => 'pix/refresh.png')),
@@ -527,7 +568,7 @@ switch ($type) {
             $table->data[] = [
                     $subjectCell,
                     $classteacher->lastname,
-                    $classteacher->firstname.$changeTeacherButton,
+                    $classteacher->firstname.$changeTeacherButton.$deleteTeacherButton,
             ];
         }
 
@@ -595,19 +636,26 @@ switch ($type) {
         //$table->head[] = block_exastud_get_string('teacher_for_bilingual');
         //$table->head[] = block_exastud_get_string('report_for_bilingual');
 
-        // different teacher lists
-        $project_teachers = [$class->userid => fullname($DB->get_record('user', ['id' => $class->userid, 'deleted' => 0]))];
+        // bilingual teachers
         $bilingual_teachers = [$class->userid => fullname($DB->get_record('user', ['id' => $class->userid, 'deleted' => 0]))];
         foreach (block_exastud_get_class_teachers($classid) as $teacher) {
             if ($teacher->id !== $class->userid) {
-                $project_teachers[$teacher->id] = fullname($teacher);
                 $bilingual_teachers[$teacher->id] = fullname($teacher);
             }
         }
-        natsort($project_teachers);
         natsort($bilingual_teachers);
 
         $bilingual_templates = block_exastud_get_bilingual_reports(true);
+
+        // project teachers
+        $project_teachers = [$class->userid => fullname($DB->get_record('user', ['id' => $class->userid, 'deleted' => 0]))];
+        $allUsers = $DB->get_records('user', ['deleted' => 0]);
+        foreach ($allUsers as $tUser) {
+            if ($tUser->id !== $class->userid) {
+                $project_teachers[$tUser->id] = fullname($tUser);
+            }
+        }
+        natsort($project_teachers);
 
         $i = 0;
         foreach ($classstudents as $classstudent) {
@@ -627,7 +675,7 @@ switch ($type) {
             // project teacher
             if (block_exastud_student_has_projekt_pruefung($class, $classstudent->id)) {
                 $row[] = html_writer::select($project_teachers, 'userdatas['.$classstudent->id.'][project_teacher]',
-                        @$userdata->{BLOCK_EXASTUD_DATA_ID_PROJECT_TEACHER}, block_exastud_trans('de:keine'));
+                        @$userdata->{BLOCK_EXASTUD_DATA_ID_PROJECT_TEACHER}, block_exastud_get_string('not_selected'), ['class' => 'projectteacherslist']);
             } else {
                 $template = block_exastud_get_student_print_template($class, $classstudent->id);
                 $row[] = block_exastud_trans(['de:Projektprüfung für Formular \'{$a}\' nicht verfügbar'], $template->get_name());

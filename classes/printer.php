@@ -2127,6 +2127,15 @@ class printer {
                 // replace default marker
                 if (in_array($dItem, ['---', '/--empty--/', '/--set-empty--/'])) {
                     if (in_array($dKey, ['profilfach_titel', 'wahlfach_titel'])) {
+                        if (in_array($templateid, [
+                                BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_HALBJAHR_ZEUGNIS_KL9_10_HSA,
+                                BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_HALBJAHR_ZEUGNIS_RS,
+                                BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_ABSCHLUSSZEUGNIS_RS,
+                                BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_JAHRESZEUGNIS_KL10_E_NIVEAU,
+                                BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_HALBJAHR_ZEUGNIS_KL10_E_NIVEAU,
+                            ])) {
+                            continue; // bug with small font
+                        }
                         $select_text = '---';
                     } else {
                         $select_text = 'Wählen Sie ein Element aus.';
@@ -2207,9 +2216,9 @@ class printer {
 
         // some reports has '*' or words in the dropdownlists. We need to find all of them
         switch ($templateid) {
-            case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_JAHRESZEUGNIS_KL10_E_NIVEAU:
+            //case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_JAHRESZEUGNIS_KL10_E_NIVEAU:
             case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_ABSCHLUSSZEUGNIS_HS:
-            case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_ABSCHLUSSZEUGNIS_RS:
+            //case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_ABSCHLUSSZEUGNIS_RS:
                 //if (mb_stripos($data['wahlfach_titel'], 'französisch') !== false) {
                 //    $data['wahlfach_titel'] .= '*';
                 //}
@@ -2274,6 +2283,18 @@ class printer {
                 if (trim($data['profilfach_titel']) != '') {
                     $data['profilfach_titel'] = 'Profilfach '.trim($data['profilfach_titel']);
                 } else {
+                    $data['profilfach_titel'] = '---';
+                }
+                break;
+            case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_HALBJAHR_ZEUGNIS_KL9_10_HSA:
+            case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_HALBJAHR_ZEUGNIS_RS:
+            case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_ABSCHLUSSZEUGNIS_RS:
+            case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_JAHRESZEUGNIS_KL10_E_NIVEAU:
+                // for bug with small '---' in result document
+                if (trim($data['wahlfach_titel']) == '') {
+                    $data['wahlfach_titel'] = '---';
+                }
+                if (trim($data['profilfach_titel']) == '') {
                     $data['profilfach_titel'] = '---';
                 }
                 break;

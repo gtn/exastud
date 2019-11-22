@@ -1183,6 +1183,10 @@ return [
 		'Soll "{$a}" wirklich gelöscht werden?',
 		'Do you really want to delete "{$a}"?',
 	],
+	'delete_subjectteacher_confirmation' => [
+		'Do you really want to delete this subject teacher?',
+		'Do you really want to delete this subject teacher?',
+	],
 	'logging' => [
 		'Logging aktivieren',
 		'Activate logging',
@@ -1696,6 +1700,10 @@ return [
         'neue Lehrerkraft zuordnen und Bewertungen übernehmen',
         'Match a new teacher and transmit his grading'
     ],
+    'subjectteacher_delete_button' => [
+        'Delete relation of this teacher and subject',
+        'Delete relation of this teacher and subject'
+    ],
     'form_subject_teacher_form_header' => [
         'Fach an andere Lehrkraft übertragen',
         'Transfer subject to other teacher'
@@ -1887,6 +1895,18 @@ return [
     'admin_requests_no_any' => [
         'No any requests',
         'No any requests',
+    ],
+    'not_selected' => [
+        'keine',
+        'Empty',
+    ],
+    'project_teacher_also_was_changed' => [
+        '{$a->newteachername} ist auch neuer Projektprüfer anstatt {$a->oldteachername}',
+        '{$a->newteachername} also got Project Teacher instead of {$a->oldteachername}'
+    ],
+    'can_not_delete_subject_teacher_because_has_grading' => [
+        'Dieser Fachlehrer hat bereits beurteilungen in diesem Fach abgegeben. Er kann nicht als Fachlehrer gelöscht werden, bitte nehmen sie stattdessen einen Fachlehrerwechsel vor.',
+        'This subjectteachers have done grading in this class in this subject. It is not possible to delete him as subject teacher. Please change subject teacher in this case.'
     ],
 
 ];
