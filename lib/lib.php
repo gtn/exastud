@@ -3619,7 +3619,7 @@ function block_exastud_get_default_templates($templateid = null, $common = true)
                                         'type' => 'textarea',
                                         'lines' => 2,
                                         'cols' => 70,
-                                        'maxchars' => 500,
+                                        'maxchars' => 140,
                                 ],
                                 'projekt_grade' => [
                                         'title' => 'Note',
