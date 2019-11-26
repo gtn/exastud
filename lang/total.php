@@ -1697,11 +1697,11 @@ return [
     ],
 
     'subjectteacher_change_button' => [
-        'neue Lehrerkraft zuordnen und Bewertungen übernehmen',
+        'neue Lehrkraft zuordnen und Bewertungen übernehmen',
         'Match a new teacher and transmit his grading'
     ],
     'subjectteacher_delete_button' => [
-        'Delete relation of this teacher and subject',
+        'Die Zuordnung dieser Lehrkraft zu diesem Fach aufheben.',
         'Delete relation of this teacher and subject'
     ],
     'form_subject_teacher_form_header' => [
@@ -1721,7 +1721,7 @@ return [
         'In this Dropdown Users are listed, who have a teacher role in some context (classteacher, teacher in this course, classowner, teacher in a subject, additional class teacher, teacher for project, bilingual teacher)',
     ],
     'form_subject_teacher_form_no_head_class_teacher' => [
-            'Klassenlehrkraft Funktion auch an die neue Fachlehrkraft übertragen.',
+            'Diese Lehrkraft auch als Klassenlehrkraft ersetzen.',
             'Also remove from head class teacher',
     ],
     'form_subject_teacher_form_save' => [
@@ -1753,11 +1753,11 @@ return [
             'This category has been reviewed for some students',
     ],
     'info_category_without_cross_competences' => [
-            'if category is {$a->categorytitles} - this report does not have &#8221;Überfachliche Kompetenzen&#8220; ',
+            'Bei der Kategorie {$a->categorytitles} - gibt es keine &#8221;Überfachlichen Kompetenzen&#8220; ',
             'if category is {$a->categorytitles} - this report does not have &#8221;interdisciplinary competences&#8220; ',
     ],
     'donotleave_page_message' => [
-            'You have unsaved changes on this page. Do you want to leave this page and discard your changes or stay on this page?',
+            'Sie haben noch nicht gespeichert. Wollen sie diese Seite verlassen ohne die Änderungen zu speichern?',
             'You have unsaved changes on this page. Do you want to leave this page and discard your changes or stay on this page?'
     ],
     'please_enter_group_name' => [
@@ -1765,15 +1765,15 @@ return [
         'Please enter the class/group name!'
     ],
     'mixed_bw_nonbw_class_error_2' => [
-        'Template for class not found. Probably you want to use class for active "exastud | bw_active"',
+        'Template für die Klasse wurde nicht gefunden. Möglicherweise wollen sie die Klasse verwenden ohne "exastud | bw_active" aktiviert zu haben',
         'Template for class not found. Please check the option of interdenominational schools - "exastud | bw_active"',
     ],
     'report_settings_userdata_wrong_user_parameter' => [
-        'User profile field \'{$a->fieldname}\' does not exist. Create it or change value to existing field.',
+        'Profilfeld \'{$a->fieldname}\' existiert nicht. Bitte erstellen sie das Profilfeld oder ändern sie die Zuordnung.',
         'User profile field \'{$a->fieldname}\' does not exist. Create it or change value to existing field.',
     ],
     'report_settings_userdata_wrong_user_parameter_editurl_title' => [
-        'Edit user profile fields',
+        'Benutzerprofil ändern',
         'Edit user profile fields',
     ],
     'report_settings_no_template_file' => [
@@ -1905,7 +1905,7 @@ return [
         '{$a->newteachername} also got Project Teacher instead of {$a->oldteachername}'
     ],
     'can_not_delete_subject_teacher_because_has_grading' => [
-        'Dieser Fachlehrer hat bereits beurteilungen in diesem Fach abgegeben. Er kann nicht als Fachlehrer gelöscht werden, bitte nehmen sie stattdessen einen Fachlehrerwechsel vor.',
+        'Dieser Fachlehrer hat bereits Beurteilungen in diesem Fach abgegeben. Er kann nicht als Fachlehrer gelöscht werden, bitte nehmen sie stattdessen einen Fachlehrerwechsel vor.',
         'This subjectteachers have done grading in this class in this subject. It is not possible to delete him as subject teacher. Please change subject teacher in this case.'
     ],
 
