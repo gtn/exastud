@@ -1829,7 +1829,7 @@ return [
         'until',
     ],
     'allow_review_admin_approved' => [
-        'approved',
+        'zustimmen',
         'approved',
     ],
     'allow_review_admin_approved_for_all' => [
@@ -1837,19 +1837,19 @@ return [
         'for all',
     ],
     'allow_review_make_request' => [
-        'make a request to admin for unlock editing',
+        'Anfrage an den Administrator um das Bearbeiten freizuschalten',
         'make a request to admin for unlock editing',
     ],
     'allow_review_make_request_already' => [
-        'already requested for unlock editing',
+        'Die Aktivierungsanfrage wurde bereits an den Administrator weitergeleitet',
         'already requested for unlock editing',
     ],
     'admin_requests' => [
-        'System requests',
+        'Benutzeranfragen',
         'System requests',
     ],
     'admin_requests_class_delete_list' => [
-        'Classes delete',
+        'Klasse löschen',
         'Classes delete',
     ],
     'admin_requests_class_title' => [
@@ -1865,11 +1865,11 @@ return [
         'Delete',
     ],
     'admin_requests_unlock_review_list' => [
-        'Unlock to review',
+        'Aktivieren der Beurteilungsmöglichkeit von Klassen aus vergangenen Eingabezeiträumen',
         'Unlock to review',
     ],
     'admin_requests_unlock_requested_teacher' => [
-        'request for teacher',
+        'Anfrage von Lehrkraft',
         'request for teacher',
     ],
     'admin_requests_unlock_request_until' => [
@@ -1877,23 +1877,23 @@ return [
         'until',
     ],
     'admin_requests_unlock_approve_button' => [
-        'Approve',
+        'Zustimmen (1 Tag)',
         'Approve',
     ],
     'admin_requests_unlock_prolong_button' => [
-        'Prolong',
+        'Bearbeitungsfrist + 1 Tag',
         'Prolong',
     ],
     'admin_requests_unlock_delete_button' => [
-        'Refuse',
+        'Ablehnen',
         'Refuse',
     ],
     'admin_requests_unlock_request_created' => [
-        'Request created',
+        'die Anfrage wurde erstellt',
         'Request created',
     ],
     'admin_requests_no_any' => [
-        'No any requests',
+        'Keine Benutzeranfragen vorhanden',
         'No any requests',
     ],
     'not_selected' => [
