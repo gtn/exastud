@@ -1908,5 +1908,17 @@ return [
         'Dieser Fachlehrer hat bereits Beurteilungen in diesem Fach abgegeben. Er kann nicht als Fachlehrer gelöscht werden, bitte nehmen sie stattdessen einen Fachlehrerwechsel vor.',
         'This subjectteachers have done grading in this class in this subject. It is not possible to delete him as subject teacher. Please change subject teacher in this case.'
     ],
+    'more_student_data' => [
+        'Show more data',
+        'Show more data',
+    ],
+    'more_student_data_all' => [
+        'Show more data for all students',
+        'Show more data for all students',
+    ],
+    'more_student_data_all_hide' => [
+        'Hide detail data for all students',
+        'Hide detail data for all students',
+    ],
 
 ];

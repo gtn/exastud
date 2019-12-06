@@ -88,9 +88,24 @@ switch ($type) {
             break;
     default:
             // BLOCK_EXASTUD_DATA_ID_PRINT_TEMPLATE
+            $dataShown = false;
+            if (isset($_COOKIE['student-fulldata-shown'])) {
+                if ($_COOKIE['student-fulldata-shown'] == 1) {
+                    $dataShown = true;
+                }
+            }
+            $toogleButton = '<span class="toggle-all-students" data-shown="'.($dataShown ? '1' : '0').'">';
+            $toogleButton .= '<a href="#" class="btn btn-xs exastud-collapse" '.($dataShown ? 'style="display: none;"' : '').' title="'.block_exastud_get_string('more_student_data_all').'">
+                                    <img src="'.$CFG->wwwroot.'/blocks/exastud/pix/collapse_btn.png" width="16" height="16" />
+                                </a>';
+            $toogleButton .= '<a href="#" class="btn btn-xs exastud-uncollapse" '.($dataShown ? '' : 'style="display: none;"').' title="'.block_exastud_get_string('more_student_data_all_hide').'">
+                                    <img src="'.$CFG->wwwroot.'/blocks/exastud/pix/uncollapse_btn.png" width="16" height="16" />
+                                </a>';
+            $toogleButton .= '</span>';
+
             $categories = [
                     BLOCK_EXASTUD_DATA_ID_PRINT_TEMPLATE => [
-                            'title' => block_exastud_get_string('report_other_report_fields'),
+                            'title' => block_exastud_get_string('report_other_report_fields').$toogleButton,
                     ],
             ];
             if (block_exastud_is_bw_active()) {
@@ -139,6 +154,9 @@ $table->align[] = 'left';
 if (true) { // block_exastud_can_edit_class($reviewclass)) {
 	$table->align[] = 'center';
 }
+
+$countItemsForHidding = 3; // from which count of items they must be hidden in the review table
+$hasManyInputs = false; // flag
 
 foreach ($classstudents as $classstudent) {
     $studenttemplateid =  block_exastud_get_student_print_template($class, $classstudent->id)->get_template_id();
@@ -300,7 +318,16 @@ foreach ($classstudents as $classstudent) {
                     $inputs = null;
                 }
                 if ($inputs) {
+                    $i = 0;
+                    $content .= '<div class="input-container">';
                     foreach ($inputs as $dataid => $form_input) {
+                        $i++;
+                        if ($i == $countItemsForHidding + 1) { // collapsible block only if count of inputs more than 3
+                            $content .= '<span class="exastud-collapse-inputs" data-inputsBlock="'.$classstudent->id.'">
+                                            <a class="btn btn-xs btn-default" href="#" title="'.block_exastud_get_string('more_student_data').'">...</a>
+                                        </span>';
+                            $content .= '<div class="input-collapsible" data-inputsBlock="'.$classstudent->id.'" style="'.($dataShown ? '' : 'display:none;').'">';
+                        }
                         switch (@$form_input['type']) {
                             case 'select':
                                 $value = @$form_input['values'][$data[$dataid]];
@@ -365,10 +392,13 @@ foreach ($classstudents as $classstudent) {
                             default:
                                 $value = !empty($data[$dataid]) ? block_exastud_text_to_html($data[$dataid]) : '';
                         }
-
-                        $content .= '<div style="padding-top: 10px; font-weight: bold;">'.$form_input['title'].'</div>';
-                        $content .= '<div>'.$value.'</div>';
+                        $content .= '<div class="student-input-data"><span class="input-title">'.$form_input['title'].':</span> <span>'.$value.'</span></div>';
                     }
+                    if (count($inputs) > $countItemsForHidding) {
+                        $hasManyInputs = true;
+                        $content .= '</div>'; // collapsible inputs wrapper
+                    }
+                    $content .= '</div>'; // inputs wrapper
                 } /*else {
 			    $content .= '<small>'.block_exastud_trans('de:Dieses Formular hat keine weiteren Eingabfelder').'</small>';
             }*/
@@ -394,6 +424,10 @@ foreach ($classstudents as $classstudent) {
 }
 
 echo $output->table($table);
+
+if (!$hasManyInputs) {
+    echo '<script>var hideDetailInputsToggler = true;</script>';
+}
 
 echo $output->back_button(new moodle_url('review.php', ['courseid' => $courseid, 'openclass' => $classid]));
 

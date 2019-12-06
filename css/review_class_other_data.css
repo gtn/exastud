@@ -1,0 +1,29 @@
+
+.exa_table .input-container {
+    font-size: 0.85em;
+}
+
+.exa_table .input-container .exastud-collapse-inputs a,
+.exa_table .toggle-all-students a {
+    /*color: white;*/
+    /*background-color: #428bca;*/
+    height: 10px;
+    line-height: 1px;
+    padding: 0px 10px 0px;
+}
+
+.exa_table .toggle-all-students a {
+    float: right;
+}
+
+.exa_table .input-container .input-collapsible {
+    /*display: none;*/
+}
+
+.exa_table .student-input-data {
+    padding-top: 5px;
+}
+
+.exa_table .student-input-data .input-title {
+    font-weight: bold;
+}

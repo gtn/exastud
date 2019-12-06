@@ -1831,6 +1831,7 @@ function block_exastud_init_js_css($especialities = array()) {
     //$PAGE->requires->css('/blocks/exastud/css/smartselect.css');
 
     //$PAGE->requires->js('/blocks/exastud/javascript/jquery.smartselect.min.js', true);
+    $PAGE->requires->js('/lib/cookies.js', true);
     $PAGE->requires->js('/blocks/exastud/javascript/common.js', true);
     $PAGE->requires->js('/blocks/exastud/javascript/select2.js', true);
 	$PAGE->requires->js('/blocks/exastud/javascript/exastud.js', true);

@@ -498,3 +498,6 @@ $string['admin_requests_no_any'] = 'No any requests';
 $string['not_selected'] = 'Empty';
 $string['project_teacher_also_was_changed'] = '{$a->newteachername} also got Project Teacher instead of {$a->oldteachername}';
 $string['can_not_delete_subject_teacher_because_has_grading'] = 'This subjectteachers have done grading in this class in this subject. It is not possible to delete him as subject teacher. Please change subject teacher in this case.';
+$string['more_student_data'] = 'Show more data';
+$string['more_student_data_all'] = 'Show more data for all students';
+$string['more_student_data_all_hide'] = 'Hide detail data for all students';
