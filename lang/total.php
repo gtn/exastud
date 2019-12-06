@@ -1909,15 +1909,14 @@ return [
         'This subjectteachers have done grading in this class in this subject. It is not possible to delete him as subject teacher. Please change subject teacher in this case.'
     ],
     'more_student_data' => [
-        'Show more data',
+        'Detaildaten auf/zuklappen',
         'Show more data',
     ],
     'more_student_data_all' => [
         'Show more data for all students',
-        'Show more data for all students',
     ],
     'more_student_data_all_hide' => [
-        'Hide detail data for all students',
+        'Anzeige gekürzter Daten für alle Schüler',
         'Hide detail data for all students',
     ],
 
