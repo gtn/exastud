@@ -1070,7 +1070,7 @@ return [
         'Last period:',
     ],
     'periods_incorrect' => [
-        'Eingabe-Periode nicht korrekt',
+        'Für das aktuelle Datum gibt es keinen oder mehrere Eingabezeiträume. Bitte überprüfen sie ihre Eingabezeiträume!',
         'Period defined is not correct',
     ],
     'suggestions_from_exacomp' => [
