@@ -88,11 +88,6 @@ if ($frm = data_submitted()) {
 
             if (!block_exastud_teacher_has_gradings_for_class($existingrecord->teacherid, $class->id, $existingrecord->subjectid)) {
                 $DB->delete_records('block_exastudclassteachers', array('id' => $record_id, 'classid' => $class->id));
-            } else {
-                $notDeletedUsers[$existingrecord->teacherid] = $existingrecord->subjectid;
-            }
-
-            if ($existingrecord) {
                 $userData = $DB->get_record('user', ['id' => $existingrecord->teacherid, 'deleted' => 0]);
                 $subjectData = $DB->get_record('block_exastudsubjects', ['id' => $existingrecord->subjectid]);
                 if ($subjectData) {
@@ -104,7 +99,10 @@ if ($frm = data_submitted()) {
                                     'classtitle' => $class->title,
                                     'relatedusername' => $userData->firstname.' '.$userData->lastname]]);
                 }
+            } else {
+                $notDeletedUsers[$existingrecord->teacherid] = $existingrecord->subjectid;
             }
+
         }
 	} else if ($showall) {
 		$searchtext = '';

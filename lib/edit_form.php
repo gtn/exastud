@@ -25,6 +25,7 @@ use block_exastud\globals as g;
 
 class class_edit_form extends moodleform {
 
+
 	function definition() {
 	    global $USER;
 		$mform = &$this->_form;
@@ -37,27 +38,32 @@ class class_edit_form extends moodleform {
         $mform->addElement('hidden', 'courseid');
         $mform->setType('courseid', PARAM_INT);
 
+        $titlelimit = 50;
         if (!$this->_customdata['for_siteadmin']) {
-            $mform->addElement('text', 'title', block_exastud_get_string('class').':', array('size' => 50));
+            $mform->addElement('text', 'title', block_exastud_get_string('class').':', array(
+                    'size' => $titlelimit,
+                    'class' => 'exastud-review-message',
+                    'data-exastudmessage' => block_exastud_get_string('class_title_limit_message', null, $titlelimit)));
         } else {
             $mform->addElement('hidden', 'title');
         }
         $mform->setType('title', PARAM_TEXT);
         $mform->addRule('title', null, 'required', null, 'client');
+        $mform->addRule('title', block_exastud_get_string('class_title_limit_message', null, $titlelimit), 'maxlength', $titlelimit, 'client');
 
+        $maxlength = 10;
         if (!$this->_customdata['for_siteadmin']) {
             $mform->addElement('text',
                     'title_forreport',
                     block_exastud_get_string('class_title_for_report').':',
-                    array('size' => 250,
+                    array('size' => $maxlength,
                             'class' => 'exastud-review-message',
-                            'data-exastudmessage' => block_exastud_get_string('class_title_for_report_description')));
+                            'data-exastudmessage' =>  block_exastud_get_string('class_title_limit_message', null, $maxlength).'. '.block_exastud_get_string('class_title_for_report_description')));
         } else {
             $mform->addElement('hidden', 'title_forreport');
         }
         $mform->setType('title_forreport', PARAM_TEXT);
-        $maxlength = 10;
-        $mform->addRule('title_forreport', null, 'maxlength', $maxlength, 'client');
+        $mform->addRule('title_forreport', block_exastud_get_string('class_title_limit_message', null, $maxlength), 'maxlength', $maxlength, 'client');
 
         $bps = g::$DB->get_records_menu('block_exastudbp', null, 'sorting', 'id, title');
         $bps = ['' => ''] + $bps;

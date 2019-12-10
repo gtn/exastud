@@ -318,6 +318,10 @@ return [
 		'Klasse',
 		'Class',
 	],
+	'class_title_limit_message' => [
+		'Max. {$a} Zeichen',
+		'Max. {$a} chars',
+	],
     'class_title_for_report' => [
         'Klassenname im Zeugnis',
         'Class name in Report'
@@ -1141,6 +1145,10 @@ return [
         'Markierung für die Löschung aufheben',
         'Unmark to delete by admin'
     ],
+    'unmark_to_delete_button' => [
+        'Markierung für die Löschung aufheben',
+        'Unmark to delete'
+    ],
     'class_marked_as_todelete' => [
         'Diese Klasse ist zum Löschen durch den Administrator vorgemerkt.',
         'This class marked to delete by site-admin',
@@ -1187,6 +1195,14 @@ return [
 		'Do you really want to delete this subject teacher?',
 		'Do you really want to delete this subject teacher?',
 	],
+    'delete_refuse_button' => [
+            'Löschanfrage ablehnen.',
+            'Refuse deletion',
+    ],
+    'delete_class_refused' => [
+            'Refused',
+            'Refused',
+    ],
 	'logging' => [
 		'Logging aktivieren',
 		'Activate logging',
@@ -1306,6 +1322,10 @@ return [
     'event_classteacherunassigned_name' => [
         'Teacher unassigned from class',
         'Teacher unassigned from class'
+    ],
+    'event_classteacherchanged_name' => [
+        'Teacher changed',
+        'Teacher changed'
     ],
     'event_classdatachanged_name' => [
         'Data of the class was changed',
@@ -1832,6 +1852,10 @@ return [
         'zustimmen',
         'approved',
     ],
+    'allow_review_admin_notapproved_yet' => [
+        'not approved yet',
+        'not approved yet',
+    ],
     'allow_review_admin_approved_for_all' => [
         'für alle',
         'for all',
@@ -1840,59 +1864,63 @@ return [
         'Anfrage an den Administrator um das Bearbeiten freizuschalten',
         'make a request to admin for unlock editing',
     ],
+    'allow_review' => [
+        'Bearbeiten freischalten',
+        'unlock editing',
+    ],
     'allow_review_make_request_already' => [
         'Die Aktivierungsanfrage wurde bereits an den Administrator weitergeleitet',
         'already requested for unlock editing',
     ],
-    'admin_requests' => [
+    'requests' => [
         'Benutzeranfragen',
         'System requests',
     ],
-    'admin_requests_class_delete_list' => [
+    'requests_class_delete_list' => [
         'Klasse löschen',
         'Classes delete',
     ],
-    'admin_requests_class_title' => [
+    'requests_class_title' => [
         'Klasse',
         'Class',
     ],
-    'admin_requests_class_teacher' => [
+    'requests_class_teacher' => [
         'Klassenlehrkraft',
         'Class teacher',
     ],
-    'admin_requests_class_delete' => [
+    'requests_class_delete' => [
         'Löschen',
         'Delete',
     ],
-    'admin_requests_unlock_review_list' => [
+    'requests_unlock_review_list' => [
         'Aktivieren der Beurteilungsmöglichkeit von Klassen aus vergangenen Eingabezeiträumen',
         'Unlock to review',
     ],
-    'admin_requests_unlock_requested_teacher' => [
+    'requests_unlock_requested_teacher' => [
         'Anfrage von Lehrkraft',
         'request for teacher',
     ],
-    'admin_requests_unlock_request_until' => [
+    'requests_unlock_request_until' => [
         'bis',
         'until',
     ],
-    'admin_requests_unlock_approve_button' => [
+    'requests_unlock_approve_button' => [
         'Zustimmen (1 Tag)',
         'Approve',
     ],
-    'admin_requests_unlock_prolong_button' => [
+    'requests_unlock_prolong_button' => [
         'Bearbeitungsfrist + 1 Tag',
         'Prolong',
     ],
-    'admin_requests_unlock_delete_button' => [
+    'requests_unlock_delete_button' => [
         'Ablehnen',
         'Refuse',
     ],
-    'admin_requests_unlock_request_created' => [
+    'requests_unlock_request_created' => [
         'die Anfrage wurde erstellt',
         'Request created',
     ],
-    'admin_requests_no_any' => [
+    'requests_no_any' => [
         'Keine Benutzeranfragen vorhanden',
         'No any requests',
     ],
@@ -1918,6 +1946,38 @@ return [
     'more_student_data_all_hide' => [
         'Anzeige gekürzter Daten für alle Schüler',
         'Hide detail data for all students',
+    ],
+    'messageprovider:approve_allow_review' => [
+        'Approve of review of class from old period',
+        'Approve of review of class from old period',
+    ],
+    'messageprovider:prolong_allow_review' => [
+        'Prolong of review of class from old period',
+        'Prolong of review of class from old period',
+    ],
+    'notification_allow_review_old_class_approve_subject' => [
+            '{$a->site}: Review of class "{$a->classtitle}" was approved',
+            '{$a->site}: Review of class "{$a->classtitle}" was approved',
+    ],
+    'notification_allow_review_old_class_approve_body' => [
+            'Dear {$a->receiver}, </br></br>Review of class "{$a->classtitle}" was approved until {$a->datetime}.</br></br> This message has been generated automatically from moodle site {$a->site}.',
+            'Dear {$a->receiver}, </br></br>Review of class "{$a->classtitle}" was approved until {$a->datetime}.</br></br> This message has been generated automatically from moodle site {$a->site}.',
+    ],
+    'notification_allow_review_old_class_approve_context' => [
+        'Allow review class from old period',
+        'Allow review class from old period',
+    ],
+    'notification_allow_review_old_class_prolong_subject' => [
+            '{$a->site}: Review of class "{$a->classtitle}" was prolonged',
+            '{$a->site}: Review of class "{$a->classtitle}" was prolonged',
+    ],
+    'notification_allow_review_old_class_prolong_body' => [
+            'Dear {$a->receiver}, </br></br>Review of class "{$a->classtitle}" was prolonged to {$a->datetime}.</br></br> This message has been generated automatically from moodle site {$a->site}.',
+            'Dear {$a->receiver}, </br></br>Review of class "{$a->classtitle}" was prolonged to {$a->datetime}.</br></br> This message has been generated automatically from moodle site {$a->site}.',
+    ],
+    'notification_allow_review_old_class_prolong_context' => [
+        'Allow review class from old period',
+        'Allow review class from old period',
     ],
 
 ];

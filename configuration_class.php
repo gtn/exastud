@@ -42,7 +42,7 @@ $period = block_exastud_get_period($class->periodid);
 // agelaufene periode => unlock anbieten
 $showUnlock = $period->endtime < time();
 
-$url = '/blocks/exastud/configuration_classes.php';
+$url = '/blocks/exastud/configuration_class.php?courseid='.$courseid.'&classid='.$classid.($action ? '&action='.$action : '').($type ? '&type='.$type : '');
 $PAGE->set_url($url);
 
 block_exastud_init_js_css(['select2']);
@@ -51,27 +51,36 @@ if ($action == 'delete') {
 	if (!optional_param('confirm', false, PARAM_BOOL)) {
 		throw new moodle_exception('not confirmed');
 	}
-    $classData = block_exastud_get_class($class->id);
-	$DB->delete_records('block_exastudclass', ['id' => $class->id]);
-	// delete related data
-    // students
-    $DB->delete_records('block_exastudclassstudents', ['classid' => $class->id]);
-    // teachers
-    $DB->delete_records('block_exastudclassteachers', ['classid' => $class->id]);
-    // data
-    $DB->delete_records('block_exastuddata', ['classid' => $class->id]);
-	// classcate
-	$DB->delete_records('block_exastudclasscate', ['classid' => $class->id]);
+	if (optional_param('refuse', false, PARAM_BOOL)) {
+	    // mark as 'refused' to deleting
+        $DB->execute('UPDATE {block_exastudclass} 
+                        SET to_delete = ? 
+                      WHERE id = ? ',
+                    [-1, $classid]);
+    } else {
+	    // real deleting
+        $classData = block_exastud_get_class($class->id);
+        $DB->delete_records('block_exastudclass', ['id' => $class->id]);
+        // delete related data
+        // students
+        $DB->delete_records('block_exastudclassstudents', ['classid' => $class->id]);
+        // teachers
+        $DB->delete_records('block_exastudclassteachers', ['classid' => $class->id]);
+        // data
+        $DB->delete_records('block_exastuddata', ['classid' => $class->id]);
+        // classcate
+        $DB->delete_records('block_exastudclasscate', ['classid' => $class->id]);
 
-	// TODO: block_exastudclassteastudvis
+        // TODO: block_exastudclassteastudvis
 
-    \block_exastud\event\class_deleted::log(['objectid' => $class->id, 'other' => ['classtitle' => $classData->title]]);
+        \block_exastud\event\class_deleted::log(['objectid' => $class->id, 'other' => ['classtitle' => $classData->title]]);
+    }
 
     // redirects
     $backTo = optional_param('backTo', '', PARAM_RAW);
     switch ($backTo) {
-        case 'admin_requests':
-            redirect(new moodle_url('/blocks/exastud/admin_requests.php'));
+        case 'requests':
+            redirect(new moodle_url('/blocks/exastud/requests.php'));
             break;
         default:
             redirect(new moodle_url('/blocks/exastud/configuration_classes.php?courseid='.$courseid));
@@ -84,11 +93,20 @@ if ($showUnlock && $action == 'unlock') {
     require_sesskey();
     $teacherid = required_param('teacherid', PARAM_INT);
 
-    $notification = $output->notification(block_exastud_get_string('admin_requests_unlock_request_created'));
+    $notification = $output->notification(block_exastud_get_string('requests_unlock_request_created'));
 
-    $toapprove_teachers = (array) json_decode(block_exastud_get_class_data($class->id, BLOCK_EXASTUD_DATA_ID_UNLOCKED_TEACHERS_TO_APPROVE), true);
-    $toapprove_teachers[$teacherid] = strtotime('+1day');
-    block_exastud_set_class_data($classid, BLOCK_EXASTUD_DATA_ID_UNLOCKED_TEACHERS_TO_APPROVE, json_encode($toapprove_teachers));
+    $clTeachers = block_exastud_get_class_teachers($class->id);
+    if ($USER->id == $class->userid) {
+        // class owner can manage unlocking of own class
+        $unlocked_teachers = (array) json_decode(block_exastud_get_class_data($class->id, BLOCK_EXASTUD_DATA_ID_UNLOCKED_TEACHERS), true);
+        $unlocked_teachers[$teacherid] = strtotime('+1day');
+        block_exastud_set_class_data($classid, BLOCK_EXASTUD_DATA_ID_UNLOCKED_TEACHERS, json_encode($unlocked_teachers));
+    } else {
+        // request to admin
+         $toapprove_teachers = (array) json_decode(block_exastud_get_class_data($class->id, BLOCK_EXASTUD_DATA_ID_UNLOCKED_TEACHERS_TO_APPROVE), true);
+         $toapprove_teachers[$teacherid] = strtotime('+1day');
+         block_exastud_set_class_data($classid, BLOCK_EXASTUD_DATA_ID_UNLOCKED_TEACHERS_TO_APPROVE, json_encode($toapprove_teachers));
+    }
 }
 
 // redirect to edit class form if it is not a class owner, but is site admin
@@ -223,6 +241,17 @@ if ($action == 'changesubjectteacher') {
                               AND name = \'head_teacher\'
                           ', [$classOwnerId, $oldTeacherid, $classid]);
             }
+            $class = block_exastud_get_class($classid);
+            $subjectData = $DB->get_record('block_exastudsubjects', ['id' => $subjectid]);
+            \block_exastud\event\classteacher_changed::log(['objectid' => $classid,
+                    'courseid' => $courseid,
+                    'relateduserid' => $oldTeacherid,
+                    'other' => ['subjectid' => $subjectid,
+                            'subjecttitle' => (@$subjectData->title ? $subjectData->title : block_exastud_get_string('additional_head_teacher')),
+                            'classtitle' => $class->title,
+                            'newrelateduserid' => $newteacher->newsubjectteacher,
+                            'newrelatedusername' => fullname(block_exastud_get_user($newteacher->newsubjectteacher)),
+                            'oldrelatedusername' => fullname(block_exastud_get_user($oldTeacherid))]]);
             redirect(new moodle_url('/blocks/exastud/configuration_class.php', $redirectparams), $message);
         }
     }
@@ -721,6 +750,7 @@ switch ($type) {
                         block_exastud_get_string('teacher'),
                         block_exastud_get_string('allow_review_until'),
                         block_exastud_get_string('allow_review_admin_approved'),
+                        ''
                 );
                 foreach ($teachers as $teacherid => $teacherName) {
                     if (isset($all_teachers_list[$teacherid]) && $all_teachers_list[$teacherid] > time()) {
@@ -730,13 +760,32 @@ switch ($type) {
                             userdate($all_teachers_list[$teacherid]),
                             array_key_exists($teacherid, $unlocked_teachers) ? '<img class="" src="'.$CFG->wwwroot.'/blocks/exastud/pix/valid.png" title="'.block_exastud_get_string('allow_review_make_request_already').'" />' : ''
                         );
+                        $cellButtons = new html_table_cell();
+                        $cellButtonsContent = array();
+                        // button to approve
+                        if (array_key_exists($teacherid, $toapprove_teachers)) {
+                            $buttonLink = new \moodle_url('requests.php', ['action' => 'reviews_unlock_approve', 'classid' => $class->id, 'teacherid' => $teacherid, 'returnTo' => $PAGE->url]);
+                            $cellButtonsContent[] = $output->link_button($buttonLink, block_exastud_get_string('requests_unlock_approve_button'), ['class' => 'btn btn-success btn-sm']);
+                        }
+                        // button to prolong
+                        if (array_key_exists($teacherid, $unlocked_teachers)) {
+                            $buttonLink = new \moodle_url('requests.php', ['action' => 'reviews_unlock_prolong', 'classid' => $class->id, 'teacherid' => $teacherid, 'returnTo' => $PAGE->url]);
+                            $cellButtonsContent[] = $output->link_button($buttonLink, block_exastud_get_string('requests_unlock_prolong_button'), ['class' => 'btn btn-info btn-sm']);
+                        }
+                        // button to delete request
+                        if (array_key_exists($teacherid, $unlocked_teachers)) {
+                            $buttonLink = new \moodle_url('requests.php', ['action' => 'reviews_unlock_delete', 'classid' => $class->id, 'teacherid' => $teacherid, 'returnTo' => $PAGE->url]);
+                            $cellButtonsContent[] = $output->link_button($buttonLink, block_exastud_get_string('requests_unlock_delete_button'), ['class' => 'btn btn-danger btn-sm']);
+                        }
+                        $cellButtons->text = implode('&nbsp;', $cellButtonsContent);
+                        $row->cells[] = $cellButtons;
                         $teachersTable->data[] = $row;
                     }
                 }
                 echo html_writer::table($teachersTable);
             }
 
-            // disabled now
+            // buttons to unlock requests
             echo '<form method="post">';
             echo '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
             echo '<input type="hidden" name="action" value="unlock" />';
@@ -745,7 +794,11 @@ switch ($type) {
             echo '<input type="hidden" name="courseid" value="'.$courseid.'" />';
             echo '<div>';
             echo html_writer::select($teachers, 'teacherid', '', false);
-            echo '&nbsp;<input type="submit" name="submit" value="'.block_exastud_get_string('allow_review_make_request').'" class="btn btn-default">';
+            if ($USER->id == $class->userid) {
+                echo '&nbsp;<input type="submit" name="submit" value="'.block_exastud_get_string('allow_review').'" class="btn btn-default">';
+            } else {
+                echo '&nbsp;<input type="submit" name="submit" value="'.block_exastud_get_string('allow_review_make_request').'" class="btn btn-default">';
+            }
             echo '</div>';
             echo '</form>';
         }

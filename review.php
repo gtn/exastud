@@ -43,8 +43,6 @@ block_exastud_require_global_cap(BLOCK_EXASTUD_CAP_REVIEW);
 
 $url = '/blocks/exastud/review.php?courseid='.$courseid.'&openclass='.$openclass;
 $PAGE->set_url($url);
-$output = block_exastud_get_renderer();
-echo $output->header('review');
 
 $actPeriod = block_exastud_check_active_period();
 
@@ -56,8 +54,13 @@ if ($action == 'unlock_request') {
         $toapprove_teachers = (array) json_decode(block_exastud_get_class_data($classid, BLOCK_EXASTUD_DATA_ID_UNLOCKED_TEACHERS_TO_APPROVE), true);
         $toapprove_teachers[$USER->id] = strtotime('+1day');
         block_exastud_set_class_data($classid, BLOCK_EXASTUD_DATA_ID_UNLOCKED_TEACHERS_TO_APPROVE, json_encode($toapprove_teachers));
+        redirect($PAGE->url);
     }
 }
+
+$output = block_exastud_get_renderer();
+echo $output->header('review');
+
 
 function block_exastud_print_period($courseid, $period, $type, $openclass) {
     global $CFG, $USER;

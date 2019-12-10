@@ -19,9 +19,19 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->component = 'block_exastud';
-
-$plugin->release  = "4.6.4";
-$plugin->version   = 2019121001;
-$plugin->requires  = 2015051100;
-$plugin->maturity = MATURITY_ALPHA;
+$messageproviders = array (
+		// Notify teacher that a review of class from old period was approved
+		'approve_allow_review' => array (
+                'defaults' => [
+                        'popup' => MESSAGE_PERMITTED + MESSAGE_DEFAULT_LOGGEDIN + MESSAGE_DEFAULT_LOGGEDOFF,
+                        'email' => MESSAGE_PERMITTED
+                ],
+		),
+		// Notify teacher that a review of class from old period was prolonged
+		'prolong_allow_review' => array (
+                'defaults' => [
+                        'popup' => MESSAGE_PERMITTED + MESSAGE_DEFAULT_LOGGEDIN + MESSAGE_DEFAULT_LOGGEDOFF,
+                        'email' => MESSAGE_PERMITTED
+                ],
+		),
+);

@@ -6787,22 +6787,73 @@ function block_exastud_teacher_is_unlocked_for_old_class_review($classid, $teach
 
 // get count (only) of requests to admin
 function block_exastud_get_admin_requests_count() {
-    global $DB;
+    global $DB, $USER;
     $count = 0;
-    // delete classes
-    $count += $DB->count_records('block_exastudclass', ['to_delete' => 1]);
-    // unlock old class editing
     block_exastud_update_allow_review_times(null, BLOCK_EXASTUD_DATA_ID_UNLOCKED_TEACHERS_TO_APPROVE);
-    $sql = 'SELECT d.* 
+    // for SITE ADMIN
+    if (block_exastud_is_siteadmin()) {
+        // delete classes
+        $count += $DB->count_records('block_exastudclass', ['to_delete' => 1]);
+        // unlock old class editing
+        $sql = 'SELECT d.* 
               FROM {block_exastuddata} d 
               WHERE d.classid > 0 
-                AND d.name = ?';
-    $classesData = $DB->get_records_sql($sql, [BLOCK_EXASTUD_DATA_ID_UNLOCKED_TEACHERS_TO_APPROVE]);
-    foreach ($classesData as $cData) {
-        $times = (array) json_decode($cData->value);
-        foreach ($times as $teacherId => $time) {
-            if ($time >= time()) {
-                $count++;
+                AND d.name = ? OR d.name = ?';
+        $classesData = $DB->get_records_sql($sql, [BLOCK_EXASTUD_DATA_ID_UNLOCKED_TEACHERS, BLOCK_EXASTUD_DATA_ID_UNLOCKED_TEACHERS_TO_APPROVE]);
+        foreach ($classesData as $cData) {
+            $times = (array) json_decode($cData->value);
+            foreach ($times as $teacherId => $time) {
+                if ($time >= time()) {
+                    $count++;
+                }
+            }
+        }
+    } else if (block_exastud_has_global_cap(BLOCK_EXASTUD_CAP_MANAGE_CLASSES)) {
+        // for CLASS TEACHER
+        // delete requests
+        $count += $DB->count_records_select('block_exastudclass', ' to_delete IN (1, -1) AND userid = ? ', [$USER->id], 'COUNT(*)');
+        // unlock requests
+        $classes = $DB->get_records_sql("SELECT DISTINCT c.id, c.id AS record_id
+                                          FROM {block_exastudclass} c
+                                          WHERE c.userid = ?			
+                                        ", [$USER->id]);
+        if ($classes) {
+            $classesUids = array_keys($classes);
+            $sql = 'SELECT d.* 
+                      FROM {block_exastuddata} d 
+                      WHERE d.classid IN ('.implode(',', $classesUids).') 
+                        AND d.name = ? || d.name = ? ';
+            $classesData = $DB->get_records_sql($sql, [BLOCK_EXASTUD_DATA_ID_UNLOCKED_TEACHERS, BLOCK_EXASTUD_DATA_ID_UNLOCKED_TEACHERS_TO_APPROVE]);
+            foreach ($classesData as $cData) {
+                $times = (array) json_decode($cData->value);
+                foreach ($times as $teacherId => $time) {
+                    if ($time >= time()) {
+                        $count++;
+                    }
+                }
+            }
+        }
+    } else if (block_exastud_is_subject_teacher()) {
+        // for SUBJECT TEACHER
+        // unlock requests
+        $classes = $DB->get_records_sql("SELECT DISTINCT ct.classid, ct.id AS record_id
+			                                FROM {block_exastudclassteachers} ct
+		                                    WHERE ct.teacherid = ?			
+		                                  ", [$USER->id]);
+        if ($classes) {
+            $classesUids = array_keys($classes);
+            $sql = 'SELECT d.* 
+                      FROM {block_exastuddata} d 
+                      WHERE d.classid IN ('.implode(',', $classesUids).') 
+                        AND d.name = ? OR d.name = ?';
+            $classesData = $DB->get_records_sql($sql, [BLOCK_EXASTUD_DATA_ID_UNLOCKED_TEACHERS_TO_APPROVE, BLOCK_EXASTUD_DATA_ID_UNLOCKED_TEACHERS]);
+            foreach ($classesData as $cData) {
+                $times = (array) json_decode($cData->value);
+                foreach ($times as $teacherId => $time) {
+                    if ($time >= time() && $teacherId == $USER->id) {
+                        $count++;
+                    }
+                }
             }
         }
     }
@@ -6829,6 +6880,54 @@ function block_exastud_teacher_has_gradings_for_class($teacherid, $classid, $sub
     }
     return $result;
 }
+
+// is this user a subject teacher?
+function block_exastud_is_subject_teacher($userid = null) {
+    global $USER, $DB;
+    if (!$userid) {
+        $userid = $USER->id;
+    }
+    return $DB->record_exists('block_exastudclassteachers', ['teacherid' => $userid]);
+}
+
+/**
+ * @param $notificationtype
+ * @param $userfrom
+ * @param $userto
+ * @param $subject
+ * @param $message
+ * @param $context
+ * @param null $contexturl
+ * @throws coding_exception
+ * @throws dml_exception
+ */
+function block_exastud_send_notification($notificationtype, $userfrom, $userto, $subject, $message, $context, $contexturl = null) {
+    global $CFG, $DB;
+
+    require_once($CFG->dirroot.'/message/lib.php');
+
+    $eventdata = new core\message\message();
+
+    $eventdata->modulename = 'block_exastud';
+    $eventdata->userfrom = $userfrom;
+    $eventdata->userto = $userto;
+    $eventdata->fullmessage = $message;
+    $eventdata->name = $notificationtype;
+
+    $eventdata->subject = $subject;
+    $eventdata->fullmessageformat = FORMAT_HTML;
+    $eventdata->fullmessagehtml = $message;
+    $eventdata->smallmessage = $subject;
+    $eventdata->component = 'block_exastud';
+    $eventdata->notification = 1;
+    $eventdata->contexturl = $contexturl;
+    $eventdata->contexturlname = $context;
+    $eventdata->courseid = 1;
+
+    message_send($eventdata);
+
+}
+
 
 /*
 function block_exastud_encrypt_raw($value, $secret) {

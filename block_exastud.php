@@ -93,14 +93,17 @@ class block_exastud extends block_list {
 			$this->content->items[] = '<a title="'.block_exastud_get_string('new_head_teacher').'" href="'.$CFG->wwwroot.'/cohort/assign.php?id='.block_exastud_get_head_teacher_cohort()->id.'">'.$icon.block_exastud_get_string('new_head_teacher').'</a>';
             $icon = '<img src="'.$output->image_url('calendar', 'block_exastud').'" class="icon" alt="" />';
             $this->content->items[] = '<a title="'.block_exastud_get_string('periods').'" href="'.$CFG->wwwroot.'/blocks/exastud/periods.php'./*.?courseid='.$COURSE->id.*/'">'.$icon.block_exastud_get_string('periods').'</a>';
+		}
+        if (block_exastud_has_global_cap(BLOCK_EXASTUD_CAP_ADMIN)
+                || block_exastud_has_global_cap(BLOCK_EXASTUD_CAP_MANAGE_CLASSES)
+                || block_exastud_is_subject_teacher()) {
             if ($request_count = block_exastud_get_admin_requests_count()) {
                 $icon = '<img src="'.$output->image_url('attention', 'block_exastud').'" class="icon" alt="" />';
                 $this->content->items[] =
-                        '<a title="'.block_exastud_get_string('admin_requests').'" href="'.$CFG->wwwroot.'/blocks/exastud/admin_requests.php'.
-                        '">'.$icon.block_exastud_get_string('admin_requests').'</a> ('.$request_count.')';
+                        '<a title="'.block_exastud_get_string('requests').'" href="'.$CFG->wwwroot.'/blocks/exastud/requests.php'.
+                        '">'.$icon.block_exastud_get_string('requests').'</a> ('.$request_count.')';
             }
-		}
-
+        }
 		return $this->content;
 	}
 }
