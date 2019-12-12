@@ -1829,6 +1829,7 @@ function block_exastud_init_js_css($especialities = array()) {
 
     $PAGE->requires->css('/blocks/exastud/css/select2.css');
     //$PAGE->requires->css('/blocks/exastud/css/smartselect.css');
+    $PAGE->requires->css('/blocks/exastud/css/fontawesome/css/all.css');
 
     //$PAGE->requires->js('/blocks/exastud/javascript/jquery.smartselect.min.js', true);
     $PAGE->requires->js('/lib/cookies.js', true);
@@ -2131,7 +2132,8 @@ function block_exastud_get_class_title($classid, $periodtype, $unlocked) {
 	$classTitle = $class->title;
     // Mark own classes.
     if ($class->userid == $USER->id) {
-        $classTitle .= '&nbsp;<img class="exastud-my-class" src="'.$CFG->wwwroot.'/blocks/exastud/pix/star.png" width="16" height="16" title="'.block_exastud_get_string('it_is_my_class').'" />';
+        //$classTitle .= '&nbsp;<img class="exastud-my-class" src="'.$CFG->wwwroot.'/blocks/exastud/pix/star.png" width="16" height="16" title="'.block_exastud_get_string('it_is_my_class').'" />';
+        $classTitle .= '&nbsp;<i class="far fa-star exastud-my-class" title="'.block_exastud_get_string('it_is_my_class').'"></i>';
     } else if ($head_teacher = g::$DB->get_record('user', array('id' => $class->userid, 'deleted' => 0))) {
 		$classTitle .= ' ('.fullname($head_teacher).')';
 	}
@@ -2139,7 +2141,8 @@ function block_exastud_get_class_title($classid, $periodtype, $unlocked) {
         if (!$unlocked) {
             if (block_exastud_teacher_is_unlocked_for_old_class_review($classid, $USER->id, BLOCK_EXASTUD_DATA_ID_UNLOCKED_TEACHERS_TO_APPROVE)) {
                 // already requested
-                $classTitle .= '&nbsp;<img class="" src="'.$CFG->wwwroot.'/blocks/exastud/pix/unlock_review_done.png" width="20" height="20" title="'.block_exastud_get_string('allow_review_make_request_already').'" />';
+                //$classTitle .= '&nbsp;<img class="" src="'.$CFG->wwwroot.'/blocks/exastud/pix/unlock_review_done.png" width="20" height="20" title="'.block_exastud_get_string('allow_review_make_request_already').'" />';
+                $classTitle .= '&nbsp;'.html_writer::tag("i", '', array('class' => 'far fa-unlock done', 'title' => block_exastud_get_string('allow_review_make_request_already')));
             } else {
                 // not requested yet
                 $classTitle .= '&nbsp;';
@@ -2149,7 +2152,9 @@ function block_exastud_get_class_title($classid, $periodtype, $unlocked) {
                         'classid' => $classid
                 );
                 $classTitle .= html_writer::link(new moodle_url('/blocks/exastud/review.php', $params),
-                        html_writer::tag("img", '', array('src' => 'pix/unlock_review.png')), array('title' => block_exastud_get_string('allow_review_make_request')));
+                        //html_writer::tag("img", '', array('src' => 'pix/unlock_review.png')),
+                        html_writer::tag("i", '', array('class' => 'far fa-unlock')),
+                        array('title' => block_exastud_get_string('allow_review_make_request')));
             }
         }
     }

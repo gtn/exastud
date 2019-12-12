@@ -94,17 +94,21 @@ for ($i = 0; $i <= $max_classes; $i++) {
             $buttons = '';
             // backup buttons
             if (block_exastud_is_siteadmin() || $tempClass->userid == $USER->id) {
-                $img = '<img src="'.$CFG->wwwroot.'/blocks/exastud/pix/backup.png" title="'.block_exastud_get_string('export_class').'"/>';
+                //$img = '<img src="'.$CFG->wwwroot.'/blocks/exastud/pix/backup.png" title="'.block_exastud_get_string('export_class').'"/>';
+                $img = '<i class="far fa-backpack" title="'.block_exastud_get_string('export_class').'"></i>';
                 $buttons .= html_writer::link($CFG->wwwroot.'/blocks/exastud/export_class.php?courseid='.$courseid.'&classid='.$tempClass->id,
                         $img,
                         ['title' => block_exastud_get_string('export_class'), 'class' => '']);
             }
             // delete buttons
             if (block_exastud_is_siteadmin() || $tempClass->userid == $USER->id) {
-                $img = '<img src="'.$CFG->wwwroot.'/blocks/exastud/pix/trash.png" title="'.block_exastud_get_string('class_delete').'"/>';
+                //$img = '<img src="'.$CFG->wwwroot.'/blocks/exastud/pix/trash.png" title="'.block_exastud_get_string('class_delete').'"/>';
+                $img = '<i class="far fa-trash" title="'.block_exastud_get_string('class_delete').'"></i>';
                 if (isset($tempClass->to_delete) && $tempClass->to_delete) {
-                    $img = '<img src="'.$CFG->wwwroot.'/blocks/exastud/pix/trash2.png" title="'.block_exastud_get_string('class_marked_as_todelete_hover').'"/>';
-                    $img .= '<img src="'.$CFG->wwwroot.'/blocks/exastud/pix/attention.png" title="'.block_exastud_get_string('class_marked_as_todelete_hover').'"/>';;
+                    //$img = '<img src="'.$CFG->wwwroot.'/blocks/exastud/pix/trash2.png" title="'.block_exastud_get_string('class_marked_as_todelete_hover').'"/>';
+                    $img = '<i class="fas fa-trash-restore" title="'.block_exastud_get_string('class_marked_as_todelete_hover').'"></i>';
+                    //$img .= '<img src="'.$CFG->wwwroot.'/blocks/exastud/pix/attention.png" title="'.block_exastud_get_string('class_marked_as_todelete_hover').'"/>';;
+                    $img .= '<i class="fad fa-exclamation-triangle" title="'.block_exastud_get_string('class_marked_as_todelete_hover').'"></i>';
                 }
                 if (!block_exastud_get_class_students($tempClass->id) || block_exastud_is_siteadmin()) {
                     $buttons .= html_writer::link($CFG->wwwroot.'/blocks/exastud/configuration_class.php?courseid='.$courseid.'&action=delete&classid='.$tempClass->id.'&confirm=1',

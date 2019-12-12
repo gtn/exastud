@@ -763,9 +763,11 @@ if ($action && (($settingsid > 0 && $action == 'edit') || $action == 'new')) {
                         if ($param_settings['type'] == 'userdata') {
                             if (!empty($param_settings['userdatakey']) &&
                                     !array_key_exists($param_settings['userdatakey'], $userselectboxparameters)) {
-                                $wrongUserdataMarker = '<img src="'.$CFG->wwwroot.'/blocks/exastud/pix/attention.png" title="'.
+                                /*$wrongUserdataMarker = '<img src="'.$CFG->wwwroot.'/blocks/exastud/pix/attention.png" title="'.
                                         block_exastud_get_string('report_settings_userdata_wrong_user_parameter_in_reports_list').
-                                        '"/>&nbsp;';
+                                        '"/>&nbsp;';*/
+                                $wrongUserdataMarker = '<i class="fad fa-exclamation-triangle" 
+                                        title="'.block_exastud_get_string('report_settings_userdata_wrong_user_parameter_in_reports_list').'"></i>&nbsp;';
                                 break;
                             }
                         }
@@ -779,7 +781,9 @@ if ($action && (($settingsid > 0 && $action == 'edit') || $action == 'new')) {
                         $hideLink.'&nbsp;'.$copyLink.'&nbsp;'.$deleteLink,
                     //$relevantSubject,
                         $wrongUserdataMarker.'<strong>'.$report->title.'</strong>',
-                        array_key_exists($report->template, $templateList) ? $templateList[$report->template] : '<img src="'.$CFG->wwwroot.'/blocks/exastud/pix/attention.png" title="'.$fileNoExistsMessage.'"/>&nbsp;'.$report->template);
+                        //array_key_exists($report->template, $templateList) ? $templateList[$report->template] : '<img src="'.$CFG->wwwroot.'/blocks/exastud/pix/attention.png" title="'.$fileNoExistsMessage.'"/>&nbsp;'.$report->template
+                        array_key_exists($report->template, $templateList) ? $templateList[$report->template] : '<i class="fad fa-exclamation-triangle" title="'.$fileNoExistsMessage.'"></i>&nbsp;'.$report->template
+                );
                 if ($showfulltable) {
                     $row = array_merge($row, array(
                             $call_setting_marker('year'),
