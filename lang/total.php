@@ -1200,7 +1200,7 @@ return [
             'Refuse deletion',
     ],
     'delete_class_refused' => [
-            'Refused',
+            'Anfrage wurde abgelehnt',
             'Refused',
     ],
 	'logging' => [
@@ -1797,11 +1797,11 @@ return [
         'Edit user profile fields',
     ],
     'report_settings_no_template_file' => [
-        'No template file: {$a->filename}',
+        'Keine Berichtsdatei: {$a->filename}',
         'No template file: {$a->filename}',
     ],
     'report_settings_userdata_wrong_user_parameter_in_reports_list' => [
-        'This report has wrong userdata marker. Please edit this report to resolve this error.',
+        'Der Bericht hat falsche Marker defíniert. Bitte ändern sie den Bericht entsprechend.',
         'This report has wrong userdata markers. Please edit this report to resolve this error.',
     ],
     'report_edit_userprofile' => [
@@ -1853,7 +1853,7 @@ return [
         'approved',
     ],
     'allow_review_admin_notapproved_yet' => [
-        'not approved yet',
+        'noch nicht bestätigt',
         'not approved yet',
     ],
     'allow_review_admin_approved_for_all' => [
@@ -1941,6 +1941,7 @@ return [
         'Show more data',
     ],
     'more_student_data_all' => [
+    		'Gesamtdaten in der Liste anzeigen.',
         'Show more data for all students',
     ],
     'more_student_data_all_hide' => [
@@ -1948,35 +1949,35 @@ return [
         'Hide detail data for all students',
     ],
     'messageprovider:approve_allow_review' => [
-        'Approve of review of class from old period',
+        'Freigabe der Klasse aus vorigem Eingabezeitraum verlängern.',
         'Approve of review of class from old period',
     ],
     'messageprovider:prolong_allow_review' => [
-        'Prolong of review of class from old period',
+        'Freigabe der Klasse aus vorigem Eingabezeitraum verlängern.',
         'Prolong of review of class from old period',
     ],
     'notification_allow_review_old_class_approve_subject' => [
-            '{$a->site}: Review of class "{$a->classtitle}" was approved',
+            '{$a->site}: Die Freigabe der Klasse "{$a->classtitle}" wurde bestätigt',
             '{$a->site}: Review of class "{$a->classtitle}" was approved',
     ],
     'notification_allow_review_old_class_approve_body' => [
-            'Dear {$a->receiver}, </br></br>Review of class "{$a->classtitle}" was approved until {$a->datetime}.</br></br> This message has been generated automatically from moodle site {$a->site}.',
+            'Sehr geehrte/r {$a->receiver}, </br></br>Die Klasse "{$a->classtitle}" wurde freigegeben bis {$a->datetime}.</br></br> Diese Nachricht wurde automatisch generiert von {$a->site}.',
             'Dear {$a->receiver}, </br></br>Review of class "{$a->classtitle}" was approved until {$a->datetime}.</br></br> This message has been generated automatically from moodle site {$a->site}.',
     ],
     'notification_allow_review_old_class_approve_context' => [
-        'Allow review class from old period',
+        'Klasse aus vorigem Eingabezeitraum freigeben.',
         'Allow review class from old period',
     ],
     'notification_allow_review_old_class_prolong_subject' => [
-            '{$a->site}: Review of class "{$a->classtitle}" was prolonged',
+            '{$a->site}: Die Freigabe der Klasse "{$a->classtitle}" wurde verlängert.',
             '{$a->site}: Review of class "{$a->classtitle}" was prolonged',
     ],
     'notification_allow_review_old_class_prolong_body' => [
-            'Dear {$a->receiver}, </br></br>Review of class "{$a->classtitle}" was prolonged to {$a->datetime}.</br></br> This message has been generated automatically from moodle site {$a->site}.',
+            'Sehr geehrte/r {$a->receiver}, </br></br>Die Freigabe der Klasse "{$a->classtitle}" wurde verlängert {$a->datetime}.</br></br> Diese Nachricht wurde automatisch generiert. {$a->site}.',
             'Dear {$a->receiver}, </br></br>Review of class "{$a->classtitle}" was prolonged to {$a->datetime}.</br></br> This message has been generated automatically from moodle site {$a->site}.',
     ],
     'notification_allow_review_old_class_prolong_context' => [
-        'Allow review class from old period',
+        'Klasse aus vorigem Eingabezeitraum freigeben',
         'Allow review class from old period',
     ],
 
