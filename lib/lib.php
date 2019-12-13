@@ -2133,7 +2133,7 @@ function block_exastud_get_class_title($classid, $periodtype, $unlocked) {
     // Mark own classes.
     if ($class->userid == $USER->id) {
         //$classTitle .= '&nbsp;<img class="exastud-my-class" src="'.$CFG->wwwroot.'/blocks/exastud/pix/star.png" width="16" height="16" title="'.block_exastud_get_string('it_is_my_class').'" />';
-        $classTitle .= '&nbsp;<i class="far fa-star exastud-my-class" title="'.block_exastud_get_string('it_is_my_class').'"></i>';
+        $classTitle .= '&nbsp;<i class="fas fa-star exastud-my-class" title="'.block_exastud_get_string('it_is_my_class').'"></i>';
     } else if ($head_teacher = g::$DB->get_record('user', array('id' => $class->userid, 'deleted' => 0))) {
 		$classTitle .= ' ('.fullname($head_teacher).')';
 	}
@@ -2153,7 +2153,7 @@ function block_exastud_get_class_title($classid, $periodtype, $unlocked) {
                 );
                 $classTitle .= html_writer::link(new moodle_url('/blocks/exastud/review.php', $params),
                         //html_writer::tag("img", '', array('src' => 'pix/unlock_review.png')),
-                        html_writer::tag("i", '', array('class' => 'far fa-unlock')),
+                        html_writer::tag("i", '', array('class' => 'fas fa-unlock-alt')),
                         array('title' => block_exastud_get_string('allow_review_make_request')));
             }
         }

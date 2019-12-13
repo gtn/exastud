@@ -177,7 +177,7 @@ if ($classToDelete) {
         // refused message
         if ($class->to_delete == -1) {
             //$buttons[] = '<img src="'.$CFG->wwwroot.'/blocks/exastud/pix/attention.png" title="'.block_exastud_get_string('delete_class_refused').'"/>';
-            $buttons[] = '<i class="fad fa-exclamation-triangle" title="'.block_exastud_get_string('delete_class_refused').'"></i>';
+            $buttons[] = '<i class="fas fa-exclamation-triangle" title="'.block_exastud_get_string('delete_class_refused').'"></i>';
             $buttons[] = block_exastud_get_string('delete_class_refused');
         }
         // redo deleting button

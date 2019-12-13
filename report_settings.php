@@ -766,7 +766,7 @@ if ($action && (($settingsid > 0 && $action == 'edit') || $action == 'new')) {
                                 /*$wrongUserdataMarker = '<img src="'.$CFG->wwwroot.'/blocks/exastud/pix/attention.png" title="'.
                                         block_exastud_get_string('report_settings_userdata_wrong_user_parameter_in_reports_list').
                                         '"/>&nbsp;';*/
-                                $wrongUserdataMarker = '<i class="fad fa-exclamation-triangle" 
+                                $wrongUserdataMarker = '<i class="fas fa-exclamation-triangle" 
                                         title="'.block_exastud_get_string('report_settings_userdata_wrong_user_parameter_in_reports_list').'"></i>&nbsp;';
                                 break;
                             }

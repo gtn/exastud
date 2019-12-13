@@ -577,14 +577,14 @@
         $('*[data-exastud-report-field-wrong]').each(function () {
             var message = $(this).attr('data-exastud-report-field-wrong');
             // var after = '&nbsp;<img src="' + M.cfg.wwwroot + '/blocks/exastud/pix/attention.png" title="' + message + '"/>';
-            var after = '&nbsp;<i class="fad fa-exclamation-triangle" title="' + message + '"></i>';
+            var after = '&nbsp;<i class="fas fa-exclamation-triangle" title="' + message + '"></i>';
             $(this).after(after);
         });
         // markers
         $('*[data-exastud-report-marker-wrong]').each(function () {
             var message = $(this).attr('data-exastud-report-marker-wrong');
             // var after = '&nbsp;<img src="' + M.cfg.wwwroot + '/blocks/exastud/pix/attention.png" title="' + message + '"/>';
-            var after = '&nbsp;<i class="fad fa-exclamation-triangle" title="' + message + '"></i>';
+            var after = '&nbsp;<i class="fas fa-exclamation-triangle" title="' + message + '"></i>';
             if ($(this).attr('data-exastud-report-marker-addurl')) {
                 var url_type = $(this).attr('data-exastud-report-marker-addurl_type');
                 var tempurl = $(this).attr('data-exastud-report-marker-addurl');
