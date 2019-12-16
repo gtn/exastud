@@ -6841,7 +6841,7 @@ function block_exastud_get_admin_requests_count() {
     } else if (block_exastud_is_subject_teacher()) {
         // for SUBJECT TEACHER
         // unlock requests
-        $classes = $DB->get_records_sql("SELECT DISTINCT ct.classid, ct.id AS record_id
+        $classes = $DB->get_records_sql("SELECT DISTINCT ct.classid, ct.classid AS tempid
 			                                FROM {block_exastudclassteachers} ct
 		                                    WHERE ct.teacherid = ?			
 		                                  ", [$USER->id]);

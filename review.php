@@ -52,7 +52,7 @@ if ($action == 'unlock_request') {
     $classteachersIds = array_map(function($u) {return @$u->id;}, $classteachers);
     if (in_array($USER->id, $classteachersIds)) {
         $toapprove_teachers = (array) json_decode(block_exastud_get_class_data($classid, BLOCK_EXASTUD_DATA_ID_UNLOCKED_TEACHERS_TO_APPROVE), true);
-        $toapprove_teachers[$USER->id] = strtotime('+1day');
+        $toapprove_teachers[$USER->id] = strtotime('+2 weeks');
         block_exastud_set_class_data($classid, BLOCK_EXASTUD_DATA_ID_UNLOCKED_TEACHERS_TO_APPROVE, json_encode($toapprove_teachers));
         redirect($PAGE->url);
     }

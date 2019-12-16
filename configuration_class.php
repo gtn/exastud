@@ -104,7 +104,7 @@ if ($showUnlock && $action == 'unlock') {
     } else {
         // request to admin
          $toapprove_teachers = (array) json_decode(block_exastud_get_class_data($class->id, BLOCK_EXASTUD_DATA_ID_UNLOCKED_TEACHERS_TO_APPROVE), true);
-         $toapprove_teachers[$teacherid] = strtotime('+1day');
+         $toapprove_teachers[$teacherid] = strtotime('+2 weeks');
          block_exastud_set_class_data($classid, BLOCK_EXASTUD_DATA_ID_UNLOCKED_TEACHERS_TO_APPROVE, json_encode($toapprove_teachers));
     }
 }

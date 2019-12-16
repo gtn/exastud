@@ -58,7 +58,7 @@ class class_edit_form extends moodleform {
                     block_exastud_get_string('class_title_for_report').':',
                     array('size' => $maxlength,
                             'class' => 'exastud-review-message',
-                            'data-exastudmessage' =>  block_exastud_get_string('class_title_limit_message', null, $maxlength).'. '.block_exastud_get_string('class_title_for_report_description')));
+                            'data-exastudmessage' =>  block_exastud_get_string('class_title_limit_message', null, $maxlength).' '.block_exastud_get_string('class_title_for_report_description')));
         } else {
             $mform->addElement('hidden', 'title_forreport');
         }

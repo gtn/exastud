@@ -319,8 +319,8 @@ return [
 		'Class',
 	],
 	'class_title_limit_message' => [
-		'Max. {$a} Zeichen',
-		'Max. {$a} chars',
+		'Max. {$a} Zeichen.',
+		'Max. {$a} chars.',
 	],
     'class_title_for_report' => [
         'Klassenname im Zeugnis',
@@ -1923,6 +1923,10 @@ return [
     'requests_no_any' => [
         'Keine Benutzeranfragen vorhanden',
         'No any requests',
+    ],
+    'requests_for_you' => [
+        'There are System Requests for you',
+        'There are System Requests for you',
     ],
     'not_selected' => [
         'keine',
