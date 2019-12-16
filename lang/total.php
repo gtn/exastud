@@ -1845,11 +1845,11 @@ return [
         'Parent',
     ],
     'allow_review_until' => [
-        'bis',
+        'Bearbeitung Freigeben bis',
         'until',
     ],
     'allow_review_admin_approved' => [
-        'zustimmen',
+        'bestätigt',
         'approved',
     ],
     'allow_review_admin_notapproved_yet' => [
@@ -1861,7 +1861,7 @@ return [
         'for all',
     ],
     'allow_review_make_request' => [
-        'Anfrage an den Administrator um das Bearbeiten freizuschalten',
+        'Anfrage an die Klassenlehrkraft stellen um das Bearbeiten dieser Klasse für 1 Tag freizuschalten.',
         'make a request to admin for unlock editing',
     ],
     'allow_review' => [
@@ -1869,7 +1869,7 @@ return [
         'unlock editing',
     ],
     'allow_review_make_request_already' => [
-        'Die Aktivierungsanfrage wurde bereits an den Administrator weitergeleitet',
+        'Die Freischaltung dieser Klasse zur Bearbeitung wurde beim Klassenlehrer angefragt. Es ist noch keine Zustimmung durch die Klassenlehrkraft erfolgt.',
         'already requested for unlock editing',
     ],
     'requests' => [
@@ -1905,11 +1905,11 @@ return [
         'until',
     ],
     'requests_unlock_approve_button' => [
-        'Zustimmen (1 Tag)',
+        'Zustimmen',
         'Approve',
     ],
     'requests_unlock_prolong_button' => [
-        'Bearbeitungsfrist + 1 Tag',
+        'Freigabe verlängern (auf jetzt + 24h)',
         'Prolong',
     ],
     'requests_unlock_delete_button' => [
