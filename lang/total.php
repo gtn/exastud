@@ -1925,7 +1925,7 @@ return [
         'No any requests',
     ],
     'requests_for_you' => [
-        'There are System Requests for you',
+        'Es sind Systemnachrichten für sie vorhanden.',
         'There are System Requests for you',
     ],
     'not_selected' => [
