@@ -131,6 +131,12 @@ switch ($type) {
                 });
             }*/
         }
+        if (!block_exastud_is_bw_active()) {
+            $sorting = $template->get_params_sorting();
+            if ($sorting && count($sorting) > 0) {
+                $categories = array_merge(array_flip($sorting), $categories);
+            }
+        }
         break;
     case BLOCK_EXASTUD_DATA_ID_ADDITIONAL_INFO:
         $template = block_exastud_get_student_print_template($class, $student->id);

@@ -117,7 +117,7 @@ $settingsform = new reportsettings_edit_form(null, [
         //'classid' => $classid,
         'category_infomessage' => $categoryinfo_text,
         'report_id' => $settingsid
-]);
+], 'post', '', ['class' => 'exastud-reports-form']);
 
 
 if ($action && (($settingsid > 0 && $action == 'edit') || $action == 'new')) {
@@ -898,6 +898,9 @@ function block_exastud_get_reportsettings_additional_description($report) {
 function block_exastud_report_templates_prepare_serialized_data($settingsform, $settingsedit) {
     // main properties
     $uploadFolder = BLOCK_EXASTUD_TEMPLATE_DIR.'/upload/';
+    if ($params_sorting = optional_param('params_sorting', '', PARAM_TEXT)) {
+        $settingsedit->params_sorting = serialize(json_decode($params_sorting));
+    }
     // template file
     if ($tmpNewFile = $settingsform->save_temp_file('newfileupload')) {
         $newfilename = $settingsform->get_new_filename('newfileupload');

@@ -78,6 +78,10 @@ class print_templates {
 		return static::get_template_config($templateid)['grades'];
 	}
 
+	static function get_template_params_sorting($templateid) {
+		return static::get_template_config($templateid)['params_sorting'];
+	}
+
 	static function get_template_inputs($templateid, $type = BLOCK_EXASTUD_DATA_ID_LERN_UND_SOZIALVERHALTEN) {
 		return static::get_template_config($templateid, $type)['inputs'];
 	}
@@ -96,6 +100,7 @@ class print_templates {
                     'grades' => $grades,
                     'rs_hs' => (@$tmpl->rs_hs ? $tmpl->rs_hs : ''),
                     'category' => $tmpl->category,
+                    'params_sorting' => (@$tmpl->params_sorting ? unserialize($tmpl->params_sorting) : ''),
                     'inputs' => self::get_inputs_for_template($tmpl->id, $type)
             );
         }
@@ -995,6 +1000,10 @@ class print_template {
 
     function get_category() {
         return trim(print_templates::get_template_category($this->templateid));
+    }
+
+    function get_params_sorting() {
+        return print_templates::get_template_params_sorting($this->templateid);
     }
 
 

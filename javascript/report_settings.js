@@ -613,4 +613,69 @@
         $('*[data-groupToggler="default"]').trigger('click');
     });
 
+    // sorting
+    $(function () {
+        // var singleP = $('.exastud-setting-block').last().clone();
+        // singleP.addClass('placeholder');
+        // console.log(singleP);
+        // var sortingPlaceholder = singleP;
+        var sortingPlaceholder = '<div class="placeholder exastud-sorting-placeholder"><span>' + M.str.block_exastud.move_here + '</span></div>';
+        var group = $('form.exastud-reports-form').sortable({
+            containerSelector: 'form',
+            group: 'exastud-reports-form',
+            itemSelector: 'div.exastud-setting-block',
+            handle: '.sorting_param_button',
+            pullPlaceholder: false,
+            placeholder: sortingPlaceholder,
+            // animation on drop
+            onDrop: function  ($item, container, _super) {
+                var $clonedItem = $('<div/>').css({height: 0});
+                $item.before($clonedItem);
+                $clonedItem.animate({'height': $item.height()});
+
+                $item.animate($clonedItem.position(), function  () {
+                    $clonedItem.detach();
+                    _super($item, container);
+                });
+                // store data
+                var items = $(group).find('[name*="additional_params_key"]');
+                var params_sorting = '';
+                if (items) {
+                    var params_sorting_tmp = [];
+                    $(items).each(function() {
+                        params_sorting_tmp.push($(this).val());
+                    });
+                    params_sorting = JSON.stringify(params_sorting_tmp); // JSON. not serialized. Serializing in PHP
+                }
+                $('#param_sorting').val(params_sorting);
+            },
+
+            // set $item relative to cursor position
+            onDragStart: function ($item, container, _super) {
+                var offset = $item.offset(),
+                    pointer = container.rootGroup.pointer;
+                adjustment = {
+                    left: pointer.left - offset.left,
+                    top: pointer.top - offset.top
+                };
+                _super($item, container);
+            },
+            onDrag: function ($item, position) {
+                $item.css({
+                    left: position.left - adjustment.left,
+                    top: position.top - adjustment.top
+                });
+            }
+            /*onMousedown: function ($item, _super, event) {
+                if (!event.target.nodeName.match(/^(input|select|textarea)$/i)) {
+                    event.preventDefault()
+                    var block = $(event.target).closest('div.exastud-setting-block');
+                    $('form.exastud-reports-form').sortable('refresh');
+                    sortingPlaceholder = '55555'; //block.outerHTML;
+                    return true
+                };
+            }*/
+        });
+    });
+
 })(block_exastud.jquery);

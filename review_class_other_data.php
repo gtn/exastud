@@ -318,6 +318,13 @@ foreach ($classstudents as $classstudent) {
                     $inputs = null;
                 }
                 if ($inputs) {
+                    // sorting
+                    if (!block_exastud_is_bw_active()) {
+                        $sorting = $template->get_params_sorting();
+                        if ($sorting && count($sorting) > 0) {
+                            $inputs = array_merge(array_flip($sorting), $inputs);
+                        }
+                    }
                     $i = 0;
                     $content .= '<div class="input-container">';
                     foreach ($inputs as $dataid => $form_input) {

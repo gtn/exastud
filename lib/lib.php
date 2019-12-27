@@ -1835,6 +1835,7 @@ function block_exastud_init_js_css($especialities = array()) {
     $PAGE->requires->js('/lib/cookies.js', true);
     $PAGE->requires->js('/blocks/exastud/javascript/common.js', true);
     $PAGE->requires->js('/blocks/exastud/javascript/select2.js', true);
+    $PAGE->requires->js('/blocks/exastud/javascript/jquery-sortable-min.js', true);
 	$PAGE->requires->js('/blocks/exastud/javascript/exastud.js', true);
 
 	// page specific js/css
@@ -1858,6 +1859,7 @@ function block_exastud_init_js_css($especialities = array()) {
     $PAGE->requires->string_for_js('download', 'block_exastud');
     $PAGE->requires->string_for_js('report_setting_type_matrix_row_titles', 'block_exastud');
     $PAGE->requires->string_for_js('report_setting_type_matrix_column_titles', 'block_exastud');
+    $PAGE->requires->string_for_js('move_here', 'block_exastud');
 }
 
 function block_exastud_get_category($categoryid, $categorysource) {

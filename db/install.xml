@@ -215,6 +215,7 @@
         <FIELD NAME="ags" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
         <FIELD NAME="additional_params" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
         <FIELD NAME="grades" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="params_sorting" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
         <FIELD NAME="hidden" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
         <FIELD NAME="rs_hs" TYPE="char" LENGTH="5" NOTNULL="false" DEFAULT="" SEQUENCE="false"/>
         <FIELD NAME="source" TYPE="char" LENGTH="200" NOTNULL="false" DEFAULT="0" SEQUENCE="false"/>

@@ -1208,6 +1208,10 @@ class reportsettings_edit_form extends moodleform {
         $mform->setType('token', PARAM_INT);
         $mform->setDefault('token', 0);
 
+        $mform->addElement('hidden', 'params_sorting', '', ['id' => 'param_sorting']);
+        $mform->setType('params_sorting', PARAM_TEXT);
+        $mform->setDefault('params_sorting', '');
+
     }
 
     public function prepare_formdata($data) {
@@ -1262,7 +1266,14 @@ class reportsettings_edit_form extends moodleform {
                 $result->{$field.'_matrixcols'} = $fieldData['matrixcols'];
             }
         }
-        $result->additional_params = unserialize($data->additional_params);
+        $additional_params_tmp = unserialize($data->additional_params);
+        if (!block_exastud_is_bw_active() && $data->params_sorting) {
+            $sorting = unserialize($data->params_sorting);
+            if (count($sorting) > 0) {
+                $additional_params_tmp = array_merge(array_flip($sorting), $additional_params_tmp);
+            }
+        }
+        $result->additional_params = $additional_params_tmp;
         return $result;
     }
 
@@ -1337,6 +1348,12 @@ class reportsettings_edit_form extends moodleform {
                 // always 'checked'
                 $mform->addElement('hidden', 'additional_params['.$i.']', '1');
                 $mform->setDefault('additional_params['.$i.']', 1);
+                // move (sorting) button
+                if (!block_exastud_is_bw_active()) {
+                    $mform->addElement('exastud_htmltag',
+                            '<img class="sorting_param_button" data-paramid="'.$i.'" src="'.$CFG->wwwroot.
+                            '/blocks/exastud/pix/move-vertical.png" title="'.block_exastud_get_string('sort_parameter').'"/>');
+                }
                 // delete button
                 $mform->addElement('exastud_htmltag', '<img class="delete_param_button" data-paramid="'.$i.'" src="'.$CFG->wwwroot.'/blocks/exastud/pix/trash.png" title="'.block_exastud_get_string('delete_parameter').'"/>');
                 // title

@@ -766,6 +766,14 @@ return [
             'Parameter löschen',
             'Delete parameter',
     ],
+    'sort_parameter' => [
+            'Sort parameters (move)',
+            'Sort parameters (move)',
+    ],
+    'move_here' => [
+        'Move here',
+        'Move here',
+    ],
     'delete' => [
             'Löschen',
             'Delete',
