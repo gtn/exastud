@@ -2144,7 +2144,7 @@ function block_exastud_get_class_title($classid, $periodtype, $unlocked) {
             if (block_exastud_teacher_is_unlocked_for_old_class_review($classid, $USER->id, BLOCK_EXASTUD_DATA_ID_UNLOCKED_TEACHERS_TO_APPROVE)) {
                 // already requested
                 //$classTitle .= '&nbsp;<img class="" src="'.$CFG->wwwroot.'/blocks/exastud/pix/unlock_review_done.png" width="20" height="20" title="'.block_exastud_get_string('allow_review_make_request_already').'" />';
-                $classTitle .= '&nbsp;'.html_writer::tag("i", '', array('class' => 'far fa-unlock done', 'title' => block_exastud_get_string('allow_review_make_request_already')));
+                $classTitle .= '&nbsp;'.html_writer::tag("i", '', array('class' => 'fas fa-unlock done', 'title' => block_exastud_get_string('allow_review_make_request_already')));
             } else {
                 // not requested yet
                 $classTitle .= '&nbsp;';

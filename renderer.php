@@ -84,15 +84,20 @@ class block_exastud_renderer extends plugin_renderer_base {
         if (block_exastud_has_global_cap(BLOCK_EXASTUD_CAP_ADMIN)
                 || block_exastud_has_global_cap(BLOCK_EXASTUD_CAP_MANAGE_CLASSES)
                 || block_exastud_is_subject_teacher()) {
+            $requests_tabtitle = null;
             if ($requests_count = block_exastud_get_admin_requests_count()) {
                 //$requests_tabtitle = html_writer::tag("img", '', array('src' => 'pix/attention.png')).
                 $requests_tabtitle = '<i class="fas fa-exclamation-triangle" title="'.block_exastud_get_string('requests_for_you').'"></i>'.'&nbsp;'.
                         block_exastud_get_string('requests').'&nbsp;('.$requests_count.')';
             } else {
-                $requests_tabtitle = block_exastud_get_string('requests');
+                if (block_exastud_has_global_cap(BLOCK_EXASTUD_CAP_ADMIN) || block_exastud_has_global_cap(BLOCK_EXASTUD_CAP_MANAGE_CLASSES)) {
+                            $requests_tabtitle = block_exastud_get_string('requests');
+                }
             }
-            $tabs['requests'] = new tabobject('requests', new moodle_url('/blocks/exastud/requests.php'),
-                    $requests_tabtitle, block_exastud_get_string('requests_for_you'), true);
+            if ($requests_tabtitle) {
+                $tabs['requests'] = new tabobject('requests', new moodle_url('/blocks/exastud/requests.php'),
+                        $requests_tabtitle, block_exastud_get_string('requests_for_you'), true);
+            }
         }
 
 		$class = @$options['class'];
