@@ -23,5 +23,5 @@ require_once __DIR__.'/../inc.php';
 function xmldb_block_exastud_install() {
 	block_exastud_check_profile_fields();
 	block_exastud_insert_default_entries();
-    //block_exastud_fill_reportsettingstable(); moved to first plugin's config saving. TODO: test this
+    block_exastud_fill_reportsettingstable(); // it is needed because is poosible to use external config.php file for moodle
 }
