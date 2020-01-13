@@ -315,13 +315,22 @@ function block_exastud_get_classes_all($sortByPeriod = false) {
 			ORDER BY ".($sortByPeriod ? "p.description, p.id, " : "")." c.title");
 }
 
-function block_exastud_get_class_students($classid) {
+function block_exastud_get_class_students($classid, $hideDroppedUot = false) {
+    $addWhere = '';
+    $addJoin = '';
+    if ($hideDroppedUot) {
+        $addJoin .= ' LEFT JOIN {block_exastuddata} d ON d.classid = '.intval($classid).' AND d.studentid = u.id AND d.name = \'dropped_out\' ';
+        $addWhere .= ' AND (d.value = 0 OR d.value IS NULL ) ';
+    }
 	return g::$DB->get_records_sql("
 			SELECT u.id, cs.id AS record_id, ".\user_picture::fields('u', null, 'userid')."
-			FROM {user} u
-			JOIN {block_exastudclassstudents} cs ON u.id=cs.studentid
-			WHERE cs.classid=? AND u.deleted = 0
-			ORDER BY u.lastname, u.firstname
+    			FROM {user} u
+	    		    JOIN {block_exastudclassstudents} cs ON u.id=cs.studentid
+	    		    ".$addJoin."
+		    	WHERE cs.classid = ? 
+		    	    AND u.deleted = 0
+		    	    ".$addWhere."
+			    ORDER BY u.lastname, u.firstname
 		", [$classid]);
 }
 

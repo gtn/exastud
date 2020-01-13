@@ -72,7 +72,7 @@ class block_exastud extends block_list {
 		}
 		// show only if the user is a teacher of at least one class
         $myclasses = block_exastud_get_teacher_classes($USER->id);
-        if (count($myclasses) > 0) {
+        if (count($myclasses) > 0 && !block_exastud_is_siteadmin()) {
             if (block_exastud_get_active_period() && block_exastud_has_global_cap(BLOCK_EXASTUD_CAP_REVIEW)) {
                 $icon = '<img src="'.$output->image_url('beurteilung', 'block_exastud').'" class="icon" alt="" />';
                 $this->content->items[] = '<a title="'.block_exastud_get_string('review').'" href="'.$CFG->wwwroot.

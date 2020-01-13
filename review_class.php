@@ -166,7 +166,7 @@ echo $output->heading($classheader);
 $actPeriod = block_exastud_check_active_period();
 
 
-if (!$classstudents = block_exastud_get_class_students($classid)) {
+if (!$classstudents = block_exastud_get_class_students($classid, true)) {
 	echo $output->heading(block_exastud_get_string('nostudentstoreview'));
 	echo $output->back_button(new moodle_url('review.php', ['courseid' => $courseid]));
 	echo $output->footer();
