@@ -2231,8 +2231,8 @@ function block_exastud_is_project_teacher($class, $userid) {
 	return !!block_exastud_get_project_teacher_students($class, $userid);
 }
 
-function block_exastud_get_project_teacher_students($class, $userid) {
-	$classstudents = block_exastud_get_class_students($class->id);
+function block_exastud_get_project_teacher_students($class, $userid, $hideDroppedOut = false) {
+	$classstudents = block_exastud_get_class_students($class->id, $hideDroppedOut);
 	$project_teacher_students = [];
 
 	foreach ($classstudents as $classstudent) {

@@ -66,7 +66,7 @@ $PAGE->set_url($url, ['courseid' => $courseid, 'classid' => $classid]);
 echo $output->header(array('review', '='.$classheader));
 echo $output->heading($classheader);
 
-$project_teacher_students = block_exastud_get_project_teacher_students($class, $USER->id);
+$project_teacher_students = block_exastud_get_project_teacher_students($class, $USER->id, true);
 
 /* Print the Students */
 $table = new html_table();
