@@ -132,7 +132,7 @@ echo $output->header(array('review', '='.$classheader));
 echo $output->heading($classheader);
 
 $actPeriod = block_exastud_check_active_period();
-$classstudents = block_exastud_get_class_students($classid);
+$classstudents = block_exastud_get_class_students($classid, true);
 //$evaluation_options = block_exastud_get_evaluation_options();
 
 /* Print the Students */
