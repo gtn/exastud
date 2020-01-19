@@ -145,6 +145,57 @@ if (($startPeriod + $countOfShownPeriods) < $count_periods) {
 $periodClasses = $output->table($tablePeriods);
 
 
+function block_exastud_require_secret() {
+	global $PAGE, $courseid;
+
+	$secret = optional_param('secret', 0, PARAM_TEXT);
+
+	if ($secret) {
+		return $secret;
+	}
+
+	$secret = block_exastud_random_password();
+
+	$output = block_exastud_get_renderer();
+
+    echo $output->header('report');
+    echo $output->heading(block_exastud_get_string('reports'));
+
+	echo block_exastud_get_string('export_password_message', null, $secret);
+	echo '<br/><br/>';
+
+	// add all other post parameters, eg. descriptors[], subjects[], topics[]
+	$flatten_params = function($params, $level = 0) use (&$flatten_params) {
+		$ret = [];
+		foreach ($params as $key=>$value) {
+			$key = $level > 0 ? '['.$key.']' : $key;
+			if (is_array($value)) {
+				foreach ($flatten_params($value, $level+1) as $subKey=>$value) {
+					$ret[$key.$subKey] = $value;
+				}
+			} else {
+				$ret[$key] = $value;
+			}
+		}
+		return $ret;
+	};
+
+	$other_params = '';
+	foreach ($flatten_params($_POST) as $key => $value) {
+		$other_params .= '<input type="hidden" name="'.$key.'" value="'.$value.'" />';
+	}
+
+	echo '<form method="post">
+		'.$other_params.'
+		<input type="hidden" name="secret" value="'.$secret.'" />
+		<input type="submit" class="btn btn-primary" value="'.block_exastud_get_string('next').'" />
+	</form>';
+
+	echo $output->footer();
+	exit;
+}
+
+
 $templates = array();
 
 $class = block_exastud_get_head_teacher_class($classid, true);
@@ -184,6 +235,12 @@ if ($class !== null) {
     $messagebeforetables = '';
     //$template = optional_param('template', '', PARAM_TEXT);
     if (count($templatesFromForm) > 0) {
+		if (get_config('exastud', 'export_class_report_password') && !$secret) {
+			$secret = block_exastud_require_secret();
+		} else {
+			$secret = '';
+		}
+
         $zipfilename = tempnam($CFG->tempdir, "zip");
         $zip = new \ZipArchive();
         $zip->open($zipfilename, \ZipArchive::OVERWRITE);
@@ -411,13 +468,9 @@ if ($class !== null) {
 
             if (count($files_to_zip) > 0) {
                 require_once $CFG->dirroot.'/lib/filelib.php';
-                if (count($files_to_zip) > 1) {
-                    foreach ($files_to_zip as $tempF => $fileName) {
-                        // temporary: delete folders
-                        //$fileName = basename($fileName);
-                        $zip->addFile($tempF, $fileName);
-                    }
-                } else if (count($files_to_zip) == 1) {
+
+                if (count($files_to_zip) == 1 && !$secret) {
+					// prüfen auf !$secret: passwort geschützter export ist immer eine zip datei
                     ob_clean();
                     if ($content = ob_get_clean()) {
                         throw new \Exception('there was some other output: '.$content);
@@ -425,8 +478,20 @@ if ($class !== null) {
                     $temp_file = key($files_to_zip);
 
                     send_temp_file($temp_file, basename($files_to_zip[$temp_file]));
-                    exit();
                 }
+
+				foreach ($files_to_zip as $tempF => $fileName) {
+					// temporary: delete folders
+					//$fileName = basename($fileName);
+					$zip->addFile($tempF, $fileName);
+				}
+
+				if ($secret) {
+					// encrypt all files in zip file
+					for ($i = 0; $i < $zip->count(); $i++) {
+						$zip->setEncryptionIndex($i, ZipArchive::EM_AES_256, $secret);
+					}
+				}
 
                 $zip->close();
 
@@ -435,9 +500,10 @@ if ($class !== null) {
                     unlink($temp_file);
                 }
 
-                $newZipFilename = 'report-'.date('Y-m-d-H-i').'.zip';
+				$extra = ($secret?'-'.block_exastud_trans(['de:passwortgeschuetzt', 'en:passwordprotected']):'');
+                $newZipFilename = 'report-'.date('Y-m-d-H-i').$extra.'.zip';
                 send_temp_file($zipfilename, $newZipFilename);
-                exit();
+                exit;
             } else {
                 // no any file to send: different reasons
                 $messagebeforetables .= $output->notification(block_exastud_get_string('not_enough_data_for_report'), 'notifyerror');

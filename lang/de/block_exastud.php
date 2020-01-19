@@ -392,7 +392,13 @@ $string['class_settings_can_edit_crosscompetencies'] = 'kann überfachliche Komp
 $string['class_settings_can_edit_learnsocial'] = 'kann Lern- und Sozialverhalten erfassen:';
 $string['class_settings_class_teacher'] = 'Klassenlehrkraft';
 $string['class_settings_subject_teacher'] = 'Fachlehrer';
-$string['backup_class_protection'] = 'Sicherung von Klassen mit Passwort schützen';
+$string['settings_heading_security'] = 'Sicherheit';
+$string['settings_heading_security_description'] = '';
+$string['export_password_message'] = 'Bitte notieren Sie sich das Passwort "<strong>{$a}</strong>", bevor Sie fortfahren.<br/><br/>
+		Hinweis: Passwortgeschützte zip-Dateien können unter Windows zwar geöffnet werden, aber die Dateien innerhalb der Zip-Datei können nur mit einem externen Programm (z.B. 7-Zip) extrahiert werden.
+		';
+$string['settings_export_class_password'] = 'Sicherung von Klassen mit Passwort schützen (AES-256 Verschlüsselung)';
+$string['settings_export_class_report_password'] = 'Export von Klassenberichten mit Passwort schützen (AES-256 Verschlüsselung)';
 $string['backup_description'] = 'Hier können Sie alle Tabellen des Lernentwicklungsberichts im sql-Format sichern. Das Einspielen der Sicherung führen Sie bitte mit einem Datenbank-Tool wie z.B. phpMyAdmin durch.';
 $string['backup_go'] = 'Datenbank jetzt sichern';
 $string['block_settings'] = 'Blockeinstellungen';

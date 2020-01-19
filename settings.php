@@ -443,18 +443,6 @@ if ($ADMIN->fulltree) {
 
     //$settings->add(new admin_setting_configcheckbox('exastud/grade_interdisciplinary_competences', block_exastud_get_string('settings_grade_interdisciplinary_competences'), '', 0));
 
-	if (block_exastud_is_a2fa_installed()) {
-		$description = '';
-	} else {
-		$description = '<span style="color: red">'.block_exastud_get_string('settings_a2fa_requirement_description').'</span>';
-	}
-	$a2fa_requirement = [
-		'' => block_exastud_get_string('settings_a2fa_requirement_def'),
-		'user_a2fa' => block_exastud_get_string('settings_a2fa_requirement_user_a2fa'),
-		'a2fa_timeout' => block_exastud_get_string('settings_a2fa_requirement_a2fa_timeout'),
-	];
-	$settings->add(new admin_setting_configselect('exastud/a2fa_requirement', block_exastud_get_string('settings_a2fa_requirement'), $description, '', $a2fa_requirement));
-
 	//$settings->add(new admin_setting_configstoredfile('exastud/school_logo',
 	$settings->add(new block_exastud_settings_extraconfigstoredfile('exastud/school_logo',
                             block_exastud_get_string('school_logo'),
@@ -465,8 +453,6 @@ if ($ADMIN->fulltree) {
                                     'subdirs' => 0,
                                     'maxfiles' => 1,
                                     'accepted_types' => array('web_image'))));
-
-	//$settings->add(new admin_setting_configcheckbox('exastud/export_class_password', block_exastud_get_string('backup_class_protection'), '', 0));
 
 	// mysource
     // generate source id if it is not existing yet
@@ -479,6 +465,27 @@ if ($ADMIN->fulltree) {
             block_exastud_get_string('settings_sourceId'),
             block_exastud_get_string('settings_sourceId_description'),
             PARAM_TEXT));
+
+    // sicherheit
+	$settings->add(new admin_setting_heading('exastud/heading_security',
+        block_exastud_get_string('settings_heading_security'),
+        block_exastud_get_string('settings_heading_security_description')));
+
+	if (block_exastud_is_a2fa_installed()) {
+		$description = '';
+	} else {
+		$description = '<span style="color: red">'.block_exastud_get_string('settings_a2fa_requirement_description').'</span>';
+	}
+	$a2fa_requirement = [
+		'' => block_exastud_get_string('settings_a2fa_requirement_def'),
+		'user_a2fa' => block_exastud_get_string('settings_a2fa_requirement_user_a2fa'),
+		'a2fa_timeout' => block_exastud_get_string('settings_a2fa_requirement_a2fa_timeout'),
+	];
+	$settings->add(new admin_setting_configselect('exastud/a2fa_requirement', block_exastud_get_string('settings_a2fa_requirement'), $description, '', $a2fa_requirement));
+
+	$settings->add(new admin_setting_configcheckbox('exastud/export_class_password', block_exastud_get_string('settings_export_class_password'), '', 1));
+
+	$settings->add(new admin_setting_configcheckbox('exastud/export_class_report_password', block_exastud_get_string('settings_export_class_report_password'), '', 1));
 
 	// button for servers with wrong updated plugins
     if (optional_param('upgradedb', 0, PARAM_INT)) {

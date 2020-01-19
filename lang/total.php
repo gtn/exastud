@@ -1489,9 +1489,27 @@ return [
         'Subject teacher'
     ],
 
-    'backup_class_protection' => [
-        'Sicherung von Klassen mit Passwort schützen',
-        'Passwort protection for class backups'
+	'settings_heading_security' => [
+		'Sicherheit',
+		'Security'
+	],
+	'settings_heading_security_description' => [
+		'',
+		''
+	],
+	'export_password_message' => [
+		'Bitte notieren Sie sich das Passwort "<strong>{$a}</strong>", bevor Sie fortfahren.<br/><br/>
+		Hinweis: Passwortgeschützte zip-Dateien können unter Windows zwar geöffnet werden, aber die Dateien innerhalb der Zip-Datei können nur mit einem externen Programm (z.B. 7-Zip) extrahiert werden.
+		',
+		'Please remember the password "<strong>{$a}</strong>" before proceeding',
+	],
+    'settings_export_class_password' => [
+        'Sicherung von Klassen mit Passwort schützen (AES-256 Verschlüsselung)',
+        'Passwort protection (AES-256 encryption) for class backups'
+    ],
+    'settings_export_class_report_password' => [
+        'Export von Klassenberichten mit Passwort schützen (AES-256 Verschlüsselung)',
+        'Passwort protection (AES-256 encryption) for class reports'
     ],
     'backup_description' => [
         'Hier können Sie alle Tabellen des Lernentwicklungsberichts im sql-Format sichern. Das Einspielen der Sicherung führen Sie bitte mit einem Datenbank-Tool wie z.B. phpMyAdmin durch.',
