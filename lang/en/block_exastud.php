@@ -331,11 +331,6 @@ $string['settings_competence_evalpoints_limit'] = 'Maximum points for assessment
 $string['settings_competence_evalpoints_limit_description'] = 'If value of exastud/competence_evaltype is based upon points';
 $string['settings_eval_setup'] = 'Assessment grading values';
 $string['settings_eval_setup_link'] = 'Edit';
-$string['settings_a2fa_requirement'] = 'Use two-factor-authentication';
-$string['settings_a2fa_requirement_description'] = 'Exa2fa Plugin is not installed';
-$string['settings_a2fa_requirement_def'] = 'Deactivated (no two-factor-authentication required)';
-$string['settings_a2fa_requirement_user_a2fa'] = 'A2fa required for user';
-$string['settings_a2fa_requirement_a2fa_timeout'] = 'A2fa required for user - timeout';
 
 
 // === grp3 ===
@@ -398,6 +393,7 @@ $string['settings_heading_security_description'] = '';
 $string['export_password_message'] = 'Please remember the password "<strong>{$a}</strong>" before proceeding';
 $string['settings_export_class_password'] = 'Passwort protection (AES-256 encryption) for class backups';
 $string['settings_export_class_report_password'] = 'Passwort protection (AES-256 encryption) for class reports';
+$string['settings_export_class_report_password_description'] = '(only available from php version 7.2 on)';
 $string['backup_description'] = 'Create a backup of assessment data as an sql file. As an admin you can import this backup using a database tool like phphMyAdmin. Backups on teacher level are possible for their individual data.';
 $string['backup_go'] = 'Backup Database now';
 $string['block_settings'] = 'Settings';

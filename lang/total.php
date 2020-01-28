@@ -1247,26 +1247,6 @@ return [
 		'Bewertungskategorien bearbeiten',
         'Edit',
 	],
-    'settings_a2fa_requirement' => [
-        'Zwei-Faktoren-Authentifizierung im Lernentwicklungsbericht aktivieren',
-        'Use two-factor-authentication',
-    ],
-    'settings_a2fa_requirement_description' => [
-        'Das 2-Faktoren-Authentifizierungs-Modul exa2fa ist nicht installiert',
-        'Exa2fa Plugin is not installed',
-    ],
-    'settings_a2fa_requirement_def' => [
-        'Deaktiviert (Keine A2fa erforderlich)',
-        'Deactivated (no two-factor-authentication required)',
-    ],
-    'settings_a2fa_requirement_user_a2fa' => [
-        'A2fa für Benutzer erforderlich (z.B. Lehrernetz)',
-        'A2fa required for user',
-    ],
-    'settings_a2fa_requirement_a2fa_timeout' => [
-        'A2fa für Benutzer erforderlich und erneute A2fa für LEB notwendig (z.B. päd. Netz)',
-        'A2fa required for user - timeout',
-    ],
 
 
 	// === grp3 ===
@@ -1510,6 +1490,10 @@ return [
     'settings_export_class_report_password' => [
         'Export von Klassenberichten mit Passwort schützen (AES-256 Verschlüsselung)',
         'Passwort protection (AES-256 encryption) for class reports'
+    ],
+    'settings_export_class_report_password_description' => [
+		'(Nur ab php Version 7.2 verfügbar)',
+		'(only available from php version 7.2 on)'
     ],
     'backup_description' => [
         'Hier können Sie alle Tabellen des Lernentwicklungsberichts im sql-Format sichern. Das Einspielen der Sicherung führen Sie bitte mit einem Datenbank-Tool wie z.B. phpMyAdmin durch.',

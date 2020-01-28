@@ -122,8 +122,6 @@ const BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_DEFAULT_REPORT_COMMON = 104;
 // example of report
 const BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_STUDENT_CARD = 999;
 
-const BLOCK_EXASTUD_SESSION_TIMEOUT = 10*60 + 1;
-
 class block_exastud_permission_exception extends moodle_exception {
 	function __construct($errorcode = 'Not allowed', $module = '', $link = '', $a = null, $debuginfo = null) {
 		return parent::__construct($errorcode, $module, $link, $a, $debuginfo);
@@ -2311,70 +2309,19 @@ function block_exastud_is_bw_active() {
 	return !!block_exastud_get_plugin_config('bw_active');
 }
 
-function block_exastud_is_a2fa_for_user_enabled() {
-	if (block_exastud_is_a2fa_installed()) {
-		return \block_exa2fa\api::a2fa_for_user_enabled(g::$USER->id);
-	} else {
-		return false;
-	}
-}
-
-function block_exastud_get_a2fa_requirement() {
-	if (block_exastud_is_a2fa_installed()) {
-		return block_exastud_get_plugin_config('a2fa_requirement');
-	} else {
-		return '';
-	}
-}
-
 function block_exastud_is_a2fa_installed() {
 	if (class_exists('\block_exa2fa\api')) {
 		return true;
 	} else {
 		return false;
 	}
-
 }
 
-function block_exastud_require_login($courseid, $autologinguest = true, $cm = null, $checklogin = true) {
+function block_exastud_require_login($courseid, $autologinguest = true, $cm = null) {
 	require_login($courseid, $autologinguest, $cm);
 
-	$a2fa_requirement = block_exastud_get_a2fa_requirement();
-
-	if ($a2fa_requirement && $checklogin) {
-		$returnurl = block_exastud\url::request_uri()->out_as_local_url(false);
-
-		if (!block_exastud_is_a2fa_for_user_enabled()) {
-			global $PAGE;
-
-			$url = '/blocks/exastud/login_a2fa_timeout.php';
-			$PAGE->set_url($url);
-
-			$output = block_exastud_get_renderer();
-			echo $output->header([], ['is_login_a2fa_timeout_page' => true]);
-
-			echo 'Sie müssen A2fa aktivieren um den Lernentwicklungsbericht einsehen zu können.
-			<br/><br/>
-			<a href="../exa2fa/configure.php?action=activate&returnurl='.\block_exa2fa\url::request_uri()->out_as_local_url().'">A2fa jetzt aktivieren</a>
-			';
-
-			echo $output->footer();
-			exit;
-	        // redirect(new moodle_url('/blocks/exastud/login_a2fa_required.php', array('courseid' => @$_REQUEST['courseid'], 'returnurl' => $returnurl)));
-		}
-
-		if ($a2fa_requirement == 'a2fa_timeout' && $checklogin) {
-			global $SESSION;
-
-			if (@$SESSION->login_a2fa_time >= time() - BLOCK_EXASTUD_SESSION_TIMEOUT) {
-				// login ok
-				$SESSION->login_a2fa_time = time();
-			} else {
-
-				redirect(new moodle_url('/blocks/exastud/login_a2fa_timeout.php', array('courseid' => @$_REQUEST['courseid'], 'returnurl' => $returnurl)));
-				exit;
-			}
-		}
+	if (block_exastud_is_a2fa_installed()) {
+		\block_exa2fa\api::check_user_a2fa_requirement('block_exastud');
 	}
 }
 

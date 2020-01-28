@@ -332,11 +332,6 @@ $string['settings_competence_evalpoints_limit'] = 'Höchste Punkteanzahl';
 $string['settings_competence_evalpoints_limit_description'] = 'Wenn als Bewertungsschema "Punkte" gewählt ist.';
 $string['settings_eval_setup'] = 'Bewertungsschema Texteintrag';
 $string['settings_eval_setup_link'] = 'Bewertungskategorien bearbeiten';
-$string['settings_a2fa_requirement'] = 'Zwei-Faktoren-Authentifizierung im Lernentwicklungsbericht aktivieren';
-$string['settings_a2fa_requirement_description'] = 'Das 2-Faktoren-Authentifizierungs-Modul exa2fa ist nicht installiert';
-$string['settings_a2fa_requirement_def'] = 'Deaktiviert (Keine A2fa erforderlich)';
-$string['settings_a2fa_requirement_user_a2fa'] = 'A2fa für Benutzer erforderlich (z.B. Lehrernetz)';
-$string['settings_a2fa_requirement_a2fa_timeout'] = 'A2fa für Benutzer erforderlich und erneute A2fa für LEB notwendig (z.B. päd. Netz)';
 
 
 // === grp3 ===
@@ -399,6 +394,7 @@ $string['export_password_message'] = 'Bitte notieren Sie sich das Passwort "<str
 		';
 $string['settings_export_class_password'] = 'Sicherung von Klassen mit Passwort schützen (AES-256 Verschlüsselung)';
 $string['settings_export_class_report_password'] = 'Export von Klassenberichten mit Passwort schützen (AES-256 Verschlüsselung)';
+$string['settings_export_class_report_password_description'] = '(Nur ab php Version 7.2 verfügbar)';
 $string['backup_description'] = 'Hier können Sie alle Tabellen des Lernentwicklungsberichts im sql-Format sichern. Das Einspielen der Sicherung führen Sie bitte mit einem Datenbank-Tool wie z.B. phpMyAdmin durch.';
 $string['backup_go'] = 'Datenbank jetzt sichern';
 $string['block_settings'] = 'Blockeinstellungen';

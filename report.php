@@ -235,7 +235,9 @@ if ($class !== null) {
     $messagebeforetables = '';
     //$template = optional_param('template', '', PARAM_TEXT);
     if (count($templatesFromForm) > 0) {
-		if (get_config('exastud', 'export_class_report_password') && !$secret) {
+    	// zip encoding only available from php 7.2 on
+    	$needsSecret = get_config('exastud', 'export_class_report_password') && (version_compare(phpversion(), '7.2') >= 0);
+		if ($needsSecret && !$secret) {
 			$secret = block_exastud_require_secret();
 		} else {
 			$secret = '';
