@@ -1561,7 +1561,9 @@ class printer {
                         $maxColumns = max($maxColumns, count($evalopts));
                         break;
                 }
-                $maxColumns++; // average value
+                if ($templateid == BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_ANLAGE_ZUM_LERNENTWICKLUNGSBERICHTALT_COMMON) {
+                    $maxColumns++; // average value
+                }
             } else {
                 $maxColumns = count($evalopts);
             }
@@ -1572,7 +1574,9 @@ class printer {
                     BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_ANLAGE_ZUM_LERNENTWICKLUNGSBERICHTALT,
                     BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_ANLAGE_ZUM_LERNENTWICKLUNGSBERICHTALT_COMMON
             ))) {
-                $templateProcessor->setValue('kheader', block_exastud_get_string('average'), 1);
+                if ($templateid == BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_ANLAGE_ZUM_LERNENTWICKLUNGSBERICHTALT_COMMON) {
+                    $templateProcessor->setValue('kheader', block_exastud_get_string('average'), 1);
+                }
                 switch (block_exastud_get_competence_eval_type()) {
                     case BLOCK_EXASTUD_COMPETENCE_EVALUATION_TYPE_GRADE:
                         foreach ($class_subjects as $subject) {
@@ -1628,7 +1632,6 @@ class printer {
             }
 
             if (in_array($templateid, array(
-                    BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_ANLAGE_ZUM_LERNENTWICKLUNGSBERICHTALT,
                     BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_ANLAGE_ZUM_LERNENTWICKLUNGSBERICHTALT_COMMON
             ))) {
                 $student_review = block_exastud_get_report($student->id,  $class->periodid, $class->id);
@@ -1647,7 +1650,7 @@ class printer {
                             }
                             break;
                         case BLOCK_EXASTUD_COMPETENCE_EVALUATION_TYPE_POINT:
-                            for ($i = 0; $i < count($maxColumns); $i++) {
+                            for ($i = 0; $i < $maxColumns; $i++) {
                                 foreach ($category->evaluationOptions as $pos_value => $option) {
                                     //$average = $category->average;
                                     //$templateProcessor->setValue('kvalue',
@@ -1685,10 +1688,34 @@ class printer {
                     $templateProcessor->cloneRowToEnd('kriterium');
                     $templateProcessor->setValue('kriterium', $category->title, 1);
 
-                    for ($i = 0; $i < count($evalopts); $i++) {
+                    switch (block_exastud_get_competence_eval_type()) {
+                        case BLOCK_EXASTUD_COMPETENCE_EVALUATION_TYPE_GRADE:
+                            foreach ($class_subjects as $subject) {
+                                $templateProcessor->setValue('kvalue', $category->evaluationAverages[$subject->id]->value, 1);
+                            }
+                            break;
+                        case BLOCK_EXASTUD_COMPETENCE_EVALUATION_TYPE_POINT:
+                            $average = $category->average;
+                            for ($i = 0; $i < $maxColumns; $i++) {
+                                if ($average !== null && round($average) == ($i + 1)) {
+                                    $templateProcessor->setValue('kvalue', 'X', 1);
+                                } else {
+                                    $templateProcessor->setValue('kvalue', '', 1);
+                                }
+                            }
+                            break;
+                        case BLOCK_EXASTUD_COMPETENCE_EVALUATION_TYPE_TEXT:
+                            for ($i = 0; $i < count($evalopts); $i++) {
+                                $average = $category->average;
+                                $templateProcessor->setValue('kvalue', $average !== null && round($average) == ($i + 1) ? 'X' : '', 1);
+                            }
+                            break;
+
+                    }
+                    /*for ($i = 0; $i < count($evalopts); $i++) {
                         $average = $category->average;
                         $templateProcessor->setValue('kvalue', $average !== null && round($average) == ($i + 1) ? 'X' : '', 1);
-                    }
+                    }*/
                 }
             }
 		    $templateProcessor->deleteRow('kriterium');
