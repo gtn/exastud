@@ -1478,7 +1478,6 @@ class printer {
             //$templateProcessor->duplicateCol('kheader', $maxColumns + 1); // +1 = column for average
             //$templateProcessor->setValue('kheader', block_exastud_get_string('average'), 1);
 
-
 		    $evalopts = g::$DB->get_records('block_exastudevalopt', null, 'sorting', 'id, title, sourceinfo');
 		    $categories = block_exastud_get_class_categories_for_report($student->id, $class->id);
 		    //echo "<pre>debug:<strong>printer.php:1483</strong>\r\n"; print_r($categories); echo '</pre>'; exit; // !!!!!!!!!! delete it
@@ -1496,6 +1495,8 @@ class printer {
                         $maxColumns = max($maxColumns, count($class_subjects));
                         break;
                     case BLOCK_EXASTUD_COMPETENCE_EVALUATION_TYPE_POINT:
+                        $maxColumns = max($maxColumns, block_exastud_get_competence_eval_typeevalpoints_limit());
+                        break;
                     case BLOCK_EXASTUD_COMPETENCE_EVALUATION_TYPE_TEXT:
                         $maxColumns = max($maxColumns, count($evalopts));
                         break;
@@ -1516,11 +1517,11 @@ class printer {
                         }
                         break;
                     case BLOCK_EXASTUD_COMPETENCE_EVALUATION_TYPE_POINT:
-                        /*$limit = get_config('exastud', 'competence_evalpoints_limit');
-                        for ($i = 1; $i < $limit; $i++) {
+                        $limit = block_exastud_get_competence_eval_typeevalpoints_limit();
+                        for ($i = 1; $i <= $limit; $i++) {
                             $templateProcessor->setValue('kheader', $i, 1);
                         }
-                        break;*/
+                        break;
                     case BLOCK_EXASTUD_COMPETENCE_EVALUATION_TYPE_TEXT:
                         foreach ($evalopts as $evalopt) {
                             $templateProcessor->setValue('kheader', $evalopt->title, 1);
