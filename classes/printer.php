@@ -2048,7 +2048,7 @@ class printer {
         $data_dropdowns = array_merge($data_dropdowns, array('leiter', 'chair', 'gruppen_leiter', 'klass_leiter'));
         $data['leiter'] = block_exastud_leiter_titles_by_gender('school', @block_exastud_get_class_data($class->id)->schoollieder_gender);
         $data['leiter_name'] = (@block_exastud_get_class_data($class->id)->schoollieder_name ? block_exastud_get_class_data($class->id)->schoollieder_name : ' ');
-        $data['chair'] = block_exastud_leiter_titles_by_gender('chair', @block_exastud_get_class_data($class->id)->auditleader_gender);
+        $data['chair'] = block_exastud_leiter_titles_by_gender('chair', @block_exastud_get_class_data($class->id)->auditleader_gender, 'femail', $templateid);
         if (in_array($templateid, [
             BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_ABSCHLUSSZEUGNIS_HS,
             BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_ABSCHLUSSZEUGNIS_KL9_10_HSA_2,

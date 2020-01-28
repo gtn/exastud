@@ -5902,7 +5902,7 @@ function block_exastud_class_get_bilingual_templateid($classid, $studentid) {
     return block_exastud_get_class_student_data($classid, $studentid, BLOCK_EXASTUD_DATA_ID_BILINGUAL_TEMPLATE);
 }
 
-function block_exastud_leiter_titles_by_gender($level = '', $gender = '', $defaultGender = 'female') {
+function block_exastud_leiter_titles_by_gender($level = '', $gender = '', $defaultGender = 'female', $templateid = null) {
     $strings = array(
         'class' => ['male' => 'Klassenlehrer', 'female' => 'Klassenlehrerin'],
         'group' => ['male' => 'Lerngruppenbegleiter', 'female' => 'Lerngruppenbegleiterin'],
@@ -5910,6 +5910,14 @@ function block_exastud_leiter_titles_by_gender($level = '', $gender = '', $defau
         'audit' => ['male' => 'Vorsitzender des Prüfungsausschusses', 'female' => 'Vorsitzende des Prüfungsausschusses'], // the same as chair, but another wordings
         'school' => ['male' => 'Schulleiter', 'female' => 'Schulleiterin'],
     );
+    // especial reports and strings
+    if ($templateid && $templateid > 0) {
+        switch ($templateid) {
+            case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_BEIBLATT_PROJEKTARBEIT:
+                $strings['chair'] = ['male' => 'Leiter des Fachausschusses', 'female' => 'Leiterin des Fachausschusses'];
+                break;
+        }
+    }
     if (array_key_exists($level, $strings)) {
         if (array_key_exists($gender, $strings[$level])) {
             return $strings[$level][$gender];
