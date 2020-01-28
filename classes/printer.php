@@ -1366,10 +1366,48 @@ class printer {
                 $templateProcessor->setValue("school_logo", ''); // no logo files
             };
 
-			$templateProcessor->duplicateCol('kheader', count($evalopts));
-			foreach ($evalopts as $evalopt) {
+            // get max columns count
+            $maxColumns = 0;
+            if ($templateid == BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_ANLAGE_ZUM_LERNENTWICKLUNGSBERICHT) {
+                switch (block_exastud_get_competence_eval_type()) {
+                    case BLOCK_EXASTUD_COMPETENCE_EVALUATION_TYPE_GRADE:
+                        $maxColumns = max($maxColumns, count($class_subjects));
+                        break;
+                    case BLOCK_EXASTUD_COMPETENCE_EVALUATION_TYPE_POINT:
+                        $maxColumns = max($maxColumns, block_exastud_get_competence_eval_typeevalpoints_limit());
+                        break;
+                    case BLOCK_EXASTUD_COMPETENCE_EVALUATION_TYPE_TEXT:
+                        $maxColumns = max($maxColumns, count($evalopts));
+                        break;
+                }
+                //$maxColumns++; // average value
+            } else {
+                $maxColumns = count($evalopts);
+            }
+
+			$templateProcessor->duplicateCol('kheader', $maxColumns);
+			/*foreach ($evalopts as $evalopt) {
 				$templateProcessor->setValue('kheader', $evalopt->title, 1);
-			}
+			}*/
+            switch (block_exastud_get_competence_eval_type()) {
+                case BLOCK_EXASTUD_COMPETENCE_EVALUATION_TYPE_GRADE:
+                    foreach ($class_subjects as $subject) {
+                        $templateProcessor->setValue('kheader', $subject->title, 1);
+                    }
+                    break;
+                case BLOCK_EXASTUD_COMPETENCE_EVALUATION_TYPE_POINT:
+                    $limit = block_exastud_get_competence_eval_typeevalpoints_limit();
+                    for ($i = 1; $i <= $limit; $i++) {
+                        $templateProcessor->setValue('kheader', $i, 1);
+                    }
+                    break;
+                case BLOCK_EXASTUD_COMPETENCE_EVALUATION_TYPE_TEXT:
+                    foreach ($evalopts as $evalopt) {
+                        $templateProcessor->setValue('kheader', $evalopt->title, 1);
+                    }
+                    break;
+
+            }
 
             $classteachers = array();
             $subjectsOfTeacher = array();
@@ -1402,11 +1440,30 @@ class printer {
 			foreach ($categories as $category) {
 				$templateProcessor->cloneRowToEnd('kriterium');
 				$templateProcessor->setValue('kriterium', $category->title, 1);
+//echo "<pre>debug:<strong>printer.php:1443</strong>\r\n"; print_r($category); echo '</pre>'; // !!!!!!!!!! delete it
+                /*for ($i = 0; $i < count($evalopts); $i++) {
+                    $templateProcessor->setValue('kvalue', $category->average !== null && round($category->average) == ($i + 1) ? 'X' : '', 1);
+                }*/
+                switch (block_exastud_get_competence_eval_type()) {
+                    case BLOCK_EXASTUD_COMPETENCE_EVALUATION_TYPE_GRADE:
+                        foreach ($class_subjects as $subject) {
+                            $templateProcessor->setValue('kvalue', $category->evaluationAverages[$subject->id]->value, 1);
+                        }
+                        break;
+                    case BLOCK_EXASTUD_COMPETENCE_EVALUATION_TYPE_POINT:
+                        for ($i = 0; $i < $maxColumns; $i++) {
+                            $templateProcessor->setValue('kvalue', $category->average !== null && round($category->average) == ($i + 1) ? 'X' : '', 1);
+                        }
+                        break;
+                    case BLOCK_EXASTUD_COMPETENCE_EVALUATION_TYPE_TEXT:
+                        for ($i = 0; $i < count($evalopts); $i++) {
+                            $templateProcessor->setValue('kvalue', $category->average !== null && round($category->average) == ($i + 1) ? 'X' : '', 1);
+                        }
+                        break;
 
-				for ($i = 0; $i < count($evalopts); $i++) {
-					$templateProcessor->setValue('kvalue', $category->average !== null && round($category->average) == ($i + 1) ? 'X' : '', 1);
-				}
+                }
 			}
+    //exit;
 			$templateProcessor->deleteRow('kriterium');
 
 			// subjects
@@ -1489,7 +1546,10 @@ class printer {
 
             // get max columns count
             $maxColumns = 0;
-            if ($templateid == BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_ANLAGE_ZUM_LERNENTWICKLUNGSBERICHTALT_COMMON) {
+            if (in_array($templateid, array(
+                    BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_ANLAGE_ZUM_LERNENTWICKLUNGSBERICHTALT,
+                    BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_ANLAGE_ZUM_LERNENTWICKLUNGSBERICHTALT_COMMON
+            ))) {
                 switch (block_exastud_get_competence_eval_type()) {
                     case BLOCK_EXASTUD_COMPETENCE_EVALUATION_TYPE_GRADE:
                         $maxColumns = max($maxColumns, count($class_subjects));
@@ -1508,7 +1568,10 @@ class printer {
 
 		    $templateProcessor->duplicateCol('kheader', $maxColumns);
 
-            if ($templateid == BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_ANLAGE_ZUM_LERNENTWICKLUNGSBERICHTALT_COMMON) {
+            if (in_array($templateid, array(
+                    BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_ANLAGE_ZUM_LERNENTWICKLUNGSBERICHTALT,
+                    BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_ANLAGE_ZUM_LERNENTWICKLUNGSBERICHTALT_COMMON
+            ))) {
                 $templateProcessor->setValue('kheader', block_exastud_get_string('average'), 1);
                 switch (block_exastud_get_competence_eval_type()) {
                     case BLOCK_EXASTUD_COMPETENCE_EVALUATION_TYPE_GRADE:
@@ -1564,7 +1627,10 @@ class printer {
                 $category->average = $average;
             }
 
-            if ($templateid == BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_ANLAGE_ZUM_LERNENTWICKLUNGSBERICHTALT_COMMON) {
+            if (in_array($templateid, array(
+                    BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_ANLAGE_ZUM_LERNENTWICKLUNGSBERICHTALT,
+                    BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_ANLAGE_ZUM_LERNENTWICKLUNGSBERICHTALT_COMMON
+            ))) {
                 $student_review = block_exastud_get_report($student->id,  $class->periodid, $class->id);
                 foreach ($categories as $category) {
                     $templateProcessor->cloneRowToEnd('kriterium');
@@ -1581,6 +1647,23 @@ class printer {
                             }
                             break;
                         case BLOCK_EXASTUD_COMPETENCE_EVALUATION_TYPE_POINT:
+                            for ($i = 0; $i < count($maxColumns); $i++) {
+                                foreach ($category->evaluationOptions as $pos_value => $option) {
+                                    //$average = $category->average;
+                                    //$templateProcessor->setValue('kvalue',
+                                    //        $average !== null && round($average) == ($i + 1) ? 'X' : '', 1);
+
+                                    $cellOutput = '';
+                                    $subjectsList = array_map(function($reviewer) {
+                                        return $reviewer->subject_shorttitle ?: fullname($reviewer);
+                                    }, $option->reviewers);
+                                    if (count($subjectsList)) {
+                                        $cellOutput = join(', ', $subjectsList);
+                                    }
+                                    $templateProcessor->setValue('kvalue', $cellOutput, 1);
+                                }
+                            }
+                            break;
                         case BLOCK_EXASTUD_COMPETENCE_EVALUATION_TYPE_TEXT:
                             foreach ($category->evaluationOptions as $pos_value => $option) {
                                 $cellOutput = '';
