@@ -152,15 +152,14 @@ class class_edit_form extends moodleform {
             $group = array();
             $group[] = $mform->createElement('checkbox', 'classteacher_grade_interdisciplinary_competences', block_exastud_get_string('class_settings_class_teacher'));
             $group[] = $mform->createElement('checkbox', 'subjectteacher_grade_interdisciplinary_competences', block_exastud_get_string('class_settings_subject_teacher'));
-            $mform->addGroup($group, 'edit_interdisciplinary_competences_exastud', block_exastud_get_string('class_settings_can_edit_crosscompetencies'), '&nbsp;&nbsp;&nbsp;', false);
+            $mform->addGroup($group, 'edit_interdisciplinary_competences', block_exastud_get_string('class_settings_can_edit_crosscompetencies'), '&nbsp;&nbsp;&nbsp;', false);
             // Learning and social behavior
             //$mform->addElement('checkbox', 'classteacher_grade_learn_and_social_behaviour',  block_exastud_get_string('classteacher_grade_learn_and_social_behaviour'));
             //$mform->addElement('checkbox', 'subjectteacher_grade_learn_and_social_behaviour',  block_exastud_get_string('subjectteacher_grade_learn_and_social_behaviour'));
             $group = array();
             $group[] = $mform->createElement('checkbox', 'classteacher_grade_learn_and_social_behaviour', block_exastud_get_string('class_settings_class_teacher'));
             $group[] = $mform->createElement('checkbox', 'subjectteacher_grade_learn_and_social_behaviour', block_exastud_get_string('class_settings_subject_teacher'));
-            $mform->addGroup($group, 'edit_learnsocial_exastud', block_exastud_get_string('class_settings_can_edit_learnsocial'), '&nbsp;&nbsp;&nbsp;', false);
-            $mform->setExpanded('edit_learnsocial_exastud');
+            $mform->addGroup($group, 'edit_learnsocial', block_exastud_get_string('class_settings_can_edit_learnsocial'), '&nbsp;&nbsp;&nbsp;', false);
         }
 
         $genders = array(
