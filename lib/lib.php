@@ -5811,8 +5811,8 @@ function block_exastud_str2bytes($value) {
     // only string
     $unit_byte = preg_replace('/[^a-zA-Z]/', '', $value);
     $unit_byte = strtolower($unit_byte);
-    // only number (allow decimal point)
-    $num_val = preg_replace('/\D\.\D/', '', $value);
+    // only numbers (dots?)
+    $num_val = preg_replace('/[^0-9]/', '', $value);
     switch ($unit_byte) {
         case 'p':	// petabyte
         case 'pb':
