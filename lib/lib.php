@@ -121,6 +121,7 @@ const BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_DEFAULT_REPORT_COMMON = 104;
 
 // example of report
 const BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_STUDENT_CARD = 999;
+const BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_TEMP = 1000; // delete it!!!!
 
 class block_exastud_permission_exception extends moodle_exception {
 	function __construct($errorcode = 'Not allowed', $module = '', $link = '', $a = null, $debuginfo = null) {

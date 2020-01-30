@@ -342,6 +342,7 @@ if ($class !== null) {
                     switch ($template) {
                         // - Anlage zum Lernentwicklungsbericht: only if competences in exacomp with grading is in the report
                         case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_ANLAGE_ZUM_LERNENTWICKLUNGSBERICHT:
+                        case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_TEMP:
                         //case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_ANLAGE_ZUM_LERNENTWICKLUNGSBERICHTALT:
                         //case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_UEBERFACHLICHE_KOMPETENZEN:
                         //    if (!in_array($student->id, $studentsWithExacompGraded)) {
@@ -666,7 +667,8 @@ if ($class !== null) {
         if (!$addAnlage && in_array($key, [
                         BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_ANLAGE_ZUM_LERNENTWICKLUNGSBERICHT,
                         BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_ANLAGE_ZUM_LERNENTWICKLUNGSBERICHTALT,
-                        BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_UEBERFACHLICHE_KOMPETENZEN
+                        BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_UEBERFACHLICHE_KOMPETENZEN,
+                        BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_TEMP
                 ])) {
             $addAnlage = true;
             /*foreach ($classstudents as $classstudent) {

@@ -1341,7 +1341,8 @@ class printer {
 				return str_replace($placeholder.'note', $replaceTo, $content);
 			});
 		} else if (in_array($templateid, [
-		        BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_ANLAGE_ZUM_LERNENTWICKLUNGSBERICHT
+		        BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_ANLAGE_ZUM_LERNENTWICKLUNGSBERICHT,
+                BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_TEMP
                  ])) {
             // very old exacomp?
             $oldExacomp = false;
@@ -1368,7 +1369,10 @@ class printer {
 
             // get max columns count
             $maxColumns = 0;
-            if ($templateid == BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_ANLAGE_ZUM_LERNENTWICKLUNGSBERICHT) {
+            if (in_array($templateid, [
+                    BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_ANLAGE_ZUM_LERNENTWICKLUNGSBERICHT,
+                    BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_TEMP
+                ])) {
                 switch (block_exastud_get_competence_eval_type()) {
                     case BLOCK_EXASTUD_COMPETENCE_EVALUATION_TYPE_GRADE:
                         $maxColumns = max($maxColumns, count($class_subjects));
