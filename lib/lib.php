@@ -6189,6 +6189,10 @@ function block_exastud_get_verbal_category_by_value($value) {
         return '';
     }
     $value = intval(round($value));
+    $compeval_type = block_exastud_get_competence_eval_type();
+    if ($compeval_type == BLOCK_EXASTUD_COMPETENCE_EVALUATION_TYPE_GRADE) {
+        return $value;
+    }
     $options = block_exastud_get_evaluation_options();
     if (array_key_exists($value, $options)) {
         return $options[$value];
