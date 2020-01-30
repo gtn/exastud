@@ -1455,7 +1455,8 @@ class printer {
                     switch (block_exastud_get_competence_eval_type()) {
                         case BLOCK_EXASTUD_COMPETENCE_EVALUATION_TYPE_GRADE:
                             foreach ($class_subjects as $subject) {
-                                $templateProcessor->setValue('kvalue', $category->evaluationAverages[$subject->id]->value, 1);
+                                $v = $category->evaluationAverages[$subject->id]->value ? $category->evaluationAverages[$subject->id]->value : '';
+                                $templateProcessor->setValue('kvalue', $v, 1);
                             }
                             break;
                         case BLOCK_EXASTUD_COMPETENCE_EVALUATION_TYPE_POINT:
@@ -1656,7 +1657,8 @@ class printer {
                     switch (block_exastud_get_competence_eval_type()) {
                         case BLOCK_EXASTUD_COMPETENCE_EVALUATION_TYPE_GRADE:
                             foreach ($class_subjects as $subject) {
-                                $templateProcessor->setValue('kvalue', $category->evaluationAverages[$subject->id]->value, 1);
+                                $v = $category->evaluationAverages[$subject->id]->value ? $category->evaluationAverages[$subject->id]->value : '';
+                                $templateProcessor->setValue('kvalue', $v, 1);
                             }
                             break;
                         case BLOCK_EXASTUD_COMPETENCE_EVALUATION_TYPE_POINT:
@@ -1701,7 +1703,8 @@ class printer {
                     switch (block_exastud_get_competence_eval_type()) {
                         case BLOCK_EXASTUD_COMPETENCE_EVALUATION_TYPE_GRADE:
                             foreach ($class_subjects as $subject) {
-                                $templateProcessor->setValue('kvalue', $category->evaluationAverages[$subject->id]->value, 1);
+                                $v = $category->evaluationAverages[$subject->id]->value ? $category->evaluationAverages[$subject->id]->value : '';
+                                $templateProcessor->setValue('kvalue', $v, 1);
                             }
                             break;
                         case BLOCK_EXASTUD_COMPETENCE_EVALUATION_TYPE_POINT:
