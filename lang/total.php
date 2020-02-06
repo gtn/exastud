@@ -1994,5 +1994,9 @@ return [
         'Klasse aus vorigem Eingabezeitraum freigeben',
         'Allow review class from old period',
     ],
+    'no_possible_inputs_in_report' => [
+            'Im Berichtskonfigurator sind keine "Klassenlehrer Eingabefelder" definiert. Deshalb ist hier keine Dateneingabe möglich',
+            'No fields defined in Report Configurator. No data input possible',
+    ],
 
 ];

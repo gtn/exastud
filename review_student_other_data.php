@@ -528,7 +528,12 @@ foreach ($categories as $dataid=>$category) {
 */
 
 $studentform->set_data($formdata);
-$studentform->display();
+
+if (count($categories)) {
+    $studentform->display();
+} else {
+    echo $output->notification(block_exastud_get_string('no_possible_inputs_in_report'), 'info');
+}
 
 echo $output->back_button($returnurl);
 
