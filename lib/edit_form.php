@@ -51,7 +51,11 @@ class class_edit_form extends moodleform {
         $mform->addRule('title', null, 'required', null, 'client');
         $mform->addRule('title', block_exastud_get_string('class_title_limit_message', null, $titlelimit), 'maxlength', $titlelimit, 'client');
 
-        $maxlength = 10;
+        if (block_exastud_is_bw_active()) {
+            $maxlength = 10;
+        } else {
+            $maxlength = 30; // for non-bw
+        }
         if (!$this->_customdata['for_siteadmin']) {
             $mform->addElement('text',
                     'title_forreport',
