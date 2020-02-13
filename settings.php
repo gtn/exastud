@@ -471,7 +471,7 @@ if ($ADMIN->fulltree) {
         block_exastud_get_string('settings_heading_security'),
         block_exastud_get_string('settings_heading_security_description')));
 
-	$settings->add(new admin_setting_configcheckbox('exastud/export_class_password', block_exastud_get_string('settings_export_class_password'), '', 1));
+	$settings->add(new admin_setting_configcheckbox('exastud/export_class_password', block_exastud_get_string('settings_export_class_password'), '', 0));
 
 	$settings->add(new admin_setting_configcheckbox('exastud/export_class_report_password', block_exastud_get_string('settings_export_class_report_password'), block_exastud_get_string('settings_export_class_report_password_description'), 0));
 
