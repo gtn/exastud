@@ -2878,8 +2878,8 @@ function block_exastud_get_default_templates($templateid = null, $common = true)
                                         'title' => block_exastud_get_string('learn_and_sociale'),
                                         'type' => 'textarea',
                                         'lines' => 8,
-                                        'cols' => 90,
-                                        'maxchars' => 720,
+                                        'cols' => 75,
+                                        'maxchars' => 600,
                                 ],
                                 'comments' => [
                                         'title' => block_exastud_trans('de:Bemerkungen'),
@@ -2945,8 +2945,8 @@ function block_exastud_get_default_templates($templateid = null, $common = true)
                                         'title' => block_exastud_get_string('learn_and_sociale'),
                                         'type' => 'textarea',
                                         'lines' => 8,
-                                        'cols' => 90,
-                                        'maxchars' => 720,
+                                        'cols' => 75,
+                                        'maxchars' => 600,
                                 ],
                                 'comments' => [
                                         'title' => block_exastud_trans('de:Bemerkungen'),
@@ -3012,8 +3012,7 @@ function block_exastud_get_default_templates($templateid = null, $common = true)
                                         'title' => block_exastud_get_string('learn_and_sociale'),
                                         'type' => 'textarea',
                                         'lines' => 8,
-                                        'cols' => 90,
-                                        'maxchars' => 720,
+                                        'cols' => 75,
                                 ],
                                 'comments' => [
                                         'title' => block_exastud_trans('de:Bemerkungen'),
@@ -3087,8 +3086,8 @@ function block_exastud_get_default_templates($templateid = null, $common = true)
                                         'title' => block_exastud_get_string('learn_and_sociale'),
                                         'type' => 'textarea',
                                         'lines' => 8,
-                                        'cols' => 90,
-                                        'maxchars' => 720,
+                                        'cols' => 75,
+                                        'maxchars' => 600,
                                 ],
                                 'comments' => [
                                         'title' => block_exastud_trans('de:Bemerkungen'),
