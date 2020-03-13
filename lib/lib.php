@@ -2877,7 +2877,7 @@ function block_exastud_get_default_templates($templateid = null, $common = true)
                                 'learn_social_behavior' => [
                                         'title' => block_exastud_get_string('learn_and_sociale'),
                                         'type' => 'textarea',
-                                        'lines' => 8,
+                                        'lines' => 7,
                                         'cols' => 75,
                                         'maxchars' => 600,
                                 ],
@@ -2907,7 +2907,7 @@ function block_exastud_get_default_templates($templateid = null, $common = true)
                                 'subjects' => [
                                         'title' => 'Fächer',
                                         'type' => 'textarea',
-                                        'lines' => 8,
+                                        'lines' => 7,
                                         'cols' => 75,
                                         'maxchars' => 600,
                                 ],
@@ -2944,7 +2944,7 @@ function block_exastud_get_default_templates($templateid = null, $common = true)
                                 'learn_social_behavior' => [
                                         'title' => block_exastud_get_string('learn_and_sociale'),
                                         'type' => 'textarea',
-                                        'lines' => 8,
+                                        'lines' => 7,
                                         'cols' => 75,
                                         'maxchars' => 600,
                                 ],
@@ -2958,7 +2958,7 @@ function block_exastud_get_default_templates($templateid = null, $common = true)
                                 'subjects' => [
                                         'title' => 'Fächer',
                                         'type' => 'textarea',
-                                        'lines' => 8,
+                                        'lines' => 7,
                                         'cols' => 75,
                                         'maxchars' => 600,
                                 ],
@@ -3011,8 +3011,9 @@ function block_exastud_get_default_templates($templateid = null, $common = true)
                                 'learn_social_behavior' => [
                                         'title' => block_exastud_get_string('learn_and_sociale'),
                                         'type' => 'textarea',
-                                        'lines' => 8,
+                                        'lines' => 7,
                                         'cols' => 75,
+                                        'maxchars' => 600,
                                 ],
                                 'comments' => [
                                         'title' => block_exastud_trans('de:Bemerkungen'),
@@ -3024,7 +3025,7 @@ function block_exastud_get_default_templates($templateid = null, $common = true)
                                 'subjects' => [
                                         'title' => 'Fächer',
                                         'type' => 'textarea',
-                                        'lines' => 8,
+                                        'lines' => 7,
                                         'cols' => 75,
                                         'maxchars' => 600,
                                 ],
@@ -3085,7 +3086,7 @@ function block_exastud_get_default_templates($templateid = null, $common = true)
                                 'learn_social_behavior' => [
                                         'title' => block_exastud_get_string('learn_and_sociale'),
                                         'type' => 'textarea',
-                                        'lines' => 8,
+                                        'lines' => 7,
                                         'cols' => 75,
                                         'maxchars' => 600,
                                 ],
@@ -3099,7 +3100,7 @@ function block_exastud_get_default_templates($templateid = null, $common = true)
                                 'subjects' => [
                                         'title' => 'Fächer',
                                         'type' => 'textarea',
-                                        'lines' => 8,
+                                        'lines' => 7,
                                         'cols' => 75,
                                         'maxchars' => 600,
                                 ],
