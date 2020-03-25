@@ -620,8 +620,7 @@ class printer {
 				$data['student_name'] = $data['comments'];
                 $data['comments'] = '';
             }
-			
-			
+
             // clean bottom notification about grading
             $data_dropdowns = array_merge($data_dropdowns, array('bottom_note_title_general', 'bottom_note_title', 'bottom_note1', 'bottom_note2'));
             if (in_array($templateid, [
@@ -1337,7 +1336,7 @@ class printer {
 			// alle restlichen noten dropdowns zurücksetzen
 			$add_filter(function($content) use ($placeholder, $templateid) {
                 $replaceTo = '---';
-               
+                
 				return str_replace($placeholder.'note', $replaceTo, $content);
 			});
 		} else if (in_array($templateid, [
@@ -2364,10 +2363,16 @@ class printer {
                 //}
                 if (trim($data['profilfach_titel']) != '') {
                     $data['profilfach_titel'] = 'Profilfach '.trim($data['profilfach_titel']);
+                    $data['profilfach_titel'] .= '*';
+                }
+                break;
+            case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_ABSCHLUSSZEUGNIS_KL9_10_HSA:
+                if (trim($data['profilfach_titel']) != '') {
+                    $data['profilfach_titel'] = 'Profilfach '.trim($data['profilfach_titel']);
+                    $data['profilfach_titel'] .= '*';
                 }
                 break;
             case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_ABSCHLUSSZEUGNIS_KL9_10_HSA_2:
-            case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_ABSCHLUSSZEUGNIS_KL9_10_HSA:
             case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_JAHRESZEUGNIS_KL11:
             case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_JAHRESZEUGNIS_KL11:
                 //if (mb_stripos($data['wahlfach_titel'], 'technik') !== false
@@ -2573,7 +2578,7 @@ class printer {
         //if (!block_exastud_is_bw_active() && block_exastud_can_edit_learnsocial_classteacher($class->id)) {
         //    $data['learn_social_behavior'] = $studentData->learn_social_behavior;
         //}
-        
+
 //exit;
 		// zuerst filters
 		$templateProcessor->applyFilters($filters);

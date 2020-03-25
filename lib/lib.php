@@ -2990,6 +2990,30 @@ function block_exastud_get_default_templates($templateid = null, $common = true)
                                         'type' => 'select',
                                         'values' => ['Lernen' => 'Lernen', 'geistige Entwicklung' => 'geistige Entwicklung'],
                                 ],
+                                'lernverhalten_note' => [
+                                        'title' => 'Lernverhalten Note',
+                                        'type' => 'select',
+                                        'values' => [
+                                                '' => '',
+                                                'Lernverhalten: sehr gut' => 'Lernverhalten: sehr gut',
+                                                'Lernverhalten: gut' => 'Lernverhalten: gut',
+                                                'Lernverhalten: befriedigend' => 'Lernverhalten: befriedigend',
+                                                'Lernverhalten: unbefriedigend' => 'Lernverhalten: unbefriedigend',
+                                        ],
+
+                                ],
+                                'sozialverhalten_note' => [
+                                        'title' => 'Sozialverhalten Note',
+                                        'type' => 'select',
+                                        'values' => [
+                                                '' => '',
+                                                'Sozialverhalten: sehr gut' => 'Sozialverhalten: sehr gut',
+                                                'Sozialverhalten: gut' => 'Sozialverhalten: gut',
+                                                'Sozialverhalten: befriedigend' => 'Sozialverhalten: befriedigend',
+                                                'Sozialverhalten: unbefriedigend' => 'Sozialverhalten: unbefriedigend',
+                                        ],
+
+                                ],
                         ],
                         'inputs_footer' => ['lessons_target', 'focus', 'beiblatt', 'comments'], // inputs in the footer of template
                         'inputs_order' => ['lessons_target', 'focus', 'beiblatt', 'comments'],
