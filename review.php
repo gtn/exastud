@@ -234,7 +234,7 @@ function block_exastud_print_period($courseid, $period, $type, $openclass) {
                     //}
 
                     $generaldata = array();
-                    if ($myclass->is_head_teacher || block_exastud_is_profilesubject_teacher($myclass->id)) {
+                    if ($myclass->is_head_teacher || block_exastud_is_profilesubject_teacher($myclass->id)/* || block_exastud_is_teacher_of_class($myclass->id, $USER->id)*/) {
                         if (block_exastud_is_bw_active()) {
                             if ($myclass->is_head_teacher) {
                                 $generaldata[] =
@@ -277,12 +277,29 @@ function block_exastud_print_period($courseid, $period, $type, $openclass) {
                                         ]), block_exastud_get_string('report_other_report_fields'));
                             }
                         } else {
-                            $generaldata[] = html_writer::link(new moodle_url('/blocks/exastud/review_class_other_data.php', [
-                                    'courseid' => $courseid,
-                                    'classid' => $myclass->id,
-                                    'type' => BLOCK_EXASTUD_DATA_ID_PRINT_TEMPLATE,
-                            ]), block_exastud_get_string('report_report_fields'));
-                            if (block_exastud_can_edit_crosscompetences_classteacher($myclass->id)) {
+                            // at least one students/template has at least one input
+                            $hasInpuits = false;
+                            $students = block_exastud_get_class_students($myclass->id, true);
+                            if ($students) {
+                                $students = array_keys($students);
+                                foreach ($students as $studentid) {
+                                    $has = !!block_exastud_get_student_print_template($myclass, $studentid)->get_inputs(BLOCK_EXASTUD_DATA_ID_PRINT_TEMPLATE);
+                                    if ($has) {
+                                        $hasInpuits = true;
+                                        break;
+                                    }
+                                }
+                            }
+                            if ($hasInpuits) {
+                                $generaldata[] = html_writer::link(new moodle_url('/blocks/exastud/review_class_other_data.php', [
+                                        'courseid' => $courseid,
+                                        'classid' => $myclass->id,
+                                        'type' => BLOCK_EXASTUD_DATA_ID_PRINT_TEMPLATE,
+                                ]), block_exastud_get_string('report_report_fields'));
+                            }
+                            if (($myclass->is_head_teacher && block_exastud_can_edit_crosscompetences_classteacher($myclass->id))
+                                    /*|| (block_exastud_is_teacher_of_class($myclass->id, $USER->id) && block_exastud_can_edit_crosscompetences_subjectteacher($myclass->id))*/
+                            ) {
                                 $generaldata[] = html_writer::link(new moodle_url('/blocks/exastud/review_class_other_data.php', [
                                         'courseid' => $courseid,
                                         'classid' => $myclass->id,

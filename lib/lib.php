@@ -345,6 +345,15 @@ function block_exastud_get_class_teachers($classid) {
 	return array_merge(block_exastud_get_class_additional_head_teachers($classid), block_exastud_get_class_subject_teachers($classid));
 }
 
+function block_exastud_is_class_teacher($classid, $userid) {
+    $classTeachers = block_exastud_get_class_teachers($classid);
+    $classTeachersIds = array_map(function($u) {return $u->id;}, $classTeachers);
+    if (in_array($userid, $classTeachersIds)) {
+        return true;
+    }
+    return false;
+}
+
 function block_exastud_get_class_subjects($class) {
 	$subjects = block_exastud_get_bildungsplan_subjects($class->bpid);
 	$teachers = block_exastud_get_class_subject_teachers($class->id);
@@ -2223,6 +2232,16 @@ function block_exastud_get_class_bilingual_template($classid, $studentid = null)
         return block_exastud\print_template::create($templateid);
     } else {
 	    return false;
+    }
+}
+
+function block_exastud_is_teacher_of_class($classid, $userid) {
+    $teachers = block_exastud_get_class_subject_teachers($classid);
+    $teacherIds = array_map(function($ct) {return $ct->userid;}, $teachers);
+    if (in_array($userid, $teacherIds)) {
+        return true;
+    } else {
+        return false;
     }
 }
 

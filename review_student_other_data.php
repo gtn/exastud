@@ -186,6 +186,16 @@ if (!is_array($categories) || !count($categories)) {
 } else {
     $dataid = key($categories);
 }
+$cross_review = false;
+$cross_categories = null;
+$is_classTeacher = block_exastud_is_class_teacher($classid, $USER->id);
+if (!block_exastud_is_bw_active()
+        && $type == BLOCK_EXASTUD_DATA_ID_CROSS_COMPETENCES
+        && $is_classTeacher
+        && block_exastud_can_edit_crosscompetences_classteacher($classid)) {
+    $cross_review = true;
+    $cross_categories = block_exastud_get_class_categories($classid);
+}
 $studentform = new student_other_data_form($PAGE->url, [
 	'categories' => $categories,
 	'templateid' => $template->get_template_id(),
@@ -201,8 +211,8 @@ $studentform = new student_other_data_form($PAGE->url, [
     'temp_formdata' => $olddata,
     //'cross_review' => !block_exastud_is_bw_active() ? true : false,
     //'cross_categories' => (!block_exastud_is_bw_active() ?  block_exastud_get_class_categories($classid) : null),
-    'cross_review' => !block_exastud_is_bw_active() && $type == BLOCK_EXASTUD_DATA_ID_CROSS_COMPETENCES && block_exastud_can_edit_crosscompetences_classteacher($classid) ? true : false,
-    'cross_categories' => !block_exastud_is_bw_active() && $type == BLOCK_EXASTUD_DATA_ID_CROSS_COMPETENCES && block_exastud_can_edit_crosscompetences_classteacher($classid) ?  block_exastud_get_class_categories($classid) : null,
+    'cross_review' => $cross_review,
+    'cross_categories' => $cross_categories,
 ]);
 
 if ($fromform = $studentform->get_data()) {
