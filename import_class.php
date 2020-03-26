@@ -90,7 +90,7 @@ class block_exastud_import_class_form_password extends moodleform {
 
 		// $mform->addElement('header', 'comment', block_exastud_trans('de:Klasse Importieren'));
 
-		$mform->addElement('text', 'password', block_exastud_get_string("password"));
+		$mform->addElement('passwordunmask', 'password', block_exastud_get_string("password"));
 		$mform->setType('password', PARAM_TEXT);
 		$mform->addRule('password', block_exastud_get_string('required'), 'required', null, 'client');
 
