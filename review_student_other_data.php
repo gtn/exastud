@@ -529,7 +529,7 @@ foreach ($categories as $dataid=>$category) {
 
 $studentform->set_data($formdata);
 
-if (count($categories)) {
+if (count($categories) || $type == BLOCK_EXASTUD_DATA_ID_CROSS_COMPETENCES) {
     $studentform->display();
 } else {
     echo $output->notification(block_exastud_get_string('no_possible_inputs_in_report'), 'info');
