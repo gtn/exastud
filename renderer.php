@@ -294,14 +294,14 @@ class block_exastud_renderer extends plugin_renderer_base {
 
 		$template = block_exastud_get_student_print_template($class, $student->id);
 
-		$output = '<table id="review-table">';
+		$output = '<table id="review-table" style="border-collapse: collapse;">';
 
 		$current_parent = null;
 		foreach ($categories as $category) {
 
 			if ($current_parent !== $category->parent) {
 				$current_parent = $category->parent;
-				$output .= '<tr><th class="category category-parent" width="25%">'.($category->parent ? $category->parent.':' : '').'</th>';
+				$output .= '<tr style="border-top: 1pt solid black; border-bottom: 1pt solid black;"><th class="category category-parent" width="25%">'.($category->parent ? $category->parent.':' : '').'</th>';
 				$output .= '<th class="average">'.block_exastud_get_string('average').'</th>';
                 switch (block_exastud_get_competence_eval_type()) {
                     case BLOCK_EXASTUD_COMPETENCE_EVALUATION_TYPE_GRADE:
@@ -320,7 +320,7 @@ class block_exastud_renderer extends plugin_renderer_base {
 				$output .= '</tr>';
 			}
 
-			$output .= '<tr><td class="category">'.$category->title.'</td>';
+			$output .= '<tr style="border-bottom:1pt solid black;"><td class="category">'.$category->title.'</td>';
 
 			// average column
             $globalAverage = (@$student_review->category_averages[$category->source.'-'.$category->id] ? $student_review->category_averages[$category->source.'-'.$category->id] : '');
