@@ -520,3 +520,5 @@ $string['notification_allow_review_old_class_prolong_subject'] = '{$a->site}: Re
 $string['notification_allow_review_old_class_prolong_body'] = 'Dear {$a->receiver}, </br></br>Review of class "{$a->classtitle}" was prolonged to {$a->datetime}.</br></br> This message has been generated automatically from moodle site {$a->site}.';
 $string['notification_allow_review_old_class_prolong_context'] = 'Allow review class from old period';
 $string['no_possible_inputs_in_report'] = 'No fields defined in Report Configurator. No data input possible';
+$string['message_interdisciplinary_competences_notes_limit'] = 'Please enter grades 1-{$a->limit}.';
+$string['message_interdisciplinary_competences_points_limit'] = 'Please enter Point 0-{$a->limit}.';

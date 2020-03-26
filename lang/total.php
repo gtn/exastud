@@ -1998,5 +1998,13 @@ return [
             'Im Berichtskonfigurator sind keine "Klassenlehrer Eingabefelder" definiert. Deshalb ist hier keine Dateneingabe möglich',
             'No fields defined in Report Configurator. No data input possible',
     ],
+    'message_interdisciplinary_competences_notes_limit' => [
+        'Bitte tragen sie Noten von 1-{$a->limit} ein.',
+        'Please enter grades 1-{$a->limit}.'
+    ],
+    'message_interdisciplinary_competences_points_limit' => [
+        'Bitte tragen sie Punkte von 0-{$a->limit} ein.',
+        'Please enter Point 0-{$a->limit}.'
+    ],
 
 ];

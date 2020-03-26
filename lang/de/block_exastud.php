@@ -521,3 +521,5 @@ $string['notification_allow_review_old_class_prolong_subject'] = '{$a->site}: Di
 $string['notification_allow_review_old_class_prolong_body'] = 'Sehr geehrte/r {$a->receiver}, </br></br>Die Freigabe der Klasse "{$a->classtitle}" wurde verlängert {$a->datetime}.</br></br> Diese Nachricht wurde automatisch generiert. {$a->site}.';
 $string['notification_allow_review_old_class_prolong_context'] = 'Klasse aus vorigem Eingabezeitraum freigeben';
 $string['no_possible_inputs_in_report'] = 'Im Berichtskonfigurator sind keine "Klassenlehrer Eingabefelder" definiert. Deshalb ist hier keine Dateneingabe möglich';
+$string['message_interdisciplinary_competences_notes_limit'] = 'Bitte tragen sie Noten von 1-{$a->limit} ein.';
+$string['message_interdisciplinary_competences_points_limit'] = 'Bitte tragen sie Punkte von 0-{$a->limit} ein.';

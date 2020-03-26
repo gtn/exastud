@@ -569,6 +569,9 @@ class student_other_data_form extends moodleform {
                 }
 
                 if ($compeval_type == BLOCK_EXASTUD_COMPETENCE_EVALUATION_TYPE_GRADE) {
+                    $noteLimit = 6; // TODO: where is limit? Count of?: exastud/configuration_global.php?action=evalopts
+                    $a = (object)['limit' => $noteLimit];
+                    $mform->addElement('html', '<div class="alert alert-info">'.block_exastud_get_string('message_interdisciplinary_competences_notes_limit', 'block_exastud', $a).'</div>');
                     $curr_group = '!!--!!';
                     foreach ($cross_categories as $category) {
                         if (isset($category->parent) && $category->parent) {
@@ -583,6 +586,11 @@ class student_other_data_form extends moodleform {
                         $mform->setType($id, PARAM_FLOAT);
                     }
                 } else {
+                    if ($compeval_type == BLOCK_EXASTUD_COMPETENCE_EVALUATION_TYPE_POINT) {
+                        $noteLimit = block_exastud_get_competence_eval_typeevalpoints_limit();
+                        $a = (object) ['limit' => $noteLimit];
+                        $mform->addElement('html', '<div class="alert alert-info">'.block_exastud_get_string('message_interdisciplinary_competences_points_limit', 'block_exastud', $a).'</div>');
+                    }
                     $mform->addElement('exastud_competencetable', 'radio', $cross_categories, $selectoptions, $this->_customdata['temp_formdata']);
                 }
 
