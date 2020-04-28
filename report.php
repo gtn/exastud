@@ -284,7 +284,7 @@ if ($class !== null) {
                                     )).' '.fullname($student);
                             $reportContent .= $output->heading($studentdesc);
                             $reportContent .= $output->student_report($class, $student);
-                            $reportContent .= '<hr>';
+//                            $reportContent .= '<hr>';
                             $reportContent = '<html>
                                                 <head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"></head>
                                                 <body>'.$reportContent.'</body>

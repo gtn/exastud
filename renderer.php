@@ -293,15 +293,54 @@ class block_exastud_renderer extends plugin_renderer_base {
         $student_review = block_exastud_get_report($student->id,  $class->periodid, $class->id);
 
 		$template = block_exastud_get_student_print_template($class, $student->id);
+        $output = '<style>
+                    body {
+                        color: #333333;                        
+                    }
+                    .heading1 {
+                        font-size: 20px;
+                        font-weight: bold;
+                        font-family: Verdana, Arial, sans-serif;          
+                        margin-top: 20px;          
+                        margin-bottom: 5px;
+                        line-height: 20px;
+                    }
+                    #review-table, #ratingtable {
+                        color: #333333;
+                        font-family: Verdana, Arial, sans-serif;
+                        font-size: 14px;
+                        border-collapse: collapse;
+                        margin: 20px;
+                        width: 99%;
+                    }
+                    #review-table, 
+                    #review-table td,
+                    #review-table th,
+                    #ratingtable, 
+                    #ratingtable td,
+                    #ratingtable th {
+                        border: 1px solid #aaaaaa;
+                    }
+                    #review-table td,
+                    #review-table th,
+                    #ratingtable td,
+                    #ratingtable th {
+                        padding: 7px;
+                    }
+                    #ratingtable td:nth-child(1) {
+                        width: 30%;
+                    }
+                    </style>
+        ';
 
-		$output = '<table id="review-table" style="border-collapse: collapse;">';
+		$output .= '<table id="review-table">';
 
 		$current_parent = null;
 		foreach ($categories as $category) {
 
 			if ($current_parent !== $category->parent) {
 				$current_parent = $category->parent;
-				$output .= '<tr style="border-top: 1pt solid black; border-bottom: 1pt solid black;"><th class="category category-parent" width="25%">'.($category->parent ? $category->parent.':' : '').'</th>';
+				$output .= '<tr><th class="category category-parent" width="25%">'.($category->parent ? $category->parent.':' : '').'</th>';
 				$output .= '<th class="average">'.block_exastud_get_string('average').'</th>';
                 switch (block_exastud_get_competence_eval_type()) {
                     case BLOCK_EXASTUD_COMPETENCE_EVALUATION_TYPE_GRADE:
@@ -329,7 +368,7 @@ class block_exastud_renderer extends plugin_renderer_base {
 			switch (block_exastud_get_competence_eval_type()) {
                 case BLOCK_EXASTUD_COMPETENCE_EVALUATION_TYPE_GRADE:
                     foreach ($class_subjects as $subject) {
-                        $output .= '<td>';
+                        $output .= '<td align="center">';
                         $output .= $category->evaluationAverages[$subject->id]->value;
                         /*if ($category->evaluationAverages[$subject->id]->value > 0) {
                             $output .= ' <small>('.$category->evaluationAverages[$subject->id]->reviewers.' reviewers)<small>';
@@ -340,7 +379,7 @@ class block_exastud_renderer extends plugin_renderer_base {
                 case BLOCK_EXASTUD_COMPETENCE_EVALUATION_TYPE_POINT:
                 case BLOCK_EXASTUD_COMPETENCE_EVALUATION_TYPE_TEXT:
                     foreach ($category->evaluationOptions as $pos_value => $option) {
-                        $output .= '<td class="evaluation">';
+                        $output .= '<td class="evaluation" align="center">';
                         $output .= join(', ', array_map(function($reviewer) {
                             return /*$reviewer->subject_title*/ $reviewer->subject_shorttitle ?: fullname($reviewer);
                         }, $option->reviewers));
@@ -356,7 +395,7 @@ class block_exastud_renderer extends plugin_renderer_base {
 
 		$output .= '<h3 class="detailed-for-student">'.block_exastud_get_string('detailedreview').'</h3>';
 
-		$output .= '<table id="ratingtable">';
+		$output .= '<table id="ratingtable" >';
 
 		if ($lern_soz) {
 			$output .= '<tr><td class="ratinguser">'.block_exastud_get_string('learn_and_sociale').'</td>
@@ -371,7 +410,9 @@ class block_exastud_renderer extends plugin_renderer_base {
 				continue;
 			}
 
-			$output .= '<tr><td class="ratinguser">'.$subject->title.'</td><td class="ratingtext">';
+			$output .= '<tr>';
+            $output .= '<td class="ratinguser" valign="top">'.$subject->title.'</td>';
+            $output .= '<td class="ratingtext">';
 			$output .= format_text(@$subjectData->review);
 			if (@$subjectData->niveau) {
 				$output .= '<div><b>'.block_exastud_get_string('Niveau').':</b> ';
