@@ -150,6 +150,10 @@ if ($action == 'save-subjects') {
         $item->not_relevant = ($item->relevant ? 0 : 1); // inverse from form to field (relevant -> not_relevant)
         $item->not_relevant_rs = ($item->relevant_rs ? 0 : 1);
 		if (isset($availablesubjects[$item->id])) {
+            if (!block_exastud_can_edit_subject($availablesubjects[$item->id])) {
+                unset($todelete[$item->id]);
+                continue;
+            }
 			// update
 			$DB->update_record('block_exastudsubjects', $item);
             // only if updated
@@ -352,7 +356,7 @@ if ($action == 'subjects') {
 	$bp = $DB->get_record('block_exastudbp', ['id' => required_param('bpid', PARAM_INT)]);
 
 	//$canEdit = block_exastud_can_edit_bp($bp);
-    $canEdit = true; // 24.12.2018
+    $canEdit = true; // 24.12.2018, look later (28.04.2020)
 
 	/*
 	if (block_exastud_get_plugin_config('always_check_default_values')) {
@@ -364,7 +368,13 @@ if ($action == 'subjects') {
 	}
 	*/
 
+	$originalCanEdit = $canEdit;
     foreach ($availablesubjects as $subject) {
+        if (block_exastud_can_edit_subject($subject)) {
+            $canEdit = $originalCanEdit; // previous conditions
+        } else {
+            $canEdit = false;
+        }
         $subject->relevant = ($subject->not_relevant ? 0 : 1); // inverse, because field is 'not_relevant', in the form - 'relevant' value
         $subject->relevant_rs = ($subject->not_relevant_rs ? 0 : 1);
 	    if (!$canEdit) {
