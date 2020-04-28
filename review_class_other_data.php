@@ -399,7 +399,7 @@ foreach ($classstudents as $classstudent) {
                             default:
                                 $value = !empty($data[$dataid]) ? block_exastud_text_to_html($data[$dataid]) : '';
                         }
-                        $content .= '<div class="student-input-data"><span class="input-title">'.$form_input['title'].':</span> <span>'.$value.'</span></div>';
+                        $content .= '<div class="student-input-data"><span class="input-title">'.(array_key_exists('title', $form_input) ? $form_input['title'] : '').':</span> <span>'.$value.'</span></div>';
                     }
                     if (count($inputs) > $countItemsForHidding) {
                         $hasManyInputs = true;

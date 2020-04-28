@@ -5725,7 +5725,7 @@ function block_exastud_get_grade_average_value($subjects = array(), $verbal = fa
 //                        $scnt++;
                         if (in_array($subject->shorttitle, $avgCalcSubjectsWPF)) {
                             if ($WPFadded) { // only first WPF subject
-                                continue;
+                                continue 2;
                             }
                             $WPFadded = true;
                         }
@@ -5752,7 +5752,7 @@ function block_exastud_get_grade_average_value($subjects = array(), $verbal = fa
                     } elseif (!in_array($subject->shorttitle, $avgCalcSubjectsProfil)) { //do not count profilfach
                         if (in_array($subject->shorttitle, $avgCalcSubjectsWPF)) {
                             if ($WPFadded) { // only first WPF subject
-                                continue;
+                                continue 2;
                             }
                             $WPFadded = true;
                         }
