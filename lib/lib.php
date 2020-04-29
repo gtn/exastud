@@ -1356,10 +1356,18 @@ function block_exastud_require_global_cap($cap, $user = null) {
         case BLOCK_EXASTUD_CAP_VIEW_REPORT:
             // if the user is a additional teacher - he can view of report
             $actPeriod = block_exastud_get_active_period();
+            if ($actPeriod) {
+                $classesActPeriod = block_exastud_get_head_teacher_classes_shared($actPeriod->id);
+                if ($classesActPeriod && count($classesActPeriod) > 0) {
+                    return;
+                }
+            }
             $lastPeriod = block_exastud_get_last_period();
-            if (($actPeriod && block_exastud_get_head_teacher_classes_shared($actPeriod->id))
-                    || ($lastPeriod && block_exastud_get_head_teacher_classes_shared($lastPeriod->id))) {
-                return;
+            if ($lastPeriod) {
+                $classesLastPeriod = block_exastud_get_head_teacher_classes_shared($lastPeriod->id);
+                if ($lastPeriod && $classesLastPeriod && count($classesLastPeriod) > 0) {
+                    return;
+                }
             }
 		case BLOCK_EXASTUD_CAP_MANAGE_CLASSES:
 		case BLOCK_EXASTUD_CAP_HEAD_TEACHER:
