@@ -189,8 +189,9 @@ if (!is_array($categories) || !count($categories)) {
 $cross_review = false;
 $cross_categories = null;
 $is_classTeacher = block_exastud_is_class_teacher($classid, $USER->id);
-if (!block_exastud_is_bw_active()
-        && $type == BLOCK_EXASTUD_DATA_ID_CROSS_COMPETENCES
+if (/*!block_exastud_is_bw_active()
+        && */
+        $type == BLOCK_EXASTUD_DATA_ID_CROSS_COMPETENCES
         && $is_classTeacher
         && block_exastud_can_edit_crosscompetences_classteacher($classid)) {
     $cross_review = true;
