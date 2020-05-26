@@ -927,6 +927,13 @@ class print_templates {
                             $val = trim($studentdata[$key]);
                             if (!trim(strip_tags($val))) {
                                 $inputValue = '---'; // spacer if empty
+                                if (in_array($templateid, [
+                                    BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_RS_SCHULFREMDE,
+                                    BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_RS_SCHULFREMDE,
+                                    BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_HS_SCHULFREMDE
+                                ])) {
+                                    $inputValue = '';
+                                }
                             } else {
                                 $inputValue = $val;
                                 // crop for input limits

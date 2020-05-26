@@ -112,6 +112,9 @@ const BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_ABSCHLUSSZEUGNIS_KL9_10_HSA =
 const BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_GLEICHWERTIGER_BILDUNGSABSCHLUSS_HSA = 43;
 const BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_GLEICHWERTIGER_BILDUNGSABSCHLUSS_RSA = 44;
 const BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_JAHRESZEUGNIS_KL11 = 45;
+const BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_RS_SCHULFREMDE = 46;
+const BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_RS_SCHULFREMDE = 47;
+const BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_HS_SCHULFREMDE = 48;
 
 // for common reports
 const BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_LERN_UND_SOZIALVERHALTEN_COMMON = 101;
@@ -5363,6 +5366,809 @@ function block_exastud_get_default_templates($templateid = null, $common = true)
                         'inputs_order' => ['verhalten', 'mitarbeit', 'ags', 'comments_short', 'eng_niveau', 'fra_niveau',
                                 'spa_niveau', 'student_transfered'], // special ordering of inputs (makes similar to docx template)
                 ],
+                'BP 2004/Realschulabschlusszeugnis Schulfremde' => [
+                    'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_RS_SCHULFREMDE,
+                    'name' => 'BP 2004 Realschulabschlusszeugnis Schulfremde',
+                    'file' => 'BP 2004/BP2004_Realschulabschlusszeugnis_Schulfremde',
+                    'category' => 'Jahr',
+                    'year' => '1',
+                    'report_date' => '1',
+                    'student_name' => '1',
+                    'date_of_birth' => '1',
+                    'place_of_birth' => '1',
+                    'learning_group' => '1',
+                    'grades' => block_exastud_get_grades_set('lang'),
+                    'inputs' => [
+                        'intercomp_thema' => [
+                            'title' => 'Fächerübergreifende Kompetenzprüfung: thema',
+                            'type' => 'textarea',
+                            'lines' => 2,
+                            'cols' => 60,
+                        ],
+                        'intercomp_grade' => [
+                            'title' => 'Fächerübergreifende Kompetenzprüfung: Note',
+                            'type' => 'select',
+                            'values' => [
+                                'sehr gut' => 'sehr gut',
+                                'gut' => 'gut',
+                                'befriedigend' => 'befriedigend',
+                                'ausreichend' => 'ausreichend',
+                                'mangelhaft' => 'mangelhaft',
+                                'ungenügend' => 'ungenügend'
+                            ],
+                        ],
+                        'lang_main' => [
+                            'title' => 'Pflichtfremdsprache',
+                            'type' => 'textarea',
+                            'lines' => 1,
+                            'cols' => 30,
+                        ],
+                        'lang_second' => [
+                            'title' => 'ggf. zweite Fremdsprache',
+                            'type' => 'textarea',
+                            'lines' => 1,
+                            'cols' => 30,
+                        ],
+                        'subj1' => [
+                            'title' => 'Leistungen in den einzelnen Fächern: 1',
+                            'type' => 'textarea',
+                            'lines' => 1,
+                            'cols' => 30,
+                        ],
+                        'subj1_grade' => [
+                            'title' => 'note',
+                            'type' => 'select',
+                            'values' => [
+                                '' => '',
+                                'sehr gut' => 'sehr gut',
+                                'gut' => 'gut',
+                                'befriedigend' => 'befriedigend',
+                                'ausreichend' => 'ausreichend',
+                                'mangelhaft' => 'mangelhaft',
+                                'ungenügend' => 'ungenügend'
+                            ],
+                        ],
+                        'subj2' => [
+                            'title' => 'Leistungen in den einzelnen Fächern: 2',
+                            'type' => 'textarea',
+                            'lines' => 1,
+                            'cols' => 30,
+                        ],
+                        'subj2_grade' => [
+                            'title' => 'note',
+                            'type' => 'select',
+                            'values' => [
+                                '' => '',
+                                'sehr gut' => 'sehr gut',
+                                'gut' => 'gut',
+                                'befriedigend' => 'befriedigend',
+                                'ausreichend' => 'ausreichend',
+                                'mangelhaft' => 'mangelhaft',
+                                'ungenügend' => 'ungenügend'
+                            ],
+                        ],
+                        'subj3' => [
+                            'title' => 'Leistungen in den einzelnen Fächern: 3',
+                            'type' => 'textarea',
+                            'lines' => 1,
+                            'cols' => 30,
+                        ],
+                        'subj3_grade' => [
+                            'title' => 'note',
+                            'type' => 'select',
+                            'values' => [
+                                '' => '',
+                                'sehr gut' => 'sehr gut',
+                                'gut' => 'gut',
+                                'befriedigend' => 'befriedigend',
+                                'ausreichend' => 'ausreichend',
+                                'mangelhaft' => 'mangelhaft',
+                                'ungenügend' => 'ungenügend'
+                            ],
+                        ],
+                        'subj4' => [
+                            'title' => 'Leistungen in den einzelnen Fächern: 4',
+                            'type' => 'textarea',
+                            'lines' => 1,
+                            'cols' => 30,
+                        ],
+                        'subj4_grade' => [
+                            'title' => 'note',
+                            'type' => 'select',
+                            'values' => [
+                                '' => '',
+                                'sehr gut' => 'sehr gut',
+                                'gut' => 'gut',
+                                'befriedigend' => 'befriedigend',
+                                'ausreichend' => 'ausreichend',
+                                'mangelhaft' => 'mangelhaft',
+                                'ungenügend' => 'ungenügend'
+                            ],
+                        ],
+                        'subj5' => [
+                            'title' => 'Leistungen in den einzelnen Fächern: 5',
+                            'type' => 'textarea',
+                            'lines' => 1,
+                            'cols' => 30,
+                        ],
+                        'subj5_grade' => [
+                            'title' => 'note',
+                            'type' => 'select',
+                            'values' => [
+                                '' => '',
+                                'sehr gut' => 'sehr gut',
+                                'gut' => 'gut',
+                                'befriedigend' => 'befriedigend',
+                                'ausreichend' => 'ausreichend',
+                                'mangelhaft' => 'mangelhaft',
+                                'ungenügend' => 'ungenügend'
+                            ],
+                        ],
+                        'subj6' => [
+                            'title' => 'Leistungen in den einzelnen Fächern: 6',
+                            'type' => 'textarea',
+                            'lines' => 1,
+                            'cols' => 30,
+                        ],
+                        'subj6_grade' => [
+                            'title' => 'note',
+                            'type' => 'select',
+                            'values' => [
+                                '' => '',
+                                'sehr gut' => 'sehr gut',
+                                'gut' => 'gut',
+                                'befriedigend' => 'befriedigend',
+                                'ausreichend' => 'ausreichend',
+                                'mangelhaft' => 'mangelhaft',
+                                'ungenügend' => 'ungenügend'
+                            ],
+                        ],
+                        'subj7' => [
+                            'title' => 'Leistungen in den einzelnen Fächern: 7',
+                            'type' => 'textarea',
+                            'lines' => 1,
+                            'cols' => 30,
+                        ],
+                        'subj7_grade' => [
+                            'title' => 'note',
+                            'type' => 'select',
+                            'values' => [
+                                '' => '',
+                                'sehr gut' => 'sehr gut',
+                                'gut' => 'gut',
+                                'befriedigend' => 'befriedigend',
+                                'ausreichend' => 'ausreichend',
+                                'mangelhaft' => 'mangelhaft',
+                                'ungenügend' => 'ungenügend'
+                            ],
+                        ],
+                        'subj8' => [
+                            'title' => 'Leistungen in den einzelnen Fächern: 8',
+                            'type' => 'textarea',
+                            'lines' => 1,
+                            'cols' => 30,
+                        ],
+                        'subj8_grade' => [
+                            'title' => 'note',
+                            'type' => 'select',
+                            'values' => [
+                                '' => '',
+                                'sehr gut' => 'sehr gut',
+                                'gut' => 'gut',
+                                'befriedigend' => 'befriedigend',
+                                'ausreichend' => 'ausreichend',
+                                'mangelhaft' => 'mangelhaft',
+                                'ungenügend' => 'ungenügend'
+                            ],
+                        ],
+                        'subj9' => [
+                            'title' => 'Leistungen in den einzelnen Fächern: 9',
+                            'type' => 'textarea',
+                            'lines' => 1,
+                            'cols' => 30,
+                        ],
+                        'subj9_grade' => [
+                            'title' => 'note',
+                            'type' => 'select',
+                            'values' => [
+                                '' => '',
+                                'sehr gut' => 'sehr gut',
+                                'gut' => 'gut',
+                                'befriedigend' => 'befriedigend',
+                                'ausreichend' => 'ausreichend',
+                                'mangelhaft' => 'mangelhaft',
+                                'ungenügend' => 'ungenügend'
+                            ],
+                        ],
+                        'subj10' => [
+                            'title' => 'Leistungen in den einzelnen Fächern: 10',
+                            'type' => 'textarea',
+                            'lines' => 1,
+                            'cols' => 30,
+                        ],
+                        'subj10_grade' => [
+                            'title' => 'note',
+                            'type' => 'select',
+                            'values' => [
+                                '' => '',
+                                'sehr gut' => 'sehr gut',
+                                'gut' => 'gut',
+                                'befriedigend' => 'befriedigend',
+                                'ausreichend' => 'ausreichend',
+                                'mangelhaft' => 'mangelhaft',
+                                'ungenügend' => 'ungenügend'
+                            ],
+                        ],
+                        'subj11' => [
+                            'title' => 'Leistungen in den einzelnen Fächern: 11',
+                            'type' => 'textarea',
+                            'lines' => 1,
+                            'cols' => 30,
+                        ],
+                        'subj11_grade' => [
+                            'title' => 'note',
+                            'type' => 'select',
+                            'values' => [
+                                '' => '',
+                                'sehr gut' => 'sehr gut',
+                                'gut' => 'gut',
+                                'befriedigend' => 'befriedigend',
+                                'ausreichend' => 'ausreichend',
+                                'mangelhaft' => 'mangelhaft',
+                                'ungenügend' => 'ungenügend'
+                            ],
+                        ],
+                        'subj12' => [
+                            'title' => 'Leistungen in den einzelnen Fächern: 12',
+                            'type' => 'textarea',
+                            'lines' => 1,
+                            'cols' => 30,
+                        ],
+                        'subj12_grade' => [
+                            'title' => 'note',
+                            'type' => 'select',
+                            'values' => [
+                                '' => '',
+                                'sehr gut' => 'sehr gut',
+                                'gut' => 'gut',
+                                'befriedigend' => 'befriedigend',
+                                'ausreichend' => 'ausreichend',
+                                'mangelhaft' => 'mangelhaft',
+                                'ungenügend' => 'ungenügend'
+                            ],
+                        ],
+                        'group1' => [
+                            'title' => 'Leistungen in den einzelnen Fächerverbünden: 1',
+                            'type' => 'textarea',
+                            'lines' => 1,
+                            'cols' => 30,
+                        ],
+                        'group1_grade' => [
+                            'title' => 'Note',
+                            'type' => 'select',
+                            'values' => [
+                                '' => '',
+                                'sehr gut' => 'sehr gut',
+                                'gut' => 'gut',
+                                'befriedigend' => 'befriedigend',
+                                'ausreichend' => 'ausreichend',
+                                'mangelhaft' => 'mangelhaft',
+                                'ungenügend' => 'ungenügend'
+                            ],
+                        ],
+                        'group2' => [
+                            'title' => 'Leistungen in den einzelnen Fächerverbünden: 2',
+                            'type' => 'textarea',
+                            'lines' => 1,
+                            'cols' => 30,
+                        ],
+                        'group2_grade' => [
+                            'title' => 'Note',
+                            'type' => 'select',
+                            'values' => [
+                                '' => '',
+                                'sehr gut' => 'sehr gut',
+                                'gut' => 'gut',
+                                'befriedigend' => 'befriedigend',
+                                'ausreichend' => 'ausreichend',
+                                'mangelhaft' => 'mangelhaft',
+                                'ungenügend' => 'ungenügend'
+                            ],
+                        ],
+
+                        'ags' => [
+                            'title' => 'Teilnahme an Arbeitsgemeinschaften',
+                            'type' => 'textarea',
+                            'lines' => 2,
+                            'cols' => 90,
+                        ],
+                        'comments_short' => [
+                            'title' => 'Bemerkungen',
+                            'type' => 'textarea',
+                            'lines' => 2,
+                            'cols' => 90,
+                        ],
+                    ],
+//                    'inputs_header' => [],
+                    'inputs_footer' => ['lang_main', 'lang_second', 'group1', 'group1_grade', 'group2', 'group2_grade', 'ags', 'comments_short'], // inputs in the footer of template
+                    'inputs_order' => ['intercomp_thema', 'intercomp_grade', 'subj1', 'subj1_grade', 'subj2', 'subj2_grade', 'subj3', 'subj3_grade',
+                                    'subj4', 'subj4_grade', 'subj5', 'subj5_grade', 'subj6', 'subj6_grade',
+                                    'subj7', 'subj7_grade', 'subj8', 'subj8_grade', 'subj9', 'subj9_grade',
+                                    'subj10', 'subj10_grade', 'subj11', 'subj11_grade', 'subj12', 'subj12_grade',
+                                    'lang_main', 'lang_second', 'group1', 'group1_grade', 'group2', 'group2_grade', 'ags', 'comments_short'], // special ordering of inputs (makes similar to docx template)
+                ],
+                'BP 2016/Zeugnis über den Realschulabschluss' => [
+                    'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_RS_SCHULFREMDE,
+                    'name' => 'BP 2016 Realschulabschlusszeugnis Schulfremde',
+                    'file' => 'BP 2016/BP2016_Realschulabschlusszeugnis_Schulfremde',
+                    'category' => 'Jahr',
+                    'year' => '1',
+                    'report_date' => '1',
+                    'student_name' => '1',
+                    'date_of_birth' => '1',
+                    'place_of_birth' => '1',
+                    'learning_group' => '1',
+                    'grades' => block_exastud_get_grades_set('lang'),
+                    'inputs' => [
+                        'wahlfach' => [
+                            'title' => 'Wahlpflichtfach',
+                            'type' => 'textarea',
+                            'lines' => 1,
+                            'cols' => 30,
+                        ],
+                        'lang_main' => [
+                            'title' => 'Pflichtfremdsprache',
+                            'type' => 'textarea',
+                            'lines' => 1,
+                            'cols' => 30,
+                        ],
+                        'lang_second' => [
+                            'title' => 'ggf. zweite Fremdsprache',
+                            'type' => 'textarea',
+                            'lines' => 1,
+                            'cols' => 30,
+                        ],
+                        'subj1' => [
+                            'title' => 'Leistungen in den einzelnen Fächern: 1',
+                            'type' => 'textarea',
+                            'lines' => 1,
+                            'cols' => 30,
+                        ],
+                        'subj1_grade' => [
+                            'title' => 'note',
+                            'type' => 'select',
+                            'values' => [
+                                '' => '',
+                                'sehr gut' => 'sehr gut',
+                                'gut' => 'gut',
+                                'befriedigend' => 'befriedigend',
+                                'ausreichend' => 'ausreichend',
+                                'mangelhaft' => 'mangelhaft',
+                                'ungenügend' => 'ungenügend'
+                            ],
+                        ],
+                        'subj2' => [
+                            'title' => 'Leistungen in den einzelnen Fächern: 2',
+                            'type' => 'textarea',
+                            'lines' => 1,
+                            'cols' => 30,
+                        ],
+                        'subj2_grade' => [
+                            'title' => 'note',
+                            'type' => 'select',
+                            'values' => [
+                                '' => '',
+                                'sehr gut' => 'sehr gut',
+                                'gut' => 'gut',
+                                'befriedigend' => 'befriedigend',
+                                'ausreichend' => 'ausreichend',
+                                'mangelhaft' => 'mangelhaft',
+                                'ungenügend' => 'ungenügend'
+                            ],
+                        ],
+                        'subj3' => [
+                            'title' => 'Leistungen in den einzelnen Fächern: 3',
+                            'type' => 'textarea',
+                            'lines' => 1,
+                            'cols' => 30,
+                        ],
+                        'subj3_grade' => [
+                            'title' => 'note',
+                            'type' => 'select',
+                            'values' => [
+                                '' => '',
+                                'sehr gut' => 'sehr gut',
+                                'gut' => 'gut',
+                                'befriedigend' => 'befriedigend',
+                                'ausreichend' => 'ausreichend',
+                                'mangelhaft' => 'mangelhaft',
+                                'ungenügend' => 'ungenügend'
+                            ],
+                        ],
+                        'subj4' => [
+                            'title' => 'Leistungen in den einzelnen Fächern: 4',
+                            'type' => 'textarea',
+                            'lines' => 1,
+                            'cols' => 30,
+                        ],
+                        'subj4_grade' => [
+                            'title' => 'note',
+                            'type' => 'select',
+                            'values' => [
+                                '' => '',
+                                'sehr gut' => 'sehr gut',
+                                'gut' => 'gut',
+                                'befriedigend' => 'befriedigend',
+                                'ausreichend' => 'ausreichend',
+                                'mangelhaft' => 'mangelhaft',
+                                'ungenügend' => 'ungenügend'
+                            ],
+                        ],
+                        'subj5' => [
+                            'title' => 'Leistungen in den einzelnen Fächern: 5',
+                            'type' => 'textarea',
+                            'lines' => 1,
+                            'cols' => 30,
+                        ],
+                        'subj5_grade' => [
+                            'title' => 'note',
+                            'type' => 'select',
+                            'values' => [
+                                '' => '',
+                                'sehr gut' => 'sehr gut',
+                                'gut' => 'gut',
+                                'befriedigend' => 'befriedigend',
+                                'ausreichend' => 'ausreichend',
+                                'mangelhaft' => 'mangelhaft',
+                                'ungenügend' => 'ungenügend'
+                            ],
+                        ],
+                        'subj6' => [
+                            'title' => 'Leistungen in den einzelnen Fächern: 6',
+                            'type' => 'textarea',
+                            'lines' => 1,
+                            'cols' => 30,
+                        ],
+                        'subj6_grade' => [
+                            'title' => 'note',
+                            'type' => 'select',
+                            'values' => [
+                                '' => '',
+                                'sehr gut' => 'sehr gut',
+                                'gut' => 'gut',
+                                'befriedigend' => 'befriedigend',
+                                'ausreichend' => 'ausreichend',
+                                'mangelhaft' => 'mangelhaft',
+                                'ungenügend' => 'ungenügend'
+                            ],
+                        ],
+                        'subj7' => [
+                            'title' => 'Leistungen in den einzelnen Fächern: 7',
+                            'type' => 'textarea',
+                            'lines' => 1,
+                            'cols' => 30,
+                        ],
+                        'subj7_grade' => [
+                            'title' => 'note',
+                            'type' => 'select',
+                            'values' => [
+                                '' => '',
+                                'sehr gut' => 'sehr gut',
+                                'gut' => 'gut',
+                                'befriedigend' => 'befriedigend',
+                                'ausreichend' => 'ausreichend',
+                                'mangelhaft' => 'mangelhaft',
+                                'ungenügend' => 'ungenügend'
+                            ],
+                        ],
+                        'subj8' => [
+                            'title' => 'Leistungen in den einzelnen Fächern: 8',
+                            'type' => 'textarea',
+                            'lines' => 1,
+                            'cols' => 30,
+                        ],
+                        'subj8_grade' => [
+                            'title' => 'note',
+                            'type' => 'select',
+                            'values' => [
+                                '' => '',
+                                'sehr gut' => 'sehr gut',
+                                'gut' => 'gut',
+                                'befriedigend' => 'befriedigend',
+                                'ausreichend' => 'ausreichend',
+                                'mangelhaft' => 'mangelhaft',
+                                'ungenügend' => 'ungenügend'
+                            ],
+                        ],
+                        'subj9' => [
+                            'title' => 'Leistungen in den einzelnen Fächern: 9',
+                            'type' => 'textarea',
+                            'lines' => 1,
+                            'cols' => 30,
+                        ],
+                        'subj9_grade' => [
+                            'title' => 'note',
+                            'type' => 'select',
+                            'values' => [
+                                '' => '',
+                                'sehr gut' => 'sehr gut',
+                                'gut' => 'gut',
+                                'befriedigend' => 'befriedigend',
+                                'ausreichend' => 'ausreichend',
+                                'mangelhaft' => 'mangelhaft',
+                                'ungenügend' => 'ungenügend'
+                            ],
+                        ],
+                        'subj10' => [
+                            'title' => 'Leistungen in den einzelnen Fächern: 10',
+                            'type' => 'textarea',
+                            'lines' => 1,
+                            'cols' => 30,
+                        ],
+                        'subj10_grade' => [
+                            'title' => 'note',
+                            'type' => 'select',
+                            'values' => [
+                                '' => '',
+                                'sehr gut' => 'sehr gut',
+                                'gut' => 'gut',
+                                'befriedigend' => 'befriedigend',
+                                'ausreichend' => 'ausreichend',
+                                'mangelhaft' => 'mangelhaft',
+                                'ungenügend' => 'ungenügend'
+                            ],
+                        ],
+                        'subj11' => [
+                            'title' => 'Leistungen in den einzelnen Fächern: 11',
+                            'type' => 'textarea',
+                            'lines' => 1,
+                            'cols' => 30,
+                        ],
+                        'subj11_grade' => [
+                            'title' => 'note',
+                            'type' => 'select',
+                            'values' => [
+                                '' => '',
+                                'sehr gut' => 'sehr gut',
+                                'gut' => 'gut',
+                                'befriedigend' => 'befriedigend',
+                                'ausreichend' => 'ausreichend',
+                                'mangelhaft' => 'mangelhaft',
+                                'ungenügend' => 'ungenügend'
+                            ],
+                        ],
+                        'subj12' => [
+                            'title' => 'Leistungen in den einzelnen Fächern: 12',
+                            'type' => 'textarea',
+                            'lines' => 1,
+                            'cols' => 30,
+                        ],
+                        'subj12_grade' => [
+                            'title' => 'note',
+                            'type' => 'select',
+                            'values' => [
+                                '' => '',
+                                'sehr gut' => 'sehr gut',
+                                'gut' => 'gut',
+                                'befriedigend' => 'befriedigend',
+                                'ausreichend' => 'ausreichend',
+                                'mangelhaft' => 'mangelhaft',
+                                'ungenügend' => 'ungenügend'
+                            ],
+                        ],
+                        'average_grade' => [
+                            'title' => 'Durchschnitt der Gesamtleistungen und Gesamtnote',
+                            'type' => 'select',
+                            'values' => [
+                                '' => '',
+                                'sehr gut' => 'sehr gut',
+                                'gut' => 'gut',
+                                'befriedigend' => 'befriedigend',
+                                'ausreichend' => 'ausreichend',
+                                'mangelhaft' => 'mangelhaft',
+                                'ungenügend' => 'ungenügend'
+                            ],
+                        ],
+                        'groups' => [
+                            'title' => 'Teilnahme an Arbeitsgemeinschaften',
+                            'type' => 'textarea',
+                            'lines' => 2,
+                            'cols' => 60,
+                        ],
+                        'comments_short' => [
+                            'title' => 'Bemerkungen',
+                            'type' => 'textarea',
+                            'lines' => 2,
+                            'cols' => 90,
+                        ],
+                    ],
+//                    'inputs_header' => [],
+                    'inputs_footer' => ['groups', 'comments_short', 'lang_main', 'lang_second'], // inputs in the footer of template
+                    'inputs_order' => ['wahlfach', 'subj1', 'subj1_grade', 'subj2', 'subj2_grade', 'subj3', 'subj3_grade',
+                        'subj4', 'subj4_grade', 'subj5', 'subj5_grade', 'subj6', 'subj6_grade',
+                        'subj7', 'subj7_grade', 'subj8', 'subj8_grade', 'subj9', 'subj9_grade',
+                        'subj10', 'subj10_grade', 'subj11', 'subj11_grade', 'subj12', 'subj12_grade',
+                        'lang_main', 'lang_second', 'groups', 'comments_short'], // special ordering of inputs (makes similar to docx template)
+                ],
+                'BP 2016/Zeugnis über den Hauptschulabschluss' => [
+                    'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_HS_SCHULFREMDE,
+                    'name' => 'BP 2016 Hauptschulabschlusszeugnis Schulfremde',
+                    'file' => 'BP 2016/BP2016_Hauptschulabschlusszeugnis_Schulfremde',
+                    'category' => 'Jahr',
+                    'year' => '1',
+                    'report_date' => '1',
+                    'student_name' => '1',
+                    'date_of_birth' => '1',
+                    'place_of_birth' => '1',
+                    'learning_group' => '1',
+                    'grades' => block_exastud_get_grades_set('lang'),
+                    'inputs' => [
+                        'subj1' => [
+                            'title' => 'Leistungen in den einzelnen Fächern: 1',
+                            'type' => 'textarea',
+                            'lines' => 1,
+                            'cols' => 30,
+                        ],
+                        'subj1_grade' => [
+                            'title' => 'note',
+                            'type' => 'select',
+                            'values' => [
+                                '' => '',
+                                'sehr gut' => 'sehr gut',
+                                'gut' => 'gut',
+                                'befriedigend' => 'befriedigend',
+                                'ausreichend' => 'ausreichend',
+                                'mangelhaft' => 'mangelhaft',
+                                'ungenügend' => 'ungenügend'
+                            ],
+                        ],
+                        'subj2' => [
+                            'title' => 'Leistungen in den einzelnen Fächern: 2',
+                            'type' => 'textarea',
+                            'lines' => 1,
+                            'cols' => 30,
+                        ],
+                        'subj2_grade' => [
+                            'title' => 'note',
+                            'type' => 'select',
+                            'values' => [
+                                '' => '',
+                                'sehr gut' => 'sehr gut',
+                                'gut' => 'gut',
+                                'befriedigend' => 'befriedigend',
+                                'ausreichend' => 'ausreichend',
+                                'mangelhaft' => 'mangelhaft',
+                                'ungenügend' => 'ungenügend'
+                            ],
+                        ],
+                        'subj3' => [
+                            'title' => 'Leistungen in den einzelnen Fächern: 3',
+                            'type' => 'textarea',
+                            'lines' => 1,
+                            'cols' => 30,
+                        ],
+                        'subj3_grade' => [
+                            'title' => 'note',
+                            'type' => 'select',
+                            'values' => [
+                                '' => '',
+                                'sehr gut' => 'sehr gut',
+                                'gut' => 'gut',
+                                'befriedigend' => 'befriedigend',
+                                'ausreichend' => 'ausreichend',
+                                'mangelhaft' => 'mangelhaft',
+                                'ungenügend' => 'ungenügend'
+                            ],
+                        ],
+                        'subj4' => [
+                            'title' => 'Leistungen in den einzelnen Fächern: 4',
+                            'type' => 'textarea',
+                            'lines' => 1,
+                            'cols' => 30,
+                        ],
+                        'subj4_grade' => [
+                            'title' => 'note',
+                            'type' => 'select',
+                            'values' => [
+                                '' => '',
+                                'sehr gut' => 'sehr gut',
+                                'gut' => 'gut',
+                                'befriedigend' => 'befriedigend',
+                                'ausreichend' => 'ausreichend',
+                                'mangelhaft' => 'mangelhaft',
+                                'ungenügend' => 'ungenügend'
+                            ],
+                        ],
+                        'subj5' => [
+                            'title' => 'Leistungen in den einzelnen Fächern: 5',
+                            'type' => 'textarea',
+                            'lines' => 1,
+                            'cols' => 30,
+                        ],
+                        'subj5_grade' => [
+                            'title' => 'note',
+                            'type' => 'select',
+                            'values' => [
+                                '' => '',
+                                'sehr gut' => 'sehr gut',
+                                'gut' => 'gut',
+                                'befriedigend' => 'befriedigend',
+                                'ausreichend' => 'ausreichend',
+                                'mangelhaft' => 'mangelhaft',
+                                'ungenügend' => 'ungenügend'
+                            ],
+                        ],
+                        'subj6' => [
+                            'title' => 'Leistungen in den einzelnen Fächern: 6',
+                            'type' => 'textarea',
+                            'lines' => 1,
+                            'cols' => 30,
+                        ],
+                        'subj6_grade' => [
+                            'title' => 'note',
+                            'type' => 'select',
+                            'values' => [
+                                '' => '',
+                                'sehr gut' => 'sehr gut',
+                                'gut' => 'gut',
+                                'befriedigend' => 'befriedigend',
+                                'ausreichend' => 'ausreichend',
+                                'mangelhaft' => 'mangelhaft',
+                                'ungenügend' => 'ungenügend'
+                            ],
+                        ],
+                        'present_thema' => [
+                            'title' => 'Leistungen in der Präsentationsprüfung: Thema',
+                            'type' => 'textarea',
+                            'lines' => 1,
+                            'cols' => 60,
+                        ],
+                        'present_grade' => [
+                            'title' => 'Leistungen in der Präsentationsprüfung: Note',
+                            'type' => 'select',
+                            'values' => [
+                                'sehr gut' => 'sehr gut',
+                                'gut' => 'gut',
+                                'befriedigend' => 'befriedigend',
+                                'ausreichend' => 'ausreichend',
+                                'mangelhaft' => 'mangelhaft',
+                                'ungenügend' => 'ungenügend'
+                            ],
+                        ],
+                        'eng_niveau' => [
+                            'title' => 'Fremdsprachenniveau - Englisch',
+                            'type' => 'textarea',
+                            'lines' => 1,
+                            'cols' => 20,
+                            'maxchars' => 20,
+                        ],
+                        'average_grade' => [
+                            'title' => 'Durchschnitt der Gesamtleistungen und Gesamtnote',
+                            'type' => 'select',
+                            'values' => [
+                                '' => '',
+                                'sehr gut' => 'sehr gut',
+                                'gut' => 'gut',
+                                'befriedigend' => 'befriedigend',
+                                'ausreichend' => 'ausreichend',
+                                'mangelhaft' => 'mangelhaft',
+                                'ungenügend' => 'ungenügend'
+                            ],
+                        ],
+                        'comments_short' => [
+                            'title' => 'Bemerkungen',
+                            'type' => 'textarea',
+                            'lines' => 2,
+                            'cols' => 90,
+                        ],
+                    ],
+    //                    'inputs_header' => [],
+                    'inputs_footer' => ['present_thema', 'present_grade', 'eng_niveau', 'average_grade', 'comments_short'], // inputs in the footer of template
+                    'inputs_order' => ['subj1', 'subj1_grade', 'subj2', 'subj2_grade', 'subj3', 'subj3_grade',
+                        'subj4', 'subj4_grade', 'subj5', 'subj5_grade', 'subj6', 'subj6_grade',
+                        'present_thema', 'present_grade', 'eng_niveau', 'average_grade', 'comments_short'], // special ordering of inputs (makes similar to docx template)
+                ],
+
         ];
     }
 

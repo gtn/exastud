@@ -1518,6 +1518,13 @@ function xmldb_block_exastud_upgrade($oldversion = 0) {
         upgrade_block_savepoint(true, 2020032501, 'exastud');
     }
 
+     if ($oldversion < 2020052603) {
+         foreach ([46, 47, 48] as $rid) {
+             block_exastud_fill_reportsettingstable($rid, true);
+         }
+         upgrade_block_savepoint(true, 2020052603, 'exastud');
+    }
+
     block_exastud_insert_default_entries();
 	block_exastud_check_profile_fields();
 
