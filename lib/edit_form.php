@@ -298,7 +298,15 @@ class student_edit_form extends moodleform {
                 $categories = $this->_customdata['categories'];
 
                 if (block_exastud_is_bw_active() || $compeval_type == BLOCK_EXASTUD_COMPETENCE_EVALUATION_TYPE_GRADE) {
-
+                    if ($compeval_type == BLOCK_EXASTUD_COMPETENCE_EVALUATION_TYPE_GRADE) {
+                        $noteLimit = 6; // TODO: where is limit? Count of?: exastud/configuration_global.php?action=evalopts
+                        $a = (object)['limit' => $noteLimit];
+                        $mform->addElement('html', '<div class="alert alert-info">' . block_exastud_get_string('message_interdisciplinary_competences_notes_limit', 'block_exastud', $a) . '</div>');
+                    } elseif ($compeval_type == BLOCK_EXASTUD_COMPETENCE_EVALUATION_TYPE_POINT) {
+                        $noteLimit = block_exastud_get_competence_eval_typeevalpoints_limit();
+                        $a = (object) ['limit' => $noteLimit];
+                        $mform->addElement('html', '<div class="alert alert-info">'.block_exastud_get_string('message_interdisciplinary_competences_points_limit', 'block_exastud', $a).'</div>');
+                    }
                     $curr_group = '!!--!!';
                     foreach ($categories as $category) {
                         if (isset($category->parent) && $category->parent) {
