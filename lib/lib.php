@@ -711,7 +711,7 @@ function block_exastud_get_category_review_by_subject_and_teacher($periodid, $st
 				AND r.teacherid = ?
 				AND r.subjectid = ?
 				AND u.deleted = 0							
-		", [$periodid, $studentid, $categoryid, $categorysource, $teacherid, $subjectid]);
+		", [$periodid, $studentid, $categoryid, $categorysource, $teacherid, $subjectid], IGNORE_MULTIPLE);
     } else {
         // for class teacher review: subjectid = 0
         return g::$DB->get_record_sql("

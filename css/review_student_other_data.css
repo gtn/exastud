@@ -6,3 +6,17 @@
 .exastud-student-review-block-header:not(:first-of-type) {
     margin-top: 25px;
 }
+
+
+.block_exastud .exastud-collapse-data {
+    cursor: pointer;
+}
+
+
+.block_exastud .collapsed_icon,
+.block_exastud .expanded_icon {
+    margin-right: 5px;
+}
+
+
+

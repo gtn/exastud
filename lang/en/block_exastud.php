@@ -522,3 +522,6 @@ $string['notification_allow_review_old_class_prolong_context'] = 'Allow review c
 $string['no_possible_inputs_in_report'] = 'No fields defined in Report Configurator. No data input possible';
 $string['message_interdisciplinary_competences_notes_limit'] = 'Please enter grades 1-{$a->limit}.';
 $string['message_interdisciplinary_competences_points_limit'] = 'Please enter Point 0-{$a->limit}.';
+$string['cross_competences_maintable_title_for_grade'] = 'Gradingscheme: Grade';
+$string['cross_competences_maintable_title_for_points'] = 'Gradingscheme: Points';
+$string['cross_competences_maintable_title_for_texts'] = 'Gradingscheme: Text entry';

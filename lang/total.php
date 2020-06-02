@@ -2006,5 +2006,17 @@ return [
         'Bitte tragen sie Punkte von 0-{$a->limit} ein.',
         'Please enter Point 0-{$a->limit}.'
     ],
+    'cross_competences_maintable_title_for_grade' => [
+        'Bewertungsschema: Note',
+        'Gradingscheme: Grade',
+    ],
+    'cross_competences_maintable_title_for_points' => [
+        'Bewertungsschema: Punkte',
+        'Gradingscheme: Points',
+    ],
+    'cross_competences_maintable_title_for_texts' => [
+        'Bewertungsschema: Text-Eintrag',
+        'Gradingscheme: Text entry',
+    ],
 
 ];

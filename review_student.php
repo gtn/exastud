@@ -353,7 +353,7 @@ $formdata->vorschlag = $DB->get_field('block_exastudreview', 'review', [
 	'subjectid' => $subjectid,
 	'periodid' => $actPeriod->id,
 	'teacherid' => $teacherid,
-]);
+], IGNORE_MULTIPLE);
 
 if (empty($formdata->grade)) {
 	$formdata->grade = '';

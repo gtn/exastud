@@ -523,3 +523,6 @@ $string['notification_allow_review_old_class_prolong_context'] = 'Klasse aus vor
 $string['no_possible_inputs_in_report'] = 'Im Berichtskonfigurator sind keine "Klassenlehrer Eingabefelder" definiert. Deshalb ist hier keine Dateneingabe möglich';
 $string['message_interdisciplinary_competences_notes_limit'] = 'Bitte tragen sie Noten von 1-{$a->limit} ein.';
 $string['message_interdisciplinary_competences_points_limit'] = 'Bitte tragen sie Punkte von 0-{$a->limit} ein.';
+$string['cross_competences_maintable_title_for_grade'] = 'Bewertungsschema: Note';
+$string['cross_competences_maintable_title_for_points'] = 'Bewertungsschema: Punkte';
+$string['cross_competences_maintable_title_for_texts'] = 'Bewertungsschema: Text-Eintrag';

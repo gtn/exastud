@@ -297,7 +297,10 @@ function block_exastud_print_period($courseid, $period, $type, $openclass) {
                                         'type' => BLOCK_EXASTUD_DATA_ID_PRINT_TEMPLATE,
                                 ]), block_exastud_get_string('report_report_fields'));
                             }
-                            if (($myclass->is_head_teacher && block_exastud_can_edit_crosscompetences_classteacher($myclass->id))
+                            if (($myclass->is_head_teacher &&
+                                    (   block_exastud_can_edit_crosscompetences_classteacher($myclass->id)
+                                        || block_exastud_can_edit_crosscompetences_subjectteacher($myclass->id))
+                                )
                                     /*|| (block_exastud_is_teacher_of_class($myclass->id, $USER->id) && block_exastud_can_edit_crosscompetences_subjectteacher($myclass->id))*/
                             ) {
                                 $generaldata[] = html_writer::link(new moodle_url('/blocks/exastud/review_class_other_data.php', [

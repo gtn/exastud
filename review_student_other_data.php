@@ -189,11 +189,16 @@ if (!is_array($categories) || !count($categories)) {
 $cross_review = false;
 $cross_categories = null;
 $is_classTeacher = block_exastud_is_class_teacher($classid, $USER->id);
-if (/*!block_exastud_is_bw_active()
-        && */
-        $type == BLOCK_EXASTUD_DATA_ID_CROSS_COMPETENCES
+
+$canEditCrossCompetences = false;
+if (!block_exastud_is_bw_active()
+        && $type == BLOCK_EXASTUD_DATA_ID_CROSS_COMPETENCES
         && $is_classTeacher
         && block_exastud_can_edit_crosscompetences_classteacher($classid)) {
+    $canEditCrossCompetences = true;
+}
+
+if ($canEditCrossCompetences) {
     $cross_review = true;
     $cross_categories = block_exastud_get_class_categories($classid);
 }
@@ -313,9 +318,38 @@ echo $output->heading($classheader);
 if ($type == BLOCK_EXASTUD_DATA_ID_CROSS_COMPETENCES
         /*|| (!block_exastud_is_bw_active() && $type == BLOCK_EXASTUD_DATA_ID_PRINT_TEMPLATE)*/
 ) {
+    // display cross competencies global table (readonly data)
+    if ($is_classTeacher &&
+            (   block_exastud_is_bw_active()
+                || block_exastud_can_edit_crosscompetences_subjectteacher($class->id))
+        ) {
 
-    // if it is for BW - only display cross competencies (readonly)
-    if (block_exastud_is_bw_active()) {
+        $toggler = '';
+        $tTitle = '';
+        switch (block_exastud_get_competence_eval_type()) {
+            case BLOCK_EXASTUD_COMPETENCE_EVALUATION_TYPE_TEXT:
+                $tTitle = block_exastud_get_string('cross_competences_maintable_title_for_texts');
+                break;
+            case BLOCK_EXASTUD_COMPETENCE_EVALUATION_TYPE_GRADE:
+                $tTitle = block_exastud_get_string('cross_competences_maintable_title_for_grade');
+                break;
+            case BLOCK_EXASTUD_COMPETENCE_EVALUATION_TYPE_POINT:
+                $tTitle = block_exastud_get_string('cross_competences_maintable_title_for_grade');
+                break;
+        }
+        $tabletitle = html_writer::tag('a', $tTitle, ['href' => "#", 'aria-controls' => 'maintable', 'role' => 'button']);
+        $togglerButton = '<img class="collapsed_icon"
+                                        style="display:none;"                                     
+                                        src="'.$CFG->wwwroot.'/blocks/exastud/pix/collapsed.png" 
+                                        width="16" height="16" 
+                                        title="'.block_exastud_get_string('collapse').'" />';
+        $togglerButton .= '<img class="expanded_icon"
+                                        style=""                                    
+                                        src="'.$CFG->wwwroot.'/blocks/exastud/pix/expanded.png" 
+                                        width="16" height="16" 
+                                        title="'.block_exastud_get_string('collapse').'" />';
+        $toggler = html_writer::tag('h3', $togglerButton.'&nbsp;'.$tabletitle, ['class' => 'exastud-collapse-data', 'data-controls' => 'maintable', 'data-expanded' => 1]);
+
         $user = $student;
         $userReport = block_exastud_get_report($user->id, $actPeriod->id, $class->id);
         //$userCategoryReviews = block_exastud_get_reviewers_by_category($actPeriod->id, $user->id, false);
@@ -346,6 +380,7 @@ if ($type == BLOCK_EXASTUD_DATA_ID_CROSS_COMPETENCES
         asort($teachers);*/
 
         $table = new html_table();
+        @$table->id = 'maintable';
         $headerrow = new html_table_row();
         $userData = new html_table_cell();
         $userData->rowspan = 2;
@@ -408,7 +443,8 @@ if ($type == BLOCK_EXASTUD_DATA_ID_CROSS_COMPETENCES
             }
             $table->data[] = $row;
         }
-        echo $output->table($table);
+        echo html_writer::div($toggler.$output->table($table));
+//        echo $output->table($table);
     } else {
         // if no BW
         // the review parameters will be shown in the edit_form.php
