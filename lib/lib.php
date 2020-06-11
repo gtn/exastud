@@ -6019,7 +6019,7 @@ function block_exastud_get_default_templates($templateid = null, $common = true)
                     'learning_group' => '1',
                     'grades' => block_exastud_get_grades_set('lang'),
                     'inputs' => [
-                        'subj1' => [
+                        /*'subj1' => [
                             'title' => 'Leistungen in den einzelnen Fächern: 1',
                             'type' => 'textarea',
                             'lines' => 1,
@@ -6132,7 +6132,7 @@ function block_exastud_get_default_templates($templateid = null, $common = true)
                                 'mangelhaft' => 'mangelhaft',
                                 'ungenügend' => 'ungenügend'
                             ],
-                        ],
+                        ],*/
                         'present_thema' => [
                             'title' => 'Leistungen in der Präsentationsprüfung: Thema',
                             'type' => 'textarea',
@@ -7920,6 +7920,37 @@ function block_exastud_template_needs_calculated_average($templateid) {
 
 function block_exastud_get_calculated_average($classid, $studentid) {
     return block_exastud_get_class_student_data($classid, $studentid, 'grade_average_calculated');
+}
+
+function block_exastud_get_verbal_avg($avg) {
+    if (!is_numeric($avg)) {
+        return array(
+            'avgForVerbal' => null,
+            'avgVerbal' => null
+        );
+    }
+    $avgForVerbal = '1';
+    $avgVerbal = 'sehr gut';
+    if ($avg >= 1.5 && $avg <= 2.4) {
+        $avgVerbal = 'gut';
+        $avgForVerbal = '2';
+    } else if ($avg >= 2.5 && $avg <= 3.4) {
+        $avgForVerbal = '3';
+        $avgVerbal = 'befriedigend';
+    } else if ($avg >= 3.5 && $avg <= 4.4) {
+        $avgForVerbal = '4';
+        $avgVerbal = 'ausreichend';
+    } else if ($avg >= 4.5) {
+        $avgForVerbal = '5';
+        $avgVerbal = 'mangelhaft';
+    } else if ($avg == 0) {
+        $avgForVerbal = '0';
+        $avgVerbal = '';
+    }
+    return array(
+        'avgForVerbal' => $avgForVerbal,
+        'avgVerbal' => $avgVerbal
+    );
 }
 
 /*

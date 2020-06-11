@@ -1061,24 +1061,9 @@ class printer {
                 $avg  = (floor($avg * $fig) / $fig); // - ALWAYS round down!
                 $avg  = $studentdata->grade_average_calculated;
                 $data['gd'] = number_format($avg, 1, ',', '');
-                $avgForVerbal = '1';
-                $avgVerbal = 'sehr gut';
-                if ($avg >= 1.5 && $avg <= 2.4) {
-                    $avgVerbal = 'gut';
-                    $avgForVerbal = '2';
-                } else if ($avg >= 2.5 && $avg <= 3.4) {
-                    $avgForVerbal = '3';
-                    $avgVerbal = 'befriedigend';
-                } else if ($avg >= 3.5 && $avg <= 4.4) {
-                    $avgForVerbal = '4';
-                    $avgVerbal = 'ausreichend';
-                } else if ($avg >= 4.5) {
-                    $avgForVerbal = '5';
-                    $avgVerbal = 'mangelhaft';
-                }else if ($avg == 0) {
-                    $avgForVerbal = '0';
-                    $avgVerbal = '';
-                }
+                $verbals = block_exastud_get_verbal_avg($avg);
+                $avgForVerbal = $verbals['avgForVerbal'];
+                $avgVerbal = $verbals['avgVerbal'];
                 // other selectboxes
 //                if ($templateid == BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_ABSCHLUSSZEUGNIS_KL10_RSA) {
 //                    $avgVerbal = block_exastud_get_grades_set('short')[$avgForVerbal];
@@ -2127,6 +2112,62 @@ class printer {
             self::learn_sozial_for_report($templateProcessor, $templateid, $class, $students);
         }
 
+        // special subject lists
+        if (in_array($templateid, [
+            BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_HS_SCHULFREMDE
+        ])) {
+            $usedSubjects = block_exastud_get_class_subjects($class);
+            $shortTitles = array_map(function($s) {return $s->shorttitle;}, $usedSubjects);
+            $requiredSubjects = [
+                BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_HS_SCHULFREMDE => ['D', 'M', 'E']
+            ];
+            $countSubjectsInReport = [
+                BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_HS_SCHULFREMDE => 4, // !!! TEMPORARY - COVID19 !!!! must be 6
+            ];
+            // first - required subjects
+            $sI = 1;
+            foreach ($requiredSubjects[$templateid] as $subjectShortTitle) {
+                $indexInSubjectsList = array_search($subjectShortTitle, $shortTitles);
+                $usedSubject = $usedSubjects[$indexInSubjectsList];
+                $usedSubjectData = block_exastud_get_graded_review($class->id, $usedSubject->id, $student->id);
+                $data['subj'.$sI] = $usedSubject->title;
+                $data['subj'.$sI.'_grade'] = @$usedSubjectData->grade ? $usedSubjectData->grade : self::spacerIfEmpty('');
+                unset($usedSubjects[$indexInSubjectsList]);
+                $sI++;
+            }
+            foreach ($usedSubjects as $usedSubject) {
+                $usedSubjectData = block_exastud_get_graded_review($class->id, $usedSubject->id, $student->id);
+                if (@$usedSubjectData->grade) {
+                    $data['subj' . $sI] = $usedSubject->title;
+                    $data['subj' . $sI . '_grade'] = $usedSubjectData->grade;
+                    $sI++;
+                    if ($sI > $countSubjectsInReport[$templateid]) {
+                        break;
+                    }
+                }
+            }
+            // insert empty subjects
+            for ($i = $sI; $i <= 12; $i++) {
+                $data['subj'.$sI] = self::spacerIfEmpty('');
+                $data['subj'.$sI.'_grade'] = self::spacerIfEmpty('');
+                $sI++;
+            }
+            $average_grade = @$studentdata->grade_average_calculated;
+            if ($average_grade && $average_grade > 0) {
+                if (in_array(block_exastud_get_competence_eval_type(), [
+                    BLOCK_EXASTUD_COMPETENCE_EVALUATION_TYPE_GRADE,
+                    BLOCK_EXASTUD_COMPETENCE_EVALUATION_TYPE_TEXT,
+                ])) {
+                    $verbals = block_exastud_get_verbal_avg($average_grade);
+                    $avgVerbal = $verbals['avgVerbal'];
+                    $average_grade = $avgVerbal.' ('.$average_grade.')';
+                }
+                $data['average_grade'] = $average_grade;
+            } else {
+                $data['average_grade'] = static::spacerIfEmpty('');
+            }
+        }
+        
 		// projekt_ingroup property
 		if (in_array($templateid, [
 		        BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_BEIBLATT_PROJEKTARBEIT_HSA,
