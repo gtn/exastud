@@ -28,7 +28,7 @@ setcookie('lastclass', $classid);
 
 block_exastud_require_login($courseid);
 
-$returnurl = new moodle_url('/blocks/exastud/review_class_project_teacher.php?courseid='.$courseid.'&classid='.$classid.'&openclass'.$classid);
+$returnurl = new moodle_url('/blocks/exastud/review_class_project_teacher.php?courseid='.$courseid.'&classid='.$classid.'&openclass='.$classid);
 
 $output = block_exastud_get_renderer();
 
@@ -86,7 +86,7 @@ if (@$categories['projekt_verbalbeurteilung']['lines'] == 999 || @$categories['p
     }
 }
 
-$classheader = $class->title.' - '.block_exastud_trans('de:Projektprüfung');
+$classheader = $class->title.' - '.block_exastud_get_string('review_project_evalueations');
 
 $studentform = new student_other_data_form($PAGE->url, [
     'classid' => $classid,

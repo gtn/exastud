@@ -276,6 +276,13 @@ function block_exastud_print_period($courseid, $period, $type, $openclass) {
                                                 'type' => BLOCK_EXASTUD_DATA_ID_PRINT_TEMPLATE,
                                         ]), block_exastud_get_string('report_other_report_fields'));
                             }
+                            if (block_exastud_is_class_teacher($myclass->id, $USER->id)) {
+                                $generaldata[] =
+                                        html_writer::link(new moodle_url('/blocks/exastud/review_class_averages.php', [
+                                                'courseid' => $courseid,
+                                                'classid' => $myclass->id
+                                        ]), block_exastud_get_string('review_class_averages'));
+                            }
                         } else {
                             // at least one students/template has at least one input
                             $hasInpuits = false;
@@ -465,7 +472,7 @@ function block_exastud_print_period($courseid, $period, $type, $openclass) {
                         $projectCell->text = html_writer::link(new moodle_url('/blocks/exastud/review_class_project_teacher.php', [
                                 'courseid' => $courseid,
                                 'classid' => $myclass->id]),
-                                block_exastud_get_string('report_report_eval'));
+                                block_exastud_get_string('review_project_evalueations'));
                         $projectCell->colspan = 2;
                         $dRow->cells[] = $projectCell;
                         $table->data[] = $dRow;

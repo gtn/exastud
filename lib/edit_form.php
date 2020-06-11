@@ -1832,7 +1832,212 @@ class add_students_via_class_parameter_form extends moodleform {
         $mform->addElement('exastud_htmltag', block_exastud_trans('de: Schüler, die in ihrem Nutzerprofil im Bereich "weitere Profileinstellungen" im Feld Klasse/Lerngruppe den entsprechenden Eintrag haben zur Klasse hinzufügen.'));
     }
 
+}
+
+class student_average_calculation_form extends moodleform {
+
+
+    public function __construct($action = null, $customdata = null, $method = 'post', $target = '', $attributes = null,
+                                $editable = true, $ajaxformdata = null) {
+        parent::__construct($action, $customdata, $method, $target, $attributes, $editable, $ajaxformdata);
+    }
+
+    function definition() {
+        global $CFG, $DB;
+        $mform = &$this->_form;
+/*        if (array_key_exists('templateid', $this->_customdata)) {
+            //$defaulttemplatesettings = block_exastud_get_default_templates($this->_customdata['templateid']);
+            if (!$defaulttemplatesettings = block_exastud_get_default_templates($this->_customdata['templateid'])) {
+                $defaulttemplatesettings = array();
+            }
+        } else {
+            $defaulttemplatesettings = array();
+        }*/
+        $studentid = null;
+        $student = null;
+        if (array_key_exists('studentid', $this->_customdata)) {
+            $studentid = $this->_customdata['studentid'];
+            $student = $DB->get_record('user', array('id' => $studentid));
+        }
+/*        $courseid = 1;
+        if (array_key_exists('courseid', $this->_customdata)) {
+            $courseid = $this->_customdata['courseid'];
+        }*/
+        $classid = null;
+        $class = null;
+        if (array_key_exists('classid', $this->_customdata)) {
+            $classid = $this->_customdata['classid'];
+            $class = block_exastud_get_class($classid);
+        }
+
+        $classSubjects = block_exastud_get_class_subjects($class);
+        block_exastud_add_projektarbait_to_subjectlist($class, $studentid, $classSubjects);
+
+        $table = new html_table();
+
+        $table->head[] = block_exastud_get_string('average_calculate_table_student');
+        $table->head[] = '';
+
+        $subjectTypeRow = new html_table_row();
+        $c = new html_table_cell();
+        $c->text = fullname($student);
+        $c->header = true;
+        $subjectTypeRow->cells[] = $c;
+        $c = new html_table_cell();
+        $c->text = block_exastud_get_string('average_calculate_table_subjecttype');
+        $c->header = true;
+        $subjectTypeRow->cells[] = $c;
+
+        $subjectFactorRow = new html_table_row();
+        $c = new html_table_cell();
+        $c->text = $class->title;
+        $c->header = true;
+        $c->rowspan = 2;
+        $subjectFactorRow->cells[] = $c;
+        $c = new html_table_cell();
+        $c->text = block_exastud_get_string('average_calculate_table_factor');
+        $c->header = true;
+        $subjectFactorRow->cells[] = $c;
+
+        $subjectGradesRow = new html_table_row();
+        $c = new html_table_cell();
+        $c->text = block_exastud_get_string('average_calculate_table_grading');
+        $c->header = true;
+        $subjectGradesRow->cells[] = $c;
+
+        $factorSumme = 0;
+        $subjectSumme = 0;
+
+        $template = block_exastud_get_student_print_template($class, $student->id);
+        $grades = $template->get_grade_options();
+
+        foreach ($classSubjects as $subject) {
+            $table->head[] = $subject->title;
+            $subjectTypes = [];
+            if ($subject->is_main) {
+                $subjectTypes[] = 'K';
+            }
+            if (!$subject->not_relevant) {
+                $subjectTypes[] = 'M';
+            }
+            if ($subject->is_best) {
+                $subjectTypes[] = 'B';
+            }
+            $subjectTypeRow->cells[] = implode(',', $subjectTypes);
+            $subjectFactorVal = block_exastud_get_average_factor_for_student($classid, $subject->id, $studentid);
+            $factorSumme += $subjectFactorVal;
+//            $factorValue = block_exastud_get_subject_student_data($classid, $subject->id, $studentid, 'subject_average_factor');
+            $elementname = 'factors['.$subject->id.']';
+            $mform->addElement('text', $elementname);
+//            $subjectFactorElement = $mform->createElement('text', $elementname);
+//            $mform->setDefault($elementname, $factorValue);
+            $mform->setType($elementname, PARAM_RAW);
+//            $subjectFactorElement->_attributes['value'] = $factorValue;
+//            $elementHtml = $subjectFactorElement->toHtml();
+//            $subjectFactorRow->cells[] = $elementHtml; // factor input
+            $markerElementName = 'tempSubject_'.$subject->id;
+            $factorCell = new html_table_cell();
+            $factorCell->text = '<span style="display: none;" id="'.$markerElementName.'"></span>';
+            $factorCell->attributes['data-subjectId'] = $subject->id;
+            $subjectFactorRow->cells[] = $factorCell;
+            if (@$subject->is_project) {
+                $studentData = block_exastud_get_class_student_data($classid, $studentid);
+                $subjectGrade_content = @$studentData->projekt_grade ? $studentData->projekt_grade : 0;
+                $gradeValNumber = (float)block_exastud_get_grade_index_by_value($subjectGrade_content);
+            } else {
+                $grade = block_exastud_get_graded_review($classid, $subject->id, $studentid);
+                if ($grade) {
+                    $subjectGrade_content = $grade->grade;
+                    $gradeValNumber = (float)block_exastud_get_grade_index_by_value($grade->grade);
+                } else {
+                    $subjectGrade_content = '';
+                    $gradeValNumber = 0;
+                }
+            }
+            $subjectGradeRes = $subjectFactorVal * $gradeValNumber;
+            $subjectSumme += $subjectGradeRes;
+            $subjectGrade_hiddenValue = '<span style="display: none;" id="val_for_calculate_'.$subject->id.'" data-subjectid="'.$subject->id.'" data-subject-gradeVal="'.$gradeValNumber.'"></span>';
+            $subjectGradesRow->cells[] = $subjectGrade_content.$subjectGrade_hiddenValue;
+
+        }
+
+        $table->head[] = '';
+        $table->head[] = block_exastud_get_string('average_calculate_table_summ');
+        $table->head[] = block_exastud_get_string('average_calculate_table_average');
+
+        $subjectTypeRow->cells[] = '';
+        $subjectTypeRow->cells[] = '';
+        $subjectTypeRow->cells[] = '';
+
+        $subjectFactorRow->cells[] = '';
+//        $factorSummeCell = new html_table_cell();
+//        $factorSummeCell->text =
+        $subjectFactorRow->cells[] = '<span id="factor_summ">'.$factorSumme.'</span>';
+        $subjectFactorRow->cells[] = '';
+
+        $subjectGradesRow->cells[] = '';
+        $subjectGradesRow->cells[] = '<span id="subject_summ">'.$subjectSumme.'</span>';
+        $avg = block_exastud_get_calculated_average($classid, $studentid);
+        if (in_array(block_exastud_get_competence_eval_type(), [
+                    BLOCK_EXASTUD_COMPETENCE_EVALUATION_TYPE_GRADE,
+                    BLOCK_EXASTUD_COMPETENCE_EVALUATION_TYPE_TEXT
+                ])) {
+            $text = block_exastud_get_grade_by_index(round($avg), $grades);
+            $avgText = $text.' ('.$avg.')';
+            // add JS for grade names
+            $gradesArr = (object)array_values($grades);
+            $avgTextAdd = '<script>';
+            $avgTextAdd .= ' var gradeNames = '.json_encode($gradesArr).';';
+            $avgTextAdd .= '</script>';
+        } else {
+            $avgTextAdd = '';
+            $avgText = $avg;
+        }
+        $subjectGradesRow->cells[] = $avgTextAdd.'<span id="average_value">'.$avgText.'</span>';
+
+        $table->data = array(
+            $subjectTypeRow,
+            $subjectFactorRow,
+            $subjectGradesRow
+        );
+
+        $tableHtml = html_writer::table($table);
+        $mform->addElement('html', $tableHtml);
+
+//        $this->add_action_buttons(false);
+        $buttonarray = array();
+        $buttonarray[] = $mform->createElement('submit', 'submitbutton', get_string('savechanges'));
+        $buttonarray[] = $mform->createElement('button', 'calculate', block_exastud_get_string('average_calculate_button'));
+        $buttonarray[] = $mform->createElement('submit', 'export_xls', block_exastud_get_string('average_export_button'));
+        $mform->addGroup($buttonarray, 'buttonar', '', array(' '), false);
+        $mform->closeHeaderBefore('buttonar');
+    }
+
+    public function set_data($default_values)
+    {
+        $studentid = null;
+        $student = null;
+        if (array_key_exists('studentid', $this->_customdata)) {
+            $studentid = $this->_customdata['studentid'];
+        }
+        $classid = null;
+        $class = null;
+        if (array_key_exists('classid', $this->_customdata)) {
+            $classid = $this->_customdata['classid'];
+            $class = block_exastud_get_class($classid);
+        }
+
+        $classSubjects = block_exastud_get_class_subjects($class);
+        block_exastud_add_projektarbait_to_subjectlist($class, $studentid, $classSubjects);
+        $factorDefaults = [];
+        foreach ($classSubjects as $subject) {
+            $factorDefaults['factors[' . $subject->id . ']'] = block_exastud_get_average_factor_for_student($classid, $subject->id, $studentid);
+        }
+        $default_values += $factorDefaults;
+        parent::set_data($default_values);
+    }
 
 }
+
 
 

@@ -1523,6 +1523,26 @@ function xmldb_block_exastud_upgrade($oldversion = 0) {
              block_exastud_fill_reportsettingstable($rid, true);
          }
          upgrade_block_savepoint(true, 2020052603, 'exastud');
+     }
+
+     if ($oldversion < 2020060500) {
+         $table = new xmldb_table('block_exastudsubjects');
+         $field = new xmldb_field('is_main', XMLDB_TYPE_INTEGER, 1, null, null, null, '0');
+         if (!$dbman->field_exists($table, $field) && !$dbman->field_exists($table, $field)) {
+             $dbman->add_field($table, $field);
+         }
+         $field = new xmldb_field('is_best', XMLDB_TYPE_INTEGER, 1, null, null, null, '0');
+         if (!$dbman->field_exists($table, $field) && !$dbman->field_exists($table, $field)) {
+             $dbman->add_field($table, $field);
+         }
+         upgrade_block_savepoint(true, 2020060500, 'exastud');
+    }
+
+    if ($oldversion < 2020061101) {
+        foreach ([42, 5, 15, 17, 37, 48, 47] as $rid) {
+            block_exastud_fill_reportsettingstable($rid, true);
+        }
+        upgrade_block_savepoint(true, 2020061101, 'exastud');
     }
 
     block_exastud_insert_default_entries();

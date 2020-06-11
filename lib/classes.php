@@ -49,8 +49,13 @@ class global_config {
 }
 
 class print_templates {
+
 	static function get_template_name($templateid) {
 		return static::get_template_config($templateid)['name'];
+	}
+
+	static function get_template_bp($templateid) {
+		return static::get_template_config($templateid)['bp'];
 	}
 
 	static function get_template_file($templateid) {
@@ -90,10 +95,12 @@ class print_templates {
 	    $templates = array();
 	    $templates_temp = g::$DB->get_records('block_exastudreportsettings');
 	    foreach ($templates_temp as $tmpl) {
+	        $bp = g::$DB->get_record('block_exastudbp', ['id' => $tmpl->bpid]);
 	        $grades = array('' => '') + array_map('trim', explode(';', $tmpl->grades));
             $grades = array_combine($grades, $grades);
 	        $templates[$tmpl->id] = array(
 	                'name' => $tmpl->title,
+                    'bp' => $bp,
                     'file' => $tmpl->template,
                     //'grades' => ['1'=>'1'], // for testing
                     //'grades' => block_exastud_get_evaluation_options(true),
@@ -162,7 +169,7 @@ class print_templates {
                 break;
             case BLOCK_EXASTUD_DATA_ID_PROJECT_TEACHER:
                 $fieldsstatic = array('projekt_thema');
-                $keptaditional = array('projekt_grade', 'projekt_verbalbeurteilung', 'projekt_text3lines');
+                $keptaditional = array('projekt_grade', 'projekt_grade_hide', 'projekt_verbalbeurteilung', 'projekt_text3lines');
                 $customfields = unserialize($template->additional_params);
                 if ($customfields) {
                     $customfields = array_intersect_key($customfields, array_flip($keptaditional));
@@ -970,6 +977,14 @@ class print_template {
 
 	function get_name() {
 		return print_templates::get_template_name($this->templateid);
+	}
+
+	function get_bp_title() {
+	    $bp = print_templates::get_template_bp($this->templateid);
+	    if ($bp) {
+            return $bp->title;
+        }
+		return '';
 	}
 
 	function get_template_id() {

@@ -48,9 +48,11 @@ const BLOCK_EXASTUD_DATA_ID_CERTIFICATE = 'certificate';
 const BLOCK_EXASTUD_DATA_ID_ADDITIONAL_INFO = 'additional_info';
 const BLOCK_EXASTUD_DATA_ID_CLASS_DEFAULT_TEMPLATEID = 'default_templateid';
 const BLOCK_EXASTUD_DATA_ID_PROJECT_TEACHER = 'project_teacher';
+const BLOCK_EXASTUD_DATA_ID_AVERAGE_CALCULATION = 'average_calculation';
 const BLOCK_EXASTUD_DATA_ID_HEAD_TEACHER = 'head_teacher';
 const BLOCK_EXASTUD_DATA_ID_BILINGUAL_TEACHER = 'bilingual_teacher';
 const BLOCK_EXASTUD_DATA_ID_BILINGUAL_TEMPLATE = 'bilingual_templateid';
+const BLOCK_EXASTUD_DATA_AVERAGES_REPORT = 'averages_report_xls';
 //const BLOCK_EXASTUD_DATA_ID_ZERTIFIKAT_FUER_PROFILFACH = 4;
 
 const BLOCK_EXASTUD_SUBJECT_ID_LERN_UND_SOZIALVERHALTEN = -1;
@@ -61,6 +63,9 @@ const BLOCK_EXASTUD_SUBJECT_ID_ADDITIONAL_HEAD_TEACHER = -2;
 const BLOCK_EXASTUD_COMPETENCE_EVALUATION_TYPE_TEXT = 0;
 const BLOCK_EXASTUD_COMPETENCE_EVALUATION_TYPE_GRADE = 1;
 const BLOCK_EXASTUD_COMPETENCE_EVALUATION_TYPE_POINT = 2;
+
+const BLOCK_EXASTUD_PROJECTARBAIT_FOR_AVERAGE_CALCULATING = -12;
+const BLOCK_EXASTUD_PROJECTARBAIT_FOR_AVERAGE_CALCULATING_PARAMNAME = 'projekt_average_factor';
 
 const BLOCK_EXASTUD_TEMPLATE_DIR = __DIR__.'/../template';
 
@@ -2436,6 +2441,7 @@ function block_exastud_get_reportsettings_all($sortByPlans = false, $filter = ar
 }
 
 function block_exastud_get_report_templates($class) {
+    global $USER;
     $templates = [];
 
     //if (!block_exastud_get_only_learnsociale_reports()) {
@@ -2473,6 +2479,9 @@ function block_exastud_get_report_templates($class) {
                         'Bericht "Lern- und Sozialverhalten" (Vorlage zur Notenkonferenz)');
         //$templates[BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_16_GMS_TESTAT_BILINGUALES_PROFIL_KL_8] = 'Bilingualer Unterricht an Gemeinschaftsschulen (Klasse 8)';
         //$templates[BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_16_GMS_ZERTIFIKAT_BILINGUALES_PROFIL_KL_10] = 'Bilinguales Zertifikat Englisch/Deutsch (Klasse 10)';
+        if (block_exastud_is_class_teacher($class->id, $USER->id)) {
+            $templates[BLOCK_EXASTUD_DATA_AVERAGES_REPORT] = block_exastud_get_string('report_averages_title');
+        }
     } else {
         if ($class == '-all-') {
             $templates += \block_exastud\print_templates::get_class_other_print_templates(null);
@@ -5029,6 +5038,13 @@ function block_exastud_get_default_templates($templateid = null, $common = true)
                                                 'mangelhaft' => 'mangelhaft',
                                                 'ungenügend' => 'ungenügend'],
                                 ],
+                                'projekt_grade_hide' => [
+                                    'title' => 'Note wird im Zertifikat nicht ausgewiesen',
+                                    'type' => 'select',
+                                    'values' => [
+                                        1 => 'Ja',
+                                        0 => 'Nein'],
+                                ],
                                 'projekt_verbalbeurteilung' => [
                                         'title' => 'Verbalbeurteilung',
                                         'type' => 'textarea',
@@ -5956,7 +5972,7 @@ function block_exastud_get_default_templates($templateid = null, $common = true)
                                 'ungenügend' => 'ungenügend'
                             ],
                         ],
-                        'average_grade' => [
+                        /*'average_grade' => [
                             'title' => 'Durchschnitt der Gesamtleistungen und Gesamtnote',
                             'type' => 'select',
                             'values' => [
@@ -5968,7 +5984,7 @@ function block_exastud_get_default_templates($templateid = null, $common = true)
                                 'mangelhaft' => 'mangelhaft',
                                 'ungenügend' => 'ungenügend'
                             ],
-                        ],
+                        ],*/
                         'groups' => [
                             'title' => 'Teilnahme an Arbeitsgemeinschaften',
                             'type' => 'textarea',
@@ -6142,7 +6158,7 @@ function block_exastud_get_default_templates($templateid = null, $common = true)
                             'cols' => 20,
                             'maxchars' => 20,
                         ],
-                        'average_grade' => [
+                        /*'average_grade' => [
                             'title' => 'Durchschnitt der Gesamtleistungen und Gesamtnote',
                             'type' => 'select',
                             'values' => [
@@ -6154,7 +6170,7 @@ function block_exastud_get_default_templates($templateid = null, $common = true)
                                 'mangelhaft' => 'mangelhaft',
                                 'ungenügend' => 'ungenügend'
                             ],
-                        ],
+                        ],*/
                         'comments_short' => [
                             'title' => 'Bemerkungen',
                             'type' => 'textarea',
@@ -6163,10 +6179,10 @@ function block_exastud_get_default_templates($templateid = null, $common = true)
                         ],
                     ],
     //                    'inputs_header' => [],
-                    'inputs_footer' => ['present_thema', 'present_grade', 'eng_niveau', 'average_grade', 'comments_short'], // inputs in the footer of template
+                    'inputs_footer' => ['present_thema', 'present_grade', 'eng_niveau',/* 'average_grade',*/ 'comments_short'], // inputs in the footer of template
                     'inputs_order' => ['subj1', 'subj1_grade', 'subj2', 'subj2_grade', 'subj3', 'subj3_grade',
                         'subj4', 'subj4_grade', 'subj5', 'subj5_grade', 'subj6', 'subj6_grade',
-                        'present_thema', 'present_grade', 'eng_niveau', 'average_grade', 'comments_short'], // special ordering of inputs (makes similar to docx template)
+                        'present_thema', 'present_grade', 'eng_niveau',/* 'average_grade',*/ 'comments_short'], // special ordering of inputs (makes similar to docx template)
                 ],
 
         ];
@@ -7776,6 +7792,135 @@ function block_exastud_random_password($length = 12) {
     return implode($pass); //turn the array into a string
 }
 
+function block_exastud_check_factors_limit($factorValue) {
+    if ($factorValue < 0) {
+        return 0;
+    }
+    if ($factorValue > 9) {
+        return 9;
+    }
+    return $factorValue;
+}
+
+function block_exastud_get_average_factor_for_student($classid, $subjectid, $studentid) {
+    global $DB;
+    static $best_used = null;
+    if ($best_used === null) {
+        $best_used[$studentid] = false;
+    }
+    if ($subjectid == BLOCK_EXASTUD_PROJECTARBAIT_FOR_AVERAGE_CALCULATING) {
+        $factorValue = block_exastud_get_class_student_data($classid, $studentid, BLOCK_EXASTUD_PROJECTARBAIT_FOR_AVERAGE_CALCULATING_PARAMNAME);
+    } else {
+        $factorValue = block_exastud_get_subject_student_data($classid, $subjectid, $studentid, 'subject_average_factor');
+    }
+    if ($factorValue === null) { // no factor yet - default factor values
+        if ($subjectid == BLOCK_EXASTUD_PROJECTARBAIT_FOR_AVERAGE_CALCULATING) {
+            $subjData = (object) [
+                'grade' => block_exastud_get_class_student_data($classid, $studentid, 'projekt_grade')
+            ];
+            $subject = (object) [
+                'is_best' => 0,
+                'is_main' => 0,
+                'not_relevant' => 0
+            ];
+        } else {
+            $subjData = block_exastud_get_graded_review($classid, $subjectid, $studentid);
+            $subject = $DB->get_record('block_exastudsubjects', ['id' => $subjectid]);
+        }
+        if (!$subjData || !$subjData->grade) {
+            $factorValue = 0;
+        } else {
+            if ($subject->is_best) {// first is_best subject has 1, all other is_bets have 0
+                if (!$best_used[$studentid]) {
+                    $factorValue = 1;
+                } else {
+                    $factorValue = 0;
+                }
+            } elseif ($subject->not_relevant == 0 // relevant and main subjects have 1
+                    || $subject->is_main
+                    ) {
+                $factorValue = 1;
+            } else { // not any type = 0
+                $factorValue = 0;
+            }
+            // using of best updating
+            if ($subject->is_best) {
+                $best_used[$studentid] = true;
+            }
+        }
+    }
+    return $factorValue;
+}
+
+function block_exastud_calculate_student_average($class, $studentid) {
+    global $DB;
+    if (is_integer($class)) {
+        $class = block_exastud_get_class($class);
+    }
+
+    $classSubjects = block_exastud_get_class_subjects($class);
+    block_exastud_add_projektarbait_to_subjectlist($class, $studentid, $classSubjects);
+    $factorSumm = 0;
+    $subjSum = 0;
+    foreach ($classSubjects as $subject) {
+        if ($subject->id == BLOCK_EXASTUD_PROJECTARBAIT_FOR_AVERAGE_CALCULATING) {
+            $subjData = (object) [
+                'grade' => block_exastud_get_class_student_data($class->id, $studentid, 'projekt_grade')
+            ];
+            $factorValue = block_exastud_get_class_student_data($class->id, $studentid, BLOCK_EXASTUD_PROJECTARBAIT_FOR_AVERAGE_CALCULATING_PARAMNAME);
+        } else {
+            $subjData = block_exastud_get_graded_review($class->id, $subject->id, $studentid);
+            $factorValue = block_exastud_get_average_factor_for_student($class->id, $subject->id, $studentid);
+        }
+        $factorSumm += $factorValue;
+        if (!$subjData || !$subjData->grade) {
+            $gradeValue = 0;
+        } else {
+            $gradeValue = (float)block_exastud_get_grade_index_by_value($subjData->grade);
+        }
+        $subjRes = $factorValue * $gradeValue;
+        $subjSum += $subjRes;
+    }
+    if ($factorSumm == 0) {
+        $average = 0;
+    } else {
+        $average = round($subjSum / $factorSumm, 1);
+    }
+    return $average;
+}
+
+function block_exastud_add_projektarbait_to_subjectlist($class, $studentid, &$classSubjects) {
+    if (block_exastud_student_has_projekt_pruefung($class, $studentid)) {
+        $projectSubject = (object) [
+            'is_project' => true,
+            'id' => BLOCK_EXASTUD_PROJECTARBAIT_FOR_AVERAGE_CALCULATING,
+            'title' => block_exastud_get_string('average_calculate_table_average_project_title'),
+            'not_relevant' => 0,
+            'is_main' => 0,
+            'is_best' => 0,
+        ];
+        $classSubjects['project'] = $projectSubject;
+    }
+}
+
+function block_exastud_template_needs_calculated_average($templateid) {
+    $templatesWithAverageValue = array(
+        BLOCK_EXASTUD_DATA_AVERAGES_REPORT,
+        BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_ABSCHLUSSZEUGNIS_HS,
+        BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_ABSCHLUSSZEUGNIS_KL9_10_HSA,
+        BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_ABSCHLUSSZEUGNIS_KL10_RSA,
+        BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_HS_SCHULFREMDE,
+        BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_RS_SCHULFREMDE
+    );
+    if (in_array($templateid, $templatesWithAverageValue)) {
+        return true;
+    }
+    return false;
+}
+
+function block_exastud_get_calculated_average($classid, $studentid) {
+    return block_exastud_get_class_student_data($classid, $studentid, 'grade_average_calculated');
+}
 
 /*
 function block_exastud_encrypt_raw($value, $secret) {

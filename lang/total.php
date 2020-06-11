@@ -1055,6 +1055,10 @@ return [
             'Projektprüfung',
             'Project evaluations',
     ],
+    'review_project_evalueations' => [
+            'Projektprüfung / Projektarbeit',
+            'Project evaluations',
+    ],
     'report_student_template' => [
             'Zeugnisformular',
             'Template',
@@ -2017,6 +2021,94 @@ return [
     'cross_competences_maintable_title_for_texts' => [
         'Bewertungsschema: Text-Eintrag',
         'Gradingscheme: Text entry',
+    ],
+    'review_class_averages' => [
+        'Schnittberechnung',
+        'Averages calculation',
+    ],
+    'review_class_average_value' => [
+        'Notenschnitt',
+        'Average value',
+    ],
+    'review_class_average_not_calculated' => [
+        'no average grading calculated',
+        'no average grading calculated',
+    ],
+    'average_calculate_table_student' => [
+        'Student',
+        'Student',
+    ],
+    'average_calculate_table_subjecttype' => [
+        'type',
+        'type',
+    ],
+    'average_calculate_table_factor' => [
+        'Factor',
+        'Factor',
+    ],
+    'average_calculate_table_grading' => [
+        'Grading',
+        'Grading',
+    ],
+    'average_calculate_table_summ' => [
+        'Summe',
+        'Summe',
+    ],
+    'average_calculate_table_average' => [
+        'Schnitt',
+        'Average',
+    ],
+    'average_calculate_table_average_project_title' => [
+        'Projektarbeit / Projektprüfung',
+        'Projektarbeit / Projektprüfung',
+    ],
+    'average_calculate_button' => [
+        'Berechnen',
+        'Calculate',
+    ],
+    'average_export_button' => [
+        'Export',
+        'Export',
+    ],
+    'average_needs_calculate' => [
+        'Bitte berechnen Sie die durchschnittliche Bewertung für den Schüler.',
+        'Please make calculation of average grading for student'
+    ],
+    'average_needs_calculate_for_student' => [
+        'Bitte führen Sie zuerst beim Schüler / bei der Schüler {$a->studentname}.',
+        'Please make calculation of average grading for student {$a->studentname}.'
+    ],
+    'report_averages_title' => [
+        'Averages',
+        'Averages'
+    ],
+    'report_averages_header_subjects' => [
+        'Subjects',
+        'Subjects'
+    ],
+    'report_averages_header_student' => [
+        'Schüler/in',
+        'Student'
+    ],
+    'report_averages_header_type' => [
+        'Type',
+        'Type',
+    ],
+    'report_averages_header_factor' => [
+        'Faktor',
+        'Factor'
+    ],
+    'report_averages_header_grading' => [
+        'Grading',
+        'Grading'
+    ],
+    'report_averages_header_sum' => [
+        'Sum',
+        'Sum'
+    ],
+    'report_averages_header_average' => [
+        'Average',
+        'Average'
     ],
 
 ];

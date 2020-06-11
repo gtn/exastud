@@ -134,8 +134,10 @@ if ($action == 'save-subjects') {
 			'id' => PARAM_INT,
 			'title' => PARAM_TEXT,
 			'shorttitle' => PARAM_TEXT,
+			'is_main' => PARAM_TEXT,
 			'relevant' => PARAM_TEXT,
-			'relevant_rs' => PARAM_TEXT,
+			'is_best' => PARAM_TEXT,
+//			'relevant_rs' => PARAM_TEXT,
 			// 'always_print' => PARAM_BOOL,
 		))
 	);
@@ -148,7 +150,9 @@ if ($action == 'save-subjects') {
 		$sorting++;
 		$item->sorting = $sorting;
         $item->not_relevant = ($item->relevant ? 0 : 1); // inverse from form to field (relevant -> not_relevant)
-        $item->not_relevant_rs = ($item->relevant_rs ? 0 : 1);
+        $item->is_main = intval($item->is_main);
+        $item->is_best = intval($item->is_best);
+//        $item->not_relevant_rs = ($item->relevant_rs ? 0 : 1);
 		if (isset($availablesubjects[$item->id])) {
             if (!block_exastud_can_edit_subject($availablesubjects[$item->id])) {
                 unset($todelete[$item->id]);
@@ -376,7 +380,7 @@ if ($action == 'subjects') {
             $canEdit = false;
         }
         $subject->relevant = ($subject->not_relevant ? 0 : 1); // inverse, because field is 'not_relevant', in the form - 'relevant' value
-        $subject->relevant_rs = ($subject->not_relevant_rs ? 0 : 1);
+//        $subject->relevant_rs = ($subject->not_relevant_rs ? 0 : 1);
 	    if (!$canEdit) {
 			$subject->disabled = true;
 		}
@@ -395,7 +399,7 @@ if ($action == 'subjects') {
 			<div for-field="shorttitle"><?php echo block_exastud_trans(['de:Kurzbezeichnung', 'en:Shortname']); ?></div>
             <?php if (block_exastud_is_bw_active()) { ?>
 			<div for-field="relevant"><?php echo block_exastud_get_string('subject_category_m'); ?><br>
-                <span for-field="HS">(HS)</span><span for-field="RS">(RS)</span>
+                <span for-field="K">(K)</span><span for-field="M">(M)</span><span for-field="B">(B)</span>
             </div>
             <?php } ?>
 <!--			<div for-field="relevant_rs">--><?php //echo block_exastud_get_string('subject_category_m_rs'); ?><!--</div>-->
@@ -406,11 +410,13 @@ if ($action == 'subjects') {
 				<input type="text" name="title"/>
 				<input type="text" name="shorttitle"/>
                 <?php if (block_exastud_is_bw_active()) { ?>
+                    <input type="checkbox" name="is_main" value="1" />
                     <input type="checkbox" name="relevant" value="1" />
-                    <input type="checkbox" name="relevant_rs" value="1" />
+                    <input type="checkbox" name="is_best" value="1" />
 				<?php } else { ?>
+                    <input type="hidden" name="is_main" value="0" />
                     <input type="hidden" name="relevant" value="0" />
-                    <input type="hidden" name="relevant_rs" value="0" />
+                    <input type="hidden" name="is_best" value="0" />
                 <?php } ?>
 				<!-- input type="checkbox" name="always_print" value="1"/ -->
 				<button exa="delete-button" class="btn btn-default"><?php echo block_exastud_get_string('delete'); ?></button>
@@ -421,11 +427,13 @@ if ($action == 'subjects') {
 			<input type="text" name="title"/>
 			<input type="text" name="shorttitle"/>
             <?php if (block_exastud_is_bw_active()) { ?>
+                <input type="checkbox" name="is_main" value="1" />
                 <input type="checkbox" name="relevant" value="1" />
-                <input type="checkbox" name="relevant_rs" value="1" />
+                <input type="checkbox" name="is_best" value="1" />
             <?php } else { ?>
+                <input type="hidden" name="is_main" value="0" />
                 <input type="hidden" name="relevant" value="0" />
-                <input type="hidden" name="relevant_rs" value="0" />
+                <input type="hidden" name="is_best" value="0" />
             <?php } ?>
 			<!-- input type="checkbox" name="always_print" value="1"/ -->
 			<input type="button" exa="new-button" class="btn btn-default" value="<?php echo block_exastud_get_string('add'); ?>">

@@ -26,6 +26,8 @@ require_once __DIR__.'/../../exacomp/inc.php';
 use block_exacomp\cross_subject;
 use block_exastud\globals as g;
 use core\plugininfo\search;
+use PhpOffice\PhpSpreadsheet\Reader\Excel5\Style\Border;
+use PhpOffice\PhpSpreadsheet\Style\Alignment;
 use PhpOffice\PhpWord\Escaper\RegExp;
 use PhpOffice\PhpWord\Escaper\Xml;
 
@@ -185,6 +187,7 @@ class printer {
                 'ags' => static::spacerIfEmpty(block_exastud_crop_value_by_template_input_setting(@$studentdata->ags, $templateid, 'ags')),
                 'lern_und_sozialverhalten' => static::spacerIfEmpty($lern_soz),
                 'learn_social_behavior' => static::spacerIfEmpty($lern_soz),
+                'average_grade' => static::spacerIfEmpty(@$studentdata->grade_average_calculated),
         ];
         // gender
         $gender = block_exastud_get_user_gender($student->id);
@@ -1056,6 +1059,7 @@ class printer {
                 //$avg = round($avg, 1, PHP_ROUND_HALF_DOWN); // not always correct. ???
                 $fig = (int) str_pad('1', 2, '0'); // 2 (second parameter) - precision
                 $avg  = (floor($avg * $fig) / $fig); // - ALWAYS round down!
+                $avg  = $studentdata->grade_average_calculated;
                 $data['gd'] = number_format($avg, 1, ',', '');
                 $avgForVerbal = '1';
                 $avgVerbal = 'sehr gut';
@@ -1258,6 +1262,9 @@ class printer {
 
 			// project grades
 			if ($value = @$grades[@$studentdata->projekt_grade]) {
+                if (@$studentdata->projekt_grade_hide == 1) {
+                    $value = self::spacerIfEmpty('');
+                }
 				// im "Beiblatt zur Projektpruefung HSA" heisst das feld projet_text3lines
 				$add_filter(function($content) use ($placeholder, $value) {
 					return preg_replace('!(projekt_thema.*)'.$placeholder.'note!U', '${1}'.$value, $content, 1, $count);
@@ -2942,7 +2949,7 @@ class printer {
                 $rowi++;
                 $nodata = false;
                 $templateProcessor->setValue("prostudent#$rowi", $rowi . '. ' . fullname($student));
-                $templateProcessor->setValue("prog#$rowi", @$studentData->projekt_grade);
+                $templateProcessor->setValue("prog#$rowi", (@$studentData->projekt_grade_hide == 1 ? self::spacerIfEmpty('') : @$studentData->projekt_grade));
                 $templateProcessor->setValue("prodescription#$rowi", @$studentData->projekt_thema);
             }
 		}
@@ -3387,7 +3394,7 @@ class printer {
                 $row = new \html_table_row();
                 $cells = array();
                 $cells[] = fullname($student);
-                $cells[] = @$studentData->projekt_grade;
+                $cells[] = (@$studentData->projekt_grade_hide == 1 ? self::spacerIfEmpty('') : @$studentData->projekt_grade);
                 $cells[] = @$studentData->projekt_thema;
                 $row->cells = $cells;
                 $projectTable->data[] = $row;
@@ -3575,7 +3582,8 @@ class printer {
             $sheet->setCellValueByColumnAndRow($cell++, $rowi, ($avg ? $avg : ''));
 
 			$studentData = block_exastud_get_class_student_data($class->id, $student->id);
-			$sheet->setCellValueByColumnAndRow($cell++, $rowi, @$studentData->projekt_grade);
+			$projectGradeVal = (@$studentData->projekt_grade_hide == 1 ? self::spacerIfEmpty('') : @$studentData->projekt_grade);
+			$sheet->setCellValueByColumnAndRow($cell++, $rowi, $projectGradeVal);
 			$sheet->setCellValueByColumnAndRow($cell++, $rowi, @$studentData->projekt_thema);
 			$sheet->setCellValueByColumnAndRow($cell++, $rowi, @$studentData->ags);
 		}
@@ -4278,6 +4286,477 @@ class printer {
         return true;
     }
 
+    static function averages_to_xls($class, $studentid) {
+        global $CFG, $DB;
+
+        \PhpOffice\PhpWord\Settings::setTempDir($CFG->tempdir);
+
+        $spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
+        $sheet = $spreadsheet->setActiveSheetIndex(0);
+
+        $template = block_exastud_get_student_print_template($class, $studentid);
+        $student = $DB->get_record('user', array('id' => $studentid));
+
+        $classSubjects = block_exastud_get_class_subjects($class);
+        block_exastud_add_projektarbait_to_subjectlist($class, $studentid, $classSubjects);
+
+        $cellIndex = 0;
+        $rowStartIndex = 1;
+        $rowHeaderIndex = $rowStartIndex + 1;
+        $rowTypeIndex = $rowStartIndex + 2;
+        $rowFactorIndex = $rowStartIndex + 3;
+        $rowGradeIndex = $rowStartIndex + 4;
+        $countRows = 4;
+        $countCells = 2 + count($classSubjects) + 4;
+
+        // first column
+        $cellIndex++;
+        $sheet->setCellValueByColumnAndRow($cellIndex, $rowHeaderIndex, block_exastud_get_string('average_calculate_table_student'));
+        $sheet->setCellValueByColumnAndRow($cellIndex, $rowTypeIndex, fullname($student));
+        $sheet->setCellValueByColumnAndRow($cellIndex, $rowFactorIndex, $class->title);
+        $sheet->setCellValueByColumnAndRow($cellIndex, $rowGradeIndex, ' ');
+
+        // second column
+        $cellIndex++;
+        $sheet->setCellValueByColumnAndRow($cellIndex, $rowHeaderIndex, ' ');
+        $sheet->setCellValueByColumnAndRow($cellIndex, $rowTypeIndex, block_exastud_get_string('average_calculate_table_subjecttype'));
+        $sheet->setCellValueByColumnAndRow($cellIndex, $rowFactorIndex, block_exastud_get_string('average_calculate_table_factor'));
+        $sheet->setCellValueByColumnAndRow($cellIndex, $rowGradeIndex, block_exastud_get_string('average_calculate_table_grading'));
+
+        $factorSumm = 0;
+        $subjectSumme = 0;
+        // subjects
+        $cellIndex++;
+        foreach ($classSubjects as $subject) {
+            // subject title
+            $sheet->setCellValueByColumnAndRow($cellIndex, $rowHeaderIndex, $subject->title);
+            // subject type
+            $subjectTypes = [];
+            if ($subject->is_main) {
+                $subjectTypes[] = 'K';
+            }
+            if (!$subject->not_relevant) {
+                $subjectTypes[] = 'M';
+            }
+            if ($subject->is_best) {
+                $subjectTypes[] = 'B';
+            }
+            $sheet->setCellValueByColumnAndRow($cellIndex, $rowTypeIndex, implode(',', $subjectTypes));
+            // subject factor
+            $factor = block_exastud_get_average_factor_for_student($class->id, $subject->id, $studentid);
+            $factorSumm += $factor;
+            $sheet->setCellValueByColumnAndRow($cellIndex, $rowFactorIndex, $factor);
+            $studentData = block_exastud_get_class_student_data($class->id, $studentid);
+            // subject grades
+            if (@$subject->is_project) {
+                $subjectGrade_content = $studentData->projekt_grade;
+                $gradeValNumber = (float)block_exastud_get_grade_index_by_value($subjectGrade_content);
+            } else {
+                $grade = block_exastud_get_graded_review($class->id, $subject->id, $studentid);
+                if ($grade) {
+                    $subjectGrade_content = $grade->grade;
+                    $gradeValNumber = (float)block_exastud_get_grade_index_by_value($grade->grade);
+                } else {
+                    $subjectGrade_content = '';
+                    $gradeValNumber = 0;
+                }
+            }
+            $subjectGradeRes = $factor * $gradeValNumber;
+            $subjectSumme += $subjectGradeRes;
+            if (@$studentData->projekt_grade_hide == 1) {
+                $subjectGrade_content = self::spacerIfEmpty('');
+            }
+            $sheet->setCellValueByColumnAndRow($cellIndex, $rowGradeIndex, $subjectGrade_content);
+            $cellIndex++;
+        }
+
+        // empty column
+        $emptyColumnIndex = $cellIndex;
+//        $cellIndex++;
+        $sheet->setCellValueByColumnAndRow($cellIndex, $rowHeaderIndex, ' ');
+        $sheet->setCellValueByColumnAndRow($cellIndex, $rowTypeIndex, ' ');
+        $sheet->setCellValueByColumnAndRow($cellIndex, $rowFactorIndex, ' ');
+        $sheet->setCellValueByColumnAndRow($cellIndex, $rowGradeIndex, ' ');
+        // summe column
+        $cellIndex++;
+        $sheet->setCellValueByColumnAndRow($cellIndex, $rowHeaderIndex, block_exastud_get_string('average_calculate_table_summ'));
+        $sheet->setCellValueByColumnAndRow($cellIndex, $rowTypeIndex, ' ');
+        $sheet->setCellValueByColumnAndRow($cellIndex, $rowFactorIndex, $factorSumm);
+        $sheet->setCellValueByColumnAndRow($cellIndex, $rowGradeIndex, $subjectSumme);
+        // average column
+        $cellIndex++;
+        $sheet->setCellValueByColumnAndRow($cellIndex, $rowHeaderIndex, block_exastud_get_string('average_calculate_table_average'));
+        $sheet->setCellValueByColumnAndRow($cellIndex, $rowTypeIndex, ' ');
+        $sheet->setCellValueByColumnAndRow($cellIndex, $rowFactorIndex, ' ');
+        $avg = block_exastud_get_calculated_average($class->id, $studentid);
+        if (in_array(block_exastud_get_competence_eval_type(), [
+            BLOCK_EXASTUD_COMPETENCE_EVALUATION_TYPE_GRADE,
+            BLOCK_EXASTUD_COMPETENCE_EVALUATION_TYPE_TEXT
+        ])) {
+            $grades = $template->get_grade_options();
+            $text = block_exastud_get_grade_by_index(round($avg), $grades);
+            $average = $text.' ('.$avg.')';
+        } else {
+            $average = $avg;
+        }
+        $sheet->setCellValueByColumnAndRow($cellIndex, $rowGradeIndex, $average);
+
+        // templating
+        $styleCell = array(
+            'borders' => array(
+                'outline' => array(
+                    'style' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
+                    'color' => array('argb' => 'FF000000'),
+                ),
+            ),
+        );
+/*        $noBorderCell = array(
+            'borders' => array(
+                'top' => [
+                    'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_DASHDOT,
+                ],
+            ),
+        );*/
+        $styleHeader = array(
+            'font' => [
+                'bold' => true,
+            ],
+/*            'fill' => [
+                'fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
+//                'rotation' => 90,
+                'startColor' => [
+                    'argb' => 'FFA0A0A0',
+                ],
+//                'endColor' => [
+//                    'argb' => 'FFFFFFFF',
+//                ],
+            ],*/
+            'borders' => array(
+                'outline' => array(
+                    'style' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_MEDIUM,
+                    'color' => array('argb' => 'FF000000'),
+                ),
+            ),
+        );
+        // all cells
+        for ($i = 1; $i < $countCells; $i++) {
+            for ($j = $rowStartIndex + 1; $j <= $rowStartIndex + $countRows; $j++) {
+                $sheet->getCellByColumnAndRow($i, $j)->getStyle()->applyFromArray($styleCell);
+            }
+        }
+        // headers
+        for ($i = 1; $i < $countCells; $i++) {
+            if ($sheet->cellExistsByColumnAndRow($i, $rowHeaderIndex)) {
+                $sheet->getRowDimension($rowHeaderIndex)->setRowHeight(70);
+                $cellStyle = $sheet->getCellByColumnAndRow($i, $rowHeaderIndex)->getStyle();
+                $cellStyle->applyFromArray($styleHeader);
+                $cellStyle->getAlignment()->setVertical(\PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER);
+                $cellStyle->getFill()
+                    ->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)
+                    ->getStartColor()->setARGB('FFCCCCCC');
+                $cellStyle->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_JUSTIFY);
+//                $sheet->getColumnDimensionByColumn($i)->setAutoSize(true);
+//                $cellStyle->getAlignment()->setWrapText(false);
+            }
+        }
+        // column headers
+        for ($j = $rowStartIndex + 1; $j <= $rowStartIndex + $countRows; $j++) {
+            $columns = [1, 2];
+            foreach ($columns as $i) {
+                $cellStyle = $sheet->getCellByColumnAndRow($i, $j)->getStyle();
+                $cellStyle->applyFromArray($styleHeader);
+                $cellStyle->getFill()
+                    ->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)
+                    ->getStartColor()->setARGB('FFCCCCCC');
+            }
+        }
+        // empty columns
+        for ($j = $rowStartIndex + 1; $j <= $rowStartIndex + $countRows; $j++) {
+            $cellStyle = $sheet->getCellByColumnAndRow($emptyColumnIndex, $j)->getStyle();
+            $cellStyle->getFill()
+                ->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)
+                ->getStartColor()->setARGB('FFFFE599');
+        }
+        // disable borders
+//        for ($i = 1; $i <= $countCells; $i++) {
+//            $sheet->getCellByColumnAndRow($i, $rowFactorIndex)->getStyle()->applyFromArray($noBorderCell);
+//                ->setBorderStyle(\PhpOffice\PhpSpreadsheet\Style\Border::BORDER_MEDIUM);// >setBorderStyle(false);// getBottom()->setBorderStyle(false);
+//            $sheet->getCellByColumnAndRow($i, $rowGradeIndex)->getStyle()->getBorders()->getAllBorders()->setBorderStyle(false);//->getTop()->setBorderStyle(false);
+//        }
+        // text alignments
+        for ($i = 1 + 2; $i < $countCells; $i++) {
+            $sheet->getCellByColumnAndRow($i, $rowTypeIndex)->getStyle()->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_LEFT);
+            $sheet->getCellByColumnAndRow($i, $rowFactorIndex)->getStyle()->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_RIGHT);
+            $sheet->getCellByColumnAndRow($i, $rowGradeIndex)->getStyle()->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_RIGHT);
+        }
+
+        $filename = date('d.m.Y').'-'.trim($template->get_bp_title()).' '.trim($class->title).'-'.fullname($student).'.xlsx';
+        $filename = block_exastud_normalize_filename($filename);
+
+        $writer = \PhpOffice\PhpSpreadsheet\IOFactory::createWriter($spreadsheet, 'Excel2007');
+        $temp_file = tempnam($CFG->tempdir, 'exastud');
+        $writer->save($temp_file);
+
+        return (object)[
+            'temp_file' => $temp_file,
+            'filename' => $filename,
+        ];
+    }
+    
+    static function averages_to_xls_full($class, $students) {
+        global $CFG, $DB;
+
+        \PhpOffice\PhpWord\Settings::setTempDir($CFG->tempdir);
+
+        $spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
+        $sheet = $spreadsheet->setActiveSheetIndex(0);
+        $sheet->getPageSetup()->setOrientation(\PhpOffice\PhpSpreadsheet\Worksheet\PageSetup::ORIENTATION_LANDSCAPE);
+
+        $classSubjects = block_exastud_get_class_subjects($class);
+
+        $rowStartIndex = 1;
+        $rowHeaderSubjectsIndex = $rowStartIndex + 1;
+        $rowHeaderIndex = $rowStartIndex + 2;
+        $rowTypeIndex = $rowStartIndex + 3;
+        $rowFactorIndex = $rowStartIndex + 4;
+        $rowGradeIndex = $rowStartIndex + 5;
+        $countRows = 5;
+
+        // templating
+        $styleCell = array(
+            'borders' => array(
+                'outline' => array(
+                    'style' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
+                    'color' => array('argb' => 'FF000000'),
+                ),
+            ),
+        );
+        $styleHeader = array(
+            'font' => [
+                'bold' => true,
+            ],
+            'borders' => array(
+                'outline' => array(
+                    'style' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_MEDIUM,
+                    'color' => array('argb' => 'FF000000'),
+                ),
+            ),
+        );
+
+        $currStudentIndex = 0;
+        foreach ($students as $student) {
+            $currStudentIndex++;
+            $cellIndex = 0;
+            $template = block_exastud_get_student_print_template($class, $student->id);
+            $studentSubjects = $classSubjects;
+            block_exastud_add_projektarbait_to_subjectlist($class, $student->id, $studentSubjects);
+            $countCells = 2 + count($studentSubjects) + 4;
+
+            // first column
+            $cellIndex++;
+            $sheet->setCellValueByColumnAndRow($cellIndex, $rowHeaderSubjectsIndex, ' ');
+            $sheet->setCellValueByColumnAndRow($cellIndex, $rowHeaderIndex, block_exastud_get_string('report_averages_header_student'));
+            $sheet->setCellValueByColumnAndRow($cellIndex, $rowTypeIndex, fullname($student));
+            $sheet->setCellValueByColumnAndRow($cellIndex, $rowFactorIndex, $class->title);
+            $sheet->setCellValueByColumnAndRow($cellIndex, $rowGradeIndex, date('d.m.Y'));
+
+            // second column
+            $cellIndex++;
+            $sheet->setCellValueByColumnAndRow($cellIndex, $rowHeaderSubjectsIndex, ' ');
+            $sheet->setCellValueByColumnAndRow($cellIndex, $rowHeaderIndex, ' ');
+            $sheet->setCellValueByColumnAndRow($cellIndex, $rowTypeIndex, block_exastud_get_string('report_averages_header_type'));
+            $sheet->setCellValueByColumnAndRow($cellIndex, $rowFactorIndex, block_exastud_get_string('report_averages_header_factor'));
+            $sheet->setCellValueByColumnAndRow($cellIndex, $rowGradeIndex, block_exastud_get_string('report_averages_header_grading'));
+
+            $factorSumm = 0;
+            $subjectSumme = 0;
+            // subjects
+            $cellIndex++;
+            $firstSubjectCell = true;
+            foreach ($studentSubjects as $subject) {
+                if ($firstSubjectCell) {
+                    $sheet->setCellValueByColumnAndRow($cellIndex, $rowHeaderSubjectsIndex, block_exastud_get_string('report_averages_header_subjects'));
+                    $firstSubjectCell = false;
+                } else {
+                    $sheet->setCellValueByColumnAndRow($cellIndex, $rowHeaderSubjectsIndex, ' ');
+                }
+                // subject title
+                if ($subject->shorttitle) {
+                    $subjectTitle = $subject->shorttitle . "\r\n" . '(' . $subject->title . ')';
+                } else {
+                    $subjectTitle = $subject->title;
+                    $subjectParts = explode('/', $subjectTitle);
+                    $subjectParts = array_map(function($t) {return trim($t);}, $subjectParts);
+                    $subjectTitle = implode("\r\n", $subjectParts);
+                }
+                $sheet->setCellValueByColumnAndRow($cellIndex, $rowHeaderIndex, $subjectTitle);
+                // subject type
+                $subjectTypes = [];
+                if ($subject->is_main) {
+                    $subjectTypes[] = 'K';
+                }
+                if (!$subject->not_relevant) {
+                    $subjectTypes[] = 'M';
+                }
+                if ($subject->is_best) {
+                    $subjectTypes[] = 'B';
+                }
+                $sheet->setCellValueByColumnAndRow($cellIndex, $rowTypeIndex, implode(',', $subjectTypes));
+                // subject factor
+                $factor = block_exastud_get_average_factor_for_student($class->id, $subject->id, $student->id);
+                $factorSumm += $factor;
+                $sheet->setCellValueByColumnAndRow($cellIndex, $rowFactorIndex, $factor);
+                $studentData = block_exastud_get_class_student_data($class->id, $student->id);
+                // subject grades
+                if (@$subject->is_project) {
+                    $subjectGrade_content = $studentData->projekt_grade;
+                    $gradeValNumber = (float)block_exastud_get_grade_index_by_value($subjectGrade_content);
+                } else {
+                    $grade = block_exastud_get_graded_review($class->id, $subject->id, $student->id);
+                    if ($grade) {
+                        $subjectGrade_content = $grade->grade;
+                        $gradeValNumber = (float)block_exastud_get_grade_index_by_value($grade->grade);
+                    } else {
+                        $subjectGrade_content = '';
+                        $gradeValNumber = 0;
+                    }
+                }
+                $subjectGradeRes = $factor * $gradeValNumber;
+                $subjectSumme += $subjectGradeRes;
+                if (@$studentData->projekt_grade_hide == 1) {
+                    $subjectGrade_content = self::spacerIfEmpty('');
+                }
+                $sheet->setCellValueByColumnAndRow($cellIndex, $rowGradeIndex, $subjectGrade_content);
+                $cellIndex++;
+            }
+
+            // empty column
+            $emptyColumnIndex = $cellIndex;
+            //        $cellIndex++;
+            $sheet->setCellValueByColumnAndRow($cellIndex, $rowHeaderSubjectsIndex, ' ');
+            $sheet->setCellValueByColumnAndRow($cellIndex, $rowHeaderIndex, ' ');
+            $sheet->setCellValueByColumnAndRow($cellIndex, $rowTypeIndex, ' ');
+            $sheet->setCellValueByColumnAndRow($cellIndex, $rowFactorIndex, ' ');
+            $sheet->setCellValueByColumnAndRow($cellIndex, $rowGradeIndex, ' ');
+            // summe column
+            $cellIndex++;
+            $sheet->setCellValueByColumnAndRow($cellIndex, $rowHeaderSubjectsIndex, ' ');
+            $sheet->setCellValueByColumnAndRow($cellIndex, $rowHeaderIndex, block_exastud_get_string('report_averages_header_sum'));
+            $sheet->setCellValueByColumnAndRow($cellIndex, $rowTypeIndex, ' ');
+            $sheet->setCellValueByColumnAndRow($cellIndex, $rowFactorIndex, $factorSumm);
+            $sheet->setCellValueByColumnAndRow($cellIndex, $rowGradeIndex, $subjectSumme);
+            // average column
+            $cellIndex++;
+            $sheet->setCellValueByColumnAndRow($cellIndex, $rowHeaderSubjectsIndex, ' ');
+            $sheet->setCellValueByColumnAndRow($cellIndex, $rowHeaderIndex, block_exastud_get_string('report_averages_header_average'));
+            $sheet->setCellValueByColumnAndRow($cellIndex, $rowTypeIndex, ' ');
+            $sheet->setCellValueByColumnAndRow($cellIndex, $rowFactorIndex, ' ');
+            $avg = block_exastud_get_calculated_average($class->id, $student->id);
+            if (in_array(block_exastud_get_competence_eval_type(), [
+                BLOCK_EXASTUD_COMPETENCE_EVALUATION_TYPE_GRADE,
+                BLOCK_EXASTUD_COMPETENCE_EVALUATION_TYPE_TEXT
+            ])) {
+                $grades = $template->get_grade_options();
+                $text = block_exastud_get_grade_by_index(round($avg), $grades);
+                $average = $text . ' (' . $avg . ')';
+            } else {
+                $average = $avg;
+            }
+            $sheet->setCellValueByColumnAndRow($cellIndex, $rowGradeIndex, $average);
+
+            // all cells
+            for ($i = 1; $i < $countCells; $i++) {
+                for ($j = $rowStartIndex + 1; $j <= $rowStartIndex + $countRows; $j++) {
+                    $sheet->getCellByColumnAndRow($i, $j)->getStyle()->applyFromArray($styleCell);
+                    $sheet->getColumnDimensionByColumn($i)->setAutoSize(true);
+                    $sheet->getCellByColumnAndRow($i, $j)->getStyle()->getAlignment()->setWrapText(true);
+                }
+            }
+            // headers
+            for ($i = 1; $i < $countCells; $i++) {
+                if ($sheet->cellExistsByColumnAndRow($i, $rowHeaderIndex)) {
+                    $cellSubectsStyle = $sheet->getCellByColumnAndRow($i, $rowHeaderSubjectsIndex)->getStyle();
+                    $cellSubectsStyle->applyFromArray($styleHeader);
+                    $cellSubectsStyle->getFill()
+                        ->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)
+                        ->getStartColor()->setARGB('FFCCCCCC');
+
+                    $sheet->getRowDimension($rowHeaderIndex)->setRowHeight(70);
+                    $cellStyle = $sheet->getCellByColumnAndRow($i, $rowHeaderIndex)->getStyle();
+                    $cellStyle->applyFromArray($styleHeader);
+                    $cellStyle->getAlignment()->setVertical(\PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER);
+                    $cellStyle->getFill()
+                        ->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)
+                        ->getStartColor()->setARGB('FFCCCCCC');
+                    $cellStyle->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_JUSTIFY);
+//                    $cellStyle->getAlignment()->setWrapText(false);
+                }
+            }
+            // column headers
+            for ($j = $rowStartIndex + 1; $j <= $rowStartIndex + $countRows; $j++) {
+                $columns = [1, 2];
+                foreach ($columns as $i) {
+                    $cellStyle = $sheet->getCellByColumnAndRow($i, $j)->getStyle();
+                    $cellStyle->applyFromArray($styleHeader);
+                    $cellStyle->getFill()
+                        ->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)
+                        ->getStartColor()->setARGB('FFCCCCCC');
+                }
+            }
+            // empty columns
+            for ($j = $rowStartIndex + 1; $j <= $rowStartIndex + $countRows; $j++) {
+                $cellStyle = $sheet->getCellByColumnAndRow($emptyColumnIndex, $j)->getStyle();
+                $cellStyle->getFill()
+                    ->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)
+                    ->getStartColor()->setARGB('FFFFE599');
+            }
+            // disable borders
+            //        for ($i = 1; $i <= $countCells; $i++) {
+            //            $sheet->getCellByColumnAndRow($i, $rowFactorIndex)->getStyle()->applyFromArray($noBorderCell);
+            //                ->setBorderStyle(\PhpOffice\PhpSpreadsheet\Style\Border::BORDER_MEDIUM);// >setBorderStyle(false);// getBottom()->setBorderStyle(false);
+            //            $sheet->getCellByColumnAndRow($i, $rowGradeIndex)->getStyle()->getBorders()->getAllBorders()->setBorderStyle(false);//->getTop()->setBorderStyle(false);
+            //        }
+            // text alignments
+            for ($i = 1 + 2; $i < $countCells; $i++) {
+                $sheet->getCellByColumnAndRow($i, $rowTypeIndex)->getStyle()->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_LEFT);
+                $sheet->getCellByColumnAndRow($i, $rowFactorIndex)->getStyle()->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_RIGHT);
+                $sheet->getCellByColumnAndRow($i, $rowGradeIndex)->getStyle()->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_RIGHT);
+            }
+            $sheet->getCellByColumnAndRow(3, $rowHeaderSubjectsIndex)->getStyle()->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
+            // empty row between students
+            if ($currStudentIndex < count($students)) {
+                for ($i = 1; $i < $countCells; $i++) {
+                    $cellStyle = $sheet->getCellByColumnAndRow($i, $rowGradeIndex + 1)->getStyle();
+                    $cellStyle->getFill()
+                        ->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)
+                        ->getStartColor()->setARGB('FFFFE599');
+                }
+            }
+            // merge Cells
+            $sheet->mergeCellsByColumnAndRow(3, $rowHeaderSubjectsIndex, 3 + count($studentSubjects) - 1, $rowHeaderSubjectsIndex);
+            // go to the new student
+            $rowHeaderSubjectsIndex += $countRows + 1;
+            $rowStartIndex += $countRows + 1;
+            $rowHeaderIndex += $countRows + 1;
+            $rowTypeIndex += $countRows + 1;
+            $rowFactorIndex += $countRows + 1;
+            $rowGradeIndex += $countRows + 1;
+        }
+
+        $filename = date('d-m-y')."-".'Average'."-".(trim($class->title_forreport) ? $class->title_forreport : $class->title).".xlsx";
+        $filename = block_exastud_normalize_filename($filename);
+
+        $writer = \PhpOffice\PhpSpreadsheet\IOFactory::createWriter($spreadsheet, 'Excel2007');
+        $temp_file = tempnam($CFG->tempdir, 'exastud');
+        $writer->save($temp_file);
+
+        return (object)[
+            'temp_file' => $temp_file,
+            'filename' => $filename,
+        ];
+    }
+
+
 }
 
 class Slice {
@@ -4974,5 +5453,5 @@ class TemplateProcessor extends \PhpOffice\PhpWord\TemplateProcessor {
 
         return $xmlBlock;
     }
-
+    
 }

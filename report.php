@@ -233,6 +233,7 @@ if ($class !== null) {
     $studentsGraded = array_filter($studentsGraded);
     $pleaseselectstudent = '';
     $messagebeforetables = '';
+    $stopAll = false; // stop all reports generatings
     //$template = optional_param('template', '', PARAM_TEXT);
     if (count($templatesFromForm) > 0) {
     	// zip encoding only available from php 7.2 on
@@ -262,6 +263,11 @@ if ($class !== null) {
         if (count($printStudents) > 0) {
             $html_results = array();
             foreach ($templatesFromForm as $template => $tempVal2) {
+                if ($template == BLOCK_EXASTUD_DATA_ID_PRINT_TEMPLATE) {
+                    $studentTemplateid = block_exastud_get_student_print_template($class, $student->id)->get_template_id();
+                } else {
+                    $studentTemplateid = $template;
+                }
 
                 if ($printStudents && $template == 'html_report') {
                     if (optional_param('preview', false, PARAM_BOOL)) {
@@ -336,7 +342,9 @@ if ($class !== null) {
                 }
 
                 $doit = true;
-                $checkstudentconditions = function($student, $template) use ($courseid, $class, $studentsWithExacompGraded, $studentsGraded) {
+                $doItMessage = '';
+                $checkstudentconditions = function($student, $template) use ($courseid, $class, $studentsWithExacompGraded, $studentsGraded, &$doItMessage, $studentTemplateid, &$stopAll) {
+                    $doItMessage = '';
                     $doit = true;
                     // get template only if the student matches the conditions:
                     switch ($template) {
@@ -421,8 +429,41 @@ if ($class !== null) {
                             }
                             break;
                     }
+                    // no report for non calculated averages
+                    if (block_exastud_template_needs_calculated_average($studentTemplateid)) {
+                        $average = block_exastud_get_calculated_average($class->id, $student->id);
+                        if (!$average) {
+                            $doit = false;
+                            $stopAll = true;
+                            $studentD = (object) [
+                                'studentname' => fullname($student)
+                            ];
+                            $doItMessage = block_exastud_get_string('average_needs_calculate_for_student', null, $studentD);
+                        }
+
+                    }
                     return $doit;
                 };
+
+                if ($printStudents && $template == BLOCK_EXASTUD_DATA_AVERAGES_REPORT) {
+                    $doitThisRep = true;
+                    foreach ($printStudents as $student) {
+                        $doit = $checkstudentconditions($student, $template);
+                        if (!$doit) {
+                            $doitThisRep = false;
+                            if ($doItMessage) {
+                                $messagebeforetables .= $output->notification($doItMessage, 'warning');
+                                $files_to_zip = []; // clean array of reports in this case
+                            }
+                        }
+                    }
+                    if ($doitThisRep) {
+                        $file = \block_exastud\printer::averages_to_xls_full($class, $printStudents);
+                        $files_to_zip[$file->temp_file] = $file->filename;
+                    }
+                    continue; // go to the next template
+                }
+
                 if (!$printStudents) {
                     // do nothing
                 } else if (count($printStudents) == 1) {
@@ -436,6 +477,11 @@ if ($class !== null) {
                                     //'/'.
                                     block_exastud_normalize_filename($student->firstname.'-'.$student->lastname.'-'.$student->id).
                                     '/'.$file->filename;
+                        }
+                    } else {
+                        if ($doItMessage) {
+                            $messagebeforetables .= $output->notification($doItMessage, 'warning');
+                            $files_to_zip = []; // clean array of reports in this case
                         }
                     }
                 } else {
@@ -451,10 +497,19 @@ if ($class !== null) {
                                         '/'.$file->filename;
                                 $temp_files[] = $file->temp_file;
                             }
+                        } else {
+                            if ($doItMessage) {
+                                $messagebeforetables .= $output->notification($doItMessage, 'warning');
+                                $files_to_zip = []; // clean array of reports in this case
+                            }
                         }
                     }
 
                 }
+            }
+            if ($stopAll) {
+                $html_results = [];
+                $files_to_zip = [];
             }
 //exit;
             if (count($html_results) > 0) {
@@ -556,7 +611,25 @@ if ($class !== null) {
         $data[] = html_writer::tag('label', $studentdesc, ['for' => 'student_'.$classstudent->id]);
         $ptemplate = block_exastud_get_student_print_template($class, $classstudent->id);
         if ($ptemplate) {
-            $data[] = $ptemplate->get_name();
+            $averageCalculatingNeeded = false;
+            if (block_exastud_template_needs_calculated_average($ptemplate->get_template_id())) {
+                $calculated = block_exastud_get_calculated_average($class->id, $classstudent->id);
+                if (!$calculated ) {
+                    $averageCalculatingNeeded = true;
+                }
+            }
+            $cellContent = '';
+            if ($averageCalculatingNeeded) {
+                $warningText = block_exastud_get_string('average_needs_calculate');
+                if (block_exastud_is_class_teacher($class->id, $USER->id)) {
+                    $warningText = html_writer::link(new moodle_url('/blocks/exastud/review_student_averages.php',
+                        ['courseid' => $courseid, 'classid' => $class->id, 'studentid' => $classstudent->id]),
+                        $warningText, ['class' => 'text-warning']);
+                }
+                $cellContent .= '<span class="text-warning small">'.$warningText.'</span><br>';
+            }
+            $cellContent .= $ptemplate->get_name();
+            $data[] = $cellContent;
         }
         
         $table->data[] = $data;
@@ -704,6 +777,10 @@ if ($class !== null) {
             case 'grades_report_xls':
             case 'html_report':
             case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_GMS_LERNENTWICKLUNGSBERICHT_DECKBLATT_UND_1_INNENSEITE:
+            case BLOCK_EXASTUD_DATA_AVERAGES_REPORT:
+                if (!block_exastud_is_class_teacher($classid, $USER->id)) {
+                    break;
+                }
                 $row = new html_table_row();
                 $row->cells[] = $tmpl;
                 $row->cells[] = html_writer::checkbox('template['.$key.']',

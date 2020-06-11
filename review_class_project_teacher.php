@@ -53,11 +53,11 @@ if (!block_exastud_is_project_teacher($class, $USER->id)) {
 
 $categories = [
         BLOCK_EXASTUD_DATA_ID_PROJECT_TEACHER => [
-                'title' => block_exastud_trans('de:Projektprüfung'),
+                'title' => block_exastud_get_string('review_project_evalueations'),
         ]
 ];
 //'projekt_thema', 'projekt_grade', 'projekt_verbalbeurteilung'];
-$classheader = $class->title.' - '.block_exastud_trans('de:Projektprüfung');
+$classheader = $class->title.' - '.block_exastud_get_string('review_project_evalueations');
 
 $output = block_exastud_get_renderer();
 
