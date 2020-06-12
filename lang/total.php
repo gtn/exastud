@@ -2031,7 +2031,7 @@ return [
         'Average value',
     ],
     'review_class_average_not_calculated' => [
-        'no average grading calculated',
+        'Es wurde noch keine Schnittberechnung durchgeführt.',
         'no average grading calculated',
     ],
     'average_calculate_table_student' => [
@@ -2039,15 +2039,15 @@ return [
         'Student',
     ],
     'average_calculate_table_subjecttype' => [
-        'type',
+        'Typ',
         'type',
     ],
     'average_calculate_table_factor' => [
-        'Factor',
+        'Faktor',
         'Factor',
     ],
     'average_calculate_table_grading' => [
-        'Grading',
+        'Beurteilung',
         'Grading',
     ],
     'average_calculate_table_summ' => [
@@ -2079,11 +2079,11 @@ return [
         'Please make calculation of average grading for student {$a->studentname}.'
     ],
     'report_averages_title' => [
-        'Averages',
+        'Durchschnitt',
         'Averages'
     ],
     'report_averages_header_subjects' => [
-        'Subjects',
+        'Fächer',
         'Subjects'
     ],
     'report_averages_header_student' => [
@@ -2099,15 +2099,15 @@ return [
         'Factor'
     ],
     'report_averages_header_grading' => [
-        'Grading',
+        'Beurteilung',
         'Grading'
     ],
     'report_averages_header_sum' => [
-        'Sum',
+        'Summe',
         'Sum'
     ],
     'report_averages_header_average' => [
-        'Average',
+        'Durchschnitt',
         'Average'
     ],
 
