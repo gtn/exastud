@@ -2157,6 +2157,7 @@ class printer {
                 if (in_array(block_exastud_get_competence_eval_type(), [
                     BLOCK_EXASTUD_COMPETENCE_EVALUATION_TYPE_GRADE,
                     BLOCK_EXASTUD_COMPETENCE_EVALUATION_TYPE_TEXT,
+                    BLOCK_EXASTUD_COMPETENCE_EVALUATION_TYPE_POINT,
                 ])) {
                     $verbals = block_exastud_get_verbal_avg($average_grade);
                     $avgVerbal = $verbals['avgVerbal'];
@@ -2166,6 +2167,8 @@ class printer {
             } else {
                 $data['average_grade'] = static::spacerIfEmpty('');
             }
+            $data['present_thema'] = self::spacerIfEmpty($data['present_thema']);
+            $data['present_grade'] = self::spacerIfEmpty(trim($data['present_grade'])).' '; // hack for non clearing of '---'
         }
         
 		// projekt_ingroup property
