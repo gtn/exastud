@@ -49,7 +49,7 @@
             $('#factor_summ').text(factorsSum);
             $('#subject_summ').text(subjectResSum);
             var roundedAvgVal = Math.round(averageVal);
-            if (gradeNames !== undefined && gradeNames[roundedAvgVal] != '') {
+            if (typeof gradeNames !== 'undefined' && roundedAvgVal in gradeNames && gradeNames[roundedAvgVal] != '') {
                 $('#average_value').text(gradeNames[roundedAvgVal] + ' (' + averageVal + ')');
             } else {
                 $('#average_value').text(averageVal);
