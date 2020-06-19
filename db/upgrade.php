@@ -1545,6 +1545,45 @@ function xmldb_block_exastud_upgrade($oldversion = 0) {
         upgrade_block_savepoint(true, 2020061103, 'exastud');
     }
 
+    if ($oldversion < 2020061900) {
+        $subjChange = array(
+            'is_main' => array('bw-bp2016-d',
+                'bw-bp2016-e',
+                'bw-bp2016-m',
+                'bw-bp2016-wpf-aes',
+                'bw-bp2016-wpf-f',
+                'bw-bp2016-wpf-te',
+                'bw-bp2016-profil-bk',
+                'bw-bp2016-profil-mu',
+                'bw-bp2016-profil-nwt',
+                'bw-bp2016-profil-imp',
+                'bw-bp2016-profil-s',
+                'bw-bp2016-profil-sp',
+                'bw-bp2004-d',
+                'bw-bp2004-e',
+                'bw-bp2004-m',
+                'bw-bp2004-wpf-f',
+                'bw-bp2004-wpf-mum',
+                'bw-bp2004-wpf-te',
+                'bw-bp2004-profil-bk',
+                'bw-bp2004-profil-mu',
+                'bw-bp2004-profil-nut',
+                'bw-bp2004-profil-s',
+                'bw-bp2004-profil-sp',
+                'bw-bp2004-profil-imp',
+                ),
+            'is_best' => array('bw-bp2004-mu',
+                'bw-bp2004-bk',
+                'bw-bp2004-sp'),
+        );
+        foreach ($subjChange as $fieldName => $subjects) {
+            foreach ($subjects as $source) {
+                $DB->execute("UPDATE {block_exastudsubjects} SET $fieldName = 1 WHERE sourceinfo = '$source'");
+            }
+        }
+        upgrade_block_savepoint(true, 2020061900, 'exastud');
+    }
+
     block_exastud_insert_default_entries();
 	block_exastud_check_profile_fields();
 

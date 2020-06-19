@@ -334,7 +334,7 @@ if ($type == BLOCK_EXASTUD_DATA_ID_CROSS_COMPETENCES
                 $tTitle = block_exastud_get_string('cross_competences_maintable_title_for_grade');
                 break;
             case BLOCK_EXASTUD_COMPETENCE_EVALUATION_TYPE_POINT:
-                $tTitle = block_exastud_get_string('cross_competences_maintable_title_for_grade');
+                $tTitle = block_exastud_get_string('cross_competences_maintable_title_for_points');
                 break;
         }
         $tabletitle = html_writer::tag('a', $tTitle, ['href' => "#", 'aria-controls' => 'maintable', 'role' => 'button']);
