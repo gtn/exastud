@@ -413,12 +413,12 @@ if ($lastPeriodClass) {
                 $formdata->review = $lastPeriodData->review;
                 if (@$lastPeriodData->niveau || @$lastPeriodData->grade) {
                     if (@$lastPeriodData->niveau) {
-
+                        $formdata->niveau = $lastPeriodData->niveau;
                         $formdata->lastPeriodNiveau = $lastPeriodData->niveau;
                         block_exastud_set_subject_student_data($classid, $subjectid, $studentid, 'lastPeriodNiveau', $lastPeriodData->niveau);
                     }
                     if (@$lastPeriodData->grade) {
-
+                        $formdata->grade = $lastPeriodData->grade;
                         $formdata->lastPeriodGrade = $lastPeriodData->grade;
                         block_exastud_set_subject_student_data($classid, $subjectid, $studentid, 'lastPeriodGrade', $lastPeriodData->grade);
                     }

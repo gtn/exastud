@@ -2831,7 +2831,7 @@ class printer {
             $shorttitle = preg_replace('/(^\s+|\s+$|\s+)/', mb_convert_encoding('&#160;', 'UTF-8', 'HTML-ENTITIES'), $shorttitle); // insert &nbsp to table header
             $templateProcessor->setValue("gs", $shorttitle, 1);
         }
-        $templateProcessor->setValue("avg", 'Notendurchschnitt');
+        $templateProcessor->setValue("avg", 'Schnitt');
         $templateProcessor->setValue("gs", '');
 
         // Change orientation if count of columns > 10
@@ -3380,7 +3380,7 @@ class printer {
         // average column
         $hCell = new \html_table_cell();
         //$hCell->colspan = 2;
-        $hCell->text = 'Notendurchschnitt';
+        $hCell->text = 'Schnitt';
         $subjectsTable->head[] = $hCell;
         $subjectsTable->align[] = 'center';
 
@@ -3574,7 +3574,7 @@ class printer {
 			$sheet->setCellValueByColumnAndRow($cell++, 1, $subject->shorttitle);
 		}
 
-		$sheet->setCellValueByColumnAndRow($cell++, 1, 'Notendurchschnitt');
+		$sheet->setCellValueByColumnAndRow($cell++, 1, 'Schnitt');
 		$sheet->setCellValueByColumnAndRow($cell++, 1, 'Projekt Note');
 		$sheet->setCellValueByColumnAndRow($cell++, 1, 'Projekt Thema');
 		$sheet->setCellValueByColumnAndRow($cell++, 1, 'AGs');

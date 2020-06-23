@@ -2002,6 +2002,7 @@ class student_average_calculation_form extends moodleform {
         );
 
         $tableHtml = html_writer::table($table);
+        $tableHtml = html_writer::div($tableHtml, 'average_table_wrapper');
         $mform->addElement('html', $tableHtml);
 
 //        $this->add_action_buttons(false);
