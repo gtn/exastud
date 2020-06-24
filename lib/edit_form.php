@@ -1983,7 +1983,7 @@ class student_average_calculation_form extends moodleform {
                     BLOCK_EXASTUD_COMPETENCE_EVALUATION_TYPE_TEXT
                 ])) {
             $text = block_exastud_get_grade_by_index(round($avg), $grades);
-            $avgText = $text.' ('.$avg.')';
+            $avgText = $text . ' (' . number_format($avg, 1, ',', '') . ')';
             // add JS for grade names
             $gradesArr = (object)array_values($grades);
             $avgTextAdd = '<script>';
@@ -1991,7 +1991,7 @@ class student_average_calculation_form extends moodleform {
             $avgTextAdd .= '</script>';
         } else {
             $avgTextAdd = '';
-            $avgText = $avg;
+            $avgText = number_format($avg, 1, ',', '');
         }
         $subjectGradesRow->cells[] = $avgTextAdd.'<span id="average_value">'.$avgText.'</span>';
 

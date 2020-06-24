@@ -187,7 +187,7 @@ class printer {
                 'ags' => static::spacerIfEmpty(block_exastud_crop_value_by_template_input_setting(@$studentdata->ags, $templateid, 'ags')),
                 'lern_und_sozialverhalten' => static::spacerIfEmpty($lern_soz),
                 'learn_social_behavior' => static::spacerIfEmpty($lern_soz),
-                'average_grade' => static::spacerIfEmpty(@$studentdata->grade_average_calculated),
+                'average_grade' => static::spacerIfEmpty(number_format(@$studentdata->grade_average_calculated, 1, ',', '')),
         ];
         // gender
         $gender = block_exastud_get_user_gender($student->id);
@@ -2154,6 +2154,7 @@ class printer {
             }
             $average_grade = @$studentdata->grade_average_calculated;
             if ($average_grade && $average_grade > 0) {
+                $average_grade_new = $average_grade;
                 if (in_array(block_exastud_get_competence_eval_type(), [
                     BLOCK_EXASTUD_COMPETENCE_EVALUATION_TYPE_GRADE,
                     BLOCK_EXASTUD_COMPETENCE_EVALUATION_TYPE_TEXT,
@@ -2161,9 +2162,9 @@ class printer {
                 ])) {
                     $verbals = block_exastud_get_verbal_avg($average_grade);
                     $avgVerbal = $verbals['avgVerbal'];
-                    $average_grade = $avgVerbal.' ('.$average_grade.')';
+                    $average_grade_new = $avgVerbal . ' (' . number_format($average_grade, 1, ',', '') . ')';
                 }
-                $data['average_grade'] = $average_grade;
+                $data['average_grade'] = $average_grade_new;
             } else {
                 $data['average_grade'] = static::spacerIfEmpty('');
             }
@@ -2506,7 +2507,11 @@ class printer {
                 }
                 break;
         }
-        
+
+        if ($templateid == BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_HS_SCHULFREMDE) {
+            $data['eng_niveau'] = self::spacerIfEmpty($data['eng_niveau']);
+        }
+
         // go throw inputs 
         foreach ($inputs as $key => $input) {
             switch ($input['type']) {
@@ -4702,9 +4707,9 @@ class printer {
             ])) {
                 $grades = $template->get_grade_options();
                 $text = block_exastud_get_grade_by_index(round($avg), $grades);
-                $average = $text . ' (' . $avg . ')';
+                $average = $text . ' (' . number_format($avg, 1, ',', '') . ')';
             } else {
-                $average = $avg;
+                $average = number_format($avg, 1, ',', '');
             }
             $sheet->setCellValueByColumnAndRow($cellIndex, $rowGradeIndex, $average);
 

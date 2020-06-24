@@ -72,7 +72,7 @@ foreach ($class_students as $classstudent) {
 	$row->cells[] = $output->link_button($CFG->wwwroot.'/blocks/exastud/review_student_averages.php?courseid='.$courseid.'&classid='.$classid.'&studentid='.$classstudent->id,
 		block_exastud_get_string('edit'), ['class' => 'btn btn-default']);
 	if (array_key_exists('grade_average_calculated', $data)) {
-        $avg = $data['grade_average_calculated'];
+        $avg = number_format($data['grade_average_calculated'], 1, ',', '');
     } else {
         $avg = block_exastud_get_string('review_class_average_not_calculated');
     }
