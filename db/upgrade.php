@@ -1607,6 +1607,18 @@ function xmldb_block_exastud_upgrade($oldversion = 0) {
         upgrade_block_savepoint(true, 2020062600, 'exastud');
     }
 
+    if ($oldversion < 2020062601) {
+        // disable relevant if it belong to other type
+        $DB->execute("
+                UPDATE {block_exastudsubjects} 
+                  SET not_relevant = 1 
+                WHERE sourceinfo LIKE '%bw-bp20%'
+                  AND (is_main = 1
+                        OR is_best = 1)
+            ");
+        upgrade_block_savepoint(true, 2020062601, 'exastud');
+    }
+
     block_exastud_insert_default_entries();
 	block_exastud_check_profile_fields();
 
