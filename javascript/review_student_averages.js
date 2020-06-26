@@ -34,7 +34,6 @@
                     factorVal = 9;
                     $(el).val(9);
                 }
-                console.log('review_student_averages.js:29');console.log(factorVal);// !!!!!!!!!! delete it
                 factorsSum = factorsSum + parseFloat(factorVal);
                 var subjectUid = $(el).closest('td').attr('data-subjectId');
                 var subjectGrade = parseFloat($('#val_for_calculate_' + subjectUid).attr('data-subject-gradeval'));
@@ -49,7 +48,7 @@
             $('#factor_summ').text(factorsSum);
             $('#subject_summ').text(subjectResSum);
             var roundedAvgVal = Math.round(averageVal);
-            averageVal = averageVal.toFixed(1).replace(".", ",");
+            console.log('review_student_averages.js:52');console.log(gradeNames);// !!!!!!!!!! delete it
             if (typeof gradeNames !== 'undefined' && roundedAvgVal in gradeNames && gradeNames[roundedAvgVal] != '') {
                 $('#average_value').text(gradeNames[roundedAvgVal] + ' (' + averageVal + ')');
             } else {

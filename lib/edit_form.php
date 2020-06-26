@@ -367,7 +367,7 @@ class student_edit_form extends moodleform {
                 $mform->setType('vorschlag', PARAM_RAW);
                 $mform->addElement('static', '', '',
                         block_exastud_get_string('textarea_max').
-                            '<span id="max_vorschlag_rows">'.$vorschlag_limits['rows'].' '.block_exastud_get_string('textarea_rows').'</span>'.
+                            ' <span id="max_vorschlag_rows">'.$vorschlag_limits['rows'].' '.block_exastud_get_string('textarea_rows').'</span>'.
                             ' / '.
                             '<span id="max_vorschlag_chars">'.(/*$vorschlag_limits['rows'] * */$vorschlag_limits['chars_per_row']).' '.block_exastud_get_string('textarea_chars').'</span>'.
                             '<span class="exastud-textarea-left-block">'.block_exastud_get_string('textarea_charsleft').': '.

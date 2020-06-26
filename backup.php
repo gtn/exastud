@@ -62,11 +62,13 @@ if ($action == 'backup') {
 	} else {
 		$dbtype = $CFG->dbtype;
 	}
-	$dump = new IMysqldump\Mysqldump($dbtype.':host='.$CFG->dbhost.';dbname='.$CFG->dbname, $CFG->dbuser, $CFG->dbpass, [
-		'include-tables' => $tables,
-		'add-drop-table' => true,
-		'compress' => IMysqldump\Mysqldump::GZIP,
-	]);
+	$dump = new IMysqldump\Mysqldump($dbtype.':host='.$CFG->dbhost.';dbname='.$CFG->dbname,
+        $CFG->dbuser,
+        $CFG->dbpass,
+        ['include-tables' => $tables,
+        'add-drop-table' => true,
+        'compress' => IMysqldump\Mysqldump::GZIP,]
+    );
 
 	$file = tempnam($CFG->tempdir, "zip");
 	$dump->start($file);

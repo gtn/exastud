@@ -1584,6 +1584,29 @@ function xmldb_block_exastud_upgrade($oldversion = 0) {
         upgrade_block_savepoint(true, 2020061900, 'exastud');
     }
 
+    if ($oldversion < 2020062600) {
+        $subjChange = array(
+            'not_relevant' => array(
+                'bw-bp2016-mu',
+                'bw-bp2016-b',
+                'bw-bp2016-sp'
+            ),
+            'is_best' => array('bw-bp2004-mu',
+                'bw-bp2004-bk',
+                'bw-bp2004-sp'),
+        );
+        foreach ($subjChange as $fieldName => $subjects) {
+            $vv = 1;
+            if ($fieldName == 'not_relevant') {
+                $vv = 0;
+            }
+            foreach ($subjects as $source) {
+                $DB->execute("UPDATE {block_exastudsubjects} SET $fieldName = $vv WHERE sourceinfo = '$source'");
+            }
+        }
+        upgrade_block_savepoint(true, 2020062600, 'exastud');
+    }
+
     block_exastud_insert_default_entries();
 	block_exastud_check_profile_fields();
 

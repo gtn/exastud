@@ -2060,6 +2060,9 @@ function block_exastud_can_delete_subject($subject) {
 }
 
 function block_exastud_can_edit_subject($subject) {
+    if (is_siteadmin()) {
+        return true;
+    }
 	return !preg_match('!^bw\-*!', $subject->sourceinfo);
 }
 

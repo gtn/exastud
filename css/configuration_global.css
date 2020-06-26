@@ -104,3 +104,9 @@
 #exa-list:not([exa-sorting=false]) [exa=save] {
 	padding-left: 40px;
 }
+
+.block-exastud-subject-legend {
+	color: #5e5e5e;
+	font-size: 0.85em;
+}
+

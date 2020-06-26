@@ -281,7 +281,7 @@ $.extend(window.block_exastud, window.exacommon || {});
         function updateTextareaWithLimits(e, textarea) {
             // now the online text modifying is disabled.
             // it may work not very clear for user.
-            // TODO: may be tis function is not needed from now? all to updateLeftMessage()?
+            // TODO: may be this function is not needed from now? all to updateLeftMessage()?
             if (e) {
                 var currentText = e.target.value;
             } else {
@@ -290,9 +290,10 @@ $.extend(window.block_exastud, window.exacommon || {});
 
             // var currentText = textarea.val();
             var itIsPaste = false;
-            if (e && e.originalEvent.type == 'paste') { // if content is paste from clipboard
+            if (e && (e.type == 'paste' || e.originalEvent.type == 'paste')) { // if content is paste from clipboard
                 itIsPaste = true;
                 var clipboardVal = e.originalEvent.clipboardData.getData('text');
+                clipboardVal = clipboardVal.replace(/[^[[:print:]]]*/gm, "");
                 var cursorPos = getCursorPosition(textarea);
                 if (cursorPos >= currentText.length) {
                     cursorPos = currentText.length;
@@ -406,7 +407,7 @@ $.extend(window.block_exastud, window.exacommon || {});
         }
 
         // $(document).on('paste input', 'textarea[data-rowscharslimit-enable]', function (e) {
-        $(document).on('input', 'textarea[data-rowscharslimit-enable]', function (e) {
+        $(document).on('input, paste', 'textarea[data-rowscharslimit-enable]', function (e) {
             if (e.type == 'paste') {
                 // we need this for checkin of Word copying
                 // var copiedContent = e.originalEvent.clipboardData.getData('Text/html');

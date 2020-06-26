@@ -398,8 +398,7 @@ if ($action == 'subjects') {
 			<div for-field="title"><?php echo block_exastud_trans(['de:Bezeichnung', 'en:Name']); ?></div>
 			<div for-field="shorttitle"><?php echo block_exastud_trans(['de:Kurzbezeichnung', 'en:Shortname']); ?></div>
             <?php if (block_exastud_is_bw_active()) { ?>
-			<div for-field="relevant"><?php echo block_exastud_get_string('subject_category_m'); ?><br>
-                <span for-field="K">(K)</span><span for-field="M">(M)</span><span for-field="B">(B)</span>
+			<div for-field="relevant"><span for-field="K">(K)</span><span for-field="M">(M)</span><span for-field="B">(B)</span><sup>*</sup>
             </div>
             <?php } ?>
 <!--			<div for-field="relevant_rs">--><?php //echo block_exastud_get_string('subject_category_m_rs'); ?><!--</div>-->
@@ -438,7 +437,13 @@ if ($action == 'subjects') {
 			<!-- input type="checkbox" name="always_print" value="1"/ -->
 			<input type="button" exa="new-button" class="btn btn-default" value="<?php echo block_exastud_get_string('add'); ?>">
 		</div>
-		<?php } ?>
+        <div class="block-exastud-subject-legend">
+            <sup>*</sup>&nbsp;K = Kernfach<br>
+            M = maßgebliches Fach<br>
+            B = bestes Fach aus ..<br>
+        </div>
+		<?php }
+		?>
 		<div exa="save">
 			<?php if ($canEdit) { ?>
 			<input type="button" exa="save-button" class="btn btn-default" value="<?php echo block_exastud_get_string('savechanges'); ?>">
