@@ -287,13 +287,12 @@ $.extend(window.block_exastud, window.exacommon || {});
             } else {
                 var currentText = textarea.val();
             }
-
             // var currentText = textarea.val();
             var itIsPaste = false;
             if (e && (e.type == 'paste' || e.originalEvent.type == 'paste')) { // if content is paste from clipboard
                 itIsPaste = true;
                 var clipboardVal = e.originalEvent.clipboardData.getData('text');
-                clipboardVal = clipboardVal.replace(/[^[[:print:]]]*/gm, "");
+                clipboardVal = clipboardVal.replace(/[^[[:print:]]]*/gm, ""); // TODO: needed?
                 var cursorPos = getCursorPosition(textarea);
                 if (cursorPos >= currentText.length) {
                     cursorPos = currentText.length;
@@ -407,7 +406,7 @@ $.extend(window.block_exastud, window.exacommon || {});
         }
 
         // $(document).on('paste input', 'textarea[data-rowscharslimit-enable]', function (e) {
-        $(document).on('input, paste', 'textarea[data-rowscharslimit-enable]', function (e) {
+        $(document).on('input', 'textarea[data-rowscharslimit-enable]', function (e) {
             if (e.type == 'paste') {
                 // we need this for checkin of Word copying
                 // var copiedContent = e.originalEvent.clipboardData.getData('Text/html');
