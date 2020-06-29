@@ -21,7 +21,11 @@ namespace block_exastud;
 defined('MOODLE_INTERNAL') || die();
 
 require_once __DIR__.'/../inc.php';
-require_once __DIR__.'/../../exacomp/inc.php';
+if (file_exists(__DIR__ . '/../../exacomp/inc.php')) {
+    require_once __DIR__ . '/../../exacomp/inc.php';
+} else {
+    throw new \Exception('exacomp is not installed');
+}
 
 use block_exacomp\cross_subject;
 use block_exastud\globals as g;

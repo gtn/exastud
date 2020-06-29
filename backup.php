@@ -62,7 +62,11 @@ if ($action == 'backup') {
 	} else {
 		$dbtype = $CFG->dbtype;
 	}
-	$dump = new IMysqldump\Mysqldump($dbtype.':host='.$CFG->dbhost.';dbname='.$CFG->dbname,
+	$dbport = '';
+	if (array_key_exists('dbport', $CFG->dboptions) && $CFG->dboptions['dbport']) {
+        $dbport = ';port='.intval($CFG->dboptions['dbport']);
+    }
+	$dump = new IMysqldump\Mysqldump($dbtype.':host='.$CFG->dbhost.$dbport.';dbname='.$CFG->dbname,
         $CFG->dbuser,
         $CFG->dbpass,
         ['include-tables' => $tables,
