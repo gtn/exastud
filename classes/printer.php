@@ -2166,7 +2166,7 @@ class printer {
                 ])) {
                     $verbals = block_exastud_get_verbal_avg($average_grade);
                     $avgVerbal = $verbals['avgVerbal'];
-                    $average_grade_new = $avgVerbal . ' (' . number_format($average_grade, 1, ',', '') . ')';
+                    $average_grade_new = number_format($average_grade, 1, ',', '') . ' (' . $avgVerbal . ')';
                 }
                 $data['average_grade'] = $average_grade_new;
             } else {
@@ -2175,7 +2175,32 @@ class printer {
             $data['present_thema'] = self::spacerIfEmpty($data['present_thema']);
             $data['present_grade'] = self::spacerIfEmpty(trim($data['present_grade'])).' '; // hack for non clearing of '---'
         }
-        
+
+        // changed average verbal order
+        if (in_array($templateid, [
+                BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_RS_SCHULFREMDE,
+                BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_RS_SCHULFREMDE,
+                BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_HS_SCHULFREMDE,
+            ]
+        )) {
+            $average_grade = @$studentdata->grade_average_calculated;
+            if ($average_grade && $average_grade > 0) {
+                $average_grade_new = $average_grade;
+                if (in_array(block_exastud_get_competence_eval_type(), [
+                    BLOCK_EXASTUD_COMPETENCE_EVALUATION_TYPE_GRADE,
+                    BLOCK_EXASTUD_COMPETENCE_EVALUATION_TYPE_TEXT,
+                    BLOCK_EXASTUD_COMPETENCE_EVALUATION_TYPE_POINT,
+                ])) {
+                    $verbals = block_exastud_get_verbal_avg($average_grade);
+                    $avgVerbal = $verbals['avgVerbal'];
+                    $average_grade_new = number_format($average_grade, 1, ',', '') . ' (' . $avgVerbal . ')';
+                }
+                $data['average_grade'] = $average_grade_new;
+            } else {
+                $data['average_grade'] = static::spacerIfEmpty('');
+            }
+        }
+
 		// projekt_ingroup property
 		if (in_array($templateid, [
 		        BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_BEIBLATT_PROJEKTARBEIT_HSA,
