@@ -5422,12 +5422,12 @@ function block_exastud_get_default_templates($templateid = null, $common = true)
                             'lines' => 1,
                             'cols' => 30,
                         ],
-                        'lang_second' => [
+                       /* 'lang_second' => [
                             'title' => 'ggf. zweite Fremdsprache',
                             'type' => 'textarea',
                             'lines' => 1,
                             'cols' => 30,
-                        ],
+                        ],*/
                         'subj1' => [
                             'title' => 'Leistungen in den einzelnen Fächern: 1',
                             'type' => 'textarea',
