@@ -6484,6 +6484,11 @@ function block_exastud_cropStringByInputLimitsFromTemplate($string, $templateid,
 }
 
 function block_exastud_get_grade_average_value($subjects = array(), $verbal = false, $templateid, $classid, $studentid) {
+    $studentData = block_exastud_get_class_student_data($classid, $studentid);
+    $avg  = $studentData->grade_average_calculated;
+    return $avg;
+
+    // TODO: delete old code?
     global $DB;
     $min = 999;
     $rsum = 0.0;

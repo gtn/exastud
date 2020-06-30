@@ -48,9 +48,25 @@
             $('#factor_summ').text(factorsSum);
             $('#subject_summ').text(subjectResSum);
             var roundedAvgVal = Math.round(averageVal);
-            console.log('review_student_averages.js:52');console.log(gradeNames);// !!!!!!!!!! delete it
-            if (typeof gradeNames !== 'undefined' && roundedAvgVal in gradeNames && gradeNames[roundedAvgVal] != '') {
-                $('#average_value').text(gradeNames[roundedAvgVal] + ' (' + averageVal + ')');
+            averageVal = averageVal.toString().replace(".", ",");
+            if (typeof gradeNames !== 'undefined'){
+                if (Object.values(gradeNames).length > 7) { // (6 + empty) like 1, 1 minus, 1-2, ....
+                    var usedGradeNames = {};
+                    Object.values(gradeNames).forEach(function (item, index) {
+                        itemVal = parseInt(item);
+                        if (!isNaN(itemVal)) {
+                            usedGradeNames[itemVal] = itemVal;
+                        } else {
+                            usedGradeNames[0] = '';
+                        }
+                    });
+
+                } else {
+                    var usedGradeNames = gradeNames;
+                }
+                if (roundedAvgVal in usedGradeNames && usedGradeNames[roundedAvgVal] != '') {
+                    $('#average_value').text(usedGradeNames[roundedAvgVal] + ' (' + averageVal + ')');
+                }
             } else {
                 $('#average_value').text(averageVal);
             }

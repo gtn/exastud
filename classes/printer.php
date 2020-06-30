@@ -2946,8 +2946,10 @@ class printer {
                 $templateProcessor->setValue("gst#$rowi", $value ? $subjectShorttitle : '', 1);
             }
             // add average values
-            $templateid = block_exastud_get_student_print_template($class, $student->id)->get_template_id();
-            $avg = block_exastud_get_grade_average_value($subjectsToAverage, false, $templateid, $class->id, $student->id);
+//            $templateid = block_exastud_get_student_print_template($class, $student->id)->get_template_id();
+//            $avg = block_exastud_get_grade_average_value($subjectsToAverage, false, $templateid, $class->id, $student->id);
+            $avg = block_exastud_get_grade_average_value(array(), false, null, $class->id, $student->id);
+            $avg = number_format($avg, 1, ',', '');
             //$avgVerbal = block_exastud_get_grade_average_value($subjectsToAverage, true);
             $templateProcessor->setValue("gavg#$rowi", $avg, 1);
             //$templateProcessor->setValue("gst#$rowi", $avgVerbal ? $avgVerbal : '', 1);
@@ -3414,12 +3416,14 @@ class printer {
                     }
                 }
             }
-            $templateid = block_exastud_get_student_print_template($class, $student->id)->get_template_id();
-            if (array_key_exists($student->id, $subjectsForAvg)) {
+//            $templateid = block_exastud_get_student_print_template($class, $student->id)->get_template_id();
+            /*if (array_key_exists($student->id, $subjectsForAvg)) {
                 $avg = block_exastud_get_grade_average_value($subjectsForAvg[$student->id], false, $templateid, $class->id, $student->id);
             } else {
                 $avg = block_exastud_get_grade_average_value(array(), false, $templateid, $class->id, $student->id);
-            }
+            }*/
+            $avg = block_exastud_get_grade_average_value(array(), false, null, $class->id, $student->id);
+            $avg = number_format($avg, 1, ',', '');
             //$avgVerbal = block_exastud_get_grade_average_value($subjectsForAvg, true);
             $cells[] = $avg;
             //$cells[] = $avgVerbal;
@@ -3630,8 +3634,10 @@ class printer {
 
 				$sheet->setCellValueByColumnAndRow($cell++, $rowi, $value);
 			}
-            $templateid = block_exastud_get_student_print_template($class, $student->id)->get_template_id();
-            $avg = block_exastud_get_grade_average_value($subjectsToAverage, false, $templateid, $class->id, $student->id);
+//            $templateid = block_exastud_get_student_print_template($class, $student->id)->get_template_id();
+//            $avg = block_exastud_get_grade_average_value($subjectsToAverage, false, $templateid, $class->id, $student->id);
+            $avg = block_exastud_get_grade_average_value(array(), false, null, $class->id, $student->id);
+            $avg = number_format($avg, 1, ',', '');
             $sheet->setCellValueByColumnAndRow($cell++, $rowi, ($avg ? $avg : ''));
 
 			$studentData = block_exastud_get_class_student_data($class->id, $student->id);
@@ -4448,9 +4454,9 @@ class printer {
         ])) {
             $grades = $template->get_grade_options();
             $text = block_exastud_get_grade_by_index(round($avg), $grades);
-            $average = $text.' ('.$avg.')';
+            $average = $text.' ('.number_format($avg, 1, ',', '').')';
         } else {
-            $average = $avg;
+            $average = number_format($avg, 1, ',', '');
         }
         $sheet->setCellValueByColumnAndRow($cellIndex, $rowGradeIndex, $average);
 
