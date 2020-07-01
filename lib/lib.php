@@ -1023,6 +1023,14 @@ function block_exastud_set_subject_student_data($classid, $subjectid, $userid, $
         // reset calculated average
         if ($name == 'grade') {
             block_exastud_set_class_student_data($classid, $userid, 'grade_average_calculated', null);
+            // if it is first grading of this subject - reset average factor (the factor could be saved as 0 for non-graded yet subjects)
+            if ($olddata === null) {
+                // only if it is zero
+                $factor = block_exastud_get_subject_student_data($classid, $subjectid, $userid, 'subject_average_factor');
+                if (!$factor) {
+                    block_exastud_set_subject_student_data($classid, $subjectid, $userid, 'subject_average_factor', null);
+                }
+            }
         }
         // LOG
 	    // not for time data
@@ -7826,7 +7834,7 @@ function block_exastud_get_average_factor_for_student($classid, $subjectid, $stu
     } else {
         $factorValue = block_exastud_get_subject_student_data($classid, $subjectid, $studentid, 'subject_average_factor');
     }
-    if ($factorValue === null) { // no factor yet - default factor values
+    if ($factorValue === null) {// no factor yet - default factor values
         if ($subjectid == BLOCK_EXASTUD_PROJECTARBAIT_FOR_AVERAGE_CALCULATING) {
             $subjData = (object) [
                 'grade' => block_exastud_get_class_student_data($classid, $studentid, 'projekt_grade')
@@ -7849,7 +7857,7 @@ function block_exastud_get_average_factor_for_student($classid, $subjectid, $stu
                 } else {
                     $factorValue = 0;
                 }
-            } elseif ($subject->not_relevant == 0 // relevant and main subjects have 1
+            } elseif (!$subject->not_relevant // relevant and main subjects have 1
                     || $subject->is_main
                     ) {
                 $factorValue = 1;

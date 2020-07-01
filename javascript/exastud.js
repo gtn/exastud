@@ -454,22 +454,24 @@ $.extend(window.block_exastud, window.exacommon || {});
         }
 
         // change clipboard PASTE text
-        document.querySelector('textarea[data-rowscharslimit-enable]').addEventListener('paste', (event) => {
-            var targetElement = event.target;
-            var paste = (event.clipboardData || window.clipboardData).getData('text');
-            // paste = paste.toUpperCase();
-            paste = removeLineBreaks(paste) + ' ';
-            var currentText = targetElement.value;
-            var cursorPos = getCursorPosition([targetElement]);
-            if (cursorPos >= currentText.length) {
-                cursorPos = currentText.length;
-            }
-            currentText = currentText.slice(0, cursorPos) + paste + currentText.slice(cursorPos);
-            currentText = currentText.trim();
-            targetElement.value = currentText;
-            event.preventDefault();
-            updateTextareaWithLimits(null, $(targetElement));
-        });
+        if (document.querySelector('textarea[data-rowscharslimit-enable]')) {
+            document.querySelector('textarea[data-rowscharslimit-enable]').addEventListener('paste', (event) => {
+                var targetElement = event.target;
+                var paste = (event.clipboardData || window.clipboardData).getData('text');
+                // paste = paste.toUpperCase();
+                paste = removeLineBreaks(paste) + ' ';
+                var currentText = targetElement.value;
+                var cursorPos = getCursorPosition([targetElement]);
+                if (cursorPos >= currentText.length) {
+                    cursorPos = currentText.length;
+                }
+                currentText = currentText.slice(0, cursorPos) + paste + currentText.slice(cursorPos);
+                currentText = currentText.trim();
+                targetElement.value = currentText;
+                event.preventDefault();
+                updateTextareaWithLimits(null, $(targetElement));
+            });
+        };
 
         $(document).find('textarea[data-rowscharslimit-enable]').each(function () {
             updateTextareaWithLimits(null, $(this));
