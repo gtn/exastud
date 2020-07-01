@@ -282,20 +282,29 @@ $.extend(window.block_exastud, window.exacommon || {});
             // now the online text modifying is disabled.
             // it may work not very clear for user.
             // TODO: may be this function is not needed from now? all to updateLeftMessage()?
-            if (e) {
-                var currentText = e.target.value;
-            } else {
-                var currentText = textarea.val();
-            }
+
             // var currentText = textarea.val();
             var itIsPaste = false;
-            if (e && (e.type == 'paste' || e.originalEvent.type == 'paste')) { // if content is paste from clipboard
+            if (e && (e.type == 'paste' || e.originalEvent.type == 'paste' /*|| e.originalEvent.inputType == 'insertFromPaste'*/)) { // if content is paste from clipboard
+                e.preventDefault();
+                var currentText = textarea.val();
+                console.log('exastud.js:290');console.log(currentText);// !!!!!!!!!! delete it
+                console.log('exastud.js:293');console.log(' COPY / PASTE for not Chrome ');// !!!!!!!!!! delete it
                 itIsPaste = true;
-                var clipboardVal = e.originalEvent.clipboardData.getData('text');
+                // var clipboardVal = e.originalEvent.clipboardData.getData('text');
+                // var clipboardVal = (e.clipboardData || window.clipboardData).getData('text')
+                var clipboardVal = e.originalEvent.data;
+                // clipboardVal = clipboardVal.toUpperCase();
                 clipboardVal = clipboardVal.replace(/[^[[:print:]]]*/gm, ""); // TODO: needed?
                 var cursorPos = getCursorPosition(textarea);
                 if (cursorPos >= currentText.length) {
                     cursorPos = currentText.length;
+                }
+            } else {
+                if (e) {
+                    var currentText = e.target.value;
+                } else {
+                    var currentText = textarea.val();
                 }
             }
 
@@ -304,6 +313,7 @@ $.extend(window.block_exastud, window.exacommon || {});
             var charsLimit = rowsLimit * charsPerRowLimit;
             if (itIsPaste) {
                 currentText = currentText.slice(0, cursorPos) + clipboardVal + currentText.slice(cursorPos);
+                console.log('exastud.js:311');console.log(currentText);// !!!!!!!!!! delete it
                 var rows = currentText.split(/\r?\n/);
                 var newRows = [];
                 // we need to see on char per rows limit
@@ -322,7 +332,7 @@ $.extend(window.block_exastud, window.exacommon || {});
 
                 textarea.attr('prev-value', currentText);
                 textarea.attr('correct-value', currentText);
-                // textarea.val(textarea.attr('correct-value'));
+                textarea.val(currentText);
             }
             var rows = currentText.split(/\r?\n/);
             var textareaName = textarea.attr('name');
@@ -407,7 +417,10 @@ $.extend(window.block_exastud, window.exacommon || {});
 
         // $(document).on('paste input', 'textarea[data-rowscharslimit-enable]', function (e) {
         $(document).on('input', 'textarea[data-rowscharslimit-enable]', function (e) {
+            // console.log('exastud.js:410');console.log('INPUT event');// !!!!!!!!!! delete it
+            // console.log('exastud.js:411');console.log(e);// !!!!!!!!!! delete it
             if (e.type == 'paste') {
+                // console.log('exastud.js:411');console.log('COPY/PASTE event');// !!!!!!!!!! delete it
                 // we need this for checkin of Word copying
                 // var copiedContent = e.originalEvent.clipboardData.getData('Text/html');
                 // e.originalEvent.clipboardData.setData('Text', '1234');
@@ -419,6 +432,43 @@ $.extend(window.block_exastud, window.exacommon || {});
             }
             updateTextareaWithLimits(e, $(this));
             return true;
+        });
+
+        function removeLineBreaks(content){
+            content = content.replace(/(\r\n|\n|\r)/gm, "<1br />");
+            re1 = /<1br \/><1br \/>/gi;
+            re1a = /<1br \/><1br \/><1br \/>/gi;
+            content = content.replace(re1, " ");
+            content = content.replace(re1a, "<1br /><2br />");
+            content = content.replace(re1, "<2br />");
+
+            re2 = /\<1br \/>/gi;
+            content = content.replace(re2, " ");
+
+            re3 = /\s+/g;
+            content = content.replace(re3, " ");
+
+            re4 = /<2br \/>/gi;
+            content = content.replace(re4, "\n\n");
+            return content;
+        }
+
+        // change clipboard PASTE text
+        document.querySelector('textarea[data-rowscharslimit-enable]').addEventListener('paste', (event) => {
+            var targetElement = event.target;
+            var paste = (event.clipboardData || window.clipboardData).getData('text');
+            // paste = paste.toUpperCase();
+            paste = removeLineBreaks(paste) + ' ';
+            var currentText = targetElement.value;
+            var cursorPos = getCursorPosition([targetElement]);
+            if (cursorPos >= currentText.length) {
+                cursorPos = currentText.length;
+            }
+            currentText = currentText.slice(0, cursorPos) + paste + currentText.slice(cursorPos);
+            currentText = currentText.trim();
+            targetElement.value = currentText;
+            event.preventDefault();
+            updateTextareaWithLimits(null, $(targetElement));
         });
 
         $(document).find('textarea[data-rowscharslimit-enable]').each(function () {
