@@ -548,3 +548,4 @@ $string['report_averages_header_factor'] = 'Factor';
 $string['report_averages_header_grading'] = 'Grading';
 $string['report_averages_header_sum'] = 'Sum';
 $string['report_averages_header_average'] = 'Average';
+$string['certificate_issue_date_missed_message'] = 'No certificate issue date has yet been specified. The administrator should input the Certificate Issue Date for generating the certificate correctly.';

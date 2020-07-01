@@ -830,6 +830,10 @@ if ($class !== null) {
 
     $messagebeforetables .= $output->notification(block_exastud_get_string('reports_server_notification'), 'notifymessage');
 
+    if (!block_exastud_get_certificate_issue_date_timestamp($class)) {
+        $messagebeforetables .= $output->notification(block_exastud_get_string('certificate_issue_date_missed_message'), 'notifydanger');
+    }
+
     echo $messagebeforetables;
     echo $output->table($templateTable);
     echo $pleaseselectstudent;

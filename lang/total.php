@@ -2110,5 +2110,9 @@ return [
         'Durchschnitt',
         'Average'
     ],
+    'certificate_issue_date_missed_message' => [
+        'Es wurde noch kein Zeugnisausgabedatum angegeben. Der Administrator sollte zur korrekten Ausgabe des Zeugnisses das Zeugnisausgabedatum angeben.',
+        'No certificate issue date has yet been specified. The administrator should input the Certificate Issue Date for generating the certificate correctly.'
+    ],
 
 ];

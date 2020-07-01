@@ -549,3 +549,4 @@ $string['report_averages_header_factor'] = 'Faktor';
 $string['report_averages_header_grading'] = 'Beurteilung';
 $string['report_averages_header_sum'] = 'Summe';
 $string['report_averages_header_average'] = 'Durchschnitt';
+$string['certificate_issue_date_missed_message'] = 'Es wurde noch kein Zeugnisausgabedatum angegeben. Der Administrator sollte zur korrekten Ausgabe des Zeugnisses das Zeugnisausgabedatum angeben.';
