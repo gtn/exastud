@@ -73,7 +73,7 @@ if ($fromform = $studentform->get_data()) {
         }
     }
     $average = block_exastud_calculate_student_average($classid, $studentid);
-    block_exastud_set_class_student_data($classid, $studentid, 'grade_average_calculated', $average); // TODO: also recalculate on subject review?
+    block_exastud_set_class_student_data($classid, $studentid, 'grade_average_calculated', $average);
     // if it is "EXPORT" button - create xls after saving
     $export_button = optional_param('export_xls', 0, PARAM_RAW);
     if ($export_button) {

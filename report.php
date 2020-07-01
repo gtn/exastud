@@ -624,7 +624,7 @@ if ($class !== null) {
                 if (block_exastud_is_class_teacher($class->id, $USER->id)) {
                     $warningText = html_writer::link(new moodle_url('/blocks/exastud/review_student_averages.php',
                         ['courseid' => $courseid, 'classid' => $class->id, 'studentid' => $classstudent->id]),
-                        $warningText, ['class' => 'text-warning']);
+                        $warningText, ['class' => 'text-danger']);
                 }
                 $cellContent .= '<span class="text-warning small">'.$warningText.'</span><br>';
             }

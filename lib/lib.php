@@ -1018,8 +1018,13 @@ function block_exastud_set_subject_student_data($classid, $subjectid, $userid, $
 		], $conditions);
 	}
 	// logging
-    // add to log only if data was changed
+    // only if data was changed
     if ($olddata != $value) {
+        // reset calculated average
+        if ($name == 'grade') {
+            block_exastud_set_class_student_data($classid, $userid, 'grade_average_calculated', null);
+        }
+        // LOG
 	    // not for time data
         $strpos_arr = function ($haystack, $needle) {
             if(!is_array($needle)) $needle = array($needle);
