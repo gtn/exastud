@@ -674,6 +674,7 @@ class student_other_data_form extends moodleform {
                     if ($input['lines'] == 1) {
                         $height = 35;
                     }
+                    $height += 3;
                     $mform->addElement('textarea', $dataid, $elementSubTitle, [
                         //'cols' => $input['cols'],
                             'cols' => $textarea_limits['chars_per_row'] + 3,
@@ -684,7 +685,7 @@ class student_other_data_form extends moodleform {
                             'data-rowslimit' => $textarea_limits['rows'],
                             'data-charsperrowlimit' => $textarea_limits['chars_per_row'],
                             'data-maxcharslimit' => $textarea_limits['maxchars'],
-                            'style' => "width: auto; "./*($input['cols'] * 15).*/" height: ".$height."px; resize: none; font-family: Arial !important; font-size: 11pt !important; line-height: 12pt !important;",
+                            'style' => "width: auto; "./*($input['cols'] * 15).*/" height: ".$height."px; min-height: ".$height."px; resize: none; font-family: Arial !important; font-size: 11pt !important; line-height: 11.5pt !important;",
                     ]);
                     $mform->setType($dataid, PARAM_RAW);
                     $mform->addElement('static', '', '',
