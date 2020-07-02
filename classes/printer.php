@@ -2131,8 +2131,8 @@ class printer {
             ];
             $countSubjectsInReport = [
                 BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_HS_SCHULFREMDE => 4, // !!! TEMPORARY - COVID19 !!!! must be 6
-                BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_RS_SCHULFREMDE => 12,
-                BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_RS_SCHULFREMDE => 12,
+                BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_RS_SCHULFREMDE => 4, // !!! TEMPORARY - COVID19 !!!! must be 12
+                BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_RS_SCHULFREMDE => 4, // !!! TEMPORARY - COVID19 !!!! must be 12
             ];
             // first - required subjects
             $sI = 1;
