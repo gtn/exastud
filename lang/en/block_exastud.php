@@ -414,6 +414,7 @@ $string['textarea_charsleft'] = 'Characters left';
 $string['textarea_linestomuch'] = 'Lines too much';
 $string['textarea_charstomuch'] = 'Characters too much';
 $string['textarea_maxchars'] = 'All characters';
+$string['textarea_limit_notation'] = 'To show full text in the Report, please do not type in more then {$a->chars_per_row} signs in the last row.';
 $string['attention_send_message_to_classteacher'] = 'Do not forget to <a id="exastud_link_to_class_teacher" href="{$a->messagehref}" target="_blank">send a message</a> to the new class teacher about his new class';
 $string['attention_admin_cannot_be_classteacher'] = 'Classes can only be defined in a class teacher role. Please log in as a class teacher to define a class.';
 $string['subject_category'] = 'Category';

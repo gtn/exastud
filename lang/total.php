@@ -1579,6 +1579,10 @@ return [
             'Gesamtzeichen',
             'All characters',
     ],
+    'textarea_limit_notation' => [
+        'Damit der Text vollständig ausgegeben werden kann, können in der letzten Zeile nur {$a->chars_per_row} Zeichen erfasst werden.',
+        'To show full text in the Report, please do not type in more then {$a->chars_per_row} signs in the last row.',
+    ],
     'attention_send_message_to_classteacher' => [
         'Bitte <a id="exastud_link_to_class_teacher" href="{$a->messagehref}" target="_blank">benachrichtigen</a> Sie die neue Klassenlehrkraft über die Neuzuteilung.',
         'Do not forget to <a id="exastud_link_to_class_teacher" href="{$a->messagehref}" target="_blank">send a message</a> to the new class teacher about his new class',

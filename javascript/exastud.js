@@ -288,8 +288,6 @@ $.extend(window.block_exastud, window.exacommon || {});
             if (e && (e.type == 'paste' || e.originalEvent.type == 'paste' /*|| e.originalEvent.inputType == 'insertFromPaste'*/)) { // if content is paste from clipboard
                 e.preventDefault();
                 var currentText = textarea.val();
-                console.log('exastud.js:290');console.log(currentText);// !!!!!!!!!! delete it
-                console.log('exastud.js:293');console.log(' COPY / PASTE for not Chrome ');// !!!!!!!!!! delete it
                 itIsPaste = true;
                 // var clipboardVal = e.originalEvent.clipboardData.getData('text');
                 // var clipboardVal = (e.clipboardData || window.clipboardData).getData('text')
@@ -313,7 +311,6 @@ $.extend(window.block_exastud, window.exacommon || {});
             var charsLimit = rowsLimit * charsPerRowLimit;
             if (itIsPaste) {
                 currentText = currentText.slice(0, cursorPos) + clipboardVal + currentText.slice(cursorPos);
-                console.log('exastud.js:311');console.log(currentText);// !!!!!!!!!! delete it
                 var rows = currentText.split(/\r?\n/);
                 var newRows = [];
                 // we need to see on char per rows limit
@@ -417,10 +414,7 @@ $.extend(window.block_exastud, window.exacommon || {});
 
         // $(document).on('paste input', 'textarea[data-rowscharslimit-enable]', function (e) {
         $(document).on('input', 'textarea[data-rowscharslimit-enable]', function (e) {
-            // console.log('exastud.js:410');console.log('INPUT event');// !!!!!!!!!! delete it
-            // console.log('exastud.js:411');console.log(e);// !!!!!!!!!! delete it
             if (e.type == 'paste') {
-                // console.log('exastud.js:411');console.log('COPY/PASTE event');// !!!!!!!!!! delete it
                 // we need this for checkin of Word copying
                 // var copiedContent = e.originalEvent.clipboardData.getData('Text/html');
                 // e.originalEvent.clipboardData.setData('Text', '1234');

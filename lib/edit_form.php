@@ -688,9 +688,12 @@ class student_other_data_form extends moodleform {
                             'style' => "width: auto; "./*($input['cols'] * 15).*/" height: ".$height."px; min-height: ".$height."px; resize: none; font-family: Arial !important; font-size: 11pt !important; line-height: 11.5pt !important;",
                     ]);
                     $mform->setType($dataid, PARAM_RAW);
+                    $a = (object)[
+                        'chars_per_row' => $textarea_limits['chars_per_row']
+                    ];
                     $mform->addElement('static', '', '',
                             block_exastud_get_string('textarea_max').
-                            '<span id="max_'.$dataid.'_rows">'.$textarea_limits['rows'].' '.block_exastud_get_string('textarea_rows').'</span>'.
+                            ' <span id="max_'.$dataid.'_rows">'.$textarea_limits['rows'].' '.block_exastud_get_string('textarea_rows').'</span>'.
                             ' / '.
                             '<span id="max_'.$dataid.'_chars">'.(/*$textarea_limits['rows'] * */$textarea_limits['chars_per_row']).' '.block_exastud_get_string('textarea_chars').'</span>'.
                             ((array_key_exists('maxchars', $textarea_limits) && $textarea_limits['maxchars'] > 0) ?
@@ -701,8 +704,7 @@ class student_other_data_form extends moodleform {
                             '<span id="left_'.$dataid.'_rows"><span class="exastud-value">-</span> <span class="exastud-wording">'.block_exastud_get_string('textarea_rows').'</span></span>'.
                             ' / '.
                             '<span id="left_'.$dataid.'_chars"><span class="exastud-value">-</span> <span class="exastud-wording">'.block_exastud_get_string('textarea_chars').'</span></span>'.
-                            /*' / '.
-                            '<span id="left_'.$dataid.'_maxchars"><span class="exastud-value">-</span> '.block_exastud_get_string('textarea_maxchars').'</span>'.*/
+                            '<br><span style="font-size: 0.85em; color: #888888;">'.block_exastud_get_string('textarea_limit_notation', null, $a).'</span>'.
                             '</span>');
                     break;
                 case 'text':
@@ -1176,7 +1178,7 @@ class reportsettings_edit_form extends moodleform {
                 }
                 $mform->addGroup($radiotype, $field.'_typeradiobuttons', '', array(' '), false);
 
-                // paramaters for textarea
+                // parameters for textarea
                 $tempGroup = array();
                 $tempGroup[] =& $mform->createElement('text', $field.'_rows', block_exastud_get_string('report_settings_countrows_fieldtitle'), array('size' => $input_size));
                 $mform->setType($field.'_rows', PARAM_INT);
