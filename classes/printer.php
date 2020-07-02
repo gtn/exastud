@@ -2118,15 +2118,21 @@ class printer {
 
         // special subject lists
         if (in_array($templateid, [
-            BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_HS_SCHULFREMDE
+            BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_HS_SCHULFREMDE,
+            BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_RS_SCHULFREMDE,
+            BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_RS_SCHULFREMDE
         ])) {
             $usedSubjects = block_exastud_get_class_subjects($class);
             $shortTitles = array_map(function($s) {return $s->shorttitle;}, $usedSubjects);
             $requiredSubjects = [
-                BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_HS_SCHULFREMDE => ['D', 'M', 'E']
+                BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_HS_SCHULFREMDE => ['D', 'M', 'E'],
+                BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_RS_SCHULFREMDE => ['D', 'M', 'E'],
+                BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_RS_SCHULFREMDE => ['D', 'M', 'E'],
             ];
             $countSubjectsInReport = [
                 BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_HS_SCHULFREMDE => 4, // !!! TEMPORARY - COVID19 !!!! must be 6
+                BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_RS_SCHULFREMDE => 12,
+                BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_RS_SCHULFREMDE => 12,
             ];
             // first - required subjects
             $sI = 1;
@@ -2134,7 +2140,15 @@ class printer {
                 $indexInSubjectsList = array_search($subjectShortTitle, $shortTitles);
                 $usedSubject = $usedSubjects[$indexInSubjectsList];
                 $usedSubjectData = block_exastud_get_graded_review($class->id, $usedSubject->id, $student->id);
-                $data['subj'.$sI] = $usedSubject->title;
+                $subjectTitle = $usedSubject->title;
+                if (!$subjectTitle) {
+                    // rarely cases when required subject is not used, but must be in the report
+                    $tempSubj = g::$DB->get_record('block_exastudsubjects', ['shorttitle' => $subjectShortTitle], '*', IGNORE_MULTIPLE);
+                    if ($tempSubj && $tempSubj->title) {
+                        $subjectTitle = $tempSubj->title;
+                    }
+                }
+                $data['subj'.$sI] = $subjectTitle;
                 $data['subj'.$sI.'_grade'] = @$usedSubjectData->grade ? $usedSubjectData->grade : self::spacerIfEmpty('');
                 unset($usedSubjects[$indexInSubjectsList]);
                 $sI++;
@@ -2174,31 +2188,6 @@ class printer {
             }
             $data['present_thema'] = self::spacerIfEmpty($data['present_thema']);
             $data['present_grade'] = self::spacerIfEmpty(trim($data['present_grade'])).' '; // hack for non clearing of '---'
-        }
-
-        // changed average verbal order
-        if (in_array($templateid, [
-//                BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_RS_SCHULFREMDE,
-                BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_RS_SCHULFREMDE,
-                BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_HS_SCHULFREMDE,
-            ]
-        )) {
-            $average_grade = @$studentdata->grade_average_calculated;
-            if ($average_grade && $average_grade > 0) {
-                $average_grade_new = $average_grade;
-                if (in_array(block_exastud_get_competence_eval_type(), [
-                    BLOCK_EXASTUD_COMPETENCE_EVALUATION_TYPE_GRADE,
-                    BLOCK_EXASTUD_COMPETENCE_EVALUATION_TYPE_TEXT,
-                    BLOCK_EXASTUD_COMPETENCE_EVALUATION_TYPE_POINT,
-                ])) {
-                    $verbals = block_exastud_get_verbal_avg($average_grade);
-                    $avgVerbal = $verbals['avgVerbal'];
-                    $average_grade_new = number_format($average_grade, 1, ',', '') . ' (' . $avgVerbal . ')';
-                }
-                $data['average_grade'] = $average_grade_new;
-            } else {
-                $data['average_grade'] = static::spacerIfEmpty('');
-            }
         }
 
 		// projekt_ingroup property
