@@ -678,8 +678,9 @@ switch ($type) {
 
         // project teachers
         $project_teachers = [$class->userid => fullname($DB->get_record('user', ['id' => $class->userid, 'deleted' => 0]))];
-        $allUsers = $DB->get_records('user', ['deleted' => 0]);
-        foreach ($allUsers as $tUser) {
+//        $allUsers = $DB->get_records('user', ['deleted' => 0]);
+        $allTeachers = block_exastud_get_all_teachers();
+        foreach ($allTeachers as $tUser) {
             if ($tUser->id !== $class->userid) {
                 $project_teachers[$tUser->id] = fullname($tUser);
             }
