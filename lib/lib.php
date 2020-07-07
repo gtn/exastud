@@ -2966,7 +2966,7 @@ function block_exastud_get_default_templates($templateid = null, $common = true)
                                 'subjects' => [
                                         'title' => 'Fächer',
                                         'type' => 'textarea',
-                                        'lines' => 7,
+                                        'lines' => 8,
                                         'cols' => 75,
                                         'maxchars' => 600,
                                 ],
@@ -3017,7 +3017,7 @@ function block_exastud_get_default_templates($templateid = null, $common = true)
                                 'subjects' => [
                                         'title' => 'Fächer',
                                         'type' => 'textarea',
-                                        'lines' => 7,
+                                        'lines' => 8,
                                         'cols' => 75,
                                         'maxchars' => 600,
                                 ],
@@ -3108,7 +3108,7 @@ function block_exastud_get_default_templates($templateid = null, $common = true)
                                 'subjects' => [
                                         'title' => 'Fächer',
                                         'type' => 'textarea',
-                                        'lines' => 7,
+                                        'lines' => 8,
                                         'cols' => 75,
                                         'maxchars' => 600,
                                 ],
@@ -3183,7 +3183,7 @@ function block_exastud_get_default_templates($templateid = null, $common = true)
                                 'subjects' => [
                                         'title' => 'Fächer',
                                         'type' => 'textarea',
-                                        'lines' => 7,
+                                        'lines' => 8,
                                         'cols' => 75,
                                         'maxchars' => 600,
                                 ],
