@@ -35,3 +35,5 @@ In addition to the „verbal“ review, teachers can rate their students on a 10
 
 That's it!
 
+If there are problems with Admin Backup of exastud, please check in your php.ini if the extension pdo_mysql is activated.
+
