@@ -587,7 +587,9 @@ class printer {
                     BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_JAHRESZEUGNIS_LERNENTWICKLUNGSBERICHT])) {
                 if (!empty($studentdata->lessons_target)) {
                     //$dataTextReplacer['zieldifferenter Unterricht'] = $studentdata->lessons_target ? $studentdata->lessons_target : '';
-                    $dataTextReplacer['Wählen Sie ein Element aus.'] = $studentdata->lessons_target ? $studentdata->lessons_target : '';
+//                    $dataTextReplacer['Wählen Sie ein Element aus.'] = $studentdata->lessons_target ? $studentdata->lessons_target : '';
+                    $dataTextReplacer['Wählen Sie ein Element aus.'] = ''; // TODO: ?
+                    $data['lessons_target'] = $studentdata->lessons_target ? $studentdata->lessons_target : '';
                     $dataTextReplacer['Beiblatt'] = $studentdata->beiblatt ? $studentdata->beiblatt : '';
                 } else {
                     // if not 'zieldifferenter Unterricht' - empty all Bemerkungen field
@@ -2311,7 +2313,8 @@ class printer {
         if ($template) {
             $inputs = print_templates::get_template_inputs($templateid, 'all');
         }
-
+//echo "<pre>debug:<strong>printer.php:2314</strong>\r\n"; print_r($data); echo '</pre>';  // !!!!!!!!!! delete it
+//        echo "<pre>debug:<strong>printer.php:2315</strong>\r\n"; print_r($dataTextReplacer); echo '</pre>'; exit; // !!!!!!!!!! delete it
         foreach ($data as $dKey => $dItem) {
             $select_text = '';
             // it is selectbox
