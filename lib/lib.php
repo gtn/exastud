@@ -2938,7 +2938,7 @@ function block_exastud_get_default_templates($templateid = null, $common = true)
                                         'type' => 'textarea',
                                         'lines' => 7,
                                         'cols' => 90,
-                                        'maxchars' => 600,
+                                        'maxchars' => 630,
                                 ],
                                 'comments' => [
                                         'title' => block_exastud_trans('de:Bemerkungen'),
@@ -3096,7 +3096,7 @@ function block_exastud_get_default_templates($templateid = null, $common = true)
                                         'type' => 'textarea',
                                         'lines' => 7,
                                         'cols' => 90,
-                                        'maxchars' => 600,
+                                        'maxchars' => 630,
                                 ],
                                 'comments' => [
                                         'title' => block_exastud_trans('de:Bemerkungen'),
