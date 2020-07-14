@@ -430,8 +430,8 @@ if ($class !== null) {
                             break;
                     }
                     // no report for non calculated averages
-                    // check only for non-graded reports; TODO: sense?
-                    if (!$doit) {
+                    // check only for non-graded reports; TODO: right?
+                    if (!in_array($student->id, $studentsGraded)) {
                         if (block_exastud_template_needs_calculated_average($studentTemplateid)) {
                             $average = block_exastud_get_calculated_average($class->id, $student->id);
                             if (!$average) {
