@@ -2079,7 +2079,7 @@ return [
         'Please make calculation of average grading for student'
     ],
     'average_needs_calculate_for_student' => [
-        'Bitte führen Sie zuerst beim Schüler / bei der Schüler {$a->studentname}.',
+        'Bitte führen Sie zuerst beim Schüler / bei der Schülerin {$a->studentname} eine Berechnung des Notenschnittes durch.',
         'Please make calculation of average grading for student {$a->studentname}.'
     ],
     'report_averages_title' => [
