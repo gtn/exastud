@@ -430,17 +430,20 @@ if ($class !== null) {
                             break;
                     }
                     // no report for non calculated averages
-                    if (block_exastud_template_needs_calculated_average($studentTemplateid)) {
-                        $average = block_exastud_get_calculated_average($class->id, $student->id);
-                        if (!$average) {
-                            $doit = false;
-                            $stopAll = true;
-                            $studentD = (object) [
-                                'studentname' => fullname($student)
-                            ];
-                            $doItMessage = block_exastud_get_string('average_needs_calculate_for_student', null, $studentD);
-                        }
+                    // check only for non-graded reports; TODO: sense?
+                    if (!$doit) {
+                        if (block_exastud_template_needs_calculated_average($studentTemplateid)) {
+                            $average = block_exastud_get_calculated_average($class->id, $student->id);
+                            if (!$average) {
+                                $doit = false;
+                                $stopAll = true;
+                                $studentD = (object)[
+                                    'studentname' => fullname($student)
+                                ];
+                                $doItMessage = block_exastud_get_string('average_needs_calculate_for_student', null, $studentD);
+                            }
 
+                        }
                     }
                     return $doit;
                 };
