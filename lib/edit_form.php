@@ -423,7 +423,7 @@ class student_edit_form extends moodleform {
                             'data-rowscharslimit-enable' => 1,
                             'data-rowslimit' => $subject_limits['rows'],
                             'data-charsperrowlimit' => $subject_limits['chars_per_row'],
-                            'style' => "width: auto; height: 160px; resize: none; font-family: Arial !important; font-size: 11pt !important;",
+                            'style' => "width: auto; height: 190px; resize: none; font-family: Arial !important; font-size: 11pt !important;",
                 ], $tagatributes));
                 $mform->setType('review', PARAM_RAW);
                 $mform->addElement('static', 'hint', "",
