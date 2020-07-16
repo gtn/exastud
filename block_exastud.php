@@ -20,6 +20,14 @@
 require_once __DIR__.'/inc.php';
 require_once __DIR__.'/../moodleblock.class.php';
 
+// Temporary code for correct already installed wrong version
+global $DB;
+$DB->execute('UPDATE {config_plugins} 
+                    SET value="2020071500" 
+                    WHERE plugin LIKE "block_exastud" 
+                      AND name LIKE "version"
+                      AND value IN ("2020130700", "2020140700")');
+
 class block_exastud extends block_list {
 
 	function init() {
