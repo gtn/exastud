@@ -2118,5 +2118,12 @@ return [
         'Es wurde noch kein Zeugnisausgabedatum angegeben. Der Administrator sollte zur korrekten Ausgabe des Zeugnisses das Zeugnisausgabedatum angeben.',
         'No certificate issue date has yet been specified. The administrator should input the Certificate Issue Date for generating the certificate correctly.'
     ],
-
+    'reports_overviews' => [
+        'Übersichten',
+        'Overviews'
+    ],
+    'reports_certs_and_attachments' => [
+        'Zeugnisse und Anlagen',
+        'Certificates and attachments'
+    ],
 ];

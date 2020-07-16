@@ -662,11 +662,11 @@ if ($class !== null) {
     $firstCell->attributes['width'] = '30%';
     $firstCell->attributes['valign'] = 'top';
     $firstCell->style .= 'vertical-align:top;';
-    $firstCell->text .= html_writer::tag('h3', block_exastud_trans('de:Übersichten'));
+    $firstCell->text .= html_writer::tag('h3', block_exastud_get_string('reports_overviews'));
     $secondCell = new html_table_cell();
     $secondCell->attributes['valign'] = 'top';
     $secondCell->style .= 'vertical-align:top;';
-    $secondCell->text .= html_writer::tag('h3', block_exastud_trans('de:Zeugnisse und Anlagen'));
+    $secondCell->text .= html_writer::tag('h3', block_exastud_get_string('reports_certs_and_attachments'));
     $previewTemplates = array('grades_report', 'html_report');
     $addAnlage = false; // add only if at least one student graded in exacomp
 
@@ -781,8 +781,10 @@ if ($class !== null) {
             case 'html_report':
             case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_GMS_LERNENTWICKLUNGSBERICHT_DECKBLATT_UND_1_INNENSEITE:
             case BLOCK_EXASTUD_DATA_AVERAGES_REPORT:
-                if (!block_exastud_is_class_teacher($classid, $USER->id)) {
-                    break;
+                if ($USER->id != $class->userid) {
+                    if (!block_exastud_is_class_teacher($classid, $USER->id)) {
+                        break;
+                    }
                 }
                 $row = new html_table_row();
                 $row->cells[] = $tmpl;
