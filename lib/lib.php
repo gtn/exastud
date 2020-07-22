@@ -7299,7 +7299,8 @@ function block_exastud_calculate_student_average($class, $studentid) {
     if ($factorSumm == 0) {
         $average = 0;
     } else {
-        $average = round($subjSum / $factorSumm, 1);
+//        $average = round($subjSum / $factorSumm, 1);
+        $average = floor($subjSum * 10 / $factorSumm) / 10; // round to lowest with 1 digit after comma
     }
     return $average;
 }

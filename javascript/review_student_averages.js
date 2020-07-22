@@ -41,7 +41,8 @@
                 subjectResSum = subjectResSum + subjectRes;
             })
             if (factorsSum > 0) {
-                var averageVal = Math.round(subjectResSum / factorsSum * 10) / 10;
+                // var averageVal = Math.round(subjectResSum / factorsSum * 10) / 10;
+                var averageVal = Math.floor(subjectResSum / factorsSum * 10) / 10;
             } else {
                 var averageVal = 0;
             }
