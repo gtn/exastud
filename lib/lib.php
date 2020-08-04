@@ -2348,6 +2348,11 @@ function block_exastud_format_certificate_issue_date($time) {
 }
 
 function block_exastud_get_certificate_issue_date_timestamp($class) {
+    // if class has own date - get it
+    if ($class->certificate_issue_date) {
+        return $class->certificate_issue_date;
+    }
+    // if not own date - get date from period
 	$period = block_exastud_get_period($class->periodid);
 
 	return @$period->certificate_issue_date ?: null;

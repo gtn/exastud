@@ -95,6 +95,7 @@ $string['endtime'] = 'Enddatum';
 $string['newperiod'] = 'Neuer Beurteilungszeitraum';
 $string['invalidperiodid'] = 'Falsche Beurteilungszeitraums-ID';
 $string['certificate_issue_date'] = 'Zeugnisausgabedatum';
+$string['certificate_issue_date_class'] = 'Zeugnisdatum';
 $string['noclassestoreview'] = 'Keine Klasse zur Beurteilung';
 $string['project_based_noclassestoreview'] = 'Kein Projekt zur Beurteilung';
 $string['class'] = 'Klasse';

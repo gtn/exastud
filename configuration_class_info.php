@@ -70,6 +70,7 @@ if ($classform->is_cancelled()) {
 	$newclass->timemodified = time();
 	$newclass->title = $classedit->title;
 	$newclass->title_forreport = $classedit->title_forreport;
+	$newclass->certificate_issue_date = $classedit->certificate_issue_date;
 	if(!$classedit->bpid){
 	    if (block_exastud_is_bw_active()) {
             $classedit->bpid = 1;

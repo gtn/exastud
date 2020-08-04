@@ -95,6 +95,7 @@ $string['endtime'] = 'End time';
 $string['newperiod'] = 'New period';
 $string['invalidperiodid'] = 'Invalid period-ID';
 $string['certificate_issue_date'] = 'Certificate Issue Date';
+$string['certificate_issue_date_class'] = 'Certificate Issue Date';
 $string['noclassestoreview'] = 'No classes to review';
 $string['project_based_noclassestoreview'] = 'No projects to review';
 $string['class'] = 'Class';

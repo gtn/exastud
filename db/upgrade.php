@@ -1634,6 +1634,21 @@ function xmldb_block_exastud_upgrade($oldversion = 0) {
         upgrade_block_savepoint(true, 2020071400, 'exastud');
     }
 
+    if ($oldversion < 2020080400) {
+
+        // Define field endtime to be added to block_exastudclass.
+        $table = new xmldb_table('block_exastudclass');
+        $field = new xmldb_field('certificate_issue_date', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0', 'to_delete');
+
+        // Conditionally launch add field endtime.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Exastud savepoint reached.
+        upgrade_block_savepoint(true, 2020080400, 'exastud');
+    }
+
     block_exastud_insert_default_entries();
 	block_exastud_check_profile_fields();
 

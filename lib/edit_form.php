@@ -166,6 +166,12 @@ class class_edit_form extends moodleform {
             $mform->addGroup($group, 'edit_learnsocial', block_exastud_get_string('class_settings_can_edit_learnsocial'), '&nbsp;&nbsp;&nbsp;', false);
         }
 
+        $mform->addElement('date_selector', 'certificate_issue_date', block_exastud_get_string('certificate_issue_date_class'), [
+            'optional' => true,
+        ]);
+        $mform->setType('certificate_issue_date', PARAM_INT);
+
+        // Genders, signatures
         $genders = array(
             'male' => block_exastud_get_string('man'),
             'female' => block_exastud_get_string('woman'),

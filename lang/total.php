@@ -306,6 +306,10 @@ return [
 		'Zeugnisausgabedatum',
 		'Certificate Issue Date',
 	],
+	'certificate_issue_date_class' => [
+		'Zeugnisdatum',
+		'Certificate Issue Date',
+	],
 	'noclassestoreview' => [
 		'Keine Klasse zur Beurteilung',
 		'No classes to review',
