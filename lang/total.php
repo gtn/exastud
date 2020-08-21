@@ -1105,8 +1105,8 @@ return [
         'Eingaben von der letzten Periode/Halbjahr übernehmen',
         'Load last period',
     ],
-    'de:Daten der letzten Periode/Halbjahr wurden übernommen' => [
-        null,
+    'load_last_period_done' => [
+        'Daten der letzten Periode/Halbjahr wurden übernommen',
         'Last period is adapted',
     ],
 	'grading' => [

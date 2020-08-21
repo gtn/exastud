@@ -438,7 +438,7 @@ if ($lastPeriodClass) {
 
 if ($lastPeriodClass) {
 	if (optional_param('action', null, PARAM_TEXT) == 'load_last_period_data' || @$formdata->lastPeriodIsLoaded) {
-		echo '<h2>'.block_exastud_trans('de:Daten der letzten Periode/Halbjahr wurden übernommen').'</h2>';
+		echo '<h2>'.block_exastud_get_string('load_last_period_done').'</h2>';
 	} else {
 		$url = block_exastud\url::request_uri();
 		$url->param('action', 'load_last_period_data');

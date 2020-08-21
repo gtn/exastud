@@ -839,6 +839,16 @@ class student_other_data_form extends moodleform {
             $ff = $mform->addElement('exastud_htmltag',
                                 '<h2 class="exastud-student-review-block-header">'.$pagePart['title'].'</h2>');
             $ff->setName('blockheader_'.$key);
+
+            // add button "load from the last period' if needed
+            if ($this->_customdata['buttonLoadFromLastPeriod']
+                    && $pagePart['inputs']
+                    && count($pagePart['inputs']) > 0
+                    && count(array_intersect($pagePart['inputs'], $this->_customdata['inputsForLoadLastPeriod'])) > 0
+            ) {
+                $mform->addElement('html', $this->_customdata['buttonLoadFromLastPeriod']);
+            }
+
             // get last inserted key and use it later for manage this element
             $clonetempt = $mform->_elements;
             end($clonetempt);

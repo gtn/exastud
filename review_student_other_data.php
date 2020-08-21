@@ -85,6 +85,22 @@ if ($class->periodid != $actPeriod->id) {
     }
 }
 
+// prepare to work with the data form last period
+$inputsForLoadLastPeriod = array('comments', 'comments_short', 'ags');
+$lastPeriod = block_exastud_get_last_period();
+if ($lastPeriod) {
+    $lastPeriodClass = $DB->get_record_sql("
+		SELECT DISTINCT c.id
+            FROM {block_exastudclass} c
+            JOIN {block_exastudclassstudents} cs ON cs.classid=c.id 
+            JOIN {block_exastudclassteachers} ct ON ct.classid=c.id
+		WHERE c.periodid=? AND cs.studentid=? AND ct.teacherid=?
+	", [$lastPeriod->id, $studentid, g::$USER->id], IGNORE_MULTIPLE);
+} else {
+    $lastPeriodClass = null;
+}
+$buttonLoadFromLastPeriod = '';
+
 switch ($type) {
     case BLOCK_EXASTUD_DATA_ID_CROSS_COMPETENCES:
         $template = block_exastud_get_student_print_template($class, $studentid); // only temporary. is not used later
@@ -137,6 +153,15 @@ switch ($type) {
                 $categories = array_merge(array_flip($sorting), $categories);
             }
         }
+        // button for 'load data from old period'
+        if ($lastPeriodClass) {
+            $catInputs = array_keys($categories);
+            if (count(array_intersect($catInputs, $inputsForLoadLastPeriod)) > 0) {
+                $url = block_exastud\url::request_uri();
+                $url->param('action', 'load_last_period_data');
+                $buttonLoadFromLastPeriod = $output->link_button($url, block_exastud_get_string('load_last_period'), ['class' => 'btn btn-default']);
+            }
+        }
         break;
     case BLOCK_EXASTUD_DATA_ID_ADDITIONAL_INFO:
         $template = block_exastud_get_student_print_template($class, $student->id);
@@ -159,6 +184,7 @@ switch ($type) {
         $classheader = $reviewclass->title.' - '.$template->get_name();
 }
 $olddata = (array)block_exastud_get_class_student_data($classid, $studentid);
+
 
 if (!block_exastud_is_bw_active()) {
     // add reviews for subjectid 0
@@ -219,6 +245,8 @@ $studentform = new student_other_data_form($PAGE->url, [
     //'cross_categories' => (!block_exastud_is_bw_active() ?  block_exastud_get_class_categories($classid) : null),
     'cross_review' => $cross_review,
     'cross_categories' => $cross_categories,
+    'inputsForLoadLastPeriod' => $inputsForLoadLastPeriod,
+    'buttonLoadFromLastPeriod' => $buttonLoadFromLastPeriod,
 ]);
 
 if ($fromform = $studentform->get_data()) {
@@ -550,6 +578,22 @@ if ($type == BLOCK_EXASTUD_DATA_ID_CROSS_COMPETENCES
 	echo $OUTPUT->heading($studentdesc);
 }
 $formdata = $olddata;
+
+// load data from last period (if the button pressed)
+if ($lastPeriodClass) {
+    if (optional_param('action', null, PARAM_TEXT) == 'load_last_period_data') {
+        $lastPeriodData = (array)block_exastud_get_class_student_data($lastPeriodClass->id, $studentid);
+        foreach ($inputsForLoadLastPeriod as $inputName) {
+            if (array_key_exists($inputName, $lastPeriodData)) {
+                $lastPeriodValue = $lastPeriodData[$inputName];
+                $formdata[$inputName] = $lastPeriodValue;
+            }
+        }
+        echo '<h2>'.block_exastud_get_string('load_last_period_done').'</h2>';
+    }
+}
+
+
 if (count($categories) > 0) {
     $context = context_system::instance(); // TODO: which context to use?
     foreach ($categories as $dataid => $category) {
