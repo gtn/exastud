@@ -188,6 +188,10 @@ if ($classform->is_cancelled()) {
 		redirect('configuration_class.php?courseid='.$courseid.'&classid='.$newclass->id);
 	}
 } else { // edit form opened
+    // default sertificate issue date - from period issue date
+    if (!@$class->certificate_issue_date) {
+        $class->certificate_issue_date = $curPeriod->certificate_issue_date;
+    }
     if ($class->id) {
         /*$draftitemid = file_get_submitted_draft_itemid('class_logo');
         file_prepare_draft_area($draftitemid, context_system::instance()->id, 'block_exastud', 'class_logo', $class->id,
