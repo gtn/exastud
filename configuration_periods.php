@@ -46,7 +46,8 @@ if ($periodform->is_cancelled()) {
 	$newperiod->description = $periodedit->description;
 	$newperiod->starttime = $periodedit->starttime;
 	$newperiod->endtime = $periodedit->endtime;
-	$newperiod->certificate_issue_date = $periodedit->certificate_issue_date;
+	// TODO: delete this field
+	$newperiod->certificate_issue_date = 0; //$periodedit->certificate_issue_date;
 	
 	if(isset($periodedit->id) && ($periodedit->action == 'edit')) {
 		$newperiod->id = $periodedit->id;
