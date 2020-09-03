@@ -173,10 +173,13 @@ if ($action == 'save-subjects') {
 			unset($todelete[$item->id]);
 		} else {
 			// insert
-            // only for non_bw (save button is hidden, but we need to check requests also)
-            $item->bpid = $bpid;
-            $newid = $DB->insert_record('block_exastudsubjects', $item);
-            \block_exastud\event\subject_created::log(['objectid' => $newid, 'other' => ['title' => $item->title]]);
+            // only for non bp (save button is hidden, but we need to check requests also)
+            $bpData = $DB->get_record('block_exastudbp', ['id' => $bpid]);
+            if (!block_exastud_is_bw_active() || !block_exastud_is_bw_bp($bpData)) {
+                $item->bpid = $bpid;
+                $newid = $DB->insert_record('block_exastudsubjects', $item);
+                \block_exastud\event\subject_created::log(['objectid' => $newid, 'other' => ['title' => $item->title]]);
+            }
 		}
 	}
 
