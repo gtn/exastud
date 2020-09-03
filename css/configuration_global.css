@@ -32,6 +32,9 @@
 #exa-list input[name=shorttitle] {
 	width: 150px;
 }
+#exa-list input[name=title][readonly=readonly], #exa-list input[name=shorttitle][readonly=readonly] {
+	background-color: #f1f1f1;
+}
 #exa-list input[name=always_print] {
 	margin-right: 140px;
 	margin-left: 10px;

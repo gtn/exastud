@@ -2079,6 +2079,10 @@ function block_exastud_can_edit_subject($subject) {
 	return !preg_match('!^bw\-*!', $subject->sourceinfo);
 }
 
+function block_exastud_is_bw_subject($subject) {
+    return preg_match('!^bw\-*!', $subject->sourceinfo);
+}
+
 function block_exastud_can_edit_class($class) {
 	return $class->userid == g::$USER->id;
 }
