@@ -180,7 +180,6 @@ $string['report_settings_setting_rs_hs'] = 'Schnittberechnung maßgebliches Fach
 $string['report_settings_setting_category'] = 'Kategorie';
 $string['report_settings_setting_template'] = 'Formular';
 $string['report_settings_setting_grades'] = 'Notenskala';
-$string['report_settings_setting_grades_rules'] = 'Delimeter \';\'';
 $string['report_settings_setting_year'] = 'Schuljahr';
 $string['report_settings_setting_reportdate'] = 'Zeugnisdatum';
 $string['report_settings_setting_studentname'] = 'Vor- und Zuname';

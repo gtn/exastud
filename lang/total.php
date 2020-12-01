@@ -646,10 +646,6 @@ return [
             'Notenskala',
             'Grades',
     ],
-    'report_settings_setting_grades_rules' => [
-            'Delimeter \';\'',
-            'Delimiter \';\'',
-    ],
     'report_settings_setting_year' => [
             'Schuljahr',
             'School year',

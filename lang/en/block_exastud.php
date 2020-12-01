@@ -180,7 +180,6 @@ $string['report_settings_setting_rs_hs'] = 'RS/HS category';
 $string['report_settings_setting_category'] = 'Category';
 $string['report_settings_setting_template'] = 'Template';
 $string['report_settings_setting_grades'] = 'Grades';
-$string['report_settings_setting_grades_rules'] = 'Delimiter \';\'';
 $string['report_settings_setting_year'] = 'School year';
 $string['report_settings_setting_reportdate'] = 'Date for report card';
 $string['report_settings_setting_studentname'] = 'First and second name';
