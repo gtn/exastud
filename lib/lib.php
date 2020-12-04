@@ -1338,7 +1338,7 @@ function block_exastud_get_plugin_config($name = null) {
 	}
 
 	if (!empty($name)) {
-		if (array_key_exists($name, $config)) {
+		if (property_exists($config, $name)) {
 			return $config->$name;
 		} else {
 			return null;
