@@ -166,6 +166,12 @@ class class_edit_form extends moodleform {
             $mform->addGroup($group, 'edit_learnsocial', block_exastud_get_string('class_settings_can_edit_learnsocial'), '&nbsp;&nbsp;&nbsp;', false);
         }
 
+        $mform->addElement('date_selector', 'certificate_issue_date', block_exastud_get_string('certificate_issue_date_class'), [
+            'optional' => true,
+        ]);
+        $mform->setType('certificate_issue_date', PARAM_INT);
+
+        // Genders, signatures
         $genders = array(
             'male' => block_exastud_get_string('man'),
             'female' => block_exastud_get_string('woman'),
@@ -213,10 +219,11 @@ class period_edit_form extends moodleform {
 		$mform->setType('endtime', PARAM_INT);
 		$mform->addRule('endtime', null, 'required', null, 'server');
 
-		$mform->addElement('date_selector', 'certificate_issue_date', block_exastud_get_string('certificate_issue_date'), [
+		// hidden. future periods will use dates from class parameters
+/*		$mform->addElement('date_selector', 'certificate_issue_date', block_exastud_get_string('certificate_issue_date'), [
 			'optional' => true,
 		]);
-		$mform->setType('certificate_issue_date', PARAM_INT);
+		$mform->setType('certificate_issue_date', PARAM_INT);*/
 
 		$mform->addElement('hidden', 'id');
 		$mform->setType('id', PARAM_INT);
@@ -833,6 +840,16 @@ class student_other_data_form extends moodleform {
             $ff = $mform->addElement('exastud_htmltag',
                                 '<h2 class="exastud-student-review-block-header">'.$pagePart['title'].'</h2>');
             $ff->setName('blockheader_'.$key);
+
+            // add button "load from the last period' if needed
+            if ($this->_customdata['buttonLoadFromLastPeriod']
+                    && $pagePart['inputs']
+                    && count($pagePart['inputs']) > 0
+                    && count(array_intersect($pagePart['inputs'], $this->_customdata['inputsForLoadLastPeriod'])) > 0
+            ) {
+                $mform->addElement('html', $this->_customdata['buttonLoadFromLastPeriod']);
+            }
+
             // get last inserted key and use it later for manage this element
             $clonetempt = $mform->_elements;
             end($clonetempt);

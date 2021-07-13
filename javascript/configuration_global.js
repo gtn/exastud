@@ -38,6 +38,9 @@
 
 			$item.find(':text').each(function () {
 				$(this).val(item[this.name]);
+				if (item['titleReadonly'] == 1) {
+                    $(this).attr('readonly', 'readonly');
+				}
 			});
 			$item.find(':checkbox').each(function () {
 				$(this).prop('checked', item[this.name]*1);

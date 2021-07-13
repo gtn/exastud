@@ -47,11 +47,11 @@ $table->head = array(
 	block_exastud_get_string('perioddescription'),
 	block_exastud_get_string('starttime'),
 	block_exastud_get_string('endtime'),
-	block_exastud_get_string('certificate_issue_date'),
+//	block_exastud_get_string('certificate_issue_date'),
 	block_exastud_get_string('action'),
 );
 
-$table->align = array("left", "left", "left", "left", "right");
+$table->align = array("left", "left", "left", /*"left",*/ "right");
 
 $actPeriod = block_exastud_get_active_period();
 if (!$actPeriod) { // if no any active period or more than one
@@ -75,7 +75,7 @@ foreach ($periods as $period) {
 		'<a href="'.$editUrl.'">'.($actPeriod && $period->id == $actPeriod->id ? '<b>' : '').$period->description.'</a>',
 		$starttime,
 		$endtime,
-		$period->certificate_issue_date ? block_exastud_format_certificate_issue_date($period->certificate_issue_date) : '',
+//		$period->certificate_issue_date ? block_exastud_format_certificate_issue_date($period->certificate_issue_date) : '',
 		$icons,
 	];
 }

@@ -158,6 +158,11 @@ if ($action == 'save-subjects') {
                 unset($todelete[$item->id]);
                 continue;
             }
+            if (block_exastud_is_bw_subject($availablesubjects[$item->id])) {
+                // bw can not change title and short title (use old titles)
+                $item->title = $availablesubjects[$item->id]->title;
+                $item->shorttitle = $availablesubjects[$item->id]->shorttitle;
+            }
 			// update
 			$DB->update_record('block_exastudsubjects', $item);
             // only if updated
@@ -168,9 +173,13 @@ if ($action == 'save-subjects') {
 			unset($todelete[$item->id]);
 		} else {
 			// insert
-			$item->bpid = $bpid;
-			$newid = $DB->insert_record('block_exastudsubjects', $item);
-            \block_exastud\event\subject_created::log(['objectid' => $newid, 'other' => ['title' => $item->title]]);
+            // only for non bp (save button is hidden, but we need to check requests also)
+            $bpData = $DB->get_record('block_exastudbp', ['id' => $bpid]);
+            if (!block_exastud_is_bw_active() || !block_exastud_is_bw_bp($bpData)) {
+                $item->bpid = $bpid;
+                $newid = $DB->insert_record('block_exastudsubjects', $item);
+                \block_exastud\event\subject_created::log(['objectid' => $newid, 'other' => ['title' => $item->title]]);
+            }
 		}
 	}
 
@@ -385,6 +394,7 @@ if ($action == 'subjects') {
 			$subject->disabled = true;
 		}
 		$subject->canDelete = block_exastud_can_delete_subject($subject);
+		$subject->titleReadonly = block_exastud_is_bw_subject($subject);
 	}
 
 	echo "<h2>".block_exastud_trans('de:Bildungsplan').": {$bp->title}</h2>";
@@ -406,8 +416,8 @@ if ($action == 'subjects') {
 		</div>
 		<ul exa="items">
 			<li>
-				<input type="text" name="title"/>
-				<input type="text" name="shorttitle"/>
+                <input type="text" name="title"/>
+                <input type="text" name="shorttitle"/>
                 <?php if (block_exastud_is_bw_active()) { ?>
                     <input type="checkbox" name="is_main" value="1" />
                     <input type="checkbox" name="relevant" value="1" />
@@ -421,7 +431,7 @@ if ($action == 'subjects') {
 				<button exa="delete-button" class="btn btn-default"><?php echo block_exastud_get_string('delete'); ?></button>
 			</li>
 		</ul>
-		<?php if ($canEdit) { ?>
+		<?php if ($canEdit && !block_exastud_is_bw_active()) { ?>
 		<div exa="new-item">
 			<input type="text" name="title"/>
 			<input type="text" name="shorttitle"/>

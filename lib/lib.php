@@ -1338,7 +1338,7 @@ function block_exastud_get_plugin_config($name = null) {
 	}
 
 	if (!empty($name)) {
-		if (array_key_exists($name, $config)) {
+		if (property_exists($config, $name)) {
 			return $config->$name;
 		} else {
 			return null;
@@ -2079,6 +2079,13 @@ function block_exastud_can_edit_subject($subject) {
 	return !preg_match('!^bw\-*!', $subject->sourceinfo);
 }
 
+function block_exastud_is_bw_bp($bp) {
+    return preg_match('!^bw\-*!', $bp->sourceinfo);
+}
+function block_exastud_is_bw_subject($subject) {
+    return preg_match('!^bw\-*!', $subject->sourceinfo);
+}
+
 function block_exastud_can_edit_class($class) {
 	return $class->userid == g::$USER->id;
 }
@@ -2348,6 +2355,11 @@ function block_exastud_format_certificate_issue_date($time) {
 }
 
 function block_exastud_get_certificate_issue_date_timestamp($class) {
+    // if class has own date - get it
+    if ($class->certificate_issue_date) {
+        return $class->certificate_issue_date;
+    }
+    // if not own date - get date from period
 	$period = block_exastud_get_period($class->periodid);
 
 	return @$period->certificate_issue_date ?: null;

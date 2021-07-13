@@ -306,6 +306,10 @@ return [
 		'Zeugnisausgabedatum',
 		'Certificate Issue Date',
 	],
+	'certificate_issue_date_class' => [
+		'Zeugnisdatum',
+		'Certificate Issue Date',
+	],
 	'noclassestoreview' => [
 		'Keine Klasse zur Beurteilung',
 		'No classes to review',
@@ -641,10 +645,6 @@ return [
     'report_settings_setting_grades' => [
             'Notenskala',
             'Grades',
-    ],
-    'report_settings_setting_grades_rules' => [
-            'Delimeter \';\'',
-            'Delimiter \';\'',
     ],
     'report_settings_setting_year' => [
             'Schuljahr',
@@ -1101,8 +1101,8 @@ return [
         'Eingaben von der letzten Periode/Halbjahr übernehmen',
         'Load last period',
     ],
-    'de:Daten der letzten Periode/Halbjahr wurden übernommen' => [
-        null,
+    'load_last_period_done' => [
+        'Daten der letzten Periode/Halbjahr wurden übernommen',
         'Last period is adapted',
     ],
 	'grading' => [
