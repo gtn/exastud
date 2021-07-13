@@ -919,17 +919,27 @@ class printer {
 				//	// einfach die erste zahl nehmen und dann durch text ersetzen
 					$grade = @$grades[substr(@$subjectData->grade, 0, 1)];
 				}
-
                 if ($isReligionSubject) {
                     $replacefilter = true;
                 } else {
                     $replacefilter = false;
                 }
 
+//if ($subject->shorttitle == 'Ph') {
+// DEBUG dropdowns for SUBJECT
+//    echo "<pre>debug:<strong>printer.php:929</strong>\r\n"; print_r($gradeSearch); echo '</pre>'; // !!!!!!!!!! delete it
+//    echo "<pre>debug:<strong>printer.php:930</strong>\r\n"; print_r($grade); echo '</pre>'; // !!!!!!!!!! delete it
+//    echo "<pre>debug:<strong>printer.php:931</strong>\r\n"; print_r($dropdownsBetween); echo '</pre>'; // !!!!!!!!!! delete it
+//    echo "<pre>debug:<strong>printer.php:930</strong>\r\n"; print_r($placeholder); echo '</pre>'; // !!!!!!!!!! delete it
+//    exit;
+//}
                 $add_filter([
                         'grade',
                         $gradeSearch,
                 ], function($content) use ($gradeSearch, $grade, $placeholder, $dropdownsBetween, $templateid) {
+//                    if ($gradeSearch == '>Physik<') {
+//                        echo "<pre>debug:<strong>printer.php:940</strong>\r\n"; print_r($content); echo '</pre>'; exit; // !!!!!!!!!! delete it
+//                    }
                     if (!preg_match('!('.preg_quote($gradeSearch, '!').'.*)'.$placeholder.'note!U', $content, $matches)) {
                          //var_dump(['fach nicht gefunden', $gradeSearch]);
                         return $content;
@@ -949,6 +959,7 @@ class printer {
                     return $ret;
                 }, $replacefilter);
 
+                // for average calculating
                 switch ($templateid) {
                     case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_ABSCHLUSSZEUGNIS_KL10_RSA:
                     case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_ABSCHLUSSZEUGNIS_KL9_10_HSA_2:
@@ -1331,10 +1342,10 @@ class printer {
 				return $content;
 			});
 
-			// alle restlichen noten dropdowns zurücksetzen
+			// reset all non-used dropdowns
 			$add_filter(function($content) use ($placeholder, $templateid) {
                 $replaceTo = '---';
-                
+
 				return str_replace($placeholder.'note', $replaceTo, $content);
 			});
 		} else if (in_array($templateid, [
