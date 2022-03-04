@@ -1,0 +1,115 @@
+#exa-list [exa=items] {
+	margin: 0;
+	padding: 0;
+}
+#exa-list li {
+	display: block;
+	list-style-type: none;
+	background-color: #efefef;
+	margin: 0 0 5px 0;
+	padding: 5px;
+}
+#exa-list:not([exa-sorting=false]) li {
+	padding-left: 40px;
+}
+#exa-list:not([exa-sorting=false]) li:not(.ui-state-disabled) {
+	cursor: move;
+	background: url(../../../pix/t/sort.png) 13px 12px no-repeat #efefef;
+}
+#exa-list * {
+	margin: 0;
+}
+#exa-list li button {
+	margin-left: 10px;
+}
+#exa-list li a {
+	margin-left: 10px;
+	cursor: pointer;
+}
+#exa-list input[name=title] {
+	min-width: 400px;
+}
+#exa-list input[name=shorttitle] {
+	width: 150px;
+}
+#exa-list input[name=title][readonly=readonly], #exa-list input[name=shorttitle][readonly=readonly] {
+	background-color: #f1f1f1;
+}
+#exa-list input[name=always_print] {
+	margin-right: 140px;
+	margin-left: 10px;
+}
+#exa-list input[name=is_main] {
+	margin-right: 0px;
+	margin-left: 20px;
+}
+#exa-list input[name=relevant_rs] {
+	margin-right: 40px;
+	margin-left: 20px;
+}
+
+#exa-list li.ui-state-disabled, #exa-list li.ui-state-disabled input:not(button) {
+	cursor: not-allowed !important;
+}
+#exa-list li.ui-state-disabled [exa=delete-button] {
+	display: none;
+}
+#exa-list li.ui-state-disabled input {
+	pointer-events:none;
+}
+#exa-list [exa=new-item] {
+	background-color: #efefef;
+	margin: 20px 0 5px 0;
+	padding: 5px;
+}
+#exa-list [exa=new-button] {
+	margin-left: 10px;
+}
+#exa-list:not([exa-sorting=false]) [exa=new-item] {
+	padding-left: 40px;
+}
+
+#exa-list div.header {
+	background-color: #efefef;
+	margin: 0 0 5px 0;
+	padding: 5px;
+	font-weight: bold;
+}
+#exa-list:not([exa-sorting=false]) div.header {
+	padding-left: 40px;
+}
+#exa-list div.header [for-field=title]{
+	margin: 0 0 0 5px;
+	width: 400px;
+}
+#exa-list div.header [for-field=shorttitle]{
+	width: 160px;
+}
+#exa-list div.header [for-field=relevant] {
+	margin-left: 0px;
+}
+#exa-list div.header [for-field=HS] {
+	margin-left: 0px;
+}
+#exa-list div.header [for-field=RS] {
+	margin-left: 10px;
+}
+#exa-list div.header [for-field=always_print]{
+}
+#exa-list div.header > div {
+	display: inline-block;
+}
+
+#exa-list [exa=save] {
+	margin: 20px 0 0 0;
+	padding: 5px;
+}
+#exa-list:not([exa-sorting=false]) [exa=save] {
+	padding-left: 40px;
+}
+
+.block-exastud-subject-legend {
+	color: #5e5e5e;
+	font-size: 0.85em;
+}
+

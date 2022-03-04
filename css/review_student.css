@@ -1,0 +1,19 @@
+#review-table {
+	margin-bottom: 30px;
+}
+#review-table td, #review-table th {
+	border: 1px solid #999;
+	padding: 5px;
+}
+
+#review-table td.evaluation-radio {
+	text-align: center;
+	min-width: 30px;
+}
+#review-table td.evaluation-radio input[type="radio"] {
+	margin: 0;
+}
+#review-table th.evaluation-header {
+	text-align: center;
+}
+

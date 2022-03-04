@@ -1,0 +1,15 @@
+
+.exastud-class-buttons {
+    float: right;
+}
+
+.exastud-class-buttons a {
+    padding-left: 5px;
+}
+
+.widthauto {
+    width: auto !important;
+}
+.maxcellwidth600 td {
+    max-width: 600px;
+}

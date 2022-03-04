@@ -1,0 +1,166 @@
+#block_exastud table.exa_table {
+	border-collapse: collapse;
+	margin-bottom: 20px;
+	width: 100%;
+}
+
+#block_exastud table.exa_table th {
+	background-color: #E6E6E6;
+	font-size: 0.9rem;
+}
+
+#block_exastud table.exa_table th, #block_exastud table.exa_table td {
+	border: 1px solid #CACACA;
+	border-collapse: collapse;
+	padding: 0.5rem;
+	vertical-align: top;
+}
+
+#block_exastud .exa_table_clean {
+	border: 0;
+	background-color: transparent;
+}
+
+#block_exastud .exa_table_clean td {
+	padding: 5px 15px 5px 0;
+}
+
+#block_exastud table.exa_table td {
+	vertical-align: middle;
+}
+
+#block_exastud table.exa_table tr:nth-child(2n+2) {
+	background-color: #F9F9F9;
+}
+#block_exastud table.exa_table tr:nth-child(2n+1) {
+	background-color: #FFFFFF;
+}
+#block_exastud table.exa_table tr.oddeven0 {
+	background-color: #FFFFFF;
+}
+#block_exastud table.exa_table tr.oddeven1 {
+	background-color: #F9F9F9;
+}
+
+#block_exastud .est_table_userimg img {
+	width: 60px
+}
+
+#block_exastud .est_table_userimg {
+	width: 60px;
+}
+
+#block_exastud .esr_pushcenter {
+	text-align: center;
+}
+
+#block_exastud .esr_pushright {
+	text-align: right;
+}
+
+#block_exastud .exa_tableedit {
+	text-align: center;
+	width: 45px
+}
+
+#block_exastud h2 {
+	font-size: 150%;
+	/*
+	font-size: 1rem;
+	font-weight: bold;
+	margin-bottom: 1.2rem;
+	text-align: left;
+	*/
+}
+
+#block_exastud h3 {
+	font-size: 130%;
+}
+#block_exastud legend {
+	font-weight: bold;
+	font-size: 130%;
+}
+#block_exastud .heading1 {
+	font-size: 150%;
+}
+
+#block_exastud .esr_subtitle {
+	margin-bottom: 1.2rem;
+}
+
+#block_exastud .ers_inlineicon {
+	margin-left: 10px;
+}
+
+#block_exastud .esr_pflichtfeld {
+	color: red;
+}
+
+#block_exastud .esr_input {
+	min-width: 250px;
+}
+
+/* remove moodle button margin in tables */
+#block_exastud table td input[type=button] {
+	margin-bottom: 0;
+}
+
+.femptylabel .fitemtitle {
+	display: none;
+}
+.femptylabel .felement {
+	margin-left: 0 !important;
+}
+.femptylabel.fitem_ftextarea textarea {
+	width: 95%;
+	height: 200px;
+}
+
+/* für reports */
+body[id^=page-blocks-exastud].pagelayout-embedded {
+	padding-top: 0;
+}
+
+.exastud-review-message .block-exastud-form-message {
+	display: inline-block;
+	padding: 5px;
+	/*float: right;*/
+	/*max-width: 50%;*/
+}
+
+.exastud-review-message .to-table {
+	display: table;
+}
+.exastud-review-message .to-cell {
+	display: table-cell;
+}
+
+.exastud-review-message select {
+	margin-right: 15px;
+}
+
+.exastud-textarea-left-block {
+	margin-left: 50px;
+}
+
+.exastud_muted_link, .exastud_muted_link a {
+	color: #5e5e5e;
+}
+
+#block_exastud i.fas,
+#block_exastud i.far,
+#block_exastud i.fal,
+#block_exastud i.fad,
+#block_exastud i.fab {
+	font-size: 1.1em;
+}
+
+#block_exastud i.fa-exclamation-triangle {
+	color: red;
+}
+#block_exastud i.fa-unlock.done {
+	opacity: 50%;
+}
+#block_exastud i.fa-star.exastud-my-class {
+	color: #ffd700;
+}

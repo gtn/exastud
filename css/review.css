@@ -1,0 +1,33 @@
+
+/*shown and hidden classes*/
+.exa_table .exastud-class-title.exastud-transparent {
+    opacity: 0.75;
+}
+
+.exa_table .exastud-class-title td {
+    font-weight: bold;
+}
+
+.exa_table .exastud-class-title .exastud-collapse-data {
+    cursor: pointer;
+}
+
+.exa_table .exastud-class-title .collapsed_icon,
+.exa_table .exastud-class-title .expanded_icon {
+    margin-right: 5px;
+}
+
+.exa_table .exastud-class-title .expanded_icon {
+    /*display: none;*/
+}
+
+.exa_table .exastud-data-row[data-classopened="0"] {
+    /*font-size: 0.75em;*/
+    display: none;
+}
+
+.exa_table .exastud-part-title {
+    font-weight: bold;
+    font-size: 1em;
+}
+

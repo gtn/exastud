@@ -1,0 +1,59 @@
+
+.exa_table .exastud-userdata-cell {
+    vertical-align: top !important;
+    width: 250px;
+    padding-left: 50px !important;
+}
+
+.exa_table .exastud-userdata-cell .exastud-userpicture {
+    float:left;
+    margin-left: -40px;
+}
+.exa_table .exastud-userdata-cell .exastud-username {
+
+}
+.exa_table .exastud-userdata-cell .exastud-usergender {
+    display: table;
+    color: #787878;
+}
+
+.exa_table .exastud-userdata-cell .exastud-hidebutton img {
+    margin-left: 0px;
+}
+
+.exastud-userdata-cell .exastud-template-title {
+    font-size: 0.8em;
+    color: #787878;
+}
+
+.exa_table .verticalText {
+    display: inline-block;
+    overflow: hidden;
+    width: 1.5em;
+    /*float: right;*/
+    /*vertical-align: bottom;*/
+    /*margin-top: 135px;*/
+    /*position: absolute;*/
+    /*bottom: 0px;*/
+}
+.exa_table .verticalTextInner {
+    display: inline-block;
+    white-space: nowrap;
+    line-height: 1.5;
+    transform: translate(0, 100%) rotate(-90deg);
+    transform-origin: 0 0;
+}
+.exa_table .verticalTextInner:after {
+    content: "";
+    display: block;
+    margin: -1.5em 0 100%;
+}
+
+.exa_table .verticalCell {
+    width: 30px;
+}
+
+.exa_table .cell.verticalCell {
+    vertical-align: bottom !important;
+}
+

@@ -1,0 +1,22 @@
+.exastud-student-review-block-header {
+    border-bottom: 3px dotted #E6E6E6;
+    padding: 3px 0px 3px 3px;
+    /*margin-bottom: 5px;*/
+}
+.exastud-student-review-block-header:not(:first-of-type) {
+    margin-top: 25px;
+}
+
+
+.block_exastud .exastud-collapse-data {
+    cursor: pointer;
+}
+
+
+.block_exastud .collapsed_icon,
+.block_exastud .expanded_icon {
+    margin-right: 5px;
+}
+
+
+

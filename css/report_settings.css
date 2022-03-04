@@ -1,0 +1,139 @@
+
+.exastud-template-settings-group {
+    font-size: small;
+}
+
+/* show hidden labels */
+.exastud-template-settings-group .col-form-label {
+    position: relative;
+    width: auto;
+    height: auto;
+    overflow: visible;
+}
+
+.exastud-template-settings-param {
+    margin-right: 15px;
+}
+
+/* show hidden labels - another moodle template */
+.exastud-template-settings-group .accesshide {
+    position: relative;
+    left: 0px;
+    width: auto;
+    height: auto;
+    overflow: visible;
+    margin-left: 15px;
+    margin-right: 5px;
+}
+
+/* change additional parameters */
+.exastud-template-settings-group .form-control {
+    font-size: 0.75rem;
+}
+
+.exastud-template-settings-group.type-settings {
+    font-size: 0.75rem;
+}
+
+.exastud-template-settings-group.type-settings label {
+    margin-right: 15px;
+}
+
+.exastud-additional-params-block.hidden {
+    display: none;
+}
+
+.add_selectbox_option,
+.delete_selectbox_option,
+.add_matrix_row,
+.delete_matrix_row,
+.add_matrix_col,
+.delete_matrix_col {
+    cursor: pointer;
+    margin-left: 7px;
+}
+
+.delete_param_button {
+    position: absolute;
+    right: 20px;
+    cursor: pointer;
+    z-index: 10000;
+}
+
+body.dragging, body.dragging * {
+    cursor: move !important;
+}
+
+.dragged {
+    position: absolute;
+    opacity: 0.5;
+    z-index: 2000;
+}
+
+form.exastud-reports-form div.exastud-sorting-placeholder {
+    position: relative;
+    /** More li styles **/
+}
+form.exastud-reports-form div.exastud-sorting-placeholder:before {
+    position: absolute;
+    /** Define arrowhead **/
+}
+
+.sorting_param_button {
+    position: absolute;
+    right: 45px;
+    cursor: pointer;
+    z-index: 10000;
+}
+
+.exastud-sorting-placeholder {
+    background-image: linear-gradient(135deg, #ffffff 25%, #d1d1d1 25%, #d1d1d1 50%, #ffffff 50%, #ffffff 75%, #d1d1d1 75%, #d1d1d1 100%);
+    background-size: 40px 40px;
+    border: #d1d1d1 solid 1px;
+    text-align: center;
+    line-height: 1.15em;
+}
+.exastud-sorting-placeholder span {
+    font-weight: bold;
+    background-color: white;
+    padding: 1px 10px;
+}
+
+.exastud-template-settings-param.matrix-row,
+.exastud-template-settings-param.matrix-col {
+    margin-top: 2px;
+    margin-bottom: 2px;
+    padding-left: 5px;
+}
+
+.block_hover {
+    background-color: #fff1f1;
+}
+.block_hover input[type="text"] {
+    background-color: #fff1f1;
+}
+
+
+.exastud-additional-params-shortlist {
+    list-style: none;
+}
+
+.exastud-additional-text {
+    display: block;
+    color: red;
+    font-size: 0.75em;
+}
+
+.exa_table .exastud-hidden-report {
+    color: #a8a8a8;
+}
+
+.exa_table .info-icon {
+    float: right;
+}
+
+.block-exastud-upload-template-toggler {
+    margin: 0 15px;
+    cursor: pointer;
+}
+
