@@ -241,11 +241,10 @@ function block_exastud_get_head_teacher_classes_shared($periodid) {
 		return [];
 	}
 	*/
-
 	$classes = g::$DB->get_records_sql("
 			SELECT c.*,
 				'shared' AS type,
-				".\user_picture::fields('u', null, 'teacher_owner_id', 'teacher_owner_')."
+				".exastud_get_picture_fields('u', null, 'teacher_owner_id', 'teacher_owner_')."
 			FROM {block_exastudclass} c
 			JOIN {block_exastudclassteachers} ct ON ct.classid=c.id
 			JOIN {user} u ON c.userid = u.id AND u.deleted = 0
@@ -330,7 +329,7 @@ function block_exastud_get_class_students($classid, $hideDroppedUot = false) {
         $addWhere .= ' AND (d.value = 0 OR d.value IS NULL ) ';
     }
 	return g::$DB->get_records_sql("
-			SELECT u.id, cs.id AS record_id, ".\user_picture::fields('u', null, 'userid')."
+			SELECT u.id, cs.id AS record_id, ".exastud_get_picture_fields('u', null, 'userid')."
     			FROM {user} u
 	    		    JOIN {block_exastudclassstudents} cs ON u.id=cs.studentid
 	    		    ".$addJoin."
@@ -373,7 +372,7 @@ function block_exastud_get_class_subjects($class) {
 
 function block_exastud_get_class_subject_teachers($classid) {
 	return iterator_to_array(g::$DB->get_recordset_sql("
-			SELECT u.id, ct.id AS record_id, ".\user_picture::fields('u', null, 'userid').", ct.subjectid, s.title AS subject_title
+			SELECT u.id, ct.id AS record_id, ".exastud_get_picture_fields('u', null, 'userid').", ct.subjectid, s.title AS subject_title
 			FROM {user} u
 			JOIN {block_exastudclassteachers} ct ON ct.teacherid = u.id
 			JOIN {block_exastudclass} c ON c.id = ct.classid
@@ -1690,7 +1689,7 @@ function block_exastud_get_report($studentid, $periodid, $classid) {
 	$report->numberOfEvaluations = $numrecords->count;
 
 	$comments = $DB->get_recordset_sql("
-				SELECT ".user_picture::fields('u').", r.review, s.title AS subject_title
+				SELECT ".exastud_get_picture_fields('u').", r.review, s.title AS subject_title
 				FROM {block_exastudreview} r
 				JOIN {user} u ON r.teacherid = u.id
 				LEFT JOIN {block_exastudsubjects} s ON r.subjectid = s.id
@@ -1792,8 +1791,8 @@ function block_exastud_print_student_report($studentid, $periodid, $class, $pdf 
 		<td class="rating legend">'.@$studentReport->{$category->title}.'</td></tr>';
 
 		if ($detailedreview) {
-			$detaildata = $DB->get_recordset_sql("SELECT ".user_picture::fields('u').", pos.value, s.title AS subject_title
-					FROM 	{block_exastudreview} r
+			$detaildata = $DB->get_recordset_sql("SELECT ".exastud_get_picture_fields('u').", pos.value, s.title AS subject_title
+                    FROM {block_exastudreview} r
 					JOIN {block_exastudreviewpos} pos ON pos.reviewid = r.id
 					JOIN {user} u ON r.teacherid = u.id
 					LEFT JOIN {block_exastudsubjects} s ON r.subjectid = s.id
@@ -7379,6 +7378,41 @@ function block_exastud_get_verbal_avg($avg) {
         'avgForVerbal' => $avgForVerbal,
         'avgVerbal' => $avgVerbal
     );
+}
+
+/** to rid of deprecation messages and backward moodle compatibility
+* since user_picture::fields() uses a deprecated moodle function, this is the workaround:
+ * @param string $tableprefix
+ * @param array $extrafields
+ * @param string $idalias
+ * @param string $fieldprefix
+ * @param bool $asStringList
+ * @return string|array
+*/
+function exastud_get_picture_fields($tableprefix = '', $extrafields = null, $idalias = 'id', $fieldprefix = '') {
+    if (class_exists('\core_user\fields')) {
+        $fields = \core_user\fields::get_picture_fields();
+    } else {
+        return user_picture::fields($tableprefix, $extrafields, $idalias, $fieldprefix);
+    }
+    if ($extrafields && is_array($extrafields)) {
+        $fields = array_merge($fields, $extrafields);
+    }
+    foreach ($fields as &$f) {
+        if ($f == 'id') {
+            $f = $f.' AS '.($idalias ? $idalias : 'id');
+            continue;
+        }
+        if ($fieldprefix) {
+            $f = $f.' AS '.$fieldprefix.$f;
+        }
+    }
+    if ($tableprefix) {
+        array_walk($fields, function(&$f) use ($tableprefix) {$f = $tableprefix.'.'.$f;});
+    }
+    $resultString = implode(', ', $fields);
+
+    return $resultString;
 }
 
 /*
