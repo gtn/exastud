@@ -1981,7 +1981,15 @@ function block_exastud_get_evaluation_options($also_empty = false) {
     $compeval_type = block_exastud_get_competence_eval_type();
     switch($compeval_type) {
         case BLOCK_EXASTUD_COMPETENCE_EVALUATION_TYPE_TEXT:
-            $options += $DB->get_records_menu('block_exastudevalopt', [], 'sorting', 'id, title');
+            $optionsTemp = $DB->get_records_menu('block_exastudevalopt', [], 'sorting', 'id, title');
+            // in result options we must have indexes, regarding 'sorting field', but not id. And it must be 1-N (sorting can be bigger)
+            $i = 1;
+            $optionsNewTemp = [];
+            foreach ($optionsTemp as $opt) {
+                $optionsNewTemp[$i] = $opt;
+                $i++;
+            }
+            $options += $optionsNewTemp;
             break;
         case BLOCK_EXASTUD_COMPETENCE_EVALUATION_TYPE_POINT:
             $options += array_combine($r = range(1, block_exastud_get_competence_eval_typeevalpoints_limit()), $r);

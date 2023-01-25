@@ -2717,7 +2717,6 @@ class printer {
                 }
                 break;
         }
-
         // header of table
         $templateProcessor->duplicateCol('kheader', $maxColumns + 1); // +1 = column for average
         $templateProcessor->setValue('kheader', block_exastud_get_string('average'), 1);
