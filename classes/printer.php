@@ -4959,7 +4959,7 @@ class TemplateProcessor extends \PhpOffice\PhpWord\TemplateProcessor {
             $length = strlen($string);
             for ($i=0; $i < $length; $i++)
             {
-                $current = ord($string{$i});
+                $current = ord($string[$i]);
                 if (($current == 0x9) ||
                         ($current == 0xA) ||
                         ($current == 0xD) ||
