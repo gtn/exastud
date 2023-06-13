@@ -5902,7 +5902,7 @@ function block_exastud_cropStringByInputLimitsFromTemplate($string, $templateid,
     return implode("\r\n", $tempContentRows);
 }
 
-function block_exastud_get_grade_average_value($subjects = array(), $verbal = false, $templateid, $classid, $studentid) {
+function block_exastud_get_grade_average_value($subjects, $verbal, $templateid, $classid, $studentid) {
     $studentData = block_exastud_get_class_student_data($classid, $studentid);
     $avg  = $studentData->grade_average_calculated;
     return $avg;
