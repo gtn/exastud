@@ -3400,20 +3400,24 @@ class printer {
             $subjectsTable->head[] = 'Mitarbeit'; // mitarbeit
         }
 
+						
+						
         foreach ($all_subjects as $subject) {
-            if (count(@$studentsData[$subject->id]) > 0) {
-                $hCell = new \html_table_cell();
-                if (in_array($subject->id, $isGroupedSubjects)) {
-                    $hCell->colspan = 2;
-                    $hCell->text = $groupedSubjectTitles[$subject->id];
-                } else {
-                    $shorttitle = trim($subject->shorttitle_stripped);
-                    $shorttitle = preg_replace('/(^\s+|\s+$|\s+)/', mb_convert_encoding('&#160;', 'UTF-8', 'HTML-ENTITIES'), $shorttitle); // insert &nbsp to table header
-                    $hCell->text = $shorttitle;
-                }
-                $subjectsTable->head[] = $hCell;
-                $subjectsTable->align[] = 'center';
-            }
+			if ($studentsData[$subject->id]){
+				if (count(@$studentsData[$subject->id]) > 0) {
+					$hCell = new \html_table_cell();
+					if (in_array($subject->id, $isGroupedSubjects)) {
+						$hCell->colspan = 2;
+						$hCell->text = $groupedSubjectTitles[$subject->id];
+					} else {
+						$shorttitle = trim($subject->shorttitle_stripped);
+						$shorttitle = preg_replace('/(^\s+|\s+$|\s+)/', mb_convert_encoding('&#160;', 'UTF-8', 'HTML-ENTITIES'), $shorttitle); // insert &nbsp to table header
+						$hCell->text = $shorttitle;
+					}
+					$subjectsTable->head[] = $hCell;
+					$subjectsTable->align[] = 'center';
+				}
+			}
         }
         // average column
         $hCell = new \html_table_cell();
@@ -3434,14 +3438,16 @@ class printer {
                 $cells[] = array_key_exists($student->id, $mitarbeits) ? $mitarbeits[$student->id] : '';
             }
             foreach ($all_subjects as $subject) {
-                if (count(@$studentsData[$subject->id]) > 0) {
-                    if (in_array($subject->id, $isGroupedSubjects)) {
-                        $cells[] = @$studentsData[$subject->id][$student->id];
-                        $cells[] = $subject->shorttitle_stripped;
-                    } else {
-                        $cells[] = @$studentsData[$subject->id][$student->id];
-                    }
-                }
+				if ($studentsData[$subject->id]){
+					if (count(@$studentsData[$subject->id]) > 0) {
+						if (in_array($subject->id, $isGroupedSubjects)) {
+							$cells[] = @$studentsData[$subject->id][$student->id];
+							$cells[] = $subject->shorttitle_stripped;
+						} else {
+							$cells[] = @$studentsData[$subject->id][$student->id];
+						}
+					}
+				}
             }
 //            $templateid = block_exastud_get_student_print_template($class, $student->id)->get_template_id();
             /*if (array_key_exists($student->id, $subjectsForAvg)) {
