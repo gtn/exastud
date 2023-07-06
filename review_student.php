@@ -101,6 +101,19 @@ if ($lastPeriod) {
 		    AND ct.subjectid=?
             AND c.userid=?
 	", [$lastPeriod->id, $studentid, g::$USER->id, $subjectid, $checkClassUser], IGNORE_MULTIPLE);
+    if (!$lastPeriodClass) {
+        // Use more simple query to get previous class. It is possible if we are not found any class for the teacher and owner of the class.
+        $lastPeriodClass = $DB->get_record_sql("
+		SELECT DISTINCT c.id
+            FROM {block_exastudclass} c
+            JOIN {block_exastudclassstudents} cs ON cs.classid=c.id 
+            JOIN {block_exastudclassteachers} ct ON ct.classid=c.id
+		WHERE c.periodid=? 
+		    AND cs.studentid=? 
+		    AND ct.teacherid=? 
+		    AND ct.subjectid=?            
+	", [$lastPeriod->id, $studentid, g::$USER->id, $subjectid], IGNORE_MULTIPLE);
+    }
 } else {
 	$lastPeriodClass = null;
 }
