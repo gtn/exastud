@@ -841,7 +841,7 @@ function block_exastud_get_average_evaluation_by_category($classid, $periodid, $
                 'reviewers' => $avg->reviewers
             ];
     }
-    if ($averageForAllSubjects) {
+    if ($averageForAllSubjects && is_array($average)) {
         return array_shift($average); // TODO: check - must be only one array item
     }
 	return $average;
