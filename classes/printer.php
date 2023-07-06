@@ -2950,7 +2950,7 @@ class printer {
                     switch ($groupkey) {
                         case 'Religion / Ethik': // for religin some another rule
                             if (!empty($toDoc[$groupkey]['shorttitle']) && $toDoc[$groupkey]['shorttitle'] != 'eth') {
-                                continue;
+                                continue 2;
                             } else {
                                 $toDoc[$groupkey]['shorttitle'] = ($value ? $subject->shorttitle_stripped : '');
                                 $toDoc[$groupkey]['value'] = ($value ? $value : '');
@@ -4599,11 +4599,17 @@ class printer {
         global $CFG, $DB;
 
         \PhpOffice\PhpWord\Settings::setTempDir($CFG->tempdir);
-
-        $spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
+        if (file_exists("$CFG->libdir/phpspreadsheet/vendor/autoload.php")) {
+            require_once("$CFG->libdir/phpspreadsheet/vendor/autoload.php");
+        }
+        try {
+            $spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
+        } catch (\Exception $e) {
+            // Moodle/PHP versions issue?
+            // TODO: Maybe phpspreadsheet from Moodle is ok always?
+        }
         $sheet = $spreadsheet->setActiveSheetIndex(0);
         $sheet->getPageSetup()->setOrientation(\PhpOffice\PhpSpreadsheet\Worksheet\PageSetup::ORIENTATION_LANDSCAPE);
-
         $classSubjects = block_exastud_get_class_subjects($class);
 
         $rowStartIndex = 1;
@@ -4837,8 +4843,15 @@ class printer {
 
         $filename = date('d-m-y')."-".'Average'."-".(trim($class->title_forreport) ? $class->title_forreport : $class->title).".xlsx";
         $filename = block_exastud_normalize_filename($filename);
-
-        $writer = \PhpOffice\PhpSpreadsheet\IOFactory::createWriter($spreadsheet, 'Excel2007');
+        
+        try {
+            $writer = \PhpOffice\PhpSpreadsheet\IOFactory::createWriter($spreadsheet, 'Excel2007');
+        } catch (\Exception $e) {
+            // Moodle/PHP versions issue?
+        }
+        if (!$writer) {
+            $writer = \PhpOffice\PhpSpreadsheet\IOFactory::createWriter($spreadsheet, 'Xlsx');
+        }
         $temp_file = tempnam($CFG->tempdir, 'exastud');
         $writer->save($temp_file);
 
@@ -5446,7 +5459,7 @@ class TemplateProcessor extends \PhpOffice\PhpWord\TemplateProcessor {
     }
 
     // Main function to add images to template
-    public function addImageToReport($context, $stringKey, $component="block_exastud", $filearea, $modelid = false, $w = 1024, $h = 768, $fileFromLoggedInUser = false) {
+    public function addImageToReport($context, $stringKey, $component="block_exastud", $filearea = '--', $modelid = false, $w = 1024, $h = 768, $fileFromLoggedInUser = false) {
         global $USER;
         $fs = get_file_storage();
         if (!$context) {
