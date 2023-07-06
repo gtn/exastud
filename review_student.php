@@ -83,14 +83,24 @@ if ($class->periodid != $actPeriod->id) {
 $categories = block_exastud_get_class_categories($classid);
 
 $lastPeriod = block_exastud_get_last_period();
+
 if ($lastPeriod) {
+    $checkClassUser = g::$USER->id;
+    // check real class OWNER, not logged in user
+    if ($class && $checkClassUser != $class->userid) {
+        $checkClassUser = $class->userid;
+    }
 	$lastPeriodClass = $DB->get_record_sql("
 		SELECT DISTINCT c.id
             FROM {block_exastudclass} c
             JOIN {block_exastudclassstudents} cs ON cs.classid=c.id 
             JOIN {block_exastudclassteachers} ct ON ct.classid=c.id
-		WHERE c.periodid=? AND cs.studentid=? AND ct.teacherid=? AND ct.subjectid=?
-	", [$lastPeriod->id, $studentid, g::$USER->id, $subjectid], IGNORE_MULTIPLE);
+		WHERE c.periodid=? 
+		    AND cs.studentid=? 
+		    AND ct.teacherid=? 
+		    AND ct.subjectid=?
+            AND c.userid=?
+	", [$lastPeriod->id, $studentid, g::$USER->id, $subjectid, $checkClassUser], IGNORE_MULTIPLE);
 } else {
 	$lastPeriodClass = null;
 }
