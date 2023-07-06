@@ -3582,7 +3582,15 @@ class printer {
 
 		\PhpOffice\PhpWord\Settings::setTempDir($CFG->tempdir);
 
-		$spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
+        if (file_exists("$CFG->libdir/phpspreadsheet/vendor/autoload.php")) {
+            require_once("$CFG->libdir/phpspreadsheet/vendor/autoload.php");
+        }
+        try {
+            $spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
+        } catch (\Exception $e) {
+            // Moodle/PHP versions issue?
+            // TODO: Maybe phpspreadsheet from Moodle is ok always?
+        }
 		$sheet = $spreadsheet->setActiveSheetIndex(0);
 
 		$class_subjects = block_exastud_get_bildungsplan_subjects($class->bpid);
@@ -3700,7 +3708,14 @@ class printer {
 
 		$filename = date('Y-m-d')."-".'Notenuebersicht'."-".(trim($class->title_forreport) ? $class->title_forreport : $class->title).".xlsx";
 
-		$writer = \PhpOffice\PhpSpreadsheet\IOFactory::createWriter($spreadsheet, 'Excel2007');
+        try {
+            $writer = \PhpOffice\PhpSpreadsheet\IOFactory::createWriter($spreadsheet, 'Excel2007');
+        } catch (\Exception $e) {
+            // Moodle/PHP versions issue?
+        }
+        if (!$writer) {
+            $writer = \PhpOffice\PhpSpreadsheet\IOFactory::createWriter($spreadsheet, 'Xlsx');
+        }
 		$temp_file = tempnam($CFG->tempdir, 'exastud');
 		$writer->save($temp_file);
 
@@ -4383,7 +4398,15 @@ class printer {
 
         \PhpOffice\PhpWord\Settings::setTempDir($CFG->tempdir);
 
-        $spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
+        if (file_exists("$CFG->libdir/phpspreadsheet/vendor/autoload.php")) {
+            require_once("$CFG->libdir/phpspreadsheet/vendor/autoload.php");
+        }
+        try {
+            $spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
+        } catch (\Exception $e) {
+            // Moodle/PHP versions issue?
+            // TODO: Maybe phpspreadsheet from Moodle is ok always?
+        }
         $sheet = $spreadsheet->setActiveSheetIndex(0);
 
         $template = block_exastud_get_student_print_template($class, $studentid);
@@ -4585,7 +4608,14 @@ class printer {
         $filename = date('d.m.Y').'-'.trim($template->get_bp_title()).' '.trim($class->title).'-'.fullname($student).'.xlsx';
         $filename = block_exastud_normalize_filename($filename);
 
-        $writer = \PhpOffice\PhpSpreadsheet\IOFactory::createWriter($spreadsheet, 'Excel2007');
+        try {
+            $writer = \PhpOffice\PhpSpreadsheet\IOFactory::createWriter($spreadsheet, 'Excel2007');
+        } catch (\Exception $e) {
+            // Moodle/PHP versions issue?
+        }
+        if (!$writer) {
+            $writer = \PhpOffice\PhpSpreadsheet\IOFactory::createWriter($spreadsheet, 'Xlsx');
+        }
         $temp_file = tempnam($CFG->tempdir, 'exastud');
         $writer->save($temp_file);
 
