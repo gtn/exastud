@@ -1309,7 +1309,7 @@ class reportsettings_edit_form extends moodleform {
         $additional_params_tmp = unserialize($data->additional_params);
         if (!block_exastud_is_bw_active() && $data->params_sorting) {
             $sorting = unserialize($data->params_sorting);
-            if (count($sorting) > 0) {
+            if (is_array($sorting) && is_array($additional_params_tmp) && count($sorting) > 0) {
                 $additional_params_tmp = array_merge(array_flip($sorting), $additional_params_tmp);
             }
         }
