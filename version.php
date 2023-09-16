@@ -22,6 +22,6 @@ defined('MOODLE_INTERNAL') || die();
 $plugin->component = 'block_exastud';
 
 $plugin->release  = "4.6.6";
-$plugin->version   = 2023091600;
+$plugin->version   = 2023091601;
 $plugin->requires  = 2021051700; // moodle 3.11
 $plugin->maturity = MATURITY_STABLE;
