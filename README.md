@@ -8,7 +8,7 @@ Advantage of using all three modules together is that learner driven learning pa
 
 # INSTALLATION
 
-This block is for Moodle 2.9 to 3.4 versions, it will not work for versions below 2015051100
+This block is for Moodle 3.11 to 4.1 versions, it will not work for versions below 2021051700
 
 Download the plugin from Moodle Plug-ins Repository. Please follow the instructions available in the Moodle Plug-ins Repository.
 
