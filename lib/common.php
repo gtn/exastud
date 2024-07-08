@@ -144,8 +144,15 @@ namespace block_exastud\common {
 			}
 		}
 
-		public function addChild(string $name, ?string $value = null, ?string $namespace = null): ?\SimpleXMLElement {
-			if ($name instanceof SimpleXMLElement) {
+        /**
+         * Info: don't add parameter types in the overridden addChild-Method, this ensures compatibility with php7.4!
+         * @param \SimpleXMLElement|string $name
+         * @param string|null $value
+         * @param string|null $namespace
+         * @return \SimpleXMLElement|null
+         */
+        public function addChild($name, $value = null, $namespace = null): ?\SimpleXMLElement {
+			if ($name instanceof \SimpleXMLElement) {
 				$newNode = $name;
 				$node = dom_import_simplexml($this);
 				$newNode = $node->ownerDocument->importNode(dom_import_simplexml($newNode), true);
