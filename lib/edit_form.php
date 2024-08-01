@@ -1809,7 +1809,7 @@ class change_subject_teacher_form extends moodleform {
         $userfieldsapi = \core_user\fields::for_name();
         $allusernames = $userfieldsapi->get_sql()->selects;
 
-        $teachers = $DB->get_records_sql('SELECT id, firstname, lastname, email, ' . $allusernames . '
+        $teachers = $DB->get_records_sql('SELECT id, firstname, lastname, email ' . $allusernames . '
 									FROM {user}
 									WHERE ' . $select . '
 									    AND deleted = 0
