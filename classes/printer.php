@@ -2717,7 +2717,6 @@ class printer {
                 }
                 break;
         }
-
         // header of table
         $templateProcessor->duplicateCol('kheader', $maxColumns + 1); // +1 = column for average
         $templateProcessor->setValue('kheader', block_exastud_get_string('average'), 1);
@@ -2951,7 +2950,7 @@ class printer {
                     switch ($groupkey) {
                         case 'Religion / Ethik': // for religin some another rule
                             if (!empty($toDoc[$groupkey]['shorttitle']) && $toDoc[$groupkey]['shorttitle'] != 'eth') {
-                                continue;
+                                continue 2;
                             } else {
                                 $toDoc[$groupkey]['shorttitle'] = ($value ? $subject->shorttitle_stripped : '');
                                 $toDoc[$groupkey]['value'] = ($value ? $value : '');
@@ -3401,20 +3400,24 @@ class printer {
             $subjectsTable->head[] = 'Mitarbeit'; // mitarbeit
         }
 
+						
+						
         foreach ($all_subjects as $subject) {
-            if (count(@$studentsData[$subject->id]) > 0) {
-                $hCell = new \html_table_cell();
-                if (in_array($subject->id, $isGroupedSubjects)) {
-                    $hCell->colspan = 2;
-                    $hCell->text = $groupedSubjectTitles[$subject->id];
-                } else {
-                    $shorttitle = trim($subject->shorttitle_stripped);
-                    $shorttitle = preg_replace('/(^\s+|\s+$|\s+)/', mb_convert_encoding('&#160;', 'UTF-8', 'HTML-ENTITIES'), $shorttitle); // insert &nbsp to table header
-                    $hCell->text = $shorttitle;
-                }
-                $subjectsTable->head[] = $hCell;
-                $subjectsTable->align[] = 'center';
-            }
+			if ($studentsData[$subject->id]){
+				if (count(@$studentsData[$subject->id]) > 0) {
+					$hCell = new \html_table_cell();
+					if (in_array($subject->id, $isGroupedSubjects)) {
+						$hCell->colspan = 2;
+						$hCell->text = $groupedSubjectTitles[$subject->id];
+					} else {
+						$shorttitle = trim($subject->shorttitle_stripped);
+						$shorttitle = preg_replace('/(^\s+|\s+$|\s+)/', mb_convert_encoding('&#160;', 'UTF-8', 'HTML-ENTITIES'), $shorttitle); // insert &nbsp to table header
+						$hCell->text = $shorttitle;
+					}
+					$subjectsTable->head[] = $hCell;
+					$subjectsTable->align[] = 'center';
+				}
+			}
         }
         // average column
         $hCell = new \html_table_cell();
@@ -3435,14 +3438,16 @@ class printer {
                 $cells[] = array_key_exists($student->id, $mitarbeits) ? $mitarbeits[$student->id] : '';
             }
             foreach ($all_subjects as $subject) {
-                if (count(@$studentsData[$subject->id]) > 0) {
-                    if (in_array($subject->id, $isGroupedSubjects)) {
-                        $cells[] = @$studentsData[$subject->id][$student->id];
-                        $cells[] = $subject->shorttitle_stripped;
-                    } else {
-                        $cells[] = @$studentsData[$subject->id][$student->id];
-                    }
-                }
+				if ($studentsData[$subject->id]){
+					if (count(@$studentsData[$subject->id]) > 0) {
+						if (in_array($subject->id, $isGroupedSubjects)) {
+							$cells[] = @$studentsData[$subject->id][$student->id];
+							$cells[] = $subject->shorttitle_stripped;
+						} else {
+							$cells[] = @$studentsData[$subject->id][$student->id];
+						}
+					}
+				}
             }
 //            $templateid = block_exastud_get_student_print_template($class, $student->id)->get_template_id();
             /*if (array_key_exists($student->id, $subjectsForAvg)) {
@@ -3577,7 +3582,15 @@ class printer {
 
 		\PhpOffice\PhpWord\Settings::setTempDir($CFG->tempdir);
 
-		$spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
+        if (file_exists("$CFG->libdir/phpspreadsheet/vendor/autoload.php")) {
+            require_once("$CFG->libdir/phpspreadsheet/vendor/autoload.php");
+        }
+        try {
+            $spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
+        } catch (\Exception $e) {
+            // Moodle/PHP versions issue?
+            // TODO: Maybe phpspreadsheet from Moodle is ok always?
+        }
 		$sheet = $spreadsheet->setActiveSheetIndex(0);
 
 		$class_subjects = block_exastud_get_bildungsplan_subjects($class->bpid);
@@ -3695,7 +3708,14 @@ class printer {
 
 		$filename = date('Y-m-d')."-".'Notenuebersicht'."-".(trim($class->title_forreport) ? $class->title_forreport : $class->title).".xlsx";
 
-		$writer = \PhpOffice\PhpSpreadsheet\IOFactory::createWriter($spreadsheet, 'Excel2007');
+        try {
+            $writer = \PhpOffice\PhpSpreadsheet\IOFactory::createWriter($spreadsheet, 'Excel2007');
+        } catch (\Exception $e) {
+            // Moodle/PHP versions issue?
+        }
+        if (!$writer) {
+            $writer = \PhpOffice\PhpSpreadsheet\IOFactory::createWriter($spreadsheet, 'Xlsx');
+        }
 		$temp_file = tempnam($CFG->tempdir, 'exastud');
 		$writer->save($temp_file);
 
@@ -4378,7 +4398,15 @@ class printer {
 
         \PhpOffice\PhpWord\Settings::setTempDir($CFG->tempdir);
 
-        $spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
+        if (file_exists("$CFG->libdir/phpspreadsheet/vendor/autoload.php")) {
+            require_once("$CFG->libdir/phpspreadsheet/vendor/autoload.php");
+        }
+        try {
+            $spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
+        } catch (\Exception $e) {
+            // Moodle/PHP versions issue?
+            // TODO: Maybe phpspreadsheet from Moodle is ok always?
+        }
         $sheet = $spreadsheet->setActiveSheetIndex(0);
 
         $template = block_exastud_get_student_print_template($class, $studentid);
@@ -4580,7 +4608,14 @@ class printer {
         $filename = date('d.m.Y').'-'.trim($template->get_bp_title()).' '.trim($class->title).'-'.fullname($student).'.xlsx';
         $filename = block_exastud_normalize_filename($filename);
 
-        $writer = \PhpOffice\PhpSpreadsheet\IOFactory::createWriter($spreadsheet, 'Excel2007');
+        try {
+            $writer = \PhpOffice\PhpSpreadsheet\IOFactory::createWriter($spreadsheet, 'Excel2007');
+        } catch (\Exception $e) {
+            // Moodle/PHP versions issue?
+        }
+        if (!$writer) {
+            $writer = \PhpOffice\PhpSpreadsheet\IOFactory::createWriter($spreadsheet, 'Xlsx');
+        }
         $temp_file = tempnam($CFG->tempdir, 'exastud');
         $writer->save($temp_file);
 
@@ -4594,11 +4629,17 @@ class printer {
         global $CFG, $DB;
 
         \PhpOffice\PhpWord\Settings::setTempDir($CFG->tempdir);
-
-        $spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
+        if (file_exists("$CFG->libdir/phpspreadsheet/vendor/autoload.php")) {
+            require_once("$CFG->libdir/phpspreadsheet/vendor/autoload.php");
+        }
+        try {
+            $spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
+        } catch (\Exception $e) {
+            // Moodle/PHP versions issue?
+            // TODO: Maybe phpspreadsheet from Moodle is ok always?
+        }
         $sheet = $spreadsheet->setActiveSheetIndex(0);
         $sheet->getPageSetup()->setOrientation(\PhpOffice\PhpSpreadsheet\Worksheet\PageSetup::ORIENTATION_LANDSCAPE);
-
         $classSubjects = block_exastud_get_class_subjects($class);
 
         $rowStartIndex = 1;
@@ -4832,8 +4873,15 @@ class printer {
 
         $filename = date('d-m-y')."-".'Average'."-".(trim($class->title_forreport) ? $class->title_forreport : $class->title).".xlsx";
         $filename = block_exastud_normalize_filename($filename);
-
-        $writer = \PhpOffice\PhpSpreadsheet\IOFactory::createWriter($spreadsheet, 'Excel2007');
+        
+        try {
+            $writer = \PhpOffice\PhpSpreadsheet\IOFactory::createWriter($spreadsheet, 'Excel2007');
+        } catch (\Exception $e) {
+            // Moodle/PHP versions issue?
+        }
+        if (!$writer) {
+            $writer = \PhpOffice\PhpSpreadsheet\IOFactory::createWriter($spreadsheet, 'Xlsx');
+        }
         $temp_file = tempnam($CFG->tempdir, 'exastud');
         $writer->save($temp_file);
 
@@ -4960,7 +5008,7 @@ class TemplateProcessor extends \PhpOffice\PhpWord\TemplateProcessor {
             $length = strlen($string);
             for ($i=0; $i < $length; $i++)
             {
-                $current = ord($string{$i});
+                $current = ord($string[$i]);
                 if (($current == 0x9) ||
                         ($current == 0xA) ||
                         ($current == 0xD) ||
@@ -5441,7 +5489,7 @@ class TemplateProcessor extends \PhpOffice\PhpWord\TemplateProcessor {
     }
 
     // Main function to add images to template
-    public function addImageToReport($context, $stringKey, $component="block_exastud", $filearea, $modelid = false, $w = 1024, $h = 768, $fileFromLoggedInUser = false) {
+    public function addImageToReport($context, $stringKey, $component="block_exastud", $filearea = '--', $modelid = false, $w = 1024, $h = 768, $fileFromLoggedInUser = false) {
         global $USER;
         $fs = get_file_storage();
         if (!$context) {

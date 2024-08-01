@@ -109,30 +109,33 @@ if ($frm = data_submitted()) {
 	}
 }
 
-$select  = "username <> 'guest' AND deleted = 0 AND confirmed = 1";
+$select  = " username <> 'guest' AND deleted = 0 AND confirmed = 1 ";
 	
 if ($searchtext !== '') {   // Search for a subset of remaining users
-	//$LIKE	  = $DB->sql_ilike();
-		$LIKE	  = "LIKE";
-	$FULLNAME  = $DB->sql_fullname();
-
-	$selectsql = " AND ($FULLNAME $LIKE '%$searchtext%' OR email $LIKE '%$searchtext%') ";
-	$select  .= $selectsql;
+    $FULLNAME  = $DB->sql_fullname();
+    $selectsql = " AND ( ".$DB->sql_like($FULLNAME, ':fname_search', false)." OR ".$DB->sql_like('email', ':email_search', false).") ";
+    $sqlparams['fname_search'] = '%'.$DB->sql_like_escape($searchtext).'%';
+    $sqlparams['fname_search_begin'] = '%'.$DB->sql_like_escape($searchtext).'%';
+    $sqlparams['email_search'] = '%'.$DB->sql_like_escape($searchtext).'%';
+    $sqlparams['email_search_begin'] = '%'.$DB->sql_like_escape($searchtext).'%';
+    $select .= str_replace(['fname_search', 'email_search'], ['fname_search_begin', 'email_search_begin'], $selectsql);
+    //$select .= $selectsql;
 } else { 
 	$selectsql = ""; 
 }
 
-$availableusers = $DB->get_records_sql('SELECT id, firstname, lastname, email, '.get_all_user_name_fields(true).'
+$availableusers = $DB->get_records_sql("SELECT id, firstname, lastname, email, ".get_all_user_name_fields(true)."
 									FROM {user}
-									WHERE '.$select.'
+									WHERE ".$select."
 									AND deleted = 0
-									-- disabled, allow teacher to be assign more than once (eg. 2 different subjects)
-									-- AND id NOT IN (
-									--		 SELECT teacherid
-									--		 FROM {block_exastudclassteachers}
-									--			   WHERE classid = '.$class->id.'
-									--			   '.$selectsql.')
-									 ORDER BY lastname ASC, firstname ASC');
+									# disabled, allow teacher to be assign more than once (eg. 2 different subjects)
+									# AND id NOT IN (
+									#		 SELECT teacherid
+									#		 FROM {block_exastudclassteachers}
+									#			   WHERE classid = ".$class->id."
+									#			   ".$selectsql.")
+									 ORDER BY lastname ASC, firstname ASC",
+                                $sqlparams);
 
 $classstudents = block_exastud_get_class_teachers($class->id);
 

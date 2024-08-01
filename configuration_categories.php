@@ -148,16 +148,16 @@ if ($frm = data_submitted()) {
 
 function get_availablecategories($searchtext, $class = 0, $notInClass = true) {
     global $DB;
+    $params = [];
     if ($searchtext !== '') {   // Search for a subset of remaining users
-        //$LIKE	  = $DB->sql_ilike();
-        $LIKE = "LIKE";
-        $selectsql = " AND (title $LIKE '%$searchtext%') ";
-        $selectsql_begin = " (title $LIKE '%$searchtext%') ";
+        $selectsql = " AND (".$DB->sql_like('title', ':searchtext', false).") ";
+        $selectsql_begin = " (".$DB->sql_like('title', ':searchtext_begin', false).") ";
+        $params['searchtext'] = '%'.$DB->sql_like_escape($searchtext).'%';
+        $params['searchtext_begin'] = '%'.$DB->sql_like_escape($searchtext).'%';
     } else {
         $selectsql = "";
         $selectsql_begin = "";
     }
-
     $sql = 'SELECT id, title FROM {block_exastudcate} ';
     if ($selectsql_begin || ($class && $notInClass)) {
         $sql .= ' WHERE '.$selectsql_begin.' ';
@@ -169,7 +169,7 @@ function get_availablecategories($searchtext, $class = 0, $notInClass = true) {
                                 '.$selectsql.')';
         }
     };
-    $availablecategories = $DB->get_records_sql($sql);
+    $availablecategories = $DB->get_records_sql($sql, $params);
     foreach ($availablecategories as $availablecategory) {
         $availablecategory->source = 'exastud';
         $availablecategory->subject_title = block_exastud_get_string('basiccategories');
@@ -189,7 +189,7 @@ function get_availablecategories($searchtext, $class = 0, $notInClass = true) {
                             AND subjid = '.$subject->id.' AND source='.$subject->source;
                 }
             }
-            $availabletopics = $DB->get_records_sql($sql);
+            $availabletopics = $DB->get_records_sql($sql, $params);
             foreach ($availabletopics as $topic) {
                 $topic->source = 'exacomp';
                 $topic->subject_title = $subject->title;
