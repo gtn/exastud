@@ -110,7 +110,8 @@ if ($frm = data_submitted()) {
 }
 
 $select  = " username <> 'guest' AND deleted = 0 AND confirmed = 1 ";
-	
+
+$sqlparams = [];
 if ($searchtext !== '') {   // Search for a subset of remaining users
     $FULLNAME  = $DB->sql_fullname();
     $selectsql = " AND ( ".$DB->sql_like($FULLNAME, ':fname_search', false)." OR ".$DB->sql_like('email', ':email_search', false).") ";
@@ -120,8 +121,8 @@ if ($searchtext !== '') {   // Search for a subset of remaining users
     $sqlparams['email_search_begin'] = '%'.$DB->sql_like_escape($searchtext).'%';
     $select .= str_replace(['fname_search', 'email_search'], ['fname_search_begin', 'email_search_begin'], $selectsql);
     //$select .= $selectsql;
-} else { 
-	$selectsql = ""; 
+} else {
+	$selectsql = "";
 }
 
 $availableusers = $DB->get_records_sql("SELECT id, firstname, lastname, email, ".get_all_user_name_fields(true)."
