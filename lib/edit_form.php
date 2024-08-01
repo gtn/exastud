@@ -526,7 +526,7 @@ class student_edit_form extends moodleform {
 }
 
 class student_other_data_form extends moodleform {
-    
+
     private $list_matrix_checkboxes = array(); // for html changes
 
     public function __construct($action = null, $customdata = null, $method = 'post', $target = '', $attributes = null,
@@ -818,7 +818,7 @@ class student_other_data_form extends moodleform {
             $previousDataid = $dataid;
             $previousType = $input['type'];
         };
-        
+
         // grouping by header/body/footer
         // fixed list of inputs are in the header/footer. other list is in the body
         $pageParts = array (
@@ -1568,7 +1568,7 @@ class reportsettings_edit_form extends moodleform {
             if ($i !== null) {
                 $arr = '['.$i.']';
             }
-            
+
             // main params (title, key)
             $main_settings = $mform->getElement($field.'_mainparams'.$arr);
             $main_settings->_attributes['class'] = 'exastud-template-settings-group group-'.$field.' main-params';
@@ -1806,7 +1806,10 @@ class change_subject_teacher_form extends moodleform {
         $select  = " username <> 'guest' AND deleted = 0 AND confirmed = 1 ";
         $selectsql = "";
 
-        $teachers = $DB->get_records_sql('SELECT id, firstname, lastname, email, '.get_all_user_name_fields(true).'
+        $userfieldsapi = \core_user\fields::for_name();
+        $allusernames = $userfieldsapi->get_sql()->selects;
+
+        $teachers = $DB->get_records_sql('SELECT id, firstname, lastname, email, '.$allusernames.'
 									FROM {user}
 									WHERE '.$select.'
 									    AND deleted = 0							

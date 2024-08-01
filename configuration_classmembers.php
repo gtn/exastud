@@ -49,12 +49,12 @@ if ($frm = data_submitted()) {
 			if (!$adduser = clean_param($adduser, PARAM_INT)) {
 				continue;
 			}
-			
+
 			$newuser = new stdClass();
 			$newuser->studentid = $adduser;
 			$newuser->classid = $class->id;
 			$newuser->timemodified = time();
-			
+
 			$DB->insert_record('block_exastudclassstudents', $newuser);
             $userData = $DB->get_record('user', ['id' => $newuser->studentid, 'deleted' => 0]);
             \block_exastud\event\classmember_assigned::log(['objectid' => $newuser->classid,
@@ -72,7 +72,7 @@ if ($frm = data_submitted()) {
 			// need for getting student id
             $relation = $DB->get_record('block_exastudclassstudents', ['id' => $record_id]);
 			$unassigneduserid = $relation->studentid;
-			
+
 			$DB->delete_records('block_exastudclassstudents', array('id'=>$record_id, 'classid'=>$class->id));
 
             $userData = $DB->get_record('user', ['id' => $unassigneduserid, 'deleted' => 0]);
@@ -99,20 +99,23 @@ if ($searchtext !== '') {   // Search for a subset of remaining users
     $sqlparams['email_search'] = '%'.$DB->sql_like_escape($searchtext).'%';
     $sqlparams['email_search_begin'] = '%'.$DB->sql_like_escape($searchtext).'%';
 	$select .= str_replace(['fname_search', 'email_search'], ['fname_search_begin', 'email_search_begin'], $selectsql);
-} else { 
-	$selectsql = ""; 
+} else {
+	$selectsql = "";
 }
 
-$availableusers = $DB->get_records_sql('SELECT id, firstname, lastname, email, '.get_all_user_name_fields(true).'
+$userfieldsapi = \core_user\fields::for_name();
+$allusernames = $userfieldsapi->get_sql()->selects;
+
+$availableusers = $DB->get_records_sql("SELECT id, firstname, lastname, email $allusernames
 									 FROM {user}
-									 WHERE '.$select.'
+									 WHERE $select
 									 AND deleted = 0
 									 AND id NOT IN (
 											 SELECT studentid
 											 FROM {block_exastudclassstudents}
-												   WHERE classid = '.$class->id.'
-												   '.$selectsql.')
-									 ORDER BY lastname ASC, firstname ASC',
+												   WHERE classid = ".$class->id."
+												   ".$selectsql.")
+									 ORDER BY lastname ASC, firstname ASC",
                                     $sqlparams);
 
 $classstudents = block_exastud_get_class_students($class->id);
@@ -121,7 +124,7 @@ echo $OUTPUT->box_start();
 $userlistType = 'students';
 require __DIR__.'/lib/configuration_userlist.inc.php';
 echo $OUTPUT->box_end();
-	
+
 echo $output->back_button($CFG->wwwroot . '/blocks/exastud/configuration_class.php?courseid='.$courseid.'&classid='.$class->id.'&type=students');
 
 echo $output->footer();

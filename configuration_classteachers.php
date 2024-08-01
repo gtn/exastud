@@ -125,9 +125,12 @@ if ($searchtext !== '') {   // Search for a subset of remaining users
 	$selectsql = "";
 }
 
-$availableusers = $DB->get_records_sql("SELECT id, firstname, lastname, email, ".get_all_user_name_fields(true)."
+$userfieldsapi = \core_user\fields::for_name();
+$allusernames = $userfieldsapi->get_sql()->selects;
+
+$availableusers = $DB->get_records_sql("SELECT id, firstname, lastname, email $allusernames
 									FROM {user}
-									WHERE ".$select."
+									WHERE $select
 									AND deleted = 0
 									# disabled, allow teacher to be assign more than once (eg. 2 different subjects)
 									# AND id NOT IN (
