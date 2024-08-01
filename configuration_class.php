@@ -316,7 +316,7 @@ switch ($type) {
                 block_exastud_get_string('editclassmemberlist'), ['class' => 'btn btn-default']);
         $buttons_left .= $output->link_button($CFG->wwwroot.'/blocks/exastud/configuration_classmembers_courses.php?courseid='.
                 $courseid.'&classid='.$class->id,
-                block_exastud_trans(['de:Aus Kurs hinzufügen', 'en:Add from Course']), ['class' => 'btn btn-default']);
+                block_exastud_get_string('add_class_from_course'), ['class' => 'btn btn-default']);
 
         if (!$classstudents) {
             echo $OUTPUT->notification(block_exastud_get_string('no_entries_found'), 'notifymessage');
@@ -331,9 +331,9 @@ switch ($type) {
                     '#',
                     block_exastud_get_string('lastname'),
                     block_exastud_get_string('firstname'),
-                    block_exastud_trans('de:Geschlecht'),
-                    block_exastud_trans('de:Geburtsdatum'),
-                    block_exastud_trans('de:Geburtsort'),
+                    block_exastud_get_string('gender'),
+                    block_exastud_get_string('report_settings_setting_dateofbirth'),
+                    block_exastud_get_string('report_settings_setting_placeofbirth'),
             ];
 
             $i = 0;
@@ -433,7 +433,7 @@ switch ($type) {
                     '#',
                     block_exastud_get_string('lastname'),
                     block_exastud_get_string('firstname'),
-                    block_exastud_trans('de:Zeugnisformular'),
+                    block_exastud_get_string('report_column_template'),
             ];
             if (block_exastud_is_bw_active()) {
                 $table->head = array_merge($table->head, [
@@ -443,7 +443,7 @@ switch ($type) {
                 ]);
             }
             $table->head = array_merge($table->head, [
-                    block_exastud_trans('de:Ausgeschieden').$selectall,
+                block_exastud_get_string('report_column_enddate').$selectall,
                     ]);
 
             $available_templates = \block_exastud\print_templates::get_class_available_print_templates($class);
@@ -536,7 +536,7 @@ switch ($type) {
         $table = new html_table();
 
         $table->head = array(
-                block_exastud_trans('de:Fachbezeichnung'),
+                block_exastud_get_string('Subjects'),
                 block_exastud_get_string('lastname'),
                 block_exastud_get_string('firstname'),
         );
@@ -549,7 +549,7 @@ switch ($type) {
         if ($additional_head_teachers) {
             foreach ($additional_head_teachers as $classteacher) {
                 $table->data[] = [
-                        $classteacher->subject_title ?: block_exastud_trans('de:nicht zugeordnet'),
+                        $classteacher->subject_title ?: block_exastud_get_string('not_assigned'),
                         $classteacher->lastname,
                         $classteacher->firstname,
                 ];
@@ -592,7 +592,7 @@ switch ($type) {
                             array('title' => block_exastud_get_string('subjectteacher_change_button'))),
                     'exastud-buttons');
             $subjectCell = new html_table_cell();
-            $subjectCell->text = $classteacher->subject_title ?: block_exastud_trans('de:nicht zugeordnet');
+            $subjectCell->text = $classteacher->subject_title ?: block_exastud_get_string('not_assigned');
             $subjectCell->attributes['data-subjectid'] = $classteacher->subjectid;
             $table->data[] = [
                     $subjectCell,
@@ -708,7 +708,7 @@ switch ($type) {
                         @$userdata->{BLOCK_EXASTUD_DATA_ID_PROJECT_TEACHER}, block_exastud_get_string('not_selected'), ['class' => 'projectteacherslist']);
             } else {
                 $template = block_exastud_get_student_print_template($class, $classstudent->id);
-                $row[] = block_exastud_trans(['de:Projektprüfung für Formular \'{$a}\' nicht verfügbar'], $template->get_name());
+                $row[] = block_exastud_get_string('no_project_examination_for_project', null, $template->get_name());
             }
 
             // bilinguales
@@ -733,7 +733,7 @@ switch ($type) {
         echo '</form>';
 
         if ($showUnlock) {
-            echo $output->heading2(block_exastud_trans(['de:Bewertung erneut freigeben', 'en:Allow reviewing this class']));
+            echo $output->heading2(block_exastud_get_string('allow_reviewing'));
 
             echo $notification;
 

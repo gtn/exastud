@@ -110,7 +110,7 @@ echo html_writer::select(array_map(function($c) {
 echo '</div>';
 
 if (!$users) {
-	echo '<div>'.block_exastud_trans(['de:Keine anderen Benutzer gefunden', 'en:No other users found']).'</div>';
+	echo '<div>'.block_exastud_get_string('no_other_users_found').'</div>';
 } else {
 
 	echo '<form method="post">';

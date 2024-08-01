@@ -72,10 +72,10 @@ switch ($type) {
     case BLOCK_EXASTUD_DATA_ID_CERTIFICATE:
             $categories = [
                     BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_16_ZERTIFIKAT_FUER_PROFILFACH => [
-                    'title' => block_exastud_trans('de:Zertifikat für Profilfach'),
+                    'title' => block_exastud_get_string('report_for_subjects'),
                 ],
             ];
-            $classheader = $reviewclass->title.' - '.block_exastud_trans('de:Zertifikat für Profilfach');
+            $classheader = $reviewclass->title.' - '.block_exastud_get_string('report_for_subjects');
             break;
     case BLOCK_EXASTUD_DATA_ID_BILINGUALES:
             $categories = [
@@ -199,7 +199,7 @@ foreach ($classstudents as $classstudent) {
             if (!block_exastud_is_bilingual_teacher($class->id, null, $classstudent->id, $templateid)) {
                 $editBilingualUser = block_exastud_get_bilingual_teacher($classid, $classstudent->id);
                 if ($editBilingualUser) {
-                    $hideReviewButton = block_exastud_trans(['de:Zugeteilt zu {$a}'], fullname($editBilingualUser));
+                    $hideReviewButton = block_exastud_get_string('assigned_to', null, fullname($editBilingualUser));
                 } else {
                     $hideReviewButton = ' ';
                 }
@@ -245,10 +245,10 @@ foreach ($classstudents as $classstudent) {
                             array('class' => 'btn btn-default'));
         } else {
             if ($editUser->id != $USER->id) {
-                $row->cells[] = block_exastud_trans(['de:Zugeteilt zu {$a}'], fullname($editUser));
+                $row->cells[] = block_exastud_get_string('assigned_to', null, fullname($editUser));
             } else if (!$hasInputs) {
                 // no categories, or it's a default printtemplate with no inputs
-                $row->cells[] = block_exastud_trans(['de:Dieses Formular hat keine weiteren Eingabfelder'], fullname($editUser));
+                $row->cells[] = block_exastud_get_string('template_with_no_inputs');
             } /*else if ($type == BLOCK_EXASTUD_DATA_ID_BILINGUALES) {
                 if (block_exastud_is_bilingual_teacher($class->id, null, $classstudent->id, $templateid)) {
                     $row->cells[] = $output->link_button($CFG->wwwroot.'/blocks/exastud/review_student_other_data.php?courseid='.$courseid.'&classid='.$classid.'&type='.$type.'&studentid='.$classstudent->id.'&templateid='.$templateid,

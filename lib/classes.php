@@ -297,7 +297,7 @@ class print_templates {
 				'grades' => $grades_1_bis_6,
 				'inputs' => [
 					'comments' => [
-						'title' => block_exastud_trans('de:Bemerkungen'),
+						'title' => block_exastud_get_string('report_settings_setting_comments'),
 						'type' => 'textarea',
 					],
 				],
@@ -308,7 +308,7 @@ class print_templates {
 				'grades' => $grades_mit_plus_minus_bis,
 				'inputs' => [
 					'comments' => [
-						'title' => block_exastud_trans('de:Bemerkungen'),
+						'title' => block_exastud_get_string('report_settings_setting_comments'),
 						'type' => 'textarea',
 					],
 				],
@@ -319,7 +319,7 @@ class print_templates {
 				'grades' => $grades_1_bis_6,
 				'inputs' => [
 					'comments' => [
-						'title' => block_exastud_trans('de:Bemerkungen'),
+						'title' => block_exastud_get_string('report_settings_setting_comments'),
 						'type' => 'textarea',
 					],
 				],
@@ -330,7 +330,7 @@ class print_templates {
 				'grades' => $grades_mit_plus_minus_bis,
 				'inputs' => [
 					'comments' => [
-						'title' => block_exastud_trans('de:Bemerkungen'),
+						'title' => block_exastud_get_string('report_settings_setting_comments'),
 						'type' => 'textarea',
 					],
 				],
@@ -341,7 +341,7 @@ class print_templates {
 				'grades' => $grades_1_bis_6,
 				'inputs' => [
 					'comments' => [
-						'title' => block_exastud_trans('de:Bemerkungen'),
+						'title' => block_exastud_get_string('report_settings_setting_comments'),
 						'type' => 'textarea',
 					],
 				],
@@ -673,6 +673,7 @@ class print_templates {
         } else {
             $notpossibledefaulttemplates = block_exastud_get_default_templates(null, false);
         }
+
         $notpossibledefaulttemplatesids = array_map(function($r) {return $r['id'];}, $notpossibledefaulttemplates);
 
 		if (block_exastud_is_bw_active() /*&& !block_exastud_get_only_learnsociale_reports()*/) {

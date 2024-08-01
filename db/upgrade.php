@@ -261,7 +261,7 @@ function xmldb_block_exastud_upgrade($oldversion = 0) {
 		}
 
 		if (!$DB->get_record('block_exastudbp', ['id' => 1])) {
-			$DB->execute("INSERT INTO {block_exastudbp} (id, title, sorting) VALUES (1, ?, 1)", [block_exastud_trans('de:Alte Fächer')]);
+			$DB->execute("INSERT INTO {block_exastudbp} (id, title, sorting) VALUES (1, ?, 1)", [block_exastud_get_string('old_subjects')]);
 		}
 
 		$DB->execute("UPDATE {block_exastudsubjects} SET bpid=1 WHERE bpid=0");

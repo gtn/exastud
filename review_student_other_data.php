@@ -219,7 +219,7 @@ $is_classTeacher = block_exastud_is_class_teacher($classid, $USER->id);
 $canEditCrossCompetences = false;
 if (!block_exastud_is_bw_active()
         && $type == BLOCK_EXASTUD_DATA_ID_CROSS_COMPETENCES
-        && $is_classTeacher
+        && ($is_classTeacher || $class->userid == $USER->id)
         && block_exastud_can_edit_crosscompetences_classteacher($classid)) {
     $canEditCrossCompetences = true;
 }
@@ -228,6 +228,7 @@ if ($canEditCrossCompetences) {
     $cross_review = true;
     $cross_categories = block_exastud_get_class_categories($classid);
 }
+
 $studentform = new student_other_data_form($PAGE->url, [
 	'categories' => $categories,
 	'templateid' => $template->get_template_id(),
@@ -570,7 +571,7 @@ if ($type == BLOCK_EXASTUD_DATA_ID_CROSS_COMPETENCES
     	 		}
        }
     } else {
-        echo block_exastud_trans('de:Keine Vorschläge gefunden');
+        echo block_exastud_get_string('No_suggestions');
     }
 
 } else {

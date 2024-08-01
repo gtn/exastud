@@ -46,7 +46,7 @@ if ($action == 'copy') {
 	unset($class->id);
 	$class->timemodified = time();
 	$class->periodid = $actPeriod->id;
-	$class->title = block_exastud_trans(['de:Kopie von {$a}', 'en:Copy of {$a}'], $class->title);
+	$class->title = block_exastud_get_string('copy_class_new_title', null, $class->title);
 	$newId = $DB->insert_record('block_exastudclass', $class);
 
 	$DB->execute("INSERT INTO {block_exastudclassstudents} (timemodified, classid, studentid)
@@ -67,7 +67,7 @@ $PAGE->set_url($url);
 
 $output = block_exastud_get_renderer();
 echo $output->header('configuration_classes');
-echo $output->heading(block_exastud_trans(['de:Klasse vom vorigen Eingabezeitraum kopieren', 'en:Copy Class from last Period']));
+echo $output->heading(block_exastud_get_string('copy_class_from_last_period'));
 $table = new html_table();
 
 $table->head = [block_exastud_get_string('class'), ''];
@@ -76,7 +76,7 @@ foreach ($lastPeriodClasses as $class) {
 	$table->data[] = [
 		$class->title,
 		$output->link_button($CFG->wwwroot.'/blocks/exastud/copy_classes.php?courseid='.$courseid.'&action=copy&classid='.$class->id,
-			block_exastud_trans(['de:Klasse kopieren', 'en:Copy Class']),
+			block_exastud_get_string('copy_class'),
             ['class' => 'btn btn-default']),
 	];
 }

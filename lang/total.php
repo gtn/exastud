@@ -66,6 +66,10 @@ return [
 		'Klassenlehrkräfte',
 		'Class teachers',
 	],
+	'head_teachers_description' => [
+		'Können Klassen anlegen, Lehrkräfte und Schüler/innen zubuchen und den Lernentwicklungsbericht abrufen',
+		'Can create classes, assign teachers and students and view the learning development report',
+	],
 	'new_head_teacher' => [
 		'Neue Klassenlehrkraft zuweisen',
 		'New class teachers',
@@ -201,6 +205,10 @@ return [
 	'editclassmemberlist' => [
 		'Schüler/innen bearbeiten',
 		'Edit student list',
+	],
+	'add_class_from_course' => [
+		'Aus Kurs hinzufügen',
+		'Add from Course',
 	],
 	'project_based_editclassmemberlist' => [
 		'Projekte bearbeiten',
@@ -1109,8 +1117,8 @@ return [
 		'Bewertungsskala',
 		'Grading',
 	],
-	'de:Fachbezeichnungen' => [
-		null,
+	'Subjects' => [
+		'Fachbezeichnungen',
 		'Subjects',
 	],
 	'education_plans' => [
@@ -1501,7 +1509,7 @@ return [
     ],
     'backup_description' => [
         'Hier können Sie alle Tabellen des Lernentwicklungsberichts im sql-Format sichern. Das Einspielen der Sicherung führen Sie bitte mit einem Datenbank-Tool wie z.B. phpMyAdmin durch.',
-        'Create a backup of assessment data as an sql file. As an admin you can import this backup using a database tool like phphMyAdmin. Backups on teacher level are possible for their individual data.'
+        'Create a backup of assessment data as an sql file. As an admin you can import this backup using a database tool like phpMyAdmin. Backups on teacher level are possible for their individual data.'
     ],
     'backup_go' => [
         'Datenbank jetzt sichern',
@@ -1733,7 +1741,10 @@ return [
         'Klassenlehrer/-In',
         'Head of class',
     ],
-
+    'classteacher' => [
+        'Klassenlehrer',
+        'Class teacher',
+    ],
     'subjectteacher_change_button' => [
         'neue Lehrkraft zuordnen und Bewertungen übernehmen',
         'Match a new teacher and transmit his grading'
@@ -2125,5 +2136,181 @@ return [
     'reports_certs_and_attachments' => [
         'Zeugnisse und Anlagen',
         'Certificates and attachments'
+    ],
+    'report_screen' => [
+        'Bildschirm',
+        'Screen'
+    ],
+    'report_file' => [
+        'Datei',
+        'File'
+    ],
+    'report_overview_xlsx' => [
+        'Notenübersicht (xlsx)',
+        'Overview of grades (xlsx)'
+    ],
+    'report_overview_docx' => [
+        'Notenübersicht (docx)',
+        'Overview of grades (docx)'
+    ],
+    'report_column_template' => [
+        'Zeugnisformular',
+        'Certificate form',
+    ],
+    'Template' => [
+        'Zeugnis',
+        'Certificate',
+    ],
+    'Template_and_departure' => [
+        'Zeugnis / Abgangszeugnis',
+        'Certificate / Certificate of Departure',
+    ],
+    'report_column_enddate' => [
+        'Ausgeschieden',
+        'Dropped out',
+    ],
+    'not_defined' => [
+        'nicht gewählt',
+        'not defined'
+    ],
+    'No_suggestions' => [
+        'Keine Vorschläge gefunden',
+        'No suggestions found'
+    ],
+    'no_project_examination_for_project' => [
+        'Projektprüfung für Formular \'{$a}\' nicht verfügbar',
+        'Project examination for form \'{$a}\' not available'
+    ],
+    'Subjects' => [
+        'Fachbezeichnung',
+        'Subjects'
+    ],
+    'allow_reviewing' => [
+        'Bewertung erneut freigeben',
+        'Allow reviewing this class'
+    ],
+    'prof_skills' => [
+        'Fachkompetenzen',
+        'Professional skills',
+    ],
+    'hidden_students' => [
+        'Ausgeblendete Schüler',
+        'Hidden students'
+    ],
+    'assigned_to' => [
+        'Zugeteilt zu {$a}',
+        'Assigned to {$a}'
+    ],
+    'template_with_no_inputs' => [
+        'Dieses Formular hat keine weiteren Eingabfelder',
+        'This template has no further input fields'
+    ],
+    'old_subjects' => [
+        'Alte Fächer',
+        'Old subjects',
+    ],
+    'class_group' => [
+        'Klasse/Lerngruppe',
+        'Class group',
+    ],
+    'clas_group_add_students' => [
+        'Schüler hinzufügen',
+        'Add students',
+    ],
+    'class_import_button' => [
+        'Prüfen',
+        'Check',
+    ],
+    'class_import_button_confirm' => [
+        'Jetzt Importieren',
+        'Import now',
+    ],
+    'file_not_found' => [
+        'Keine Datei gefunden',
+        'File not found'
+    ],
+    'file_not_selected' => [
+        'Keine Datei ausgewählt',
+        'File not selected'
+    ],
+    'file_is_wrong_format' => [
+        'Datei hat falsches Format',
+        'The file is in the wrong format'
+    ],
+    'file_is_not_class_backup' => [
+        'Datei ist keine Sicherung einer Klasse',
+        'The file is not a backup of a Class'
+    ],
+    'file_version_wrong' => [
+        'Das Dateiformat ist leider nicht mit dieser Version des Lernentwicklungsberichts kompatibel',
+        'Unfortunately, the file format is not compatible with this version of assessment data'
+    ],
+    'wrong_password' => [
+        'Falsches Passwort',
+        'Wrong password'
+    ],
+    'classname' => [
+        'Klassenname',
+        'Class name',
+    ],
+    'import_class_already_exist' => [
+        'Klasse "{$a}" existiert bereits und wird überschrieben',
+        'Class "{$a}" already exists and will be overwritten',
+    ],
+    'import_evaluation_will_overwrite' => [
+        'Es wird eine Bewertung überschrieben (Typ: {$a->type}, Lehrer: {$a->teacher})',
+        'An evaluation will be overwritten (Type: {$a->type}, Teacher: {$a->teacher})',
+    ],
+    'import_class_restored' => [
+        'Klasse "{$a}" wurde wiederhergestellt',
+        'Class "{$a}" has been restored',
+    ],
+    'import_class_checked_success' => [
+        'Klassendaten erfolgreich geprüft',
+        'Class data checked successfully',
+    ],
+    'import_class' => [
+        'Klasse Importieren',
+        'Import class',
+    ],
+    'import_class_reviewsimport' => [
+        'Bewertung importieren',
+        'Import reviews',
+    ],
+    'bp_title' => [
+        'Bezeichnung',
+        'Name',
+    ],
+    'bp_shorttitle' => [
+        'Kurzbezeichnung',
+        'Shortname',
+    ],
+    'bp_leb_always_print' => [
+        'Immer im LEB drucken',
+        'Always print',
+    ],
+    'last_edited_by' => [
+        'Letzte Änderung von {$a->name} am {$a->time}',
+        'Last Change by {$a->name} on {$a->time}'
+    ],
+    'no_other_users_found' => [
+          'Keine anderen Benutzer gefunden',
+          'No other users found'
+    ],
+    'copy_class' => [
+        'Klasse kopieren',
+        'Copy Class',
+    ],
+    'copy_class_from_last_period' => [
+        'Klasse vom vorigen Eingabezeitraum kopieren',
+        'Copy Class from last Period',
+    ],
+    'copy_class_new_title' => [
+        'Kopie von {$a}',
+        'Copy of {$a}',
+    ],
+    'class_add_students_from_group_description' => [
+        'Schüler, die in ihrem Nutzerprofil im Bereich "weitere Profileinstellungen" im Feld Klasse/Lerngruppe den entsprechenden Eintrag haben zur Klasse hinzufügen.',
+        'Students from this class group (see student user profile) will be added to the class'
     ],
 ];

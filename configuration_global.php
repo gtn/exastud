@@ -397,7 +397,7 @@ if ($action == 'subjects') {
 		$subject->titleReadonly = block_exastud_is_bw_subject($subject);
 	}
 
-	echo "<h2>".block_exastud_trans('de:Bildungsplan').": {$bp->title}</h2>";
+	echo "<h2>".block_exastud_get_string('class_educationplan').": {$bp->title}</h2>";
 	?>
 
 	<script>
@@ -405,14 +405,14 @@ if ($action == 'subjects') {
 	</script>
 	<div id="exa-list" <?php if (!$canEdit) { echo 'exa-sorting="false"'; } ?>>
 		<div class="header">
-			<div for-field="title"><?php echo block_exastud_trans(['de:Bezeichnung', 'en:Name']); ?></div>
-			<div for-field="shorttitle"><?php echo block_exastud_trans(['de:Kurzbezeichnung', 'en:Shortname']); ?></div>
+			<div for-field="title"><?php echo block_exastud_get_string('bp_title'); ?></div>
+			<div for-field="shorttitle"><?php echo block_exastud_get_string('bp_shorttitle'); ?></div>
             <?php if (block_exastud_is_bw_active()) { ?>
 			<div for-field="relevant"><span for-field="K">(K)</span><span for-field="M">(M)</span><span for-field="B">(B)</span><sup>*</sup>
             </div>
             <?php } ?>
 <!--			<div for-field="relevant_rs">--><?php //echo block_exastud_get_string('subject_category_m_rs'); ?><!--</div>-->
-			<!-- div for-field="always_print"><?php echo block_exastud_trans(['de:Immer im LEB drucken', 'en:Always print']); ?></div -->
+			<!-- div for-field="always_print"><?php echo block_exastud_get_string('bp_leb_always_print'); ?></div -->
 		</div>
 		<ul exa="items">
 			<li>
@@ -511,7 +511,7 @@ if ($action == 'bps') {
 			<li>
 				<input type="text" name="title"/>
 				<button exa="delete-button" class="btn btn-default"><?php echo block_exastud_get_string('delete'); ?></button>
-				<button exa="subjects-button" class="btn btn-default"><?php echo block_exastud_trans('de:Fachbezeichnungen'); ?></button>
+				<button exa="subjects-button" class="btn btn-default"><?php echo block_exastud_get_string('Subjects'); ?></button>
 			</li>
 		</ul>
 		<div exa="new-item">

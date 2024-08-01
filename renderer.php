@@ -500,7 +500,7 @@ class block_exastud_renderer extends plugin_renderer_base {
 			return '';
 		}
 
-		return g::$OUTPUT->notification(block_exastud_trans(['de:Letzte Änderung von {$a->name} am {$a->time}', 'en:Last Change by {$a->name} on {$a->time}'], [
+		return g::$OUTPUT->notification(block_exastud_get_string('last_edited_by', null, [
 			'time' => userdate($timemodified), 'name' => fullname($modifiedby),
 		]), g::$USER->id !== $modifiedby->id ? '' : 'notifymessage');
 	}

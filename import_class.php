@@ -44,13 +44,13 @@ class block_exastud_import_class_form extends moodleform {
 
 		// $mform->addElement('header', 'comment', block_exastud_trans('de:Klasse Importieren'));
 
-		$mform->addElement('checkbox', 'override_reviews', block_exastud_trans("de:Bewertung importieren"), ' ');
+		$mform->addElement('checkbox', 'override_reviews', block_exastud_get_string('import_class_reviewsimport'), ' ');
 		// , block_exastud_trans("de:(Vorhandene Bewertungen der Lehrer für die Klassenfächer und die Schüler in der Klasse werden überschrieben)"));
 
 		$mform->addElement('filepicker', 'file', block_exastud_get_string("file"));
 		$mform->addRule('file', block_exastud_get_string('commentshouldnotbeempty'), 'required', null, 'client');
 
-		$this->add_action_buttons(false, block_exastud_trans('de:Prüfen'));
+		$this->add_action_buttons(false, block_exastud_get_string('class_import_button'));
 	}
 }
 
@@ -70,7 +70,7 @@ class block_exastud_import_class_form_do_import extends moodleform {
 		$mform->addElement('hidden', 'file');
 		$mform->setType('file', PARAM_INT);
 
-		$this->add_action_buttons(false, block_exastud_trans('de:Jetzt Importieren'));
+		$this->add_action_buttons(false, block_exastud_get_string('class_import_button_confirm'));
 	}
 }
 
@@ -94,7 +94,7 @@ class block_exastud_import_class_form_password extends moodleform {
 		$mform->setType('password', PARAM_TEXT);
 		$mform->addRule('password', block_exastud_get_string('required'), 'required', null, 'client');
 
-		$this->add_action_buttons(false, block_exastud_trans('de:Jetzt Importieren'));
+		$this->add_action_buttons(false, block_exastud_get_string('class_import_button_confirm'));
 	}
 }
 
@@ -107,7 +107,7 @@ function block_exastud_import_class($doimport, $override_reviews, $draftitemid, 
 
 	$file = reset($draftfiles);
 	if (!$file) {
-		echo $output->notification(block_exastud_trans('de:Keine Datei gefunden'), 'notifyerror');
+		echo $output->notification(block_exastud_get_string('file_not_found'), 'notifyerror');
 
 		return;
 	}
@@ -116,30 +116,30 @@ function block_exastud_import_class($doimport, $override_reviews, $draftitemid, 
 	$content = $file->get_content();
 
 	if (!$content) {
-		echo $output->notification(block_exastud_trans('de:Keine Datei ausgewählt'), 'notifyerror');
+		echo $output->notification(block_exastud_get_string('file_not_selected'), 'notifyerror');
 
 		return;
 	}
 
 	$content = @gzdecode($content);
 	if (!$content) {
-		echo $output->notification(block_exastud_trans('de:Datei hat falsches Format'), 'notifyerror');
+		echo $output->notification(block_exastud_get_string('file_is_wrong_format'), 'notifyerror');
 
 		return;
 	}
 	$classData = json_decode($content);
 	if (!$classData) {
-		echo $output->notification(block_exastud_trans('de:Datei hat falsches Format'), 'notifyerror');
+		echo $output->notification(block_exastud_get_string('file_is_wrong_format'), 'notifyerror');
 
 		return;
 	}
 
 	if (@$classData->datatype != 'block_exastud_class_export') {
-		echo $output->notification(block_exastud_trans('de:Datei ist keine Sicherung einer Klasse'), 'notifyerror');
+		echo $output->notification(block_exastud_get_string('file_is_not_class_backup'), 'notifyerror');
 
 		return;
 	} elseif (@$classData->dataversion != '0.1' && @$classData->dataversion != '0.2') {
-		echo $output->notification(block_exastud_trans('de:Das Dateiformat ist leider nicht mit dieser Version des Lernentwicklungsberichts kompatibel'), 'notifyerror');
+		echo $output->notification(block_exastud_get_string('file_version_wrong'), 'notifyerror');
 
 		return;
 	}
@@ -154,13 +154,13 @@ function block_exastud_import_class($doimport, $override_reviews, $draftitemid, 
 
 		$privateData = openssl_decrypt($encrypted, 'aes-256-cbc', $password, true, $iv);
 		if (!$privateData) {
-			echo $output->notification(block_exastud_trans('de:Falsches Passwort'), 'notifyerror');
+			echo $output->notification(block_exastud_get_string('wrong_password'), 'notifyerror');
 
 			return;
 		}
 		$privateData = json_decode($privateData);
 		if (!$privateData) {
-			echo $output->notification(block_exastud_trans('de:Datei hat falsches Format'), 'notifyerror');
+			echo $output->notification(block_exastud_get_string('file_is_wrong_format'), 'notifyerror');
 
 			return;
 		}
@@ -179,9 +179,9 @@ function block_exastud_import_class($doimport, $override_reviews, $draftitemid, 
 
 	if (!$doimport) {
 		if ($existingClass) {
-			echo $output->notification(block_exastud_trans('de:Klasse "{$a}" existiert bereits und wird überschrieben', $class->title), 'error');
+			echo $output->notification(block_exastud_get_string('import_class_already_exist', null, $class->title), 'error');
 		} else {
-			echo $output->notification(block_exastud_trans('de:Klassenname: {$a}', $class->title), 'info');
+			echo $output->notification(block_exastud_get_string('classname').': '.$class->title, 'info');
 		}
 	}
 
@@ -306,7 +306,7 @@ function block_exastud_import_class($doimport, $override_reviews, $draftitemid, 
 							'type' => $subject ?: '-',
 							'teacher' => $teacher ? fullname($teacher) : '-',
 						];
-						echo $output->notification(block_exastud_trans('de:Es wird eine Bewertung überschrieben (Typ: {$a->type}, Lehrer: {$a->teacher})', $a), 'notifyerror');
+						echo $output->notification(block_exastud_get_string('import_evaluation_will_overwrite', null, $a), 'notifyerror');
 					}
 
 					/*
@@ -330,9 +330,9 @@ function block_exastud_import_class($doimport, $override_reviews, $draftitemid, 
 	}
 
 	if ($doimport) {
-		echo $output->notification(block_exastud_trans('de:Klasse "{$a}" wurde wiederhergestellt', $class->title), 'info');
+		echo $output->notification(block_exastud_get_string('import_class_restored', null, $class->title), 'info');
 	} else {
-		echo $output->notification(block_exastud_trans('de:Klassendaten erfolgreich geprüft'), 'info');
+		echo $output->notification(block_exastud_get_string('import_class_checked_success'), 'info');
 	}
 
 	return $ret;
@@ -362,7 +362,7 @@ if (optional_param('action', '', PARAM_TEXT) == 'import') {
 	}
 }
 
-echo $output->heading(block_exastud_trans('de:Klasse Importieren'));
+echo $output->heading(block_exastud_get_string('import_class'));
 
 $mform = new block_exastud_import_class_form();
 if ($mform->is_cancelled()) {

@@ -184,9 +184,9 @@ echo '<input type="hidden" name="action" value="update" />';
 
 $tableheadernote = block_exastud_get_string('Note');
 $tableheaderniveau = block_exastud_get_string('Niveau');
-$tableheadersubjects = block_exastud_trans('de:Fachkompetenzen '); // bewerten button
+$tableheadersubjects = block_exastud_get_string('prof_skills'); // bewerten button
 $tableheaderlearnsocial = block_exastud_get_string('learn_and_sociale'); // bewerten button
-$tableheadercategories = block_exastud_trans('de:Überfachliche Kompetenzen'); // bewerten button
+$tableheadercategories = block_exastud_get_string('competencies'); // bewerten button
 
 /* Print the Students */
 $table = new html_table();
@@ -353,7 +353,7 @@ if ($isSubjectTeacher) {
         $userdatacell = new html_table_cell();
         $userdatacell->attributes['class'] .= 'exastud-userdata-cell';
         $userdatacell->text = '<div class="cell-content">'.$userdata.'</div>';
-        $userdatacell->text .= '<span class="exastud-template-title">'.block_exastud_trans('de:Zeugnisformular').': '.$template->get_name().'</span>';
+        $userdatacell->text .= '<span class="exastud-template-title">'.block_exastud_get_string('report_student_template').': '.$template->get_name().'</span>';
         if (block_exastud_is_bw_active()) {
             $userdatacell->rowspan = 2;
         }
@@ -645,7 +645,7 @@ foreach ($tabledeletecolumns as $todelete) {
 echo $output->table($table);
 
 if ($hiddenclassstudents) {
-	echo $output->heading(block_exastud_trans('de:Ausgeblendete Schüler'));
+	echo $output->heading(block_exastud_get_string('hidden_students'));
 
 	$table = new html_table();
 

@@ -350,7 +350,7 @@ if ($class !== null) {
                     switch ($template) {
                         // - Anlage zum Lernentwicklungsbericht: only if competences in exacomp with grading is in the report
                         case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_ANLAGE_ZUM_LERNENTWICKLUNGSBERICHT:
-                        case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_TEMP:
+//                        case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_TEMP:
                         //case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_ANLAGE_ZUM_LERNENTWICKLUNGSBERICHTALT:
                         //case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_UEBERFACHLICHE_KOMPETENZEN:
                         //    if (!in_array($student->id, $studentsWithExacompGraded)) {
@@ -701,10 +701,10 @@ if ($class !== null) {
     $headerRow3 = new html_table_row();
     $headercell_1 = new html_table_cell();
     $headercell_1->header = true;
-    $headercell_1->text = html_writer::tag('label', block_exastud_trans('de:Datei'), ['for' => 'select_all1']);
+    $headercell_1->text = html_writer::tag('label', block_exastud_get_string('report_file'), ['for' => 'select_all1']);
     $headercell_2 = new html_table_cell();
     $headercell_2->header = true;
-    $headercell_2->text = html_writer::tag('label', block_exastud_trans('de:Bildschirm'), ['for' => 'select_all2']);
+    $headercell_2->text = html_writer::tag('label', block_exastud_get_string('report_screen'), ['for' => 'select_all2']);
     $headerRow3->cells = array(
             $headercell_1,
             $headercell_2,
@@ -744,7 +744,7 @@ if ($class !== null) {
                         BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_ANLAGE_ZUM_LERNENTWICKLUNGSBERICHT,
                         BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_ANLAGE_ZUM_LERNENTWICKLUNGSBERICHTALT,
                         BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_UEBERFACHLICHE_KOMPETENZEN,
-                        BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_TEMP
+//                        BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_TEMP
                 ])) {
             $addAnlage = true;
             /*foreach ($classstudents as $classstudent) {

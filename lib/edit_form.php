@@ -415,7 +415,7 @@ class student_edit_form extends moodleform {
                         'chars_per_row' => @$template_inputparams['cols'] ? $template_inputparams['cols'] : 80,
                         'rows' => @$template_inputparams['lines'] ? $template_inputparams['lines'] : 8
                 );
-                $mform->addElement('header', 'review_header', block_exastud_trans("de:Fachkompetenzen"));
+                $mform->addElement('header', 'review_header', block_exastud_get_string("prof_skills"));
                 $mform->setExpanded('review_header');
                 if ($this->_customdata['review.modified']) {
                     $mform->addElement('static', '', '', $this->_customdata['review.modified']);
@@ -1181,7 +1181,7 @@ class reportsettings_edit_form extends moodleform {
                 $titleGroup[] = $mform->createElement('hidden', $field.'_key', $field);
                 $mform->setType($field.'_key', PARAM_RAW);
                 // title
-                $titleGroup[] = $mform->createElement('text', $field.'_title', block_exastud_trans('de: Titel'), 'size = \'45\'');
+                $titleGroup[] = $mform->createElement('text', $field.'_title', block_exastud_get_string('report_settings_setting_title'), 'size = \'45\'');
                 $mform->setType($field.'_title', PARAM_TEXT);
                 $titleGroup[] = $mform->createElement('exastud_htmltag',
                         '<div class="exastud-template-settings-group group-'.$field.' main-params">
@@ -1397,7 +1397,7 @@ class reportsettings_edit_form extends moodleform {
                 // delete button
                 $mform->addElement('exastud_htmltag', '<img class="delete_param_button" data-paramid="'.$i.'" src="'.$CFG->wwwroot.'/blocks/exastud/pix/trash.png" title="'.block_exastud_get_string('delete_parameter').'"/>');
                 // title
-                $main_block[] = $mform->createElement('text', 'additional_params_title['.$i.']', block_exastud_trans('de: Titel'), 'size = \'45\'');
+                $main_block[] = $mform->createElement('text', 'additional_params_title['.$i.']', block_exastud_get_string('report_settings_setting_title'), 'size = \'45\'');
                 if (!empty($param_settings['title'])) {
                     $mform->setDefault('additional_params_title['.$i.']', $param_settings['title']);
                 }
@@ -1845,11 +1845,11 @@ class add_students_via_class_parameter_form extends moodleform {
 
         //$mform->addElement('header', 'class_toadd');
         $group=array();
-        $group[] =& $mform->createElement('text', 'class_toadd', block_exastud_trans('de:Klasse/Lerngruppe').':');
-        $group[] =& $mform->createElement('submit', 'add', block_exastud_trans('de:Schüler hinzufügen'));
+        $group[] =& $mform->createElement('text', 'class_toadd', block_exastud_get_string('class_group').':');
+        $group[] =& $mform->createElement('submit', 'add', block_exastud_get_string('clas_group_add_students'));
         $mform->setType('class_toadd', PARAM_TEXT);
-        $mform->addGroup($group, 'group', block_exastud_trans('de:Klasse/Lerngruppe').':', ' ', false);
-        $mform->addElement('exastud_htmltag', block_exastud_trans('de: Schüler, die in ihrem Nutzerprofil im Bereich "weitere Profileinstellungen" im Feld Klasse/Lerngruppe den entsprechenden Eintrag haben zur Klasse hinzufügen.'));
+        $mform->addGroup($group, 'group', block_exastud_get_string('class_group').':', ' ', false);
+        $mform->addElement('exastud_htmltag', block_exastud_get_string('class_add_students_from_group_description'));
     }
 
 }

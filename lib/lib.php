@@ -129,7 +129,7 @@ const BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_DEFAULT_REPORT_COMMON = 104;
 
 // example of report
 const BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_STUDENT_CARD = 999;
-const BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_TEMP = 1000; // delete it!!!!
+//const BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_TEMP = 1000; // delete it!!!!
 
 class block_exastud_permission_exception extends moodle_exception {
 	function __construct($errorcode = 'Not allowed', $module = '', $link = '', $a = null, $debuginfo = null) {
@@ -188,7 +188,7 @@ function block_exastud_get_head_teacher_cohort() {
 	$cohort = g::$DB->get_record('cohort', ['contextid' => \context_system::instance()->id, 'idnumber' => 'block_exastud_head_teachers']);
 
 	$name = block_exastud_get_string('head_teachers');
-	$description = block_exastud_trans('de:Können Klassen anlegen, Lehrkräfte und Schüler/innen zubuchen und den Lernentwicklungsbericht abrufen');
+	$description = block_exastud_get_string('head_teachers_description');
 
 	if (!$cohort) {
 		$cohort = (object)[
@@ -1085,7 +1085,7 @@ function block_exastud_check_profile_fields() {
 	$fields = [
 		[
 			'shortname' => 'dateofbirth',
-			'name' => block_exastud_trans('de:Geburtsdatum'),
+			'name' => block_exastud_get_string('report_settings_setting_dateofbirth'),
 			'description' => '',
 			'datatype' => 'text',
 			'categoryid' => $categoryid,
@@ -1097,7 +1097,7 @@ function block_exastud_check_profile_fields() {
 			'param3' => 0,
 		], [
 			'shortname' => 'placeofbirth',
-			'name' => block_exastud_trans('de:Geburtsort'),
+			'name' => block_exastud_get_string('report_settings_setting_placeofbirth'),
 			'description' => '',
 			'datatype' => 'text',
 			'categoryid' => $categoryid,
@@ -1109,7 +1109,7 @@ function block_exastud_check_profile_fields() {
 			'param3' => 0,
 		], [
 			'shortname' => 'gender',
-			'name' => block_exastud_trans('de:Geschlecht'),
+			'name' => block_exastud_get_string('gender'),
 			'description' => '',
 			'datatype' => 'menu',
 			'categoryid' => $categoryid,
@@ -1121,7 +1121,7 @@ function block_exastud_check_profile_fields() {
 			'param1' => "\nmännlich\nweiblich",
         ], [
             'shortname' => 'class',
-            'name' => block_exastud_trans('de:Klasse/Lerngruppe'),
+            'name' => block_exastud_get_string('class_group'),
             'description' => 'Klassen-, Lerngruppenbezeichnung',
             'datatype' => 'text',
             'categoryid' => $categoryid,
@@ -1976,7 +1976,7 @@ function block_exastud_get_evaluation_options($also_empty = false) {
 	global $DB;
 
 	$options = $also_empty ? array(
-		0 => block_exastud_trans('de:nicht gewählt') // empty option
+		0 => block_exastud_get_string('not_defined') // empty option
 	) : array();
 
     $compeval_type = block_exastud_get_competence_eval_type();
@@ -2473,13 +2473,13 @@ function block_exastud_get_report_templates($class) {
     $templates = [];
 
     //if (!block_exastud_get_only_learnsociale_reports()) {
-    $templates['grades_report'] = 'Notenübersicht (docx)';
-    $templates['grades_report_xls'] = 'Notenübersicht (xlsx)';
+    $templates['grades_report'] = block_exastud_get_string('report_overview_docx');
+    $templates['grades_report_xls'] = block_exastud_get_string('report_overview_xlsx');
     $templates['html_report'] = block_exastud_get_string('html_report');
     if (block_exastud_is_bw_active()) {
         $templates[BLOCK_EXASTUD_DATA_ID_PRINT_TEMPLATE] =
-                block_exastud_is_bw_active() ? block_exastud_trans('de:Zeugnis / Abgangszeugnis') :
-                        block_exastud_trans('de:Zeugnis');
+                block_exastud_is_bw_active() ? block_exastud_get_string('Template_and_departure') :
+                        block_exastud_get_string('Template');
         //}
     }
     if (block_exastud_is_bw_active()) {
@@ -2715,7 +2715,7 @@ function block_exastud_get_default_templates($templateid = null, $common = true)
                                         'cols' => 90,
                                 ],
                                 'comments' => [
-                                        'title' => block_exastud_trans('de:Bemerkungen'),
+                                        'title' => block_exastud_get_string('report_settings_setting_comments'),
                                         'type' => 'textarea',
                                         'lines' => 7,
                                         'cols' => 80,
@@ -2796,7 +2796,7 @@ function block_exastud_get_default_templates($templateid = null, $common = true)
                                         'cols' => 90,
                                 ],
                                 'comments' => [
-                                        'title' => block_exastud_trans('de:Bemerkungen'),
+                                        'title' => block_exastud_get_string('report_settings_setting_comments'),
                                         'type' => 'textarea',
                                         'lines' => 7,
                                         'cols' => 80,
@@ -2953,7 +2953,7 @@ function block_exastud_get_default_templates($templateid = null, $common = true)
                                         'maxchars' => 630,
                                 ],
                                 'comments' => [
-                                        'title' => block_exastud_trans('de:Bemerkungen'),
+                                        'title' => block_exastud_get_string('report_settings_setting_comments'),
                                         'type' => 'textarea',
                                         'lines' => 4,
                                         'cols' => 90,
@@ -3020,7 +3020,7 @@ function block_exastud_get_default_templates($templateid = null, $common = true)
                                         'maxchars' => 600,
                                 ],
                                 'comments' => [
-                                        'title' => block_exastud_trans('de:Bemerkungen'),
+                                        'title' => block_exastud_get_string('report_settings_setting_comments'),
                                         'type' => 'textarea',
                                         'lines' => 4,
                                         'cols' => 90,
@@ -3111,7 +3111,7 @@ function block_exastud_get_default_templates($templateid = null, $common = true)
                                         'maxchars' => 630,
                                 ],
                                 'comments' => [
-                                        'title' => block_exastud_trans('de:Bemerkungen'),
+                                        'title' => block_exastud_get_string('report_settings_setting_comments'),
                                         'type' => 'textarea',
                                         'lines' => 4,
                                         'cols' => 90,
@@ -3186,7 +3186,7 @@ function block_exastud_get_default_templates($templateid = null, $common = true)
                                         'maxchars' => 600,
                                 ],
                                 'comments' => [
-                                        'title' => block_exastud_trans('de:Bemerkungen'),
+                                        'title' => block_exastud_get_string('report_settings_setting_comments'),
                                         'type' => 'textarea',
                                         'lines' => 4,
                                         'cols' => 90,
