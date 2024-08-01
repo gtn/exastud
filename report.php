@@ -54,7 +54,7 @@ $startPeriod = optional_param('startPeriod', 0, PARAM_INT);
 $countOfShownPeriods = 4;
 
 
-if (! empty($CFG->block_exastud_project_based_assessment)) {
+if (!empty($CFG->block_exastud_project_based_assessment)) {
     redirect('report_project.php?courseid=' . $courseid);
 }
 
@@ -64,7 +64,7 @@ block_exastud_require_global_cap(BLOCK_EXASTUD_CAP_VIEW_REPORT);
 
 $output = block_exastud_get_renderer();
 
-$url = '/blocks/exastud/report.php?courseid='.$courseid.'&classid='.$classid;
+$url = '/blocks/exastud/report.php?courseid=' . $courseid . '&classid=' . $classid;
 $PAGE->set_url($url);
 
 //set_time_limit(600);
@@ -108,17 +108,17 @@ for ($i = 0; $i <= $max_classes; $i++) {
             $dateStart = preg_replace('/\s+/', '&nbsp;', $dateStart);
             $dateEnd = date('d F Y', $period->endtime);
             $dateEnd = preg_replace('/\s+/', '&nbsp;', $dateEnd);
-            $tablePeriods->head[$period->id] .= '<br><small>'.$dateStart.' - '.$dateEnd.'</small>';
+            $tablePeriods->head[$period->id] .= '<br><small>' . $dateStart . ' - ' . $dateEnd . '</small>';
         }
         $periodCell = new html_table_cell();
         $div = (($startPeriod + $countOfShownPeriods) < $count_periods) ? $countOfShownPeriods : ($count_periods - $startPeriod);
-        $periodCell->attributes['width'] = (100 / $div).'%';
+        $periodCell->attributes['width'] = (100 / $div) . '%';
         if (array_key_exists($period->id, $period_classes) && array_key_exists($i, $period_classes[$period->id])) {
             $tempClass = $period_classes[$period->id][$i];
-            $periodCell->text = '<a href="report.php?courseid='.$courseid.'&classid='.$tempClass->id.'">'.$tempClass->title.'</a>';
+            $periodCell->text = '<a href="report.php?courseid=' . $courseid . '&classid=' . $tempClass->id . '">' . $tempClass->title . '</a>';
             if (block_exastud_is_siteadmin() && $tempClass->userid != $USER->id) {
                 $ownerData = $DB->get_record('user', ['id' => $tempClass->userid, 'deleted' => 0]);
-                $periodCell->text .= '&nbsp;<small>(id: '.$tempClass->id.') '.$ownerData->firstname.' '.$ownerData->lastname.'</small>';
+                $periodCell->text .= '&nbsp;<small>(id: ' . $tempClass->id . ') ' . $ownerData->firstname . ' ' . $ownerData->lastname . '</small>';
             }
         } else {
             $periodCell->text = '';
@@ -134,65 +134,65 @@ for ($i = 0; $i <= $max_classes; $i++) {
 
 // add prev period link
 if ($startPeriod > 0) {
-    $link = \html_writer::link($CFG->wwwroot.'/blocks/exastud/report.php?courseid='.$courseid.'&classid=-1&startPeriod='.($startPeriod - $countOfShownPeriods), ' << ');
+    $link = \html_writer::link($CFG->wwwroot . '/blocks/exastud/report.php?courseid=' . $courseid . '&classid=-1&startPeriod=' . ($startPeriod - $countOfShownPeriods), ' << ');
     array_unshift($tablePeriods->head, $link);
 }
 // add next period link
 if (($startPeriod + $countOfShownPeriods) < $count_periods) {
-    $link = \html_writer::link($CFG->wwwroot.'/blocks/exastud/report.php?courseid='.$courseid.'&classid=-1&startPeriod='.($startPeriod + $countOfShownPeriods), ' >> ');
+    $link = \html_writer::link($CFG->wwwroot . '/blocks/exastud/report.php?courseid=' . $courseid . '&classid=-1&startPeriod=' . ($startPeriod + $countOfShownPeriods), ' >> ');
     $tablePeriods->head[] = $link;
 }
 $periodClasses = $output->table($tablePeriods);
 
 
 function block_exastud_require_secret() {
-	global $PAGE, $courseid;
+    global $PAGE, $courseid;
 
-	$secret = optional_param('secret', 0, PARAM_TEXT);
+    $secret = optional_param('secret', 0, PARAM_TEXT);
 
-	if ($secret) {
-		return $secret;
-	}
+    if ($secret) {
+        return $secret;
+    }
 
-	$secret = block_exastud_random_password();
+    $secret = block_exastud_random_password();
 
-	$output = block_exastud_get_renderer();
+    $output = block_exastud_get_renderer();
 
     echo $output->header('report');
     echo $output->heading(block_exastud_get_string('reports'));
 
-	echo block_exastud_get_string('export_password_message', null, $secret);
-	echo '<br/><br/>';
+    echo block_exastud_get_string('export_password_message', null, $secret);
+    echo '<br/><br/>';
 
-	// add all other post parameters, eg. descriptors[], subjects[], topics[]
-	$flatten_params = function($params, $level = 0) use (&$flatten_params) {
-		$ret = [];
-		foreach ($params as $key=>$value) {
-			$key = $level > 0 ? '['.$key.']' : $key;
-			if (is_array($value)) {
-				foreach ($flatten_params($value, $level+1) as $subKey=>$value) {
-					$ret[$key.$subKey] = $value;
-				}
-			} else {
-				$ret[$key] = $value;
-			}
-		}
-		return $ret;
-	};
+    // add all other post parameters, eg. descriptors[], subjects[], topics[]
+    $flatten_params = function($params, $level = 0) use (&$flatten_params) {
+        $ret = [];
+        foreach ($params as $key => $value) {
+            $key = $level > 0 ? '[' . $key . ']' : $key;
+            if (is_array($value)) {
+                foreach ($flatten_params($value, $level + 1) as $subKey => $value) {
+                    $ret[$key . $subKey] = $value;
+                }
+            } else {
+                $ret[$key] = $value;
+            }
+        }
+        return $ret;
+    };
 
-	$other_params = '';
-	foreach ($flatten_params($_POST) as $key => $value) {
-		$other_params .= '<input type="hidden" name="'.$key.'" value="'.$value.'" />';
-	}
+    $other_params = '';
+    foreach ($flatten_params($_POST) as $key => $value) {
+        $other_params .= '<input type="hidden" name="' . $key . '" value="' . $value . '" />';
+    }
 
-	echo '<form method="post">
-		'.$other_params.'
-		<input type="hidden" name="secret" value="'.$secret.'" />
-		<input type="submit" class="btn btn-primary" value="'.block_exastud_get_string('next').'" />
+    echo '<form method="post">
+		' . $other_params . '
+		<input type="hidden" name="secret" value="' . $secret . '" />
+		<input type="submit" class="btn btn-primary" value="' . block_exastud_get_string('next') . '" />
 	</form>';
 
-	echo $output->footer();
-	exit;
+    echo $output->footer();
+    exit;
 }
 
 
@@ -200,14 +200,14 @@ $templates = array();
 
 $class = block_exastud_get_head_teacher_class($classid, true);
 if ($class !== null) {
-//if ($classid) {
-//    $class = block_exastud_get_head_teacher_class($classid, true);
+    //if ($classid) {
+    //    $class = block_exastud_get_head_teacher_class($classid, true);
 
-    if (! $classstudents = block_exastud_get_class_students($class->id)) {
+    if (!$classstudents = block_exastud_get_class_students($class->id)) {
         echo $output->header('report');
         echo $output->heading(block_exastud_get_string('nostudentsfound'));
         echo $output->back_button(new moodle_url('report.php', [
-            'courseid' => $courseid
+            'courseid' => $courseid,
         ]));
         echo $periodClasses;
         echo $output->footer();
@@ -236,13 +236,13 @@ if ($class !== null) {
     $stopAll = false; // stop all reports generatings
     //$template = optional_param('template', '', PARAM_TEXT);
     if (count($templatesFromForm) > 0) {
-    	// zip encoding only available from php 7.2 on
-    	$needsSecret = get_config('exastud', 'export_class_report_password') && (version_compare(phpversion(), '7.2') >= 0);
-		if ($needsSecret && !$secret) {
-			$secret = block_exastud_require_secret();
-		} else {
-			$secret = '';
-		}
+        // zip encoding only available from php 7.2 on
+        $needsSecret = get_config('exastud', 'export_class_report_password') && (version_compare(phpversion(), '7.2') >= 0);
+        if ($needsSecret && !$secret) {
+            $secret = block_exastud_require_secret();
+        } else {
+            $secret = '';
+        }
 
         $zipfilename = tempnam($CFG->tempdir, "zip");
         $zip = new \ZipArchive();
@@ -274,8 +274,8 @@ if ($class !== null) {
                         // Preview of report on html page
                         foreach ($printStudents as $student) {
                             $studentdesc = $OUTPUT->user_picture($student, array(
-                                            "courseid" => $courseid
-                                    )).' '.fullname($student);
+                                    "courseid" => $courseid,
+                                )) . ' ' . fullname($student);
                             $studentResult = $output->heading($studentdesc);
                             $studentResult .= $output->student_report($class, $student);
                             $html_results[] = $studentResult;
@@ -286,22 +286,22 @@ if ($class !== null) {
                         foreach ($printStudents as $student) {
                             $reportContent = '';
                             $studentdesc = $OUTPUT->user_picture($student, array(
-                                            "courseid" => $courseid
-                                    )).' '.fullname($student);
+                                    "courseid" => $courseid,
+                                )) . ' ' . fullname($student);
                             $reportContent .= $output->heading($studentdesc);
                             $reportContent .= $output->student_report($class, $student);
-//                            $reportContent .= '<hr>';
+                            //                            $reportContent .= '<hr>';
                             $reportContent = '<html>
                                                 <head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"></head>
-                                                <body>'.$reportContent.'</body>
+                                                <body>' . $reportContent . '</body>
                                             </html>';
-                            $reportFileName = block_exastud_normalize_filename('html_report-'.$student->firstname.'-'.$student->lastname.'-'.$student->id.'.html');
+                            $reportFileName = block_exastud_normalize_filename('html_report-' . $student->firstname . '-' . $student->lastname . '-' . $student->id . '.html');
                             $tempFile = tempnam($CFG->tempdir, 'exastud');
                             file_put_contents($tempFile, $reportContent);
                             $files_to_zip[$tempFile] =
-                                    //'/'.
-                                    block_exastud_normalize_filename($student->firstname.'-'.$student->lastname.'-'.$student->id).
-                                    '/'.$reportFileName;
+                                //'/'.
+                                block_exastud_normalize_filename($student->firstname . '-' . $student->lastname . '-' . $student->id) .
+                                '/' . $reportFileName;
                         }
                     }
                     continue; // go to the next template
@@ -324,17 +324,17 @@ if ($class !== null) {
                 }
                 if ($printStudents && in_array($template, array(
                         BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_LERN_UND_SOZIALVERHALTEN,
-                        BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_LERN_UND_SOZIALVERHALTEN_COMMON
-                        ))) {
+                        BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_LERN_UND_SOZIALVERHALTEN_COMMON,
+                    ))) {
                     foreach ($printStudents as $printstudent) {
                         $tempPrintStudents = array($printstudent);
                         $file = \block_exastud\printer::lern_und_social_report($template, $class, $tempPrintStudents);
                         //$files_to_zip[$file->temp_file] = $file->filename;
                         if ($file) {
                             $files_to_zip[$file->temp_file] =
-                                    //'/'.
-                                    block_exastud_normalize_filename($printstudent->firstname.'-'.$printstudent->lastname.'-'.$printstudent->id).
-                                    '/'.$file->filename;
+                                //'/'.
+                                block_exastud_normalize_filename($printstudent->firstname . '-' . $printstudent->lastname . '-' . $printstudent->id) .
+                                '/' . $file->filename;
                             $temp_files[] = $file->temp_file;
                         }
                     }
@@ -350,12 +350,12 @@ if ($class !== null) {
                     switch ($template) {
                         // - Anlage zum Lernentwicklungsbericht: only if competences in exacomp with grading is in the report
                         case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_ANLAGE_ZUM_LERNENTWICKLUNGSBERICHT:
-//                        case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_TEMP:
-                        //case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_ANLAGE_ZUM_LERNENTWICKLUNGSBERICHTALT:
-                        //case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_UEBERFACHLICHE_KOMPETENZEN:
-                        //    if (!in_array($student->id, $studentsWithExacompGraded)) {
-                        //        $doit = false;
-                        //    }
+                            //                        case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_TEMP:
+                            //case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_ANLAGE_ZUM_LERNENTWICKLUNGSBERICHTALT:
+                            //case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_UEBERFACHLICHE_KOMPETENZEN:
+                            //    if (!in_array($student->id, $studentsWithExacompGraded)) {
+                            //        $doit = false;
+                            //    }
                             break;
                         // - Beiblatt zur Projektprüfung: if there is grading in exastud and filled data in BLOCK_EXASTUD_DATA_ID_PROJECT_TEACHER
                         case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_BEIBLATT_PROJEKTPRUEFUNG_HSA:
@@ -438,7 +438,7 @@ if ($class !== null) {
                                 $doit = false;
                                 $stopAll = true;
                                 $studentD = (object)[
-                                    'studentname' => fullname($student)
+                                    'studentname' => fullname($student),
                                 ];
                                 $doItMessage = block_exastud_get_string('average_needs_calculate_for_student', null, $studentD);
                             }
@@ -477,9 +477,9 @@ if ($class !== null) {
                         $file = \block_exastud\printer::report_to_temp_file($class, $student, $template, $courseid);
                         if ($file) {
                             $files_to_zip[$file->temp_file] =
-                                    //'/'.
-                                    block_exastud_normalize_filename($student->firstname.'-'.$student->lastname.'-'.$student->id).
-                                    '/'.$file->filename;
+                                //'/'.
+                                block_exastud_normalize_filename($student->firstname . '-' . $student->lastname . '-' . $student->id) .
+                                '/' . $file->filename;
                         }
                     } else {
                         if ($doItMessage) {
@@ -495,9 +495,9 @@ if ($class !== null) {
                             $file = \block_exastud\printer::report_to_temp_file($class, $student, $template, $courseid);
                             if ($file) {
                                 $files_to_zip[$file->temp_file] =
-                                        //'/'.
-                                        block_exastud_normalize_filename($student->firstname.'-'.$student->lastname.'-'.$student->id).
-                                        '/'.$file->filename;
+                                    //'/'.
+                                    block_exastud_normalize_filename($student->firstname . '-' . $student->lastname . '-' . $student->id) .
+                                    '/' . $file->filename;
                                 $temp_files[] = $file->temp_file;
                             }
                         } else {
@@ -514,13 +514,13 @@ if ($class !== null) {
                 $html_results = [];
                 $files_to_zip = [];
             }
-//exit;
+            //exit;
             if (count($html_results) > 0) {
                 // if it is a HTML preview
                 $PAGE->set_pagelayout('embedded');
                 echo $output->header('report');
 
-                $classheader = block_exastud_get_period($class->periodid)->description.' - '.$class->title;
+                $classheader = block_exastud_get_period($class->periodid)->description . ' - ' . $class->title;
                 echo $output->heading($classheader);
                 echo implode('<hr />', $html_results);
                 echo $output->footer();
@@ -528,31 +528,31 @@ if ($class !== null) {
             }
 
             if (count($files_to_zip) > 0) {
-                require_once $CFG->dirroot.'/lib/filelib.php';
+                require_once $CFG->dirroot . '/lib/filelib.php';
 
                 if (count($files_to_zip) == 1 && !$secret) {
-					// prüfen auf !$secret: passwort geschützter export ist immer eine zip datei
+                    // prüfen auf !$secret: passwort geschützter export ist immer eine zip datei
                     ob_clean();
                     if ($content = ob_get_clean()) {
-                        throw new \Exception('there was some other output: '.$content);
+                        throw new \Exception('there was some other output: ' . $content);
                     }
                     $temp_file = key($files_to_zip);
 
                     send_temp_file($temp_file, basename($files_to_zip[$temp_file]));
                 }
 
-				foreach ($files_to_zip as $tempF => $fileName) {
-					// temporary: delete folders
-					//$fileName = basename($fileName);
-					$zip->addFile($tempF, $fileName);
-				}
+                foreach ($files_to_zip as $tempF => $fileName) {
+                    // temporary: delete folders
+                    //$fileName = basename($fileName);
+                    $zip->addFile($tempF, $fileName);
+                }
 
-				if ($secret) {
-					// encrypt all files in zip file
-					for ($i = 0; $i < $zip->count(); $i++) {
-						$zip->setEncryptionIndex($i, ZipArchive::EM_AES_256, $secret);
-					}
-				}
+                if ($secret) {
+                    // encrypt all files in zip file
+                    for ($i = 0; $i < $zip->count(); $i++) {
+                        $zip->setEncryptionIndex($i, ZipArchive::EM_AES_256, $secret);
+                    }
+                }
 
                 $zip->close();
 
@@ -561,8 +561,8 @@ if ($class !== null) {
                     unlink($temp_file);
                 }
 
-				$extra = ($secret?'-'.block_exastud_trans(['de:passwortgeschuetzt', 'en:passwordprotected']):'');
-                $newZipFilename = 'report-'.date('Y-m-d-H-i').$extra.'.zip';
+                $extra = ($secret ? '-' . block_exastud_trans(['de:passwortgeschuetzt', 'en:passwordprotected']) : '');
+                $newZipFilename = 'report-' . date('Y-m-d-H-i') . $extra . '.zip';
                 send_temp_file($zipfilename, $newZipFilename);
                 exit;
             } else {
@@ -573,26 +573,26 @@ if ($class !== null) {
             $pleaseselectstudent .= $output->notification(block_exastud_get_string('select_student'), 'notifyerror');
         }
     }
-    
-    
+
+
     /* Print the Students */
     $table = new html_table();
-    
+
     $table->head = array();
     $table->head[] = '<input type="checkbox" name="checkallornone"/>';
     $table->head[] = '';
     $table->head[] = '';
     $table->head[] = block_exastud_get_string('name');
     $table->head[] = block_exastud_get_string('report_student_template');
-    
+
     $table->size = [
         '5%',
         '5%',
         '5%',
         '',
-        '25%'
+        '25%',
     ];
-    
+
     $table->align = array();
     $table->align[] = 'center';
     $table->align[] = 'center';
@@ -600,24 +600,24 @@ if ($class !== null) {
     $table->align[] = 'left';
     $table->align[] = 'left';
     $table->align[] = 'left';
-    
+
     $i = 1;
     foreach ($classstudents as $classstudent) {
         $studentdesc = fullname($classstudent);
-        
+
         $data = array();
-        $data[] = '<input type="checkbox" name="studentids[]" value="' . $classstudent->id . '" id="student_'.$classstudent->id.'" />';
-        $data[] = $i ++;
+        $data[] = '<input type="checkbox" name="studentids[]" value="' . $classstudent->id . '" id="student_' . $classstudent->id . '" />';
+        $data[] = $i++;
         $data[] = $OUTPUT->user_picture($classstudent, array(
-            "courseid" => $courseid
+            "courseid" => $courseid,
         ));
-        $data[] = html_writer::tag('label', $studentdesc, ['for' => 'student_'.$classstudent->id]);
+        $data[] = html_writer::tag('label', $studentdesc, ['for' => 'student_' . $classstudent->id]);
         $ptemplate = block_exastud_get_student_print_template($class, $classstudent->id);
         if ($ptemplate) {
             $averageCalculatingNeeded = false;
             if (block_exastud_template_needs_calculated_average($ptemplate->get_template_id())) {
                 $calculated = block_exastud_get_calculated_average($class->id, $classstudent->id);
-                if (!$calculated ) {
+                if (!$calculated) {
                     $averageCalculatingNeeded = true;
                 }
             }
@@ -629,28 +629,28 @@ if ($class !== null) {
                         ['courseid' => $courseid, 'classid' => $class->id, 'studentid' => $classstudent->id]),
                         $warningText, ['class' => 'text-danger']);
                 }
-                $cellContent .= '<span class="text-warning small">'.$warningText.'</span><br>';
+                $cellContent .= '<span class="text-warning small">' . $warningText . '</span><br>';
             }
             $cellContent .= $ptemplate->get_name();
             $data[] = $cellContent;
         }
-        
+
         $table->data[] = $data;
     }
-    
+
     $bp = $DB->get_record('block_exastudbp', [
-        'id' => $class->bpid
+        'id' => $class->bpid,
     ]);
-    
+
     echo $output->header('report');
     $classheader = block_exastud_get_period($class->periodid)->description . ' - ' . $class->title;
-    $classheader .= ' <a href="#" class="exastud-class-selector">'.block_exastud_get_string('select_another_class').'</a>';
+    $classheader .= ' <a href="#" class="exastud-class-selector">' . block_exastud_get_string('select_another_class') . '</a>';
     echo $output->heading($classheader);
     //echo ' <a href="#" class="exastud-class-selector">'.block_exastud_get_string('select_another_class').'</a>';
     echo html_writer::div($periodClasses, 'exastud-class-list', ['style' => 'display: none;']);
 
     echo '<form method="post" id="report">';
-    
+
     //echo block_exastud_get_string('report_template') . ': ';
     //echo html_writer::select($templates, 'template', $template, false);
     $templateTable = new html_table();
@@ -682,8 +682,8 @@ if ($class !== null) {
     $allselect->text = block_exastud_get_string('report_select_all');
     $allselect->colspan = 2;
     $headerRow1->cells = array(
-            $emptycell,
-            $allselect
+        $emptycell,
+        $allselect,
     );
     $headerRow2 = new html_table_row();
     $headercell_1 = new html_table_cell();
@@ -692,11 +692,11 @@ if ($class !== null) {
     $headercell_2 = new html_table_cell();
     $headercell_2->header = true;
     $previews = html_writer::checkbox('select_all2', '1', false, '', ['class' => 'exastud-selectall-checkbox', 'id' => 'select_all2', 'data-reportgroup' => 2]);
-    $previews .= html_writer::empty_tag('input', array('type'=>'hidden', 'name'=>'preview', 'value'=>0, 'id' => 'preview_selector'));
+    $previews .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'preview', 'value' => 0, 'id' => 'preview_selector'));
     $headercell_2->text = $previews;
     $headerRow2->cells = array(
-            $headercell_1,
-            $headercell_2,
+        $headercell_1,
+        $headercell_2,
     );
     $headerRow3 = new html_table_row();
     $headercell_1 = new html_table_cell();
@@ -706,8 +706,8 @@ if ($class !== null) {
     $headercell_2->header = true;
     $headercell_2->text = html_writer::tag('label', block_exastud_get_string('report_screen'), ['for' => 'select_all2']);
     $headerRow3->cells = array(
-            $headercell_1,
-            $headercell_2,
+        $headercell_1,
+        $headercell_2,
     );
     $firstList->data[] = $headerRow1;
     $firstList->data[] = $headerRow2;
@@ -741,11 +741,11 @@ if ($class !== null) {
     //$secondList->head[] = html_writer::tag('label', block_exastud_get_string('report_select_all'), ['for' => 'select_all3']);
     foreach ($templates as $key => $tmpl) {
         if (!$addAnlage && in_array($key, [
-                        BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_ANLAGE_ZUM_LERNENTWICKLUNGSBERICHT,
-                        BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_ANLAGE_ZUM_LERNENTWICKLUNGSBERICHTALT,
-                        BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_UEBERFACHLICHE_KOMPETENZEN,
-//                        BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_TEMP
-                ])) {
+                BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_ANLAGE_ZUM_LERNENTWICKLUNGSBERICHT,
+                BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_ANLAGE_ZUM_LERNENTWICKLUNGSBERICHTALT,
+                BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_UEBERFACHLICHE_KOMPETENZEN,
+                //                        BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_TEMP
+            ])) {
             $addAnlage = true;
             /*foreach ($classstudents as $classstudent) {
                 if (in_array($classstudent->id, $studentsWithExacompGraded)) {
@@ -759,9 +759,9 @@ if ($class !== null) {
         }
 
         if (in_array($key, [
-                BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_16_ZERTIFIKAT_FUER_PROFILFACH,
-                BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_BEIBLATT_PROJEKTPRUEFUNG_HSA, // TODO: is it correct?
-                BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_BEIBLATT_PROJEKTARBEIT_HSA, // TODO: is it correct?
+            BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_16_ZERTIFIKAT_FUER_PROFILFACH,
+            BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_BEIBLATT_PROJEKTPRUEFUNG_HSA, // TODO: is it correct?
+            BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_BEIBLATT_PROJEKTARBEIT_HSA, // TODO: is it correct?
             //BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_ZERTIFIKAT_FUER_PROJEKTARBEIT, // TODO: is it correct?
         ])) {
             $addCurrent = false;
@@ -788,21 +788,21 @@ if ($class !== null) {
                 }
                 $row = new html_table_row();
                 $row->cells[] = $tmpl;
-                $row->cells[] = html_writer::checkbox('template['.$key.']',
+                $row->cells[] = html_writer::checkbox('template[' . $key . ']',
+                    '1',
+                    (array_key_exists($key, $templatesFromForm) ? true : false),
+                    '',
+                    ['class' => 'exastud-selecttemplate-checkbox',
+                        'data-reportgroup' => 1,
+                        'data-templateid' => $key]);
+                if (in_array($key, $previewTemplates)) {
+                    $row->cells[] = html_writer::checkbox('template[' . $key . ']',
                         '1',
                         (array_key_exists($key, $templatesFromForm) ? true : false),
                         '',
                         ['class' => 'exastud-selecttemplate-checkbox',
-                                'data-reportgroup' => 1,
-                                'data-templateid' => $key]);
-                if (in_array($key, $previewTemplates)) {
-                    $row->cells[] = html_writer::checkbox('template['.$key.']',
-                            '1',
-                            (array_key_exists($key, $templatesFromForm) ? true : false),
-                            '',
-                            ['class' => 'exastud-selecttemplate-checkbox',
-                                    'data-reportgroup' => 2,
-                                    'data-templateid' => $key]);
+                            'data-reportgroup' => 2,
+                            'data-templateid' => $key]);
                 } else {
                     $row->cells[] = '&nbsp;';
                 }
@@ -810,15 +810,15 @@ if ($class !== null) {
                 break;
             default:
                 $row = new html_table_row();
-                $row->cells[] = html_writer::checkbox('template['.$key.']',
-                        '1',
-                        (array_key_exists($key, $templatesFromForm) ? true : false),
-                        '',
-                        ['class' => 'exastud-selecttemplate-checkbox',
-                                'data-reportgroup' => 3,
-                                'data-templateid' => $key,
-                                'id' => 'template_'.$key]);
-                $row->cells[] = html_writer::tag('label', $tmpl, ['for' => 'template_'.$key]);
+                $row->cells[] = html_writer::checkbox('template[' . $key . ']',
+                    '1',
+                    (array_key_exists($key, $templatesFromForm) ? true : false),
+                    '',
+                    ['class' => 'exastud-selecttemplate-checkbox',
+                        'data-reportgroup' => 3,
+                        'data-templateid' => $key,
+                        'id' => 'template_' . $key]);
+                $row->cells[] = html_writer::tag('label', $tmpl, ['for' => 'template_' . $key]);
                 $secondList->data[] = $row;
                 break;
         }
@@ -843,17 +843,17 @@ if ($class !== null) {
     echo $output->table($templateTable);
     echo $pleaseselectstudent;
     echo $output->table($table);
-    
-//     echo '<pre>hallo'.block_exacomp_get_grading_scheme(3);
-//     foreach ((\block_exacomp\api::get_comp_tree_for_exastud(89)) as $subject) {
-//         print_r($subject);
-//         echo '------------------------------------------------------------------------';
 
-//         echo '<hr>';
-//     }
-    
-    echo '<input type="submit" value="' . block_exastud_get_string('download'). '" class="btn btn-default" />';
-    
+    //     echo '<pre>hallo'.block_exacomp_get_grading_scheme(3);
+    //     foreach ((\block_exacomp\api::get_comp_tree_for_exastud(89)) as $subject) {
+    //         print_r($subject);
+    //         echo '------------------------------------------------------------------------';
+
+    //         echo '<hr>';
+    //     }
+
+    echo '<input type="submit" value="' . block_exastud_get_string('download') . '" class="btn btn-default" />';
+
     echo $output->footer();
 } else {
     echo $output->header('report');
@@ -862,19 +862,19 @@ if ($class !== null) {
     echo $periodClasses;
 
     /*$periods = $DB->get_records_sql('SELECT * FROM {block_exastudperiod} WHERE (starttime <= ' . time() . ') ORDER BY endtime DESC');
-    
+
     foreach ($periods as $period) {
         $classes = block_exastud_get_head_teacher_classes_all($period->id);
-        
+
         $table = new html_table();
-        
+
         $table->head = [
             $period->description
         ];
         $table->align = array(
             "left"
         );
-        
+
         if (! $classes) {
             $table->data[] = [
                 block_exastud_trans('de:Keine Klassen gefunden')
@@ -886,9 +886,9 @@ if ($class !== null) {
                 ];
             }
         }
-        
+
         echo $output->table($table);
     }*/
-    
+
     echo $output->footer();
 }

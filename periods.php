@@ -17,7 +17,7 @@
 //
 // This copyright notice MUST APPEAR in all copies of the script!
 
-require __DIR__.'/inc.php';
+require __DIR__ . '/inc.php';
 global $DB;
 $courseid = optional_param('courseid', 1, PARAM_INT); // Course ID
 
@@ -30,7 +30,7 @@ $strperiods = block_exastud_get_string('periods');
 block_exastud_check_periods(true);
 
 if (!$periods = $DB->get_records('block_exastudperiod', [], 'starttime DESC, endtime DESC')) {
-	redirect('configuration_periods.php?courseid='.$courseid, block_exastud_get_string('redirectingtoperiodsinput'));
+    redirect('configuration_periods.php?courseid=' . $courseid, block_exastud_get_string('redirectingtoperiodsinput'));
 }
 $url = '/blocks/exastud/periods.php';
 $PAGE->set_url($url);
@@ -44,14 +44,15 @@ echo $output->header(['periods'], ['content_title' => block_exastud_get_string('
 $table = new html_table();
 
 $table->head = array(
-	block_exastud_get_string('perioddescription'),
-	block_exastud_get_string('starttime'),
-	block_exastud_get_string('endtime'),
-//	block_exastud_get_string('certificate_issue_date'),
-	block_exastud_get_string('action'),
+    block_exastud_get_string('perioddescription'),
+    block_exastud_get_string('starttime'),
+    block_exastud_get_string('endtime'),
+    //	block_exastud_get_string('certificate_issue_date'),
+    block_exastud_get_string('action'),
 );
 
-$table->align = array("left", "left", "left", /*"left",*/ "right");
+$table->align = array("left", "left", "left", /*"left",*/
+    "right");
 
 $actPeriod = block_exastud_get_active_period();
 if (!$actPeriod) { // if no any active period or more than one
@@ -59,30 +60,30 @@ if (!$actPeriod) { // if no any active period or more than one
 }
 
 foreach ($periods as $period) {
-	$editUrl = $CFG->wwwroot.'/blocks/exastud/configuration_periods.php?courseid='.$courseid.'&periodid='.$period->id.'&sesskey='.sesskey().'&action=edit';
+    $editUrl = $CFG->wwwroot . '/blocks/exastud/configuration_periods.php?courseid=' . $courseid . '&periodid=' . $period->id . '&sesskey=' . sesskey() . '&action=edit';
 
-	$icons = $output->link_button($editUrl,
-		'<img src="pix/edit.png" alt="'.block_exastud_get_string('edit').'" />');
-	$icons .= $output->link_button($CFG->wwwroot.'/blocks/exastud/configuration_periods.php?courseid='.$courseid.'&periodid='.$period->id.'&sesskey='.sesskey().'&action=delete',
-		'<img src="pix/del.png" alt="'.block_exastud_get_string('delete').'" />',
-		['exa-confirm' => block_exastud_get_string('delete_confirmation', null, $period->description)]
-	);
+    $icons = $output->link_button($editUrl,
+        '<img src="pix/edit.png" alt="' . block_exastud_get_string('edit') . '" />');
+    $icons .= $output->link_button($CFG->wwwroot . '/blocks/exastud/configuration_periods.php?courseid=' . $courseid . '&periodid=' . $period->id . '&sesskey=' . sesskey() . '&action=delete',
+        '<img src="pix/del.png" alt="' . block_exastud_get_string('delete') . '" />',
+        ['exa-confirm' => block_exastud_get_string('delete_confirmation', null, $period->description)]
+    );
 
-	$starttime = userdate($period->starttime, block_exastud_get_string('strftimedatetime', 'langconfig'));
-	$endtime = userdate($period->endtime, block_exastud_get_string('strftimedatetime', 'langconfig'));
+    $starttime = userdate($period->starttime, block_exastud_get_string('strftimedatetime', 'langconfig'));
+    $endtime = userdate($period->endtime, block_exastud_get_string('strftimedatetime', 'langconfig'));
 
-	$table->data[] = [
-		'<a href="'.$editUrl.'">'.($actPeriod && $period->id == $actPeriod->id ? '<b>' : '').$period->description.'</a>',
-		$starttime,
-		$endtime,
-//		$period->certificate_issue_date ? block_exastud_format_certificate_issue_date($period->certificate_issue_date) : '',
-		$icons,
-	];
+    $table->data[] = [
+        '<a href="' . $editUrl . '">' . ($actPeriod && $period->id == $actPeriod->id ? '<b>' : '') . $period->description . '</a>',
+        $starttime,
+        $endtime,
+        //		$period->certificate_issue_date ? block_exastud_format_certificate_issue_date($period->certificate_issue_date) : '',
+        $icons,
+    ];
 }
 
 echo $output->table($table);
 
-echo $OUTPUT->single_button($CFG->wwwroot.'/blocks/exastud/configuration_periods.php?courseid='.$courseid.'&sesskey='.sesskey().'&action=new',
-	block_exastud_get_string('newperiod'), 'get');
+echo $OUTPUT->single_button($CFG->wwwroot . '/blocks/exastud/configuration_periods.php?courseid=' . $courseid . '&sesskey=' . sesskey() . '&action=new',
+    block_exastud_get_string('newperiod'), 'get');
 
 echo $output->footer();

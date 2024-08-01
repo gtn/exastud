@@ -59,7 +59,7 @@ class exastud_reportmatrix extends HTML_QuickForm_element {
 
     function toHtml() {
         global $CFG, $OUTPUT;
-        
+
         $htmltable = new html_table();
 
         $htmltable->head = array_merge(array(''), $this->input['matrixcols']);
@@ -75,8 +75,8 @@ class exastud_reportmatrix extends HTML_QuickForm_element {
                 case 'checkbox':
                     $value = @$this->value[$rowtitle][$coltitle];
                     $html = '<input type="checkbox"
-                                name="'.$dataid.'['.$rowtitle.']['.$coltitle.']"
-                                '.($value ? ' checked="checked" ' : '').' 
+                                name="' . $dataid . '[' . $rowtitle . '][' . $coltitle . ']"
+                                ' . ($value ? ' checked="checked" ' : '') . '
                                 value="1">';
                     break;
                 case 'radio':
@@ -85,16 +85,16 @@ class exastud_reportmatrix extends HTML_QuickForm_element {
                     } else {
                         $value = '';
                     }
-                    $html = '<input type="radio" 
-                                name="'.$dataid.'['.$rowtitle.']"
-                                '.$value.' 
-                                value="'.$coltitle.'">';
+                    $html = '<input type="radio"
+                                name="' . $dataid . '[' . $rowtitle . ']"
+                                ' . $value . '
+                                value="' . $coltitle . '">';
                     break;
                 case 'text':
                     $value = @$this->value[$rowtitle][$coltitle];
                     $html = '<input type="text" class="form-control "
-                                name="'.$dataid.'['.$rowtitle.']['.$coltitle.']"
-                                value="'.$value.'">';
+                                name="' . $dataid . '[' . $rowtitle . '][' . $coltitle . ']"
+                                value="' . $value . '">';
                     break;
             }
 
@@ -119,6 +119,6 @@ class exastud_reportmatrix extends HTML_QuickForm_element {
 }
 
 //register this form element
-MoodleQuickForm::registerElementType('exastud_reportmatrix', $CFG->dirroot."/blocks/exastud/classes/exastud_reportmatrix.php", 'exastud_reportmatrix');
+MoodleQuickForm::registerElementType('exastud_reportmatrix', $CFG->dirroot . "/blocks/exastud/classes/exastud_reportmatrix.php", 'exastud_reportmatrix');
 
 

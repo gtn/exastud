@@ -55,12 +55,12 @@ class studentreview_changed extends base {
         $oldvalue = $this->other['oldvalue'];
         $value = $this->other['value'];
         $target = $this->other['target'];
-        $result = $this->other['whoDid']." reviewed the student '$studentname' (id: $this->relateduserid)";
+        $result = $this->other['whoDid'] . " reviewed the student '$studentname' (id: $this->relateduserid)";
         $result .= " for class '$classtitle' (id: $this->objectid) and subject '$subjecttitle' (id: $subjectid).";
         if ($oldvalue) {
-            $result .= $target.": old value is '$oldvalue', new value is '$value'";
+            $result .= $target . ": old value is '$oldvalue', new value is '$value'";
         } else {
-            $result .= $target.": value is '$value'";
+            $result .= $target . ": value is '$value'";
         }
         return $result;
 
@@ -72,8 +72,8 @@ class studentreview_changed extends base {
      * @return array
      */
     protected function get_legacy_logdata() {
-        return(array($this->courseid, 'exastud', 'change review of the student',
-                'review_class.php?classid=' . $this->objectid.'&subjectid='.intval($this->other['subjectid']), $this->objectid, $this->contextinstanceid));
+        return (array($this->courseid, 'exastud', 'change review of the student',
+            'review_class.php?classid=' . $this->objectid . '&subjectid=' . intval($this->other['subjectid']), $this->objectid, $this->contextinstanceid));
     }
 
     /**
@@ -83,7 +83,7 @@ class studentreview_changed extends base {
      */
     public function get_url() {
         return new \moodle_url('/blocks/exastud/review_class.php',
-                                array('classid' => $this->objectid, 'subjectid' => $this->other['subjectid']));
+            array('classid' => $this->objectid, 'subjectid' => $this->other['subjectid']));
     }
 
     public static function get_objectid_mapping() {

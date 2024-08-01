@@ -19,7 +19,7 @@
 
 use Ifsnop\Mysqldump as IMysqldump;
 
-require __DIR__.'/inc.php';
+require __DIR__ . '/inc.php';
 
 $courseid = optional_param('courseid', 1, PARAM_INT); // Course ID
 $action = optional_param('action', '', PARAM_TEXT); // Period ID
@@ -36,58 +36,58 @@ $output = block_exastud_get_renderer();
 block_exastud_custom_breadcrumb($PAGE);
 
 if ($action == 'backup') {
-	$tables = [];
+    $tables = [];
 
-	// backup all exastud tables
-	preg_match_all('!<table\s.*name="(?<tables>[^"]+)"!i', file_get_contents(__DIR__.'/db/install.xml'), $matches);
-	$tables = $matches['tables'];
+    // backup all exastud tables
+    preg_match_all('!<table\s.*name="(?<tables>[^"]+)"!i', file_get_contents(__DIR__ . '/db/install.xml'), $matches);
+    $tables = $matches['tables'];
 
-	if (!$tables) {
-		throw new \Exception('table names not found');
-	}
-
-	// and also backup user tables
-	$tables[] = 'user';
-	$tables[] = 'user_info_category';
-	$tables[] = 'user_info_data';
-	$tables[] = 'user_info_field';
-
-	$tables = array_map(function($t) use ($CFG) {
-		return $CFG->prefix.$t;
-	}, $tables);
-
-
-	if ($CFG->dbtype == 'mysqli' || $CFG->dbtype == 'mariadb') {
-		$dbtype = 'mysql';
-	} else {
-		$dbtype = $CFG->dbtype;
-	}
-	$dbport = '';
-	if (array_key_exists('dbport', $CFG->dboptions) && $CFG->dboptions['dbport']) {
-        $dbport = ';port='.intval($CFG->dboptions['dbport']);
+    if (!$tables) {
+        throw new \Exception('table names not found');
     }
-	$dump = new IMysqldump\Mysqldump($dbtype.':host='.$CFG->dbhost.$dbport.';dbname='.$CFG->dbname,
+
+    // and also backup user tables
+    $tables[] = 'user';
+    $tables[] = 'user_info_category';
+    $tables[] = 'user_info_data';
+    $tables[] = 'user_info_field';
+
+    $tables = array_map(function($t) use ($CFG) {
+        return $CFG->prefix . $t;
+    }, $tables);
+
+
+    if ($CFG->dbtype == 'mysqli' || $CFG->dbtype == 'mariadb') {
+        $dbtype = 'mysql';
+    } else {
+        $dbtype = $CFG->dbtype;
+    }
+    $dbport = '';
+    if (array_key_exists('dbport', $CFG->dboptions) && $CFG->dboptions['dbport']) {
+        $dbport = ';port=' . intval($CFG->dboptions['dbport']);
+    }
+    $dump = new IMysqldump\Mysqldump($dbtype . ':host=' . $CFG->dbhost . $dbport . ';dbname=' . $CFG->dbname,
         $CFG->dbuser,
         $CFG->dbpass,
         ['include-tables' => $tables,
-        'add-drop-table' => true,
-        'compress' => IMysqldump\Mysqldump::GZIP,]
+            'add-drop-table' => true,
+            'compress' => IMysqldump\Mysqldump::GZIP,]
     );
 
-	$file = tempnam($CFG->tempdir, "zip");
-	$dump->start($file);
+    $file = tempnam($CFG->tempdir, "zip");
+    $dump->start($file);
 
-	require_once($CFG->libdir.'/filelib.php');
-	send_temp_file($file, 'backup_exastud_'.date('Y-m-d').'.gz');
+    require_once($CFG->libdir . '/filelib.php');
+    send_temp_file($file, 'backup_exastud_' . date('Y-m-d') . '.gz');
 
-	exit;
+    exit;
 }
 
 echo $output->header(['backup'], ['content_title' => block_exastud_get_string('pluginname')], true/*['settings', 'backup']*/);
 
-echo block_exastud_get_string('backup_description').'<br/><br/>';
+echo block_exastud_get_string('backup_description') . '<br/><br/>';
 
-echo $output->link_button($_SERVER['REQUEST_URI'].'&action=backup', block_exastud_get_string('backup_go'), ['class' => 'btn btn-default']);
+echo $output->link_button($_SERVER['REQUEST_URI'] . '&action=backup', block_exastud_get_string('backup_go'), ['class' => 'btn btn-default']);
 
 echo $output->footer();
 

@@ -49,7 +49,7 @@ class subject_deleted extends base {
      */
     public function get_description() {
         $title = $this->other['title'];
-        return $this->other['whoDid']." deleted the Subject '$title' (id: $this->objectid)";
+        return $this->other['whoDid'] . " deleted the Subject '$title' (id: $this->objectid)";
     }
 
     /**
@@ -58,8 +58,8 @@ class subject_deleted extends base {
      * @return array
      */
     protected function get_legacy_logdata() {
-        return(array($this->courseid, 'exastud', 'delete subject',
-                'configuration_global.php', $this->objectid, $this->contextinstanceid));
+        return (array($this->courseid, 'exastud', 'delete subject',
+            'configuration_global.php', $this->objectid, $this->contextinstanceid));
     }
 
     /**

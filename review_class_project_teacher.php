@@ -17,7 +17,7 @@
 //
 // This copyright notice MUST APPEAR in all copies of the script!
 
-require __DIR__.'/inc.php';
+require __DIR__ . '/inc.php';
 
 $courseid = optional_param('courseid', 1, PARAM_INT); // Course ID
 $classid = required_param('classid', PARAM_INT);
@@ -27,10 +27,10 @@ setcookie('lastclass', $classid);
 block_exastud_require_login($courseid);
 
 if (!$class = block_exastud_get_class($classid)) {
-	throw new moodle_exception("badclass", "block_exastud");
+    throw new moodle_exception("badclass", "block_exastud");
 }
 if (!block_exastud_is_project_teacher($class, $USER->id)) {
-	throw new moodle_exception("not a project teacher");
+    throw new moodle_exception("not a project teacher");
 }
 
 /*$categories = [
@@ -52,18 +52,18 @@ if (!block_exastud_is_project_teacher($class, $USER->id)) {
 ];*/
 
 $categories = [
-        BLOCK_EXASTUD_DATA_ID_PROJECT_TEACHER => [
-                'title' => block_exastud_get_string('review_project_evalueations'),
-        ]
+    BLOCK_EXASTUD_DATA_ID_PROJECT_TEACHER => [
+        'title' => block_exastud_get_string('review_project_evalueations'),
+    ],
 ];
 //'projekt_thema', 'projekt_grade', 'projekt_verbalbeurteilung'];
-$classheader = $class->title.' - '.block_exastud_get_string('review_project_evalueations');
+$classheader = $class->title . ' - ' . block_exastud_get_string('review_project_evalueations');
 
 $output = block_exastud_get_renderer();
 
 $url = '/blocks/exastud/review_class_project_teacher.php';
 $PAGE->set_url($url, ['courseid' => $courseid, 'classid' => $classid]);
-echo $output->header(array('review', '='.$classheader));
+echo $output->header(array('review', '=' . $classheader));
 echo $output->heading($classheader);
 
 $project_teacher_students = block_exastud_get_project_teacher_students($class, $USER->id, true);
@@ -77,7 +77,7 @@ $table->head[] = block_exastud_get_string('name');
 $table->head[] = '';
 
 foreach ($categories as $category) {
-	$table->head[] = $category['title'];
+    $table->head[] = $category['title'];
 }
 
 $table->align = array();
@@ -87,20 +87,20 @@ $table->align[] = 'center';
 
 foreach ($project_teacher_students as $classstudent) {
     $template = block_exastud_get_student_print_template($class, $classstudent->id);
-	$icons = '<img src="'.$CFG->wwwroot.'/pix/i/edit.gif" width="16" height="16" alt="'.block_exastud_get_string('edit').'" />';
-	$userdesc = fullname($classstudent);
+    $icons = '<img src="' . $CFG->wwwroot . '/pix/i/edit.gif" width="16" height="16" alt="' . block_exastud_get_string('edit') . '" />';
+    $userdesc = fullname($classstudent);
 
-	$data = (array)block_exastud_get_class_student_data($classid, $classstudent->id);
+    $data = (array)block_exastud_get_class_student_data($classid, $classstudent->id);
 
-	$row = new html_table_row();
-	$row->cells[] = $OUTPUT->user_picture($classstudent, array("courseid" => $courseid));
-	$row->cells[] = $userdesc;
+    $row = new html_table_row();
+    $row->cells[] = $OUTPUT->user_picture($classstudent, array("courseid" => $courseid));
+    $row->cells[] = $userdesc;
 
-	$row->cells[] = $output->link_button($CFG->wwwroot.'/blocks/exastud/review_student_project_teacher.php?courseid='.$courseid.'&classid='.$classid.'&studentid='.$classstudent->id,
-		block_exastud_get_string('edit'), ['class' => 'btn btn-default']);
+    $row->cells[] = $output->link_button($CFG->wwwroot . '/blocks/exastud/review_student_project_teacher.php?courseid=' . $courseid . '&classid=' . $classid . '&studentid=' . $classstudent->id,
+        block_exastud_get_string('edit'), ['class' => 'btn btn-default']);
 
-	foreach ($categories as $dataid => $category) {
-        $content = '<div><b>Formular:</b> '.$template->get_name().'</div>';
+    foreach ($categories as $dataid => $category) {
+        $content = '<div><b>Formular:</b> ' . $template->get_name() . '</div>';
         $inputs = $template->get_inputs($dataid);
         if ($inputs) {
             foreach ($inputs as $dataid => $form_input) {
@@ -109,8 +109,8 @@ foreach ($project_teacher_students as $classstudent) {
                         $value = @$form_input['values'][$data[$dataid]];
                         break;
                     case 'image':
-                        $files = $fs->get_area_files($context->id, 'block_exastud', 'report_image_'.$dataid, $classstudent->id,
-                                'itemid', false);
+                        $files = $fs->get_area_files($context->id, 'block_exastud', 'report_image_' . $dataid, $classstudent->id,
+                            'itemid', false);
                         $filesOut = [];
                         foreach ($files as $file) {
                             if ($file->get_userid() != $USER->id) {
@@ -118,7 +118,7 @@ foreach ($project_teacher_students as $classstudent) {
                             }
                             $filename = $file->get_filename();
                             $url = moodle_url::make_pluginfile_url($file->get_contextid(), $file->get_component(),
-                                    $file->get_filearea(), $file->get_itemid(), $file->get_filepath(), $file->get_filename());
+                                $file->get_filearea(), $file->get_itemid(), $file->get_filepath(), $file->get_filename());
                             $img = html_writer::img($url, $filename, ['width' => 150]);
                             $filesOut[] = html_writer::link($url, $img, ['target' => '_blank']);
                         }
@@ -129,8 +129,8 @@ foreach ($project_teacher_students as $classstudent) {
                         $value = !empty($data[$dataid]) ? block_exastud_text_to_html($data[$dataid]) : '';
                 }
 
-                $content .= '<div style="padding-top: 10px; font-weight: bold;">'.$form_input['title'].'</div>';
-                $content .= '<div>'.$value.'</div>';
+                $content .= '<div style="padding-top: 10px; font-weight: bold;">' . $form_input['title'] . '</div>';
+                $content .= '<div>' . $value . '</div>';
             }
         }
         $row->cells[] = $content;
@@ -139,9 +139,9 @@ foreach ($project_teacher_students as $classstudent) {
 		} else {
 			$row->cells[] = !empty($data[$dataid]) ? block_exastud_text_to_html($data[$dataid]) : '';
 		}*/
-	}
+    }
 
-	$table->data[] = $row;
+    $table->data[] = $row;
 }
 
 echo $output->table($table);

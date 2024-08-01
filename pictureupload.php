@@ -17,8 +17,8 @@
 //
 // This copyright notice MUST APPEAR in all copies of the script!
 
-require __DIR__.'/inc.php';
-require_once __DIR__.'/lib/picture_upload_form.php';
+require __DIR__ . '/inc.php';
+require_once __DIR__ . '/lib/picture_upload_form.php';
 
 $courseid = optional_param('courseid', 1, PARAM_INT); // Course ID
 
@@ -27,7 +27,7 @@ block_exastud_require_login($courseid);
 block_exastud_require_global_cap(BLOCK_EXASTUD_CAP_UPLOAD_PICTURE);
 
 $url = '/blocks/exastud/pictureupload.php';
-$PAGE->set_url($url, [ 'courseid' => $courseid ]);
+$PAGE->set_url($url, ['courseid' => $courseid]);
 $PAGE->set_pagelayout('admin'); // Needed for admin menu block
 $output = block_exastud_get_renderer();
 
@@ -36,24 +36,24 @@ echo $output->header(['pictureupload'], ['content_title' => block_exastud_get_st
 
 $mform = new block_exastud_picture_upload_form();
 if ($mform->is_cancelled()) {
-	redirect($returnurl);
+    redirect($returnurl);
 } else if ($mform->is_submitted()) {
-	
-	$fs = get_file_storage();
-	
-	// delete old logo
-	$fs->delete_area_files(context_system::instance()->id, 'block_exastud', 'main_logo', 0);
 
-	// save new logo
-	$mform->save_stored_file('file', context_system::instance()->id	, 'block_exastud', 'main_logo', 0);
-							  
-	block_exastud_get_string('upload_success');
+    $fs = get_file_storage();
+
+    // delete old logo
+    $fs->delete_area_files(context_system::instance()->id, 'block_exastud', 'main_logo', 0);
+
+    // save new logo
+    $mform->save_stored_file('file', context_system::instance()->id, 'block_exastud', 'main_logo', 0);
+
+    block_exastud_get_string('upload_success');
 }
 
 if ($logo = block_exastud_get_main_logo_url()) {
-	echo '<img style="max-width: 840px" src="'.$logo.'" />';
+    echo '<img style="max-width: 840px" src="' . $logo . '" />';
 }
-		
+
 $mform->display();
 
 echo $output->footer();

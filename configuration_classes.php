@@ -17,7 +17,7 @@
 //
 // This copyright notice MUST APPEAR in all copies of the script!
 
-require __DIR__.'/inc.php';
+require __DIR__ . '/inc.php';
 
 $courseid = optional_param('courseid', 1, PARAM_INT); // Course ID
 $action = optional_param('action', '', PARAM_TEXT);
@@ -55,7 +55,7 @@ foreach ($periods as $period) {
 }
 $max_classes = max($class_counts);
 
-$url = '/blocks/exastud/configuration_classes.php?startPeriod='.$startPeriod;
+$url = '/blocks/exastud/configuration_classes.php?startPeriod=' . $startPeriod;
 $PAGE->set_url($url);
 
 $output = block_exastud_get_renderer();
@@ -79,49 +79,49 @@ for ($i = 0; $i <= $max_classes; $i++) {
             $dateStart = preg_replace('/\s+/', '&nbsp;', $dateStart);
             $dateEnd = date('d F Y', $period->endtime);
             $dateEnd = preg_replace('/\s+/', '&nbsp;', $dateEnd);
-            $tablePeriods->head[$period->id] .= '<br><small>'.$dateStart.' - '.$dateEnd.'</small>';
+            $tablePeriods->head[$period->id] .= '<br><small>' . $dateStart . ' - ' . $dateEnd . '</small>';
         }
         $periodCell = new html_table_cell();
         $div = (($startPeriod + $countOfShownPeriods) < $count_periods) ? $countOfShownPeriods : ($count_periods - $startPeriod);
-        $periodCell->attributes['width'] = (100 / $div).'%';
+        $periodCell->attributes['width'] = (100 / $div) . '%';
         if (array_key_exists($period->id, $period_classes) && array_key_exists($i, $period_classes[$period->id])) {
             $tempClass = $period_classes[$period->id][$i];
-            $periodCell->text = '<a href="configuration_class.php?courseid='.$courseid.'&classid='.$tempClass->id.'">'.$tempClass->title.'</a>';
+            $periodCell->text = '<a href="configuration_class.php?courseid=' . $courseid . '&classid=' . $tempClass->id . '">' . $tempClass->title . '</a>';
             if (block_exastud_is_siteadmin() && $tempClass->userid != $USER->id) {
                 $ownerData = $DB->get_record('user', ['id' => $tempClass->userid, 'deleted' => 0]);
-                $periodCell->text .= '&nbsp;<small>(id: '.$tempClass->id.') '.$ownerData->firstname.' '.$ownerData->lastname.'</small>';
+                $periodCell->text .= '&nbsp;<small>(id: ' . $tempClass->id . ') ' . $ownerData->firstname . ' ' . $ownerData->lastname . '</small>';
             }
             $buttons = '';
             // backup buttons
             if (block_exastud_is_siteadmin() || $tempClass->userid == $USER->id) {
                 //$img = '<img src="'.$CFG->wwwroot.'/blocks/exastud/pix/backup.png" title="'.block_exastud_get_string('export_class').'"/>';
-                $img = '<i class="fas fa-download" title="'.block_exastud_get_string('export_class').'"></i>';
-                $buttons .= html_writer::link($CFG->wwwroot.'/blocks/exastud/export_class.php?courseid='.$courseid.'&classid='.$tempClass->id,
-                        $img,
-                        ['title' => block_exastud_get_string('export_class'), 'class' => '']);
+                $img = '<i class="fas fa-download" title="' . block_exastud_get_string('export_class') . '"></i>';
+                $buttons .= html_writer::link($CFG->wwwroot . '/blocks/exastud/export_class.php?courseid=' . $courseid . '&classid=' . $tempClass->id,
+                    $img,
+                    ['title' => block_exastud_get_string('export_class'), 'class' => '']);
             }
             // delete buttons
             if (block_exastud_is_siteadmin() || $tempClass->userid == $USER->id) {
                 //$img = '<img src="'.$CFG->wwwroot.'/blocks/exastud/pix/trash.png" title="'.block_exastud_get_string('class_delete').'"/>';
-                $img = '<i class="fas fa-trash" title="'.block_exastud_get_string('class_delete').'"></i>';
+                $img = '<i class="fas fa-trash" title="' . block_exastud_get_string('class_delete') . '"></i>';
                 if (isset($tempClass->to_delete) && $tempClass->to_delete) {
                     //$img = '<img src="'.$CFG->wwwroot.'/blocks/exastud/pix/trash2.png" title="'.block_exastud_get_string('class_marked_as_todelete_hover').'"/>';
-                    $img = '<i class="fas fa-trash-restore" title="'.block_exastud_get_string('class_marked_as_todelete_hover').'"></i>';
+                    $img = '<i class="fas fa-trash-restore" title="' . block_exastud_get_string('class_marked_as_todelete_hover') . '"></i>';
                     //$img .= '<img src="'.$CFG->wwwroot.'/blocks/exastud/pix/attention.png" title="'.block_exastud_get_string('class_marked_as_todelete_hover').'"/>';;
-                    $img .= '<i class="fas fa-exclamation-triangle" title="'.block_exastud_get_string('class_marked_as_todelete_hover').'"></i>';
+                    $img .= '<i class="fas fa-exclamation-triangle" title="' . block_exastud_get_string('class_marked_as_todelete_hover') . '"></i>';
                 }
                 if (!block_exastud_get_class_students($tempClass->id) || block_exastud_is_siteadmin()) {
-                    $buttons .= html_writer::link($CFG->wwwroot.'/blocks/exastud/configuration_class.php?courseid='.$courseid.'&action=delete&classid='.$tempClass->id.'&confirm=1',
-                            $img,
-                            ['exa-confirm' => block_exastud_get_string('delete_confirmation', null, $tempClass->title), 'exa-type' => 'link', 'class' => '', 'title' => block_exastud_get_string('delete')]);
+                    $buttons .= html_writer::link($CFG->wwwroot . '/blocks/exastud/configuration_class.php?courseid=' . $courseid . '&action=delete&classid=' . $tempClass->id . '&confirm=1',
+                        $img,
+                        ['exa-confirm' => block_exastud_get_string('delete_confirmation', null, $tempClass->title), 'exa-type' => 'link', 'class' => '', 'title' => block_exastud_get_string('delete')]);
                 } else {
-                    $buttons .= html_writer::link($CFG->wwwroot.'/blocks/exastud/configuration_class.php?courseid='.$courseid.'&action=to_delete&classid='.$tempClass->id.'&confirm=0&startPeriod='.$startPeriod,
-                            $img,
-                            ['title' => block_exastud_get_string('class_delete'), 'class' => '']
+                    $buttons .= html_writer::link($CFG->wwwroot . '/blocks/exastud/configuration_class.php?courseid=' . $courseid . '&action=to_delete&classid=' . $tempClass->id . '&confirm=0&startPeriod=' . $startPeriod,
+                        $img,
+                        ['title' => block_exastud_get_string('class_delete'), 'class' => '']
                     );
                 }
 
-                $periodCell->text .= '<span class="exastud-class-buttons">'.$buttons.'</span>';
+                $periodCell->text .= '<span class="exastud-class-buttons">' . $buttons . '</span>';
             }
         } else {
             $periodCell->text = '';
@@ -136,30 +136,30 @@ for ($i = 0; $i <= $max_classes; $i++) {
 }
 // add prev period link
 if ($startPeriod > 0) {
-    $link = \html_writer::link($CFG->wwwroot.'/blocks/exastud/configuration_classes.php?startPeriod='.($startPeriod - $countOfShownPeriods), ' << ');
+    $link = \html_writer::link($CFG->wwwroot . '/blocks/exastud/configuration_classes.php?startPeriod=' . ($startPeriod - $countOfShownPeriods), ' << ');
     array_unshift($tablePeriods->head, $link);
 }
 // add next period link
 if (($startPeriod + $countOfShownPeriods) < $count_periods) {
-    $link = \html_writer::link($CFG->wwwroot.'/blocks/exastud/configuration_classes.php?startPeriod='.($startPeriod + $countOfShownPeriods), ' >> ');
+    $link = \html_writer::link($CFG->wwwroot . '/blocks/exastud/configuration_classes.php?startPeriod=' . ($startPeriod + $countOfShownPeriods), ' >> ');
     $tablePeriods->head[] = $link;
 }
 echo $output->table($tablePeriods, 'widthauto maxcellwidth600');
 
 if (!block_exastud_is_siteadmin()) { // not for siteadmins
-    echo $output->link_button($CFG->wwwroot.'/blocks/exastud/configuration_class_info.php?courseid='.$courseid.'&action=add',
-            block_exastud_get_string('add_class'), ['class' => 'btn btn-default']);
+    echo $output->link_button($CFG->wwwroot . '/blocks/exastud/configuration_class_info.php?courseid=' . $courseid . '&action=add',
+        block_exastud_get_string('add_class'), ['class' => 'btn btn-default']);
 }
 
 if ($lastPeriodClasses && !block_exastud_is_siteadmin()) {
-	echo $output->link_button($CFG->wwwroot.'/blocks/exastud/copy_classes.php?courseid='.$courseid,
-            block_exastud_get_string('copy_class_from_last_period'), ['class' => 'btn btn-default']);
+    echo $output->link_button($CFG->wwwroot . '/blocks/exastud/copy_classes.php?courseid=' . $courseid,
+        block_exastud_get_string('copy_class_from_last_period'), ['class' => 'btn btn-default']);
 }
 
 if (!block_exastud_is_siteadmin()) { // not for siteadmins
-    echo $output->link_button($CFG->wwwroot.'/blocks/exastud/import_class.php?courseid='.$courseid,
-            block_exastud_get_string('import_class_from_backup'),
-            ['class' => 'btn btn-default']);
+    echo $output->link_button($CFG->wwwroot . '/blocks/exastud/import_class.php?courseid=' . $courseid,
+        block_exastud_get_string('import_class_from_backup'),
+        ['class' => 'btn btn-default']);
 }
 
 

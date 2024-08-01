@@ -19,13 +19,12 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-require_once $CFG->dirroot.'/cohort/lib.php';
-require_once __DIR__.'/../block_exastud.php';
-require_once __DIR__.'/common.php';
-require_once __DIR__.'/classes.php';
+require_once $CFG->dirroot . '/cohort/lib.php';
+require_once __DIR__ . '/../block_exastud.php';
+require_once __DIR__ . '/common.php';
+require_once __DIR__ . '/classes.php';
 
 use block_exastud\globals as g;
-use block_exastud\print_template;
 
 const BLOCK_EXASTUD_CAP_HEAD_TEACHER = 'head_teacher';
 // const BLOCK_EXASTUD_CAP_SUBJECT_TEACHER = 'subject_teacher';
@@ -67,7 +66,7 @@ const BLOCK_EXASTUD_COMPETENCE_EVALUATION_TYPE_POINT = 2;
 const BLOCK_EXASTUD_PROJECTARBAIT_FOR_AVERAGE_CALCULATING = -12;
 const BLOCK_EXASTUD_PROJECTARBAIT_FOR_AVERAGE_CALCULATING_PARAMNAME = 'projekt_average_factor';
 
-const BLOCK_EXASTUD_TEMPLATE_DIR = __DIR__.'/../template';
+const BLOCK_EXASTUD_TEMPLATE_DIR = __DIR__ . '/../template';
 
 // these default ids are for default templates. The names of constants are from current filenames
 // reports for BW
@@ -75,27 +74,27 @@ const BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_DEFAULT_REPORT = 1;
 const BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_ANLAGE_ZUM_LERNENTWICKLUNGSBERICHT = 2;
 const BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_ANLAGE_ZUM_LERNENTWICKLUNGSBERICHTALT = 3;
 const BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_16_ZERTIFIKAT_FUER_PROFILFACH = 4;
-const BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_BEIBLATT_PROJEKTPRUEFUNG_HSA  = 5;
-const BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_HALBJAHR_LERNENTWICKLUNGSBERICHT  = 6;
-const BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_JAHRESZEUGNIS_LERNENTWICKLUNGSBERICHT  = 7;
-const BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_HALBJAHR_LERNENTWICKLUNGSBERICHT  = 8;
-const BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_JAHRESZEUGNIS_LERNENTWICKLUNGSBERICHT  = 9;
-const BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_HALBJAHR_ZEUGNIS_KL10_E_NIVEAU  = 10;
-const BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_JAHRESZEUGNIS_KL10_E_NIVEAU  = 11;
+const BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_BEIBLATT_PROJEKTPRUEFUNG_HSA = 5;
+const BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_HALBJAHR_LERNENTWICKLUNGSBERICHT = 6;
+const BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_JAHRESZEUGNIS_LERNENTWICKLUNGSBERICHT = 7;
+const BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_HALBJAHR_LERNENTWICKLUNGSBERICHT = 8;
+const BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_JAHRESZEUGNIS_LERNENTWICKLUNGSBERICHT = 9;
+const BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_HALBJAHR_ZEUGNIS_KL10_E_NIVEAU = 10;
+const BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_JAHRESZEUGNIS_KL10_E_NIVEAU = 11;
 const BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_ABGANGSZEUGNIS_SCHULPFLICHT = 12;
-const BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_ABGANGSZEUGNIS_NICHT_BEST_HSA  = 13;
-const BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_HALBJAHR_ZEUGNIS_KL9_10_HSA  = 14;
-const BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_ABSCHLUSSZEUGNIS_HS  = 15;
-const BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_HALBJAHR_ZEUGNIS_RS  = 16;
-const BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_ABSCHLUSSZEUGNIS_RS  = 17;
-const BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_ABSCHLUSSZEUGNIS_FOE  = 18;
-const BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_HALBJAHR_ZEUGNIS_FOE  = 19;
-const BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_GMS_LERNENTWICKLUNGSBERICHT_DECKBLATT_UND_1_INNENSEITE  = 20;
-const BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_HALBJAHRESINFORMATION_KL11  = 21;
-const BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_HALBJAHRESINFORMATION_KL11  = 22;
+const BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_ABGANGSZEUGNIS_NICHT_BEST_HSA = 13;
+const BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_HALBJAHR_ZEUGNIS_KL9_10_HSA = 14;
+const BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_ABSCHLUSSZEUGNIS_HS = 15;
+const BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_HALBJAHR_ZEUGNIS_RS = 16;
+const BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_ABSCHLUSSZEUGNIS_RS = 17;
+const BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_ABSCHLUSSZEUGNIS_FOE = 18;
+const BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_HALBJAHR_ZEUGNIS_FOE = 19;
+const BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_GMS_LERNENTWICKLUNGSBERICHT_DECKBLATT_UND_1_INNENSEITE = 20;
+const BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_HALBJAHRESINFORMATION_KL11 = 21;
+const BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_HALBJAHRESINFORMATION_KL11 = 22;
 const BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_UEBERFACHLICHE_KOMPETENZEN = 23;
 const BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_GLEICHWERTIGER_BILDUNGSABSCHLUSS_HSA = 24;
-const BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_ABGANGSZEUGNIS_SCHULPFLICHT  = 25;
+const BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_ABGANGSZEUGNIS_SCHULPFLICHT = 25;
 const BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_ABGANGSZEUGNIS_NICHT_BEST_HSA = 26;
 const BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_ABSCHLUSSZEUGNIS_FOE = 27;
 const BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_BEIBLATT_PROJEKTARBEIT_HSA = 28;
@@ -132,9 +131,9 @@ const BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_STUDENT_CARD = 999;
 //const BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_TEMP = 1000; // delete it!!!!
 
 class block_exastud_permission_exception extends moodle_exception {
-	function __construct($errorcode = 'Not allowed', $module = '', $link = '', $a = null, $debuginfo = null) {
-		return parent::__construct($errorcode, $module, $link, $a, $debuginfo);
-	}
+    function __construct($errorcode = 'Not allowed', $module = '', $link = '', $a = null, $debuginfo = null) {
+        return parent::__construct($errorcode, $module, $link, $a, $debuginfo);
+    }
 }
 
 /**
@@ -143,82 +142,82 @@ class block_exastud_permission_exception extends moodle_exception {
  * version, which requires a different naming.
  */
 function block_exastud_get_string($identifier, $component = null, $a = null, $lazyload = false) {
-	global $CFG;
+    global $CFG;
 
-	$manager = get_string_manager();
+    $manager = get_string_manager();
 
-	if ($component == null) {
-		$component = 'block_exastud';
-	}
+    if ($component == null) {
+        $component = 'block_exastud';
+    }
 
-	// first try string with project_based_* prefix
-	if (($component == 'block_exastud') && !empty($CFG->block_exastud_project_based_assessment) && $manager->string_exists('project_based_'.$identifier, $component)) {
-		return $manager->get_string('project_based_'.$identifier, $component, $a);
-	}
+    // first try string with project_based_* prefix
+    if (($component == 'block_exastud') && !empty($CFG->block_exastud_project_based_assessment) && $manager->string_exists('project_based_' . $identifier, $component)) {
+        return $manager->get_string('project_based_' . $identifier, $component, $a);
+    }
 
-	if ($manager->string_exists($identifier, $component)) {
-		return $manager->get_string($identifier, $component, $a);
-	}
+    if ($manager->string_exists($identifier, $component)) {
+        return $manager->get_string($identifier, $component, $a);
+    }
 
-	return $manager->get_string($identifier, '', $a);
+    return $manager->get_string($identifier, '', $a);
 }
 
 function block_exastud_get_string_if_exists($identifier, $component = null, $a = null) {
-	$manager = get_string_manager();
+    $manager = get_string_manager();
 
-	if ($component === null) {
-		$component = 'block_exastud';
-	}
+    if ($component === null) {
+        $component = 'block_exastud';
+    }
 
-	if ($manager->string_exists($identifier, $component)) {
-		return $manager->get_string($identifier, $component, $a);
-	}
+    if ($manager->string_exists($identifier, $component)) {
+        return $manager->get_string($identifier, $component, $a);
+    }
 
-	return null;
+    return null;
 }
 
 function block_exastud_is_head_teacher($userid = null) {
-	$cohort = block_exastud_get_head_teacher_cohort();
+    $cohort = block_exastud_get_head_teacher_cohort();
 
-	return cohort_is_member($cohort->id, $userid ? $userid : g::$USER->id);
+    return cohort_is_member($cohort->id, $userid ? $userid : g::$USER->id);
 }
 
 function block_exastud_get_head_teacher_cohort() {
-	// get or create cohort if not exists
-	$cohort = g::$DB->get_record('cohort', ['contextid' => \context_system::instance()->id, 'idnumber' => 'block_exastud_head_teachers']);
+    // get or create cohort if not exists
+    $cohort = g::$DB->get_record('cohort', ['contextid' => \context_system::instance()->id, 'idnumber' => 'block_exastud_head_teachers']);
 
-	$name = block_exastud_get_string('head_teachers');
-	$description = block_exastud_get_string('head_teachers_description');
+    $name = block_exastud_get_string('head_teachers');
+    $description = block_exastud_get_string('head_teachers_description');
 
-	if (!$cohort) {
-		$cohort = (object)[
-			'contextid' => \context_system::instance()->id,
-			'idnumber' => 'block_exastud_head_teachers',
-			'name' => $name,
-			'description' => $description,
-			'visible' => 1,
-			'component' => '', // should be block_exastud, but then the admin can't change the group members anymore
-		];
-		$cohort->id = cohort_add_cohort($cohort);
-	} else {
-		// keep name or description up to date
-		if ($name != $cohort->name || $description != $cohort->description) {
-			g::$DB->update_record('cohort', [
-				'id' => $cohort->id,
-				'name' => $name,
-				'description' => $description,
-			]);
-		}
-	}
+    if (!$cohort) {
+        $cohort = (object)[
+            'contextid' => \context_system::instance()->id,
+            'idnumber' => 'block_exastud_head_teachers',
+            'name' => $name,
+            'description' => $description,
+            'visible' => 1,
+            'component' => '', // should be block_exastud, but then the admin can't change the group members anymore
+        ];
+        $cohort->id = cohort_add_cohort($cohort);
+    } else {
+        // keep name or description up to date
+        if ($name != $cohort->name || $description != $cohort->description) {
+            g::$DB->update_record('cohort', [
+                'id' => $cohort->id,
+                'name' => $name,
+                'description' => $description,
+            ]);
+        }
+    }
 
-	return $cohort;
+    return $cohort;
 }
 
 function block_exastud_get_head_teacher_classes_owner($periodid, $forAdmin = false) {
-	if (!block_exastud_has_global_cap(BLOCK_EXASTUD_CAP_MANAGE_CLASSES)) {
-		return [];
-	}
-	if ($forAdmin) {
+    if (!block_exastud_has_global_cap(BLOCK_EXASTUD_CAP_MANAGE_CLASSES)) {
+        return [];
+    }
+    if ($forAdmin) {
         $sql = 'SELECT c.*,
 				\'normal\' AS type
 			FROM {block_exastudclass} c
@@ -236,36 +235,36 @@ function block_exastud_get_head_teacher_classes_owner($periodid, $forAdmin = fal
 }
 
 function block_exastud_get_head_teacher_classes_shared($periodid) {
-	/*
+    /*
 	if (!block_exastud_has_global_cap(BLOCK_EXASTUD_CAP_MANAGE_CLASSES)) {
 		return [];
 	}
 	*/
-	$classes = g::$DB->get_records_sql("
+    $classes = g::$DB->get_records_sql("
 			SELECT c.*,
 				'shared' AS type,
-				".exastud_get_picture_fields('u', null, 'teacher_owner_id', 'teacher_owner_')."
+				" . exastud_get_picture_fields('u', null, 'teacher_owner_id', 'teacher_owner_') . "
 			FROM {block_exastudclass} c
 			JOIN {block_exastudclassteachers} ct ON ct.classid=c.id
 			JOIN {user} u ON c.userid = u.id AND u.deleted = 0
-			WHERE ct.subjectid = ".BLOCK_EXASTUD_SUBJECT_ID_ADDITIONAL_HEAD_TEACHER." AND ct.teacherid = ? AND c.periodid = ?
+			WHERE ct.subjectid = " . BLOCK_EXASTUD_SUBJECT_ID_ADDITIONAL_HEAD_TEACHER . " AND ct.teacherid = ? AND c.periodid = ?
 			ORDER BY c.title", [g::$USER->id, $periodid]);
 
-	/*
+    /*
 	foreach ($classes as $class) {
 		$class->title_full = fullname(filter_fields_by_prefix($class, 'teacher_owner_')).': '.$class->title;
 	}
 	*/
 
-	return $classes;
+    return $classes;
 }
 
 function block_exastud_get_personal_head_teacher($classid, $studentid, $withclassownerteacher = true) {
 
-	$teacherid = block_exastud_get_class_student_data($classid, $studentid, BLOCK_EXASTUD_DATA_ID_HEAD_TEACHER);
-	if (!$teacherid && $withclassownerteacher) {
-	    // get main class teacher if no peronal teacher
-//        $teacherid = block_exastud_get_head_teacher_class($classid)->userid;
+    $teacherid = block_exastud_get_class_student_data($classid, $studentid, BLOCK_EXASTUD_DATA_ID_HEAD_TEACHER);
+    if (!$teacherid && $withclassownerteacher) {
+        // get main class teacher if no peronal teacher
+        //        $teacherid = block_exastud_get_head_teacher_class($classid)->userid;
         $class = g::$DB->get_record_sql("
 			SELECT c.*
 			FROM {block_exastudclass} c
@@ -273,29 +272,29 @@ function block_exastud_get_personal_head_teacher($classid, $studentid, $withclas
 		", array($classid));
         $teacherid = $class->userid;
     }
-//	if (!$teacherid) {
-//	    $teacherid = 0;
-//    }
-	return $teacherid;
+    //	if (!$teacherid) {
+    //	    $teacherid = 0;
+    //    }
+    return $teacherid;
 }
 
 function block_exastud_get_head_teacher_classes_all($periodid) {
-	return block_exastud_get_head_teacher_classes_owner($periodid) + block_exastud_get_head_teacher_classes_shared($periodid);
+    return block_exastud_get_head_teacher_classes_owner($periodid) + block_exastud_get_head_teacher_classes_shared($periodid);
 }
 
 function block_exastud_get_head_teacher_class($classid, $nullifnoclass = false) {
-	$periods = g::$DB->get_records_sql('SELECT * FROM {block_exastudperiod}');
+    $periods = g::$DB->get_records_sql('SELECT * FROM {block_exastudperiod}');
 
-	foreach ($periods as $period) {
-		$classes = block_exastud_get_head_teacher_classes_all($period->id);
+    foreach ($periods as $period) {
+        $classes = block_exastud_get_head_teacher_classes_all($period->id);
 
-		if ($classid != '-all-') {
+        if ($classid != '-all-') {
             if (array_key_exists($classid, $classes) && $classes[$classid]) {
                 return $classes[$classid];
             }
         }
-	}
-	// only for Admin access.
+    }
+    // only for Admin access.
     if (block_exastud_is_siteadmin()) {
         $classes = block_exastud_get_classes_all();
         if (array_key_exists($classid, $classes) && $classes[$classid]) {
@@ -308,7 +307,7 @@ function block_exastud_get_head_teacher_class($classid, $nullifnoclass = false) 
         return null;
     }
 
-	throw new moodle_exception('class ('.$classid.') not found');
+    throw new moodle_exception('class (' . $classid . ') not found');
 }
 
 // get ALL classes
@@ -318,43 +317,45 @@ function block_exastud_get_classes_all($sortByPeriod = false) {
 				'normal' AS type
 			FROM {block_exastudclass} c
             LEFT JOIN {block_exastudperiod} p ON p.id = c.periodid
-			ORDER BY ".($sortByPeriod ? "p.description, p.id, " : "")." c.title");
+			ORDER BY " . ($sortByPeriod ? "p.description, p.id, " : "") . " c.title");
 }
 
 function block_exastud_get_class_students($classid, $hideDroppedUot = false) {
     $addWhere = '';
     $addJoin = '';
     if ($hideDroppedUot) {
-        $addJoin .= ' LEFT JOIN {block_exastuddata} d ON d.classid = '.intval($classid).' AND d.studentid = u.id AND d.name = \'dropped_out\' ';
+        $addJoin .= ' LEFT JOIN {block_exastuddata} d ON d.classid = ' . intval($classid) . ' AND d.studentid = u.id AND d.name = \'dropped_out\' ';
         $addWhere .= ' AND (d.value = 0 OR d.value IS NULL ) ';
     }
-	return g::$DB->get_records_sql("
-			SELECT u.id, cs.id AS record_id, ".exastud_get_picture_fields('u', null, 'userid')."
+    return g::$DB->get_records_sql("
+			SELECT u.id, cs.id AS record_id, " . exastud_get_picture_fields('u', null, 'userid') . "
     			FROM {user} u
 	    		    JOIN {block_exastudclassstudents} cs ON u.id=cs.studentid
-	    		    ".$addJoin."
-		    	WHERE cs.classid = ? 
+	    		    " . $addJoin . "
+		    	WHERE cs.classid = ?
 		    	    AND u.deleted = 0
-		    	    ".$addWhere."
+		    	    " . $addWhere . "
 			    ORDER BY u.lastname, u.firstname
 		", [$classid]);
 }
 
 function block_exastud_get_user($userid) {
-	return g::$DB->get_record_sql("
+    return g::$DB->get_record_sql("
 			SELECT u.*
-			FROM {user} u			
-			WHERE u.id = ?			
+			FROM {user} u
+			WHERE u.id = ?
 		", [$userid]);
 }
 
 function block_exastud_get_class_teachers($classid) {
-	return array_merge(block_exastud_get_class_additional_head_teachers($classid), block_exastud_get_class_subject_teachers($classid));
+    return array_merge(block_exastud_get_class_additional_head_teachers($classid), block_exastud_get_class_subject_teachers($classid));
 }
 
 function block_exastud_is_class_teacher($classid, $userid) {
     $classTeachers = block_exastud_get_class_teachers($classid);
-    $classTeachersIds = array_map(function($u) {return $u->id;}, $classTeachers);
+    $classTeachersIds = array_map(function($u) {
+        return $u->id;
+    }, $classTeachers);
     if (in_array($userid, $classTeachersIds)) {
         return true;
     }
@@ -362,29 +363,29 @@ function block_exastud_is_class_teacher($classid, $userid) {
 }
 
 function block_exastud_get_class_subjects($class) {
-	$subjects = block_exastud_get_bildungsplan_subjects($class->bpid);
-	$teachers = block_exastud_get_class_subject_teachers($class->id);
+    $subjects = block_exastud_get_bildungsplan_subjects($class->bpid);
+    $teachers = block_exastud_get_class_subject_teachers($class->id);
 
-	return array_filter($subjects, function($subject) use ($teachers) {
-		return block_exastud_find_object_in_array_by_property($teachers, 'subjectid', $subject->id);
-	});
+    return array_filter($subjects, function($subject) use ($teachers) {
+        return block_exastud_find_object_in_array_by_property($teachers, 'subjectid', $subject->id);
+    });
 }
 
 function block_exastud_get_class_subject_teachers($classid) {
-	return iterator_to_array(g::$DB->get_recordset_sql("
-			SELECT u.id, ct.id AS record_id, ".exastud_get_picture_fields('u', null, 'userid').", ct.subjectid, s.title AS subject_title
+    return iterator_to_array(g::$DB->get_recordset_sql("
+			SELECT u.id, ct.id AS record_id, " . exastud_get_picture_fields('u', null, 'userid') . ", ct.subjectid, s.title AS subject_title
 			FROM {user} u
 			JOIN {block_exastudclassteachers} ct ON ct.teacherid = u.id
 			JOIN {block_exastudclass} c ON c.id = ct.classid
 			JOIN {block_exastudsubjects} s ON ct.subjectid = s.id AND s.bpid = c.bpid
-			WHERE   c.id=? 
+			WHERE   c.id=?
 			        AND u.deleted = 0
 			ORDER BY s.sorting, u.lastname, u.firstname, s.id
 		", [$classid]), false);
 }
 
 function block_exastud_get_class_teacher_by_subject($classid, $subjectid) {
-	return g::$DB->get_record_sql('
+    return g::$DB->get_record_sql('
 			SELECT u.*
 			    FROM {user} u
 			        JOIN {block_exastudclassteachers} ct ON ct.teacherid=u.id
@@ -394,8 +395,9 @@ function block_exastud_get_class_teacher_by_subject($classid, $subjectid) {
 			    ORDER BY u.lastname, u.firstname',
         [$classid, $subjectid], IGNORE_MULTIPLE);
 }
+
 function block_exastud_get_class_teachers_by_subject($classid, $subjectid) {
-	return g::$DB->get_records_sql('
+    return g::$DB->get_records_sql('
 			SELECT u.*
 			    FROM {user} u
 			        JOIN {block_exastudclassteachers} ct ON ct.teacherid=u.id
@@ -405,19 +407,21 @@ function block_exastud_get_class_teachers_by_subject($classid, $subjectid) {
 			    ORDER BY u.lastname, u.firstname',
         [$classid, $subjectid]);
 }
+
 function block_exastud_get_class_subjects_by_teacher($classid, $teacherid) {
     return g::$DB->get_records_sql('
 			SELECT s.*
-			    FROM {block_exastudsubjects} s             			    			
+			    FROM {block_exastudsubjects} s
 			        JOIN {block_exastudclassteachers} ct ON ct.subjectid = s.id
-			        JOIN {user} u ON u.id = ct.teacherid 
-			        JOIN {block_exastudclass} c ON c.id = ct.classid			        
+			        JOIN {user} u ON u.id = ct.teacherid
+			        JOIN {block_exastudclass} c ON c.id = ct.classid
 			    WHERE c.id = ?
-			        AND s.bpid = c.bpid 
-			        AND u.deleted = 0 
+			        AND s.bpid = c.bpid
+			        AND u.deleted = 0
 			        AND u.id = ?',
-            [$classid, $teacherid]);
+        [$classid, $teacherid]);
 }
+
 function block_exastud_is_profilesubject_teacher($classid, $userid = null) {
     global $USER;
     if (!$userid) {
@@ -448,11 +452,11 @@ function block_exastud_is_bilingual_teacher($classid, $teacherid = null, $studen
             'value' => $teacherid,
     ];*/
     $sql = 'SELECT DISTINCT studentid
-                  FROM {block_exastuddata} 
-                  WHERE classid = ? 
-                    AND subjectid = 0 
-                    AND name = ? 
-                    AND value = ? 
+                  FROM {block_exastuddata}
+                  WHERE classid = ?
+                    AND subjectid = 0
+                    AND name = ?
+                    AND value = ?
               ';
     if ($studentid) {
         $sql .= ' AND studentid = ? ';
@@ -464,28 +468,28 @@ function block_exastud_is_bilingual_teacher($classid, $teacherid = null, $studen
         return $result;
     }
     // here is comparing with templateid. only if the teacher is bilingual at least for one student
-    $sql = 'SELECT * 
-                  FROM {block_exastuddata} 
-                  WHERE classid = ? 
-                    AND subjectid = 0 
-                    AND name = ? 
-                    AND value = ? 
+    $sql = 'SELECT *
+                  FROM {block_exastuddata}
+                  WHERE classid = ?
+                    AND subjectid = 0
+                    AND name = ?
+                    AND value = ?
               ';
     if ($studentid) {
         $sql .= ' AND studentid = ? ';
     } else {
-        $sql .= ' AND studentid IN ('.implode(',', $result).') '; // only students from previous query
+        $sql .= ' AND studentid IN (' . implode(',', $result) . ') '; // only students from previous query
     }
     return g::$DB->record_exists_sql($sql, [$classid, BLOCK_EXASTUD_DATA_ID_BILINGUAL_TEMPLATE, $templateid, $studentid]);
 }
 
 function block_exastud_get_bilingual_teacher($classid, $studentid = null) {
     $sql = 'SELECT value
-                  FROM {block_exastuddata} 
-                  WHERE classid = ? 
+                  FROM {block_exastuddata}
+                  WHERE classid = ?
                     AND studentid = ?
-                    AND subjectid = 0 
-                    AND name = ?                     
+                    AND subjectid = 0
+                    AND name = ?
               ';
     $result = g::$DB->get_field_sql($sql, [$classid, $studentid, BLOCK_EXASTUD_DATA_ID_BILINGUAL_TEACHER]);
     if ($result && $result > 0) {
@@ -495,7 +499,7 @@ function block_exastud_get_bilingual_teacher($classid, $studentid = null) {
 }
 
 function block_exastud_get_class_additional_head_teachers($classid) {
-	$classteachers = g::$DB->get_records_sql("
+    $classteachers = g::$DB->get_records_sql("
 			SELECT u.*, ct.id AS record_id, ct.subjectid
                 FROM {user} u
                     JOIN {block_exastudclassteachers} ct ON ct.teacherid = u.id
@@ -506,23 +510,23 @@ function block_exastud_get_class_additional_head_teachers($classid) {
 			    ORDER BY u.lastname, u.firstname
 		", [$classid, BLOCK_EXASTUD_SUBJECT_ID_ADDITIONAL_HEAD_TEACHER]);
 
-	foreach ($classteachers as $classteacher) {
-		$classteacher->subject_title = block_exastud_get_string('additional_head_teacher');
-	}
+    foreach ($classteachers as $classteacher) {
+        $classteacher->subject_title = block_exastud_get_string('additional_head_teacher');
+    }
 
-	return $classteachers;
+    return $classteachers;
 }
 
 function block_exastud_get_teacher_classes($userid) {
     $ownclasses = g::$DB->get_records_sql("
 			SELECT DISTINCT c.id, c.id AS record_id
 			FROM {block_exastudclass} c
-		    WHERE c.userid = ?			
+		    WHERE c.userid = ?
 		", [$userid]);
     $classesforteaching = g::$DB->get_records_sql("
 			SELECT DISTINCT c.id, c.id AS record_id
 			FROM {block_exastudclassteachers} c
-		    WHERE c.teacherid = ?			
+		    WHERE c.teacherid = ?
 		", [$userid]);
     $classesforprojects = g::$DB->get_records_sql("
 			SELECT DISTINCT d.classid, d.classid AS record_id
@@ -533,25 +537,25 @@ function block_exastud_get_teacher_classes($userid) {
 }
 
 function block_exastud_get_head_teacher_lern_und_sozialverhalten_classes($periodid = null) {
-	$classes = block_exastud_get_head_teacher_classes_all($periodid);
+    $classes = block_exastud_get_head_teacher_classes_all($periodid);
 
-	$ret = [];
-	foreach ($classes as $class) {
-		if (!block_exastud_has_global_cap(BLOCK_EXASTUD_CAP_VIEW_REPORT, $class->userid)) {
-			continue;
-		}
+    $ret = [];
+    foreach ($classes as $class) {
+        if (!block_exastud_has_global_cap(BLOCK_EXASTUD_CAP_VIEW_REPORT, $class->userid)) {
+            continue;
+        }
 
-		$ret[$class->id] = (object)[
-			'classid' => $class->id,
-			'subjectid' => BLOCK_EXASTUD_SUBJECT_ID_LERN_UND_SOZIALVERHALTEN,
-			'userid' => $class->userid,
-			'title' => $class->title,
-			'subject' => block_exastud_get_string('learn_and_sociale'),
-			'type' => $class->type,
-		];
-	}
+        $ret[$class->id] = (object)[
+            'classid' => $class->id,
+            'subjectid' => BLOCK_EXASTUD_SUBJECT_ID_LERN_UND_SOZIALVERHALTEN,
+            'userid' => $class->userid,
+            'title' => $class->title,
+            'subject' => block_exastud_get_string('learn_and_sociale'),
+            'type' => $class->type,
+        ];
+    }
 
-	return $ret;
+    return $ret;
 }
 
 /**
@@ -559,21 +563,21 @@ function block_exastud_get_head_teacher_lern_und_sozialverhalten_classes($period
  * @return array
  */
 function block_exastud_get_review_subjects($periodid) {
-	return g::$DB->get_records_sql("
+    return g::$DB->get_records_sql("
 			SELECT ct.id, ct.subjectid, ct.classid, c.title, s.title AS subject_title
 			FROM {block_exastudclassteachers} ct
 			JOIN {block_exastudclass} c ON ct.classid = c.id
-			JOIN {block_exastudsubjects} s ON ct.subjectid = s.id AND s.bpid = c.bpid 
+			JOIN {block_exastudsubjects} s ON ct.subjectid = s.id AND s.bpid = c.bpid
 			WHERE ct.teacherid = ? AND c.periodid = ? AND ct.subjectid >= 0
 			ORDER BY c.title, s.sorting
 		", array(g::$USER->id, $periodid));
 }
 
 function block_exastud_get_review_class($classid, $subjectid) {
-	global $DB, $USER;
-	if ($subjectid == BLOCK_EXASTUD_SUBJECT_ID_LERN_UND_SOZIALVERHALTEN) {
-	    $class = block_exastud_get_class($classid);
-	    $periodid = $class->periodid;
+    global $DB, $USER;
+    if ($subjectid == BLOCK_EXASTUD_SUBJECT_ID_LERN_UND_SOZIALVERHALTEN) {
+        $class = block_exastud_get_class($classid);
+        $periodid = $class->periodid;
         if ($periodid != block_exastud_get_active_or_next_period()->id) {
             // check to unlock editing
             if (!block_exastud_teacher_is_unlocked_for_old_class_review($classid, $USER->id, BLOCK_EXASTUD_DATA_ID_UNLOCKED_TEACHERS)) {
@@ -581,31 +585,31 @@ function block_exastud_get_review_class($classid, $subjectid) {
                 $periodid = block_exastud_get_active_or_next_period()->id;
             }
         }
-		$classes = block_exastud_get_head_teacher_lern_und_sozialverhalten_classes($periodid);
-		return isset($classes[$classid]) ? $classes[$classid] : null;
-	//} else if ($subjectid == BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_16_ZERTIFIKAT_FUER_PROFILFACH) {
-	} else if ($subjectid == BLOCK_EXASTUD_DATA_ID_CERTIFICATE) {
+        $classes = block_exastud_get_head_teacher_lern_und_sozialverhalten_classes($periodid);
+        return isset($classes[$classid]) ? $classes[$classid] : null;
+        //} else if ($subjectid == BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_16_ZERTIFIKAT_FUER_PROFILFACH) {
+    } else if ($subjectid == BLOCK_EXASTUD_DATA_ID_CERTIFICATE) {
         if (block_exastud_is_profilesubject_teacher($classid)) {
             $class = block_exastud_get_class($classid);
             return (object)[
-                    'classid' => $classid,
-                    'subjectid' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_16_ZERTIFIKAT_FUER_PROFILFACH,
-                    'userid' => $USER->id,
-                    'title' => $class->title,
-                    'subject' => block_exastud_get_string('report_for_subjects'), // TODO: need?
-                    'subject_title' => block_exastud_get_string('report_for_subjects'),
-                    'type' => BLOCK_EXASTUD_DATA_ID_CERTIFICATE,
+                'classid' => $classid,
+                'subjectid' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_16_ZERTIFIKAT_FUER_PROFILFACH,
+                'userid' => $USER->id,
+                'title' => $class->title,
+                'subject' => block_exastud_get_string('report_for_subjects'), // TODO: need?
+                'subject_title' => block_exastud_get_string('report_for_subjects'),
+                'type' => BLOCK_EXASTUD_DATA_ID_CERTIFICATE,
             ];
         } else {
             return false;
         }
     } else {
-            return $DB->get_record_sql("
+        return $DB->get_record_sql("
 			SELECT ct.id, ct.id AS classteacherid, c.title, s.title AS subject_title, s.id as subject_id, c.userid
 			FROM {block_exastudclassteachers} ct
 			JOIN {block_exastudclass} c ON ct.classid = c.id
 			LEFT JOIN {block_exastudsubjects} s ON ct.subjectid = s.id
-			WHERE ct.teacherid = ? AND ct.classid = ? AND ct.subjectid >= 0 AND ".($subjectid ? 's.id = ?' : 's.id IS NULL')."
+			WHERE ct.teacherid = ? AND ct.classid = ? AND ct.subjectid >= 0 AND " . ($subjectid ? 's.id = ?' : 's.id IS NULL') . "
 		", array($USER->id, $classid, $subjectid), IGNORE_MULTIPLE);
     }
 }
@@ -615,7 +619,7 @@ function block_exastud_get_review_class($classid, $subjectid) {
  * @return \block_exastud_renderer
  */
 function block_exastud_get_renderer() {
-	return g::$PAGE->get_renderer('block_exastud');
+    return g::$PAGE->get_renderer('block_exastud');
 }
 
 /*
@@ -641,7 +645,9 @@ function block_exastud_get_reviewers_by_category_and_pos($periodid, $studentid, 
     $classSubjects = block_exastud_get_class_subjects($class);
     $result = array();
     if (count($classSubjects)) {
-        $subjectIds = array_map(function($subj) {return $subj->id;}, $classSubjects);
+        $subjectIds = array_map(function($subj) {
+            return $subj->id;
+        }, $classSubjects);
         // if the class has subjects - we need to get data with related subjects
         $result = iterator_to_array(g::$DB->get_recordset_sql("
 			SELECT DISTINCT u.*, s.title AS subject_title, s.shorttitle as subject_shorttitle, pos.value
@@ -654,14 +660,14 @@ function block_exastud_get_reviewers_by_category_and_pos($periodid, $studentid, 
 			WHERE c.periodid = ? AND r.studentid = ?
 				AND pos.categoryid = ? AND pos.categorysource = ?
 				AND u.deleted = 0
-				AND s.id IN (".implode(',', $subjectIds).")				
-			".($pos_value !== null ? "AND pos.value = ?" : "AND pos.value > 0")."
+				AND s.id IN (" . implode(',', $subjectIds) . ")
+			" . ($pos_value !== null ? "AND pos.value = ?" : "AND pos.value > 0") . "
 			-- GROUP BY r.teacherid, s.id, pos.value
 		", [$periodid, $studentid, $categoryid, $categorysource, $pos_value]), false);
     } else {
         // if no subjects - get data without subjects
         $result = array(); // no subjects - no reviewers: true?
-       /* return iterator_to_array(g::$DB->get_recordset_sql("
+        /* return iterator_to_array(g::$DB->get_recordset_sql("
 			SELECT DISTINCT u.*, s.title AS subject_title, s.shorttitle as subject_shorttitle, pos.value
 			FROM {block_exastudreview} r
                 JOIN {block_exastudreviewpos} pos ON pos.reviewid = r.id
@@ -669,11 +675,11 @@ function block_exastud_get_reviewers_by_category_and_pos($periodid, $studentid, 
                 JOIN {block_exastudclass} c ON c.periodid = r.periodid
                 JOIN {block_exastudclassteachers} ct ON ct.classid=c.id AND ct.teacherid=r.teacherid AND ct.subjectid=r.subjectid
                 LEFT JOIN {block_exastudsubjects} s ON r.subjectid = s.id
-			WHERE 
+			WHERE
 			    s.id IS NOT NULL
 			    AND c.periodid = ? AND r.studentid = ?
 				AND pos.categoryid = ? AND pos.categorysource = ?
-				AND u.deleted = 0				
+				AND u.deleted = 0
 			".($pos_value !== null ? "AND pos.value = ?" : "AND pos.value > 0")."
 			-- GROUP BY r.teacherid, s.id, pos.value
 		", [$periodid, $studentid, $categoryid, $categorysource, $pos_value]), false);*/
@@ -684,13 +690,13 @@ function block_exastud_get_reviewers_by_category_and_pos($periodid, $studentid, 
 			FROM {block_exastudreview} r
                 JOIN {block_exastudreviewpos} pos ON pos.reviewid = r.id
                 JOIN {user} u ON r.teacherid = u.id
-                JOIN {block_exastudclass} c ON c.periodid = r.periodid                                 
+                JOIN {block_exastudclass} c ON c.periodid = r.periodid
 			WHERE
-			    r.subjectid = 0 
+			    r.subjectid = 0
 			    AND c.periodid = ? AND r.studentid = ?
 				AND pos.categoryid = ? AND pos.categorysource = ?
-				AND u.deleted = 0				
-			".($pos_value !== null ? "AND pos.value = ?" : "AND pos.value > 0")."		  
+				AND u.deleted = 0
+			" . ($pos_value !== null ? "AND pos.value = ?" : "AND pos.value > 0") . "
 		", [$periodid, $studentid, $categoryid, $categorysource, $pos_value]), false);
     if (count($resultClassTeacher)) {
         $result = array_merge($result, $resultClassTeacher);
@@ -701,36 +707,36 @@ function block_exastud_get_reviewers_by_category_and_pos($periodid, $studentid, 
 function block_exastud_get_category_review_by_subject_and_teacher($periodid, $studentid, $categoryid, $categorysource, $teacherid, $subjectid) {
     if ($subjectid) {
         return g::$DB->get_record_sql("
-			SELECT DISTINCT u.*, s.title AS subject_title, s.shorttitle as subject_shorttitle, r.teacherid as teacherid, r.subjectid as subjectid, pos.value as catreview_value 
+			SELECT DISTINCT u.*, s.title AS subject_title, s.shorttitle as subject_shorttitle, r.teacherid as teacherid, r.subjectid as subjectid, pos.value as catreview_value
 			FROM {block_exastudreview} r
 			  JOIN {block_exastudreviewpos} pos ON pos.reviewid = r.id
 			  JOIN {user} u ON r.teacherid = u.id
 			  JOIN {block_exastudclass} c ON c.periodid = r.periodid
 			  JOIN {block_exastudclassteachers} ct ON ct.classid=c.id AND ct.teacherid = r.teacherid AND ct.subjectid = r.subjectid
 			LEFT JOIN {block_exastudsubjects} s ON r.subjectid = s.id
-			WHERE c.periodid = ? 
+			WHERE c.periodid = ?
 			    AND r.studentid = ?
-				AND pos.categoryid = ? 
+				AND pos.categoryid = ?
 				AND pos.categorysource = ?
 				AND r.teacherid = ?
 				AND r.subjectid = ?
-				AND u.deleted = 0							
+				AND u.deleted = 0
 		", [$periodid, $studentid, $categoryid, $categorysource, $teacherid, $subjectid], IGNORE_MULTIPLE);
     } else {
         // for class teacher review: subjectid = 0
         return g::$DB->get_record_sql("
-			SELECT DISTINCT u.*, 'Class teacher review' AS subject_title, 'KL' as subject_shorttitle, r.teacherid as teacherid, r.subjectid as subjectid, pos.value as catreview_value 
+			SELECT DISTINCT u.*, 'Class teacher review' AS subject_title, 'KL' as subject_shorttitle, r.teacherid as teacherid, r.subjectid as subjectid, pos.value as catreview_value
 			FROM {block_exastudreview} r
 			  JOIN {block_exastudreviewpos} pos ON pos.reviewid = r.id
 			  JOIN {user} u ON r.teacherid = u.id
-			  JOIN {block_exastudclass} c ON c.periodid = r.periodid			
-			WHERE c.periodid = ? 
+			  JOIN {block_exastudclass} c ON c.periodid = r.periodid
+			WHERE c.periodid = ?
 			    AND r.studentid = ?
-				AND pos.categoryid = ? 
+				AND pos.categoryid = ?
 				AND pos.categorysource = ?
 				AND r.teacherid = ?
 				AND r.subjectid = ?
-				AND u.deleted = 0							
+				AND u.deleted = 0
 		", [$periodid, $studentid, $categoryid, $categorysource, $teacherid, $subjectid]);
     }
 }
@@ -746,10 +752,10 @@ function block_exastud_get_reviewers_by_category($periodid, $studentid, $average
                 JOIN {user} u ON r.teacherid = u.id
                 JOIN {block_exastudclass} c ON c.periodid = r.periodid
                 JOIN {block_exastudclassteachers} ct ON ct.classid = c.id AND ct.teacherid = r.teacherid AND ct.subjectid = r.subjectid
-                LEFT JOIN {block_exastudsubjects} s ON r.subjectid = s.id			
-			WHERE c.periodid = ? 
-			  AND r.studentid = ? 
-			  AND u.deleted = 0									
+                LEFT JOIN {block_exastudsubjects} s ON r.subjectid = s.id
+			WHERE c.periodid = ?
+			  AND r.studentid = ?
+			  AND u.deleted = 0
 			GROUP BY r.teacherid, pos.categoryid, pos.categorysource
 		", [$periodid, $studentid]), false);
         foreach ($values as $val) {
@@ -771,9 +777,9 @@ function block_exastud_get_reviewers_by_category($periodid, $studentid, $average
                 JOIN {block_exastudclass} c ON c.periodid = r.periodid
                 JOIN {block_exastudclassteachers} ct ON ct.classid = c.id AND ct.teacherid = r.teacherid AND ct.subjectid = r.subjectid
 			    LEFT JOIN {block_exastudsubjects} s ON r.subjectid = s.id
-			WHERE c.periodid = ? 
-			      AND r.studentid = ? 
-			      AND u.deleted = 0									
+			WHERE c.periodid = ?
+			      AND r.studentid = ?
+			      AND u.deleted = 0
 		", [$periodid, $studentid]), false);
         foreach ($values as $val) {
             if (!array_key_exists($val->teacher_id, $result)) {
@@ -788,7 +794,7 @@ function block_exastud_get_reviewers_by_category($periodid, $studentid, $average
             $result[$val->teacher_id][$val->subject_id][$val->category_source][$val->category_id] = $val->value;
         }
     }
-	return $result;
+    return $result;
 }
 
 function block_exastud_get_average_evaluation_by_category($classid, $periodid, $studentid, $categoryid, $categorysource, $averageForAllSubjects = false) {
@@ -804,8 +810,8 @@ function block_exastud_get_average_evaluation_by_category($classid, $periodid, $
                 WHERE c.periodid = ? AND r.studentid = ?
                     AND pos.categoryid = ? AND pos.categorysource = ?
                     AND u.deleted = 0
-                GROUP BY '.($averageForAllSubjects ? ' pos.categoryid, r.studentid ' : ' s.id ')
-            , [$periodid, $studentid, $categoryid, $categorysource]);
+                GROUP BY ' . ($averageForAllSubjects ? ' pos.categoryid, r.studentid ' : ' s.id ')
+        , [$periodid, $studentid, $categoryid, $categorysource]);
     // with class teacher review
     if ($averageForAllSubjects && block_exastud_can_edit_crosscompetences_classteacher($classid)) {
         $evals = g::$DB->get_records_sql('
@@ -815,12 +821,12 @@ function block_exastud_get_average_evaluation_by_category($classid, $periodid, $
                     FROM {block_exastudreview} r
                     JOIN {block_exastudreviewpos} pos ON pos.reviewid = r.id
                     JOIN {user} u ON r.teacherid = u.id
-                    JOIN {block_exastudclass} c ON c.periodid = r.periodid                                    
+                    JOIN {block_exastudclass} c ON c.periodid = r.periodid
                     WHERE c.periodid = ? AND r.studentid = ?
                         AND pos.categoryid = ? AND pos.categorysource = ?
                         AND u.deleted = 0
-                        AND r.subjectid = 0                
-                UNION ALL 
+                        AND r.subjectid = 0
+                UNION ALL
                 SELECT DISTINCT s.id AS subject_id, pos.value AS val,pos.categoryid as catid, u.id as reviewers, r.studentid as studentid, s.title AS subject_title, u.id as teacher_id
                     FROM {block_exastudreview} r
                     JOIN {block_exastudreviewpos} pos ON pos.reviewid = r.id
@@ -830,55 +836,55 @@ function block_exastud_get_average_evaluation_by_category($classid, $periodid, $
                     LEFT JOIN {block_exastudsubjects} s ON r.subjectid = s.id
                     WHERE c.periodid = ? AND r.studentid = ?
                         AND pos.categoryid = ? AND pos.categorysource = ?
-                        AND u.deleted = 0 
+                        AND u.deleted = 0
             ) un
             GROUP BY  un.catid, un.studentid '
-                , [$periodid, $studentid, $categoryid, $categorysource, $periodid, $studentid, $categoryid, $categorysource]);
+            , [$periodid, $studentid, $categoryid, $categorysource, $periodid, $studentid, $categoryid, $categorysource]);
     }
     foreach ($evals as $subjectid => $avg) {
-        $average[$subjectid] = (object) [
-                'average' => $avg->average,
-                'reviewers' => $avg->reviewers
-            ];
+        $average[$subjectid] = (object)[
+            'average' => $avg->average,
+            'reviewers' => $avg->reviewers,
+        ];
     }
     if ($averageForAllSubjects && is_array($average)) {
         return array_shift($average); // TODO: check - must be only one array item
     }
-	return $average;
+    return $average;
 
 }
 
 function block_exastud_get_class_categories_for_report($studentid, $classid) {
-	$evaluationOptions = block_exastud_get_evaluation_options();
-	$categories = block_exastud_get_class_categories($classid);
+    $evaluationOptions = block_exastud_get_evaluation_options();
+    $categories = block_exastud_get_class_categories($classid);
     $class = block_exastud_get_class($classid);
     $class_subjects = block_exastud_get_class_subjects($class);
-    
+
     $current_parent = null;
-	foreach ($categories as $category) {
+    foreach ($categories as $category) {
 
-		$category->fulltitle = $category->title;
-		if (preg_match('!^([^:]*):\s*([^\s].*)$!', $category->fulltitle, $matches)) {
-			$category->parent = $matches[1];
-			$category->title = $matches[2];
-		} else {
-			$category->parent = '';
-			$category->title = $category->fulltitle;
-		}
+        $category->fulltitle = $category->title;
+        if (preg_match('!^([^:]*):\s*([^\s].*)$!', $category->fulltitle, $matches)) {
+            $category->parent = $matches[1];
+            $category->title = $matches[2];
+        } else {
+            $category->parent = '';
+            $category->title = $category->fulltitle;
+        }
 
-		$category->evaluationOptions = [];
-		$reviewPoints = 0;
-		$reviewCnt = 0;
-		if ($evaluationOptions) {
-		    // for texts and points
+        $category->evaluationOptions = [];
+        $reviewPoints = 0;
+        $reviewCnt = 0;
+        if ($evaluationOptions) {
+            // for texts and points
             $i = 0;
             foreach ($evaluationOptions as $pos_value => $option) {
                 $reviewers = block_exastud_get_reviewers_by_category_and_pos($class->periodid,
-                                $studentid, $category->id, $category->source, $pos_value, $classid);
-                $category->evaluationOptions[$pos_value] = (object) [
-                        'value' => $pos_value,
-                        'title' => $option,
-                        'reviewers' => $reviewers,
+                    $studentid, $category->id, $category->source, $pos_value, $classid);
+                $category->evaluationOptions[$pos_value] = (object)[
+                    'value' => $pos_value,
+                    'title' => $option,
+                    'reviewers' => $reviewers,
                 ];
                 $reviewPoints += count($reviewers) * $i;
                 $reviewCnt += count($reviewers);
@@ -890,33 +896,33 @@ function block_exastud_get_class_categories_for_report($studentid, $classid) {
                 $category->average = null;
             }*/
             $category->average = block_exastud_get_average_evaluation_by_category($class->id, $class->periodid,
-                    $studentid, $category->id, $category->source, true);
+                $studentid, $category->id, $category->source, true);
         } else {
-		    // for grades
+            // for grades
             $i = 0;
             $subjectaverages = block_exastud_get_average_evaluation_by_category($class->id, $class->periodid,
-                    $studentid, $category->id, $category->source);
+                $studentid, $category->id, $category->source);
             foreach ($class_subjects as $subjid => $subj) {
-                $category->evaluationAverages[$subjid] = (object) [
-                        'value' => (@$subjectaverages[$subjid] ? $subjectaverages[$subjid]->average : null),
-                        'reviewers' => (@$subjectaverages[$subjid] ? $subjectaverages[$subjid]->reviewers : null),
+                $category->evaluationAverages[$subjid] = (object)[
+                    'value' => (@$subjectaverages[$subjid] ? $subjectaverages[$subjid]->average : null),
+                    'reviewers' => (@$subjectaverages[$subjid] ? $subjectaverages[$subjid]->reviewers : null),
                 ];
                 $i++;
             }
 
             $category->average = block_exastud_get_average_evaluation_by_category($class->id, $class->periodid,
-                    $studentid, $category->id, $category->source, true);
+                $studentid, $category->id, $category->source, true);
         }
 
-	}
+    }
 
 
-	return $categories;
+    return $categories;
 }
 
 function block_exastud_set_custom_profile_field_value($userid, $fieldname, $value) {
     $fieldid = g::$DB->get_field_sql("SELECT uif.id
-			FROM {user_info_field} uif 
+			FROM {user_info_field} uif
 			WHERE uif.shortname = ?
 			", [$fieldname]);
     if ($fieldid > 0) {
@@ -937,7 +943,7 @@ function block_exastud_set_custom_profile_field_value($userid, $fieldname, $valu
 }
 
 function block_exastud_get_custom_profile_field_value($userid, $fieldname) {
-	return g::$DB->get_field_sql("SELECT uid.data
+    return g::$DB->get_field_sql("SELECT uid.data
 			FROM {user_info_data} uid
 			JOIN {user_info_field} uif ON uif.id=uid.fieldid
 			WHERE uif.shortname=? AND uid.userid=?
@@ -945,56 +951,56 @@ function block_exastud_get_custom_profile_field_value($userid, $fieldname) {
 }
 
 function block_exastud_get_custom_profile_field_valuelist($fieldname, $valuefield = 'param1', $asArray = false) {
-	$result = g::$DB->get_field_sql("SELECT uif.".$valuefield."
+    $result = g::$DB->get_field_sql("SELECT uif." . $valuefield . "
 			FROM {user_info_field} uif
 			WHERE uif.shortname = ?
 			", [$fieldname]);
-	if ($asArray) {
+    if ($asArray) {
         $result = explode("\n", $result);
     }
     return $result;
 }
 
 function block_exastud_is_exacomp_installed() {
-	return class_exists('\block_exacomp\api') && \block_exacomp\api::active();
+    return class_exists('\block_exacomp\api') && \block_exacomp\api::active();
 }
 
 function block_exastud_get_class_data($classid, $name = null) {
-	return block_exastud_get_subject_student_data($classid, 0, 0, $name);
+    return block_exastud_get_subject_student_data($classid, 0, 0, $name);
 }
 
 function block_exastud_get_class_student_data($classid, $userid, $name = null) {
-	return block_exastud_get_subject_student_data($classid, 0, $userid, $name);
+    return block_exastud_get_subject_student_data($classid, 0, $userid, $name);
 }
 
 function block_exastud_get_subject_student_data($classid, $subjectid, $userid, $name = null) {
-	$data = (object)g::$DB->get_records_menu('block_exastuddata', [
-		'classid' => $classid,
-		'studentid' => $userid,
-		'subjectid' => $subjectid,
-	], 'name', 'name, value');
+    $data = (object)g::$DB->get_records_menu('block_exastuddata', [
+        'classid' => $classid,
+        'studentid' => $userid,
+        'subjectid' => $subjectid,
+    ], 'name', 'name, value');
 
-	$convertMatrix = function($value) {
+    $convertMatrix = function($value) {
         if (strpos($value, '==matrix==:') === 0) { // it is a matrix - return unserialized array
             return unserialize(substr($value, 11));
         } else {
             return $value;
         }
     };
-	
-	if ($name) {
-	    return $convertMatrix(@$data->$name);
-	} else {
-	    $properties = get_object_vars($data);
-	    foreach ($properties as $propName => $propValue) {
-	        $data->$propName = $convertMatrix(@$propValue);
+
+    if ($name) {
+        return $convertMatrix(@$data->$name);
+    } else {
+        $properties = get_object_vars($data);
+        foreach ($properties as $propName => $propValue) {
+            $data->$propName = $convertMatrix(@$propValue);
         }
-		return $data;
-	}
+        return $data;
+    }
 }
 
 function block_exastud_set_class_data($classid, $name, $value) {
-	return block_exastud_set_subject_student_data($classid, 0, 0, $name, $value);
+    return block_exastud_set_subject_student_data($classid, 0, 0, $name, $value);
 }
 
 function block_exastud_set_class_student_data($classid, $userid, $name, $value) {
@@ -1002,21 +1008,21 @@ function block_exastud_set_class_student_data($classid, $userid, $name, $value) 
 }
 
 function block_exastud_set_subject_student_data($classid, $subjectid, $userid, $name, $value) {
-	$conditions = [
-		'classid' => $classid,
-		'studentid' => $userid,
-		'subjectid' => $subjectid,
-		'name' => $name,
-	];
+    $conditions = [
+        'classid' => $classid,
+        'studentid' => $userid,
+        'subjectid' => $subjectid,
+        'name' => $name,
+    ];
     $olddata = block_exastud_get_subject_student_data($classid, $subjectid, $userid, $name);
-	if ($value === null) {
-		g::$DB->delete_records('block_exastuddata', $conditions);
-	} else {
-		g::$DB->insert_or_update_record('block_exastuddata', [
-			'value' => $value,
-		], $conditions);
-	}
-	// logging
+    if ($value === null) {
+        g::$DB->delete_records('block_exastuddata', $conditions);
+    } else {
+        g::$DB->insert_or_update_record('block_exastuddata', [
+            'value' => $value,
+        ], $conditions);
+    }
+    // logging
     // only if data was changed
     if ($olddata != $value) {
         // reset calculated average
@@ -1032,11 +1038,13 @@ function block_exastud_set_subject_student_data($classid, $subjectid, $userid, $
             }
         }
         // LOG
-	    // not for time data
-        $strpos_arr = function ($haystack, $needle) {
-            if(!is_array($needle)) $needle = array($needle);
-            foreach($needle as $what) {
-                if(($pos = strpos($haystack, $what))!==false) return $pos;
+        // not for time data
+        $strpos_arr = function($haystack, $needle) {
+            if (!is_array($needle))
+                $needle = array($needle);
+            foreach ($needle as $what) {
+                if (($pos = strpos($haystack, $what)) !== false)
+                    return $pos;
             }
             return false;
         };
@@ -1046,24 +1054,24 @@ function block_exastud_set_subject_student_data($classid, $subjectid, $userid, $
             $subjectData = g::$DB->get_record('block_exastudsubjects', ['id' => $subjectid]);
             if ($subjectid === 0 && $userid === 0) { // classes data
                 \block_exastud\event\classdata_changed::log(['objectid' => $classid,
-                        'other' => ['name' => $name,
-                                    'value' => $value,
-                                    'classtitle' => $classData->title,
-                                    'oldvalue' => $olddata]]);
+                    'other' => ['name' => $name,
+                        'value' => $value,
+                        'classtitle' => $classData->title,
+                        'oldvalue' => $olddata]]);
             } else if ($subjectid === 0) { // student's data
                 \block_exastud\event\studentdata_changed::log(['objectid' => $classid, 'relateduserid' => $userid,
-                        'other' => ['name' => $name,
-                                    'value' => $value,
-                                    'classtitle' => $classData->title,
-                                    'relatedusername' => $userData->firstname.' '.$userData->lastname]]);
+                    'other' => ['name' => $name,
+                        'value' => $value,
+                        'classtitle' => $classData->title,
+                        'relatedusername' => $userData->firstname . ' ' . $userData->lastname]]);
             } else {
                 \block_exastud\event\subjectstudentdata_changed::log(['objectid' => $classid, 'relateduserid' => $userid,
-                        'other' => ['name' => $name,
-                                    'value' => $value,
-                                    'subjectid' => $subjectid,
-                                    'subjecttitle' => $subjectData->title,
-                                    'classtitle' => $classData->title,
-                                    'relatedusername' => $userData->firstname.' '.$userData->lastname]]);
+                    'other' => ['name' => $name,
+                        'value' => $value,
+                        'subjectid' => $subjectid,
+                        'subjecttitle' => $subjectData->title,
+                        'classtitle' => $classData->title,
+                        'relatedusername' => $userData->firstname . ' ' . $userData->lastname]]);
             }
         }
     }
@@ -1071,53 +1079,53 @@ function block_exastud_set_subject_student_data($classid, $subjectid, $userid, $
 
 function block_exastud_check_profile_fields() {
 
-	$categoryid = g::$DB->get_field_sql("SELECT id FROM {user_info_category} ORDER BY sortorder LIMIT 1");
-	if (!$categoryid) {
-		$categoryid = g::$DB->insert_record('user_info_category', [
-			'name' => block_exastud_get_string('profiledefaultcategory', 'admin'),
-			'sortorder' => 1,
-		]);
-	}
+    $categoryid = g::$DB->get_field_sql("SELECT id FROM {user_info_category} ORDER BY sortorder LIMIT 1");
+    if (!$categoryid) {
+        $categoryid = g::$DB->insert_record('user_info_category', [
+            'name' => block_exastud_get_string('profiledefaultcategory', 'admin'),
+            'sortorder' => 1,
+        ]);
+    }
 
-	$sortorder = g::$DB->get_field_sql('SELECT MAX(sortorder) FROM {user_info_field} WHERE categoryid=?', [$categoryid]);
+    $sortorder = g::$DB->get_field_sql('SELECT MAX(sortorder) FROM {user_info_field} WHERE categoryid=?', [$categoryid]);
 
-	$fields = [
-		[
-			'shortname' => 'dateofbirth',
-			'name' => block_exastud_get_string('report_settings_setting_dateofbirth'),
-			'description' => '',
-			'datatype' => 'text',
-			'categoryid' => $categoryid,
-			'locked' => 1,
-			'required' => 0,
-			'visible' => 0,
-			'param1' => 30,
-			'param2' => 2048,
-			'param3' => 0,
-		], [
-			'shortname' => 'placeofbirth',
-			'name' => block_exastud_get_string('report_settings_setting_placeofbirth'),
-			'description' => '',
-			'datatype' => 'text',
-			'categoryid' => $categoryid,
-			'locked' => 1,
-			'required' => 0,
-			'visible' => 0,
-			'param1' => 30,
-			'param2' => 2048,
-			'param3' => 0,
-		], [
-			'shortname' => 'gender',
-			'name' => block_exastud_get_string('gender'),
-			'description' => '',
-			'datatype' => 'menu',
-			'categoryid' => $categoryid,
-			'locked' => 1,
-			'required' => 0,
-			'visible' => 0,
-			// TODO: english male / famle auch berücksichtigen.
-			// => die moodle default sprach einstellung hernehmen.
-			'param1' => "\nmännlich\nweiblich",
+    $fields = [
+        [
+            'shortname' => 'dateofbirth',
+            'name' => block_exastud_get_string('report_settings_setting_dateofbirth'),
+            'description' => '',
+            'datatype' => 'text',
+            'categoryid' => $categoryid,
+            'locked' => 1,
+            'required' => 0,
+            'visible' => 0,
+            'param1' => 30,
+            'param2' => 2048,
+            'param3' => 0,
+        ], [
+            'shortname' => 'placeofbirth',
+            'name' => block_exastud_get_string('report_settings_setting_placeofbirth'),
+            'description' => '',
+            'datatype' => 'text',
+            'categoryid' => $categoryid,
+            'locked' => 1,
+            'required' => 0,
+            'visible' => 0,
+            'param1' => 30,
+            'param2' => 2048,
+            'param3' => 0,
+        ], [
+            'shortname' => 'gender',
+            'name' => block_exastud_get_string('gender'),
+            'description' => '',
+            'datatype' => 'menu',
+            'categoryid' => $categoryid,
+            'locked' => 1,
+            'required' => 0,
+            'visible' => 0,
+            // TODO: english male / famle auch berücksichtigen.
+            // => die moodle default sprach einstellung hernehmen.
+            'param1' => "\nmännlich\nweiblich",
         ], [
             'shortname' => 'class',
             'name' => block_exastud_get_string('class_group'),
@@ -1131,248 +1139,248 @@ function block_exastud_check_profile_fields() {
             'param2' => 2048,
             'param3' => 0,
         ],
-	];
+    ];
 
-	foreach ($fields as $field) {
-		$id = g::$DB->get_field('user_info_field', 'id', ['shortname' => $field['shortname']]);
-		if ($id) {
-			// don't update those:
-			unset($field['name']);
-			unset($field['description']);
+    foreach ($fields as $field) {
+        $id = g::$DB->get_field('user_info_field', 'id', ['shortname' => $field['shortname']]);
+        if ($id) {
+            // don't update those:
+            unset($field['name']);
+            unset($field['description']);
 
-			g::$DB->update_record('user_info_field', $field, ['id' => $id]);
-		} else {
-			$sortorder++;
-			$field['sortorder'] = $sortorder;
-			g::$DB->insert_record('user_info_field', $field);
-		}
-	}
+            g::$DB->update_record('user_info_field', $field, ['id' => $id]);
+        } else {
+            $sortorder++;
+            $field['sortorder'] = $sortorder;
+            g::$DB->insert_record('user_info_field', $field);
+        }
+    }
 }
 
 function block_exastud_find_object_in_array_by_property($array, $key, $value) {
-	if (!$array) {
-		return null;
-	}
+    if (!$array) {
+        return null;
+    }
 
-	foreach ($array as $item) {
-		if ($item->$key == $value) {
-			return $item;
-		}
-	}
+    foreach ($array as $item) {
+        if ($item->$key == $value) {
+            return $item;
+        }
+    }
 
-	return null;
+    return null;
 }
 
 function block_exastud_insert_default_entries($dorecheck = false) {
 
-	//if empty import
-	$categories = g::$DB->get_records('block_exastudcate', null, 'sorting', 'id, title, sourceinfo');
-	$defaultItems = (array)block_exastud_get_plugin_config('default_categories');
+    //if empty import
+    $categories = g::$DB->get_records('block_exastudcate', null, 'sorting', 'id, title, sourceinfo');
+    $defaultItems = (array)block_exastud_get_plugin_config('default_categories');
 
-	if (!$categories || $dorecheck || block_exastud_get_plugin_config('always_check_default_values')) {
-		$sorting = 1;
-		foreach ($defaultItems as $defaultItem) {
-			$defaultItem = (object)$defaultItem;
+    if (!$categories || $dorecheck || block_exastud_get_plugin_config('always_check_default_values')) {
+        $sorting = 1;
+        foreach ($defaultItems as $defaultItem) {
+            $defaultItem = (object)$defaultItem;
 
-			if ($dbItem = block_exastud_find_object_in_array_by_property($categories, 'sourceinfo', $defaultItem->sourceinfo)) {
-				g::$DB->update_record('block_exastudcate', [
-					'id' => $dbItem->id,
-					'sorting' => $sorting,
-				]);
-				unset($categories[$dbItem->id]);
-			} elseif ($dbItem = block_exastud_find_object_in_array_by_property($categories, 'title', $defaultItem->title)) {
-				g::$DB->update_record('block_exastudcate', [
-					'id' => $dbItem->id,
-					'sourceinfo' => $defaultItem->sourceinfo,
-					'sorting' => $sorting,
-				]);
-				unset($categories[$dbItem->id]);
-			} else {
-				g::$DB->insert_record('block_exastudcate', [
-					'sourceinfo' => $defaultItem->sourceinfo,
-					'title' => $defaultItem->title,
-					'sorting' => $sorting,
-				]);
-			}
+            if ($dbItem = block_exastud_find_object_in_array_by_property($categories, 'sourceinfo', $defaultItem->sourceinfo)) {
+                g::$DB->update_record('block_exastudcate', [
+                    'id' => $dbItem->id,
+                    'sorting' => $sorting,
+                ]);
+                unset($categories[$dbItem->id]);
+            } elseif ($dbItem = block_exastud_find_object_in_array_by_property($categories, 'title', $defaultItem->title)) {
+                g::$DB->update_record('block_exastudcate', [
+                    'id' => $dbItem->id,
+                    'sourceinfo' => $defaultItem->sourceinfo,
+                    'sorting' => $sorting,
+                ]);
+                unset($categories[$dbItem->id]);
+            } else {
+                g::$DB->insert_record('block_exastudcate', [
+                    'sourceinfo' => $defaultItem->sourceinfo,
+                    'title' => $defaultItem->title,
+                    'sorting' => $sorting,
+                ]);
+            }
 
-			$sorting++;
-		}
+            $sorting++;
+        }
 
-		foreach ($categories as $id => $title) {
-			g::$DB->update_record('block_exastudcate', ['id' => $id, 'sorting' => $sorting]);
-			$sorting++;
-		}
-	}
+        foreach ($categories as $id => $title) {
+            g::$DB->update_record('block_exastudcate', ['id' => $id, 'sorting' => $sorting]);
+            $sorting++;
+        }
+    }
 
-	$evalopts = g::$DB->get_records('block_exastudevalopt', null, 'sorting', 'id, title, sourceinfo');
-	$defaultItems = (array)block_exastud_get_plugin_config('default_evalopt');
+    $evalopts = g::$DB->get_records('block_exastudevalopt', null, 'sorting', 'id, title, sourceinfo');
+    $defaultItems = (array)block_exastud_get_plugin_config('default_evalopt');
 
-	if ($defaultItems && (!$evalopts || $dorecheck || block_exastud_get_plugin_config('always_check_default_values'))) {
-		$sorting = 1;
-		foreach ($defaultItems as $defaultItem) {
-			$defaultItem = (object)$defaultItem;
+    if ($defaultItems && (!$evalopts || $dorecheck || block_exastud_get_plugin_config('always_check_default_values'))) {
+        $sorting = 1;
+        foreach ($defaultItems as $defaultItem) {
+            $defaultItem = (object)$defaultItem;
 
-			if ($dbItem = block_exastud_find_object_in_array_by_property($evalopts, 'sourceinfo', $defaultItem->sourceinfo)) {
-				g::$DB->update_record('block_exastudevalopt', [
-					'id' => $dbItem->id,
-					'sorting' => $sorting,
-				]);
-				unset($evalopts[$dbItem->id]);
-			} elseif ($dbItem = block_exastud_find_object_in_array_by_property($evalopts, 'title', $defaultItem->title)) {
-				g::$DB->update_record('block_exastudevalopt', [
-					'id' => $dbItem->id,
-					'sourceinfo' => $defaultItem->sourceinfo,
-					'sorting' => $sorting,
-				]);
-				unset($evalopts[$dbItem->id]);
-			} else {
-				g::$DB->insert_record('block_exastudevalopt', [
-					'sourceinfo' => $defaultItem->sourceinfo,
-					'title' => $defaultItem->title,
-					'sorting' => $sorting,
-				]);
-			}
+            if ($dbItem = block_exastud_find_object_in_array_by_property($evalopts, 'sourceinfo', $defaultItem->sourceinfo)) {
+                g::$DB->update_record('block_exastudevalopt', [
+                    'id' => $dbItem->id,
+                    'sorting' => $sorting,
+                ]);
+                unset($evalopts[$dbItem->id]);
+            } elseif ($dbItem = block_exastud_find_object_in_array_by_property($evalopts, 'title', $defaultItem->title)) {
+                g::$DB->update_record('block_exastudevalopt', [
+                    'id' => $dbItem->id,
+                    'sourceinfo' => $defaultItem->sourceinfo,
+                    'sorting' => $sorting,
+                ]);
+                unset($evalopts[$dbItem->id]);
+            } else {
+                g::$DB->insert_record('block_exastudevalopt', [
+                    'sourceinfo' => $defaultItem->sourceinfo,
+                    'title' => $defaultItem->title,
+                    'sorting' => $sorting,
+                ]);
+            }
 
-			$sorting++;
-		}
+            $sorting++;
+        }
 
-		foreach ($evalopts as $id => $title) {
-			g::$DB->update_record('block_exastudevalopt', ['id' => $id, 'sorting' => $sorting]);
-			$sorting++;
-		}
-	} elseif (!$evalopts) {
-		for ($i = 1; $i <= 10; $i++) {
-			if (!get_string_manager()->string_exists('evaluation'.$i)) {
-				break;
-			}
-			g::$DB->insert_record('block_exastudevalopt', [
-				'sourceinfo' => 'default-from-lang-'.$i,
-				"sorting" => $i,
-				"title" => block_exastud_get_string('evaluation'.$i),
-			]);
-		}
-	}
+        foreach ($evalopts as $id => $title) {
+            g::$DB->update_record('block_exastudevalopt', ['id' => $id, 'sorting' => $sorting]);
+            $sorting++;
+        }
+    } elseif (!$evalopts) {
+        for ($i = 1; $i <= 10; $i++) {
+            if (!get_string_manager()->string_exists('evaluation' . $i)) {
+                break;
+            }
+            g::$DB->insert_record('block_exastudevalopt', [
+                'sourceinfo' => 'default-from-lang-' . $i,
+                "sorting" => $i,
+                "title" => block_exastud_get_string('evaluation' . $i),
+            ]);
+        }
+    }
 
-	$bps = g::$DB->get_records('block_exastudbp', null, 'sorting', 'id, title, sourceinfo');
-	$defaultBps = (array)block_exastud_get_plugin_config('default_bps');
+    $bps = g::$DB->get_records('block_exastudbp', null, 'sorting', 'id, title, sourceinfo');
+    $defaultBps = (array)block_exastud_get_plugin_config('default_bps');
 
-	if (!$bps || $dorecheck || block_exastud_get_plugin_config('always_check_default_values')) {
-		$sorting = 1;
-		foreach ($defaultBps as $defaultBp) {
-			$defaultBp = (object)$defaultBp;
+    if (!$bps || $dorecheck || block_exastud_get_plugin_config('always_check_default_values')) {
+        $sorting = 1;
+        foreach ($defaultBps as $defaultBp) {
+            $defaultBp = (object)$defaultBp;
 
-			if ($dbBp = block_exastud_find_object_in_array_by_property($bps, 'sourceinfo', $defaultBp->sourceinfo)) {
-				g::$DB->update_record('block_exastudbp', [
-					'id' => $dbBp->id,
-					'sorting' => $sorting,
-				]);
-				unset($bps[$dbBp->id]);
-			} elseif ($dbBp = block_exastud_find_object_in_array_by_property($bps, 'title', $defaultBp->title)) {
-				g::$DB->update_record('block_exastudbp', [
-					'id' => $dbBp->id,
-					'sourceinfo' => $defaultBp->sourceinfo,
-					'sorting' => $sorting,
-				]);
-				unset($bps[$dbBp->id]);
-			} else {
-				$dbBp = $defaultBp;
-				$dbBp->sorting = $sorting;
-				$dbBp->id = g::$DB->insert_record('block_exastudbp', $dbBp);
-			}
-			$sorting++;
+            if ($dbBp = block_exastud_find_object_in_array_by_property($bps, 'sourceinfo', $defaultBp->sourceinfo)) {
+                g::$DB->update_record('block_exastudbp', [
+                    'id' => $dbBp->id,
+                    'sorting' => $sorting,
+                ]);
+                unset($bps[$dbBp->id]);
+            } elseif ($dbBp = block_exastud_find_object_in_array_by_property($bps, 'title', $defaultBp->title)) {
+                g::$DB->update_record('block_exastudbp', [
+                    'id' => $dbBp->id,
+                    'sourceinfo' => $defaultBp->sourceinfo,
+                    'sorting' => $sorting,
+                ]);
+                unset($bps[$dbBp->id]);
+            } else {
+                $dbBp = $defaultBp;
+                $dbBp->sorting = $sorting;
+                $dbBp->id = g::$DB->insert_record('block_exastudbp', $dbBp);
+            }
+            $sorting++;
 
-			$subjects = block_exastud_get_bildungsplan_subjects($dbBp->id);
-			$subjectSorting = 1;
+            $subjects = block_exastud_get_bildungsplan_subjects($dbBp->id);
+            $subjectSorting = 1;
 
-			foreach ($defaultBp->subjects as $subject) {
-				$subject = (object)$subject;
-				$subject->sorting = $subjectSorting;
-				$subjectSorting++;
+            foreach ($defaultBp->subjects as $subject) {
+                $subject = (object)$subject;
+                $subject->sorting = $subjectSorting;
+                $subjectSorting++;
 
-				if ($dbSubject = block_exastud_find_object_in_array_by_property($subjects, 'sourceinfo', $subject->sourceinfo)) {
-					g::$DB->update_record('block_exastudsubjects', [
-						'id' => $dbSubject->id,
-						'sorting' => $subjectSorting,
-					]);
-					unset($subjects[$dbSubject->id]);
-				} elseif ($dbSubject = block_exastud_find_object_in_array_by_property($subjects, 'title', $subject->title)) {
-					g::$DB->update_record('block_exastudsubjects', [
-						'id' => $dbSubject->id,
-						'sourceinfo' => $subject->sourceinfo,
-						'sorting' => $subjectSorting,
-					]);
-					unset($subjects[$dbSubject->id]);
-				} else {
-					$subject->bpid = $dbBp->id;
-					g::$DB->insert_record('block_exastudsubjects', $subject);
-				}
-			}
+                if ($dbSubject = block_exastud_find_object_in_array_by_property($subjects, 'sourceinfo', $subject->sourceinfo)) {
+                    g::$DB->update_record('block_exastudsubjects', [
+                        'id' => $dbSubject->id,
+                        'sorting' => $subjectSorting,
+                    ]);
+                    unset($subjects[$dbSubject->id]);
+                } elseif ($dbSubject = block_exastud_find_object_in_array_by_property($subjects, 'title', $subject->title)) {
+                    g::$DB->update_record('block_exastudsubjects', [
+                        'id' => $dbSubject->id,
+                        'sourceinfo' => $subject->sourceinfo,
+                        'sorting' => $subjectSorting,
+                    ]);
+                    unset($subjects[$dbSubject->id]);
+                } else {
+                    $subject->bpid = $dbBp->id;
+                    g::$DB->insert_record('block_exastudsubjects', $subject);
+                }
+            }
 
-			foreach ($subjects as $id => $title) {
-				g::$DB->update_record('block_exastudsubjects', ['id' => $id, 'sorting' => $subjectSorting]);
-				$subjectSorting++;
-			}
-		}
+            foreach ($subjects as $id => $title) {
+                g::$DB->update_record('block_exastudsubjects', ['id' => $id, 'sorting' => $subjectSorting]);
+                $subjectSorting++;
+            }
+        }
 
-		foreach ($bps as $id => $tmp) {
-			g::$DB->update_record('block_exastudbp', ['id' => $id, 'sorting' => $sorting]);
-			$sorting++;
-		}
-	}
+        foreach ($bps as $id => $tmp) {
+            g::$DB->update_record('block_exastudbp', ['id' => $id, 'sorting' => $sorting]);
+            $sorting++;
+        }
+    }
 }
 
 function block_exastud_get_plugin_config($name = null) {
-	static $config = null;
+    static $config = null;
 
-	if ($config === null) {
-		$config = [];
+    if ($config === null) {
+        $config = [];
 
-		if (file_exists(__DIR__.'/../local.config/config.php')) {
-			$config += require __DIR__.'/../local.config/config.php';
-		}
+        if (file_exists(__DIR__ . '/../local.config/config.php')) {
+            $config += require __DIR__ . '/../local.config/config.php';
+        }
 
-		$config += (array)get_config('exastud');
+        $config += (array)get_config('exastud');
 
-		$config = (object)$config;
-	}
+        $config = (object)$config;
+    }
 
-	if (!empty($name)) {
-		if (property_exists($config, $name)) {
-			return $config->$name;
-		} else {
-			return null;
-		}
-	} else {
-		return $config;
-	}
+    if (!empty($name)) {
+        if (property_exists($config, $name)) {
+            return $config->$name;
+        } else {
+            return null;
+        }
+    } else {
+        return $config;
+    }
 }
 
 function block_exastud_is_new_version() {
-	return true;
+    return true;
 }
 
 function block_exastud_has_global_cap($cap, $user = null) {
-	try {
-		block_exastud_require_global_cap($cap, $user);
+    try {
+        block_exastud_require_global_cap($cap, $user);
 
-		return true;
-	} catch (block_exastud_permission_exception $e) {
-		return false;
-	} catch (required_capability_exception $e) {
-		return false;
-	}
+        return true;
+    } catch (block_exastud_permission_exception $e) {
+        return false;
+    } catch (required_capability_exception $e) {
+        return false;
+    }
 }
 
 function block_exastud_require_global_cap($cap, $user = null) {
-	// all capabilities require use
-	require_capability('block/exastud:use', context_system::instance(), $user);
+    // all capabilities require use
+    require_capability('block/exastud:use', context_system::instance(), $user);
 
-	switch ($cap) {
-		case BLOCK_EXASTUD_CAP_EDIT_PERIODS:
-		case BLOCK_EXASTUD_CAP_UPLOAD_PICTURE:
-			require_capability('block/exastud:admin', context_system::instance(), $user);
+    switch ($cap) {
+        case BLOCK_EXASTUD_CAP_EDIT_PERIODS:
+        case BLOCK_EXASTUD_CAP_UPLOAD_PICTURE:
+            require_capability('block/exastud:admin', context_system::instance(), $user);
 
-			return;
+            return;
         case BLOCK_EXASTUD_CAP_VIEW_REPORT:
             // if the user is a additional teacher - he can view of report
             $actPeriod = block_exastud_get_active_period();
@@ -1389,32 +1397,32 @@ function block_exastud_require_global_cap($cap, $user = null) {
                     return;
                 }
             }
-		case BLOCK_EXASTUD_CAP_MANAGE_CLASSES:
-		case BLOCK_EXASTUD_CAP_HEAD_TEACHER:
-			if (!block_exastud_is_head_teacher($user) && !block_exastud_is_siteadmin()) {
-				throw new block_exastud_permission_exception('no headteacher');
-			} else {
-				return;
-			}
-		case BLOCK_EXASTUD_CAP_REVIEW:
-			$actPeriod = block_exastud_get_active_period();
-			$lastPeriod = block_exastud_get_last_period();
-			if (($actPeriod && (block_exastud_get_review_subjects($actPeriod->id) || block_exastud_get_head_teacher_classes_all($actPeriod->id)))
-				|| ($lastPeriod && (block_exastud_get_review_subjects($lastPeriod->id) || block_exastud_get_head_teacher_classes_all($lastPeriod->id)))
-			) {
-				// has reviews in this or last period (=a class is unlocked for late review)
-				return;
-			} else {
-				throw new block_exastud_permission_exception('no classes');
-			}
-	}
+        case BLOCK_EXASTUD_CAP_MANAGE_CLASSES:
+        case BLOCK_EXASTUD_CAP_HEAD_TEACHER:
+            if (!block_exastud_is_head_teacher($user) && !block_exastud_is_siteadmin()) {
+                throw new block_exastud_permission_exception('no headteacher');
+            } else {
+                return;
+            }
+        case BLOCK_EXASTUD_CAP_REVIEW:
+            $actPeriod = block_exastud_get_active_period();
+            $lastPeriod = block_exastud_get_last_period();
+            if (($actPeriod && (block_exastud_get_review_subjects($actPeriod->id) || block_exastud_get_head_teacher_classes_all($actPeriod->id)))
+                || ($lastPeriod && (block_exastud_get_review_subjects($lastPeriod->id) || block_exastud_get_head_teacher_classes_all($lastPeriod->id)))
+            ) {
+                // has reviews in this or last period (=a class is unlocked for late review)
+                return;
+            } else {
+                throw new block_exastud_permission_exception('no classes');
+            }
+    }
 
-	require_capability('block/exastud:'.$cap, context_system::instance(), $user);
+    require_capability('block/exastud:' . $cap, context_system::instance(), $user);
 }
 
 function block_exastud_check_periods($printBoxInsteadOfError = false) {
-	block_exastud_has_wrong_periods($printBoxInsteadOfError);
-	block_exastud_check_if_periods_overlap($printBoxInsteadOfError);
+    block_exastud_has_wrong_periods($printBoxInsteadOfError);
+    block_exastud_check_if_periods_overlap($printBoxInsteadOfError);
 }
 
 /*
@@ -1453,110 +1461,110 @@ function block_exastud_reviews_available() {
 */
 
 function block_exastud_has_wrong_periods($printBoxInsteadOfError = false) {
-	global $DB;
-	// check if any entry has a starttime after the endtime:
-	$wrongs = $DB->get_records_sql('SELECT p.description, p.starttime, p.endtime FROM {block_exastudperiod} p WHERE starttime > endtime');
+    global $DB;
+    // check if any entry has a starttime after the endtime:
+    $wrongs = $DB->get_records_sql('SELECT p.description, p.starttime, p.endtime FROM {block_exastudperiod} p WHERE starttime > endtime');
 
-	if ($wrongs) {
-		foreach ($wrongs as $wrong) {
-			if ($printBoxInsteadOfError) {
-			    g::$OUTPUT->notification(block_exastud_get_string('errorstarttimebeforeendtime', null, $wrong));
-			} else {
-				error('errorstarttimebeforeendtime', 'block_exastud', '', $wrong);
-			}
-		}
-	}
+    if ($wrongs) {
+        foreach ($wrongs as $wrong) {
+            if ($printBoxInsteadOfError) {
+                g::$OUTPUT->notification(block_exastud_get_string('errorstarttimebeforeendtime', null, $wrong));
+            } else {
+                error('errorstarttimebeforeendtime', 'block_exastud', '', $wrong);
+            }
+        }
+    }
 
-	return true;
+    return true;
 }
 
 function block_exastud_check_if_periods_overlap($printBoxInsteadOfError = false) {
-	global $DB;
-	$allPeriods = $DB->get_records('block_exastudperiod', null, 'id, description, starttime, endtime');
+    global $DB;
+    $allPeriods = $DB->get_records('block_exastudperiod', null, 'id, description, starttime, endtime');
 
-	$periodshistory = '';
-	foreach ($allPeriods as $actPeriod) {
-		if ($periodshistory == '') {
-			$periodshistory .= $actPeriod->id;
-		} else {
-			$periodshistory .= ', '.$actPeriod->id;
-		}
-		$ovelapPeriods = $DB->get_records_sql('SELECT id, description, starttime, endtime FROM {block_exastudperiod}
-				WHERE (id NOT IN ('.$periodshistory.')) AND NOT ( (starttime < '.$actPeriod->starttime.' AND endtime < '.$actPeriod->starttime.')
-				OR (starttime > '.$actPeriod->endtime.' AND endtime > '.$actPeriod->endtime.') )');
+    $periodshistory = '';
+    foreach ($allPeriods as $actPeriod) {
+        if ($periodshistory == '') {
+            $periodshistory .= $actPeriod->id;
+        } else {
+            $periodshistory .= ', ' . $actPeriod->id;
+        }
+        $ovelapPeriods = $DB->get_records_sql('SELECT id, description, starttime, endtime FROM {block_exastudperiod}
+				WHERE (id NOT IN (' . $periodshistory . ')) AND NOT ( (starttime < ' . $actPeriod->starttime . ' AND endtime < ' . $actPeriod->starttime . ')
+				OR (starttime > ' . $actPeriod->endtime . ' AND endtime > ' . $actPeriod->endtime . ') )');
 
-		if ($ovelapPeriods) {
-			foreach ($ovelapPeriods as $overlapPeriod) {
-				$a = new stdClass();
-				$a->period1 = $actPeriod->description;
-				$a->period2 = $overlapPeriod->description;
+        if ($ovelapPeriods) {
+            foreach ($ovelapPeriods as $overlapPeriod) {
+                $a = new stdClass();
+                $a->period1 = $actPeriod->description;
+                $a->period2 = $overlapPeriod->description;
 
-				if ($printBoxInsteadOfError) {
-				    g::$OUTPUT->notification(block_exastud_get_string('periodoverlaps', null, $a));
-				} else {
-					print_error('periodoverlaps', 'block_exastud', '', $a);
-				}
-			}
-		}
-	}
+                if ($printBoxInsteadOfError) {
+                    g::$OUTPUT->notification(block_exastud_get_string('periodoverlaps', null, $a));
+                } else {
+                    print_error('periodoverlaps', 'block_exastud', '', $a);
+                }
+            }
+        }
+    }
 }
 
 function block_exastud_check_active_period() {
-	global $CFG, $COURSE;
+    global $CFG, $COURSE;
 
-	if ($period = block_exastud_get_active_period()) {
-		return $period;
-	}
+    if ($period = block_exastud_get_active_period()) {
+        return $period;
+    }
 
-	if (block_exastud_has_global_cap(BLOCK_EXASTUD_CAP_EDIT_PERIODS)) {
-		redirect($CFG->wwwroot.'/blocks/exastud/configuration_periods.php?courseid='.$COURSE->id, block_exastud_get_string('redirectingtoperiodsinput'));
-	}
+    if (block_exastud_has_global_cap(BLOCK_EXASTUD_CAP_EDIT_PERIODS)) {
+        redirect($CFG->wwwroot . '/blocks/exastud/configuration_periods.php?courseid=' . $COURSE->id, block_exastud_get_string('redirectingtoperiodsinput'));
+    }
 
-	throw new \moodle_exception('periodserror', 'block_exastud', $CFG->wwwroot.'/blocks/exastud/configuration_periods.php?courseid='.$COURSE->id);
+    throw new \moodle_exception('periodserror', 'block_exastud', $CFG->wwwroot . '/blocks/exastud/configuration_periods.php?courseid=' . $COURSE->id);
 }
 
 function block_exastud_get_active_period() {
-	$periods = g::$DB->get_records_sql('SELECT * FROM {block_exastudperiod} WHERE (starttime <= '.time().') AND (endtime >= '.time().')');
+    $periods = g::$DB->get_records_sql('SELECT * FROM {block_exastudperiod} WHERE (starttime <= ' . time() . ') AND (endtime >= ' . time() . ')');
 
-	// genau 1e periode?
-	if (count($periods) == 1) {
-		return reset($periods);
-	}
-	return null;
+    // genau 1e periode?
+    if (count($periods) == 1) {
+        return reset($periods);
+    }
+    return null;
 }
 
 function block_exastud_get_active_or_next_period() {
-	return g::$DB->get_record_sql('SELECT * FROM {block_exastudperiod} WHERE (endtime >= '.time().') ORDER BY starttime ASC LIMIT 1');
+    return g::$DB->get_record_sql('SELECT * FROM {block_exastudperiod} WHERE (endtime >= ' . time() . ') ORDER BY starttime ASC LIMIT 1');
 }
 
 function block_exastud_get_active_or_last_period() {
-    return g::$DB->get_record_sql('SELECT * FROM {block_exastudperiod} WHERE (starttime <= '.time().') ORDER BY endtime DESC LIMIT 1');
+    return g::$DB->get_record_sql('SELECT * FROM {block_exastudperiod} WHERE (starttime <= ' . time() . ') ORDER BY endtime DESC LIMIT 1');
 }
 
 function block_exastud_get_last_periods($start = 0, $limit = 4) {
-    $sql = 'SELECT * FROM {block_exastudperiod} WHERE (starttime <= '.time().') ORDER BY endtime DESC ';
+    $sql = 'SELECT * FROM {block_exastudperiod} WHERE (starttime <= ' . time() . ') ORDER BY endtime DESC ';
     if ($limit > 0) {
-        $sql .= ' LIMIT '.$limit.' ';
+        $sql .= ' LIMIT ' . $limit . ' ';
     }
     if ($start > 0) {
-        $sql .= ' OFFSET '.$start.' ';
+        $sql .= ' OFFSET ' . $start . ' ';
     }
     return g::$DB->get_records_sql($sql);
 }
 
 function block_exastud_get_last_period() {
-	return g::$DB->get_record_sql('SELECT * FROM {block_exastudperiod} WHERE (endtime <= '.time().') ORDER BY starttime DESC LIMIT 1');
+    return g::$DB->get_record_sql('SELECT * FROM {block_exastudperiod} WHERE (endtime <= ' . time() . ') ORDER BY starttime DESC LIMIT 1');
 }
 
 function block_exastud_get_period($periodid, $loadActive = true) {
-	if ($periodid) {
-		return g::$DB->get_record('block_exastudperiod', array('id' => $periodid));
-	} elseif ($loadActive) {
-		// if period empty, load active one
-		return block_exastud_get_active_period();
-	} else {
-		return null;
-	}
+    if ($periodid) {
+        return g::$DB->get_record('block_exastudperiod', array('id' => $periodid));
+    } elseif ($loadActive) {
+        // if period empty, load active one
+        return block_exastud_get_active_period();
+    } else {
+        return null;
+    }
 }
 
 /*
@@ -1572,18 +1580,18 @@ function block_exastud_check_period($periodid, $loadActive = true) {
 */
 
 function block_exastud_get_period_categories($periodid) {
-	global $DB;
+    global $DB;
 
-	$reviewcategories = $DB->get_recordset_sql('SELECT rp.categoryid, rp.categorysource FROM {block_exastudreviewpos} rp, {block_exastudreview} r WHERE r.periodid=? AND rp.reviewid=r.id GROUP BY rp.categoryid, rp.categorysource', array($periodid));
+    $reviewcategories = $DB->get_recordset_sql('SELECT rp.categoryid, rp.categorysource FROM {block_exastudreviewpos} rp, {block_exastudreview} r WHERE r.periodid=? AND rp.reviewid=r.id GROUP BY rp.categoryid, rp.categorysource', array($periodid));
 
-	$categories = array();
-	foreach ($reviewcategories as $reviewcategory) {
-		if ($tmp = block_exastud_get_category($reviewcategory->categoryid, $reviewcategory->categorysource)) {
-			$categories[] = $tmp;
-		}
-	}
+    $categories = array();
+    foreach ($reviewcategories as $reviewcategory) {
+        if ($tmp = block_exastud_get_category($reviewcategory->categoryid, $reviewcategory->categorysource)) {
+            $categories[] = $tmp;
+        }
+    }
 
-	return $categories;
+    return $categories;
 }
 
 /*
@@ -1611,29 +1619,29 @@ function block_exastud_get_detailed_report($studentid, $periodid) {
 }
 */
 function block_exastud_get_report($studentid, $periodid, $classid) {
-	global $DB;
+    global $DB;
 
-	$report = new stdClass();
-	$class = block_exastud_get_class($classid);
+    $report = new stdClass();
+    $class = block_exastud_get_class($classid);
 
-	$totalvalue = $DB->get_record_sql('SELECT sum(rp.value) as total 
-                                          FROM {block_exastudreview} r, 
-                                              {block_exastudreviewpos} rp 
-                                          WHERE r.studentid = ? 
-                                                AND r.periodid = ? 
+    $totalvalue = $DB->get_record_sql('SELECT sum(rp.value) as total
+                                          FROM {block_exastudreview} r,
+                                              {block_exastudreviewpos} rp
+                                          WHERE r.studentid = ?
+                                                AND r.periodid = ?
                                                 AND rp.reviewid = r.id',
-                                        array($studentid, $periodid));
-	$report->totalvalue = $totalvalue->total;
+        array($studentid, $periodid));
+    $report->totalvalue = $totalvalue->total;
 
-	$reviewcategories = $DB->get_records_sql("
+    $reviewcategories = $DB->get_records_sql("
                 SELECT DISTINCT rp.categoryid, rp.categorysource
                     FROM {block_exastudreview} r
                       JOIN {block_exastudreviewpos} rp ON rp.reviewid = r.id
-                    WHERE r.studentid = ? 
+                    WHERE r.studentid = ?
                           AND r.periodid = ?",
         array($studentid, $periodid));
 
-	$report->category_averages = [];
+    $report->category_averages = [];
 
     $classteachers = array();
     $subjectsOfTeacher = array();
@@ -1646,20 +1654,22 @@ function block_exastud_get_report($studentid, $periodid, $classid) {
         }
         return null;
     });
-    $classteachers = array_map(function($o) {return block_exastud_get_user($o);}, $classteachers);
-	foreach ($reviewcategories as $rcat) {
-		if ($category = block_exastud_get_category($rcat->categoryid, $rcat->categorysource)) {
-			$catid = $rcat->categorysource.'-'.$rcat->categoryid;
+    $classteachers = array_map(function($o) {
+        return block_exastud_get_user($o);
+    }, $classteachers);
+    foreach ($reviewcategories as $rcat) {
+        if ($category = block_exastud_get_category($rcat->categoryid, $rcat->categorysource)) {
+            $catid = $rcat->categorysource . '-' . $rcat->categoryid;
 
             $category_total = 0;
             $category_cnt = 0;
 
-			/*$reviewers = block_exastud_get_reviewers_by_category_and_pos($periodid, $studentid, $rcat->categoryid, $rcat->categorysource, null);
+            /*$reviewers = block_exastud_get_reviewers_by_category_and_pos($periodid, $studentid, $rcat->categoryid, $rcat->categorysource, null);
 			foreach ($reviewers as $reviewer) {
 			    $category_total += $reviewer->value;
 				$category_cnt++;
 			}*/
-			foreach ($classteachers as $teacher) {
+            foreach ($classteachers as $teacher) {
                 foreach ($subjectsOfTeacher[$teacher->id] as $subjectId) {
                     $cateReview = block_exastud_get_category_review_by_subject_and_teacher($periodid, $studentid, $rcat->categoryid, $rcat->categorysource, $teacher->id, $subjectId);
                     if (@$cateReview->catreview_value) {
@@ -1679,198 +1689,198 @@ function block_exastud_get_report($studentid, $periodid, $classid) {
             //echo "<pre>debug:<strong>lib.php:1607</strong>\r\n"; print_r($category_cnt); echo '</pre>'; // !!!!!!!!!! delete it
             //echo "<pre>debug:<strong>lib.php:1613</strong>\r\n"; print_r(round($category_total / $category_cnt, 2)); echo '</pre>'; // !!!!!!!!!! delete it
 
-			$average = $category_cnt > 0 ? round($category_total / $category_cnt, 2) : 0;
-			$report->category_averages[$category->title] = $average; // wird das noch benötigt?
-			$report->category_averages[$catid] = $average;
-		}
-	}
-//exit;
-	$numrecords = $DB->get_record_sql('SELECT COUNT(id) AS count FROM {block_exastudreview} WHERE studentid='.$studentid.' AND periodid='.$periodid);
-	$report->numberOfEvaluations = $numrecords->count;
+            $average = $category_cnt > 0 ? round($category_total / $category_cnt, 2) : 0;
+            $report->category_averages[$category->title] = $average; // wird das noch benötigt?
+            $report->category_averages[$catid] = $average;
+        }
+    }
+    //exit;
+    $numrecords = $DB->get_record_sql('SELECT COUNT(id) AS count FROM {block_exastudreview} WHERE studentid=' . $studentid . ' AND periodid=' . $periodid);
+    $report->numberOfEvaluations = $numrecords->count;
 
-	$comments = $DB->get_recordset_sql("
-				SELECT ".exastud_get_picture_fields('u').", r.review, s.title AS subject_title
+    $comments = $DB->get_recordset_sql("
+				SELECT " . exastud_get_picture_fields('u') . ", r.review, s.title AS subject_title
 				FROM {block_exastudreview} r
 				JOIN {user} u ON r.teacherid = u.id
 				LEFT JOIN {block_exastudsubjects} s ON r.subjectid = s.id
 				WHERE r.studentid = ? AND r.periodid = ? AND TRIM(r.review) !=  '' AND u.deleted = 0
 				ORDER BY s.title, u.lastname, u.firstname",
-		array($studentid, $periodid));
+        array($studentid, $periodid));
 
-	$report->comments = array();
-	foreach ($comments as $comment) {
-		$newcomment = new stdClass();
-		$newcomment->name = ($comment->subject_title ? $comment->subject_title.' ('.fullname($comment).')' : fullname($comment));
-		$newcomment->review = format_text($comment->review);
+    $report->comments = array();
+    foreach ($comments as $comment) {
+        $newcomment = new stdClass();
+        $newcomment->name = ($comment->subject_title ? $comment->subject_title . ' (' . fullname($comment) . ')' : fullname($comment));
+        $newcomment->review = format_text($comment->review);
 
-		$report->comments[] = $newcomment;
-	}
+        $report->comments[] = $newcomment;
+    }
 
-	return $report;
+    return $report;
 }
 
 function block_exastud_read_template_file($filename) {
-	global $CFG;
-	$filecontent = '';
+    global $CFG;
+    $filecontent = '';
 
-	if (is_file($CFG->dirroot.'/blocks/exastud/template/'.$filename)) {
-		$filecontent = file_get_contents($CFG->dirroot.'/blocks/exastud/template/'.$filename);
-	} else {
-		if (is_file($CFG->dirroot.'/blocks/exastud/default_template/'.$filename)) {
-			$filecontent = file_get_contents($CFG->dirroot.'/blocks/exastud/default_template/'.$filename);
-		}
-	}
-	$filecontent = str_replace('###WWWROOT###', $CFG->wwwroot, $filecontent);
+    if (is_file($CFG->dirroot . '/blocks/exastud/template/' . $filename)) {
+        $filecontent = file_get_contents($CFG->dirroot . '/blocks/exastud/template/' . $filename);
+    } else {
+        if (is_file($CFG->dirroot . '/blocks/exastud/default_template/' . $filename)) {
+            $filecontent = file_get_contents($CFG->dirroot . '/blocks/exastud/default_template/' . $filename);
+        }
+    }
+    $filecontent = str_replace('###WWWROOT###', $CFG->wwwroot, $filecontent);
 
-	return $filecontent;
+    return $filecontent;
 }
 
 function block_exastud_print_student_report_header() {
-	echo block_exastud_read_template_file('header.html');
+    echo block_exastud_read_template_file('header.html');
 }
 
 function block_exastud_print_student_report_footer() {
-	echo block_exastud_read_template_file('footer.html');
+    echo block_exastud_read_template_file('footer.html');
 }
 
 function block_exastud_print_student_report($studentid, $periodid, $class, $pdf = false, $detail = false, $ranking = false) {
-	global $DB, $CFG, $OUTPUT;
+    global $DB, $CFG, $OUTPUT;
 
-	$detailedreview = !empty($CFG->block_exastud_detailed_review) && $detail;
+    $detailedreview = !empty($CFG->block_exastud_detailed_review) && $detail;
 
-	$period = $DB->get_record('block_exastudperiod', array('id' => $periodid));
+    $period = $DB->get_record('block_exastudperiod', array('id' => $periodid));
 
-	if (!$studentReport = block_exastud_get_report($studentid, $periodid, $class->id)) {
-		print_error('studentnotfound', 'block_exastud');
-	}
+    if (!$studentReport = block_exastud_get_report($studentid, $periodid, $class->id)) {
+        print_error('studentnotfound', 'block_exastud');
+    }
 
 
-	$student = $DB->get_record('user', array('id' => $studentid, 'deleted' => 0));
-	$studentreport = block_exastud_read_template_file('student_new.html');
-	$studentreport = str_replace('###STUDENTREVIEW###', block_exastud_get_string('studentreview'), $studentreport);
-	$studentreport = str_replace('###NAME###', block_exastud_get_string('name'), $studentreport);
-	$studentreport = str_replace('###PERIODREVIEW###', block_exastud_get_string('periodreview'), $studentreport);
-	$studentreport = str_replace('###REVIEWCOUNT###', block_exastud_get_string('reviewcount'), $studentreport);
-	$studentreport = str_replace('###CLASSTRANSLATION###', block_exastud_get_string('class'), $studentreport);
-	$studentreport = str_replace('###FIRSTNAME###', $student->firstname, $studentreport);
-	$studentreport = str_replace('###LASTNAME###', $student->lastname, $studentreport);
-	if (!empty($CFG->block_exastud_project_based_assessment) && $ranking) {
-		$studentreport = str_replace('###RANKING###', $ranking, $studentreport);
-		$studentreport = str_replace('###RANKINGTRANSLATION###', 'Ranking', $studentreport);
-	} else {
-		$studentreport = str_replace('<tr>
+    $student = $DB->get_record('user', array('id' => $studentid, 'deleted' => 0));
+    $studentreport = block_exastud_read_template_file('student_new.html');
+    $studentreport = str_replace('###STUDENTREVIEW###', block_exastud_get_string('studentreview'), $studentreport);
+    $studentreport = str_replace('###NAME###', block_exastud_get_string('name'), $studentreport);
+    $studentreport = str_replace('###PERIODREVIEW###', block_exastud_get_string('periodreview'), $studentreport);
+    $studentreport = str_replace('###REVIEWCOUNT###', block_exastud_get_string('reviewcount'), $studentreport);
+    $studentreport = str_replace('###CLASSTRANSLATION###', block_exastud_get_string('class'), $studentreport);
+    $studentreport = str_replace('###FIRSTNAME###', $student->firstname, $studentreport);
+    $studentreport = str_replace('###LASTNAME###', $student->lastname, $studentreport);
+    if (!empty($CFG->block_exastud_project_based_assessment) && $ranking) {
+        $studentreport = str_replace('###RANKING###', $ranking, $studentreport);
+        $studentreport = str_replace('###RANKINGTRANSLATION###', 'Ranking', $studentreport);
+    } else {
+        $studentreport = str_replace('<tr>
 						<td class="printpersonalinfo_heading">###RANKING###</td>
 					</tr>
 					<tr>
 						<td class="printpersonalinfo_subheading">###RANKINGTRANSLATION###</td>
 					</tr>', "", $studentreport);
-	}
-	if (!$pdf) {
-		$studentreport = str_replace('###USERPIC###', $OUTPUT->user_picture($DB->get_record('user', array("id" => $studentid, 'deleted' => 0)), array("size" => 100)), $studentreport);
-	} else {
-		$studentreport = str_replace('###USERPIC###', '', $studentreport);
-	}
+    }
+    if (!$pdf) {
+        $studentreport = str_replace('###USERPIC###', $OUTPUT->user_picture($DB->get_record('user', array("id" => $studentid, 'deleted' => 0)), array("size" => 100)), $studentreport);
+    } else {
+        $studentreport = str_replace('###USERPIC###', '', $studentreport);
+    }
 
-	if ($logo = block_exastud_get_main_logo_url()) {
-		$img = '<img id="logo" width="840" height="100" src="'.$logo.'"/>';
-	} else {
-		$img = '';
-	}
-	$studentreport = str_replace('###TITLE###', $img, $studentreport);
-	$studentreport = str_replace('###CLASS###', $class->title, $studentreport);
-	$studentreport = str_replace('###NUM###', $studentReport->numberOfEvaluations, $studentreport);
-	$studentreport = str_replace('###PERIOD###', $period->description, $studentreport);
-	$studentreport = str_replace('###LOGO###', $img, $studentreport);
+    if ($logo = block_exastud_get_main_logo_url()) {
+        $img = '<img id="logo" width="840" height="100" src="' . $logo . '"/>';
+    } else {
+        $img = '';
+    }
+    $studentreport = str_replace('###TITLE###', $img, $studentreport);
+    $studentreport = str_replace('###CLASS###', $class->title, $studentreport);
+    $studentreport = str_replace('###NUM###', $studentReport->numberOfEvaluations, $studentreport);
+    $studentreport = str_replace('###PERIOD###', $period->description, $studentreport);
+    $studentreport = str_replace('###LOGO###', $img, $studentreport);
 
-	$categories = ($periodid == block_exastud_check_active_period()->id) ? block_exastud_get_class_categories($class->id) : block_exastud_get_period_categories($periodid);
+    $categories = ($periodid == block_exastud_check_active_period()->id) ? block_exastud_get_class_categories($class->id) : block_exastud_get_period_categories($periodid);
 
-	$html = '';
+    $html = '';
 
-	foreach ($categories as $category) {
-		$html .= '<tr class="ratings"><td class="ratingfirst text">'.$category->title.'</td>
-		<td class="rating legend">'.@$studentReport->{$category->title}.'</td></tr>';
+    foreach ($categories as $category) {
+        $html .= '<tr class="ratings"><td class="ratingfirst text">' . $category->title . '</td>
+		<td class="rating legend">' . @$studentReport->{$category->title} . '</td></tr>';
 
-		if ($detailedreview) {
-			$detaildata = $DB->get_recordset_sql("SELECT ".exastud_get_picture_fields('u').", pos.value, s.title AS subject_title
+        if ($detailedreview) {
+            $detaildata = $DB->get_recordset_sql("SELECT " . exastud_get_picture_fields('u') . ", pos.value, s.title AS subject_title
                     FROM {block_exastudreview} r
 					JOIN {block_exastudreviewpos} pos ON pos.reviewid = r.id
 					JOIN {user} u ON r.teacherid = u.id
 					LEFT JOIN {block_exastudsubjects} s ON r.subjectid = s.id
 					WHERE u.deleted = 0, studentid = ? AND periodid = ? AND pos.categoryid = ? AND pos.categorysource = ?", array($studentid, $periodid, $category->id, $category->source));
-			foreach ($detaildata as $detailrow) {
-				$html .= '<tr class="ratings"><td class="teacher">'.($detailrow->subject_title ? $detailrow->subject_title.' ('.fullname($detailrow).')' : fullname($detailrow)).'</td>
-				<td class="rating legend teacher">'.$detailrow->value.'</td></tr>';
-			}
-		}
-	}
-	$studentreport = str_replace('###CATEGORIES###', $html, $studentreport);
+            foreach ($detaildata as $detailrow) {
+                $html .= '<tr class="ratings"><td class="teacher">' . ($detailrow->subject_title ? $detailrow->subject_title . ' (' . fullname($detailrow) . ')' : fullname($detailrow)) . '</td>
+				<td class="rating legend teacher">' . $detailrow->value . '</td></tr>';
+            }
+        }
+    }
+    $studentreport = str_replace('###CATEGORIES###', $html, $studentreport);
 
 
-	if (!$studentReport->comments) {
-		$studentreport = str_replace('###COMMENTS###', '', $studentreport);
-	} else {
-		$comments = '
-		<table class="ratingtable"><tr class="ratingheading"><td><h3>'.block_exastud_get_string('detailedreview').'</h3></td></tr></table>';
-		foreach ($studentReport->comments as $comment) {
-			$comments .= '<table class="ratingtable">
-			<tr class="ratinguser"><td class="ratingfirst">'.$comment->name.'</td></tr>
-			<tr class="ratingtext"><td>'.$comment->review.'</td>
+    if (!$studentReport->comments) {
+        $studentreport = str_replace('###COMMENTS###', '', $studentreport);
+    } else {
+        $comments = '
+		<table class="ratingtable"><tr class="ratingheading"><td><h3>' . block_exastud_get_string('detailedreview') . '</h3></td></tr></table>';
+        foreach ($studentReport->comments as $comment) {
+            $comments .= '<table class="ratingtable">
+			<tr class="ratinguser"><td class="ratingfirst">' . $comment->name . '</td></tr>
+			<tr class="ratingtext"><td>' . $comment->review . '</td>
 			</tr>
 			</table>';
-		}
-		$studentreport = str_replace('###COMMENTS###', $comments, $studentreport);
-	}
+        }
+        $studentreport = str_replace('###COMMENTS###', $comments, $studentreport);
+    }
 
-	if ($pdf) {
-		$imgdir = make_upload_directory("exastud/temp/userpic/{$studentid}");
+    if ($pdf) {
+        $imgdir = make_upload_directory("exastud/temp/userpic/{$studentid}");
 
-		$fs = get_file_storage();
-		$context = $DB->get_record("context", array("contextlevel" => 30, "instanceid" => $studentid));
-		$files = $fs->get_area_files($context->id, 'user', 'icon', 0, '', false);
-		$file = reset($files);
-		unset($files);
-		//copy file
-		if ($file) {
-			$newfile = $imgdir."/".$file->get_filename();
-			$file->copy_content_to($newfile);
-		}
+        $fs = get_file_storage();
+        $context = $DB->get_record("context", array("contextlevel" => 30, "instanceid" => $studentid));
+        $files = $fs->get_area_files($context->id, 'user', 'icon', 0, '', false);
+        $file = reset($files);
+        unset($files);
+        //copy file
+        if ($file) {
+            $newfile = $imgdir . "/" . $file->get_filename();
+            $file->copy_content_to($newfile);
+        }
 
-		require_once($CFG->dirroot.'/lib/tcpdf/tcpdf.php');
-		try {
-			// create new PDF document
-			$pdf = new TCPDF("P", "pt", "A4", true, 'UTF-8', false);
-			$pdf->SetTitle('Bericht');
-			$pdf->AddPage();
-			if ($file) {
-				$pdf->Image($newfile, 480, 185, 75, 75);
-			}
-			$pdf->writeHTML($studentreport, true, false, true, false, '');
+        require_once($CFG->dirroot . '/lib/tcpdf/tcpdf.php');
+        try {
+            // create new PDF document
+            $pdf = new TCPDF("P", "pt", "A4", true, 'UTF-8', false);
+            $pdf->SetTitle('Bericht');
+            $pdf->AddPage();
+            if ($file) {
+                $pdf->Image($newfile, 480, 185, 75, 75);
+            }
+            $pdf->writeHTML($studentreport, true, false, true, false, '');
 
-			$pdf->Output('Student Review.pdf', 'I');
-			unlink($newfile);
-		} catch (tcpdf_exception $e) {
-			echo $e;
-			exit;
-		}
-	} else {
-		echo $studentreport;
-	}
+            $pdf->Output('Student Review.pdf', 'I');
+            unlink($newfile);
+        } catch (tcpdf_exception $e) {
+            echo $e;
+            exit;
+        }
+    } else {
+        echo $studentreport;
+    }
 }
 
 function block_exastud_init_js_css($especialities = array()) {
-	global $PAGE, $CFG;
+    global $PAGE, $CFG;
 
-	// only allowed to be called once
-	static $js_inited = false;
-	if ($js_inited) {
-		return;
-	}
-	$js_inited = true;
+    // only allowed to be called once
+    static $js_inited = false;
+    if ($js_inited) {
+        return;
+    }
+    $js_inited = true;
 
-	// js/css for whole block
-	$PAGE->requires->css('/blocks/exastud/css/styles.css');
-	$PAGE->requires->jquery();
-	$PAGE->requires->jquery_plugin('ui');
+    // js/css for whole block
+    $PAGE->requires->css('/blocks/exastud/css/styles.css');
+    $PAGE->requires->jquery();
+    $PAGE->requires->jquery_plugin('ui');
 
     $PAGE->requires->css('/blocks/exastud/css/select2.css');
     //$PAGE->requires->css('/blocks/exastud/css/smartselect.css');
@@ -1881,16 +1891,16 @@ function block_exastud_init_js_css($especialities = array()) {
     $PAGE->requires->js('/blocks/exastud/javascript/common.js', true);
     $PAGE->requires->js('/blocks/exastud/javascript/select2.js', true);
     $PAGE->requires->js('/blocks/exastud/javascript/jquery-sortable-min.js', true);
-	$PAGE->requires->js('/blocks/exastud/javascript/exastud.js', true);
+    $PAGE->requires->js('/blocks/exastud/javascript/exastud.js', true);
 
-	// page specific js/css
-	$scriptName = preg_replace('!\.[^\.]+$!', '', basename($_SERVER['PHP_SELF']));
-	if (file_exists($CFG->dirroot.'/blocks/exastud/css/'.$scriptName.'.css')) {
-		$PAGE->requires->css('/blocks/exastud/css/'.$scriptName.'.css');
-	}
-	if (file_exists($CFG->dirroot.'/blocks/exastud/javascript/'.$scriptName.'.js')) {
-		$PAGE->requires->js('/blocks/exastud/javascript/'.$scriptName.'.js', true);
-	}
+    // page specific js/css
+    $scriptName = preg_replace('!\.[^\.]+$!', '', basename($_SERVER['PHP_SELF']));
+    if (file_exists($CFG->dirroot . '/blocks/exastud/css/' . $scriptName . '.css')) {
+        $PAGE->requires->css('/blocks/exastud/css/' . $scriptName . '.css');
+    }
+    if (file_exists($CFG->dirroot . '/blocks/exastud/javascript/' . $scriptName . '.js')) {
+        $PAGE->requires->js('/blocks/exastud/javascript/' . $scriptName . '.js', true);
+    }
 
     $PAGE->requires->string_for_js('legend', 'block_exastud');
     $PAGE->requires->string_for_js('textarea_rows', 'block_exastud');
@@ -1908,50 +1918,50 @@ function block_exastud_init_js_css($especialities = array()) {
 }
 
 function block_exastud_get_category($categoryid, $categorysource) {
-	global $DB;
-	switch ($categorysource) {
-		case 'exastud':
-			$category = $DB->get_record('block_exastudcate', array("id" => $categoryid));
-			if (!$category) {
-				return null;
-			}
+    global $DB;
+    switch ($categorysource) {
+        case 'exastud':
+            $category = $DB->get_record('block_exastudcate', array("id" => $categoryid));
+            if (!$category) {
+                return null;
+            }
 
-			$category->source = 'exastud';
+            $category->source = 'exastud';
 
-			return $category;
-		case 'exacomp':
-			if (block_exastud_is_exacomp_installed()) {
-				$category = $DB->get_record('block_exacomptopics', array("id" => $categoryid));
-				if (!$category) {
-					return null;
-				}
+            return $category;
+        case 'exacomp':
+            if (block_exastud_is_exacomp_installed()) {
+                $category = $DB->get_record('block_exacomptopics', array("id" => $categoryid));
+                if (!$category) {
+                    return null;
+                }
 
-				$category->source = 'exacomp';
+                $category->source = 'exacomp';
 
-				return $category;
-			} else {
-				return null;
-			}
-	}
+                return $category;
+            } else {
+                return null;
+            }
+    }
 
-	return null;
+    return null;
 }
 
 function block_exastud_get_class_categories($classid) {
-	global $DB;
-	// $classid = 0 -  for global configuration, but not for every class (keeping of catefories list)
-	$classcategories = $DB->get_records('block_exastudclasscate', array("classid" => $classid));
+    global $DB;
+    // $classid = 0 -  for global configuration, but not for every class (keeping of catefories list)
+    $classcategories = $DB->get_records('block_exastudclasscate', array("classid" => $classid));
 
-	if (!$classcategories) {
-		//if empty insert default categories
-		block_exastud_insert_default_entries();
+    if (!$classcategories) {
+        //if empty insert default categories
+        block_exastud_insert_default_entries();
 
-		foreach ($DB->get_records('block_exastudcate', null, 'sorting, id') as $defaultCategory) {
-			$DB->insert_record('block_exastudclasscate', array("classid" => $classid, "categoryid" => $defaultCategory->id, "categorysource" => "exastud"));
-		}
-	}
+        foreach ($DB->get_records('block_exastudcate', null, 'sorting, id') as $defaultCategory) {
+            $DB->insert_record('block_exastudclasscate', array("classid" => $classid, "categoryid" => $defaultCategory->id, "categorysource" => "exastud"));
+        }
+    }
 
-	$classcategories = $DB->get_records_sql("
+    $classcategories = $DB->get_records_sql("
 		SELECT classcate.*
 		FROM {block_exastudclasscate} classcate
 		LEFT JOIN {block_exastudcate} cate ON classcate.categorysource='exastud' AND classcate.categoryid=cate.id
@@ -1961,25 +1971,25 @@ function block_exastud_get_class_categories($classid) {
 	", array($classid));
 
 
-	$categories = array();
-	foreach ($classcategories as $category) {
-		if ($tmp = block_exastud_get_category($category->categoryid, $category->categorysource)) {
-			$categories[] = $tmp;
-		}
-	}
+    $categories = array();
+    foreach ($classcategories as $category) {
+        if ($tmp = block_exastud_get_category($category->categoryid, $category->categorysource)) {
+            $categories[] = $tmp;
+        }
+    }
 
-	return $categories;
+    return $categories;
 }
 
 function block_exastud_get_evaluation_options($also_empty = false) {
-	global $DB;
+    global $DB;
 
-	$options = $also_empty ? array(
-		0 => block_exastud_get_string('not_defined') // empty option
-	) : array();
+    $options = $also_empty ? array(
+        0 => block_exastud_get_string('not_defined'), // empty option
+    ) : array();
 
     $compeval_type = block_exastud_get_competence_eval_type();
-    switch($compeval_type) {
+    switch ($compeval_type) {
         case BLOCK_EXASTUD_COMPETENCE_EVALUATION_TYPE_TEXT:
             $optionsTemp = $DB->get_records_menu('block_exastudevalopt', [], 'sorting', 'id, title');
             // in result options we must have indexes, regarding 'sorting field', but not id. And it must be 1-N (sorting can be bigger)
@@ -2002,144 +2012,145 @@ function block_exastud_get_evaluation_options($also_empty = false) {
             return null;
     }
 
-	return $options;
+    return $options;
 }
 
 /**
  * @return stored_file
  */
 function block_exastud_get_main_logo() {
-	$fs = get_file_storage();
+    $fs = get_file_storage();
 
-	$areafiles = $fs->get_area_files(context_system::instance()->id, 'block_exastud', 'main_logo', 0, 'itemid', false);
+    $areafiles = $fs->get_area_files(context_system::instance()->id, 'block_exastud', 'main_logo', 0, 'itemid', false);
 
-	return empty($areafiles) ? null : reset($areafiles);
+    return empty($areafiles) ? null : reset($areafiles);
 }
 
 function block_exastud_get_main_logo_url() {
-	if (!$file = block_exastud_get_main_logo()) {
-		return null;
-	}
+    if (!$file = block_exastud_get_main_logo()) {
+        return null;
+    }
 
-	return moodle_url::make_pluginfile_url($file->get_contextid(), $file->get_component(), $file->get_filearea(), null, null, null);
+    return moodle_url::make_pluginfile_url($file->get_contextid(), $file->get_component(), $file->get_filearea(), null, null, null);
 }
 
 function block_exastud_str_to_csv($string, $delimiter, $has_header) {
-	$string = trim($string, "\r\n");
-	$string = rtrim($string);
-	$csv = preg_split("!\r?\n!", $string);
+    $string = trim($string, "\r\n");
+    $string = rtrim($string);
+    $csv = preg_split("!\r?\n!", $string);
 
-	foreach ($csv as &$item) {
-		$item = str_getcsv($item, $delimiter);
-	}
-	unset($item);
+    foreach ($csv as &$item) {
+        $item = str_getcsv($item, $delimiter);
+    }
+    unset($item);
 
-	if ($has_header) {
-		$header = array_shift($csv);
-		foreach ($csv as &$item) {
-			$newItem = [];
-			foreach ($item as $i => $part) {
-				$newItem[$header[$i]] = $part;
-			}
-			$item = $newItem;
-		}
-		unset($item);
-	}
+    if ($has_header) {
+        $header = array_shift($csv);
+        foreach ($csv as &$item) {
+            $newItem = [];
+            foreach ($item as $i => $part) {
+                $newItem[$header[$i]] = $part;
+            }
+            $item = $newItem;
+        }
+        unset($item);
+    }
 
-	return $csv;
+    return $csv;
 }
 
 function block_exastud_html_to_text($html) {
     if (is_array($html)) {
         return $html;
     }
-	if (preg_match('!</p>|<br\s*/?>!', $html)) {
-		// is html
-		$html = html_to_text($html, 0);
-	}
-	if (!$html) {
-	    $html = ''; // we need string type
+    if (preg_match('!</p>|<br\s*/?>!', $html)) {
+        // is html
+        $html = html_to_text($html, 0);
+    }
+    if (!$html) {
+        $html = ''; // we need string type
     }
 
-	return $html;
+    return $html;
 }
 
 function block_exastud_text_to_html($text) {
-	// make sure it's text
-	$text = block_exastud_html_to_text($text);
+    // make sure it's text
+    $text = block_exastud_html_to_text($text);
 
-	return text_to_html($text, null, false);
+    return text_to_html($text, null, false);
 }
 
 function block_exastud_can_edit_bp($bp) {
-	return !preg_match('!^bw\-*!', $bp->sourceinfo);
+    return !preg_match('!^bw\-*!', $bp->sourceinfo);
 }
 
 function block_exastud_can_delete_subject($subject) {
-	return !preg_match('!^bw\-*!', $subject->sourceinfo);
+    return !preg_match('!^bw\-*!', $subject->sourceinfo);
 }
 
 function block_exastud_can_edit_subject($subject) {
     if (is_siteadmin()) {
         return true;
     }
-	return !preg_match('!^bw\-*!', $subject->sourceinfo);
+    return !preg_match('!^bw\-*!', $subject->sourceinfo);
 }
 
 function block_exastud_is_bw_bp($bp) {
     return preg_match('!^bw\-*!', $bp->sourceinfo);
 }
+
 function block_exastud_is_bw_subject($subject) {
     return preg_match('!^bw\-*!', $subject->sourceinfo);
 }
 
 function block_exastud_can_edit_class($class) {
-	return $class->userid == g::$USER->id;
+    return $class->userid == g::$USER->id;
 }
 
 function block_exastud_get_date_of_birth_as_timestamp($userid) {
-	$str = trim(block_exastud_get_custom_profile_field_value($userid, 'dateofbirth'));
-	if (!$str) {
-		return null;
-	}
-	$parts = preg_split('![^0-9]+!', $str);
-	if (count($parts) != 3) {
-		// wrong format
-		return null;
-	}
+    $str = trim(block_exastud_get_custom_profile_field_value($userid, 'dateofbirth'));
+    if (!$str) {
+        return null;
+    }
+    $parts = preg_split('![^0-9]+!', $str);
+    if (count($parts) != 3) {
+        // wrong format
+        return null;
+    }
 
-	return mktime(0, 0, 0, $parts[1], $parts[0], $parts[2]);
+    return mktime(0, 0, 0, $parts[1], $parts[0], $parts[2]);
 }
 
 function block_exastud_get_date_of_birth($userid) {
-	$timestamp = block_exastud_get_date_of_birth_as_timestamp($userid);
-	if (!$timestamp) {
-		return null;
-	}
+    $timestamp = block_exastud_get_date_of_birth_as_timestamp($userid);
+    if (!$timestamp) {
+        return null;
+    }
 
-	return date('d.m.Y', $timestamp);
+    return date('d.m.Y', $timestamp);
 }
 
 function block_exastud_get_review($classid, $subjectid, $studentid) {
-	$data = block_exastud_get_subject_student_data($classid, $subjectid, $studentid);
-	if (!isset($data->review)) {
-		// always fill review property
-		$data->review = null;
+    $data = block_exastud_get_subject_student_data($classid, $subjectid, $studentid);
+    if (!isset($data->review)) {
+        // always fill review property
+        $data->review = null;
 
-		// fallback for old style with own table
-		$class = block_exastud_get_class($classid);
+        // fallback for old style with own table
+        $class = block_exastud_get_class($classid);
 
-		$reviewdata = g::$DB->get_records('block_exastudreview', array('subjectid' => $subjectid, 'periodid' => $class->periodid, 'studentid' => $studentid), 'timemodified DESC');
-		$reviewdata = reset($reviewdata);
-		if ($reviewdata) {
-			//$data->review = $reviewdata->review; // overwrites the fachkompetenzen; TODO: check this!
-			$data->learnreview = $reviewdata->review;
-			$data->{'review.modifiedby'} = $reviewdata->teacherid;
-			$data->{'review.timemodified'} = $reviewdata->timemodified;
-		}
-	}
+        $reviewdata = g::$DB->get_records('block_exastudreview', array('subjectid' => $subjectid, 'periodid' => $class->periodid, 'studentid' => $studentid), 'timemodified DESC');
+        $reviewdata = reset($reviewdata);
+        if ($reviewdata) {
+            //$data->review = $reviewdata->review; // overwrites the fachkompetenzen; TODO: check this!
+            $data->learnreview = $reviewdata->review;
+            $data->{'review.modifiedby'} = $reviewdata->teacherid;
+            $data->{'review.timemodified'} = $reviewdata->timemodified;
+        }
+    }
 
-	return $data;
+    return $data;
 }
 
 /**
@@ -2149,18 +2160,18 @@ function block_exastud_get_review($classid, $subjectid, $studentid) {
  * @param $studentid
  */
 function block_exastud_get_graded_review($classid, $subjectid, $studentid) {
-	$subjectData = block_exastud_get_review($classid, $subjectid, $studentid);
-	if (!$subjectData) {
-		// no review
-		return;
-	}
-	if (!@$subjectData->review && !@$subjectData->grade && !@$subjectData->niveau) {
-		// empty review data
-		return;
-	}
+    $subjectData = block_exastud_get_review($classid, $subjectid, $studentid);
+    if (!$subjectData) {
+        // no review
+        return;
+    }
+    if (!@$subjectData->review && !@$subjectData->grade && !@$subjectData->niveau) {
+        // empty review data
+        return;
+    }
 
-	// has a review
-	return $subjectData;
+    // has a review
+    return $subjectData;
 }
 
 /**
@@ -2179,70 +2190,70 @@ function block_exastud_student_is_graded($class, $studentid) {
 }
 
 function block_exastud_get_bildungsplan_subjects($bpid) {
-	return g::$DB->get_records('block_exastudsubjects', ['bpid' => $bpid], 'sorting');
+    return g::$DB->get_records('block_exastudsubjects', ['bpid' => $bpid], 'sorting');
 }
 
 function block_exastud_get_class($classid) {
-	return g::$DB->get_record('block_exastudclass', ['id' => $classid]);
+    return g::$DB->get_record('block_exastudclass', ['id' => $classid]);
 }
 
 
 function block_exastud_get_bildungsstandards() {
-	$bildungsstandards = array_map('trim', explode(',', block_exastud_get_plugin_config('bildungsstandards')));
-	$bildungsstandards = array_combine($bildungsstandards, $bildungsstandards);
+    $bildungsstandards = array_map('trim', explode(',', block_exastud_get_plugin_config('bildungsstandards')));
+    $bildungsstandards = array_combine($bildungsstandards, $bildungsstandards);
 
-	return $bildungsstandards;
+    return $bildungsstandards;
 }
 
 function block_exastud_get_class_title($classid, $periodtype, $unlocked) {
     global $USER, $CFG;
-	$class = block_exastud_get_class($classid);
+    $class = block_exastud_get_class($classid);
 
-	$classTitle = $class->title;
+    $classTitle = $class->title;
     // Mark own classes.
     if ($class->userid == $USER->id) {
         //$classTitle .= '&nbsp;<img class="exastud-my-class" src="'.$CFG->wwwroot.'/blocks/exastud/pix/star.png" width="16" height="16" title="'.block_exastud_get_string('it_is_my_class').'" />';
-        $classTitle .= '&nbsp;<i class="fas fa-star exastud-my-class" title="'.block_exastud_get_string('it_is_my_class').'"></i>';
+        $classTitle .= '&nbsp;<i class="fas fa-star exastud-my-class" title="' . block_exastud_get_string('it_is_my_class') . '"></i>';
     } else if ($head_teacher = g::$DB->get_record('user', array('id' => $class->userid, 'deleted' => 0))) {
-		$classTitle .= ' ('.fullname($head_teacher).')';
-	}
+        $classTitle .= ' (' . fullname($head_teacher) . ')';
+    }
     if ($periodtype == 'last') {
         if (!$unlocked) {
             if (block_exastud_teacher_is_unlocked_for_old_class_review($classid, $USER->id, BLOCK_EXASTUD_DATA_ID_UNLOCKED_TEACHERS_TO_APPROVE)) {
                 // already requested
                 //$classTitle .= '&nbsp;<img class="" src="'.$CFG->wwwroot.'/blocks/exastud/pix/unlock_review_done.png" width="20" height="20" title="'.block_exastud_get_string('allow_review_make_request_already').'" />';
-                $classTitle .= '&nbsp;'.html_writer::tag("i", '', array('class' => 'fas fa-unlock done', 'title' => block_exastud_get_string('allow_review_make_request_already')));
+                $classTitle .= '&nbsp;' . html_writer::tag("i", '', array('class' => 'fas fa-unlock done', 'title' => block_exastud_get_string('allow_review_make_request_already')));
             } else {
                 // not requested yet
                 $classTitle .= '&nbsp;';
                 $params = array(
-                        'courseid' => optional_param('courseid', 1, PARAM_INT),
-                        'action' => 'unlock_request',
-                        'classid' => $classid
+                    'courseid' => optional_param('courseid', 1, PARAM_INT),
+                    'action' => 'unlock_request',
+                    'classid' => $classid,
                 );
                 $classTitle .= html_writer::link(new moodle_url('/blocks/exastud/review.php', $params),
-                        //html_writer::tag("img", '', array('src' => 'pix/unlock_review.png')),
-                        html_writer::tag("i", '', array('class' => 'fas fa-unlock-alt')),
-                        array('title' => block_exastud_get_string('allow_review_make_request')));
+                    //html_writer::tag("img", '', array('src' => 'pix/unlock_review.png')),
+                    html_writer::tag("i", '', array('class' => 'fas fa-unlock-alt')),
+                    array('title' => block_exastud_get_string('allow_review_make_request')));
             }
         }
     }
 
-	return $classTitle;
+    return $classTitle;
 }
 
 function block_exastud_get_student_print_templateid($class, $userid) {
-	$templateid = block_exastud_get_class_student_data($class->id, $userid, BLOCK_EXASTUD_DATA_ID_PRINT_TEMPLATE);
-	$available_templates = \block_exastud\print_templates::get_class_available_print_templates($class);
-	if (isset($available_templates[$templateid])) {
-		return $templateid;
-	}
+    $templateid = block_exastud_get_class_student_data($class->id, $userid, BLOCK_EXASTUD_DATA_ID_PRINT_TEMPLATE);
+    $available_templates = \block_exastud\print_templates::get_class_available_print_templates($class);
+    if (isset($available_templates[$templateid])) {
+        return $templateid;
+    }
 
-	$default_templateid = block_exastud_get_class_data($class->id, BLOCK_EXASTUD_DATA_ID_CLASS_DEFAULT_TEMPLATEID);
-	if (isset($available_templates[$default_templateid])) {
-		return $default_templateid;
-	}
-	if (count($available_templates)) {
+    $default_templateid = block_exastud_get_class_data($class->id, BLOCK_EXASTUD_DATA_ID_CLASS_DEFAULT_TEMPLATEID);
+    if (isset($available_templates[$default_templateid])) {
+        return $default_templateid;
+    }
+    if (count($available_templates)) {
         return key($available_templates);
     }
     return 0;
@@ -2255,39 +2266,41 @@ function block_exastud_get_student_print_templateid($class, $userid) {
  */
 function block_exastud_get_student_print_template($class, $userid) {
     global $PAGE;
-	$templateid = block_exastud_get_student_print_templateid($class, $userid);
-	if (!$templateid) {
-	    return null; // test
-	    if (block_exastud_is_bw_active()) {
+    $templateid = block_exastud_get_student_print_templateid($class, $userid);
+    if (!$templateid) {
+        return null; // test
+        if (block_exastud_is_bw_active()) {
             $message = 'Template for class not found. Probably you want to use class for non-active "exastud | bw_active"';
         } else {
             //throw new moodle_exception('Template for class not found. Probably you want to use class for active "exastud | bw_active"');
             $message = block_exastud_get_string('mixed_bw_nonbw_class_error_2');
         }
-        $message .= '<br>'.block_exastud_get_string('select_another_class');
+        $message .= '<br>' . block_exastud_get_string('select_another_class');
         $params = array(
-                'classid' => -1,
-                'courseid' => optional_param('courseid', 1, PARAM_INT)
+            'classid' => -1,
+            'courseid' => optional_param('courseid', 1, PARAM_INT),
         );
         echo $message;
         $url = new moodle_url($PAGE->url, $params);
         redirect($url, $message, null, \core\output\notification::NOTIFY_ERROR);
     }
-	return block_exastud\print_template::create($templateid);
+    return block_exastud\print_template::create($templateid);
 }
 
 function block_exastud_get_class_bilingual_template($classid, $studentid = null) {
-	$templateid = block_exastud_class_get_bilingual_templateid($classid, $studentid);
-	if ($templateid) {
+    $templateid = block_exastud_class_get_bilingual_templateid($classid, $studentid);
+    if ($templateid) {
         return block_exastud\print_template::create($templateid);
     } else {
-	    return false;
+        return false;
     }
 }
 
 function block_exastud_is_teacher_of_class($classid, $userid) {
     $teachers = block_exastud_get_class_subject_teachers($classid);
-    $teacherIds = array_map(function($ct) {return $ct->userid;}, $teachers);
+    $teacherIds = array_map(function($ct) {
+        return $ct->userid;
+    }, $teachers);
     if (in_array($userid, $teacherIds)) {
         return true;
     } else {
@@ -2296,32 +2309,32 @@ function block_exastud_is_teacher_of_class($classid, $userid) {
 }
 
 function block_exastud_is_project_teacher($class, $userid) {
-	return !!block_exastud_get_project_teacher_students($class, $userid);
+    return !!block_exastud_get_project_teacher_students($class, $userid);
 }
 
 function block_exastud_get_project_teacher_students($class, $userid, $hideDroppedOut = false) {
-	$classstudents = block_exastud_get_class_students($class->id, $hideDroppedOut);
-	$project_teacher_students = [];
+    $classstudents = block_exastud_get_class_students($class->id, $hideDroppedOut);
+    $project_teacher_students = [];
 
-	foreach ($classstudents as $classstudent) {
-		$project_teacher_id = block_exastud_get_class_student_data($class->id, $classstudent->id, BLOCK_EXASTUD_DATA_ID_PROJECT_TEACHER);
-		if ($project_teacher_id == $userid) {
-			$project_teacher_students[$classstudent->id] = $classstudent;
-		}
-	}
+    foreach ($classstudents as $classstudent) {
+        $project_teacher_id = block_exastud_get_class_student_data($class->id, $classstudent->id, BLOCK_EXASTUD_DATA_ID_PROJECT_TEACHER);
+        if ($project_teacher_id == $userid) {
+            $project_teacher_students[$classstudent->id] = $classstudent;
+        }
+    }
 
-	return $project_teacher_students;
+    return $project_teacher_students;
 }
 
 function block_exastud_get_user_gender($userid) {
-	$value = block_exastud_get_custom_profile_field_value($userid, 'gender');
-	if (!$value) {
-		return null;
-	} elseif ($value[0] == 'm') {
-		return 'male';
-	} else {
-		return 'female';
-	}
+    $value = block_exastud_get_custom_profile_field_value($userid, 'gender');
+    if (!$value) {
+        return null;
+    } elseif ($value[0] == 'm') {
+        return 'male';
+    } else {
+        return 'female';
+    }
 }
 
 function block_exastud_get_user_gender_string($userid) {
@@ -2337,28 +2350,28 @@ function block_exastud_get_user_gender_string($userid) {
 }
 
 function block_exastud_student_has_projekt_pruefung($class, $userid) {
-	$templateids_with_projekt_pruefung = \block_exastud\print_templates::get_templateids_with_projekt_pruefung();
-	$templateid = block_exastud_get_student_print_templateid($class, $userid);
+    $templateids_with_projekt_pruefung = \block_exastud\print_templates::get_templateids_with_projekt_pruefung();
+    $templateid = block_exastud_get_student_print_templateid($class, $userid);
 
-	return in_array($templateid, $templateids_with_projekt_pruefung);
+    return in_array($templateid, $templateids_with_projekt_pruefung);
 }
 
 function block_exastud_normalize_projekt_pruefung($class) {
-	$classstudents = block_exastud_get_class_students($class->id);
+    $classstudents = block_exastud_get_class_students($class->id);
 
-	foreach ($classstudents as $student) {
-		if (!block_exastud_student_has_projekt_pruefung($class, $student->id)) {
-			block_exastud_set_class_student_data($class->id, $student->id, BLOCK_EXASTUD_DATA_ID_PROJECT_TEACHER, null);
-		}
-	}
+    foreach ($classstudents as $student) {
+        if (!block_exastud_student_has_projekt_pruefung($class, $student->id)) {
+            block_exastud_set_class_student_data($class->id, $student->id, BLOCK_EXASTUD_DATA_ID_PROJECT_TEACHER, null);
+        }
+    }
 }
 
 function block_exastud_format_certificate_issue_date($time) {
-	if (substr(current_language(), 0, 2) == 'de') {
-		return date('d.m.Y', $time);
-	} else {
-		return userdate($time, block_exastud_get_string('strftimedatefullshort', 'langconfig'));
-	}
+    if (substr(current_language(), 0, 2) == 'de') {
+        return date('d.m.Y', $time);
+    } else {
+        return userdate($time, block_exastud_get_string('strftimedatefullshort', 'langconfig'));
+    }
 }
 
 function block_exastud_get_certificate_issue_date_timestamp($class) {
@@ -2367,37 +2380,37 @@ function block_exastud_get_certificate_issue_date_timestamp($class) {
         return $class->certificate_issue_date;
     }
     // if not own date - get date from period
-	$period = block_exastud_get_period($class->periodid);
+    $period = block_exastud_get_period($class->periodid);
 
-	return @$period->certificate_issue_date ?: null;
+    return @$period->certificate_issue_date ?: null;
 }
 
 function block_exastud_get_certificate_issue_date_text($class) {
-	if ($certificate_issue_date_timestamp = block_exastud_get_certificate_issue_date_timestamp($class)) {
-		return block_exastud_format_certificate_issue_date($certificate_issue_date_timestamp);
-	} else {
-		return null;
-	}
+    if ($certificate_issue_date_timestamp = block_exastud_get_certificate_issue_date_timestamp($class)) {
+        return block_exastud_format_certificate_issue_date($certificate_issue_date_timestamp);
+    } else {
+        return null;
+    }
 }
 
 function block_exastud_is_bw_active() {
-	return !!block_exastud_get_plugin_config('bw_active');
+    return !!block_exastud_get_plugin_config('bw_active');
 }
 
 function block_exastud_is_a2fa_installed() {
-	if (class_exists('\block_exa2fa\api')) {
-		return true;
-	} else {
-		return false;
-	}
+    if (class_exists('\block_exa2fa\api')) {
+        return true;
+    } else {
+        return false;
+    }
 }
 
 function block_exastud_require_login($courseid, $autologinguest = true, $cm = null) {
-	require_login($courseid, $autologinguest, $cm);
+    require_login($courseid, $autologinguest, $cm);
 
-	if (block_exastud_is_a2fa_installed()) {
-		\block_exa2fa\api::check_user_a2fa_requirement('block_exastud');
-	}
+    if (block_exastud_is_a2fa_installed()) {
+        \block_exa2fa\api::check_user_a2fa_requirement('block_exastud');
+    }
 }
 
 function block_exastud_is_siteadmin($userid = null) {
@@ -2426,7 +2439,7 @@ function block_exastud_get_head_teachers_all() {
     //$where[] = 'cm.cohortid = :cohortid';
     $params['cohortid'] = $cohort->id;
     $where = implode(' AND ', $where);
-    $sql = " SELECT u.* 
+    $sql = " SELECT u.*
               FROM {user} u
               JOIN {cohort_members} cm ON (cm.userid = u.id AND cm.cohortid = :cohortid)
               WHERE $where";
@@ -2443,19 +2456,19 @@ function block_exastud_get_reportsettings_all($sortByPlans = false, $filter = ar
             switch ($f) {
                 case 'search':
                     if (trim($value) != '') {
-                        $wherearr[] = ' r.title LIKE \'%'.trim($value).'%\' ';
+                        $wherearr[] = ' r.title LIKE \'%' . trim($value) . '%\' ';
                     }
                     break;
                 case 'bpid':
-                    if (is_numeric($value) && $value >= 0 ) {
-                        $wherearr[] = ' r.bpid = '.intval($value).' ';
+                    if (is_numeric($value) && $value >= 0) {
+                        $wherearr[] = ' r.bpid = ' . intval($value) . ' ';
                     }
                     break;
                 case 'category':
                     if ($value == '--notselected--') {
                         // no filter
                     } else if (trim($value) != '') {
-                        $wherearr[] = ' r.category = \''.trim($value).'\' ';
+                        $wherearr[] = ' r.category = \'' . trim($value) . '\' ';
                     } else {
                         // filter by empty
                         $wherearr[] = ' r.category = \'\' ';
@@ -2467,11 +2480,11 @@ function block_exastud_get_reportsettings_all($sortByPlans = false, $filter = ar
             $where = implode(' AND ', $wherearr);
         }
     }
-    $sql = 'SELECT r.* 
+    $sql = 'SELECT r.*
                   FROM {block_exastudreportsettings} r
                   LEFT JOIN {block_exastudbp} p ON p.id = r.bpid
-                  '.($where ? ' WHERE '.$where.' ' : ' ').'
-			      ORDER BY '.($sortByPlans ? 'p.sorting, p.id, ' : '').' r.title';
+                  ' . ($where ? ' WHERE ' . $where . ' ' : ' ') . '
+			      ORDER BY ' . ($sortByPlans ? 'p.sorting, p.id, ' : '') . ' r.title';
     return g::$DB->get_records_sql($sql);
 }
 
@@ -2485,21 +2498,21 @@ function block_exastud_get_report_templates($class) {
     $templates['html_report'] = block_exastud_get_string('html_report');
     if (block_exastud_is_bw_active()) {
         $templates[BLOCK_EXASTUD_DATA_ID_PRINT_TEMPLATE] =
-                block_exastud_is_bw_active() ? block_exastud_get_string('Template_and_departure') :
-                        block_exastud_get_string('Template');
+            block_exastud_is_bw_active() ? block_exastud_get_string('Template_and_departure') :
+                block_exastud_get_string('Template');
         //}
     }
     if (block_exastud_is_bw_active()) {
         $templates[BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_GMS_LERNENTWICKLUNGSBERICHT_DECKBLATT_UND_1_INNENSEITE] =
-                (\block_exastud\print_templates::get_template_name(BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_GMS_LERNENTWICKLUNGSBERICHT_DECKBLATT_UND_1_INNENSEITE) ?:
-                        'Deckblatt und 1. Innenseite LEB');
+            (\block_exastud\print_templates::get_template_name(BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_GMS_LERNENTWICKLUNGSBERICHT_DECKBLATT_UND_1_INNENSEITE) ?:
+                'Deckblatt und 1. Innenseite LEB');
         if (block_exastud_is_exacomp_installed() /*&& !block_exastud_get_only_learnsociale_reports()*/) {
             $templates[BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_ANLAGE_ZUM_LERNENTWICKLUNGSBERICHT] =
-                    (\block_exastud\print_templates::get_template_name(BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_ANLAGE_ZUM_LERNENTWICKLUNGSBERICHT) ?:
-                            'Überfachliche Kompetenzen und Fachkompetenzen');
+                (\block_exastud\print_templates::get_template_name(BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_ANLAGE_ZUM_LERNENTWICKLUNGSBERICHT) ?:
+                    'Überfachliche Kompetenzen und Fachkompetenzen');
             $templates[BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_ANLAGE_ZUM_LERNENTWICKLUNGSBERICHTALT] =
-                    (\block_exastud\print_templates::get_template_name(BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_ANLAGE_ZUM_LERNENTWICKLUNGSBERICHTALT) ?:
-                            'Anlage zum Lernentwicklungsbericht (GMS)');
+                (\block_exastud\print_templates::get_template_name(BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_ANLAGE_ZUM_LERNENTWICKLUNGSBERICHTALT) ?:
+                    'Anlage zum Lernentwicklungsbericht (GMS)');
         }
         if ($class == '-all-') {
             $templates += \block_exastud\print_templates::get_class_other_print_templates(null);
@@ -2507,11 +2520,11 @@ function block_exastud_get_report_templates($class) {
             $templates += \block_exastud\print_templates::get_class_other_print_templates($class);
         }
         $templates[BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_UEBERFACHLICHE_KOMPETENZEN] =
-                (\block_exastud\print_templates::get_template_name(BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_UEBERFACHLICHE_KOMPETENZEN) ?:
-                        '"Überfachliche Kompetenzen" (Vorlage zur Notenkonferenz)');
+            (\block_exastud\print_templates::get_template_name(BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_UEBERFACHLICHE_KOMPETENZEN) ?:
+                '"Überfachliche Kompetenzen" (Vorlage zur Notenkonferenz)');
         $templates[BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_LERN_UND_SOZIALVERHALTEN] =
-                (\block_exastud\print_templates::get_template_name(BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_LERN_UND_SOZIALVERHALTEN) ?:
-                        'Bericht "Lern- und Sozialverhalten" (Vorlage zur Notenkonferenz)');
+            (\block_exastud\print_templates::get_template_name(BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_LERN_UND_SOZIALVERHALTEN) ?:
+                'Bericht "Lern- und Sozialverhalten" (Vorlage zur Notenkonferenz)');
         //$templates[BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_16_GMS_TESTAT_BILINGUALES_PROFIL_KL_8] = 'Bilingualer Unterricht an Gemeinschaftsschulen (Klasse 8)';
         //$templates[BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_16_GMS_ZERTIFIKAT_BILINGUALES_PROFIL_KL_10] = 'Bilinguales Zertifikat Englisch/Deutsch (Klasse 10)';
         if (block_exastud_is_class_teacher($class->id, $USER->id)) {
@@ -2548,7 +2561,7 @@ function block_exastud_get_template_files($getExcludeFiles = false) {
             'Lern_und_Sozialverhalten.docx',
             'Ueberfachliche_Kompetenzen.docx',
             'grades_report.docx',
-                ));
+        ));
     }
     if ($getExcludeFiles) {
         // we need to have a list of excluded files (without etensions)
@@ -2573,20 +2586,20 @@ function block_exastud_get_grades_set($variant = '1_bis_6') {
     $grades['short'] = ['1' => 'sgt', '2' => 'gut', '3' => 'bfr', '4' => 'ausr', '5' => 'mgh', '6' => 'ung'];
     $grades['short2'] = ['1' => 'sgt', '2' => 'gut', '3' => 'bfr.', '4' => 'unbfr.'];
     $grades['mit_plus_minus_bis'] = [
-            '1' => '1', '1-' => '1-', '1-2' => '1-2',
-            '2+' => '2+', '2' => '2', '2-' => '2-', '2-3' => '2-3',
-            '3+' => '3+', '3' => '3', '3-' => '3-', '3-4' => '3-4',
-            '4+' => '4+', '4' => '4', '4-' => '4-', '4-5' => '4-5',
-            '5+' => '5+', '5' => '5', '5-' => '5-', '5-6' => '5-6',
-            '6+' => '6+', '6' => '6',
+        '1' => '1', '1-' => '1-', '1-2' => '1-2',
+        '2+' => '2+', '2' => '2', '2-' => '2-', '2-3' => '2-3',
+        '3+' => '3+', '3' => '3', '3-' => '3-', '3-4' => '3-4',
+        '4+' => '4+', '4' => '4', '4-' => '4-', '4-5' => '4-5',
+        '5+' => '5+', '5' => '5', '5-' => '5-', '5-6' => '5-6',
+        '6+' => '6+', '6' => '6',
     ];
     $grades['mit_plus_minus_bis_ausgeschrieben'] = [
-            '1' => '1', '1-' => '1 minus', '1-2' => '1 - 2',
-            '2+' => '2 plus', '2' => '2', '2-' => '2 minus', '2-3' => '2 - 3',
-            '3+' => '3 plus', '3' => '3', '3-' => '3 minus', '3-4' => '3 - 4',
-            '4+' => '4 plus', '4' => '4', '4-' => '4 minus', '4-5' => '4 - 5',
-            '5+' => '5 plus', '5' => '5', '5-' => '5 minus', '5-6' => '5 - 6',
-            '6+' => '6 plus', '6' => '6',
+        '1' => '1', '1-' => '1 minus', '1-2' => '1 - 2',
+        '2+' => '2 plus', '2' => '2', '2-' => '2 minus', '2-3' => '2 - 3',
+        '3+' => '3 plus', '3' => '3', '3-' => '3 minus', '3-4' => '3 - 4',
+        '4+' => '4 plus', '4' => '4', '4-' => '4 minus', '4-5' => '4 - 5',
+        '5+' => '5 plus', '5' => '5', '5-' => '5 minus', '5-6' => '5 - 6',
+        '6+' => '6 plus', '6' => '6',
     ];
     if (array_key_exists($variant, $grades)) {
         return $grades[$variant];
@@ -2663,215 +2676,215 @@ function block_exastud_get_default_templates($templateid = null, $common = true)
 
     if ($common) {
         $templates = [
-                'Lern- und Sozialverhalten' => [
-                        'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_LERN_UND_SOZIALVERHALTEN_COMMON,
-                        'name' => 'Lern- und Sozialverhalten Übersicht',
-                        'file' => 'lern_und_sozialverhalten_uebersicht',
-                        //'category' => 'Anlage',
-                        'year' => '1',
-                        'report_date' => '1',
-                        'student_name' => '1',
-                        'date_of_birth' => '1',
-                        'place_of_birth' => '1',
-                        'learning_group' => '1',
+            'Lern- und Sozialverhalten' => [
+                'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_LERN_UND_SOZIALVERHALTEN_COMMON,
+                'name' => 'Lern- und Sozialverhalten Übersicht',
+                'file' => 'lern_und_sozialverhalten_uebersicht',
+                //'category' => 'Anlage',
+                'year' => '1',
+                'report_date' => '1',
+                'student_name' => '1',
+                'date_of_birth' => '1',
+                'place_of_birth' => '1',
+                'learning_group' => '1',
+            ],
+            'Überfachliche Kompetenzen' => [
+                'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_UEBERFACHLICHE_KOMPETENZEN_COMMON,
+                'name' => 'Überfachliche Kompetenzen',
+                'file' => 'Ueberfachliche_Kompetenzen_common',
+                //'category' => 'Anlage',
+                'year' => '1',
+                'report_date' => '1',
+                'student_name' => '1',
+                'date_of_birth' => '1',
+                'place_of_birth' => '1',
+                'learning_group' => '1',
+                'inputs' => [
                 ],
-                'Überfachliche Kompetenzen' => [
-                        'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_UEBERFACHLICHE_KOMPETENZEN_COMMON,
-                        'name' => 'Überfachliche Kompetenzen',
-                        'file' => 'Ueberfachliche_Kompetenzen_common',
-                        //'category' => 'Anlage',
-                        'year' => '1',
-                        'report_date' => '1',
-                        'student_name' => '1',
-                        'date_of_birth' => '1',
-                        'place_of_birth' => '1',
-                        'learning_group' => '1',
-                        'inputs' => [
-                        ],
+            ],
+            'Anlage' => [
+                'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_ANLAGE_ZUM_LERNENTWICKLUNGSBERICHTALT_COMMON,
+                'name' => 'Überfachliche Kompetenzen und Kompetenzraster',
+                'file' => 'Allgemeine Anlage',
+                //'category' => 'Anlage',
+                'year' => '1',
+                'report_date' => '1',
+                'student_name' => '1',
+                'date_of_birth' => '1',
+                'place_of_birth' => '1',
+                'learning_group' => '1',
+                'inputs' => [],
+            ],
+            'default_report' => [
+                'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_DEFAULT_REPORT_COMMON,
+                'name' => 'Lern- und Sozialverhalten, überfachliche Kompetenzen',
+                'file' => 'gesamtzeugnis',
+                //'category' => 'Default',
+                'year' => '1',
+                'report_date' => '1',
+                'student_name' => '1',
+                'date_of_birth' => '1',
+                'place_of_birth' => '1',
+                'learning_group' => '1',
+                'grades' => block_exastud_get_grades_set('1_bis_6'),
+                'inputs' => [
+                    'learn_social_behavior' => [
+                        'title' => block_exastud_get_string('learn_and_sociale'),
+                        'type' => 'textarea',
+                        'lines' => 8,
+                        'cols' => 90,
+                    ],
+                    'comments' => [
+                        'title' => block_exastud_get_string('report_settings_setting_comments'),
+                        'type' => 'textarea',
+                        'lines' => 7,
+                        'cols' => 80,
+                    ],
                 ],
-                'Anlage' => [
-                        'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_ANLAGE_ZUM_LERNENTWICKLUNGSBERICHTALT_COMMON,
-                        'name' => 'Überfachliche Kompetenzen und Kompetenzraster',
-                        'file' => 'Allgemeine Anlage',
-                        //'category' => 'Anlage',
-                        'year' => '1',
-                        'report_date' => '1',
-                        'student_name' => '1',
-                        'date_of_birth' => '1',
-                        'place_of_birth' => '1',
-                        'learning_group' => '1',
-                        'inputs' => [],
-                ],
-                'default_report' => [
-                        'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_DEFAULT_REPORT_COMMON,
-                        'name' => 'Lern- und Sozialverhalten, überfachliche Kompetenzen',
-                        'file' => 'gesamtzeugnis',
-                        //'category' => 'Default',
-                        'year' => '1',
-                        'report_date' => '1',
-                        'student_name' => '1',
-                        'date_of_birth' => '1',
-                        'place_of_birth' => '1',
-                        'learning_group' => '1',
-                        'grades' => block_exastud_get_grades_set('1_bis_6'),
-                        'inputs' => [
-                                'learn_social_behavior' => [
-                                        'title' => block_exastud_get_string('learn_and_sociale'),
-                                        'type' => 'textarea',
-                                        'lines' => 8,
-                                        'cols' => 90,
-                                ],
-                                'comments' => [
-                                        'title' => block_exastud_get_string('report_settings_setting_comments'),
-                                        'type' => 'textarea',
-                                        'lines' => 7,
-                                        'cols' => 80,
-                                ],
-                        ],
-                        'inputs_footer' => ['comments'], // inputs in the footer of template
-                ],
-                'student_card' => [
-                        'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_STUDENT_CARD,
-                        'name' => 'Schülerprofil (Demo)',
-                        'file' => 'student_card',
-                        //'category' => 'Default',
-                        'inputs' => [
-                                'fname' => [
-                                        'title' => 'first name',
-                                        'type' => 'userdata',
-                                        'userdatakey' => 'firstname',
-                                ],
-                                'sname' => [
-                                        'title' => 'second name',
-                                        'type' => 'userdata',
-                                        'userdatakey' => 'lastname',
-                                ],
-                                'birth_day' => [
-                                        'title' => 'day of birth',
-                                        'type' => 'userdata',
-                                        'userdatakey' => 'profile_field_dateofbirth',
-                                ],
-                                'birth_city' => [
-                                        'title' => 'city of birth',
-                                        'type' => 'userdata',
-                                        'userdatakey' => 'profile_field_placeofbirth',
-                                ],
-                                'student_photo' => [
-                                        'title' => 'student\'s photo',
-                                        'type' => 'userdata',
-                                        'userdatakey' => 'currentpicture',
-                                ],
-                                'schule_address1' => [
-                                        'title' => 'GTN school',
-                                        'type' => 'header',
-                                ],
-                                'schule_address2' => [
-                                        'title' => 'Linz, main square',
-                                        'type' => 'header',
-                                ],
-                                'schule_phone' => [
-                                        'title' => '222-22-22',
-                                        'type' => 'header',
-                                ],
-                                'schule_web' => [
-                                        'title' => 'www.gtn-solutions.com',
-                                        'type' => 'header',
-                                ],
+                'inputs_footer' => ['comments'], // inputs in the footer of template
+            ],
+            'student_card' => [
+                'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_STUDENT_CARD,
+                'name' => 'Schülerprofil (Demo)',
+                'file' => 'student_card',
+                //'category' => 'Default',
+                'inputs' => [
+                    'fname' => [
+                        'title' => 'first name',
+                        'type' => 'userdata',
+                        'userdatakey' => 'firstname',
+                    ],
+                    'sname' => [
+                        'title' => 'second name',
+                        'type' => 'userdata',
+                        'userdatakey' => 'lastname',
+                    ],
+                    'birth_day' => [
+                        'title' => 'day of birth',
+                        'type' => 'userdata',
+                        'userdatakey' => 'profile_field_dateofbirth',
+                    ],
+                    'birth_city' => [
+                        'title' => 'city of birth',
+                        'type' => 'userdata',
+                        'userdatakey' => 'profile_field_placeofbirth',
+                    ],
+                    'student_photo' => [
+                        'title' => 'student\'s photo',
+                        'type' => 'userdata',
+                        'userdatakey' => 'currentpicture',
+                    ],
+                    'schule_address1' => [
+                        'title' => 'GTN school',
+                        'type' => 'header',
+                    ],
+                    'schule_address2' => [
+                        'title' => 'Linz, main square',
+                        'type' => 'header',
+                    ],
+                    'schule_phone' => [
+                        'title' => '222-22-22',
+                        'type' => 'header',
+                    ],
+                    'schule_web' => [
+                        'title' => 'www.gtn-solutions.com',
+                        'type' => 'header',
+                    ],
 
-                        ],
-                ]
+                ],
+            ],
         ];
     } else {
         $templates = [
-                'default_report' => [
-                        'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_DEFAULT_REPORT,
-                        'name' => 'Standard Zeugnis',
-                        'file' => 'default_report',
-                        'category' => 'Default',
-                        'year' => '1',
-                        'report_date' => '1',
-                        'student_name' => '1',
-                        'date_of_birth' => '1',
-                        'place_of_birth' => '1',
-                        'learning_group' => '1',
-                        'grades' => block_exastud_get_grades_set('1_bis_6'),
-                        'inputs' => [
-                                'learn_social_behavior' => [
-                                        'title' => block_exastud_get_string('learn_and_sociale'),
-                                        'type' => 'textarea',
-                                        'lines' => 8,
-                                        'cols' => 90,
-                                ],
-                                'comments' => [
-                                        'title' => block_exastud_get_string('report_settings_setting_comments'),
-                                        'type' => 'textarea',
-                                        'lines' => 7,
-                                        'cols' => 80,
-                                ],
-                        ],
-                        'inputs_footer' => ['comments'], // inputs in the footer of template
+            'default_report' => [
+                'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_DEFAULT_REPORT,
+                'name' => 'Standard Zeugnis',
+                'file' => 'default_report',
+                'category' => 'Default',
+                'year' => '1',
+                'report_date' => '1',
+                'student_name' => '1',
+                'date_of_birth' => '1',
+                'place_of_birth' => '1',
+                'learning_group' => '1',
+                'grades' => block_exastud_get_grades_set('1_bis_6'),
+                'inputs' => [
+                    'learn_social_behavior' => [
+                        'title' => block_exastud_get_string('learn_and_sociale'),
+                        'type' => 'textarea',
+                        'lines' => 8,
+                        'cols' => 90,
+                    ],
+                    'comments' => [
+                        'title' => block_exastud_get_string('report_settings_setting_comments'),
+                        'type' => 'textarea',
+                        'lines' => 7,
+                        'cols' => 80,
+                    ],
                 ],
-                'Anlage' => [
-                        'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_ANLAGE_ZUM_LERNENTWICKLUNGSBERICHT,
-                        'name' => 'Überfachliche Kompetenzen und Fachkompetenzen',
-                        'file' => 'Anlage zum Lernentwicklungsbericht',
-                        'category' => 'Anlage',
-                        'year' => '1',
-                        'report_date' => '1',
-                        'student_name' => '1',
-                        'date_of_birth' => '1',
-                        'place_of_birth' => '1',
-                        'learning_group' => '1',
-                        'inputs' => [
-                        ],
+                'inputs_footer' => ['comments'], // inputs in the footer of template
+            ],
+            'Anlage' => [
+                'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_ANLAGE_ZUM_LERNENTWICKLUNGSBERICHT,
+                'name' => 'Überfachliche Kompetenzen und Fachkompetenzen',
+                'file' => 'Anlage zum Lernentwicklungsbericht',
+                'category' => 'Anlage',
+                'year' => '1',
+                'report_date' => '1',
+                'student_name' => '1',
+                'date_of_birth' => '1',
+                'place_of_birth' => '1',
+                'learning_group' => '1',
+                'inputs' => [
                 ],
-                'Überfachliche Kompetenzen (Vorlage zur Notenkonferenz)' => [
-                        'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_UEBERFACHLICHE_KOMPETENZEN,
-                        'name' => '"Überfachliche Kompetenzen" (Vorlage zur Notenkonferenz)',
-                        'file' => 'Ueberfachliche_Kompetenzen',
-                        'category' => 'Anlage',
-                        'year' => '1',
-                        'report_date' => '1',
-                        'student_name' => '1',
-                        'date_of_birth' => '1',
-                        'place_of_birth' => '1',
-                        'learning_group' => '1',
-                        'inputs' => [
-                        ],
+            ],
+            'Überfachliche Kompetenzen (Vorlage zur Notenkonferenz)' => [
+                'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_UEBERFACHLICHE_KOMPETENZEN,
+                'name' => '"Überfachliche Kompetenzen" (Vorlage zur Notenkonferenz)',
+                'file' => 'Ueberfachliche_Kompetenzen',
+                'category' => 'Anlage',
+                'year' => '1',
+                'report_date' => '1',
+                'student_name' => '1',
+                'date_of_birth' => '1',
+                'place_of_birth' => '1',
+                'learning_group' => '1',
+                'inputs' => [
                 ],
-                'Anlage Alt' => [
-                        'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_ANLAGE_ZUM_LERNENTWICKLUNGSBERICHTALT,
-                        'name' => 'Anlage zum Lernentwicklungsbericht (GMS)',
-                        'file' => 'Anlage zum LernentwicklungsberichtAlt',
-                        'category' => 'Anlage',
-                        'year' => '1',
-                        'report_date' => '1',
-                        'student_name' => '1',
-                        'date_of_birth' => '1',
-                        'place_of_birth' => '1',
-                        'learning_group' => '1',
-                        'inputs' => [],
-                ],
-                'BP 2004_16/Zertifikat fuer Profilfach' => [
-                        'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_16_ZERTIFIKAT_FUER_PROFILFACH,
-                        'name' => 'Zertifikat für Profilfach',
-                        'file' => 'BP 2004_16/BP2004_16_GMS_Zertifikat_fuer_Profilfach',
-                        'category' => 'Anlage',
-                        'year' => '1',
-                        'report_date' => '1',
-                        'student_name' => '1',
-                        'date_of_birth' => '1',
-                        'place_of_birth' => '1',
-                        'learning_group' => '1',
-                        'grades' => [],
-                        'inputs' => [
-                                'besondere_kompetenzen' => [
-                                        'title' => 'Besondere Kompetenzen in folgenden Bereichen erworben',
-                                        'type' => 'textarea',
-                                        'lines' => 13,
-                                        'cols' => 70,
-                                ],
-                            /*'profilfach_fixed' => [
+            ],
+            'Anlage Alt' => [
+                'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_ANLAGE_ZUM_LERNENTWICKLUNGSBERICHTALT,
+                'name' => 'Anlage zum Lernentwicklungsbericht (GMS)',
+                'file' => 'Anlage zum LernentwicklungsberichtAlt',
+                'category' => 'Anlage',
+                'year' => '1',
+                'report_date' => '1',
+                'student_name' => '1',
+                'date_of_birth' => '1',
+                'place_of_birth' => '1',
+                'learning_group' => '1',
+                'inputs' => [],
+            ],
+            'BP 2004_16/Zertifikat fuer Profilfach' => [
+                'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_16_ZERTIFIKAT_FUER_PROFILFACH,
+                'name' => 'Zertifikat für Profilfach',
+                'file' => 'BP 2004_16/BP2004_16_GMS_Zertifikat_fuer_Profilfach',
+                'category' => 'Anlage',
+                'year' => '1',
+                'report_date' => '1',
+                'student_name' => '1',
+                'date_of_birth' => '1',
+                'place_of_birth' => '1',
+                'learning_group' => '1',
+                'grades' => [],
+                'inputs' => [
+                    'besondere_kompetenzen' => [
+                        'title' => 'Besondere Kompetenzen in folgenden Bereichen erworben',
+                        'type' => 'textarea',
+                        'lines' => 13,
+                        'cols' => 70,
+                    ],
+                    /*'profilfach_fixed' => [
                                     'title' => 'Profilfach',
                                     'type' => 'select',
                                     'values' => [
@@ -2883,501 +2896,501 @@ function block_exastud_get_default_templates($templateid = null, $common = true)
                                         'Informatik, Mathematik, Physik (IMP)' => 'Informatik, Mathematik, Physik (IMP)',
                                     ],
                             ]*/
-                        ],
                 ],
-                'BP 2004/Beiblatt zur Projektprüfung HSA' => [
-                        'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_BEIBLATT_PROJEKTPRUEFUNG_HSA,
-                        'name' => 'Beiblatt zur Projektprüfung HSA',
-                        'file' => 'BP 2004/BP2004_GMS_Beiblatt_Projektpruefung_HSA',
-                        'category' => 'Anlage',
-                        'year' => '1',
-                        'report_date' => '1',
-                        'student_name' => '1',
-                        'date_of_birth' => '1',
-                        'place_of_birth' => '1',
-                        'learning_group' => '1',
-                        'grades' => block_exastud_get_grades_set('lang'),
-                        'inputs' => [
-                                'projekt_thema' => [
-                                        'title' => 'Thema',
-                                        'type' => 'textarea',
-                                        'lines' => 2,
-                                        'cols' => 80,
-                                        'maxchars' => 250,
+            ],
+            'BP 2004/Beiblatt zur Projektprüfung HSA' => [
+                'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_BEIBLATT_PROJEKTPRUEFUNG_HSA,
+                'name' => 'Beiblatt zur Projektprüfung HSA',
+                'file' => 'BP 2004/BP2004_GMS_Beiblatt_Projektpruefung_HSA',
+                'category' => 'Anlage',
+                'year' => '1',
+                'report_date' => '1',
+                'student_name' => '1',
+                'date_of_birth' => '1',
+                'place_of_birth' => '1',
+                'learning_group' => '1',
+                'grades' => block_exastud_get_grades_set('lang'),
+                'inputs' => [
+                    'projekt_thema' => [
+                        'title' => 'Thema',
+                        'type' => 'textarea',
+                        'lines' => 2,
+                        'cols' => 80,
+                        'maxchars' => 250,
 
-                                ],
-                                'projekt_grade' => [
-                                        'title' => 'Note',
-                                        'type' => 'select',
-                                        'values' => [
-                                                'sehr gut' => 'sehr gut',
-                                                'gut' => 'gut',
-                                                'befriedigend' => 'befriedigend',
-                                                'ausreichend' => 'ausreichend',
-                                                'mangelhaft' => 'mangelhaft',
-                                                'ungenügend' => 'ungenügend'],
-                                ],/*
+                    ],
+                    'projekt_grade' => [
+                        'title' => 'Note',
+                        'type' => 'select',
+                        'values' => [
+                            'sehr gut' => 'sehr gut',
+                            'gut' => 'gut',
+                            'befriedigend' => 'befriedigend',
+                            'ausreichend' => 'ausreichend',
+                            'mangelhaft' => 'mangelhaft',
+                            'ungenügend' => 'ungenügend'],
+                    ],/*
                         'projekt_text3lines' => [
                             'title' => 'Projektthema',
                             'type' => 'textarea',
                             'lines' => 3,
                         ],*/
-                                'projekt_verbalbeurteilung' => [
-                                        'title' => 'Verbalbeurteilung',
-                                        'type' => 'textarea',
-                                        'lines' => 14,
-                                        'cols' => 80,
-                                        'maxchars' => 1900,
-                                ],
-                                'annotation' => [
-                                        'title' => 'Anmerkung',
-                                        'type' => 'select',
-                                        'values' => [
-                                                'Die Projektprüfung wurde in Klasse 9 durchgeführt.' => 'Die Projektprüfung wurde in Klasse 9 durchgeführt.',
-                                        ],
-                                ],
+                    'projekt_verbalbeurteilung' => [
+                        'title' => 'Verbalbeurteilung',
+                        'type' => 'textarea',
+                        'lines' => 14,
+                        'cols' => 80,
+                        'maxchars' => 1900,
+                    ],
+                    'annotation' => [
+                        'title' => 'Anmerkung',
+                        'type' => 'select',
+                        'values' => [
+                            'Die Projektprüfung wurde in Klasse 9 durchgeführt.' => 'Die Projektprüfung wurde in Klasse 9 durchgeführt.',
                         ],
-                        'inputs_footer' => ['annotation'], // inputs in the footer of template
+                    ],
                 ],
-                'BP 2016/GMS Lernentwicklungsbericht 1. HJ' => [
-                        'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_HALBJAHR_LERNENTWICKLUNGSBERICHT,
-                        'name' => 'BP 2016 GMS Lernentwicklungsbericht 1. HJ',
-                        'file' => 'BP 2016/BP2016_GMS_Halbjahr_Lernentwicklungsbericht',
-                        'category' => 'Halbjahr',
-                        'year' => '1',
-                        'report_date' => '1',
-                        'student_name' => '1',
-                        'date_of_birth' => '1',
-                        'place_of_birth' => '1',
-                        'learning_group' => '1',
-                        'grades' => block_exastud_get_grades_set('mit_plus_minus_bis'),
-                        'inputs' => [
-                                'learn_social_behavior' => [
-                                        'title' => block_exastud_get_string('learn_and_sociale'),
-                                        'type' => 'textarea',
-                                        'lines' => 7,
-                                        'cols' => 90,
-                                        'maxchars' => 630,
-                                ],
-                                'comments' => [
-                                        'title' => block_exastud_get_string('report_settings_setting_comments'),
-                                        'type' => 'textarea',
-                                        'lines' => 4,
-                                        'cols' => 90,
-                                        'maxchars' => 360,
-                                ],
-                                'lessons_target' => [
-                                        'title' => 'zieldifferenter Unterricht',
-                                        'type' => 'select',
-                                        'values' => ['' => '',
-                                                'wurde zieldifferent unterrichtet. Die Leistungsbeschreibung und -bewertung erfolgte auf Grundlage des Bildungsplans für den Förderschwerpunkt' => 'wurde zieldifferent unterrichtet. Die Leistungsbeschreibung und -bewertung erfolgte auf Grundlage des Bildungsplans für den Förderschwerpunkt'],
-                                ],
-                                'focus' => [
-                                        'title' => 'Förderschwerpunkt',
-                                        'type' => 'select',
-                                        'values' => ['Lernen' => 'Lernen', 'geistige Entwicklung' => 'geistige Entwicklung'],
-                                ],
-                                'beiblatt' => [
-                                        'title' => 'Beiblatt',
-                                        'type' => 'select',
-                                        'values' => ['' => '', '(siehe schuleigenes Blatt)' => '(siehe schuleigenes Blatt)'],
-                                ],
-                                'subjects' => [
-                                        'title' => 'Fächer',
-                                        'type' => 'textarea',
-                                        'lines' => 8,
-                                        'cols' => 75,
-                                        'maxchars' => 600,
-                                ],
-                                'subject_elective' => [ // Wahlpflicht-bereich ?
-                                        'title' => 'Wahlpflicht-bereich',
-                                        'type' => 'textarea',
-                                        'lines' => 8,
-                                        'cols' => 75,
-                                ],
-                                'subject_profile' => [ // Profil-fach ?
-                                        'title' => 'Profil-fach',
-                                        'type' => 'textarea',
-                                        'lines' => 8,
-                                        'cols' => 75,
-                                ],
+                'inputs_footer' => ['annotation'], // inputs in the footer of template
+            ],
+            'BP 2016/GMS Lernentwicklungsbericht 1. HJ' => [
+                'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_HALBJAHR_LERNENTWICKLUNGSBERICHT,
+                'name' => 'BP 2016 GMS Lernentwicklungsbericht 1. HJ',
+                'file' => 'BP 2016/BP2016_GMS_Halbjahr_Lernentwicklungsbericht',
+                'category' => 'Halbjahr',
+                'year' => '1',
+                'report_date' => '1',
+                'student_name' => '1',
+                'date_of_birth' => '1',
+                'place_of_birth' => '1',
+                'learning_group' => '1',
+                'grades' => block_exastud_get_grades_set('mit_plus_minus_bis'),
+                'inputs' => [
+                    'learn_social_behavior' => [
+                        'title' => block_exastud_get_string('learn_and_sociale'),
+                        'type' => 'textarea',
+                        'lines' => 7,
+                        'cols' => 90,
+                        'maxchars' => 630,
+                    ],
+                    'comments' => [
+                        'title' => block_exastud_get_string('report_settings_setting_comments'),
+                        'type' => 'textarea',
+                        'lines' => 4,
+                        'cols' => 90,
+                        'maxchars' => 360,
+                    ],
+                    'lessons_target' => [
+                        'title' => 'zieldifferenter Unterricht',
+                        'type' => 'select',
+                        'values' => ['' => '',
+                            'wurde zieldifferent unterrichtet. Die Leistungsbeschreibung und -bewertung erfolgte auf Grundlage des Bildungsplans für den Förderschwerpunkt' => 'wurde zieldifferent unterrichtet. Die Leistungsbeschreibung und -bewertung erfolgte auf Grundlage des Bildungsplans für den Förderschwerpunkt'],
+                    ],
+                    'focus' => [
+                        'title' => 'Förderschwerpunkt',
+                        'type' => 'select',
+                        'values' => ['Lernen' => 'Lernen', 'geistige Entwicklung' => 'geistige Entwicklung'],
+                    ],
+                    'beiblatt' => [
+                        'title' => 'Beiblatt',
+                        'type' => 'select',
+                        'values' => ['' => '', '(siehe schuleigenes Blatt)' => '(siehe schuleigenes Blatt)'],
+                    ],
+                    'subjects' => [
+                        'title' => 'Fächer',
+                        'type' => 'textarea',
+                        'lines' => 8,
+                        'cols' => 75,
+                        'maxchars' => 600,
+                    ],
+                    'subject_elective' => [ // Wahlpflicht-bereich ?
+                        'title' => 'Wahlpflicht-bereich',
+                        'type' => 'textarea',
+                        'lines' => 8,
+                        'cols' => 75,
+                    ],
+                    'subject_profile' => [ // Profil-fach ?
+                        'title' => 'Profil-fach',
+                        'type' => 'textarea',
+                        'lines' => 8,
+                        'cols' => 75,
+                    ],
+                ],
+                'inputs_footer' => ['lessons_target', 'focus', 'beiblatt', 'comments'], // inputs in the footer of template
+                'inputs_order' => ['lessons_target', 'focus', 'beiblatt', 'comments'],
+                // special ordering of inputs (makes similar to docx template)
+            ],
+            'BP 2016/GMS Lernentwicklungsbericht SJ' => [
+                'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_JAHRESZEUGNIS_LERNENTWICKLUNGSBERICHT,
+                'name' => 'BP 2016 GMS Lernentwicklungsbericht SJ',
+                'file' => 'BP 2016/BP2016_GMS_Jahreszeugnis_Lernentwicklungsbericht',
+                'category' => 'Jahr',
+                'year' => '1',
+                'report_date' => '1',
+                'student_name' => '1',
+                'date_of_birth' => '1',
+                'place_of_birth' => '1',
+                'learning_group' => '1',
+                'grades' => block_exastud_get_grades_set('1_bis_6'),
+                'inputs' => [
+                    'learn_social_behavior' => [
+                        'title' => block_exastud_get_string('learn_and_sociale'),
+                        'type' => 'textarea',
+                        'lines' => 8,
+                        'cols' => 75,
+                        'maxchars' => 600,
+                    ],
+                    'comments' => [
+                        'title' => block_exastud_get_string('report_settings_setting_comments'),
+                        'type' => 'textarea',
+                        'lines' => 4,
+                        'cols' => 90,
+                        'maxchars' => 360,
+                    ],
+                    'subjects' => [
+                        'title' => 'Fächer',
+                        'type' => 'textarea',
+                        'lines' => 8,
+                        'cols' => 75,
+                        'maxchars' => 600,
+                    ],
+                    'subject_elective' => [ // Wahlpflicht-bereich ?
+                        'title' => 'Wahlpflicht-bereich',
+                        'type' => 'textarea',
+                        'lines' => 8,
+                        'cols' => 75,
+                    ],
+                    'subject_profile' => [ // Profil-fach ?
+                        'title' => 'Profil-fach',
+                        'type' => 'textarea',
+                        'lines' => 8,
+                        'cols' => 75,
+                    ],
+                    'beiblatt' => [
+                        'title' => 'Beiblatt',
+                        'type' => 'select',
+                        'values' => ['' => '', '(siehe schuleigenes Blatt)' => '(siehe schuleigenes Blatt)'],
+                    ],
+                    'lessons_target' => [
+                        'title' => 'zieldifferenter Unterricht',
+                        'type' => 'select',
+                        'values' => ['' => '',
+                            'wurde zieldifferent unterrichtet. Die Leistungsbeschreibung und -bewertung erfolgte auf Grundlage des Bildungsplans für den Förderschwerpunkt' => 'wurde zieldifferent unterrichtet. Die Leistungsbeschreibung und -bewertung erfolgte auf Grundlage des Bildungsplans für den Förderschwerpunkt'],
+                    ],
+                    'focus' => [
+                        'title' => 'Förderschwerpunkt',
+                        'type' => 'select',
+                        'values' => ['Lernen' => 'Lernen', 'geistige Entwicklung' => 'geistige Entwicklung'],
+                    ],
+                    'lernverhalten_note' => [
+                        'title' => 'Lernverhalten Note',
+                        'type' => 'select',
+                        'values' => [
+                            '' => '',
+                            'Lernverhalten: sehr gut' => 'Lernverhalten: sehr gut',
+                            'Lernverhalten: gut' => 'Lernverhalten: gut',
+                            'Lernverhalten: befriedigend' => 'Lernverhalten: befriedigend',
+                            'Lernverhalten: unbefriedigend' => 'Lernverhalten: unbefriedigend',
                         ],
-                        'inputs_footer' => ['lessons_target', 'focus', 'beiblatt', 'comments'], // inputs in the footer of template
-                        'inputs_order' => ['lessons_target', 'focus', 'beiblatt', 'comments'],
-                    // special ordering of inputs (makes similar to docx template)
-                ],
-                'BP 2016/GMS Lernentwicklungsbericht SJ' => [
-                        'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_JAHRESZEUGNIS_LERNENTWICKLUNGSBERICHT,
-                        'name' => 'BP 2016 GMS Lernentwicklungsbericht SJ',
-                        'file' => 'BP 2016/BP2016_GMS_Jahreszeugnis_Lernentwicklungsbericht',
-                        'category' => 'Jahr',
-                        'year' => '1',
-                        'report_date' => '1',
-                        'student_name' => '1',
-                        'date_of_birth' => '1',
-                        'place_of_birth' => '1',
-                        'learning_group' => '1',
-                        'grades' => block_exastud_get_grades_set('1_bis_6'),
-                        'inputs' => [
-                                'learn_social_behavior' => [
-                                        'title' => block_exastud_get_string('learn_and_sociale'),
-                                        'type' => 'textarea',
-                                        'lines' => 8,
-                                        'cols' => 75,
-                                        'maxchars' => 600,
-                                ],
-                                'comments' => [
-                                        'title' => block_exastud_get_string('report_settings_setting_comments'),
-                                        'type' => 'textarea',
-                                        'lines' => 4,
-                                        'cols' => 90,
-                                        'maxchars' => 360,
-                                ],
-                                'subjects' => [
-                                        'title' => 'Fächer',
-                                        'type' => 'textarea',
-                                        'lines' => 8,
-                                        'cols' => 75,
-                                        'maxchars' => 600,
-                                ],
-                                'subject_elective' => [ // Wahlpflicht-bereich ?
-                                        'title' => 'Wahlpflicht-bereich',
-                                        'type' => 'textarea',
-                                        'lines' => 8,
-                                        'cols' => 75,
-                                ],
-                                'subject_profile' => [ // Profil-fach ?
-                                        'title' => 'Profil-fach',
-                                        'type' => 'textarea',
-                                        'lines' => 8,
-                                        'cols' => 75,
-                                ],
-                                'beiblatt' => [
-                                        'title' => 'Beiblatt',
-                                        'type' => 'select',
-                                        'values' => ['' => '', '(siehe schuleigenes Blatt)' => '(siehe schuleigenes Blatt)'],
-                                ],
-                                'lessons_target' => [
-                                        'title' => 'zieldifferenter Unterricht',
-                                        'type' => 'select',
-                                        'values' => ['' => '',
-                                                'wurde zieldifferent unterrichtet. Die Leistungsbeschreibung und -bewertung erfolgte auf Grundlage des Bildungsplans für den Förderschwerpunkt' => 'wurde zieldifferent unterrichtet. Die Leistungsbeschreibung und -bewertung erfolgte auf Grundlage des Bildungsplans für den Förderschwerpunkt'],
-                                ],
-                                'focus' => [
-                                        'title' => 'Förderschwerpunkt',
-                                        'type' => 'select',
-                                        'values' => ['Lernen' => 'Lernen', 'geistige Entwicklung' => 'geistige Entwicklung'],
-                                ],
-                                'lernverhalten_note' => [
-                                        'title' => 'Lernverhalten Note',
-                                        'type' => 'select',
-                                        'values' => [
-                                                '' => '',
-                                                'Lernverhalten: sehr gut' => 'Lernverhalten: sehr gut',
-                                                'Lernverhalten: gut' => 'Lernverhalten: gut',
-                                                'Lernverhalten: befriedigend' => 'Lernverhalten: befriedigend',
-                                                'Lernverhalten: unbefriedigend' => 'Lernverhalten: unbefriedigend',
-                                        ],
 
-                                ],
-                                'sozialverhalten_note' => [
-                                        'title' => 'Sozialverhalten Note',
-                                        'type' => 'select',
-                                        'values' => [
-                                                '' => '',
-                                                'Sozialverhalten: sehr gut' => 'Sozialverhalten: sehr gut',
-                                                'Sozialverhalten: gut' => 'Sozialverhalten: gut',
-                                                'Sozialverhalten: befriedigend' => 'Sozialverhalten: befriedigend',
-                                                'Sozialverhalten: unbefriedigend' => 'Sozialverhalten: unbefriedigend',
-                                        ],
+                    ],
+                    'sozialverhalten_note' => [
+                        'title' => 'Sozialverhalten Note',
+                        'type' => 'select',
+                        'values' => [
+                            '' => '',
+                            'Sozialverhalten: sehr gut' => 'Sozialverhalten: sehr gut',
+                            'Sozialverhalten: gut' => 'Sozialverhalten: gut',
+                            'Sozialverhalten: befriedigend' => 'Sozialverhalten: befriedigend',
+                            'Sozialverhalten: unbefriedigend' => 'Sozialverhalten: unbefriedigend',
+                        ],
 
-                                ],
-                        ],
-                        'inputs_footer' => ['lessons_target', 'focus', 'beiblatt', 'comments'], // inputs in the footer of template
-                        'inputs_order' => ['lessons_target', 'focus', 'beiblatt', 'comments'],
-                    // special ordering of inputs (makes similar to docx template)
+                    ],
                 ],
-                'BP 2004/GMS Lernentwicklungsbericht 1. HJ' => [
-                        'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_HALBJAHR_LERNENTWICKLUNGSBERICHT,
-                        'name' => 'BP 2004 GMS Lernentwicklungsbericht 1. HJ',
-                        'file' => 'BP 2004/BP2004_GMS_Halbjahr_Lernentwicklungsbericht',
-                        'category' => 'Halbjahr',
-                        'year' => '1',
-                        'report_date' => '1',
-                        'student_name' => '1',
-                        'date_of_birth' => '1',
-                        'place_of_birth' => '1',
-                        'learning_group' => '1',
-                        'grades' => block_exastud_get_grades_set('mit_plus_minus_bis'),
-                        'inputs' => [
-                                'learn_social_behavior' => [
-                                        'title' => block_exastud_get_string('learn_and_sociale'),
-                                        'type' => 'textarea',
-                                        'lines' => 7,
-                                        'cols' => 90,
-                                        'maxchars' => 630,
-                                ],
-                                'comments' => [
-                                        'title' => block_exastud_get_string('report_settings_setting_comments'),
-                                        'type' => 'textarea',
-                                        'lines' => 4,
-                                        'cols' => 90,
-                                        'maxchars' => 360,
-                                ],
-                                'subjects' => [
-                                        'title' => 'Fächer',
-                                        'type' => 'textarea',
-                                        'lines' => 8,
-                                        'cols' => 75,
-                                        'maxchars' => 600,
-                                ],
-                                'subject_elective' => [ // Wahlpflicht-bereich ?
-                                        'title' => 'Wahlpflicht-bereich',
-                                        'type' => 'textarea',
-                                        'lines' => 8,
-                                        'cols' => 75,
-                                ],
-                                'subject_profile' => [ // Profil-fach ?
-                                        'title' => 'Profil-fach',
-                                        'type' => 'textarea',
-                                        'lines' => 8,
-                                        'cols' => 75,
-                                ],
-                                'lessons_target' => [
-                                        'title' => 'zieldifferenter Unterricht',
-                                        'type' => 'select',
-                                        'values' => [
-                                                '' => '',
-                                                'wurde zieldifferent unterrichtet. Die Leistungsbeschreibung und -bewertung erfolgte auf Grundlage des Bildungsplans für den Förderschwerpunkt' => 'wurde zieldifferent unterrichtet. Die Leistungsbeschreibung und -bewertung erfolgte auf Grundlage des Bildungsplans für den Förderschwerpunkt',
-                                        ],
-                                ],
-                                'focus' => [
-                                        'title' => 'Förderschwerpunkt',
-                                        'type' => 'select',
-                                        'values' => [
-                                                'Lernen' => 'Lernen',
-                                                'geistige Entwicklung' => 'geistige Entwicklung'
-                                        ],
-                                ],
-                                'beiblatt' => [
-                                        'title' => 'Beiblatt',
-                                        'type' => 'select',
-                                        'values' => [
-                                                '' => '',
-                                                '(siehe schuleigenes Blatt)' => '(siehe schuleigenes Blatt)',
-                                        ],
-                                ],
+                'inputs_footer' => ['lessons_target', 'focus', 'beiblatt', 'comments'], // inputs in the footer of template
+                'inputs_order' => ['lessons_target', 'focus', 'beiblatt', 'comments'],
+                // special ordering of inputs (makes similar to docx template)
+            ],
+            'BP 2004/GMS Lernentwicklungsbericht 1. HJ' => [
+                'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_HALBJAHR_LERNENTWICKLUNGSBERICHT,
+                'name' => 'BP 2004 GMS Lernentwicklungsbericht 1. HJ',
+                'file' => 'BP 2004/BP2004_GMS_Halbjahr_Lernentwicklungsbericht',
+                'category' => 'Halbjahr',
+                'year' => '1',
+                'report_date' => '1',
+                'student_name' => '1',
+                'date_of_birth' => '1',
+                'place_of_birth' => '1',
+                'learning_group' => '1',
+                'grades' => block_exastud_get_grades_set('mit_plus_minus_bis'),
+                'inputs' => [
+                    'learn_social_behavior' => [
+                        'title' => block_exastud_get_string('learn_and_sociale'),
+                        'type' => 'textarea',
+                        'lines' => 7,
+                        'cols' => 90,
+                        'maxchars' => 630,
+                    ],
+                    'comments' => [
+                        'title' => block_exastud_get_string('report_settings_setting_comments'),
+                        'type' => 'textarea',
+                        'lines' => 4,
+                        'cols' => 90,
+                        'maxchars' => 360,
+                    ],
+                    'subjects' => [
+                        'title' => 'Fächer',
+                        'type' => 'textarea',
+                        'lines' => 8,
+                        'cols' => 75,
+                        'maxchars' => 600,
+                    ],
+                    'subject_elective' => [ // Wahlpflicht-bereich ?
+                        'title' => 'Wahlpflicht-bereich',
+                        'type' => 'textarea',
+                        'lines' => 8,
+                        'cols' => 75,
+                    ],
+                    'subject_profile' => [ // Profil-fach ?
+                        'title' => 'Profil-fach',
+                        'type' => 'textarea',
+                        'lines' => 8,
+                        'cols' => 75,
+                    ],
+                    'lessons_target' => [
+                        'title' => 'zieldifferenter Unterricht',
+                        'type' => 'select',
+                        'values' => [
+                            '' => '',
+                            'wurde zieldifferent unterrichtet. Die Leistungsbeschreibung und -bewertung erfolgte auf Grundlage des Bildungsplans für den Förderschwerpunkt' => 'wurde zieldifferent unterrichtet. Die Leistungsbeschreibung und -bewertung erfolgte auf Grundlage des Bildungsplans für den Förderschwerpunkt',
                         ],
-                        'inputs_footer' => ['lessons_target', 'focus', 'beiblatt', 'comments'], // inputs in the footer of template
-                        'inputs_order' => ['lessons_target', 'focus', 'beiblatt', 'comments'],
-                    // special ordering of inputs (makes similar to docx template)
-                ],
-                'BP 2004/GMS Lernentwicklungsbericht SJ' => [
-                        'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_JAHRESZEUGNIS_LERNENTWICKLUNGSBERICHT,
-                        'name' => 'BP 2004 GMS Lernentwicklungsbericht SJ',
-                        'file' => 'BP 2004/BP2004_GMS_Jahreszeugnis_Lernentwicklungsbericht',
-                        'category' => 'Jahr',
-                        'year' => '1',
-                        'report_date' => '1',
-                        'student_name' => '1',
-                        'date_of_birth' => '1',
-                        'place_of_birth' => '1',
-                        'learning_group' => '1',
-                        'grades' => block_exastud_get_grades_set('1_bis_6'),
-                        'inputs' => [
-                                'learn_social_behavior' => [
-                                        'title' => block_exastud_get_string('learn_and_sociale'),
-                                        'type' => 'textarea',
-                                        'lines' => 8,
-                                        'cols' => 75,
-                                        'maxchars' => 600,
-                                ],
-                                'comments' => [
-                                        'title' => block_exastud_get_string('report_settings_setting_comments'),
-                                        'type' => 'textarea',
-                                        'lines' => 4,
-                                        'cols' => 90,
-                                        'maxchars' => 360,
-                                ],
-                                'subjects' => [
-                                        'title' => 'Fächer',
-                                        'type' => 'textarea',
-                                        'lines' => 8,
-                                        'cols' => 75,
-                                        'maxchars' => 600,
-                                ],
-                                'subject_elective' => [ // Wahlpflicht-bereich ?
-                                        'title' => 'Wahlpflicht-bereich',
-                                        'type' => 'textarea',
-                                        'lines' => 8,
-                                        'cols' => 68,
-                                        'maxchars' => 550,
-                                ],
-                                'subject_profile' => [ // Profil-fach ?
-                                        'title' => 'Profil-fach',
-                                        'type' => 'textarea',
-                                        'lines' => 8,
-                                        'cols' => 68,
-                                        'maxchars' => 500,
-                                ],
-                                'lessons_target' => [
-                                        'title' => 'zieldifferenter Unterricht',
-                                        'type' => 'select',
-                                        'values' => [
-                                                '' => '',
-                                                'wurde zieldifferent unterrichtet. Die Leistungsbeschreibung und -bewertung erfolgte auf Grundlage des Bildungsplans für den Förderschwerpunkt' => 'wurde zieldifferent unterrichtet. Die Leistungsbeschreibung und -bewertung erfolgte auf Grundlage des Bildungsplans für den Förderschwerpunkt',
-                                        ],
-                                ],
-                                'focus' => [
-                                        'title' => 'Förderschwerpunkt',
-                                        'type' => 'select',
-                                        'values' => ['Lernen' => 'Lernen', 'geistige Entwicklung' => 'geistige Entwicklung'],
-                                ],
-                                'beiblatt' => [
-                                        'title' => 'Beiblatt',
-                                        'type' => 'select',
-                                        'values' => ['' => '', '(siehe schuleigenes Blatt)' => '(siehe schuleigenes Blatt)'],
-                                ],
+                    ],
+                    'focus' => [
+                        'title' => 'Förderschwerpunkt',
+                        'type' => 'select',
+                        'values' => [
+                            'Lernen' => 'Lernen',
+                            'geistige Entwicklung' => 'geistige Entwicklung',
                         ],
-                        'inputs_footer' => ['lessons_target', 'focus', 'beiblatt', 'comments'], // inputs in the footer of template
-                        'inputs_order' => ['lessons_target', 'focus', 'beiblatt', 'comments'],
-                    // special ordering of inputs (makes similar to docx template)
+                    ],
+                    'beiblatt' => [
+                        'title' => 'Beiblatt',
+                        'type' => 'select',
+                        'values' => [
+                            '' => '',
+                            '(siehe schuleigenes Blatt)' => '(siehe schuleigenes Blatt)',
+                        ],
+                    ],
                 ],
-                'BP 2004/GMS Zeugnis Klasse 10 E-Niveau 1.HJ' => [
-                        'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_HALBJAHR_ZEUGNIS_KL10_E_NIVEAU,
-                        'name' => 'BP 2004 GMS Zeugnis Klasse 10 E-Niveau 1.HJ',
-                        'file' => 'BP 2004/BP2004_GMS_Halbjahr_Zeugnis_Kl10_E_Niveau',
-                        'category' => 'Halbjahr',
-                        'year' => '1',
-                        'report_date' => '1',
-                        'student_name' => '1',
-                        'date_of_birth' => '1',
-                        'place_of_birth' => '1',
-                        'learning_group' => '1',
-                        'grades' => block_exastud_get_grades_set('mit_plus_minus_bis_ausgeschrieben'),
-                        'inputs' => [
-                                'ags' => [
-                                        'title' => 'Teilnahme an Arbeitsgemeinschaften',
-                                        'type' => 'textarea',
-                                        'lines' => 3,
-                                        'cols' => 90,
-                                        'maxchars' => 270,
-                                ],
-                                'comments_short' => [
-                                        'title' => 'Bemerkungen',
-                                        'type' => 'textarea',
-                                        'lines' => 3,
-                                        'cols' => 90,
-                                        'maxchars' => 270,
-                                ],/*
+                'inputs_footer' => ['lessons_target', 'focus', 'beiblatt', 'comments'], // inputs in the footer of template
+                'inputs_order' => ['lessons_target', 'focus', 'beiblatt', 'comments'],
+                // special ordering of inputs (makes similar to docx template)
+            ],
+            'BP 2004/GMS Lernentwicklungsbericht SJ' => [
+                'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_JAHRESZEUGNIS_LERNENTWICKLUNGSBERICHT,
+                'name' => 'BP 2004 GMS Lernentwicklungsbericht SJ',
+                'file' => 'BP 2004/BP2004_GMS_Jahreszeugnis_Lernentwicklungsbericht',
+                'category' => 'Jahr',
+                'year' => '1',
+                'report_date' => '1',
+                'student_name' => '1',
+                'date_of_birth' => '1',
+                'place_of_birth' => '1',
+                'learning_group' => '1',
+                'grades' => block_exastud_get_grades_set('1_bis_6'),
+                'inputs' => [
+                    'learn_social_behavior' => [
+                        'title' => block_exastud_get_string('learn_and_sociale'),
+                        'type' => 'textarea',
+                        'lines' => 8,
+                        'cols' => 75,
+                        'maxchars' => 600,
+                    ],
+                    'comments' => [
+                        'title' => block_exastud_get_string('report_settings_setting_comments'),
+                        'type' => 'textarea',
+                        'lines' => 4,
+                        'cols' => 90,
+                        'maxchars' => 360,
+                    ],
+                    'subjects' => [
+                        'title' => 'Fächer',
+                        'type' => 'textarea',
+                        'lines' => 8,
+                        'cols' => 75,
+                        'maxchars' => 600,
+                    ],
+                    'subject_elective' => [ // Wahlpflicht-bereich ?
+                        'title' => 'Wahlpflicht-bereich',
+                        'type' => 'textarea',
+                        'lines' => 8,
+                        'cols' => 68,
+                        'maxchars' => 550,
+                    ],
+                    'subject_profile' => [ // Profil-fach ?
+                        'title' => 'Profil-fach',
+                        'type' => 'textarea',
+                        'lines' => 8,
+                        'cols' => 68,
+                        'maxchars' => 500,
+                    ],
+                    'lessons_target' => [
+                        'title' => 'zieldifferenter Unterricht',
+                        'type' => 'select',
+                        'values' => [
+                            '' => '',
+                            'wurde zieldifferent unterrichtet. Die Leistungsbeschreibung und -bewertung erfolgte auf Grundlage des Bildungsplans für den Förderschwerpunkt' => 'wurde zieldifferent unterrichtet. Die Leistungsbeschreibung und -bewertung erfolgte auf Grundlage des Bildungsplans für den Förderschwerpunkt',
+                        ],
+                    ],
+                    'focus' => [
+                        'title' => 'Förderschwerpunkt',
+                        'type' => 'select',
+                        'values' => ['Lernen' => 'Lernen', 'geistige Entwicklung' => 'geistige Entwicklung'],
+                    ],
+                    'beiblatt' => [
+                        'title' => 'Beiblatt',
+                        'type' => 'select',
+                        'values' => ['' => '', '(siehe schuleigenes Blatt)' => '(siehe schuleigenes Blatt)'],
+                    ],
+                ],
+                'inputs_footer' => ['lessons_target', 'focus', 'beiblatt', 'comments'], // inputs in the footer of template
+                'inputs_order' => ['lessons_target', 'focus', 'beiblatt', 'comments'],
+                // special ordering of inputs (makes similar to docx template)
+            ],
+            'BP 2004/GMS Zeugnis Klasse 10 E-Niveau 1.HJ' => [
+                'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_HALBJAHR_ZEUGNIS_KL10_E_NIVEAU,
+                'name' => 'BP 2004 GMS Zeugnis Klasse 10 E-Niveau 1.HJ',
+                'file' => 'BP 2004/BP2004_GMS_Halbjahr_Zeugnis_Kl10_E_Niveau',
+                'category' => 'Halbjahr',
+                'year' => '1',
+                'report_date' => '1',
+                'student_name' => '1',
+                'date_of_birth' => '1',
+                'place_of_birth' => '1',
+                'learning_group' => '1',
+                'grades' => block_exastud_get_grades_set('mit_plus_minus_bis_ausgeschrieben'),
+                'inputs' => [
+                    'ags' => [
+                        'title' => 'Teilnahme an Arbeitsgemeinschaften',
+                        'type' => 'textarea',
+                        'lines' => 3,
+                        'cols' => 90,
+                        'maxchars' => 270,
+                    ],
+                    'comments_short' => [
+                        'title' => 'Bemerkungen',
+                        'type' => 'textarea',
+                        'lines' => 3,
+                        'cols' => 90,
+                        'maxchars' => 270,
+                    ],/*
                             'subject_profile' => [
                                     'title' => 'Profil-fach',
                                     'type' => 'textarea',
                             ],*/
-                        ],
-                        'inputs_footer' => ['ags', 'comments_short'], // inputs in the footer of template
-                        'inputs_order' => ['ags', 'comments_short'], // special ordering of inputs (makes similar to docx template)
                 ],
-                'BP 2004/GMS Zeugnis Klasse 10 E-Niveau SJ' => [
-                        'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_JAHRESZEUGNIS_KL10_E_NIVEAU,
-                        'name' => 'BP 2004 GMS Zeugnis Klasse 10 E-Niveau SJ',
-                        'file' => 'BP 2004/BP2004_GMS_Jahreszeugnis_Kl10_E_Niveau',
-                        'category' => 'Jahr',
-                        'year' => '1',
-                        'report_date' => '1',
-                        'student_name' => '1',
-                        'date_of_birth' => '1',
-                        'place_of_birth' => '1',
-                        'learning_group' => '1',
-                        'grades' => block_exastud_get_grades_set('short'),
-                        'inputs' => [
-                                'verhalten' => [
-                                        'title' => 'Verhalten',
-                                        'type' => 'select',
-                                        'values' => ['sgt' => 'sgt', 'gut' => 'gut', 'bfr.' => 'bfr.', 'unbfr.' => 'unbfr.'],
-                                ],
-                                'mitarbeit' => [
-                                        'title' => 'Mitarbeit',
-                                        'type' => 'select',
-                                        'values' => ['sgt' => 'sgt', 'gut' => 'gut', 'bfr.' => 'bfr.', 'unbfr.' => 'unbfr.'],
-                                ],
-                                'ags' => [
-                                        'title' => 'Teilnahme an Arbeitsgemeinschaften',
-                                        'type' => 'textarea',
-                                        'lines' => 3,
-                                        'cols' => 90,
-                                        'maxchars' => 270,
-                                ],
-                                'comments_short' => [
-                                        'title' => 'Bemerkungen',
-                                        'type' => 'textarea',
-                                        'lines' => 3,
-                                        'cols' => 90,
-                                        'maxchars' => 270,
-                                ],/*
+                'inputs_footer' => ['ags', 'comments_short'], // inputs in the footer of template
+                'inputs_order' => ['ags', 'comments_short'], // special ordering of inputs (makes similar to docx template)
+            ],
+            'BP 2004/GMS Zeugnis Klasse 10 E-Niveau SJ' => [
+                'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_JAHRESZEUGNIS_KL10_E_NIVEAU,
+                'name' => 'BP 2004 GMS Zeugnis Klasse 10 E-Niveau SJ',
+                'file' => 'BP 2004/BP2004_GMS_Jahreszeugnis_Kl10_E_Niveau',
+                'category' => 'Jahr',
+                'year' => '1',
+                'report_date' => '1',
+                'student_name' => '1',
+                'date_of_birth' => '1',
+                'place_of_birth' => '1',
+                'learning_group' => '1',
+                'grades' => block_exastud_get_grades_set('short'),
+                'inputs' => [
+                    'verhalten' => [
+                        'title' => 'Verhalten',
+                        'type' => 'select',
+                        'values' => ['sgt' => 'sgt', 'gut' => 'gut', 'bfr.' => 'bfr.', 'unbfr.' => 'unbfr.'],
+                    ],
+                    'mitarbeit' => [
+                        'title' => 'Mitarbeit',
+                        'type' => 'select',
+                        'values' => ['sgt' => 'sgt', 'gut' => 'gut', 'bfr.' => 'bfr.', 'unbfr.' => 'unbfr.'],
+                    ],
+                    'ags' => [
+                        'title' => 'Teilnahme an Arbeitsgemeinschaften',
+                        'type' => 'textarea',
+                        'lines' => 3,
+                        'cols' => 90,
+                        'maxchars' => 270,
+                    ],
+                    'comments_short' => [
+                        'title' => 'Bemerkungen',
+                        'type' => 'textarea',
+                        'lines' => 3,
+                        'cols' => 90,
+                        'maxchars' => 270,
+                    ],/*
                             'subject_profile' => [
                                     'title' => 'Profil-fach',
                                     'type' => 'textarea',
                             ],*/
-                                'student_transfered' => [
-                                        'title' => 'Versetzung',
-                                        'type' => 'select',
-                                        'values' => [
-                                                'Die Schülerin wird versetzt.' => 'Die Schülerin wird versetzt.',
-                                                'Die Schülerin wird nicht versetzt.' => 'Die Schülerin wird nicht versetzt.',
-                                                'Der Schüler wird versetzt.' => 'Der Schüler wird versetzt.',
-                                                'Der Schüler wird nicht versetzt.' => 'Der Schüler wird nicht versetzt.',
-                                        ],
-                                ],
-                                'eng_niveau' => [
-                                        'title' => 'Fremdsprachenniveau - Englisch',
-                                        'type' => 'textarea',
-                                        'lines' => 1,
-                                        'cols' => 20,
-                                        'maxchars' => 20,
-                                ],
-                                'fra_niveau' => [
-                                        'title' => 'Fremdsprachenniveau - Französisch',
-                                        'type' => 'textarea',
-                                        'lines' => 1,
-                                        'cols' => 20,
-                                        'maxchars' => 20,
-                                ],
-                                'spa_niveau' => [
-                                        'title' => 'Fremdsprachenniveau - Spanisch',
-                                        'type' => 'textarea',
-                                        'lines' => 1,
-                                        'cols' => 20,
-                                        'maxchars' => 20,
-                                ],
+                    'student_transfered' => [
+                        'title' => 'Versetzung',
+                        'type' => 'select',
+                        'values' => [
+                            'Die Schülerin wird versetzt.' => 'Die Schülerin wird versetzt.',
+                            'Die Schülerin wird nicht versetzt.' => 'Die Schülerin wird nicht versetzt.',
+                            'Der Schüler wird versetzt.' => 'Der Schüler wird versetzt.',
+                            'Der Schüler wird nicht versetzt.' => 'Der Schüler wird nicht versetzt.',
                         ],
-                        'inputs_header' => ['verhalten', 'mitarbeit'],
-                        'inputs_footer' => ['eng_niveau', 'fra_niveau', 'spa_niveau', 'ags', 'comments_short',
-                                'student_transfered'], // inputs in the footer of template
-                        'inputs_order' => ['ags', 'comments_short', 'student_transfered'],
-                    // special ordering of inputs (makes similar to docx template)
+                    ],
+                    'eng_niveau' => [
+                        'title' => 'Fremdsprachenniveau - Englisch',
+                        'type' => 'textarea',
+                        'lines' => 1,
+                        'cols' => 20,
+                        'maxchars' => 20,
+                    ],
+                    'fra_niveau' => [
+                        'title' => 'Fremdsprachenniveau - Französisch',
+                        'type' => 'textarea',
+                        'lines' => 1,
+                        'cols' => 20,
+                        'maxchars' => 20,
+                    ],
+                    'spa_niveau' => [
+                        'title' => 'Fremdsprachenniveau - Spanisch',
+                        'type' => 'textarea',
+                        'lines' => 1,
+                        'cols' => 20,
+                        'maxchars' => 20,
+                    ],
                 ],
-                'BP 2004/GMS Abgangszeugnis Schulpflicht' => [
-                        'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_ABGANGSZEUGNIS_SCHULPFLICHT,
-                        'name' => 'BP 2004 GMS Abgangszeugnis Schulpflicht',
-                        'file' => 'BP 2004/BP2004_GMS_Abgangszeugnis_Schulpflicht',
-                        'category' => 'Abgang',
-                        'year' => '1',
-                        'report_date' => '1',
-                        'student_name' => '1',
-                        'date_of_birth' => '1',
-                        'place_of_birth' => '1',
-                        'learning_group' => '1',
-                        'grades' => block_exastud_get_grades_set('lang'),
-                        'inputs' => [
-                                'wann_verlassen' => [
-                                        'title' => 'verlässt ... Klasse',
-                                        'type' => 'select',
-                                        'values' => [
-                                                '8' => '8',
-                                                '9' => '9',
-                                                '10' => '10',
-                                            /*'heute8' => 'heute die Klasse 8 der Schule.',
+                'inputs_header' => ['verhalten', 'mitarbeit'],
+                'inputs_footer' => ['eng_niveau', 'fra_niveau', 'spa_niveau', 'ags', 'comments_short',
+                    'student_transfered'], // inputs in the footer of template
+                'inputs_order' => ['ags', 'comments_short', 'student_transfered'],
+                // special ordering of inputs (makes similar to docx template)
+            ],
+            'BP 2004/GMS Abgangszeugnis Schulpflicht' => [
+                'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_ABGANGSZEUGNIS_SCHULPFLICHT,
+                'name' => 'BP 2004 GMS Abgangszeugnis Schulpflicht',
+                'file' => 'BP 2004/BP2004_GMS_Abgangszeugnis_Schulpflicht',
+                'category' => 'Abgang',
+                'year' => '1',
+                'report_date' => '1',
+                'student_name' => '1',
+                'date_of_birth' => '1',
+                'place_of_birth' => '1',
+                'learning_group' => '1',
+                'grades' => block_exastud_get_grades_set('lang'),
+                'inputs' => [
+                    'wann_verlassen' => [
+                        'title' => 'verlässt ... Klasse',
+                        'type' => 'select',
+                        'values' => [
+                            '8' => '8',
+                            '9' => '9',
+                            '10' => '10',
+                            /*'heute8' => 'heute die Klasse 8 der Schule.',
                                             'heute9' => 'heute die Klasse 9 der Schule.',
                                             'heute10' => 'heute die Klasse 10 der Schule.',
                                             'during8' => 'während der Klasse 8 die Schule.',
@@ -3385,42 +3398,42 @@ function block_exastud_get_default_templates($templateid = null, $common = true)
                                             'during10' => 'während der Klasse 10 die Schule.',
                                             'ende8' => 'am Ende der Klasse 8 die Schule.',
                                             'ende10' => 'am Ende der Klasse 10 die Schule.',*/
-                                        ],
-                                ],
-                                'ags' => [
-                                        'title' => 'Teilnahme an Arbeitsgemeinschaften',
-                                        'type' => 'textarea',
-                                        'lines' => 2,
-                                        'cols' => 90,
-                                        'maxchars' => 180,
-                                ],
-                                'comments_short' => [
-                                        'title' => 'Bemerkungen',
-                                        'type' => 'textarea',
-                                        'lines' => 2,
-                                        'cols' => 90,
-                                        'maxchars' => 180,
-                                ],
-                                'abgangszeugnis_niveau' => [
-                                        'title' => 'Leistungen in den einzelnen Fächern auf',
-                                        'type' => 'select',
-                                        'values' => [
-                                                'grundlegenden Niveau' => 'grundlegenden Niveau',
-                                                'mittleren Niveau' => 'mittleren Niveau',
-                                                'erweiteren Niveau' => 'erweiteren Niveau',
-                                            //'G' => 'G', 'M' => 'M', 'E' => 'E'
-                                        ],
-                                ],/*
+                        ],
+                    ],
+                    'ags' => [
+                        'title' => 'Teilnahme an Arbeitsgemeinschaften',
+                        'type' => 'textarea',
+                        'lines' => 2,
+                        'cols' => 90,
+                        'maxchars' => 180,
+                    ],
+                    'comments_short' => [
+                        'title' => 'Bemerkungen',
+                        'type' => 'textarea',
+                        'lines' => 2,
+                        'cols' => 90,
+                        'maxchars' => 180,
+                    ],
+                    'abgangszeugnis_niveau' => [
+                        'title' => 'Leistungen in den einzelnen Fächern auf',
+                        'type' => 'select',
+                        'values' => [
+                            'grundlegenden Niveau' => 'grundlegenden Niveau',
+                            'mittleren Niveau' => 'mittleren Niveau',
+                            'erweiteren Niveau' => 'erweiteren Niveau',
+                            //'G' => 'G', 'M' => 'M', 'E' => 'E'
+                        ],
+                    ],/*
                             'subject_profile' => [
                                     'title' => 'Profil-fach',
                                     'type' => 'textarea',
                             ],*/
-                        ],
-                        'inputs_header' => ['wann_verlassen'], // inputs in the header of template
-                        'inputs_footer' => ['ags', 'comments_short', 'abgangszeugnis_niveau'], // inputs in the footer of template
-                        'inputs_order' => ['wann_verlassen', 'ags', 'comments_short', 'abgangszeugnis_niveau'],
-                    // special ordering of inputs (makes similar to docx template)
                 ],
+                'inputs_header' => ['wann_verlassen'], // inputs in the header of template
+                'inputs_footer' => ['ags', 'comments_short', 'abgangszeugnis_niveau'], // inputs in the footer of template
+                'inputs_order' => ['wann_verlassen', 'ags', 'comments_short', 'abgangszeugnis_niveau'],
+                // special ordering of inputs (makes similar to docx template)
+            ],
             /*'BP 2004/GMS Abgangszeugnis HSA Kl.9 und 10' => [
                     'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_ABGANGSZEUGNIS_NICHT_BEST_HSA,
                     'name' => 'BP 2004 GMS Abgangszeugnis HSA Kl.9 und 10',
@@ -3486,39 +3499,39 @@ function block_exastud_get_default_templates($templateid = null, $common = true)
             'inputs_footer' => ['ags', 'comments_short'], // inputs in the footer of template
             'inputs_order' => ['wann_verlassen', 'projekt_thema', 'projekt_grade', 'ags', 'comments_short'], // special ordering of inputs (makes similar to docx template)
     ],*/
-                'BP 2004/GMS Hauptschulabschlusszeugnis 1. HJ' => [
-                        'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_HALBJAHR_ZEUGNIS_KL9_10_HSA,
-                        'name' => 'BP 2004 GMS Hauptschulabschlusszeugnis 1. HJ',
-                        'file' => 'BP 2004/BP2004_GMS_Halbjahr_Zeugnis_KL9_10_HSA',
-                        'category' => 'Halbjahr',
-                        'year' => '1',
-                        'report_date' => '1',
-                        'student_name' => '1',
-                        'date_of_birth' => '1',
-                        'place_of_birth' => '1',
-                        'learning_group' => '1',
-                        'rs_hs' => 'HS',
-                        'grades' => block_exastud_get_grades_set('short'),
-                        'inputs' => [
-                                'ags' => [
-                                        'title' => 'Teilnahme an Arbeitsgemeinschaften',
-                                        'type' => 'textarea',
-                                        'lines' => 3,
-                                        'cols' => 80,
-                                        'maxchars' => 240,
-                                ],
-                                'comments_short' => [
-                                        'title' => 'Bemerkungen',
-                                        'type' => 'textarea',
-                                        'lines' => 3,
-                                        'cols' => 80,
-                                        'maxchars' => 240,
-                                ],/*
+            'BP 2004/GMS Hauptschulabschlusszeugnis 1. HJ' => [
+                'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_HALBJAHR_ZEUGNIS_KL9_10_HSA,
+                'name' => 'BP 2004 GMS Hauptschulabschlusszeugnis 1. HJ',
+                'file' => 'BP 2004/BP2004_GMS_Halbjahr_Zeugnis_KL9_10_HSA',
+                'category' => 'Halbjahr',
+                'year' => '1',
+                'report_date' => '1',
+                'student_name' => '1',
+                'date_of_birth' => '1',
+                'place_of_birth' => '1',
+                'learning_group' => '1',
+                'rs_hs' => 'HS',
+                'grades' => block_exastud_get_grades_set('short'),
+                'inputs' => [
+                    'ags' => [
+                        'title' => 'Teilnahme an Arbeitsgemeinschaften',
+                        'type' => 'textarea',
+                        'lines' => 3,
+                        'cols' => 80,
+                        'maxchars' => 240,
+                    ],
+                    'comments_short' => [
+                        'title' => 'Bemerkungen',
+                        'type' => 'textarea',
+                        'lines' => 3,
+                        'cols' => 80,
+                        'maxchars' => 240,
+                    ],/*
                             'subject_profile' => [
                                     'title' => 'Profil-fach',
                                     'type' => 'textarea',
                             ],*/
-                            /*'class' => [
+                    /*'class' => [
                                     'title' => 'Klasse',
                                     'type' => 'select',
                                     'values' => [
@@ -3526,27 +3539,27 @@ function block_exastud_get_default_templates($templateid = null, $common = true)
                                             '10' => '10'
                                     ],
                             ],*/
-                        ],
-                        'inputs_header' => ['class'], // inputs in the header of template
-                        'inputs_footer' => ['ags', 'comments_short'], // inputs in the footer of template
-                        'inputs_order' => ['class', 'ags', 'comments_short'],
-                    // special ordering of inputs (makes similar to docx template)
                 ],
-                'BP 2004/GMS Hauptschulabschlusszeugnis Projektprüfung SJ' => [
-                        'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_ABSCHLUSSZEUGNIS_HS,
-                        'name' => 'BP 2004 GMS Hauptschulabschlusszeugnis Projektprüfung SJ',
-                        'file' => 'BP 2004/BP2004_GMS_Abschlusszeugnis_HS',
-                        'category' => 'Abschluss',
-                        'year' => '1',
-                        'report_date' => '1',
-                        'student_name' => '1',
-                        'date_of_birth' => '1',
-                        'place_of_birth' => '1',
-                        'learning_group' => '1',
-                        'rs_hs' => 'HS',
-                        'grades' => block_exastud_get_grades_set('lang'),
-                        'inputs' => [
-                            /*'abgelegt' => [
+                'inputs_header' => ['class'], // inputs in the header of template
+                'inputs_footer' => ['ags', 'comments_short'], // inputs in the footer of template
+                'inputs_order' => ['class', 'ags', 'comments_short'],
+                // special ordering of inputs (makes similar to docx template)
+            ],
+            'BP 2004/GMS Hauptschulabschlusszeugnis Projektprüfung SJ' => [
+                'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_ABSCHLUSSZEUGNIS_HS,
+                'name' => 'BP 2004 GMS Hauptschulabschlusszeugnis Projektprüfung SJ',
+                'file' => 'BP 2004/BP2004_GMS_Abschlusszeugnis_HS',
+                'category' => 'Abschluss',
+                'year' => '1',
+                'report_date' => '1',
+                'student_name' => '1',
+                'date_of_birth' => '1',
+                'place_of_birth' => '1',
+                'learning_group' => '1',
+                'rs_hs' => 'HS',
+                'grades' => block_exastud_get_grades_set('lang'),
+                'inputs' => [
+                    /*'abgelegt' => [
                                 'title' => 'Hat die Hauptschulabschlussprüfung nach ...',
                                 'type' => 'select',
                                 'values' => [
@@ -3554,240 +3567,240 @@ function block_exastud_get_default_templates($templateid = null, $common = true)
                                     'Hat die Hauptschulabschlussprüfung nach Klasse 10 der Gemeinschaftsschule mit Erfolg abgelegt.' => 'Hat die Hauptschulabschlussprüfung nach Klasse 10 der Gemeinschaftsschule mit Erfolg abgelegt.',
                                 ],
                             ],*/
-                                'projekt_thema' => [
-                                        'title' => 'Thema',
-                                        'type' => 'textarea',
-                                        'lines' => 2,
-                                        'cols' => 60,
-                                ],
-                                'projekt_grade' => [
-                                        'title' => 'Note',
-                                        'type' => 'select',
-                                        'values' => ['sehr gut' => 'sehr gut',
-                                                'gut' => 'gut',
-                                                'befriedigend' => 'befriedigend',
-                                                'ausreichend' => 'ausreichend',
-                                                'mangelhaft' => 'mangelhaft',
-                                                'ungenügend' => 'ungenügend'],
-                                ],
-                                'projekt_verbalbeurteilung' => [
-                                        'title' => 'Verbalbeurteilung',
-                                        'type' => 'textarea',
-                                ],
-                                'eng_niveau' => [
-                                        'title' => 'Fremdsprachenniveau - Englisch',
-                                        'type' => 'textarea',
-                                        'lines' => 1,
-                                        'cols' => 20,
-                                        'maxchars' => 20,
-                                ],
-                                'fra_niveau' => [
-                                        'title' => 'Fremdsprachenniveau - Französisch',
-                                        'type' => 'textarea',
-                                        'lines' => 1,
-                                        'cols' => 20,
-                                        'maxchars' => 20,
-                                ],
-                                'spa_niveau' => [
-                                        'title' => 'Fremdsprachenniveau - Spanisch',
-                                        'type' => 'textarea',
-                                        'lines' => 1,
-                                        'cols' => 20,
-                                        'maxchars' => 20,
-                                ],
-                            /*
+                    'projekt_thema' => [
+                        'title' => 'Thema',
+                        'type' => 'textarea',
+                        'lines' => 2,
+                        'cols' => 60,
+                    ],
+                    'projekt_grade' => [
+                        'title' => 'Note',
+                        'type' => 'select',
+                        'values' => ['sehr gut' => 'sehr gut',
+                            'gut' => 'gut',
+                            'befriedigend' => 'befriedigend',
+                            'ausreichend' => 'ausreichend',
+                            'mangelhaft' => 'mangelhaft',
+                            'ungenügend' => 'ungenügend'],
+                    ],
+                    'projekt_verbalbeurteilung' => [
+                        'title' => 'Verbalbeurteilung',
+                        'type' => 'textarea',
+                    ],
+                    'eng_niveau' => [
+                        'title' => 'Fremdsprachenniveau - Englisch',
+                        'type' => 'textarea',
+                        'lines' => 1,
+                        'cols' => 20,
+                        'maxchars' => 20,
+                    ],
+                    'fra_niveau' => [
+                        'title' => 'Fremdsprachenniveau - Französisch',
+                        'type' => 'textarea',
+                        'lines' => 1,
+                        'cols' => 20,
+                        'maxchars' => 20,
+                    ],
+                    'spa_niveau' => [
+                        'title' => 'Fremdsprachenniveau - Spanisch',
+                        'type' => 'textarea',
+                        'lines' => 1,
+                        'cols' => 20,
+                        'maxchars' => 20,
+                    ],
+                    /*
                             'gesamtnote_und_durchschnitt_der_gesamtleistungen' => [
                                     'title' => 'Gesamtnote und Durchschnitt der Gesamtleistungen',
                                     'type' => 'text',
                             ],*/
-                                'ags' => [
-                                        'title' => 'Teilnahme an Arbeitsgemeinschaften',
-                                        'lines' => 2,
-                                        'cols' => 90,
-                                ],
-                                'comments_short' => [
-                                        'title' => 'Bemerkungen',
-                                        'type' => 'textarea',
-                                        'lines' => 2,
-                                        'cols' => 90,
-                                ],/*
+                    'ags' => [
+                        'title' => 'Teilnahme an Arbeitsgemeinschaften',
+                        'lines' => 2,
+                        'cols' => 90,
+                    ],
+                    'comments_short' => [
+                        'title' => 'Bemerkungen',
+                        'type' => 'textarea',
+                        'lines' => 2,
+                        'cols' => 90,
+                    ],/*
                         'subject_profile' => [
                                 'title' => 'Profil-fach',
                                 'type' => 'textarea',
                         ],*/
-                                'exam_english' => [
-                                        'title' => 'Schriftliche Prüfungsfächer',
-                                        'type' => 'select',
-                                        'values' => [
-                                                '' => '',
-                                                ', Englisch' => ', Englisch',
-                                        ],
-                                ],
+                    'exam_english' => [
+                        'title' => 'Schriftliche Prüfungsfächer',
+                        'type' => 'select',
+                        'values' => [
+                            '' => '',
+                            ', Englisch' => ', Englisch',
                         ],
-                        'inputs_header' => ['exam_english'/*, 'abgelegt'*/], // inputs in the header of template
-                        'inputs_footer' => ['eng_niveau', 'fra_niveau', 'spa_niveau', 'ags', 'comments_short'],
-                    // inputs in the footer of template
-                        'inputs_order' => ['exam_english', /*'abgelegt', */
-                                'eng_niveau', 'fra_niveau', 'spa_niveau', 'projekt_thema', 'projekt_grade', 'ags',
-                                'comments_short'], // special ordering of inputs (makes similar to docx template)
+                    ],
                 ],
-                'BP 2004/GMS Realschulabschlusszeugnis 1. HJ' => [
-                        'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_HALBJAHR_ZEUGNIS_RS,
-                        'name' => 'BP 2004 GMS Realschulabschlusszeugnis 1. HJ',
-                        'file' => 'BP 2004/BP2004_GMS_Halbjahr_Zeugnis_RS',
-                        'category' => 'Halbjahr',
-                        'year' => '1',
-                        'report_date' => '1',
-                        'student_name' => '1',
-                        'date_of_birth' => '1',
-                        'place_of_birth' => '1',
-                        'learning_group' => '1',
-                        'rs_hs' => 'RS',
-                        'grades' => block_exastud_get_grades_set('short'),
-                        'inputs' => [
-                                'ags' => [
-                                        'title' => 'Teilnahme an Arbeitsgemeinschaften',
-                                        'type' => 'textarea',
-                                        'lines' => 2,
-                                        'cols' => 80,
-                                        'maxchars' => 160,
-                                ],
-                                'comments_short' => [
-                                        'title' => 'Bemerkungen',
-                                        'type' => 'textarea',
-                                        'lines' => 3,
-                                        'cols' => 80,
-                                        'maxchars' => 240,
-                                ],/*
+                'inputs_header' => ['exam_english'/*, 'abgelegt'*/], // inputs in the header of template
+                'inputs_footer' => ['eng_niveau', 'fra_niveau', 'spa_niveau', 'ags', 'comments_short'],
+                // inputs in the footer of template
+                'inputs_order' => ['exam_english', /*'abgelegt', */
+                    'eng_niveau', 'fra_niveau', 'spa_niveau', 'projekt_thema', 'projekt_grade', 'ags',
+                    'comments_short'], // special ordering of inputs (makes similar to docx template)
+            ],
+            'BP 2004/GMS Realschulabschlusszeugnis 1. HJ' => [
+                'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_HALBJAHR_ZEUGNIS_RS,
+                'name' => 'BP 2004 GMS Realschulabschlusszeugnis 1. HJ',
+                'file' => 'BP 2004/BP2004_GMS_Halbjahr_Zeugnis_RS',
+                'category' => 'Halbjahr',
+                'year' => '1',
+                'report_date' => '1',
+                'student_name' => '1',
+                'date_of_birth' => '1',
+                'place_of_birth' => '1',
+                'learning_group' => '1',
+                'rs_hs' => 'RS',
+                'grades' => block_exastud_get_grades_set('short'),
+                'inputs' => [
+                    'ags' => [
+                        'title' => 'Teilnahme an Arbeitsgemeinschaften',
+                        'type' => 'textarea',
+                        'lines' => 2,
+                        'cols' => 80,
+                        'maxchars' => 160,
+                    ],
+                    'comments_short' => [
+                        'title' => 'Bemerkungen',
+                        'type' => 'textarea',
+                        'lines' => 3,
+                        'cols' => 80,
+                        'maxchars' => 240,
+                    ],/*
                             'subject_profile' => [
                                     'title' => 'Profil-fach',
                                     'type' => 'textarea',
                             ],*/
-                        ],
-                        'inputs_footer' => ['ags', 'comments_short'], // inputs in the footer of template
-                        'inputs_order' => ['ags', 'comments_short'], // special ordering of inputs (makes similar to docx template)
                 ],
-                'BP 2004/GMS Realschulabschlusszeugnis SJ' => [
-                        'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_ABSCHLUSSZEUGNIS_RS,
-                        'name' => 'BP 2004 GMS Realschulabschlusszeugnis SJ',
-                        'file' => 'BP 2004/BP2004_GMS_Abschlusszeugnis_RS',
-                        'category' => 'Abschluss',
-                        'year' => '1',
-                        'report_date' => '1',
-                        'student_name' => '1',
-                        'date_of_birth' => '1',
-                        'place_of_birth' => '1',
-                        'learning_group' => '1',
-                        'rs_hs' => 'RS',
-                        'grades' => block_exastud_get_grades_set('lang'),
-                        'inputs' => [
-                                'projekt_thema' => [
-                                        'title' => 'Thema',
-                                        'type' => 'textarea',
-                                        'lines' => 2,
-                                        'cols' => 70,
-                                        'maxchars' => 140,
-                                ],
-                                'projekt_grade' => [
-                                        'title' => 'Note',
-                                        'type' => 'select',
-                                        'values' => [
-                                                'sehr gut' => 'sehr gut',
-                                                'gut' => 'gut',
-                                                'befriedigend' => 'befriedigend',
-                                                'ausreichend' => 'ausreichend',
-                                                'mangelhaft' => 'mangelhaft',
-                                                'ungenügend' => 'ungenügend'
-                                        ],
-                                ],
-                                'projekt_verbalbeurteilung' => [
-                                        'title' => 'Verbalbeurteilung',
-                                        'type' => 'textarea',
-                                ],
-                                'eng_niveau' => [
-                                        'title' => 'Fremdsprachenniveau - Englisch',
-                                        'type' => 'textarea',
-                                        'lines' => 1,
-                                        'cols' => 20,
-                                        'maxchars' => 20,
-                                ],
-                                'fra_niveau' => [
-                                        'title' => 'Fremdsprachenniveau - Französisch',
-                                        'type' => 'textarea',
-                                        'lines' => 1,
-                                        'cols' => 20,
-                                        'maxchars' => 20,
-                                ],
-                                'spa_niveau' => [
-                                        'title' => 'Fremdsprachenniveau - Spanisch',
-                                        'type' => 'textarea',
-                                        'lines' => 1,
-                                        'cols' => 20,
-                                        'maxchars' => 20,
-                                ],
-                                'ags' => [
-                                        'title' => 'Teilnahme an Arbeitsgemeinschaften',
-                                        'type' => 'textarea',
-                                        'lines' => 2,
-                                        'cols' => 90,
-                                        'maxchars' => 180,
-                                ],
-                                'comments_short' => [
-                                        'title' => 'Bemerkungen',
-                                        'type' => 'textarea',
-                                        'lines' => 3,
-                                        'cols' => 90,
-                                        'maxchars' => 180,
-                                ],/*
+                'inputs_footer' => ['ags', 'comments_short'], // inputs in the footer of template
+                'inputs_order' => ['ags', 'comments_short'], // special ordering of inputs (makes similar to docx template)
+            ],
+            'BP 2004/GMS Realschulabschlusszeugnis SJ' => [
+                'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_ABSCHLUSSZEUGNIS_RS,
+                'name' => 'BP 2004 GMS Realschulabschlusszeugnis SJ',
+                'file' => 'BP 2004/BP2004_GMS_Abschlusszeugnis_RS',
+                'category' => 'Abschluss',
+                'year' => '1',
+                'report_date' => '1',
+                'student_name' => '1',
+                'date_of_birth' => '1',
+                'place_of_birth' => '1',
+                'learning_group' => '1',
+                'rs_hs' => 'RS',
+                'grades' => block_exastud_get_grades_set('lang'),
+                'inputs' => [
+                    'projekt_thema' => [
+                        'title' => 'Thema',
+                        'type' => 'textarea',
+                        'lines' => 2,
+                        'cols' => 70,
+                        'maxchars' => 140,
+                    ],
+                    'projekt_grade' => [
+                        'title' => 'Note',
+                        'type' => 'select',
+                        'values' => [
+                            'sehr gut' => 'sehr gut',
+                            'gut' => 'gut',
+                            'befriedigend' => 'befriedigend',
+                            'ausreichend' => 'ausreichend',
+                            'mangelhaft' => 'mangelhaft',
+                            'ungenügend' => 'ungenügend',
+                        ],
+                    ],
+                    'projekt_verbalbeurteilung' => [
+                        'title' => 'Verbalbeurteilung',
+                        'type' => 'textarea',
+                    ],
+                    'eng_niveau' => [
+                        'title' => 'Fremdsprachenniveau - Englisch',
+                        'type' => 'textarea',
+                        'lines' => 1,
+                        'cols' => 20,
+                        'maxchars' => 20,
+                    ],
+                    'fra_niveau' => [
+                        'title' => 'Fremdsprachenniveau - Französisch',
+                        'type' => 'textarea',
+                        'lines' => 1,
+                        'cols' => 20,
+                        'maxchars' => 20,
+                    ],
+                    'spa_niveau' => [
+                        'title' => 'Fremdsprachenniveau - Spanisch',
+                        'type' => 'textarea',
+                        'lines' => 1,
+                        'cols' => 20,
+                        'maxchars' => 20,
+                    ],
+                    'ags' => [
+                        'title' => 'Teilnahme an Arbeitsgemeinschaften',
+                        'type' => 'textarea',
+                        'lines' => 2,
+                        'cols' => 90,
+                        'maxchars' => 180,
+                    ],
+                    'comments_short' => [
+                        'title' => 'Bemerkungen',
+                        'type' => 'textarea',
+                        'lines' => 3,
+                        'cols' => 90,
+                        'maxchars' => 180,
+                    ],/*
                         'subject_profile' => [
                                 'title' => 'Profil-fach',
                                 'type' => 'textarea',
                         ],*/
-                        ],
-                        'inputs_footer' => ['projekt_thema', 'projekt_grade', 'eng_niveau', 'fra_niveau', 'spa_niveau', 'ags',
-                                'comments_short'], // inputs in the footer of template
-                        'inputs_order' => ['ags', 'comments_short'], // special ordering of inputs (makes similar to docx template)
                 ],
-                'BP 2004/GMS Abschlusszeugnis Förderschwerpunkt SJ' => [
-                        'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_ABSCHLUSSZEUGNIS_FOE,
-                        'name' => 'BP 2004 GMS Abschlusszeugnis Förderschwerpunkt SJ G/L',
-                        'file' => 'BP 2004/BP2004_GMS_Abschlusszeugnis_Foe',
-                        'category' => 'Abschluss',
-                        'year' => '1',
-                        'report_date' => '1',
-                        'student_name' => '1',
-                        'date_of_birth' => '1',
-                        'place_of_birth' => '1',
-                        'learning_group' => '1',
-                        'grades' => block_exastud_get_grades_set('lang'),
-                        'inputs' => [
-                                'focus' => [
-                                        'title' => 'Förderschwerpunkt',
-                                        'type' => 'select',
-                                        'values' => [
-                                                'Lernen' => 'Lernen',
-                                                'geistige Entwicklung' => 'geistige Entwicklung'
-                                        ],
-                                ],/*
+                'inputs_footer' => ['projekt_thema', 'projekt_grade', 'eng_niveau', 'fra_niveau', 'spa_niveau', 'ags',
+                    'comments_short'], // inputs in the footer of template
+                'inputs_order' => ['ags', 'comments_short'], // special ordering of inputs (makes similar to docx template)
+            ],
+            'BP 2004/GMS Abschlusszeugnis Förderschwerpunkt SJ' => [
+                'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_ABSCHLUSSZEUGNIS_FOE,
+                'name' => 'BP 2004 GMS Abschlusszeugnis Förderschwerpunkt SJ G/L',
+                'file' => 'BP 2004/BP2004_GMS_Abschlusszeugnis_Foe',
+                'category' => 'Abschluss',
+                'year' => '1',
+                'report_date' => '1',
+                'student_name' => '1',
+                'date_of_birth' => '1',
+                'place_of_birth' => '1',
+                'learning_group' => '1',
+                'grades' => block_exastud_get_grades_set('lang'),
+                'inputs' => [
+                    'focus' => [
+                        'title' => 'Förderschwerpunkt',
+                        'type' => 'select',
+                        'values' => [
+                            'Lernen' => 'Lernen',
+                            'geistige Entwicklung' => 'geistige Entwicklung',
+                        ],
+                    ],/*
                             'gesamtnote_und_durchschnitt_der_gesamtleistungen' => [
                                     'title' => 'Gesamtnote und Durchschnitt der Gesamtleistungen',
                                     'type' => 'text',
                             ],*/
-                                'ags' => [
-                                        'title' => 'Teilnahme an Arbeitsgemeinschaften',
-                                        'type' => 'textarea',
-                                        'lines' => 3,
-                                        'cols' => 80,
-                                        'maxchars' => 240,
-                                ],
-                                'comments_short' => [
-                                        'title' => 'Bemerkungen',
-                                        'type' => 'textarea',
-                                        'lines' => 5,
-                                        'cols' => 80,
-                                        'maxchars' => 400,
-                                ],
-                            /*'projekt_thema' => [
+                    'ags' => [
+                        'title' => 'Teilnahme an Arbeitsgemeinschaften',
+                        'type' => 'textarea',
+                        'lines' => 3,
+                        'cols' => 80,
+                        'maxchars' => 240,
+                    ],
+                    'comments_short' => [
+                        'title' => 'Bemerkungen',
+                        'type' => 'textarea',
+                        'lines' => 5,
+                        'cols' => 80,
+                        'maxchars' => 400,
+                    ],
+                    /*'projekt_thema' => [
                                     'title' => 'Thema',
                                     'type' => 'textarea',
                                     'lines' => 2,
@@ -3807,147 +3820,147 @@ function block_exastud_get_default_templates($templateid = null, $common = true)
                                     'title' => 'Verbalbeurteilung',
                                     'type' => 'textarea',
                             ],*/
-                            /*'subject_profile' => [
+                    /*'subject_profile' => [
                                     'title' => 'Profil-fach',
                                     'type' => 'textarea',
                             ],*/
-                                'class' => [
-                                        'title' => 'Abschlusszeugnis Klasse',
-                                        'type' => 'select',
-                                        'values' => ['9' => '9', '10' => '10'],
-                                ],
-                        ],
-                        'inputs_header' => ['class'],
-                        'inputs_footer' => ['ags', 'focus', 'comments_short'], // inputs in the footer of template
-                        'inputs_order' => ['class', 'ags', 'focus', 'comments_short'],
-                    // special ordering of inputs (makes similar to docx template)
+                    'class' => [
+                        'title' => 'Abschlusszeugnis Klasse',
+                        'type' => 'select',
+                        'values' => ['9' => '9', '10' => '10'],
+                    ],
                 ],
-                'BP 2004/GMS Abschlusszeugnis Förderschwerpunkt 1. HJ' => [
-                        'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_HALBJAHR_ZEUGNIS_FOE,
-                        'name' => 'BP 2004 GMS Abschlusszeugnis Förderschwerpunkt G/L 1. HJ',
-                        'file' => 'BP 2004/BP2004_GMS_Halbjahr_Zeugnis_Foe',
-                        'category' => 'Halbjahr',
-                        'year' => '1',
-                        'report_date' => '1',
-                        'student_name' => '1',
-                        'date_of_birth' => '1',
-                        'place_of_birth' => '1',
-                        'learning_group' => '1',
-                        'grades' => block_exastud_get_grades_set('short'),
-                        'inputs' => [
-                                'focus' => [
-                                        'title' => 'Förderschwerpunkt',
-                                        'type' => 'select',
-                                        'values' => [
-                                                'Lernen' => 'Lernen',
-                                                'geistige Entwicklung' => 'geistige Entwicklung',
-                                        ],
-                                ],
-                                'ags' => [
-                                        'title' => 'Teilnahme an Arbeitsgemeinschaften',
-                                        'type' => 'textarea',
-                                        'lines' => 3,
-                                        'cols' => 80,
-                                        'maxchars' => 240,
-                                ],
-                                'comments_short' => [
-                                        'title' => 'Bemerkungen',
-                                        'type' => 'textarea',
-                                        'lines' => 5,
-                                        'cols' => 80,
-                                        'maxchars' => 400,
-                                ],/*
+                'inputs_header' => ['class'],
+                'inputs_footer' => ['ags', 'focus', 'comments_short'], // inputs in the footer of template
+                'inputs_order' => ['class', 'ags', 'focus', 'comments_short'],
+                // special ordering of inputs (makes similar to docx template)
+            ],
+            'BP 2004/GMS Abschlusszeugnis Förderschwerpunkt 1. HJ' => [
+                'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_HALBJAHR_ZEUGNIS_FOE,
+                'name' => 'BP 2004 GMS Abschlusszeugnis Förderschwerpunkt G/L 1. HJ',
+                'file' => 'BP 2004/BP2004_GMS_Halbjahr_Zeugnis_Foe',
+                'category' => 'Halbjahr',
+                'year' => '1',
+                'report_date' => '1',
+                'student_name' => '1',
+                'date_of_birth' => '1',
+                'place_of_birth' => '1',
+                'learning_group' => '1',
+                'grades' => block_exastud_get_grades_set('short'),
+                'inputs' => [
+                    'focus' => [
+                        'title' => 'Förderschwerpunkt',
+                        'type' => 'select',
+                        'values' => [
+                            'Lernen' => 'Lernen',
+                            'geistige Entwicklung' => 'geistige Entwicklung',
+                        ],
+                    ],
+                    'ags' => [
+                        'title' => 'Teilnahme an Arbeitsgemeinschaften',
+                        'type' => 'textarea',
+                        'lines' => 3,
+                        'cols' => 80,
+                        'maxchars' => 240,
+                    ],
+                    'comments_short' => [
+                        'title' => 'Bemerkungen',
+                        'type' => 'textarea',
+                        'lines' => 5,
+                        'cols' => 80,
+                        'maxchars' => 400,
+                    ],/*
                             'subject_profile' => [
                                     'title' => 'Profil-fach',
                                     'type' => 'textarea',
                             ],*/
-                            /*'class' => [
+                    /*'class' => [
                                     'title' => 'Klasse',
                                     'type' => 'select',
                                     'values' => ['9' => '9', '10' => '10'],
                             ],*/
-                        ],
-                        'inputs_header' => ['class'],
-                        'inputs_footer' => ['ags', 'focus', 'comments_short'], // inputs in the footer of template
-                        'inputs_order' => ['ags', 'focus', 'comments_short'],
-                    // special ordering of inputs (makes similar to docx template)
                 ],
-                'Deckblatt und 1. Innenseite LEB' => [
-                        'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_GMS_LERNENTWICKLUNGSBERICHT_DECKBLATT_UND_1_INNENSEITE,
-                        'name' => 'Deckblatt und 1. Innenseite LEB',
-                        'file' => 'GMS_Lernentwicklungsbericht_Deckblatt_und_1_Innenseite',
-                        'category' => 'Anlage',
-                        'year' => '1',
-                        'report_date' => '1',
-                        'student_name' => '1',
-                        'date_of_birth' => '1',
-                        'place_of_birth' => '1',
-                        'learning_group' => '1',
-                        'inputs' => [],
-                ],
-                'BP 2016/GMS Zeugnis Klasse 11 1. HJ' => [
-                        'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_HALBJAHRESINFORMATION_KL11,
-                        'name' => 'BP 2016 GMS Zeugnis Klasse 11 1. HJ',
-                        'file' => 'BP 2016/BP2016_GMS_Halbjahresinformation_Kl11',
-                        'category' => 'Halbjahr',
-                        'year' => '1',
-                        'report_date' => '1',
-                        'student_name' => '1',
-                        'date_of_birth' => '1',
-                        'place_of_birth' => '1',
-                        'learning_group' => '1',
-                        'grades' => block_exastud_get_grades_set('mit_plus_minus_bis_ausgeschrieben'),
-                        'inputs' => [
-                                'ags' => [
-                                        'title' => 'Teilnahme an Arbeitsgemeinschaften',
-                                        'type' => 'textarea',
-                                        'lines' => 4,
-                                        'cols' => 90,
-                                        'maxchars' => 360,
-                                ],
-                                'comments_short' => [
-                                        'title' => 'Bemerkungen',
-                                        'type' => 'textarea',
-                                        'lines' => 4,
-                                        'cols' => 90,
-                                        'maxchars' => 360,
-                                ],/*
+                'inputs_header' => ['class'],
+                'inputs_footer' => ['ags', 'focus', 'comments_short'], // inputs in the footer of template
+                'inputs_order' => ['ags', 'focus', 'comments_short'],
+                // special ordering of inputs (makes similar to docx template)
+            ],
+            'Deckblatt und 1. Innenseite LEB' => [
+                'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_GMS_LERNENTWICKLUNGSBERICHT_DECKBLATT_UND_1_INNENSEITE,
+                'name' => 'Deckblatt und 1. Innenseite LEB',
+                'file' => 'GMS_Lernentwicklungsbericht_Deckblatt_und_1_Innenseite',
+                'category' => 'Anlage',
+                'year' => '1',
+                'report_date' => '1',
+                'student_name' => '1',
+                'date_of_birth' => '1',
+                'place_of_birth' => '1',
+                'learning_group' => '1',
+                'inputs' => [],
+            ],
+            'BP 2016/GMS Zeugnis Klasse 11 1. HJ' => [
+                'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_HALBJAHRESINFORMATION_KL11,
+                'name' => 'BP 2016 GMS Zeugnis Klasse 11 1. HJ',
+                'file' => 'BP 2016/BP2016_GMS_Halbjahresinformation_Kl11',
+                'category' => 'Halbjahr',
+                'year' => '1',
+                'report_date' => '1',
+                'student_name' => '1',
+                'date_of_birth' => '1',
+                'place_of_birth' => '1',
+                'learning_group' => '1',
+                'grades' => block_exastud_get_grades_set('mit_plus_minus_bis_ausgeschrieben'),
+                'inputs' => [
+                    'ags' => [
+                        'title' => 'Teilnahme an Arbeitsgemeinschaften',
+                        'type' => 'textarea',
+                        'lines' => 4,
+                        'cols' => 90,
+                        'maxchars' => 360,
+                    ],
+                    'comments_short' => [
+                        'title' => 'Bemerkungen',
+                        'type' => 'textarea',
+                        'lines' => 4,
+                        'cols' => 90,
+                        'maxchars' => 360,
+                    ],/*
                             'subject_profile' => [
                                     'title' => 'Profil-fach',
                                     'type' => 'textarea',
                             ],*/
-                        ],
-                        'inputs_footer' => ['ags', 'focus', 'comments_short'], // inputs in the footer of template
-                        'inputs_order' => ['ags', 'focus', 'comments_short'],
-                    // special ordering of inputs (makes similar to docx template)
                 ],
-                'BP 2004/GMS gleichwertiger Bildungsabschluss HSA' => [
-                        'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_GLEICHWERTIGER_BILDUNGSABSCHLUSS_HSA,
-                        'name' => 'BP 2004 GMS gleichwertiger Bildungsabschluss HSA',
-                        'file' => 'BP 2004/BP2004_GMS_gleichwertiger_Bildungsabschluss_HSA',
-                        'category' => 'Abschluss',
-                        'year' => '1',
-                        'report_date' => '1',
-                        'student_name' => '1',
-                        'date_of_birth' => '1',
-                        'place_of_birth' => '1',
-                        'learning_group' => '1',
-                        'grades' => block_exastud_get_grades_set('lang'),
-                        'inputs' => [
-                                'ags' => [
-                                        'title' => 'Teilnahme an Arbeitsgemeinschaften',
-                                        'type' => 'textarea',
-                                        'lines' => 1,
-                                        'cols' => 90,
-                                        'maxchars' => 90,
-                                ],
-                                'comments_short' => [
-                                        'title' => 'Bemerkungen',
-                                        'type' => 'textarea',
-                                        'lines' => 1,
-                                        'cols' => 90,
-                                        'maxchars' => 90,
-                                ],/*
+                'inputs_footer' => ['ags', 'focus', 'comments_short'], // inputs in the footer of template
+                'inputs_order' => ['ags', 'focus', 'comments_short'],
+                // special ordering of inputs (makes similar to docx template)
+            ],
+            'BP 2004/GMS gleichwertiger Bildungsabschluss HSA' => [
+                'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_GLEICHWERTIGER_BILDUNGSABSCHLUSS_HSA,
+                'name' => 'BP 2004 GMS gleichwertiger Bildungsabschluss HSA',
+                'file' => 'BP 2004/BP2004_GMS_gleichwertiger_Bildungsabschluss_HSA',
+                'category' => 'Abschluss',
+                'year' => '1',
+                'report_date' => '1',
+                'student_name' => '1',
+                'date_of_birth' => '1',
+                'place_of_birth' => '1',
+                'learning_group' => '1',
+                'grades' => block_exastud_get_grades_set('lang'),
+                'inputs' => [
+                    'ags' => [
+                        'title' => 'Teilnahme an Arbeitsgemeinschaften',
+                        'type' => 'textarea',
+                        'lines' => 1,
+                        'cols' => 90,
+                        'maxchars' => 90,
+                    ],
+                    'comments_short' => [
+                        'title' => 'Bemerkungen',
+                        'type' => 'textarea',
+                        'lines' => 1,
+                        'cols' => 90,
+                        'maxchars' => 90,
+                    ],/*
                             'cert_level' => [
                                     'title' => 'HSA/RSA',
                                     'type' => 'select',
@@ -3972,111 +3985,111 @@ function block_exastud_get_default_templates($templateid = null, $common = true)
                                             'Damit wurde ein den Realschulabschluss gleichwertiger Bildungsstand erreicht.' => 'Damit wurde ein den Realschulabschluss gleichwertiger Bildungsstand erreicht.',
                                     ],
                             ],*/
-                                'abgangszeugnis_niveau' => [
-                                        'title' => 'Leistungen in den einzelnen Fächern auf',
-                                        'type' => 'select',
-                                        'values' => [
-                                                'mittleren Niveau' => 'mittleren Niveau',
-                                                'erweiteren Niveau' => 'erweiteren Niveau',
-                                        ],
-                                ],
-                            /*
+                    'abgangszeugnis_niveau' => [
+                        'title' => 'Leistungen in den einzelnen Fächern auf',
+                        'type' => 'select',
+                        'values' => [
+                            'mittleren Niveau' => 'mittleren Niveau',
+                            'erweiteren Niveau' => 'erweiteren Niveau',
+                        ],
+                    ],
+                    /*
                             'subject_profile' => [
                                     'title' => 'Profil-fach',
                                     'type' => 'textarea',
                             ],*/
-                                'eng_niveau' => [
-                                        'title' => 'Fremdsprachenniveau - Englisch',
-                                        'type' => 'textarea',
-                                        'lines' => 1,
-                                        'cols' => 20,
-                                        'maxchars' => 20,
-                                ],
-                                'fra_niveau' => [
-                                        'title' => 'Fremdsprachenniveau - Französisch',
-                                        'type' => 'textarea',
-                                        'lines' => 1,
-                                        'cols' => 20,
-                                        'maxchars' => 20,
-                                ],
-                                'spa_niveau' => [
-                                        'title' => 'Fremdsprachenniveau - Spanisch',
-                                        'type' => 'textarea',
-                                        'lines' => 1,
-                                        'cols' => 20,
-                                        'maxchars' => 20,
-                                ],
-                        ],
-                        'inputs_header' => ['cert_level', 'class_level', 'education_standard'],
-                        'inputs_footer' => ['eng_niveau', 'fra_niveau', 'spa_niveau', 'ags', 'comments_short'],
-                    // inputs in the footer of template
-                        'inputs_order' => ['cert_level', 'class_level', 'education_standard', 'ags', 'comments_short'],
-                    // special ordering of inputs (makes similar to docx template)
+                    'eng_niveau' => [
+                        'title' => 'Fremdsprachenniveau - Englisch',
+                        'type' => 'textarea',
+                        'lines' => 1,
+                        'cols' => 20,
+                        'maxchars' => 20,
+                    ],
+                    'fra_niveau' => [
+                        'title' => 'Fremdsprachenniveau - Französisch',
+                        'type' => 'textarea',
+                        'lines' => 1,
+                        'cols' => 20,
+                        'maxchars' => 20,
+                    ],
+                    'spa_niveau' => [
+                        'title' => 'Fremdsprachenniveau - Spanisch',
+                        'type' => 'textarea',
+                        'lines' => 1,
+                        'cols' => 20,
+                        'maxchars' => 20,
+                    ],
                 ],
-                'BP 2016/GMS Abgangszeugnis Schulpflicht' => [
-                        'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_ABGANGSZEUGNIS_SCHULPFLICHT,
-                        'name' => 'BP 2016 GMS Abgangszeugnis Schulpflicht',
-                        'file' => 'BP 2016/BP2016_GMS_Abgangszeugnis_Schulpflicht',
-                        'category' => 'Abgang',
-                        'year' => '1',
-                        'report_date' => '1',
-                        'student_name' => '1',
-                        'date_of_birth' => '1',
-                        'place_of_birth' => '1',
-                        'learning_group' => '1',
-                        'grades' => block_exastud_get_grades_set('lang'),
-                        'inputs' => [
-                                'wann_verlassen' => [
-                                        'title' => 'verlässt nach ...',
-                                        'type' => 'select',
-                                        'values' => [
-                                                '8' => '8',
-                                                '9' => '9',
-                                                '10' => '10',
-                                            //'heute8' => 'heute die Klasse 8 der Schule.',
-                                            //'heute9' => 'heute die Klasse 9 der Schule.',
-                                            //'heute10' => 'heute die Klasse 10 der Schule.',
-                                            //'during8' => 'während der Klasse 8 die Schule.',
-                                            //'during9' => 'während der Klasse 9 die Schule.',
-                                            //'during10' => 'während der Klasse 10 die Schule.',
-                                            //'ende8' => 'am Ende der Klasse 8 die Schule.',
-                                            //'ende10' => 'am Ende der Klasse 10 die Schule.',
-                                        ],
-                                ],
-                                'ags' => [
-                                        'title' => 'Teilnahme an Arbeitsgemeinschaften',
-                                        'type' => 'textarea',
-                                        'lines' => 2,
-                                        'cols' => 90,
-                                        'maxchars' => 180,
-                                ],
-                                'comments_short' => [
-                                        'title' => 'Bemerkungen',
-                                        'type' => 'textarea',
-                                        'lines' => 2,
-                                        'cols' => 90,
-                                        'maxchars' => 180,
-                                ],
-                                'abgangszeugnis_niveau' => [
-                                        'title' => 'Die Leistung wurde in allen Fächern auf dem folgenden Niveau beurteilt',
-                                        'type' => 'select',
-                                        'values' => [
-                                                'grundlegenden Niveau' => 'grundlegenden Niveau',
-                                                'mittleren Niveau' => 'mittleren Niveau',
-                                                'erweiteren Niveau' => 'erweiteren Niveau',
-                                            //'G' => 'G', 'M' => 'M', 'E' => 'E'
-                                        ],
-                                ],
-                            //'subject_profile' => [
-                            //        'title' => 'Profil-fach',
-                            //        'type' => 'textarea',
-                            //],
+                'inputs_header' => ['cert_level', 'class_level', 'education_standard'],
+                'inputs_footer' => ['eng_niveau', 'fra_niveau', 'spa_niveau', 'ags', 'comments_short'],
+                // inputs in the footer of template
+                'inputs_order' => ['cert_level', 'class_level', 'education_standard', 'ags', 'comments_short'],
+                // special ordering of inputs (makes similar to docx template)
+            ],
+            'BP 2016/GMS Abgangszeugnis Schulpflicht' => [
+                'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_ABGANGSZEUGNIS_SCHULPFLICHT,
+                'name' => 'BP 2016 GMS Abgangszeugnis Schulpflicht',
+                'file' => 'BP 2016/BP2016_GMS_Abgangszeugnis_Schulpflicht',
+                'category' => 'Abgang',
+                'year' => '1',
+                'report_date' => '1',
+                'student_name' => '1',
+                'date_of_birth' => '1',
+                'place_of_birth' => '1',
+                'learning_group' => '1',
+                'grades' => block_exastud_get_grades_set('lang'),
+                'inputs' => [
+                    'wann_verlassen' => [
+                        'title' => 'verlässt nach ...',
+                        'type' => 'select',
+                        'values' => [
+                            '8' => '8',
+                            '9' => '9',
+                            '10' => '10',
+                            //'heute8' => 'heute die Klasse 8 der Schule.',
+                            //'heute9' => 'heute die Klasse 9 der Schule.',
+                            //'heute10' => 'heute die Klasse 10 der Schule.',
+                            //'during8' => 'während der Klasse 8 die Schule.',
+                            //'during9' => 'während der Klasse 9 die Schule.',
+                            //'during10' => 'während der Klasse 10 die Schule.',
+                            //'ende8' => 'am Ende der Klasse 8 die Schule.',
+                            //'ende10' => 'am Ende der Klasse 10 die Schule.',
                         ],
-                        'inputs_header' => ['wann_verlassen'],
-                        'inputs_footer' => ['ags', 'comments_short', 'abgangszeugnis_niveau'], // inputs in the footer of template
-                        'inputs_order' => ['wann_verlassen', 'ags', 'comments_short', 'abgangszeugnis_niveau'],
-                    // special ordering of inputs (makes similar to docx template)
+                    ],
+                    'ags' => [
+                        'title' => 'Teilnahme an Arbeitsgemeinschaften',
+                        'type' => 'textarea',
+                        'lines' => 2,
+                        'cols' => 90,
+                        'maxchars' => 180,
+                    ],
+                    'comments_short' => [
+                        'title' => 'Bemerkungen',
+                        'type' => 'textarea',
+                        'lines' => 2,
+                        'cols' => 90,
+                        'maxchars' => 180,
+                    ],
+                    'abgangszeugnis_niveau' => [
+                        'title' => 'Die Leistung wurde in allen Fächern auf dem folgenden Niveau beurteilt',
+                        'type' => 'select',
+                        'values' => [
+                            'grundlegenden Niveau' => 'grundlegenden Niveau',
+                            'mittleren Niveau' => 'mittleren Niveau',
+                            'erweiteren Niveau' => 'erweiteren Niveau',
+                            //'G' => 'G', 'M' => 'M', 'E' => 'E'
+                        ],
+                    ],
+                    //'subject_profile' => [
+                    //        'title' => 'Profil-fach',
+                    //        'type' => 'textarea',
+                    //],
                 ],
+                'inputs_header' => ['wann_verlassen'],
+                'inputs_footer' => ['ags', 'comments_short', 'abgangszeugnis_niveau'], // inputs in the footer of template
+                'inputs_order' => ['wann_verlassen', 'ags', 'comments_short', 'abgangszeugnis_niveau'],
+                // special ordering of inputs (makes similar to docx template)
+            ],
             /*            'BP 2016/GMS Abgangszeugnis HSA Kl.9 und 10' => [
                                 'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_ABGANGSZEUGNIS_NICHT_BEST_HSA,
                                 'name' => 'BP 2016 GMS Abgangszeugnis HSA Kl.9 und 10',
@@ -4143,43 +4156,43 @@ function block_exastud_get_default_templates($templateid = null, $common = true)
                                 'inputs_footer' => ['ags', 'comments_short'], // inputs in the footer of template
                                 'inputs_order' => ['wann_verlassen', 'ags', 'comments_short'], // special ordering of inputs (makes similar to docx template)
                         ],*/
-                'BP 2016/GMS Abschlusszeugnis Förderschwerpunkt SJ' => [
-                        'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_ABSCHLUSSZEUGNIS_FOE,
-                        'name' => 'BP 2016 GMS Abschlusszeugnis Förderschwerpunkt G/L SJ',
-                        'file' => 'BP 2016/BP2016_GMS_Abschlusszeugnis_Foe',
-                        'category' => 'Abschluss',
-                        'year' => '1',
-                        'report_date' => '1',
-                        'student_name' => '1',
-                        'date_of_birth' => '1',
-                        'place_of_birth' => '1',
-                        'learning_group' => '1',
-                        'grades' => block_exastud_get_grades_set('lang'),
-                        'inputs' => [
-                                'focus' => [
-                                        'title' => 'Förderschwerpunkt',
-                                        'type' => 'select',
-                                        'values' => ['Lernen' => 'Lernen', 'geistige Entwicklung' => 'geistige Entwicklung'],
-                                ],/*
+            'BP 2016/GMS Abschlusszeugnis Förderschwerpunkt SJ' => [
+                'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_ABSCHLUSSZEUGNIS_FOE,
+                'name' => 'BP 2016 GMS Abschlusszeugnis Förderschwerpunkt G/L SJ',
+                'file' => 'BP 2016/BP2016_GMS_Abschlusszeugnis_Foe',
+                'category' => 'Abschluss',
+                'year' => '1',
+                'report_date' => '1',
+                'student_name' => '1',
+                'date_of_birth' => '1',
+                'place_of_birth' => '1',
+                'learning_group' => '1',
+                'grades' => block_exastud_get_grades_set('lang'),
+                'inputs' => [
+                    'focus' => [
+                        'title' => 'Förderschwerpunkt',
+                        'type' => 'select',
+                        'values' => ['Lernen' => 'Lernen', 'geistige Entwicklung' => 'geistige Entwicklung'],
+                    ],/*
                             'gesamtnote_und_durchschnitt_der_gesamtleistungen' => [
                                     'title' => 'Gesamtnote und Durchschnitt der Gesamtleistungen',
                                     'type' => 'text',
                             ],*/
-                                'ags' => [
-                                        'title' => 'Teilnahme an Arbeitsgemeinschaften',
-                                        'type' => 'textarea',
-                                        'lines' => 3,
-                                        'cols' => 80,
-                                        'maxchars' => 240,
-                                ],
-                                'comments_short' => [
-                                        'title' => 'Bemerkungen',
-                                        'type' => 'textarea',
-                                        'lines' => 3,
-                                        'cols' => 80,
-                                        'maxchars' => 240,
-                                ],
-                            /*'projekt_thema' => [
+                    'ags' => [
+                        'title' => 'Teilnahme an Arbeitsgemeinschaften',
+                        'type' => 'textarea',
+                        'lines' => 3,
+                        'cols' => 80,
+                        'maxchars' => 240,
+                    ],
+                    'comments_short' => [
+                        'title' => 'Bemerkungen',
+                        'type' => 'textarea',
+                        'lines' => 3,
+                        'cols' => 80,
+                        'maxchars' => 240,
+                    ],
+                    /*'projekt_thema' => [
                                     'title' => 'Thema',
                                     'type' => 'textarea',
                                     'lines' => 2,
@@ -4203,17 +4216,17 @@ function block_exastud_get_default_templates($templateid = null, $common = true)
                                     'title' => 'Profil-fach',
                                     'type' => 'textarea',
                             ],*/
-                                'class' => [
-                                        'title' => 'Klasse',
-                                        'type' => 'select',
-                                        'values' => ['9' => '9', '10' => '10'],
-                                ],
-                        ],
-                        'inputs_header' => ['class'],
-                        'inputs_footer' => ['ags', 'focus', 'comments_short'], // inputs in the footer of template
-                        'inputs_order' => ['class', 'ags', 'focus', 'comments_short'],
-                    // special ordering of inputs (makes similar to docx template)
+                    'class' => [
+                        'title' => 'Klasse',
+                        'type' => 'select',
+                        'values' => ['9' => '9', '10' => '10'],
+                    ],
                 ],
+                'inputs_header' => ['class'],
+                'inputs_footer' => ['ags', 'focus', 'comments_short'], // inputs in the footer of template
+                'inputs_order' => ['class', 'ags', 'focus', 'comments_short'],
+                // special ordering of inputs (makes similar to docx template)
+            ],
             /*'BP 2016/Beiblatt zur Projektprüfung HSA' => [
                     'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_BEIBLATT_PROJEKTARBEIT_HSA,
                     'name' => 'Beiblatt zur Projektprüfung HSA',
@@ -4271,113 +4284,113 @@ function block_exastud_get_default_templates($templateid = null, $common = true)
                     'inputs_order' => ['projekt_ingroup', 'annotation', 'leiter', 'chair'], // special ordering of inputs (makes similar to docx template)
                     'inputs_footer' => ['annotation', 'leiter', 'chair'],
             ],*/
-                'BP 2016/GMS Zeugnis Klasse 10 E-Niveau SJ' => [
-                        'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_JAHRESZEUGNIS_KL10_E_NIVEAU,
-                        'name' => 'BP 2016 GMS Zeugnis Klasse 10 E-Niveau SJ',
-                        'file' => 'BP 2016/BP2016_GMS_Jahreszeugnis_Kl10_E_Niveau',
-                        'category' => 'Jahr',
-                        'year' => '1',
-                        'report_date' => '1',
-                        'student_name' => '1',
-                        'date_of_birth' => '1',
-                        'place_of_birth' => '1',
-                        'learning_group' => '1',
-                        'grades' => block_exastud_get_grades_set('short'),
-                        'inputs' => [
-                                'verhalten' => [
-                                        'title' => 'Verhalten',
-                                        'type' => 'select',
-                                        'values' => ['sgt' => 'sgt', 'gut' => 'gut', 'bfr.' => 'bfr.', 'unbfr.' => 'unbfr.'],
-                                ],
-                                'mitarbeit' => [
-                                        'title' => 'Mitarbeit',
-                                        'type' => 'select',
-                                        'values' => ['sgt' => 'sgt', 'gut' => 'gut', 'bfr.' => 'bfr.', 'unbfr.' => 'unbfr.'],
-                                ],
-                                'ags' => [
-                                        'title' => 'Teilnahme an Arbeitsgemeinschaften',
-                                        'type' => 'textarea',
-                                        'lines' => 3,
-                                        'cols' => 90,
-                                        'maxchars' => 270,
-                                ],
-                                'comments_short' => [
-                                        'title' => 'Bemerkungen',
-                                        'type' => 'textarea',
-                                        'lines' => 3,
-                                        'cols' => 90,
-                                        'maxchars' => 270,
-                                ],/*
+            'BP 2016/GMS Zeugnis Klasse 10 E-Niveau SJ' => [
+                'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_JAHRESZEUGNIS_KL10_E_NIVEAU,
+                'name' => 'BP 2016 GMS Zeugnis Klasse 10 E-Niveau SJ',
+                'file' => 'BP 2016/BP2016_GMS_Jahreszeugnis_Kl10_E_Niveau',
+                'category' => 'Jahr',
+                'year' => '1',
+                'report_date' => '1',
+                'student_name' => '1',
+                'date_of_birth' => '1',
+                'place_of_birth' => '1',
+                'learning_group' => '1',
+                'grades' => block_exastud_get_grades_set('short'),
+                'inputs' => [
+                    'verhalten' => [
+                        'title' => 'Verhalten',
+                        'type' => 'select',
+                        'values' => ['sgt' => 'sgt', 'gut' => 'gut', 'bfr.' => 'bfr.', 'unbfr.' => 'unbfr.'],
+                    ],
+                    'mitarbeit' => [
+                        'title' => 'Mitarbeit',
+                        'type' => 'select',
+                        'values' => ['sgt' => 'sgt', 'gut' => 'gut', 'bfr.' => 'bfr.', 'unbfr.' => 'unbfr.'],
+                    ],
+                    'ags' => [
+                        'title' => 'Teilnahme an Arbeitsgemeinschaften',
+                        'type' => 'textarea',
+                        'lines' => 3,
+                        'cols' => 90,
+                        'maxchars' => 270,
+                    ],
+                    'comments_short' => [
+                        'title' => 'Bemerkungen',
+                        'type' => 'textarea',
+                        'lines' => 3,
+                        'cols' => 90,
+                        'maxchars' => 270,
+                    ],/*
                             'subject_profile' => [
                                     'title' => 'Profil-fach',
                                     'type' => 'textarea',
                             ],*/
-                                'student_transfered' => [
-                                        'title' => 'Versetzung',
-                                        'type' => 'select',
-                                        'values' => [
-                                                'Die Schülerin wird versetzt.' => 'Die Schülerin wird versetzt.',
-                                                'Die Schülerin wird nicht versetzt.' => 'Die Schülerin wird nicht versetzt.',
-                                                'Der Schüler wird versetzt.' => 'Der Schüler wird versetzt.',
-                                                'Der Schüler wird nicht versetzt.' => 'Der Schüler wird nicht versetzt.',
-                                        ],
-                                ],
-                                'eng_niveau' => [
-                                        'title' => 'Fremdsprachenniveau - Englisch',
-                                        'type' => 'textarea',
-                                        'lines' => 1,
-                                        'cols' => 20,
-                                        'maxchars' => 20,
-                                ],
-                                'fra_niveau' => [
-                                        'title' => 'Fremdsprachenniveau - Französisch',
-                                        'type' => 'textarea',
-                                        'lines' => 1,
-                                        'cols' => 20,
-                                        'maxchars' => 20,
-                                ],
-                                'spa_niveau' => [
-                                        'title' => 'Fremdsprachenniveau - Spanisch',
-                                        'type' => 'textarea',
-                                        'lines' => 1,
-                                        'cols' => 20,
-                                        'maxchars' => 20,
-                                ],
+                    'student_transfered' => [
+                        'title' => 'Versetzung',
+                        'type' => 'select',
+                        'values' => [
+                            'Die Schülerin wird versetzt.' => 'Die Schülerin wird versetzt.',
+                            'Die Schülerin wird nicht versetzt.' => 'Die Schülerin wird nicht versetzt.',
+                            'Der Schüler wird versetzt.' => 'Der Schüler wird versetzt.',
+                            'Der Schüler wird nicht versetzt.' => 'Der Schüler wird nicht versetzt.',
                         ],
-                        'inputs_header' => ['verhalten', 'mitarbeit'],
-                        'inputs_footer' => ['ags', 'focus', 'comments_short', 'student_transfered', 'eng_niveau', 'fra_niveau',
-                                'spa_niveau'], // inputs in the footer of template
-                        'inputs_order' => ['verhalten', 'mitarbeit', 'ags', 'comments_short', 'eng_niveau', 'fra_niveau',
-                                'spa_niveau', 'student_transfered'], // special ordering of inputs (makes similar to docx template)
+                    ],
+                    'eng_niveau' => [
+                        'title' => 'Fremdsprachenniveau - Englisch',
+                        'type' => 'textarea',
+                        'lines' => 1,
+                        'cols' => 20,
+                        'maxchars' => 20,
+                    ],
+                    'fra_niveau' => [
+                        'title' => 'Fremdsprachenniveau - Französisch',
+                        'type' => 'textarea',
+                        'lines' => 1,
+                        'cols' => 20,
+                        'maxchars' => 20,
+                    ],
+                    'spa_niveau' => [
+                        'title' => 'Fremdsprachenniveau - Spanisch',
+                        'type' => 'textarea',
+                        'lines' => 1,
+                        'cols' => 20,
+                        'maxchars' => 20,
+                    ],
                 ],
-                'BP 2016/GMS gleichwertiger Bildungsabschluss RSA' => [
-                        'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_GLEICHWERTIGER_BILDUNGSABSCHLUSS_RSA,
-                        'name' => 'BP 2016 GMS gleichwertiger Bildungsabschluss RSA',
-                        'file' => 'BP 2016/BP2016_GMS_gleichwertiger_Bildungsabschluss_RSA',
-                        'category' => 'Abschluss',
-                        'year' => '1',
-                        'report_date' => '1',
-                        'student_name' => '1',
-                        'date_of_birth' => '1',
-                        'place_of_birth' => '1',
-                        'learning_group' => '1',
-                        'grades' => block_exastud_get_grades_set('lang'),
-                        'inputs' => [
-                                'ags' => [
-                                        'title' => 'Teilnahme an Arbeitsgemeinschaften',
-                                        'type' => 'textarea',
-                                        'lines' => 1,
-                                        'cols' => 80,
-                                        'maxchars' => 80,
-                                ],
-                                'comments_short' => [
-                                        'title' => 'Bemerkungen',
-                                        'type' => 'textarea',
-                                        'lines' => 1,
-                                        'cols' => 90,
-                                        'maxchars' => 90,
-                                ],
-                            /*'cert_level' => [
+                'inputs_header' => ['verhalten', 'mitarbeit'],
+                'inputs_footer' => ['ags', 'focus', 'comments_short', 'student_transfered', 'eng_niveau', 'fra_niveau',
+                    'spa_niveau'], // inputs in the footer of template
+                'inputs_order' => ['verhalten', 'mitarbeit', 'ags', 'comments_short', 'eng_niveau', 'fra_niveau',
+                    'spa_niveau', 'student_transfered'], // special ordering of inputs (makes similar to docx template)
+            ],
+            'BP 2016/GMS gleichwertiger Bildungsabschluss RSA' => [
+                'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_GLEICHWERTIGER_BILDUNGSABSCHLUSS_RSA,
+                'name' => 'BP 2016 GMS gleichwertiger Bildungsabschluss RSA',
+                'file' => 'BP 2016/BP2016_GMS_gleichwertiger_Bildungsabschluss_RSA',
+                'category' => 'Abschluss',
+                'year' => '1',
+                'report_date' => '1',
+                'student_name' => '1',
+                'date_of_birth' => '1',
+                'place_of_birth' => '1',
+                'learning_group' => '1',
+                'grades' => block_exastud_get_grades_set('lang'),
+                'inputs' => [
+                    'ags' => [
+                        'title' => 'Teilnahme an Arbeitsgemeinschaften',
+                        'type' => 'textarea',
+                        'lines' => 1,
+                        'cols' => 80,
+                        'maxchars' => 80,
+                    ],
+                    'comments_short' => [
+                        'title' => 'Bemerkungen',
+                        'type' => 'textarea',
+                        'lines' => 1,
+                        'cols' => 90,
+                        'maxchars' => 90,
+                    ],
+                    /*'cert_level' => [
                                     'title' => 'HSA/RSA',
                                     'type' => 'select',
                                     'values' => [
@@ -4405,34 +4418,34 @@ function block_exastud_get_default_templates($templateid = null, $common = true)
                                     'title' => 'Profil-fach',
                                     'type' => 'textarea',
                             ],*/
-                                'eng_niveau' => [
-                                        'title' => 'Fremdsprachenniveau - Englisch',
-                                        'type' => 'textarea',
-                                        'lines' => 1,
-                                        'cols' => 20,
-                                        'maxchars' => 20,
-                                ],
-                                'fra_niveau' => [
-                                        'title' => 'Fremdsprachenniveau - Französisch',
-                                        'type' => 'textarea',
-                                        'lines' => 1,
-                                        'cols' => 20,
-                                        'maxchars' => 20,
-                                ],
-                                'spa_niveau' => [
-                                        'title' => 'Fremdsprachenniveau - Spanisch',
-                                        'type' => 'textarea',
-                                        'lines' => 1,
-                                        'cols' => 20,
-                                        'maxchars' => 20,
-                                ],
-                        ],
-                        'inputs_header' => ['cert_level', 'class_level', 'education_standard'],
-                        'inputs_footer' => ['eng_niveau', 'fra_niveau', 'spa_niveau', 'ags', 'comments_short'],
-                    // inputs in the footer of template
-                        'inputs_order' => ['cert_level', 'class_level', 'education_standard', 'ags', 'comments_short'],
-                    // special ordering of inputs (makes similar to docx template)
+                    'eng_niveau' => [
+                        'title' => 'Fremdsprachenniveau - Englisch',
+                        'type' => 'textarea',
+                        'lines' => 1,
+                        'cols' => 20,
+                        'maxchars' => 20,
+                    ],
+                    'fra_niveau' => [
+                        'title' => 'Fremdsprachenniveau - Französisch',
+                        'type' => 'textarea',
+                        'lines' => 1,
+                        'cols' => 20,
+                        'maxchars' => 20,
+                    ],
+                    'spa_niveau' => [
+                        'title' => 'Fremdsprachenniveau - Spanisch',
+                        'type' => 'textarea',
+                        'lines' => 1,
+                        'cols' => 20,
+                        'maxchars' => 20,
+                    ],
                 ],
+                'inputs_header' => ['cert_level', 'class_level', 'education_standard'],
+                'inputs_footer' => ['eng_niveau', 'fra_niveau', 'spa_niveau', 'ags', 'comments_short'],
+                // inputs in the footer of template
+                'inputs_order' => ['cert_level', 'class_level', 'education_standard', 'ags', 'comments_short'],
+                // special ordering of inputs (makes similar to docx template)
+            ],
             /*'BP 2016/GMS Hauptschulabschlusszeugnis Projektarbeit SJ' => [
                     'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_ABSCHLUSSZEUGNIS_KL9_10_HSA_2,
                     'name' => 'BP 2016 GMS Hauptschulabschlusszeugnis Projektprüfung SJ',
@@ -4519,643 +4532,643 @@ function block_exastud_get_default_templates($templateid = null, $common = true)
                     'inputs_footer' => ['ags', 'comments_short', 'eng_niveau', 'fra_niveau', 'spa_niveau'], // inputs in the footer of template
                     'inputs_order' => ['abgelegt', 'ags', 'comments_short'], // special ordering of inputs (makes similar to docx template)
             ],*/
-                'BP 2016/GMS Zeugnis Klasse 10 E-Niveau 1. HJ' => [
-                        'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_HALBJAHR_ZEUGNIS_KL10_E_NIVEAU,
-                        'name' => 'BP 2016 GMS Zeugnis Klasse 10 E-Niveau 1. HJ',
-                        'file' => 'BP 2016/BP2016_GMS_Halbjahr_Zeugnis_Kl10_E_Niveau',
-                        'category' => 'Halbjahr',
-                        'year' => '1',
-                        'report_date' => '1',
-                        'student_name' => '1',
-                        'date_of_birth' => '1',
-                        'place_of_birth' => '1',
-                        'learning_group' => '1',
-                        'grades' => block_exastud_get_grades_set('mit_plus_minus_bis_ausgeschrieben'),
-                        'inputs' => [
-                                'ags' => [
-                                        'title' => 'Teilnahme an Arbeitsgemeinschaften',
-                                        'type' => 'textarea',
-                                        'lines' => 3,
-                                        'cols' => 90,
-                                        'maxchars' => 270,
-                                ],
-                                'comments_short' => [
-                                        'title' => 'Bemerkungen',
-                                        'type' => 'textarea',
-                                        'lines' => 3,
-                                        'cols' => 90,
-                                        'maxchars' => 270,
-                                ],/*
+            'BP 2016/GMS Zeugnis Klasse 10 E-Niveau 1. HJ' => [
+                'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_HALBJAHR_ZEUGNIS_KL10_E_NIVEAU,
+                'name' => 'BP 2016 GMS Zeugnis Klasse 10 E-Niveau 1. HJ',
+                'file' => 'BP 2016/BP2016_GMS_Halbjahr_Zeugnis_Kl10_E_Niveau',
+                'category' => 'Halbjahr',
+                'year' => '1',
+                'report_date' => '1',
+                'student_name' => '1',
+                'date_of_birth' => '1',
+                'place_of_birth' => '1',
+                'learning_group' => '1',
+                'grades' => block_exastud_get_grades_set('mit_plus_minus_bis_ausgeschrieben'),
+                'inputs' => [
+                    'ags' => [
+                        'title' => 'Teilnahme an Arbeitsgemeinschaften',
+                        'type' => 'textarea',
+                        'lines' => 3,
+                        'cols' => 90,
+                        'maxchars' => 270,
+                    ],
+                    'comments_short' => [
+                        'title' => 'Bemerkungen',
+                        'type' => 'textarea',
+                        'lines' => 3,
+                        'cols' => 90,
+                        'maxchars' => 270,
+                    ],/*
                             'subject_profile' => [
                                     'title' => 'Profil-fach',
                                     'type' => 'textarea',
                             ],*/
-                        ],
-                        'inputs_footer' => ['ags', 'comments_short'], // inputs in the footer of template
-                        'inputs_order' => ['ags', 'comments_short'], // special ordering of inputs (makes similar to docx template)
                 ],
-                'BP 2016/GMS Hauptschulabschlusszeugnis 1. HJ' => [
-                        'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_HALBJAHR_ZEUGNIS_KL9_10_HSA,
-                        'name' => 'BP 2016 GMS Hauptschulabschlusszeugnis 1. HJ',
-                        'file' => 'BP 2016/BP2016_GMS_Halbjahr_Zeugnis_Kl9_10_HSA',
-                        'category' => 'Halbjahr',
-                        'year' => '1',
-                        'report_date' => '1',
-                        'student_name' => '1',
-                        'date_of_birth' => '1',
-                        'place_of_birth' => '1',
-                        'learning_group' => '1',
-                        'rs_hs' => 'HS',
-                        'grades' => block_exastud_get_grades_set('short'),
-                        'inputs' => [
-                                'ags' => [
-                                        'title' => 'Teilnahme an Arbeitsgemeinschaften',
-                                        'type' => 'textarea',
-                                        'lines' => 3,
-                                        'cols' => 90,
-                                        'maxchars' => 270,
-                                ],
-                                'comments_short' => [
-                                        'title' => 'Bemerkungen',
-                                        'type' => 'textarea',
-                                        'lines' => 3,
-                                        'cols' => 90,
-                                        'maxchars' => 270,
-                                ],/*
+                'inputs_footer' => ['ags', 'comments_short'], // inputs in the footer of template
+                'inputs_order' => ['ags', 'comments_short'], // special ordering of inputs (makes similar to docx template)
+            ],
+            'BP 2016/GMS Hauptschulabschlusszeugnis 1. HJ' => [
+                'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_HALBJAHR_ZEUGNIS_KL9_10_HSA,
+                'name' => 'BP 2016 GMS Hauptschulabschlusszeugnis 1. HJ',
+                'file' => 'BP 2016/BP2016_GMS_Halbjahr_Zeugnis_Kl9_10_HSA',
+                'category' => 'Halbjahr',
+                'year' => '1',
+                'report_date' => '1',
+                'student_name' => '1',
+                'date_of_birth' => '1',
+                'place_of_birth' => '1',
+                'learning_group' => '1',
+                'rs_hs' => 'HS',
+                'grades' => block_exastud_get_grades_set('short'),
+                'inputs' => [
+                    'ags' => [
+                        'title' => 'Teilnahme an Arbeitsgemeinschaften',
+                        'type' => 'textarea',
+                        'lines' => 3,
+                        'cols' => 90,
+                        'maxchars' => 270,
+                    ],
+                    'comments_short' => [
+                        'title' => 'Bemerkungen',
+                        'type' => 'textarea',
+                        'lines' => 3,
+                        'cols' => 90,
+                        'maxchars' => 270,
+                    ],/*
                             'subject_profile' => [
                                     'title' => 'Profil-fach',
                                     'type' => 'textarea',
                             ],*/
-                            /*'class' => [
+                    /*'class' => [
                                     'title' => 'Klasse',
                                     'type' => 'select',
                                     'values' => ['9' => '9', '10' => '10'],
                             ],*/
-                        ],
-                        'inputs_header' => ['class'],
-                        'inputs_footer' => ['ags', 'comments_short'], // inputs in the footer of template
-                        'inputs_order' => ['class', 'ags', 'comments_short'],
-                    // special ordering of inputs (makes similar to docx template)
                 ],
-                'BP 2016/GMS Abschlusszeugnis Förderschwerpunkt 1. HJ' => [
-                        'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_HALBJAHR_ZEUGNIS_FOE,
-                        'name' => 'BP 2016 GMS Abschlusszeugnis Förderschwerpunkt G/L 1. HJ',
-                        'file' => 'BP 2016/BP2016_GMS_Halbjahr_Zeugnis_Foe',
-                        'category' => 'Halbjahr',
-                        'year' => '1',
-                        'report_date' => '1',
-                        'student_name' => '1',
-                        'date_of_birth' => '1',
-                        'place_of_birth' => '1',
-                        'learning_group' => '1',
-                        'grades' => block_exastud_get_grades_set('short'),
-                        'inputs' => [
-                                'focus' => [
-                                        'title' => 'Förderschwerpunkt',
-                                        'type' => 'select',
-                                        'values' => ['Lernen' => 'Lernen', 'geistige Entwicklung' => 'geistige Entwicklung'],
-                                ],
-                                'ags' => [
-                                        'title' => 'Teilnahme an Arbeitsgemeinschaften',
-                                        'type' => 'textarea',
-                                        'lines' => 3,
-                                        'cols' => 80,
-                                        'maxchars' => 240,
-                                ],
-                                'comments_short' => [
-                                        'title' => 'Bemerkungen',
-                                        'type' => 'textarea',
-                                        'lines' => 3,
-                                        'cols' => 80,
-                                        'maxchars' => 240,
-                                ],/*
+                'inputs_header' => ['class'],
+                'inputs_footer' => ['ags', 'comments_short'], // inputs in the footer of template
+                'inputs_order' => ['class', 'ags', 'comments_short'],
+                // special ordering of inputs (makes similar to docx template)
+            ],
+            'BP 2016/GMS Abschlusszeugnis Förderschwerpunkt 1. HJ' => [
+                'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_HALBJAHR_ZEUGNIS_FOE,
+                'name' => 'BP 2016 GMS Abschlusszeugnis Förderschwerpunkt G/L 1. HJ',
+                'file' => 'BP 2016/BP2016_GMS_Halbjahr_Zeugnis_Foe',
+                'category' => 'Halbjahr',
+                'year' => '1',
+                'report_date' => '1',
+                'student_name' => '1',
+                'date_of_birth' => '1',
+                'place_of_birth' => '1',
+                'learning_group' => '1',
+                'grades' => block_exastud_get_grades_set('short'),
+                'inputs' => [
+                    'focus' => [
+                        'title' => 'Förderschwerpunkt',
+                        'type' => 'select',
+                        'values' => ['Lernen' => 'Lernen', 'geistige Entwicklung' => 'geistige Entwicklung'],
+                    ],
+                    'ags' => [
+                        'title' => 'Teilnahme an Arbeitsgemeinschaften',
+                        'type' => 'textarea',
+                        'lines' => 3,
+                        'cols' => 80,
+                        'maxchars' => 240,
+                    ],
+                    'comments_short' => [
+                        'title' => 'Bemerkungen',
+                        'type' => 'textarea',
+                        'lines' => 3,
+                        'cols' => 80,
+                        'maxchars' => 240,
+                    ],/*
                             'subject_profile' => [
                                     'title' => 'Profil-fach',
                                     'type' => 'textarea',
                             ],*/
-                            /*'class' => [
+                    /*'class' => [
                                     'title' => 'Klasse',
                                     'type' => 'select',
                                     'values' => ['9' => '9', '10' => '10'],
                             ],*/
-                        ],
-                        'inputs_header' => ['class'],
-                        'inputs_footer' => ['ags', 'focus', 'comments_short'], // inputs in the footer of template
-                        'inputs_order' => ['class', 'ags', 'focus', 'comments_short'],
-                    // special ordering of inputs (makes similar to docx template)
                 ],
-                'BP 2016/GMS Realschulabschlusszeugnis 1. HJ' => [
-                        'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_JAHRZEUGNIS_RS,
-                        'name' => 'BP 2016 GMS Realschulabschlusszeugnis 1. HJ',
-                        'file' => 'BP 2016/BP2016_GMS_Jahrzeugnis_RS_1HJ',
-                        'category' => 'Halbjahr',
-                        'year' => '1',
-                        'report_date' => '1',
-                        'student_name' => '1',
-                        'date_of_birth' => '1',
-                        'place_of_birth' => '1',
-                        'learning_group' => '1',
-                        'rs_hs' => 'RS',
-                        'grades' => block_exastud_get_grades_set('short'),
-                        'inputs' => [
-                                'ags' => [
-                                        'title' => 'Teilnahme an Arbeitsgemeinschaften',
-                                        'type' => 'textarea',
-                                        'lines' => 2,
-                                        'cols' => 90,
-                                        'maxchars' => 180,
-                                ],
-                                'comments_short' => [
-                                        'title' => 'Bemerkungen',
-                                        'type' => 'textarea',
-                                        'lines' => 2,
-                                        'cols' => 90,
-                                        'maxchars' => 180,
-                                ],/*
+                'inputs_header' => ['class'],
+                'inputs_footer' => ['ags', 'focus', 'comments_short'], // inputs in the footer of template
+                'inputs_order' => ['class', 'ags', 'focus', 'comments_short'],
+                // special ordering of inputs (makes similar to docx template)
+            ],
+            'BP 2016/GMS Realschulabschlusszeugnis 1. HJ' => [
+                'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_JAHRZEUGNIS_RS,
+                'name' => 'BP 2016 GMS Realschulabschlusszeugnis 1. HJ',
+                'file' => 'BP 2016/BP2016_GMS_Jahrzeugnis_RS_1HJ',
+                'category' => 'Halbjahr',
+                'year' => '1',
+                'report_date' => '1',
+                'student_name' => '1',
+                'date_of_birth' => '1',
+                'place_of_birth' => '1',
+                'learning_group' => '1',
+                'rs_hs' => 'RS',
+                'grades' => block_exastud_get_grades_set('short'),
+                'inputs' => [
+                    'ags' => [
+                        'title' => 'Teilnahme an Arbeitsgemeinschaften',
+                        'type' => 'textarea',
+                        'lines' => 2,
+                        'cols' => 90,
+                        'maxchars' => 180,
+                    ],
+                    'comments_short' => [
+                        'title' => 'Bemerkungen',
+                        'type' => 'textarea',
+                        'lines' => 2,
+                        'cols' => 90,
+                        'maxchars' => 180,
+                    ],/*
                             'subject_profile' => [
                                     'title' => 'Profil-fach',
                                     'type' => 'textarea',
                             ],*/
-                        ],
-                        'inputs_footer' => ['ags', 'comments_short'], // inputs in the footer of template
-                        'inputs_order' => ['ags', 'comments_short'], // special ordering of inputs (makes similar to docx template)
                 ],
-                'BP 2016/GMS Realschulabschlusszeugnis SJ' => [
-                        'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_ABSCHLUSSZEUGNIS_KL10_RSA,
-                        'name' => 'BP 2016 GMS Realschulabschlusszeugnis SJ',
-                        'file' => 'BP 2016/BP2016_GMS_Abschlusszeugnis_KL10_RSA',
-                        'category' => 'Abschluss',
-                        'year' => '1',
-                        'report_date' => '1',
-                        'student_name' => '1',
-                        'date_of_birth' => '1',
-                        'place_of_birth' => '1',
-                        'learning_group' => '1',
-                        'rs_hs' => 'RS',
-                        'grades' => block_exastud_get_grades_set('lang'),
-                        'inputs' => [
-                                'ags' => [
-                                        'title' => 'Teilnahme an Arbeitsgemeinschaften',
-                                        'type' => 'textarea',
-                                        'lines' => 2,
-                                        'cols' => 90,
-                                        'maxchars' => 180,
-                                ],
-                                'comments_short' => [
-                                        'title' => 'Bemerkungen',
-                                        'type' => 'textarea',
-                                        'lines' => 2,
-                                        'cols' => 90,
-                                        'maxchars' => 180,
-                                ],
-                                'eng_niveau' => [
-                                        'title' => 'Fremdsprachenniveau - Englisch',
-                                        'type' => 'textarea',
-                                        'lines' => 1,
-                                        'cols' => 20,
-                                        'maxchars' => 20,
-                                ],
-                                'fra_niveau' => [
-                                        'title' => 'Fremdsprachenniveau - Französisch',
-                                        'type' => 'textarea',
-                                        'lines' => 1,
-                                        'cols' => 20,
-                                        'maxchars' => 20,
-                                ],
-                                'spa_niveau' => [
-                                        'title' => 'Fremdsprachenniveau - Spanisch',
-                                        'type' => 'textarea',
-                                        'lines' => 1,
-                                        'cols' => 20,
-                                        'maxchars' => 20,
-                                ],/*
+                'inputs_footer' => ['ags', 'comments_short'], // inputs in the footer of template
+                'inputs_order' => ['ags', 'comments_short'], // special ordering of inputs (makes similar to docx template)
+            ],
+            'BP 2016/GMS Realschulabschlusszeugnis SJ' => [
+                'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_ABSCHLUSSZEUGNIS_KL10_RSA,
+                'name' => 'BP 2016 GMS Realschulabschlusszeugnis SJ',
+                'file' => 'BP 2016/BP2016_GMS_Abschlusszeugnis_KL10_RSA',
+                'category' => 'Abschluss',
+                'year' => '1',
+                'report_date' => '1',
+                'student_name' => '1',
+                'date_of_birth' => '1',
+                'place_of_birth' => '1',
+                'learning_group' => '1',
+                'rs_hs' => 'RS',
+                'grades' => block_exastud_get_grades_set('lang'),
+                'inputs' => [
+                    'ags' => [
+                        'title' => 'Teilnahme an Arbeitsgemeinschaften',
+                        'type' => 'textarea',
+                        'lines' => 2,
+                        'cols' => 90,
+                        'maxchars' => 180,
+                    ],
+                    'comments_short' => [
+                        'title' => 'Bemerkungen',
+                        'type' => 'textarea',
+                        'lines' => 2,
+                        'cols' => 90,
+                        'maxchars' => 180,
+                    ],
+                    'eng_niveau' => [
+                        'title' => 'Fremdsprachenniveau - Englisch',
+                        'type' => 'textarea',
+                        'lines' => 1,
+                        'cols' => 20,
+                        'maxchars' => 20,
+                    ],
+                    'fra_niveau' => [
+                        'title' => 'Fremdsprachenniveau - Französisch',
+                        'type' => 'textarea',
+                        'lines' => 1,
+                        'cols' => 20,
+                        'maxchars' => 20,
+                    ],
+                    'spa_niveau' => [
+                        'title' => 'Fremdsprachenniveau - Spanisch',
+                        'type' => 'textarea',
+                        'lines' => 1,
+                        'cols' => 20,
+                        'maxchars' => 20,
+                    ],/*
                             'subject_profile' => [
                                     'title' => 'Profil-fach',
                                     'type' => 'textarea',
                             ],*/
-                        ],
-                        'inputs_footer' => ['ags', 'comments_short', 'eng_niveau', 'fra_niveau', 'spa_niveau'],
-                    // inputs in the footer of template
-                        'inputs_order' => ['ags', 'comments_short'], // special ordering of inputs (makes similar to docx template)
                 ],
-                'BP 2016/Zertifikat über die Projektarbeit' => [
-                        'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_BEIBLATT_PROJEKTARBEIT,
-                        'name' => 'Zertifikat über die Projektarbeit',
-                        'file' => 'BP 2016/BP2016_GMS_Zertifikat_Projektarbeit',
-                        'category' => 'Anlage',
-                        'year' => '1',
-                        'report_date' => '1',
-                        'student_name' => '1',
-                        'date_of_birth' => '1',
-                        'place_of_birth' => '1',
-                        'learning_group' => '1',
-                        'grades' => block_exastud_get_grades_set('lang'),
-                        'inputs' => [
-                                'projekt_thema' => [
-                                        'title' => 'Thema',
-                                        'type' => 'textarea',
-                                        'lines' => 2,
-                                        'cols' => 80,
-                                        'maxchars' => 250,
-                                ],
-                                'projekt_grade' => [
-                                        'title' => 'Note',
-                                        'type' => 'select',
-                                        'values' => [
-                                                'sehr gut' => 'sehr gut',
-                                                'gut' => 'gut',
-                                                'befriedigend' => 'befriedigend',
-                                                'ausreichend' => 'ausreichend',
-                                                'mangelhaft' => 'mangelhaft',
-                                                'ungenügend' => 'ungenügend'],
-                                ],
-                                'projekt_verbalbeurteilung' => [
-                                        'title' => 'Verbalbeurteilung',
-                                        'type' => 'textarea',
-                                        'lines' => 14,
-                                        'cols' => 80,
-                                        'maxchars' => 1900
-                                ],
-                                'projekt_ingroup' => [
-                                        'title' => 'wer entwickelte',
-                                        'type' => 'select',
-                                        'values' => [
-                                                'in der Gruppe' => 'in der Gruppe',
-                                                'individuell' => 'individuell',
-                                        ],
-                                ],
+                'inputs_footer' => ['ags', 'comments_short', 'eng_niveau', 'fra_niveau', 'spa_niveau'],
+                // inputs in the footer of template
+                'inputs_order' => ['ags', 'comments_short'], // special ordering of inputs (makes similar to docx template)
+            ],
+            'BP 2016/Zertifikat über die Projektarbeit' => [
+                'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_BEIBLATT_PROJEKTARBEIT,
+                'name' => 'Zertifikat über die Projektarbeit',
+                'file' => 'BP 2016/BP2016_GMS_Zertifikat_Projektarbeit',
+                'category' => 'Anlage',
+                'year' => '1',
+                'report_date' => '1',
+                'student_name' => '1',
+                'date_of_birth' => '1',
+                'place_of_birth' => '1',
+                'learning_group' => '1',
+                'grades' => block_exastud_get_grades_set('lang'),
+                'inputs' => [
+                    'projekt_thema' => [
+                        'title' => 'Thema',
+                        'type' => 'textarea',
+                        'lines' => 2,
+                        'cols' => 80,
+                        'maxchars' => 250,
+                    ],
+                    'projekt_grade' => [
+                        'title' => 'Note',
+                        'type' => 'select',
+                        'values' => [
+                            'sehr gut' => 'sehr gut',
+                            'gut' => 'gut',
+                            'befriedigend' => 'befriedigend',
+                            'ausreichend' => 'ausreichend',
+                            'mangelhaft' => 'mangelhaft',
+                            'ungenügend' => 'ungenügend'],
+                    ],
+                    'projekt_verbalbeurteilung' => [
+                        'title' => 'Verbalbeurteilung',
+                        'type' => 'textarea',
+                        'lines' => 14,
+                        'cols' => 80,
+                        'maxchars' => 1900,
+                    ],
+                    'projekt_ingroup' => [
+                        'title' => 'wer entwickelte',
+                        'type' => 'select',
+                        'values' => [
+                            'in der Gruppe' => 'in der Gruppe',
+                            'individuell' => 'individuell',
                         ],
-                        'inputs_footer' => ['projekt_ingroup'], // inputs in the footer of template
-                        'inputs_order' => ['projekt_ingroup'], // special ordering of inputs (makes similar to docx template)
+                    ],
                 ],
-                'BP 2016/GMS Zeugnis Klasse 11 SJ' => [
-                        'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_JAHRESZEUGNIS_KL11,
-                        'name' => 'BP 2016 GMS Zeugnis Klasse 11 SJ',
-                        'file' => 'BP 2016/BP2016_GMS_Jahreszeugnis_Kl11',
-                        'category' => 'Jahr',
-                        'year' => '1',
-                        'report_date' => '1',
-                        'student_name' => '1',
-                        'date_of_birth' => '1',
-                        'place_of_birth' => '1',
-                        'learning_group' => '1',
-                        'grades' => block_exastud_get_grades_set('short'),
-                        'inputs' => [
-                                'verhalten' => [
-                                        'title' => 'Verhalten',
-                                        'type' => 'select',
-                                        'values' => ['sgt' => 'sgt', 'gut' => 'gut', 'bfr' => 'bfr', 'unbfr' => 'unbfr'],
-                                ],
-                                'mitarbeit' => [
-                                        'title' => 'Mitarbeit',
-                                        'type' => 'select',
-                                        'values' => ['sgt' => 'sgt', 'gut' => 'gut', 'bfr' => 'bfr', 'unbfr' => 'unbfr'],
-                                ],
-                                'ags' => [
-                                        'title' => 'Teilnahme an Arbeitsgemeinschaften',
-                                        'type' => 'textarea',
-                                        'lines' => 4,
-                                        'cols' => 90,
-                                ],
-                                'comments_short' => [
-                                        'title' => 'Bemerkungen',
-                                        'type' => 'textarea',
-                                        'lines' => 4,
-                                        'cols' => 90,
-                                ],/*
+                'inputs_footer' => ['projekt_ingroup'], // inputs in the footer of template
+                'inputs_order' => ['projekt_ingroup'], // special ordering of inputs (makes similar to docx template)
+            ],
+            'BP 2016/GMS Zeugnis Klasse 11 SJ' => [
+                'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_JAHRESZEUGNIS_KL11,
+                'name' => 'BP 2016 GMS Zeugnis Klasse 11 SJ',
+                'file' => 'BP 2016/BP2016_GMS_Jahreszeugnis_Kl11',
+                'category' => 'Jahr',
+                'year' => '1',
+                'report_date' => '1',
+                'student_name' => '1',
+                'date_of_birth' => '1',
+                'place_of_birth' => '1',
+                'learning_group' => '1',
+                'grades' => block_exastud_get_grades_set('short'),
+                'inputs' => [
+                    'verhalten' => [
+                        'title' => 'Verhalten',
+                        'type' => 'select',
+                        'values' => ['sgt' => 'sgt', 'gut' => 'gut', 'bfr' => 'bfr', 'unbfr' => 'unbfr'],
+                    ],
+                    'mitarbeit' => [
+                        'title' => 'Mitarbeit',
+                        'type' => 'select',
+                        'values' => ['sgt' => 'sgt', 'gut' => 'gut', 'bfr' => 'bfr', 'unbfr' => 'unbfr'],
+                    ],
+                    'ags' => [
+                        'title' => 'Teilnahme an Arbeitsgemeinschaften',
+                        'type' => 'textarea',
+                        'lines' => 4,
+                        'cols' => 90,
+                    ],
+                    'comments_short' => [
+                        'title' => 'Bemerkungen',
+                        'type' => 'textarea',
+                        'lines' => 4,
+                        'cols' => 90,
+                    ],/*
                             'subject_profile' => [
                                     'title' => 'Profil-fach',
                                     'type' => 'textarea',
                             ],*/
-                                'student_transfered' => [
-                                        'title' => 'Versetzung',
-                                        'type' => 'select',
-                                        'values' => [
-                                                'Die Schülerin wird versetzt.' => 'Die Schülerin wird versetzt.',
-                                                'Die Schülerin wird nicht versetzt.' => 'Die Schülerin wird nicht versetzt.',
-                                                'Der Schüler wird versetzt.' => 'Der Schüler wird versetzt.',
-                                                'Der Schüler wird nicht versetzt.' => 'Der Schüler wird nicht versetzt.',
-                                        ],
-                                ],
-                                'eng_niveau' => [
-                                        'title' => 'Fremdsprachenniveau - Englisch',
-                                        'type' => 'textarea',
-                                        'lines' => 1,
-                                        'cols' => 20,
-                                        'maxchars' => 20,
-                                ],
-                                'fra_niveau' => [
-                                        'title' => 'Fremdsprachenniveau - Französisch',
-                                        'type' => 'textarea',
-                                        'lines' => 1,
-                                        'cols' => 20,
-                                        'maxchars' => 20,
-                                ],
-                                'spa_niveau' => [
-                                        'title' => 'Fremdsprachenniveau - Spanisch',
-                                        'type' => 'textarea',
-                                        'lines' => 1,
-                                        'cols' => 20,
-                                        'maxchars' => 20,
-                                ],
+                    'student_transfered' => [
+                        'title' => 'Versetzung',
+                        'type' => 'select',
+                        'values' => [
+                            'Die Schülerin wird versetzt.' => 'Die Schülerin wird versetzt.',
+                            'Die Schülerin wird nicht versetzt.' => 'Die Schülerin wird nicht versetzt.',
+                            'Der Schüler wird versetzt.' => 'Der Schüler wird versetzt.',
+                            'Der Schüler wird nicht versetzt.' => 'Der Schüler wird nicht versetzt.',
                         ],
-                        'inputs_header' => ['verhalten', 'mitarbeit'],
-                        'inputs_footer' => ['ags', 'comments_short', 'eng_niveau', 'fra_niveau', 'spa_niveau',
-                                'student_transfered'], // inputs in the footer of template
-                        'inputs_order' => ['verhalten', 'mitarbeit', 'ags', 'comments_short', 'eng_niveau', 'fra_niveau',
-                                'spa_niveau', 'student_transfered'], // special ordering of inputs (makes similar to docx template)
+                    ],
+                    'eng_niveau' => [
+                        'title' => 'Fremdsprachenniveau - Englisch',
+                        'type' => 'textarea',
+                        'lines' => 1,
+                        'cols' => 20,
+                        'maxchars' => 20,
+                    ],
+                    'fra_niveau' => [
+                        'title' => 'Fremdsprachenniveau - Französisch',
+                        'type' => 'textarea',
+                        'lines' => 1,
+                        'cols' => 20,
+                        'maxchars' => 20,
+                    ],
+                    'spa_niveau' => [
+                        'title' => 'Fremdsprachenniveau - Spanisch',
+                        'type' => 'textarea',
+                        'lines' => 1,
+                        'cols' => 20,
+                        'maxchars' => 20,
+                    ],
                 ],
-                'Testat Englisch/Deutsch (Klasse 8)' => [
-                        'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_16_GMS_TESTAT_BILINGUALES_PROFIL_KL_8,
-                        'name' => 'Testat Englisch/Deutsch (Klasse 8)',
-                        'file' => 'BP 2004_16/BP2004_16_GMS_Testat_bilinguales_Profil_Kl_8',
-                        'category' => 'Anlage',
-                        'year' => '1',
-                        'report_date' => '1',
-                        'student_name' => '1',
-                        'date_of_birth' => '1',
-                        'place_of_birth' => '1',
-                        'learning_group' => '1',
-                        'grades' => [],
-                        'inputs' => [
-                                'eng_subjects_5' => [
-                                        'title' => 'Bilinguale Sachfächer (Jahrgangsstufe 5)',
-                                        'type' => 'textarea',
-                                        'lines' => 1,
-                                        'cols' => 35,
-                                ],
-                                'eng_subjects_6' => [
-                                        'title' => 'Bilinguale Sachfächer (Jahrgangsstufe 6)',
-                                        'type' => 'textarea',
-                                        'lines' => 1,
-                                        'cols' => 35,
-                                ],
-                                'eng_subjects_7' => [
-                                        'title' => 'Bilinguale Sachfächer (Jahrgangsstufe 7)',
-                                        'type' => 'textarea',
-                                        'lines' => 1,
-                                        'cols' => 35,
-                                ],
-                                'eng_subjects_8' => [
-                                        'title' => 'Bilinguale Sachfächer (Jahrgangsstufe 8)',
-                                        'type' => 'textarea',
-                                        'lines' => 1,
-                                        'cols' => 35,
-                                ],
-                                'eng_lessons_5' => [
-                                        'title' => 'Wochenstunden (Jahrgangsstufe 5)',
-                                        'type' => 'textarea',
-                                        'lines' => 1,
-                                        'cols' => 3,
-                                ],
-                                'eng_lessons_6' => [
-                                        'title' => 'Wochenstunden (Jahrgangsstufe 6)',
-                                        'type' => 'textarea',
-                                        'lines' => 1,
-                                        'cols' => 3,
-                                ],
-                                'eng_lessons_7' => [
-                                        'title' => 'Wochenstunden (Jahrgangsstufe 7)',
-                                        'type' => 'textarea',
-                                        'lines' => 1,
-                                        'cols' => 3,
-                                ],
-                                'eng_lessons_8' => [
-                                        'title' => 'Wochenstunden (Jahrgangsstufe 8)',
-                                        'type' => 'textarea',
-                                        'lines' => 1,
-                                        'cols' => 3,
-                                ],
-                        ],
-                        'inputs_footer' => ['leiter'],
-                        'inputs_order' => ['eng_subjects_5', 'eng_lessons_5', 'eng_subjects_6', 'eng_lessons_6', 'eng_subjects_7',
-                                'eng_lessons_7', 'eng_subjects_8', 'eng_lessons_8'],
+                'inputs_header' => ['verhalten', 'mitarbeit'],
+                'inputs_footer' => ['ags', 'comments_short', 'eng_niveau', 'fra_niveau', 'spa_niveau',
+                    'student_transfered'], // inputs in the footer of template
+                'inputs_order' => ['verhalten', 'mitarbeit', 'ags', 'comments_short', 'eng_niveau', 'fra_niveau',
+                    'spa_niveau', 'student_transfered'], // special ordering of inputs (makes similar to docx template)
+            ],
+            'Testat Englisch/Deutsch (Klasse 8)' => [
+                'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_16_GMS_TESTAT_BILINGUALES_PROFIL_KL_8,
+                'name' => 'Testat Englisch/Deutsch (Klasse 8)',
+                'file' => 'BP 2004_16/BP2004_16_GMS_Testat_bilinguales_Profil_Kl_8',
+                'category' => 'Anlage',
+                'year' => '1',
+                'report_date' => '1',
+                'student_name' => '1',
+                'date_of_birth' => '1',
+                'place_of_birth' => '1',
+                'learning_group' => '1',
+                'grades' => [],
+                'inputs' => [
+                    'eng_subjects_5' => [
+                        'title' => 'Bilinguale Sachfächer (Jahrgangsstufe 5)',
+                        'type' => 'textarea',
+                        'lines' => 1,
+                        'cols' => 35,
+                    ],
+                    'eng_subjects_6' => [
+                        'title' => 'Bilinguale Sachfächer (Jahrgangsstufe 6)',
+                        'type' => 'textarea',
+                        'lines' => 1,
+                        'cols' => 35,
+                    ],
+                    'eng_subjects_7' => [
+                        'title' => 'Bilinguale Sachfächer (Jahrgangsstufe 7)',
+                        'type' => 'textarea',
+                        'lines' => 1,
+                        'cols' => 35,
+                    ],
+                    'eng_subjects_8' => [
+                        'title' => 'Bilinguale Sachfächer (Jahrgangsstufe 8)',
+                        'type' => 'textarea',
+                        'lines' => 1,
+                        'cols' => 35,
+                    ],
+                    'eng_lessons_5' => [
+                        'title' => 'Wochenstunden (Jahrgangsstufe 5)',
+                        'type' => 'textarea',
+                        'lines' => 1,
+                        'cols' => 3,
+                    ],
+                    'eng_lessons_6' => [
+                        'title' => 'Wochenstunden (Jahrgangsstufe 6)',
+                        'type' => 'textarea',
+                        'lines' => 1,
+                        'cols' => 3,
+                    ],
+                    'eng_lessons_7' => [
+                        'title' => 'Wochenstunden (Jahrgangsstufe 7)',
+                        'type' => 'textarea',
+                        'lines' => 1,
+                        'cols' => 3,
+                    ],
+                    'eng_lessons_8' => [
+                        'title' => 'Wochenstunden (Jahrgangsstufe 8)',
+                        'type' => 'textarea',
+                        'lines' => 1,
+                        'cols' => 3,
+                    ],
                 ],
-                'Bilinguales Zertifikat Englisch/Deutsch (Klasse 10)' => [
-                        'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_16_GMS_ZERTIFIKAT_BILINGUALES_PROFIL_KL_10,
-                        'name' => 'Bilinguales Zertifikat Englisch/Deutsch (Klasse 10)',
-                        'file' => 'BP 2004_16/BP2004_16_GMS_Zertifikat_bilinguales_Profil_Kl_10',
-                        'category' => 'Anlage',
-                        'year' => '1',
-                        'report_date' => '1',
-                        'student_name' => '1',
-                        'date_of_birth' => '1',
-                        'place_of_birth' => '1',
-                        'learning_group' => '1',
-                        'grades' => [],
-                        'inputs' => [
-                                'eng_subjects_5' => [
-                                        'title' => 'Bilinguale Sachfächer (Jahrgangsstufe 5)',
-                                        'type' => 'textarea',
-                                        'lines' => 1,
-                                        'cols' => 35,
-                                ],
-                                'eng_subjects_6' => [
-                                        'title' => 'Bilinguale Sachfächer (Jahrgangsstufe 6)',
-                                        'type' => 'textarea',
-                                        'lines' => 1,
-                                        'cols' => 35,
-                                ],
-                                'eng_subjects_7' => [
-                                        'title' => 'Bilinguale Sachfächer (Jahrgangsstufe 7)',
-                                        'type' => 'textarea',
-                                        'lines' => 1,
-                                        'cols' => 35,
-                                ],
-                                'eng_subjects_8' => [
-                                        'title' => 'Bilinguale Sachfächer (Jahrgangsstufe 8)',
-                                        'type' => 'textarea',
-                                        'lines' => 1,
-                                        'cols' => 35,
-                                ],
-                                'eng_subjects_9' => [
-                                        'title' => 'Bilinguale Sachfächer (Jahrgangsstufe 9)',
-                                        'type' => 'textarea',
-                                        'lines' => 1,
-                                        'cols' => 35,
-                                ],
-                                'eng_subjects_10' => [
-                                        'title' => 'Bilinguale Sachfächer (Jahrgangsstufe 10)',
-                                        'type' => 'textarea',
-                                        'lines' => 1,
-                                        'cols' => 35,
-                                ],
-                                'eng_lessons_5' => [
-                                        'title' => 'Wochenstunden (Jahrgangsstufe 5)',
-                                        'type' => 'textarea',
-                                        'lines' => 1,
-                                        'cols' => 3,
-                                ],
-                                'eng_lessons_6' => [
-                                        'title' => 'Wochenstunden (Jahrgangsstufe 6)',
-                                        'type' => 'textarea',
-                                        'lines' => 1,
-                                        'cols' => 3,
-                                ],
-                                'eng_lessons_7' => [
-                                        'title' => 'Wochenstunden (Jahrgangsstufe 7)',
-                                        'type' => 'textarea',
-                                        'lines' => 1,
-                                        'cols' => 3,
-                                ],
-                                'eng_lessons_8' => [
-                                        'title' => 'Wochenstunden (Jahrgangsstufe 8)',
-                                        'type' => 'textarea',
-                                        'lines' => 1,
-                                        'cols' => 3,
-                                ],
-                                'eng_lessons_9' => [
-                                        'title' => 'Wochenstunden (Jahrgangsstufe 9)',
-                                        'type' => 'textarea',
-                                        'lines' => 1,
-                                        'cols' => 3,
-                                ],
-                                'eng_lessons_10' => [
-                                        'title' => 'Wochenstunden (Jahrgangsstufe 10)',
-                                        'type' => 'textarea',
-                                        'lines' => 1,
-                                        'cols' => 3,
-                                ],
-                        ],
-                        'inputs_footer' => ['leiter'],
-                        'inputs_order' => ['eng_subjects_5', 'eng_lessons_5', 'eng_subjects_6', 'eng_lessons_6', 'eng_subjects_7',
-                                'eng_lessons_7', 'eng_subjects_8', 'eng_lessons_8', 'eng_subjects_9', 'eng_lessons_9',
-                                'eng_subjects_10', 'eng_lessons_10'],
+                'inputs_footer' => ['leiter'],
+                'inputs_order' => ['eng_subjects_5', 'eng_lessons_5', 'eng_subjects_6', 'eng_lessons_6', 'eng_subjects_7',
+                    'eng_lessons_7', 'eng_subjects_8', 'eng_lessons_8'],
+            ],
+            'Bilinguales Zertifikat Englisch/Deutsch (Klasse 10)' => [
+                'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_16_GMS_ZERTIFIKAT_BILINGUALES_PROFIL_KL_10,
+                'name' => 'Bilinguales Zertifikat Englisch/Deutsch (Klasse 10)',
+                'file' => 'BP 2004_16/BP2004_16_GMS_Zertifikat_bilinguales_Profil_Kl_10',
+                'category' => 'Anlage',
+                'year' => '1',
+                'report_date' => '1',
+                'student_name' => '1',
+                'date_of_birth' => '1',
+                'place_of_birth' => '1',
+                'learning_group' => '1',
+                'grades' => [],
+                'inputs' => [
+                    'eng_subjects_5' => [
+                        'title' => 'Bilinguale Sachfächer (Jahrgangsstufe 5)',
+                        'type' => 'textarea',
+                        'lines' => 1,
+                        'cols' => 35,
+                    ],
+                    'eng_subjects_6' => [
+                        'title' => 'Bilinguale Sachfächer (Jahrgangsstufe 6)',
+                        'type' => 'textarea',
+                        'lines' => 1,
+                        'cols' => 35,
+                    ],
+                    'eng_subjects_7' => [
+                        'title' => 'Bilinguale Sachfächer (Jahrgangsstufe 7)',
+                        'type' => 'textarea',
+                        'lines' => 1,
+                        'cols' => 35,
+                    ],
+                    'eng_subjects_8' => [
+                        'title' => 'Bilinguale Sachfächer (Jahrgangsstufe 8)',
+                        'type' => 'textarea',
+                        'lines' => 1,
+                        'cols' => 35,
+                    ],
+                    'eng_subjects_9' => [
+                        'title' => 'Bilinguale Sachfächer (Jahrgangsstufe 9)',
+                        'type' => 'textarea',
+                        'lines' => 1,
+                        'cols' => 35,
+                    ],
+                    'eng_subjects_10' => [
+                        'title' => 'Bilinguale Sachfächer (Jahrgangsstufe 10)',
+                        'type' => 'textarea',
+                        'lines' => 1,
+                        'cols' => 35,
+                    ],
+                    'eng_lessons_5' => [
+                        'title' => 'Wochenstunden (Jahrgangsstufe 5)',
+                        'type' => 'textarea',
+                        'lines' => 1,
+                        'cols' => 3,
+                    ],
+                    'eng_lessons_6' => [
+                        'title' => 'Wochenstunden (Jahrgangsstufe 6)',
+                        'type' => 'textarea',
+                        'lines' => 1,
+                        'cols' => 3,
+                    ],
+                    'eng_lessons_7' => [
+                        'title' => 'Wochenstunden (Jahrgangsstufe 7)',
+                        'type' => 'textarea',
+                        'lines' => 1,
+                        'cols' => 3,
+                    ],
+                    'eng_lessons_8' => [
+                        'title' => 'Wochenstunden (Jahrgangsstufe 8)',
+                        'type' => 'textarea',
+                        'lines' => 1,
+                        'cols' => 3,
+                    ],
+                    'eng_lessons_9' => [
+                        'title' => 'Wochenstunden (Jahrgangsstufe 9)',
+                        'type' => 'textarea',
+                        'lines' => 1,
+                        'cols' => 3,
+                    ],
+                    'eng_lessons_10' => [
+                        'title' => 'Wochenstunden (Jahrgangsstufe 10)',
+                        'type' => 'textarea',
+                        'lines' => 1,
+                        'cols' => 3,
+                    ],
                 ],
-                'Lern- und Sozialverhalten' => [
-                        'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_LERN_UND_SOZIALVERHALTEN,
-                        'name' => 'Bericht "Lern- und Sozialverhalten" (Vorlage zur Notenkonferenz)',
-                        'file' => 'Lern_und_Sozialverhalten',
-                        'category' => 'Anlage',
-                        'year' => '1',
-                        'report_date' => '1',
-                        'student_name' => '1',
-                        'date_of_birth' => '1',
-                        'place_of_birth' => '1',
-                        'learning_group' => '1',
+                'inputs_footer' => ['leiter'],
+                'inputs_order' => ['eng_subjects_5', 'eng_lessons_5', 'eng_subjects_6', 'eng_lessons_6', 'eng_subjects_7',
+                    'eng_lessons_7', 'eng_subjects_8', 'eng_lessons_8', 'eng_subjects_9', 'eng_lessons_9',
+                    'eng_subjects_10', 'eng_lessons_10'],
+            ],
+            'Lern- und Sozialverhalten' => [
+                'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_LERN_UND_SOZIALVERHALTEN,
+                'name' => 'Bericht "Lern- und Sozialverhalten" (Vorlage zur Notenkonferenz)',
+                'file' => 'Lern_und_Sozialverhalten',
+                'category' => 'Anlage',
+                'year' => '1',
+                'report_date' => '1',
+                'student_name' => '1',
+                'date_of_birth' => '1',
+                'place_of_birth' => '1',
+                'learning_group' => '1',
+            ],
+            'BP 2016/GMS Hauptschulabschlusszeugnis Projektprüfung SJ' => [
+                'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_ABSCHLUSSZEUGNIS_KL9_10_HSA,
+                'name' => 'BP 2016 GMS Hauptschulabschlusszeugnis Projektarbeit SJ',
+                'file' => 'BP 2016/BP2016_GMS_Abschlusszeugnis_KL9_10_HSA',
+                'category' => 'Abschluss',
+                'year' => '1',
+                'report_date' => '1',
+                'student_name' => '1',
+                'date_of_birth' => '1',
+                'place_of_birth' => '1',
+                'learning_group' => '1',
+                'rs_hs' => 'HS',
+                'grades' => block_exastud_get_grades_set('lang'),
+                'inputs' => [
+                    //                            'abgelegt' => [
+                    //                                    'title' => 'Hat die Hauptschulabschlussprüfung nach',
+                    //                                    'type' => 'select',
+                    //                                    'values' => [
+                    //                                            'Hat die Hauptschulabschlussprüfung nach Klasse 9 der Gemeinschaftsschule mit Erfolg abgelegt.' => 'Hat die Hauptschulabschlussprüfung nach Klasse 9 der Gemeinschaftsschule mit Erfolg abgelegt.',
+                    //                                            'Hat die Hauptschulabschlussprüfung nach Klasse 10 der Gemeinschaftsschule mit Erfolg abgelegt.' => 'Hat die Hauptschulabschlussprüfung nach Klasse 10 der Gemeinschaftsschule mit Erfolg abgelegt.',
+                    //                                    ],
+                    //                            ],
+                    'projekt_thema' => [
+                        'title' => 'Thema',
+                        'type' => 'textarea',
+                        'lines' => 1,
+                        'cols' => 65,
+                        'maxchars' => 100,
+                    ],
+                    'projekt_grade' => [
+                        'title' => 'Note',
+                        'type' => 'select',
+                        'values' => ['sehr gut' => 'sehr gut',
+                            'gut' => 'gut',
+                            'befriedigend' => 'befriedigend',
+                            'ausreichend' => 'ausreichend',
+                            'mangelhaft' => 'mangelhaft',
+                            'ungenügend' => 'ungenügend'],
+                    ],
+                    'projekt_grade_hide' => [
+                        'title' => 'Note wird im Zertifikat nicht ausgewiesen',
+                        'type' => 'select',
+                        'values' => [
+                            1 => 'Ja',
+                            0 => 'Nein'],
+                    ],
+                    'projekt_verbalbeurteilung' => [
+                        'title' => 'Verbalbeurteilung',
+                        'type' => 'textarea',
+                    ],
+                    'ags' => [
+                        'title' => 'Teilnahme an Arbeitsgemeinschaften',
+                        'lines' => 2,
+                        'cols' => 90,
+                        'maxchars' => 180,
+                    ],
+                    'comments_short' => [
+                        'title' => 'Bemerkungen',
+                        'type' => 'textarea',
+                        'lines' => 2,
+                        'cols' => 90,
+                        'maxchars' => 180,
+                    ],
+                    'eng_niveau' => [
+                        'title' => 'Fremdsprachenniveau - Englisch',
+                        'type' => 'textarea',
+                        'lines' => 1,
+                        'cols' => 20,
+                        'maxchars' => 20,
+                    ],
+                    'fra_niveau' => [
+                        'title' => 'Fremdsprachenniveau - Französisch',
+                        'type' => 'textarea',
+                        'lines' => 1,
+                        'cols' => 20,
+                        'maxchars' => 20,
+                    ],
+                    'spa_niveau' => [
+                        'title' => 'Fremdsprachenniveau - Spanisch',
+                        'type' => 'textarea',
+                        'lines' => 1,
+                        'cols' => 20,
+                        'maxchars' => 20,
+                    ],
+                    //                            'subject_profile' => [
+                    //                                    'title' => 'Profil-fach',
+                    //                                    'type' => 'textarea',
+                    //                            ],
                 ],
-                'BP 2016/GMS Hauptschulabschlusszeugnis Projektprüfung SJ' => [
-                        'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_ABSCHLUSSZEUGNIS_KL9_10_HSA,
-                        'name' => 'BP 2016 GMS Hauptschulabschlusszeugnis Projektarbeit SJ',
-                        'file' => 'BP 2016/BP2016_GMS_Abschlusszeugnis_KL9_10_HSA',
-                        'category' => 'Abschluss',
-                        'year' => '1',
-                        'report_date' => '1',
-                        'student_name' => '1',
-                        'date_of_birth' => '1',
-                        'place_of_birth' => '1',
-                        'learning_group' => '1',
-                        'rs_hs' => 'HS',
-                        'grades' => block_exastud_get_grades_set('lang'),
-                        'inputs' => [
-                            //                            'abgelegt' => [
-                            //                                    'title' => 'Hat die Hauptschulabschlussprüfung nach',
-                            //                                    'type' => 'select',
-                            //                                    'values' => [
-                            //                                            'Hat die Hauptschulabschlussprüfung nach Klasse 9 der Gemeinschaftsschule mit Erfolg abgelegt.' => 'Hat die Hauptschulabschlussprüfung nach Klasse 9 der Gemeinschaftsschule mit Erfolg abgelegt.',
-                            //                                            'Hat die Hauptschulabschlussprüfung nach Klasse 10 der Gemeinschaftsschule mit Erfolg abgelegt.' => 'Hat die Hauptschulabschlussprüfung nach Klasse 10 der Gemeinschaftsschule mit Erfolg abgelegt.',
-                            //                                    ],
-                            //                            ],
-                                'projekt_thema' => [
-                                        'title' => 'Thema',
-                                        'type' => 'textarea',
-                                        'lines' => 1,
-                                        'cols' => 65,
-                                        'maxchars' => 100,
-                                ],
-                                'projekt_grade' => [
-                                        'title' => 'Note',
-                                        'type' => 'select',
-                                        'values' => ['sehr gut' => 'sehr gut',
-                                                'gut' => 'gut',
-                                                'befriedigend' => 'befriedigend',
-                                                'ausreichend' => 'ausreichend',
-                                                'mangelhaft' => 'mangelhaft',
-                                                'ungenügend' => 'ungenügend'],
-                                ],
-                                'projekt_grade_hide' => [
-                                    'title' => 'Note wird im Zertifikat nicht ausgewiesen',
-                                    'type' => 'select',
-                                    'values' => [
-                                        1 => 'Ja',
-                                        0 => 'Nein'],
-                                ],
-                                'projekt_verbalbeurteilung' => [
-                                        'title' => 'Verbalbeurteilung',
-                                        'type' => 'textarea',
-                                ],
-                                'ags' => [
-                                        'title' => 'Teilnahme an Arbeitsgemeinschaften',
-                                        'lines' => 2,
-                                        'cols' => 90,
-                                        'maxchars' => 180,
-                                ],
-                                'comments_short' => [
-                                        'title' => 'Bemerkungen',
-                                        'type' => 'textarea',
-                                        'lines' => 2,
-                                        'cols' => 90,
-                                        'maxchars' => 180,
-                                ],
-                                'eng_niveau' => [
-                                        'title' => 'Fremdsprachenniveau - Englisch',
-                                        'type' => 'textarea',
-                                        'lines' => 1,
-                                        'cols' => 20,
-                                        'maxchars' => 20,
-                                ],
-                                'fra_niveau' => [
-                                        'title' => 'Fremdsprachenniveau - Französisch',
-                                        'type' => 'textarea',
-                                        'lines' => 1,
-                                        'cols' => 20,
-                                        'maxchars' => 20,
-                                ],
-                                'spa_niveau' => [
-                                        'title' => 'Fremdsprachenniveau - Spanisch',
-                                        'type' => 'textarea',
-                                        'lines' => 1,
-                                        'cols' => 20,
-                                        'maxchars' => 20,
-                                ],
-                            //                            'subject_profile' => [
-                            //                                    'title' => 'Profil-fach',
-                            //                                    'type' => 'textarea',
-                            //                            ],
-                        ],
-                        'inputs_header' => ['abgelegt'],
-                        'inputs_footer' => ['ags', 'comments_short', 'eng_niveau', 'fra_niveau', 'spa_niveau'],
-                    // inputs in the footer of template
-                        'inputs_order' => ['abgelegt', 'ags', 'comments_short'],
-                    // special ordering of inputs (makes similar to docx template)
-                ],
-                'BP 2016/GMS gleichwertiger Bildungsabschluss HSA' => [
-                        'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_GLEICHWERTIGER_BILDUNGSABSCHLUSS_HSA,
-                        'name' => 'BP 2016 GMS gleichwertiger Bildungsabschluss HSA',
-                        'file' => 'BP 2016/BP2016_GMS_gleichwertiger_Bildungsabschluss_HSA',
-                        'category' => 'Abschluss',
-                        'year' => '1',
-                        'report_date' => '1',
-                        'student_name' => '1',
-                        'date_of_birth' => '1',
-                        'place_of_birth' => '1',
-                        'learning_group' => '1',
-                        'grades' => block_exastud_get_grades_set('lang'),
-                        'inputs' => [
-                                'ags' => [
-                                        'title' => 'Teilnahme an Arbeitsgemeinschaften',
-                                        'type' => 'textarea',
-                                        'lines' => 1,
-                                        'cols' => 74,
-                                        'maxchars' => 74,
-                                ],
-                                'comments_short' => [
-                                        'title' => 'Bemerkungen',
-                                        'type' => 'textarea',
-                                        'lines' => 1,
-                                        'cols' => 90,
-                                        'maxchars' => 90,
-                                ],/*
+                'inputs_header' => ['abgelegt'],
+                'inputs_footer' => ['ags', 'comments_short', 'eng_niveau', 'fra_niveau', 'spa_niveau'],
+                // inputs in the footer of template
+                'inputs_order' => ['abgelegt', 'ags', 'comments_short'],
+                // special ordering of inputs (makes similar to docx template)
+            ],
+            'BP 2016/GMS gleichwertiger Bildungsabschluss HSA' => [
+                'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_GLEICHWERTIGER_BILDUNGSABSCHLUSS_HSA,
+                'name' => 'BP 2016 GMS gleichwertiger Bildungsabschluss HSA',
+                'file' => 'BP 2016/BP2016_GMS_gleichwertiger_Bildungsabschluss_HSA',
+                'category' => 'Abschluss',
+                'year' => '1',
+                'report_date' => '1',
+                'student_name' => '1',
+                'date_of_birth' => '1',
+                'place_of_birth' => '1',
+                'learning_group' => '1',
+                'grades' => block_exastud_get_grades_set('lang'),
+                'inputs' => [
+                    'ags' => [
+                        'title' => 'Teilnahme an Arbeitsgemeinschaften',
+                        'type' => 'textarea',
+                        'lines' => 1,
+                        'cols' => 74,
+                        'maxchars' => 74,
+                    ],
+                    'comments_short' => [
+                        'title' => 'Bemerkungen',
+                        'type' => 'textarea',
+                        'lines' => 1,
+                        'cols' => 90,
+                        'maxchars' => 90,
+                    ],/*
                             'cert_level' => [
                                     'title' => 'HSA/RSA',
                                     'type' => 'select',
@@ -5180,75 +5193,75 @@ function block_exastud_get_default_templates($templateid = null, $common = true)
                                             'Damit wurde ein den Realschulabschluss gleichwertiger Bildungsstand erreicht.' => 'Damit wurde ein den Realschulabschluss gleichwertiger Bildungsstand erreicht.',
                                     ],
                             ],*/
-                                'abgangszeugnis_niveau' => [
-                                        'title' => 'Leistungen in den einzelnen Fächern auf',
-                                        'type' => 'select',
-                                        'values' => [
-                                                'mittleren Niveau' => 'mittleren Niveau',
-                                                'erweiteren Niveau' => 'erweiteren Niveau',
-                                        ],
-                                ],
-                                'eng_niveau' => [
-                                        'title' => 'Fremdsprachenniveau - Englisch',
-                                        'type' => 'textarea',
-                                        'lines' => 1,
-                                        'cols' => 20,
-                                        'maxchars' => 20,
-                                ],
-                                'fra_niveau' => [
-                                        'title' => 'Fremdsprachenniveau - Französisch',
-                                        'type' => 'textarea',
-                                        'lines' => 1,
-                                        'cols' => 20,
-                                        'maxchars' => 20,
-                                ],
-                                'spa_niveau' => [
-                                        'title' => 'Fremdsprachenniveau - Spanisch',
-                                        'type' => 'textarea',
-                                        'lines' => 1,
-                                        'cols' => 20,
-                                        'maxchars' => 20,
-                                ],
-                            /*
+                    'abgangszeugnis_niveau' => [
+                        'title' => 'Leistungen in den einzelnen Fächern auf',
+                        'type' => 'select',
+                        'values' => [
+                            'mittleren Niveau' => 'mittleren Niveau',
+                            'erweiteren Niveau' => 'erweiteren Niveau',
+                        ],
+                    ],
+                    'eng_niveau' => [
+                        'title' => 'Fremdsprachenniveau - Englisch',
+                        'type' => 'textarea',
+                        'lines' => 1,
+                        'cols' => 20,
+                        'maxchars' => 20,
+                    ],
+                    'fra_niveau' => [
+                        'title' => 'Fremdsprachenniveau - Französisch',
+                        'type' => 'textarea',
+                        'lines' => 1,
+                        'cols' => 20,
+                        'maxchars' => 20,
+                    ],
+                    'spa_niveau' => [
+                        'title' => 'Fremdsprachenniveau - Spanisch',
+                        'type' => 'textarea',
+                        'lines' => 1,
+                        'cols' => 20,
+                        'maxchars' => 20,
+                    ],
+                    /*
                             'subject_profile' => [
                                     'title' => 'Profil-fach',
                                     'type' => 'textarea',
                             ],*/
-                        ],
-                        'inputs_header' => ['cert_level', 'class_level', 'education_standard'],
-                        'inputs_footer' => ['eng_niveau', 'fra_niveau', 'spa_niveau', 'ags', 'comments_short'],
-                    // inputs in the footer of template
-                        'inputs_order' => ['cert_level', 'class_level', 'education_standard', 'ags', 'comments_short'],
-                    // special ordering of inputs (makes similar to docx template)
                 ],
-                'BP 2004/GMS gleichwertiger Bildungsabschluss RSA' => [
-                        'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_GLEICHWERTIGER_BILDUNGSABSCHLUSS_RSA,
-                        'name' => 'BP 2004 GMS gleichwertiger Bildungsabschluss RSA',
-                        'file' => 'BP 2004/BP2004_GMS_gleichwertiger_Bildungsabschluss_RSA',
-                        'category' => 'Abschluss',
-                        'year' => '1',
-                        'report_date' => '1',
-                        'student_name' => '1',
-                        'date_of_birth' => '1',
-                        'place_of_birth' => '1',
-                        'learning_group' => '1',
-                        'grades' => block_exastud_get_grades_set('lang'),
-                        'inputs' => [
-                                'ags' => [
-                                        'title' => 'Teilnahme an Arbeitsgemeinschaften',
-                                        'type' => 'textarea',
-                                        'lines' => 1,
-                                        'cols' => 80,
-                                        'maxchars' => 80,
-                                ],
-                                'comments_short' => [
-                                        'title' => 'Bemerkungen',
-                                        'type' => 'textarea',
-                                        'lines' => 1,
-                                        'cols' => 90,
-                                        'maxchars' => 90,
-                                ],
-                            /*'cert_level' => [
+                'inputs_header' => ['cert_level', 'class_level', 'education_standard'],
+                'inputs_footer' => ['eng_niveau', 'fra_niveau', 'spa_niveau', 'ags', 'comments_short'],
+                // inputs in the footer of template
+                'inputs_order' => ['cert_level', 'class_level', 'education_standard', 'ags', 'comments_short'],
+                // special ordering of inputs (makes similar to docx template)
+            ],
+            'BP 2004/GMS gleichwertiger Bildungsabschluss RSA' => [
+                'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_GLEICHWERTIGER_BILDUNGSABSCHLUSS_RSA,
+                'name' => 'BP 2004 GMS gleichwertiger Bildungsabschluss RSA',
+                'file' => 'BP 2004/BP2004_GMS_gleichwertiger_Bildungsabschluss_RSA',
+                'category' => 'Abschluss',
+                'year' => '1',
+                'report_date' => '1',
+                'student_name' => '1',
+                'date_of_birth' => '1',
+                'place_of_birth' => '1',
+                'learning_group' => '1',
+                'grades' => block_exastud_get_grades_set('lang'),
+                'inputs' => [
+                    'ags' => [
+                        'title' => 'Teilnahme an Arbeitsgemeinschaften',
+                        'type' => 'textarea',
+                        'lines' => 1,
+                        'cols' => 80,
+                        'maxchars' => 80,
+                    ],
+                    'comments_short' => [
+                        'title' => 'Bemerkungen',
+                        'type' => 'textarea',
+                        'lines' => 1,
+                        'cols' => 90,
+                        'maxchars' => 90,
+                    ],
+                    /*'cert_level' => [
                                     'title' => 'HSA/RSA',
                                     'type' => 'select',
                                     'values' => [
@@ -5276,349 +5289,351 @@ function block_exastud_get_default_templates($templateid = null, $common = true)
                                     'title' => 'Profil-fach',
                                     'type' => 'textarea',
                             ],*/
-                                'eng_niveau' => [
-                                        'title' => 'Fremdsprachenniveau - Englisch',
-                                        'type' => 'textarea',
-                                        'lines' => 1,
-                                        'cols' => 20,
-                                        'maxchars' => 20,
-                                ],
-                                'fra_niveau' => [
-                                        'title' => 'Fremdsprachenniveau - Französisch',
-                                        'type' => 'textarea',
-                                        'lines' => 1,
-                                        'cols' => 20,
-                                        'maxchars' => 20,
-                                ],
-                                'spa_niveau' => [
-                                        'title' => 'Fremdsprachenniveau - Spanisch',
-                                        'type' => 'textarea',
-                                        'lines' => 1,
-                                        'cols' => 20,
-                                        'maxchars' => 20,
-                                ],
-                        ],
-                        'inputs_header' => ['cert_level', 'class_level', 'education_standard'],
-                        'inputs_footer' => ['eng_niveau', 'fra_niveau', 'spa_niveau', 'ags', 'comments_short'],
-                    // inputs in the footer of template
-                        'inputs_order' => ['cert_level', 'class_level', 'education_standard', 'ags', 'comments_short'],
-                    // special ordering of inputs (makes similar to docx template)
+                    'eng_niveau' => [
+                        'title' => 'Fremdsprachenniveau - Englisch',
+                        'type' => 'textarea',
+                        'lines' => 1,
+                        'cols' => 20,
+                        'maxchars' => 20,
+                    ],
+                    'fra_niveau' => [
+                        'title' => 'Fremdsprachenniveau - Französisch',
+                        'type' => 'textarea',
+                        'lines' => 1,
+                        'cols' => 20,
+                        'maxchars' => 20,
+                    ],
+                    'spa_niveau' => [
+                        'title' => 'Fremdsprachenniveau - Spanisch',
+                        'type' => 'textarea',
+                        'lines' => 1,
+                        'cols' => 20,
+                        'maxchars' => 20,
+                    ],
                 ],
-                'BP 2004/GMS Zeugnis Klasse 11 1. HJ' => [
-                        'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_HALBJAHRESINFORMATION_KL11,
-                        'name' => 'BP 2004 GMS Zeugnis Klasse 11 1. HJ',
-                        'file' => 'BP 2004/BP2004_GMS_Halbjahresinformation_Kl11',
-                        'category' => 'Halbjahr',
-                        'year' => '1',
-                        'report_date' => '1',
-                        'student_name' => '1',
-                        'date_of_birth' => '1',
-                        'place_of_birth' => '1',
-                        'learning_group' => '1',
-                        'grades' => block_exastud_get_grades_set('mit_plus_minus_bis_ausgeschrieben'),
-                        'inputs' => [
-                                'ags' => [
-                                        'title' => 'Teilnahme an Arbeitsgemeinschaften',
-                                        'type' => 'textarea',
-                                        'lines' => 4,
-                                        'cols' => 90,
-                                        'maxchars' => 360,
-                                ],
-                                'comments_short' => [
-                                        'title' => 'Bemerkungen',
-                                        'type' => 'textarea',
-                                        'lines' => 4,
-                                        'cols' => 90,
-                                        'maxchars' => 360,
-                                ],/*
+                'inputs_header' => ['cert_level', 'class_level', 'education_standard'],
+                'inputs_footer' => ['eng_niveau', 'fra_niveau', 'spa_niveau', 'ags', 'comments_short'],
+                // inputs in the footer of template
+                'inputs_order' => ['cert_level', 'class_level', 'education_standard', 'ags', 'comments_short'],
+                // special ordering of inputs (makes similar to docx template)
+            ],
+            'BP 2004/GMS Zeugnis Klasse 11 1. HJ' => [
+                'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_HALBJAHRESINFORMATION_KL11,
+                'name' => 'BP 2004 GMS Zeugnis Klasse 11 1. HJ',
+                'file' => 'BP 2004/BP2004_GMS_Halbjahresinformation_Kl11',
+                'category' => 'Halbjahr',
+                'year' => '1',
+                'report_date' => '1',
+                'student_name' => '1',
+                'date_of_birth' => '1',
+                'place_of_birth' => '1',
+                'learning_group' => '1',
+                'grades' => block_exastud_get_grades_set('mit_plus_minus_bis_ausgeschrieben'),
+                'inputs' => [
+                    'ags' => [
+                        'title' => 'Teilnahme an Arbeitsgemeinschaften',
+                        'type' => 'textarea',
+                        'lines' => 4,
+                        'cols' => 90,
+                        'maxchars' => 360,
+                    ],
+                    'comments_short' => [
+                        'title' => 'Bemerkungen',
+                        'type' => 'textarea',
+                        'lines' => 4,
+                        'cols' => 90,
+                        'maxchars' => 360,
+                    ],/*
                             'subject_profile' => [
                                     'title' => 'Profil-fach',
                                     'type' => 'textarea',
                             ],*/
-                        ],
-                        'inputs_footer' => ['ags', 'focus', 'comments_short'], // inputs in the footer of template
-                        'inputs_order' => ['ags', 'focus', 'comments_short'],
-                    // special ordering of inputs (makes similar to docx template)
                 ],
-                'BP 2004/GMS Zeugnis Klasse 11 SJ' => [
-                        'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_JAHRESZEUGNIS_KL11,
-                        'name' => 'BP 2004 GMS Zeugnis Klasse 11 SJ',
-                        'file' => 'BP 2004/BP2004_GMS_Jahreszeugnis_Kl11',
-                        'category' => 'Jahr',
-                        'year' => '1',
-                        'report_date' => '1',
-                        'student_name' => '1',
-                        'date_of_birth' => '1',
-                        'place_of_birth' => '1',
-                        'learning_group' => '1',
-                        'grades' => block_exastud_get_grades_set('short'),
-                        'inputs' => [
-                                'verhalten' => [
-                                        'title' => 'Verhalten',
-                                        'type' => 'select',
-                                        'values' => ['sgt' => 'sgt', 'gut' => 'gut', 'bfr' => 'bfr', 'unbfr' => 'unbfr'],
-                                ],
-                                'mitarbeit' => [
-                                        'title' => 'Mitarbeit',
-                                        'type' => 'select',
-                                        'values' => ['sgt' => 'sgt', 'gut' => 'gut', 'bfr' => 'bfr', 'unbfr' => 'unbfr'],
-                                ],
-                                'ags' => [
-                                        'title' => 'Teilnahme an Arbeitsgemeinschaften',
-                                        'type' => 'textarea',
-                                        'lines' => 4,
-                                        'cols' => 90,
-                                ],
-                                'comments_short' => [
-                                        'title' => 'Bemerkungen',
-                                        'type' => 'textarea',
-                                        'lines' => 4,
-                                        'cols' => 90,
-                                ],/*
+                'inputs_footer' => ['ags', 'focus', 'comments_short'], // inputs in the footer of template
+                'inputs_order' => ['ags', 'focus', 'comments_short'],
+                // special ordering of inputs (makes similar to docx template)
+            ],
+            'BP 2004/GMS Zeugnis Klasse 11 SJ' => [
+                'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_JAHRESZEUGNIS_KL11,
+                'name' => 'BP 2004 GMS Zeugnis Klasse 11 SJ',
+                'file' => 'BP 2004/BP2004_GMS_Jahreszeugnis_Kl11',
+                'category' => 'Jahr',
+                'year' => '1',
+                'report_date' => '1',
+                'student_name' => '1',
+                'date_of_birth' => '1',
+                'place_of_birth' => '1',
+                'learning_group' => '1',
+                'grades' => block_exastud_get_grades_set('short'),
+                'inputs' => [
+                    'verhalten' => [
+                        'title' => 'Verhalten',
+                        'type' => 'select',
+                        'values' => ['sgt' => 'sgt', 'gut' => 'gut', 'bfr' => 'bfr', 'unbfr' => 'unbfr'],
+                    ],
+                    'mitarbeit' => [
+                        'title' => 'Mitarbeit',
+                        'type' => 'select',
+                        'values' => ['sgt' => 'sgt', 'gut' => 'gut', 'bfr' => 'bfr', 'unbfr' => 'unbfr'],
+                    ],
+                    'ags' => [
+                        'title' => 'Teilnahme an Arbeitsgemeinschaften',
+                        'type' => 'textarea',
+                        'lines' => 4,
+                        'cols' => 90,
+                    ],
+                    'comments_short' => [
+                        'title' => 'Bemerkungen',
+                        'type' => 'textarea',
+                        'lines' => 4,
+                        'cols' => 90,
+                    ],/*
                             'subject_profile' => [
                                     'title' => 'Profil-fach',
                                     'type' => 'textarea',
                             ],*/
-                                'student_transfered' => [
-                                        'title' => 'Versetzung',
-                                        'type' => 'select',
-                                        'values' => [
-                                                'Die Schülerin wird versetzt.' => 'Die Schülerin wird versetzt.',
-                                                'Die Schülerin wird nicht versetzt.' => 'Die Schülerin wird nicht versetzt.',
-                                                'Der Schüler wird versetzt.' => 'Der Schüler wird versetzt.',
-                                                'Der Schüler wird nicht versetzt.' => 'Der Schüler wird nicht versetzt.',
-                                        ],
-                                ],
-                                'eng_niveau' => [
-                                        'title' => 'Fremdsprachenniveau - Englisch',
-                                        'type' => 'textarea',
-                                        'lines' => 1,
-                                        'cols' => 20,
-                                        'maxchars' => 20,
-                                ],
-                                'fra_niveau' => [
-                                        'title' => 'Fremdsprachenniveau - Französisch',
-                                        'type' => 'textarea',
-                                        'lines' => 1,
-                                        'cols' => 20,
-                                        'maxchars' => 20,
-                                ],
-                                'spa_niveau' => [
-                                        'title' => 'Fremdsprachenniveau - Spanisch',
-                                        'type' => 'textarea',
-                                        'lines' => 1,
-                                        'cols' => 20,
-                                        'maxchars' => 20,
-                                ],
+                    'student_transfered' => [
+                        'title' => 'Versetzung',
+                        'type' => 'select',
+                        'values' => [
+                            'Die Schülerin wird versetzt.' => 'Die Schülerin wird versetzt.',
+                            'Die Schülerin wird nicht versetzt.' => 'Die Schülerin wird nicht versetzt.',
+                            'Der Schüler wird versetzt.' => 'Der Schüler wird versetzt.',
+                            'Der Schüler wird nicht versetzt.' => 'Der Schüler wird nicht versetzt.',
                         ],
-                        'inputs_header' => ['verhalten', 'mitarbeit'],
-                        'inputs_footer' => ['ags', 'comments_short', 'eng_niveau', 'fra_niveau', 'spa_niveau',
-                                'student_transfered'], // inputs in the footer of template
-                        'inputs_order' => ['verhalten', 'mitarbeit', 'ags', 'comments_short', 'eng_niveau', 'fra_niveau',
-                                'spa_niveau', 'student_transfered'], // special ordering of inputs (makes similar to docx template)
+                    ],
+                    'eng_niveau' => [
+                        'title' => 'Fremdsprachenniveau - Englisch',
+                        'type' => 'textarea',
+                        'lines' => 1,
+                        'cols' => 20,
+                        'maxchars' => 20,
+                    ],
+                    'fra_niveau' => [
+                        'title' => 'Fremdsprachenniveau - Französisch',
+                        'type' => 'textarea',
+                        'lines' => 1,
+                        'cols' => 20,
+                        'maxchars' => 20,
+                    ],
+                    'spa_niveau' => [
+                        'title' => 'Fremdsprachenniveau - Spanisch',
+                        'type' => 'textarea',
+                        'lines' => 1,
+                        'cols' => 20,
+                        'maxchars' => 20,
+                    ],
                 ],
-                'BP 2004/Realschulabschlusszeugnis Schulfremde' => [
-                    'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_RS_SCHULFREMDE,
-                    'name' => 'BP 2004 Realschulabschlusszeugnis Schulfremde',
-                    'file' => 'BP 2004/BP2004_Realschulabschlusszeugnis_Schulfremde',
-                    'category' => 'Jahr',
-                    'year' => '1',
-                    'report_date' => '1',
-                    'student_name' => '1',
-                    'date_of_birth' => '1',
-                    'place_of_birth' => '1',
-                    'learning_group' => '1',
-                    'grades' => block_exastud_get_grades_set('lang'),
-                    'inputs' => [
-                        'intercomp_thema' => [
-                            'title' => 'Fächerübergreifende Kompetenzprüfung: thema',
-                            'type' => 'textarea',
-                            'lines' => 2,
-                            'cols' => 60,
+                'inputs_header' => ['verhalten', 'mitarbeit'],
+                'inputs_footer' => ['ags', 'comments_short', 'eng_niveau', 'fra_niveau', 'spa_niveau',
+                    'student_transfered'], // inputs in the footer of template
+                'inputs_order' => ['verhalten', 'mitarbeit', 'ags', 'comments_short', 'eng_niveau', 'fra_niveau',
+                    'spa_niveau', 'student_transfered'], // special ordering of inputs (makes similar to docx template)
+            ],
+            'BP 2004/Realschulabschlusszeugnis Schulfremde' => [
+                'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_RS_SCHULFREMDE,
+                'name' => 'BP 2004 Realschulabschlusszeugnis Schulfremde',
+                'file' => 'BP 2004/BP2004_Realschulabschlusszeugnis_Schulfremde',
+                'category' => 'Jahr',
+                'year' => '1',
+                'report_date' => '1',
+                'student_name' => '1',
+                'date_of_birth' => '1',
+                'place_of_birth' => '1',
+                'learning_group' => '1',
+                'grades' => block_exastud_get_grades_set('lang'),
+                'inputs' => [
+                    'intercomp_thema' => [
+                        'title' => 'Fächerübergreifende Kompetenzprüfung: thema',
+                        'type' => 'textarea',
+                        'lines' => 2,
+                        'cols' => 60,
+                    ],
+                    'intercomp_grade' => [
+                        'title' => 'Fächerübergreifende Kompetenzprüfung: Note',
+                        'type' => 'select',
+                        'values' => [
+                            'sehr gut' => 'sehr gut',
+                            'gut' => 'gut',
+                            'befriedigend' => 'befriedigend',
+                            'ausreichend' => 'ausreichend',
+                            'mangelhaft' => 'mangelhaft',
+                            'ungenügend' => 'ungenügend',
                         ],
-                        'intercomp_grade' => [
-                            'title' => 'Fächerübergreifende Kompetenzprüfung: Note',
-                            'type' => 'select',
-                            'values' => [
-                                'sehr gut' => 'sehr gut',
-                                'gut' => 'gut',
-                                'befriedigend' => 'befriedigend',
-                                'ausreichend' => 'ausreichend',
-                                'mangelhaft' => 'mangelhaft',
-                                'ungenügend' => 'ungenügend'
-                            ],
-                        ],
-                        'lang_main' => [
-                            'title' => 'Pflichtfremdsprache',
-                            'type' => 'textarea',
-                            'lines' => 1,
-                            'cols' => 30,
-                        ],
-                       /* 'lang_second' => [
+                    ],
+                    'lang_main' => [
+                        'title' => 'Pflichtfremdsprache',
+                        'type' => 'textarea',
+                        'lines' => 1,
+                        'cols' => 30,
+                    ],
+                    /* 'lang_second' => [
                             'title' => 'ggf. zweite Fremdsprache',
                             'type' => 'textarea',
                             'lines' => 1,
                             'cols' => 30,
                         ],*/
-                        'group1' => [
-                            'title' => 'Leistungen in den einzelnen Fächerverbünden: 1',
-                            'type' => 'textarea',
-                            'lines' => 1,
-                            'cols' => 30,
+                    'group1' => [
+                        'title' => 'Leistungen in den einzelnen Fächerverbünden: 1',
+                        'type' => 'textarea',
+                        'lines' => 1,
+                        'cols' => 30,
+                    ],
+                    'group1_grade' => [
+                        'title' => 'Note',
+                        'type' => 'select',
+                        'values' => [
+                            '' => '',
+                            'sehr gut' => 'sehr gut',
+                            'gut' => 'gut',
+                            'befriedigend' => 'befriedigend',
+                            'ausreichend' => 'ausreichend',
+                            'mangelhaft' => 'mangelhaft',
+                            'ungenügend' => 'ungenügend',
                         ],
-                        'group1_grade' => [
-                            'title' => 'Note',
-                            'type' => 'select',
-                            'values' => [
-                                '' => '',
-                                'sehr gut' => 'sehr gut',
-                                'gut' => 'gut',
-                                'befriedigend' => 'befriedigend',
-                                'ausreichend' => 'ausreichend',
-                                'mangelhaft' => 'mangelhaft',
-                                'ungenügend' => 'ungenügend'
-                            ],
+                    ],
+                    'group2' => [
+                        'title' => 'Leistungen in den einzelnen Fächerverbünden: 2',
+                        'type' => 'textarea',
+                        'lines' => 1,
+                        'cols' => 30,
+                    ],
+                    'group2_grade' => [
+                        'title' => 'Note',
+                        'type' => 'select',
+                        'values' => [
+                            '' => '',
+                            'sehr gut' => 'sehr gut',
+                            'gut' => 'gut',
+                            'befriedigend' => 'befriedigend',
+                            'ausreichend' => 'ausreichend',
+                            'mangelhaft' => 'mangelhaft',
+                            'ungenügend' => 'ungenügend',
                         ],
-                        'group2' => [
-                            'title' => 'Leistungen in den einzelnen Fächerverbünden: 2',
-                            'type' => 'textarea',
-                            'lines' => 1,
-                            'cols' => 30,
-                        ],
-                        'group2_grade' => [
-                            'title' => 'Note',
-                            'type' => 'select',
-                            'values' => [
-                                '' => '',
-                                'sehr gut' => 'sehr gut',
-                                'gut' => 'gut',
-                                'befriedigend' => 'befriedigend',
-                                'ausreichend' => 'ausreichend',
-                                'mangelhaft' => 'mangelhaft',
-                                'ungenügend' => 'ungenügend'
-                            ],
-                        ],
+                    ],
 
-                        'ags' => [
-                            'title' => 'Teilnahme an Arbeitsgemeinschaften',
-                            'type' => 'textarea',
-                            'lines' => 2,
-                            'cols' => 90,
-                        ],
-                        'comments_short' => [
-                            'title' => 'Bemerkungen',
-                            'type' => 'textarea',
-                            'lines' => 2,
-                            'cols' => 90,
+                    'ags' => [
+                        'title' => 'Teilnahme an Arbeitsgemeinschaften',
+                        'type' => 'textarea',
+                        'lines' => 2,
+                        'cols' => 90,
+                    ],
+                    'comments_short' => [
+                        'title' => 'Bemerkungen',
+                        'type' => 'textarea',
+                        'lines' => 2,
+                        'cols' => 90,
+                    ],
+                ],
+                //                    'inputs_header' => [],
+                'inputs_footer' => ['lang_main', 'lang_second', 'group1', 'group1_grade', 'group2', 'group2_grade', 'ags', 'comments_short'], // inputs in the footer of template
+                'inputs_order' => ['intercomp_thema', 'intercomp_grade', 'lang_main', 'group1', 'group1_grade', 'group2', 'group2_grade', 'ags', 'comments_short'], // special ordering of inputs (makes similar to docx template)
+            ],
+            'BP 2016/Zeugnis über den Realschulabschluss' => [
+                'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_RS_SCHULFREMDE,
+                'name' => 'BP 2016 Realschulabschlusszeugnis Schulfremde',
+                'file' => 'BP 2016/BP2016_Realschulabschlusszeugnis_Schulfremde',
+                'category' => 'Jahr',
+                'year' => '1',
+                'report_date' => '1',
+                'student_name' => '1',
+                'date_of_birth' => '1',
+                'place_of_birth' => '1',
+                'learning_group' => '1',
+                'grades' => block_exastud_get_grades_set('lang'),
+                'inputs' => [
+                    'wahlfach' => [
+                        'title' => 'Wahlpflichtfach',
+                        'type' => 'textarea',
+                        'lines' => 1,
+                        'cols' => 30,
+                    ],
+                    'lang_main' => [
+                        'title' => 'Pflichtfremdsprache',
+                        'type' => 'textarea',
+                        'lines' => 1,
+                        'cols' => 30,
+                    ],
+                    'lang_second' => [
+                        'title' => 'ggf. zweite Fremdsprache',
+                        'type' => 'textarea',
+                        'lines' => 1,
+                        'cols' => 30,
+                    ],
+                    'groups' => [
+                        'title' => 'Teilnahme an Arbeitsgemeinschaften',
+                        'type' => 'textarea',
+                        'lines' => 2,
+                        'cols' => 60,
+                    ],
+                    'comments_short' => [
+                        'title' => 'Bemerkungen',
+                        'type' => 'textarea',
+                        'lines' => 2,
+                        'cols' => 90,
+                    ],
+                ],
+                //                    'inputs_header' => [],
+                'inputs_footer' => ['groups', 'comments_short', 'lang_main', 'lang_second'], // inputs in the footer of template
+                'inputs_order' => ['wahlfach', 'lang_main', 'lang_second', 'groups', 'comments_short'], // special ordering of inputs (makes similar to docx template)
+            ],
+            'BP 2016/Zeugnis über den Hauptschulabschluss' => [
+                'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_HS_SCHULFREMDE,
+                'name' => 'BP 2016 Hauptschulabschlusszeugnis Schulfremde',
+                'file' => 'BP 2016/BP2016_Hauptschulabschlusszeugnis_Schulfremde',
+                'category' => 'Jahr',
+                'year' => '1',
+                'report_date' => '1',
+                'student_name' => '1',
+                'date_of_birth' => '1',
+                'place_of_birth' => '1',
+                'learning_group' => '1',
+                'grades' => block_exastud_get_grades_set('lang'),
+                'inputs' => [
+                    'present_thema' => [
+                        'title' => 'Leistungen in der Präsentationsprüfung: Thema',
+                        'type' => 'textarea',
+                        'lines' => 1,
+                        'cols' => 60,
+                    ],
+                    'present_grade' => [
+                        'title' => 'Leistungen in der Präsentationsprüfung: Note',
+                        'type' => 'select',
+                        'values' => [
+                            'sehr gut' => 'sehr gut',
+                            'gut' => 'gut',
+                            'befriedigend' => 'befriedigend',
+                            'ausreichend' => 'ausreichend',
+                            'mangelhaft' => 'mangelhaft',
+                            'ungenügend' => 'ungenügend',
                         ],
                     ],
-//                    'inputs_header' => [],
-                    'inputs_footer' => ['lang_main', 'lang_second', 'group1', 'group1_grade', 'group2', 'group2_grade', 'ags', 'comments_short'], // inputs in the footer of template
-                    'inputs_order' => ['intercomp_thema', 'intercomp_grade', 'lang_main', 'group1', 'group1_grade', 'group2', 'group2_grade', 'ags', 'comments_short'], // special ordering of inputs (makes similar to docx template)
-                ],
-                'BP 2016/Zeugnis über den Realschulabschluss' => [
-                    'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_RS_SCHULFREMDE,
-                    'name' => 'BP 2016 Realschulabschlusszeugnis Schulfremde',
-                    'file' => 'BP 2016/BP2016_Realschulabschlusszeugnis_Schulfremde',
-                    'category' => 'Jahr',
-                    'year' => '1',
-                    'report_date' => '1',
-                    'student_name' => '1',
-                    'date_of_birth' => '1',
-                    'place_of_birth' => '1',
-                    'learning_group' => '1',
-                    'grades' => block_exastud_get_grades_set('lang'),
-                    'inputs' => [
-                        'wahlfach' => [
-                            'title' => 'Wahlpflichtfach',
-                            'type' => 'textarea',
-                            'lines' => 1,
-                            'cols' => 30,
-                        ],
-                        'lang_main' => [
-                            'title' => 'Pflichtfremdsprache',
-                            'type' => 'textarea',
-                            'lines' => 1,
-                            'cols' => 30,
-                        ],
-                        'lang_second' => [
-                            'title' => 'ggf. zweite Fremdsprache',
-                            'type' => 'textarea',
-                            'lines' => 1,
-                            'cols' => 30,
-                        ],
-                        'groups' => [
-                            'title' => 'Teilnahme an Arbeitsgemeinschaften',
-                            'type' => 'textarea',
-                            'lines' => 2,
-                            'cols' => 60,
-                        ],
-                        'comments_short' => [
-                            'title' => 'Bemerkungen',
-                            'type' => 'textarea',
-                            'lines' => 2,
-                            'cols' => 90,
-                        ],
+                    'eng_niveau' => [
+                        'title' => 'Fremdsprachenniveau - Englisch',
+                        'type' => 'textarea',
+                        'lines' => 1,
+                        'cols' => 20,
+                        'maxchars' => 20,
                     ],
-//                    'inputs_header' => [],
-                    'inputs_footer' => ['groups', 'comments_short', 'lang_main', 'lang_second'], // inputs in the footer of template
-                    'inputs_order' => ['wahlfach', 'lang_main', 'lang_second', 'groups', 'comments_short'], // special ordering of inputs (makes similar to docx template)
-                ],
-                'BP 2016/Zeugnis über den Hauptschulabschluss' => [
-                    'id' => BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_HS_SCHULFREMDE,
-                    'name' => 'BP 2016 Hauptschulabschlusszeugnis Schulfremde',
-                    'file' => 'BP 2016/BP2016_Hauptschulabschlusszeugnis_Schulfremde',
-                    'category' => 'Jahr',
-                    'year' => '1',
-                    'report_date' => '1',
-                    'student_name' => '1',
-                    'date_of_birth' => '1',
-                    'place_of_birth' => '1',
-                    'learning_group' => '1',
-                    'grades' => block_exastud_get_grades_set('lang'),
-                    'inputs' => [
-                        'present_thema' => [
-                            'title' => 'Leistungen in der Präsentationsprüfung: Thema',
-                            'type' => 'textarea',
-                            'lines' => 1,
-                            'cols' => 60,
-                        ],
-                        'present_grade' => [
-                            'title' => 'Leistungen in der Präsentationsprüfung: Note',
-                            'type' => 'select',
-                            'values' => [
-                                'sehr gut' => 'sehr gut',
-                                'gut' => 'gut',
-                                'befriedigend' => 'befriedigend',
-                                'ausreichend' => 'ausreichend',
-                                'mangelhaft' => 'mangelhaft',
-                                'ungenügend' => 'ungenügend'
-                            ],
-                        ],
-                        'eng_niveau' => [
-                            'title' => 'Fremdsprachenniveau - Englisch',
-                            'type' => 'textarea',
-                            'lines' => 1,
-                            'cols' => 20,
-                            'maxchars' => 20,
-                        ],
-                        'comments_short' => [
-                            'title' => 'Bemerkungen',
-                            'type' => 'textarea',
-                            'lines' => 2,
-                            'cols' => 90,
-                        ],
+                    'comments_short' => [
+                        'title' => 'Bemerkungen',
+                        'type' => 'textarea',
+                        'lines' => 2,
+                        'cols' => 90,
                     ],
-    //                    'inputs_header' => [],
-                    'inputs_footer' => ['present_thema', 'present_grade', 'eng_niveau', 'comments_short'], // inputs in the footer of template
-                    'inputs_order' => ['present_thema', 'present_grade', 'eng_niveau', 'comments_short'], // special ordering of inputs (makes similar to docx template)
                 ],
+                //                    'inputs_header' => [],
+                'inputs_footer' => ['present_thema', 'present_grade', 'eng_niveau', 'comments_short'], // inputs in the footer of template
+                'inputs_order' => ['present_thema', 'present_grade', 'eng_niveau', 'comments_short'], // special ordering of inputs (makes similar to docx template)
+            ],
 
         ];
     }
 
     if ($templateid) {
-        $res = array_filter($templates, function($t) use ($templateid) {return $t['id'] == $templateid;});
+        $res = array_filter($templates, function($t) use ($templateid) {
+            return $t['id'] == $templateid;
+        });
         return reset($res);
     }
 
@@ -5670,7 +5685,7 @@ function block_exastud_fill_reportsettingstable($id = 0, $update = false) {
         $bp_bykey = $bp_bykey[0];
         $bp_bykey = str_replace(' ', '', $bp_bykey);
         $bp_bykey = strtolower($bp_bykey);
-        $bptitle = 'bw-'.$bp_bykey;
+        $bptitle = 'bw-' . $bp_bykey;
         foreach ($allBPs as $bp) {
             if ($bptitle == $bp->sourceinfo) {
                 $bpid = $bp->id;
@@ -5688,10 +5703,10 @@ function block_exastud_fill_reportsettingstable($id = 0, $update = false) {
             $data['rs_hs'] = $template['rs_hs'];
         }
         $checkboxes = array('year', 'report_date', 'report_date', 'student_name',
-                'date_of_birth', 'place_of_birth', 'learning_group'/*, 'class', 'focus'*/);
+            'date_of_birth', 'place_of_birth', 'learning_group'/*, 'class', 'focus'*/);
         foreach ($checkboxes as $f) {
             if (array_key_exists($f, $template)) {
-                $data[$f] = serialize(array('checked' => "".$template[$f]));
+                $data[$f] = serialize(array('checked' => "" . $template[$f]));
             }
         }
         $data['category'] = (@$template['category'] ? @$template['category'] : '');
@@ -5709,12 +5724,12 @@ function block_exastud_fill_reportsettingstable($id = 0, $update = false) {
         if (array_key_exists('inputs', $template) && count($template['inputs']) > 0) {
             foreach ($template['inputs'] as $inputname => $inputconfig) {
                 $fielddata = array(
-                        'key' => $inputname, // used in the template files
-                        'title' => @$inputconfig['title'] ? $inputconfig['title'] : '',
-                        'type' => @$inputconfig['type'] ? $inputconfig['type'] : 'textarea',
-                        'checked' => '1'
+                    'key' => $inputname, // used in the template files
+                    'title' => @$inputconfig['title'] ? $inputconfig['title'] : '',
+                    'type' => @$inputconfig['type'] ? $inputconfig['type'] : 'textarea',
+                    'checked' => '1',
                 );
-                if ($fielddata['type'] == 'textarea' ) {
+                if ($fielddata['type'] == 'textarea') {
                     $fielddata['rows'] = @$inputconfig['lines'] ? $inputconfig['lines'] : "999"; // 999 - will be used calculated value later
                     $fielddata['count_in_row'] = @$inputconfig['cols'] ? $inputconfig['cols'] : "999";
                     $fielddata['maxchars'] = @$inputconfig['maxchars'] ? $inputconfig['maxchars'] : "0";
@@ -5722,7 +5737,7 @@ function block_exastud_fill_reportsettingstable($id = 0, $update = false) {
                 if ($fielddata['type'] == 'select' && !empty($inputconfig['values'])) {
                     $fielddata['values'] = $inputconfig['values'];
                 }
-                if ($fielddata['type'] == 'userdata' ) {
+                if ($fielddata['type'] == 'userdata') {
                     $fielddata['userdatakey'] = @$inputconfig['userdatakey'] ? $inputconfig['userdatakey'] : "username";
                 }
                 if (in_array($inputname, $tablecolumns)) {
@@ -5766,7 +5781,7 @@ function block_exastud_fill_reportsettingstable($id = 0, $update = false) {
 
 function block_exastud_optional_param_array($parname, $default, $type) {
     if (func_num_args() != 3 or empty($parname) or empty($type)) {
-        throw new coding_exception('optional_param_array requires $parname, $default + $type to be specified (parameter: '.$parname.')');
+        throw new coding_exception('optional_param_array requires $parname, $default + $type to be specified (parameter: ' . $parname . ')');
     }
     // POST has precedence.
     if (isset($_POST[$parname])) {
@@ -5777,13 +5792,13 @@ function block_exastud_optional_param_array($parname, $default, $type) {
         return $default;
     }
     if (!is_array($param)) {
-        debugging('optional_param_array() expects array parameters only: '.$parname);
+        debugging('optional_param_array() expects array parameters only: ' . $parname);
         return $default;
     }
     $result = array();
     foreach ($param as $key => $value) {
         if (!preg_match('/^[a-z0-9_-]+$/i', $key)) {
-            debugging('Invalid key name in optional_param_array() detected: '.$key.', parameter: '.$parname);
+            debugging('Invalid key name in optional_param_array() detected: ' . $key . ', parameter: ' . $parname);
             continue;
         }
         $result[$key] = clean_param_array($value, $type, true);
@@ -5795,7 +5810,7 @@ function block_exastud_optional_param_array($parname, $default, $type) {
 // but be careful with using
 function block_exastud_optional_param_array_keyfree($parname, $default, $type) {
     if (func_num_args() != 3 or empty($parname) or empty($type)) {
-        throw new coding_exception('optional_param_array requires $parname, $default + $type to be specified (parameter: '.$parname.')');
+        throw new coding_exception('optional_param_array requires $parname, $default + $type to be specified (parameter: ' . $parname . ')');
     }
     // POST has precedence.
     if (isset($_POST[$parname])) {
@@ -5806,7 +5821,7 @@ function block_exastud_optional_param_array_keyfree($parname, $default, $type) {
         return $default;
     }
     if (!is_array($param)) {
-        debugging('optional_param_array() expects array parameters only: '.$parname);
+        debugging('optional_param_array() expects array parameters only: ' . $parname);
         return $default;
     }
     $result = array();
@@ -5839,10 +5854,10 @@ function block_exastud_menu_for_settings() {
     $titleMainConfig = block_exastud_get_string_if_exists('blocksettings') ?: block_exastud_get_string("blocksettings", 'block');
     $tabs[] = new tabobject('blockconfig', new moodle_url('/admin/settings.php', ['section' => 'blocksettingexastud']), $titleMainConfig, '', true);
     $tabs[] = new tabobject('periods', new moodle_url('/blocks/exastud/periods.php', ['courseid' => g::$COURSE->id]), block_exastud_get_string("periods"), '', true);
-    $tabs[] = new tabobject('competencies', new moodle_url('/blocks/exastud/configuration_global.php', ['courseid' => g::$COURSE->id]).'&action=categories', block_exastud_get_string("competencies"), '', true);
-    $tabs[] = new tabobject('grading', new moodle_url('/blocks/exastud/configuration_global.php', ['courseid' => g::$COURSE->id]).'&action=evalopts', block_exastud_get_string("grading"), '', true);
+    $tabs[] = new tabobject('competencies', new moodle_url('/blocks/exastud/configuration_global.php', ['courseid' => g::$COURSE->id]) . '&action=categories', block_exastud_get_string("competencies"), '', true);
+    $tabs[] = new tabobject('grading', new moodle_url('/blocks/exastud/configuration_global.php', ['courseid' => g::$COURSE->id]) . '&action=evalopts', block_exastud_get_string("grading"), '', true);
     if (block_exastud_get_plugin_config('can_edit_bps_and_subjects')) {
-        $tabs[] = new tabobject('education_plans', new moodle_url('/blocks/exastud/configuration_global.php', ['courseid' => g::$COURSE->id]).'&action=bps', block_exastud_get_string("education_plans"), '', true);
+        $tabs[] = new tabobject('education_plans', new moodle_url('/blocks/exastud/configuration_global.php', ['courseid' => g::$COURSE->id]) . '&action=bps', block_exastud_get_string("education_plans"), '', true);
     }
     /*if (!block_exastud_is_bw_active()) {
         if (block_exastud_has_global_cap(BLOCK_EXASTUD_CAP_UPLOAD_PICTURE)) {
@@ -5854,7 +5869,7 @@ function block_exastud_menu_for_settings() {
     }
 
     //here the cohort gets created if it does not exist
-    $tabs[] = new tabobject('head_teachers', 'javascript:void window.open(\''.\block_exastud\url::create('/cohort/assign.php', ['id' => block_exastud_get_head_teacher_cohort()->id])->out(false).'\');', block_exastud_get_string('head_teachers'), '', true);
+    $tabs[] = new tabobject('head_teachers', 'javascript:void window.open(\'' . \block_exastud\url::create('/cohort/assign.php', ['id' => block_exastud_get_head_teacher_cohort()->id])->out(false) . '\');', block_exastud_get_string('head_teachers'), '', true);
     $tabs[] = new tabobject('report_settings', new moodle_url('/blocks/exastud/report_settings.php'), block_exastud_get_string("report_settings_edit"), '', true);
     return new tabtree($tabs);
 }
@@ -5911,7 +5926,7 @@ function block_exastud_cropStringByInputLimitsFromTemplate($string, $templateid,
 
 function block_exastud_get_grade_average_value($subjects, $verbal, $templateid, $classid, $studentid) {
     $studentData = block_exastud_get_class_student_data($classid, $studentid);
-    $avg  = $studentData->grade_average_calculated;
+    $avg = $studentData->grade_average_calculated;
     return $avg;
 
     // TODO: delete old code?
@@ -5923,20 +5938,20 @@ function block_exastud_get_grade_average_value($subjects, $verbal, $templateid, 
     $scnt = 0;
     $template = block_exastud\print_template::create($templateid);
     switch ($templateid) {
-    	case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_HALBJAHR_LERNENTWICKLUNGSBERICHT :
-				case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_JAHRESZEUGNIS_LERNENTWICKLUNGSBERICHT :
-				case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_HALBJAHRESINFORMATION_KL11 :
-				case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_ABGANGSZEUGNIS_SCHULPFLICHT :
-				case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_ABSCHLUSSZEUGNIS_FOE :
-				case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_JAHRESZEUGNIS_KL10_E_NIVEAU :
-				case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_GLEICHWERTIGER_BILDUNGSABSCHLUSS_RSA :
-				case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_HALBJAHR_ZEUGNIS_KL10_E_NIVEAU :
-				case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_HALBJAHR_ZEUGNIS_KL9_10_HSA :
-				case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_HALBJAHR_ZEUGNIS_FOE :
-				case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_JAHRZEUGNIS_RS :
-				case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_BEIBLATT_PROJEKTARBEIT :
-				case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_JAHRESZEUGNIS_KL11 :
-				case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_GLEICHWERTIGER_BILDUNGSABSCHLUSS_HSA :
+        case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_HALBJAHR_LERNENTWICKLUNGSBERICHT :
+        case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_JAHRESZEUGNIS_LERNENTWICKLUNGSBERICHT :
+        case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_HALBJAHRESINFORMATION_KL11 :
+        case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_ABGANGSZEUGNIS_SCHULPFLICHT :
+        case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_ABSCHLUSSZEUGNIS_FOE :
+        case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_JAHRESZEUGNIS_KL10_E_NIVEAU :
+        case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_GLEICHWERTIGER_BILDUNGSABSCHLUSS_RSA :
+        case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_HALBJAHR_ZEUGNIS_KL10_E_NIVEAU :
+        case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_HALBJAHR_ZEUGNIS_KL9_10_HSA :
+        case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_HALBJAHR_ZEUGNIS_FOE :
+        case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_JAHRZEUGNIS_RS :
+        case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_BEIBLATT_PROJEKTARBEIT :
+        case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_JAHRESZEUGNIS_KL11 :
+        case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_GLEICHWERTIGER_BILDUNGSABSCHLUSS_HSA :
         case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_ABSCHLUSSZEUGNIS_KL10_RSA:
         case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_ABSCHLUSSZEUGNIS_KL9_10_HSA_2:
         case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_ABSCHLUSSZEUGNIS_KL9_10_HSA:
@@ -5958,25 +5973,25 @@ function block_exastud_get_grade_average_value($subjects, $verbal, $templateid, 
     $WPFadded = false;
     foreach ($subjects as $sId => $grade) {
         $subject = $DB->get_record('block_exastudsubjects', ['id' => $sId]);
-        $gradeForCalc = (float) block_exastud_get_grade_index_by_value($grade);
+        $gradeForCalc = (float)block_exastud_get_grade_index_by_value($grade);
         if (in_array($subject->shorttitle, $avgCalcAll)) {
             // look on religion (only one or Ethik).
             // Cause 'Ethik' we need to look not only for first value. So add this value later. now - ignore that
             switch ($templateid) {
-            		case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_HALBJAHR_LERNENTWICKLUNGSBERICHT :
-								case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_JAHRESZEUGNIS_LERNENTWICKLUNGSBERICHT :
-								case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_HALBJAHRESINFORMATION_KL11 :
-								case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_ABGANGSZEUGNIS_SCHULPFLICHT :
-								case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_ABSCHLUSSZEUGNIS_FOE :
-								case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_JAHRESZEUGNIS_KL10_E_NIVEAU :
-								case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_GLEICHWERTIGER_BILDUNGSABSCHLUSS_RSA :
-								case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_HALBJAHR_ZEUGNIS_KL10_E_NIVEAU :
-								case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_HALBJAHR_ZEUGNIS_KL9_10_HSA :
-								case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_HALBJAHR_ZEUGNIS_FOE :
-								case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_JAHRZEUGNIS_RS :
-								case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_BEIBLATT_PROJEKTARBEIT :
-								case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_JAHRESZEUGNIS_KL11 :
-								case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_GLEICHWERTIGER_BILDUNGSABSCHLUSS_HSA :
+                case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_HALBJAHR_LERNENTWICKLUNGSBERICHT :
+                case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_JAHRESZEUGNIS_LERNENTWICKLUNGSBERICHT :
+                case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_HALBJAHRESINFORMATION_KL11 :
+                case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_ABGANGSZEUGNIS_SCHULPFLICHT :
+                case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_ABSCHLUSSZEUGNIS_FOE :
+                case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_JAHRESZEUGNIS_KL10_E_NIVEAU :
+                case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_GLEICHWERTIGER_BILDUNGSABSCHLUSS_RSA :
+                case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_HALBJAHR_ZEUGNIS_KL10_E_NIVEAU :
+                case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_HALBJAHR_ZEUGNIS_KL9_10_HSA :
+                case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_HALBJAHR_ZEUGNIS_FOE :
+                case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_JAHRZEUGNIS_RS :
+                case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_BEIBLATT_PROJEKTARBEIT :
+                case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_JAHRESZEUGNIS_KL11 :
+                case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_GLEICHWERTIGER_BILDUNGSABSCHLUSS_HSA :
                 case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_ABSCHLUSSZEUGNIS_KL10_RSA:
                 case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_ABSCHLUSSZEUGNIS_KL9_10_HSA_2:
                 case BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_ABSCHLUSSZEUGNIS_KL9_10_HSA:
@@ -5985,8 +6000,8 @@ function block_exastud_get_grade_average_value($subjects, $verbal, $templateid, 
                     if (in_array($subject->shorttitle, $avgCalcSubjectsRel)) {
                         $religionGrade = $gradeForCalc;
                     } elseif (!in_array($subject->shorttitle, $avgCalcSubjectsProfil)) { // no calculate for Prifolefach
-//                        $sum += $gradeForCalc;
-//                        $scnt++;
+                        //                        $sum += $gradeForCalc;
+                        //                        $scnt++;
                         if (in_array($subject->shorttitle, $avgCalcSubjectsWPF)) {
                             if ($WPFadded) { // only first WPF subject
                                 continue 2;
@@ -6003,11 +6018,11 @@ function block_exastud_get_grade_average_value($subjects, $verbal, $templateid, 
                             $rsum += $gradeForCalc;
                             $rcnt++;
                         }
-                        if (!empty ($gradeForCalc)){
-	                        $sum += $gradeForCalc;
-	                        $scnt++;
-	                      }
-//                        echo $subject->title.' added with '.$gradeForCalc.'<br>';
+                        if (!empty ($gradeForCalc)) {
+                            $sum += $gradeForCalc;
+                            $scnt++;
+                        }
+                        //                        echo $subject->title.' added with '.$gradeForCalc.'<br>';
                     }
                     break;
                 default:
@@ -6030,10 +6045,10 @@ function block_exastud_get_grade_average_value($subjects, $verbal, $templateid, 
                             $rsum += $gradeForCalc;
                             $rcnt++;
                         }
-                        if (!empty ($gradeForCalc)){
-	                        $sum += $gradeForCalc;
-	                        $scnt++;
-	                      }
+                        if (!empty ($gradeForCalc)) {
+                            $sum += $gradeForCalc;
+                            $scnt++;
+                        }
                     }
             }
             /*if ($subject) {
@@ -6053,10 +6068,10 @@ function block_exastud_get_grade_average_value($subjects, $verbal, $templateid, 
     $grades = $template->get_grade_options();
     $studentdata = block_exastud_get_class_student_data($classid, $studentid);
     $projekt_grade = (float)block_exastud_get_grade_index_by_value(@$grades[@$studentdata->projekt_grade]);
-//    echo $projekt_grade;
+    //    echo $projekt_grade;
     if ($projekt_grade && $projekt_grade > 0) {
-	    $sum += $projekt_grade;
-	    $scnt++;
+        $sum += $projekt_grade;
+        $scnt++;
     }
     if (isset($religionGrade) && $religionGrade > 0) {
         $sum += $religionGrade;
@@ -6071,11 +6086,11 @@ function block_exastud_get_grade_average_value($subjects, $verbal, $templateid, 
         $avg = (($sum - $rsum) + $min) / (($scnt - $rcnt) + 1);
         $avg = 0; //customer request 11.7.2019, additional conditions will be necessary
     }
-//    echo $sum.'/'.$scnt.'<br>'; exit;
+    //    echo $sum.'/'.$scnt.'<br>'; exit;
 
     //$avg = round($avg, 1, PHP_ROUND_HALF_DOWN); // not always correct. ???
-    $fig = (int) str_pad('1', 2, '0'); // 2 (second parameter) - precision
-    $avg  = (floor($avg * $fig) / $fig); // - ALWAYS round down!
+    $fig = (int)str_pad('1', 2, '0'); // 2 (second parameter) - precision
+    $avg = (floor($avg * $fig) / $fig); // - ALWAYS round down!
     $result = number_format($avg, 1, ',', '');
     if ($verbal) {
         $avgVerbal = 'sehr gut';
@@ -6126,22 +6141,22 @@ function block_exastud_str2bytes($value) {
     // only numbers (dots?)
     $num_val = preg_replace('/[^0-9]/', '', $value);
     switch ($unit_byte) {
-        case 'p':	// petabyte
+        case 'p':    // petabyte
         case 'pb':
             $num_val *= 1024;
-        case 't':	// terabyte
+        case 't':    // terabyte
         case 'tb':
             $num_val *= 1024;
-        case 'g':	// gigabyte
+        case 'g':    // gigabyte
         case 'gb':
             $num_val *= 1024;
-        case 'm':	// megabyte
+        case 'm':    // megabyte
         case 'mb':
             $num_val *= 1024;
-        case 'k':	// kilobyte
+        case 'k':    // kilobyte
         case 'kb':
             $num_val *= 1024;
-        case 'b':	// byte
+        case 'b':    // byte
             return $num_val *= 1;
             break; // make sure
         default:
@@ -6218,7 +6233,7 @@ function block_exastud_get_year_for_report($class) {
     $year2 = $year1 + 1;
     $year1 = str_pad($year1, 2, '0', STR_PAD_LEFT);
     $year2 = str_pad($year2, 2, '0', STR_PAD_LEFT);
-    $resultYear = $year1.'/'.$year2;
+    $resultYear = $year1 . '/' . $year2;
     return $resultYear;
 }
 
@@ -6254,7 +6269,7 @@ function block_exastud_resize_image_from_image($original, $imageinfo, $width, $h
     if (empty($imageinfo)) {
         return false;
     }
-    $originalwidth  = $imageinfo[0];
+    $originalwidth = $imageinfo[0];
     $originalheight = $imageinfo[1];
     if (empty($originalwidth) or empty($originalheight)) {
         return false;
@@ -6282,12 +6297,12 @@ function block_exastud_resize_image_from_image($original, $imageinfo, $width, $h
     }
 
     if ($ratio < 1) {
-        $targetwidth    = floor($originalwidth * $ratio);
-        $targetheight   = floor($originalheight * $ratio);
+        $targetwidth = floor($originalwidth * $ratio);
+        $targetheight = floor($originalheight * $ratio);
     } else {
         // Do not enlarge the original file if it is smaller than the requested thumbnail size.
-        $targetwidth    = $originalwidth;
-        $targetheight   = $originalheight;
+        $targetwidth = $originalwidth;
+        $targetheight = $originalheight;
     }
 
     $canvaswidth = $targetwidth;
@@ -6337,7 +6352,7 @@ function block_exastud_get_all_teachers($courseid = null) {
     $context = context_course::instance($courseid);
     $teachers = get_role_users($role->id, $context);*/
     // for all moodle installation
-    $teachers = $DB->get_records_sql('SELECT DISTINCT u.* 
+    $teachers = $DB->get_records_sql('SELECT DISTINCT u.*
                                         FROM {role_assignments} ra
                                         JOIN {user} u ON u.id = ra.userid
                                         WHERE ra.roleid = ?
@@ -6346,35 +6361,35 @@ function block_exastud_get_all_teachers($courseid = null) {
 
     // add teachers from classes (head_teacher, project_teacher, bilingual_teacher)
     $names = ['head_teacher', 'project_teacher', 'bilingual_teacher'];
-    $addTeachers = $DB->get_records_sql('SELECT DISTINCT u.* 
+    $addTeachers = $DB->get_records_sql('SELECT DISTINCT u.*
                                           FROM {block_exastuddata} d
                                           JOIN {user} u ON u.id = d.value
-                                          WHERE u.deleted = 0 
+                                          WHERE u.deleted = 0
                                             AND d.value > 0
-                                            AND d.name IN (\''.implode('\', \'', $names).'\') ');
+                                            AND d.name IN (\'' . implode('\', \'', $names) . '\') ');
     // add teachers from class owners
-    $headTeachers = $DB->get_records_sql('SELECT DISTINCT u.* 
+    $headTeachers = $DB->get_records_sql('SELECT DISTINCT u.*
                                           FROM {block_exastudclass} c
                                           JOIN {user} u ON u.id = c.userid
-                                          WHERE u.deleted = 0 
+                                          WHERE u.deleted = 0
                                             AND c.userid > 0
                                             ');
     // add teachers from subjects
-    $subjectTeachers = $DB->get_records_sql('SELECT DISTINCT u.* 
+    $subjectTeachers = $DB->get_records_sql('SELECT DISTINCT u.*
                                           FROM {block_exastudclassteachers} ct
                                           JOIN {user} u ON u.id = ct.teacherid
-                                          WHERE u.deleted = 0 
+                                          WHERE u.deleted = 0
                                             AND ct.teacherid > 0
                                             ');
     // teachers from cohort 'head_teachers'
     $cohort = block_exastud_get_head_teacher_cohort();
-    $cohortTeachers = $DB->get_records_sql('SELECT DISTINCT u.* 
+    $cohortTeachers = $DB->get_records_sql('SELECT DISTINCT u.*
                                           FROM {cohort_members} c
                                           JOIN {user} u ON u.id = c.userid
-                                          WHERE u.deleted = 0 
+                                          WHERE u.deleted = 0
                                             AND c.cohortid = ?
                                             ',
-            [$cohort->id]);
+        [$cohort->id]);
     $teachers = $teachers + $addTeachers + $headTeachers + $subjectTeachers + $cohortTeachers;
     //$headteachers = block_exastud_get_class_teachers();
     return $teachers;
@@ -6387,24 +6402,24 @@ function block_exastud_get_class_diff_teachers($classid, $type = null) {
     } else {
         $types = [$type];
     }
-    $teachers = $DB->get_records_sql('SELECT DISTINCT u.* 
+    $teachers = $DB->get_records_sql('SELECT DISTINCT u.*
                                           FROM {block_exastuddata} d
                                             JOIN {user} u ON u.id = d.value
                                           WHERE u.deleted = 0
-                                            AND d.classid = ? 
-                                            AND d.value > 0                                            
-                                            AND d.name IN (\''.implode('\', \'', $types).'\') ',
-                                    [$classid]);
+                                            AND d.classid = ?
+                                            AND d.value > 0
+                                            AND d.name IN (\'' . implode('\', \'', $types) . '\') ',
+        [$classid]);
     return $teachers;
 }
 
 function block_exastud_clean_templatelist_for_classconfiguration($list, $depth = 'student') {
     $toClean = array(
         // clean beiblatt and zertificate
-            BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_16_ZERTIFIKAT_FUER_PROFILFACH,
-            BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_BEIBLATT_PROJEKTPRUEFUNG_HSA,
-            BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_BEIBLATT_PROJEKTARBEIT,
-            BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_BEIBLATT_PROJEKTARBEIT_HSA,
+        BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_16_ZERTIFIKAT_FUER_PROFILFACH,
+        BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_GMS_BEIBLATT_PROJEKTPRUEFUNG_HSA,
+        BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_BEIBLATT_PROJEKTARBEIT,
+        BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_BEIBLATT_PROJEKTARBEIT_HSA,
     );
     switch ($depth) {
         case 'student':
@@ -6436,14 +6451,14 @@ function block_exastud_update_class_categories_for_global_settings($toAdd = null
             foreach ($toAdd as $category) {
                 list($categoryid, $categorysource) = explode('_', $category);
                 $existing = $DB->get_record('block_exastudclasscate',
-                        ['classid' => $class->id,
-                                'categoryid' => $categoryid,
-                                'categorysource' => $categorysource], '*', IGNORE_MULTIPLE);
+                    ['classid' => $class->id,
+                        'categoryid' => $categoryid,
+                        'categorysource' => $categorysource], '*', IGNORE_MULTIPLE);
                 if (!$existing) {
-                    $entry = (object) [
-                            'classid' => $class->id,
-                            'categoryid' => $categoryid,
-                            'categorysource' => $categorysource
+                    $entry = (object)[
+                        'classid' => $class->id,
+                        'categoryid' => $categoryid,
+                        'categorysource' => $categorysource,
                     ];
                     $DB->insert_record('block_exastudclasscate', $entry);
                 }
@@ -6454,7 +6469,7 @@ function block_exastud_update_class_categories_for_global_settings($toAdd = null
             foreach ($toRemove as $category) {
                 list($categoryid, $categorysource) = explode('_', $category);
                 $DB->delete_records('block_exastudclasscate',
-                        ['classid' => $class->id,
+                    ['classid' => $class->id,
                         'categoryid' => $categoryid,
                         'categorysource' => $categorysource]);
             }
@@ -6465,7 +6480,9 @@ function block_exastud_update_class_categories_for_global_settings($toAdd = null
 function block_exastud_relate_categories_to_class($classid) {
     global $DB;
     $toAdd = $DB->get_records('block_exastudclasscate', ['classid' => 0]);
-    $toAdd = array_map(function ($o) {return $o->categoryid.'_'.$o->categorysource;}, $toAdd);
+    $toAdd = array_map(function($o) {
+        return $o->categoryid . '_' . $o->categorysource;
+    }, $toAdd);
     block_exastud_update_class_categories_for_global_settings($toAdd, null, $classid);
 }
 
@@ -6564,32 +6581,32 @@ function block_exastud_upgrade_old_lern_social_reviews_temporary_function() {
     // 1. get time of plugin upgrading top version 2019052700
     // it is a version where was deleted subjectid = -3
     $pluginupgr_tstamp = $DB->get_records('upgrade_log', ['plugin' => 'block_exastud',
-                                                    'targetversion' => '2019070509', //'2019052700',
-                                                    ]);
+        'targetversion' => '2019070509', //'2019052700',
+    ]);
     $pluginupgr_tstamp = end($pluginupgr_tstamp);
     $pluginupgr_tstamp = $pluginupgr_tstamp->timemodified;
     if ($pluginupgr_tstamp > 0) {
         // if we are adding Lern to All subjects - we also need to look on mdl_block_exastuddata records for get subject relations
         // it is for 1. way of adding Lern information (look below)
         $subjectreviewedstudents = array();
-        $subjectreviewed = $DB->get_records_sql('SELECT DISTINCT d.id, c.periodid as periodid, d.subjectid as subjectid, d.studentid as studentid  
+        $subjectreviewed = $DB->get_records_sql('SELECT DISTINCT d.id, c.periodid as periodid, d.subjectid as subjectid, d.studentid as studentid
                                             FROM {block_exastuddata} d
                                                 LEFT JOIN {block_exastudclass} c ON c.id = d.classid
                                             WHERE d.name = ?
                                               AND d.value < ? ',
-                [   'review.timemodified',
-                        $pluginupgr_tstamp  ]);
+            ['review.timemodified',
+                $pluginupgr_tstamp]);
         foreach ($subjectreviewed as $sreview) {
             @$subjectreviewedstudents[$sreview->periodid][$sreview->studentid][] = $sreview->subjectid;
         }
 
         // get all old subjectid = -3 'Lern' reviews
-        $reviewsOldLern = $DB->get_records_sql('SELECT * 
+        $reviewsOldLern = $DB->get_records_sql('SELECT *
                                             FROM {block_exastudreview}
-                                            WHERE timemodified < ? 
+                                            WHERE timemodified < ?
                                               AND subjectid = ? ',
-                [   $pluginupgr_tstamp,
-                    BLOCK_EXASTUD_SUBJECT_ID_LERN_UND_SOZIALVERHALTEN_VORSCHLAG]);
+            [$pluginupgr_tstamp,
+                BLOCK_EXASTUD_SUBJECT_ID_LERN_UND_SOZIALVERHALTEN_VORSCHLAG]);
         // it is possible that the subject has no any -3 subjectid, so we need to delete such reviews also
         $workedreviews = array();
         $learnreviewedArr = array(); // needed for Learn values, which not was reviewed at all, except -3. Later we add this to all subjects
@@ -6599,19 +6616,19 @@ function block_exastud_upgrade_old_lern_social_reviews_temporary_function() {
             $workedreviews[] = $reviewOldLern->id;
             $firstChanged = false;
             // get all reviews for this student. with PERIOD!!!!
-            $reviews = $DB->get_records_sql('SELECT * 
-                                              FROM {block_exastudreview} r                                              
-                                              WHERE studentid = ?                                                
+            $reviews = $DB->get_records_sql('SELECT *
+                                              FROM {block_exastudreview} r
+                                              WHERE studentid = ?
                                                   AND periodid = ?
                                                   AND teacherid = ?
                                                   AND subjectid != ?
                                                   ',
-                                            [       $reviewOldLern->studentid,
-                                                    $reviewOldLern->periodid,
-                                                    $reviewOldLern->teacherid,
-                                                    BLOCK_EXASTUD_SUBJECT_ID_LERN_UND_SOZIALVERHALTEN_VORSCHLAG,
-                                                    //$pluginupgr_tstamp
-                                                    ]);
+                [$reviewOldLern->studentid,
+                    $reviewOldLern->periodid,
+                    $reviewOldLern->teacherid,
+                    BLOCK_EXASTUD_SUBJECT_ID_LERN_UND_SOZIALVERHALTEN_VORSCHLAG,
+                    //$pluginupgr_tstamp
+                ]);
             foreach ($reviews as $review) {
                 // this Lern review was added to records
                 if (($key = array_search($reviewOldLern->id, $learnreviewedArr)) !== false) {
@@ -6621,11 +6638,11 @@ function block_exastud_upgrade_old_lern_social_reviews_temporary_function() {
                 // way 1 - change to LERN text of ALL subjects
                 if ($review->timemodified < $pluginupgr_tstamp) {
                     $DB->execute('UPDATE {block_exastudreview}
-                                            SET review = ?                                               
+                                            SET review = ?
                                               WHERE id = ?',
-                            [       $lernText,
-                                    $review->id
-                            ]);
+                        [$lernText,
+                            $review->id,
+                        ]);
                 }
                 // or way 2 - change only first, other - delete
                 /*if (!$firstChanged) {
@@ -6666,17 +6683,17 @@ function block_exastud_upgrade_old_lern_social_reviews_temporary_function() {
                     if (($key = array_search($reviewOldLern->id, $learnreviewedArr)) !== false) {
                         unset($learnreviewedArr[$key]);
                     }
-                    $existing = $DB->get_record_sql('SELECT DISTINCT * 
-                                              FROM {block_exastudreview} r                                              
-                                              WHERE studentid = ?                                                
+                    $existing = $DB->get_record_sql('SELECT DISTINCT *
+                                              FROM {block_exastudreview} r
+                                              WHERE studentid = ?
                                                   AND periodid = ?
                                                   AND teacherid = ?
                                                   AND subjectid = ?                                                  ',
-                            [       $reviewOldLern->studentid,
-                                    $reviewOldLern->periodid,
-                                    $reviewOldLern->teacherid,
-                                    $subjid
-                            ], IGNORE_MULTIPLE);
+                        [$reviewOldLern->studentid,
+                            $reviewOldLern->periodid,
+                            $reviewOldLern->teacherid,
+                            $subjid,
+                        ], IGNORE_MULTIPLE);
                     if (!$existing) {
                         $newRec = (object)array(
                             'timemodified' => time(),
@@ -6684,7 +6701,7 @@ function block_exastud_upgrade_old_lern_social_reviews_temporary_function() {
                             'periodid' => $reviewOldLern->periodid,
                             'teacherid' => $reviewOldLern->teacherid,
                             'subjectid' => $subjid,
-                            'review' => $lernText
+                            'review' => $lernText,
                         );
                         $newid = $DB->insert_record('block_exastudreview', $newRec);
                         $workedreviews[] = $newid;
@@ -6699,30 +6716,30 @@ function block_exastud_upgrade_old_lern_social_reviews_temporary_function() {
                             $reviewOldLern->id
                     ]);*/
             $DB->execute('UPDATE {block_exastudreview}
-                                            SET subjectid = ?                                               
+                                            SET subjectid = ?
                                               WHERE id = ?',
-                    [       '-333333', // -3
-                            $reviewOldLern->id
-                    ]);
+                ['-333333', // -3
+                    $reviewOldLern->id,
+                ]);
 
 
         }
 
         // check reviews, which not were checked (not in $workedreviews)
-        $reviewsAgain = $DB->get_records_sql('SELECT * 
+        $reviewsAgain = $DB->get_records_sql('SELECT *
                                             FROM {block_exastudreview}
                                             WHERE timemodified < ?',
-                                        [$pluginupgr_tstamp]);
+            [$pluginupgr_tstamp]);
         foreach ($reviewsAgain as $review) {
             if (!in_array($review->id, $workedreviews)) {
                 $posrelations = $DB->get_records('block_exastudreviewpos', ['reviewid' => $review->id]);
                 if (count($posrelations) > 0) { // can not delete. only make empty!
                     $DB->execute('UPDATE {block_exastudreview}
-                                            SET review = ?                                               
+                                            SET review = ?
                                               WHERE id = ?',
-                            ['',
-                                    $review->id
-                            ]);
+                        ['',
+                            $review->id,
+                        ]);
                 } else {
                     /*$DB->execute('DELETE FROM {block_exastudreview} WHERE id = ?',
                             [
@@ -6730,11 +6747,11 @@ function block_exastud_upgrade_old_lern_social_reviews_temporary_function() {
                             ]);*/
                     $invertid = -1 * abs($review->subjectid);
                     $DB->execute('UPDATE {block_exastudreview}
-                                            SET subjectid = ?                                               
+                                            SET subjectid = ?
                                               WHERE id = ?',
-                            [$invertid,
-                                    $review->id
-                            ]);
+                        [$invertid,
+                            $review->id,
+                        ]);
                 }
             }
         }
@@ -6746,33 +6763,33 @@ function block_exastud_upgrade_old_lern_social_reviews_temporary_function() {
                 $subjects = $DB->get_records_sql('SELECT DISTINCT ct.subjectid
                                                     FROM {block_exastudclassteachers} ct
                                                       JOIN {block_exastudclass} c ON c.id = ct.classid
-                                                      JOIN {block_exastudperiod} p ON p.id = c.periodid 
-                                                    WHERE ct.teacherid = ? 
+                                                      JOIN {block_exastudperiod} p ON p.id = c.periodid
+                                                    WHERE ct.teacherid = ?
                                                       AND p.id = ?
                                                       ',
-                        [$lernRec->teacherid,
-                            $lernRec->periodid]);
+                    [$lernRec->teacherid,
+                        $lernRec->periodid]);
                 foreach ($subjects as $subject) {
                     // add new record for subject+student+teacher
-                    $existing = $DB->record_exists_sql('SELECT DISTINCT * 
-                                              FROM {block_exastudreview} r                                              
-                                              WHERE studentid = ?                                                
+                    $existing = $DB->record_exists_sql('SELECT DISTINCT *
+                                              FROM {block_exastudreview} r
+                                              WHERE studentid = ?
                                                   AND periodid = ?
                                                   AND teacherid = ?
                                                   AND subjectid = ?',
-                            [       $lernRec->studentid,
-                                    $lernRec->periodid,
-                                    $lernRec->teacherid,
-                                    $subject->subjectid,
-                            ]);
+                        [$lernRec->studentid,
+                            $lernRec->periodid,
+                            $lernRec->teacherid,
+                            $subject->subjectid,
+                        ]);
                     if (!$existing) {
                         $newRec = (object)array(
-                                'timemodified' => time(),
-                                'studentid' => $lernRec->studentid,
-                                'periodid' => $lernRec->periodid,
-                                'teacherid' => $lernRec->teacherid,
-                                'subjectid' => $subject->subjectid,
-                                'review' => $lernRec->review
+                            'timemodified' => time(),
+                            'studentid' => $lernRec->studentid,
+                            'periodid' => $lernRec->periodid,
+                            'teacherid' => $lernRec->teacherid,
+                            'subjectid' => $subject->subjectid,
+                            'review' => $lernRec->review,
                         );
                         $newid = $DB->insert_record('block_exastudreview', $newRec);
                     }
@@ -6789,32 +6806,32 @@ function block_exastud_export_mysql_table($table = '', $filename = false, $funct
 
     $queryTables = $DB->get_records_sql('SHOW TABLES');
     $target_tables = array_keys($queryTables);
-    $table = $DB->get_prefix().$table;
+    $table = $DB->get_prefix() . $table;
 
     if (!in_array($table, $target_tables)) {
         return '';
     }
 
-    $result = $DB->get_records_sql('SELECT * FROM '.$table);
+    $result = $DB->get_records_sql('SELECT * FROM ' . $table);
     $fields = array_keys((array)reset($result));
     $fields_amount = count($fields);
     $rows_num = count($result);
-    $res = $DB->get_records_sql('SHOW CREATE TABLE '.$table);
+    $res = $DB->get_records_sql('SHOW CREATE TABLE ' . $table);
     $TableMLine = $res[$table]->{'create table'};
-    $content = "\n\n".$TableMLine.";\n\n";
+    $content = "\n\n" . $TableMLine . ";\n\n";
     $i = 0;
     $st_counter = 0;
     foreach ($result as $row) {
         $row = (array)$row;
         // when started (and every after 100 command cycle):
-        if ($st_counter%100 == 0 || $st_counter == 0 ) {
-            $content .= "\nINSERT INTO ".$table." VALUES";
+        if ($st_counter % 100 == 0 || $st_counter == 0) {
+            $content .= "\nINSERT INTO " . $table . " VALUES";
         }
         $content .= "\n(";
         foreach ($fields as $j => $field) {
-            $row[$field] = str_replace("\n","\\n", addslashes($row[$field]) );
+            $row[$field] = str_replace("\n", "\\n", addslashes($row[$field]));
             if (isset($row[$field])) {
-                $content .= '"'.$row[$field].'"';
+                $content .= '"' . $row[$field] . '"';
             } else {
                 $content .= '""';
             }
@@ -6824,16 +6841,16 @@ function block_exastud_export_mysql_table($table = '', $filename = false, $funct
         }
         $content .= ")";
         //every after 100 command cycle [or at last line] ....p.s. but should be inserted 1 cycle eariler
-        if ( (($st_counter+1)%100==0 && $st_counter!=0) || $st_counter+1 == $rows_num) {
+        if ((($st_counter + 1) % 100 == 0 && $st_counter != 0) || $st_counter + 1 == $rows_num) {
             $content .= ";";
         } else {
             $content .= ",";
         }
         $st_counter++;
     }
-    $content .="\n\n\n";
+    $content .= "\n\n\n";
 
-    $filename = $filename ? $filename : $table.'__'.date('d-m-Y-H-i-s').'.sql';
+    $filename = $filename ? $filename : $table . '__' . date('d-m-Y-H-i-s') . '.sql';
 
     // call function after backup, but before downloading
     if ($functionBeforeDownload && function_exists($functionBeforeDownload)) {
@@ -6842,8 +6859,9 @@ function block_exastud_export_mysql_table($table = '', $filename = false, $funct
 
     header('Content-Type: application/octet-stream');
     header("Content-Transfer-Encoding: Binary");
-    header("Content-disposition: attachment; filename=\"".$filename."\"");
-    echo $content; exit;
+    header("Content-disposition: attachment; filename=\"" . $filename . "\"");
+    echo $content;
+    exit;
 }
 
 function block_exastud_get_my_source() {
@@ -6852,7 +6870,7 @@ function block_exastud_get_my_source() {
 
 function block_exastud_load_xml_data($xmlcontent, $onlyFromExastud = false, $root = '') {
     global $CFG;
-    require_once($CFG->dirroot.'/lib/xmlize.php');
+    require_once($CFG->dirroot . '/lib/xmlize.php');
 
     if (!$xmlcontent = block_exastud_check_xml_utf8($xmlcontent)) {
         return false;
@@ -6880,12 +6898,12 @@ function block_exastud_check_xml_utf8($text) {
     //$match[0] = \<\? xml ... \?\> (without \)
     //$match[1] = encoding="...."
     //$match[2] = ISO-8859-1 or so on
-    if (isset($match[0]) AND !isset($match[1])) { //no encoding given. we assume utf-8
+    if (isset($match[0]) and !isset($match[1])) { //no encoding given. we assume utf-8
         return $text;
     }
 
     //encoding is given in $match[2]
-    if (isset($match[0]) AND isset($match[1]) AND isset($match[2])) {
+    if (isset($match[0]) and isset($match[1]) and isset($match[2])) {
         $enc = $match[2];
         return core_text::convert($text, $enc);
     }
@@ -6894,7 +6912,7 @@ function block_exastud_check_xml_utf8($text) {
 function block_exastud_get_unique_filename($origfilename, $dir) {
     $maxIndex = 10000;
     // Check if the file exists and if not - return the filename...
-    $destFile = $dir.$origfilename;
+    $destFile = $dir . $origfilename;
     if (!file_exists($destFile)) {
         return $destFile;
     }
@@ -6902,13 +6920,13 @@ function block_exastud_get_unique_filename($origfilename, $dir) {
     for ($a = 1; $a <= ($maxIndex + 1); $a++) {
         if ($a <= $maxIndex) {
             // First we try to append numbers
-            $insert = '_'.sprintf('%02d', $a);
+            $insert = '_' . sprintf('%02d', $a);
         } else {
             // .. then we try unique-strings...
-            $insert = '_' .substr(md5(uniqId('')), 0, 2);
+            $insert = '_' . substr(md5(uniqId('')), 0, 2);
         }
-        $testFile = $origFileData['filename'].$insert.'.'.$origFileData['extension'];
-        $destFile = $dir.$testFile;
+        $testFile = $origFileData['filename'] . $insert . '.' . $origFileData['extension'];
+        $destFile = $dir . $testFile;
         if (!file_exists($destFile)) {
             // If the file does NOT exist we return this filename
             return $testFile;
@@ -6921,13 +6939,13 @@ function block_exastud_global_useredit_link($userid, $courseid) {
     $user = $DB->get_record('user', array('id' => $userid), '*', MUST_EXIST);
     $iscurrentuser = ($user->id == $USER->id);
     $systemcontext = context_system::instance();
-    $usercontext   = context_user::instance($user->id, IGNORE_MISSING);
+    $usercontext = context_user::instance($user->id, IGNORE_MISSING);
     $url = '';
     if (isloggedin() && !isguestuser($user) && !is_mnet_remote_user($user)) {
         if (($iscurrentuser || is_siteadmin($USER) || !is_siteadmin($user)) && has_capability('moodle/user:update', $systemcontext)) {
             $url = new moodle_url('/user/editadvanced.php', array('id' => $user->id, 'course' => $courseid));
         } else if ((has_capability('moodle/user:editprofile', $usercontext) && !is_siteadmin($user))
-                || ($iscurrentuser && has_capability('moodle/user:editownprofile', $systemcontext))) {
+            || ($iscurrentuser && has_capability('moodle/user:editownprofile', $systemcontext))) {
             $userauthplugin = false;
             if (!empty($user->auth)) {
                 $userauthplugin = get_auth_plugin($user->auth);
@@ -6956,8 +6974,8 @@ function block_exastud_competence_tree($classid) {
         if ($competence->parent && array_key_exists($competence->parent, $allCategories)) {
             if (!array_key_exists($competence->parent, $competenceTree)) {
                 $competenceTree[$competence->parent] = array(
-                        'title' => $allCategories[$competence->parent]->title,
-                        'children' => array()
+                    'title' => $allCategories[$competence->parent]->title,
+                    'children' => array(),
                 );
             }
             $competenceTree[$competence->parent]['children'][] = $competence;
@@ -7001,18 +7019,18 @@ function block_exastud_can_edit_learnsocial_subjectteacher($classid) {
 function block_exastud_fill_crosscompetece_reviews(&$returnArray, $classid, $teacherid, $studentid, $periodid) {
     global $DB;
     $reviewdata = $DB->get_record('block_exastudreview',
-            array('teacherid' => $teacherid,
-                    'subjectid' => 0,
-                    'periodid' => $periodid,
-                    'studentid' => $studentid));
+        array('teacherid' => $teacherid,
+            'subjectid' => 0,
+            'periodid' => $periodid,
+            'studentid' => $studentid));
     if ($reviewdata) {
         $crosscategories = block_exastud_get_class_categories($classid);
         foreach ($crosscategories as $crosscategory) {
-            $returnArray[$crosscategory->id.'_'.$crosscategory->source] = $DB->get_field('block_exastudreviewpos',
-                    'value',
-                    array("categoryid" => $crosscategory->id,
-                            "reviewid" => $reviewdata->id,
-                            "categorysource" => $crosscategory->source));
+            $returnArray[$crosscategory->id . '_' . $crosscategory->source] = $DB->get_field('block_exastudreviewpos',
+                'value',
+                array("categoryid" => $crosscategory->id,
+                    "reviewid" => $reviewdata->id,
+                    "categorysource" => $crosscategory->source));
         }
     }
 }
@@ -7020,7 +7038,7 @@ function block_exastud_fill_crosscompetece_reviews(&$returnArray, $classid, $tea
 function block_exastud_update_allow_review_times($classid = null, $target = BLOCK_EXASTUD_DATA_ID_UNLOCKED_TEACHERS) {
     global $DB;
     if ($classid) {
-        $teachers = (array) json_decode(block_exastud_get_class_data($classid, $target), true);
+        $teachers = (array)json_decode(block_exastud_get_class_data($classid, $target), true);
         if (count($teachers)) {
             $changed = false;
             foreach ($teachers as $teacherid => $teacherData) {
@@ -7035,16 +7053,16 @@ function block_exastud_update_allow_review_times($classid = null, $target = BLOC
         }
     } else {
         // update all classes
-        $sql = 'SELECT d.* 
-              FROM {block_exastuddata} d 
-              WHERE d.classid > 0 
+        $sql = 'SELECT d.*
+              FROM {block_exastuddata} d
+              WHERE d.classid > 0
                 AND d.name = ?
                 AND value != ? ';
         $classesData = $DB->get_records_sql($sql, [$target, '']);
         foreach ($classesData as $cData) {
             $changed = false;
-            $times = (array) json_decode($cData->value);
-            foreach($times as $teacherId => $time) {
+            $times = (array)json_decode($cData->value);
+            foreach ($times as $teacherId => $time) {
                 if ($time < time()) {
                     $changed = true;
                     unset($times[$teacherId]);
@@ -7061,7 +7079,7 @@ function block_exastud_update_allow_review_times($classid = null, $target = BLOC
 // also using for get requested or not (before admins approving)
 function block_exastud_teacher_is_unlocked_for_old_class_review($classid, $teacherid, $target = BLOCK_EXASTUD_DATA_ID_UNLOCKED_TEACHERS) {
     block_exastud_update_allow_review_times($classid, $target);
-    $unlocked_teachers = (array) json_decode(block_exastud_get_class_data($classid, $target), true);
+    $unlocked_teachers = (array)json_decode(block_exastud_get_class_data($classid, $target), true);
     if (array_key_exists(0, $unlocked_teachers)) {
         // for ALL teachers of this class
         return true;
@@ -7082,13 +7100,13 @@ function block_exastud_get_admin_requests_count() {
         // delete classes
         $count += $DB->count_records('block_exastudclass', ['to_delete' => 1]);
         // unlock old class editing
-        $sql = 'SELECT d.* 
-              FROM {block_exastuddata} d 
-              WHERE d.classid > 0 
+        $sql = 'SELECT d.*
+              FROM {block_exastuddata} d
+              WHERE d.classid > 0
                 AND d.name = ? OR d.name = ?';
         $classesData = $DB->get_records_sql($sql, [BLOCK_EXASTUD_DATA_ID_UNLOCKED_TEACHERS, BLOCK_EXASTUD_DATA_ID_UNLOCKED_TEACHERS_TO_APPROVE]);
         foreach ($classesData as $cData) {
-            $times = (array) json_decode($cData->value);
+            $times = (array)json_decode($cData->value);
             foreach ($times as $teacherId => $time) {
                 if ($time >= time()) {
                     $count++;
@@ -7102,17 +7120,17 @@ function block_exastud_get_admin_requests_count() {
         // unlock requests
         $classes = $DB->get_records_sql("SELECT DISTINCT c.id, c.id AS record_id
                                           FROM {block_exastudclass} c
-                                          WHERE c.userid = ?			
+                                          WHERE c.userid = ?
                                         ", [$USER->id]);
         if ($classes) {
             $classesUids = array_keys($classes);
-            $sql = 'SELECT d.* 
-                      FROM {block_exastuddata} d 
-                      WHERE d.classid IN ('.implode(',', $classesUids).') 
+            $sql = 'SELECT d.*
+                      FROM {block_exastuddata} d
+                      WHERE d.classid IN (' . implode(',', $classesUids) . ')
                         AND d.name = ? || d.name = ? ';
             $classesData = $DB->get_records_sql($sql, [BLOCK_EXASTUD_DATA_ID_UNLOCKED_TEACHERS, BLOCK_EXASTUD_DATA_ID_UNLOCKED_TEACHERS_TO_APPROVE]);
             foreach ($classesData as $cData) {
-                $times = (array) json_decode($cData->value);
+                $times = (array)json_decode($cData->value);
                 foreach ($times as $teacherId => $time) {
                     if ($time >= time()) {
                         $count++;
@@ -7125,17 +7143,17 @@ function block_exastud_get_admin_requests_count() {
         // unlock requests
         $classes = $DB->get_records_sql("SELECT DISTINCT ct.classid, ct.classid AS tempid
 			                                FROM {block_exastudclassteachers} ct
-		                                    WHERE ct.teacherid = ?			
+		                                    WHERE ct.teacherid = ?
 		                                  ", [$USER->id]);
         if ($classes) {
             $classesUids = array_keys($classes);
-            $sql = 'SELECT d.* 
-                      FROM {block_exastuddata} d 
-                      WHERE d.classid IN ('.implode(',', $classesUids).') 
+            $sql = 'SELECT d.*
+                      FROM {block_exastuddata} d
+                      WHERE d.classid IN (' . implode(',', $classesUids) . ')
                         AND d.name = ? OR d.name = ?';
             $classesData = $DB->get_records_sql($sql, [BLOCK_EXASTUD_DATA_ID_UNLOCKED_TEACHERS_TO_APPROVE, BLOCK_EXASTUD_DATA_ID_UNLOCKED_TEACHERS]);
             foreach ($classesData as $cData) {
-                $times = (array) json_decode($cData->value);
+                $times = (array)json_decode($cData->value);
                 foreach ($times as $teacherId => $time) {
                     if ($time >= time() && $teacherId == $USER->id) {
                         $count++;
@@ -7159,7 +7177,7 @@ function block_exastud_teacher_has_gradings_for_class($teacherid, $classid, $sub
     if (count($subjectIds) > 0) {
         $sql = 'SELECT * FROM {block_exastuddata}
                     WHERE classid = ?
-                      AND subjectid IN ('.implode(',', $subjectIds).')
+                      AND subjectid IN (' . implode(',', $subjectIds) . ')
                       AND name IN (\'grade\', \'niveau\', \'review\')
                       AND value != \'\'
                       ';
@@ -7191,7 +7209,7 @@ function block_exastud_is_subject_teacher($userid = null) {
 function block_exastud_send_notification($notificationtype, $userfrom, $userto, $subject, $message, $context, $contexturl = null) {
     global $CFG, $DB;
 
-    require_once($CFG->dirroot.'/message/lib.php');
+    require_once($CFG->dirroot . '/message/lib.php');
 
     $eventdata = new core\message\message();
 
@@ -7249,13 +7267,13 @@ function block_exastud_get_average_factor_for_student($classid, $subjectid, $stu
     }
     if ($factorValue === null) {// no factor yet - default factor values
         if ($subjectid == BLOCK_EXASTUD_PROJECTARBAIT_FOR_AVERAGE_CALCULATING) {
-            $subjData = (object) [
-                'grade' => block_exastud_get_class_student_data($classid, $studentid, 'projekt_grade')
+            $subjData = (object)[
+                'grade' => block_exastud_get_class_student_data($classid, $studentid, 'projekt_grade'),
             ];
-            $subject = (object) [
+            $subject = (object)[
                 'is_best' => 0,
                 'is_main' => 0,
-                'not_relevant' => 0
+                'not_relevant' => 0,
             ];
         } else {
             $subjData = block_exastud_get_graded_review($classid, $subjectid, $studentid);
@@ -7271,8 +7289,8 @@ function block_exastud_get_average_factor_for_student($classid, $subjectid, $stu
                     $factorValue = 0;
                 }
             } elseif (!$subject->not_relevant // relevant and main subjects have 1
-                    || $subject->is_main
-                    ) {
+                || $subject->is_main
+            ) {
                 $factorValue = 1;
             } else { // not any type = 0
                 $factorValue = 0;
@@ -7298,8 +7316,8 @@ function block_exastud_calculate_student_average($class, $studentid) {
     $subjSum = 0;
     foreach ($classSubjects as $subject) {
         if ($subject->id == BLOCK_EXASTUD_PROJECTARBAIT_FOR_AVERAGE_CALCULATING) {
-            $subjData = (object) [
-                'grade' => block_exastud_get_class_student_data($class->id, $studentid, 'projekt_grade')
+            $subjData = (object)[
+                'grade' => block_exastud_get_class_student_data($class->id, $studentid, 'projekt_grade'),
             ];
             $factorValue = block_exastud_get_class_student_data($class->id, $studentid, BLOCK_EXASTUD_PROJECTARBAIT_FOR_AVERAGE_CALCULATING_PARAMNAME);
         } else {
@@ -7318,7 +7336,7 @@ function block_exastud_calculate_student_average($class, $studentid) {
     if ($factorSumm == 0) {
         $average = 0;
     } else {
-//        $average = round($subjSum / $factorSumm, 1);
+        //        $average = round($subjSum / $factorSumm, 1);
         $average = floor($subjSum * 10 / $factorSumm) / 10; // round to lowest with 1 digit after comma
     }
     return $average;
@@ -7326,7 +7344,7 @@ function block_exastud_calculate_student_average($class, $studentid) {
 
 function block_exastud_add_projektarbait_to_subjectlist($class, $studentid, &$classSubjects) {
     if (block_exastud_student_has_projekt_pruefung($class, $studentid)) {
-        $projectSubject = (object) [
+        $projectSubject = (object)[
             'is_project' => true,
             'id' => BLOCK_EXASTUD_PROJECTARBAIT_FOR_AVERAGE_CALCULATING,
             'title' => block_exastud_get_string('average_calculate_table_average_project_title'),
@@ -7345,7 +7363,7 @@ function block_exastud_template_needs_calculated_average($templateid) {
         BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_ABSCHLUSSZEUGNIS_KL9_10_HSA,
         BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_ABSCHLUSSZEUGNIS_KL10_RSA,
         BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_HS_SCHULFREMDE,
-        BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_RS_SCHULFREMDE
+        BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2016_GMS_RS_SCHULFREMDE,
     );
     if (in_array($templateid, $templatesWithAverageValue)) {
         return true;
@@ -7361,7 +7379,7 @@ function block_exastud_get_verbal_avg($avg) {
     if (!is_numeric($avg)) {
         return array(
             'avgForVerbal' => null,
-            'avgVerbal' => null
+            'avgVerbal' => null,
         );
     }
     $avgForVerbal = '1';
@@ -7384,19 +7402,19 @@ function block_exastud_get_verbal_avg($avg) {
     }
     return array(
         'avgForVerbal' => $avgForVerbal,
-        'avgVerbal' => $avgVerbal
+        'avgVerbal' => $avgVerbal,
     );
 }
 
 /** to rid of deprecation messages and backward moodle compatibility
-* since user_picture::fields() uses a deprecated moodle function, this is the workaround:
+ * since user_picture::fields() uses a deprecated moodle function, this is the workaround:
  * @param string $tableprefix
  * @param array $extrafields
  * @param string $idalias
  * @param string $fieldprefix
  * @param bool $asStringList
  * @return string|array
-*/
+ */
 function exastud_get_picture_fields($tableprefix = '', $extrafields = null, $idalias = 'id', $fieldprefix = '') {
     if (class_exists('\core_user\fields')) {
         $fields = \core_user\fields::get_picture_fields();
@@ -7408,15 +7426,17 @@ function exastud_get_picture_fields($tableprefix = '', $extrafields = null, $ida
     }
     foreach ($fields as &$f) {
         if ($f == 'id') {
-            $f = $f.' AS '.($idalias ? $idalias : 'id');
+            $f = $f . ' AS ' . ($idalias ? $idalias : 'id');
             continue;
         }
         if ($fieldprefix) {
-            $f = $f.' AS '.$fieldprefix.$f;
+            $f = $f . ' AS ' . $fieldprefix . $f;
         }
     }
     if ($tableprefix) {
-        array_walk($fields, function(&$f) use ($tableprefix) {$f = $tableprefix.'.'.$f;});
+        array_walk($fields, function(&$f) use ($tableprefix) {
+            $f = $tableprefix . '.' . $f;
+        });
     }
     $resultString = implode(', ', $fields);
 

@@ -17,8 +17,8 @@
 //
 // This copyright notice MUST APPEAR in all copies of the script!
 
-require __DIR__.'/inc.php';
-require_once($CFG->dirroot.'/blocks/exastud/lib/edit_form.php');
+require __DIR__ . '/inc.php';
+require_once($CFG->dirroot . '/blocks/exastud/lib/edit_form.php');
 
 $courseid = optional_param('courseid', 1, PARAM_INT); // Course ID
 $classid = required_param('classid', PARAM_INT);
@@ -28,18 +28,18 @@ setcookie('lastclass', $classid);
 
 block_exastud_require_login($courseid);
 
-$returnurl = new moodle_url('/blocks/exastud/review_class_averages.php?courseid='.$courseid.'&classid='.$classid.'&openclass='.$classid);
+$returnurl = new moodle_url('/blocks/exastud/review_class_averages.php?courseid=' . $courseid . '&classid=' . $classid . '&openclass=' . $classid);
 
 $output = block_exastud_get_renderer();
 
 $PAGE->set_url('/blocks/exastud/review_student_averages.php', [
-	'courseid' => $courseid,
-	'classid' => $classid,
-	'studentid' => $studentid,
+    'courseid' => $courseid,
+    'classid' => $classid,
+    'studentid' => $studentid,
 ]);
 
 if (!$class = block_exastud_get_class($classid)) {
-	throw new moodle_exception("badclass", "block_exastud");
+    throw new moodle_exception("badclass", "block_exastud");
 }
 if (!block_exastud_is_class_teacher($classid, $USER->id)) {
     throw new moodle_exception("not a class teacher");
@@ -48,17 +48,19 @@ $student = $DB->get_record('user', array('id' => $studentid, 'deleted' => 0));
 
 $actPeriod = block_exastud_check_active_period();
 
-$classheader = $class->title.' - '.block_exastud_get_string('review_class_averages');
+$classheader = $class->title . ' - ' . block_exastud_get_string('review_class_averages');
 
 $studentform = new student_average_calculation_form($PAGE->url, [
     'studentid' => $studentid,
     'classid' => $classid,
-	'courseid' => $courseid,
+    'courseid' => $courseid,
 ]);
 
 $classSubjects = block_exastud_get_class_subjects($class);
 block_exastud_add_projektarbait_to_subjectlist($class, $studentid, $classSubjects);
-$subjectIds = array_map(function($s) {return $s->id;}, $classSubjects);
+$subjectIds = array_map(function($s) {
+    return $s->id;
+}, $classSubjects);
 if ($fromform = $studentform->get_data()) {
     $factors = required_param_array('factors', PARAM_INT);
     foreach ($subjectIds as $sKey => $sId) {
@@ -80,24 +82,24 @@ if ($fromform = $studentform->get_data()) {
         $xls = \block_exastud\printer::averages_to_xls($class, $studentid);
         ob_clean();
         if ($content = ob_get_clean()) {
-            throw new \Exception('there was some other output: '.$content);
+            throw new \Exception('there was some other output: ' . $content);
         }
         send_temp_file($xls->temp_file, basename($xls->filename));
     }
-//	redirect($PAGE->url);
-	redirect($returnurl);
+    //	redirect($PAGE->url);
+    redirect($returnurl);
 }
 
 $formdata = array();//(array)block_exastud_get_class_student_data($classid, $studentid);
 $studentform->set_data($formdata);
 
 echo $output->header(array('review',
-	array('name' => $classheader, 'link' => $returnurl),
+    array('name' => $classheader, 'link' => $returnurl),
 ), array('noheading'));
 
 echo $output->heading($classheader);
 
-$studentdesc = $OUTPUT->user_picture($student, array("courseid" => $courseid)).' '.fullname($student);
+$studentdesc = $OUTPUT->user_picture($student, array("courseid" => $courseid)) . ' ' . fullname($student);
 echo $OUTPUT->heading($studentdesc);
 
 //$studentform->display();
@@ -113,7 +115,7 @@ foreach ($allInputs as $inp) {
     }
 }
 foreach ($classSubjects as $subject) {
-    $inputName = 'factors['.$subject->id.']';
+    $inputName = 'factors[' . $subject->id . ']';
     if (array_key_exists($inputName, $factorElements)) {
         $inputEl = $factorElements[$inputName];
         $inputEl->setAttribute('autocomplete', 'off');
@@ -130,7 +132,7 @@ foreach ($classSubjects as $subject) {
             $inputElWrapperTemp = $inputElWrapperTemp->parentNode;
         }
 
-        $insertMarker = $doc->getElementById('tempSubject_'.$subject->id);
+        $insertMarker = $doc->getElementById('tempSubject_' . $subject->id);
         $insertWrapper = $insertMarker->parentNode;
         $insertWrapper->insertBefore($inputEl, $insertMarker);
         if ($inputElWrapper) {

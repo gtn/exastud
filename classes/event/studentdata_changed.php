@@ -54,8 +54,8 @@ class studentdata_changed extends base {
         if (is_array($this->other) && array_key_exists('value', $this->other)) {
             $value = $this->other['value'];
         }
-        $result = $this->other['whoDid']." changed the parameter '$name' of the student '$relatedusername' (id: '$this->relateduserid'). ";
-        $result .= ' New value is \''.$value.'\'';
+        $result = $this->other['whoDid'] . " changed the parameter '$name' of the student '$relatedusername' (id: '$this->relateduserid'). ";
+        $result .= ' New value is \'' . $value . '\'';
         return $result;
 
     }
@@ -66,8 +66,8 @@ class studentdata_changed extends base {
      * @return array
      */
     protected function get_legacy_logdata() {
-        return(array($this->courseid, 'exastud', 'change data of the student',
-                'configuration_class.php?classid=' . $this->objectid, $this->objectid, $this->contextinstanceid));
+        return (array($this->courseid, 'exastud', 'change data of the student',
+            'configuration_class.php?classid=' . $this->objectid, $this->objectid, $this->contextinstanceid));
     }
 
     /**
@@ -77,7 +77,7 @@ class studentdata_changed extends base {
      */
     public function get_url() {
         return new \moodle_url('/blocks/exastud/configuration_class.php',
-                                array('classid' => $this->objectid, 'action' => 'edit', 'type' => 'studentgradereports'));
+            array('classid' => $this->objectid, 'action' => 'edit', 'type' => 'studentgradereports'));
     }
 
     public static function get_objectid_mapping() {

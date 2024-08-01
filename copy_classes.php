@@ -17,7 +17,7 @@
 //
 // This copyright notice MUST APPEAR in all copies of the script!
 
-require __DIR__.'/inc.php';
+require __DIR__ . '/inc.php';
 
 $courseid = optional_param('courseid', 1, PARAM_INT);
 $action = optional_param('action', '', PARAM_TEXT);
@@ -31,35 +31,35 @@ $lastPeriod = block_exastud_get_last_period();
 $lastPeriodClasses = $lastPeriod ? block_exastud_get_head_teacher_classes_owner($lastPeriod->id) : [];
 
 if (!$lastPeriodClasses) {
-	throw new Exception('no classes found');
+    throw new Exception('no classes found');
 }
 
 if ($action == 'copy') {
-	$classid = required_param('classid', PARAM_INT);
+    $classid = required_param('classid', PARAM_INT);
 
-	if (!isset($lastPeriodClasses[$classid])) {
-		throw new Exception('class not found');
-	}
+    if (!isset($lastPeriodClasses[$classid])) {
+        throw new Exception('class not found');
+    }
 
-	$class = $lastPeriodClasses[$classid];
-	$oldId = $class->id;
-	unset($class->id);
-	$class->timemodified = time();
-	$class->periodid = $actPeriod->id;
-	$class->title = block_exastud_get_string('copy_class_new_title', null, $class->title);
-	$newId = $DB->insert_record('block_exastudclass', $class);
+    $class = $lastPeriodClasses[$classid];
+    $oldId = $class->id;
+    unset($class->id);
+    $class->timemodified = time();
+    $class->periodid = $actPeriod->id;
+    $class->title = block_exastud_get_string('copy_class_new_title', null, $class->title);
+    $newId = $DB->insert_record('block_exastudclass', $class);
 
-	$DB->execute("INSERT INTO {block_exastudclassstudents} (timemodified, classid, studentid)
+    $DB->execute("INSERT INTO {block_exastudclassstudents} (timemodified, classid, studentid)
 		SELECT ?, ?, studentid
 		FROM {block_exastudclassstudents}
 		WHERE classid = ?", [time(), $newId, $oldId]);
-	$DB->execute("INSERT INTO {block_exastudclassteachers} (timemodified, classid, teacherid, subjectid)
+    $DB->execute("INSERT INTO {block_exastudclassteachers} (timemodified, classid, teacherid, subjectid)
 		SELECT ?, ?, teacherid, subjectid
 		FROM {block_exastudclassteachers}
 		WHERE classid = ?", [time(), $newId, $oldId]);
 
-	redirect('configuration_class_info.php?courseid='.$courseid.'&classid='.$newId);
-	exit;
+    redirect('configuration_class_info.php?courseid=' . $courseid . '&classid=' . $newId);
+    exit;
 }
 
 $url = '/blocks/exastud/copy_classes.php';
@@ -73,18 +73,18 @@ $table = new html_table();
 $table->head = [block_exastud_get_string('class'), ''];
 
 foreach ($lastPeriodClasses as $class) {
-	$table->data[] = [
-		$class->title,
-		$output->link_button($CFG->wwwroot.'/blocks/exastud/copy_classes.php?courseid='.$courseid.'&action=copy&classid='.$class->id,
-			block_exastud_get_string('copy_class'),
+    $table->data[] = [
+        $class->title,
+        $output->link_button($CFG->wwwroot . '/blocks/exastud/copy_classes.php?courseid=' . $courseid . '&action=copy&classid=' . $class->id,
+            block_exastud_get_string('copy_class'),
             ['class' => 'btn btn-default']),
-	];
+    ];
 }
 
 echo $output->table($table);
 
-echo $output->link_button($CFG->wwwroot.'/blocks/exastud/configuration_classes.php?courseid='.$courseid,
-	block_exastud_get_string('back'),
+echo $output->link_button($CFG->wwwroot . '/blocks/exastud/configuration_classes.php?courseid=' . $courseid,
+    block_exastud_get_string('back'),
     ['class' => 'btn btn-default']);
 
 echo $output->footer();

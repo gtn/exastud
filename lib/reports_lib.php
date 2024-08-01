@@ -17,13 +17,13 @@
 //
 // This copyright notice MUST APPEAR in all copies of the script!
 
-require_once($CFG->libdir.'/gdlib.php');
-require_once($CFG->libdir.'/adminlib.php');
-require_once($CFG->dirroot.'/user/editadvanced_form.php');
-require_once($CFG->dirroot.'/user/editlib.php');
-require_once($CFG->dirroot.'/user/profile/lib.php');
-require_once($CFG->dirroot.'/user/lib.php');
-require_once($CFG->dirroot.'/webservice/lib.php');
+require_once($CFG->libdir . '/gdlib.php');
+require_once($CFG->libdir . '/adminlib.php');
+require_once($CFG->dirroot . '/user/editadvanced_form.php');
+require_once($CFG->dirroot . '/user/editlib.php');
+require_once($CFG->dirroot . '/user/profile/lib.php');
+require_once($CFG->dirroot . '/user/lib.php');
+require_once($CFG->dirroot . '/webservice/lib.php');
 
 class exastud_user_formedit extends user_editadvanced_form {
 
@@ -38,12 +38,12 @@ class exastud_user_formedit extends user_editadvanced_form {
                 $resultFields[$fieldkey] = $field; // for filtering in other functions
             } else {
                 if (!in_array($classOfField, array(
-                                'MoodleQuickForm_hidden',
-                                'MoodleQuickForm_submit',
-                            //'MoodleQuickForm_selectgroups' // need?
-                        ))
-                        && (strpos($fieldkey, 'passw') === false) // delete all password fields
-                        && (trim($label) != '')
+                        'MoodleQuickForm_hidden',
+                        'MoodleQuickForm_submit',
+                        //'MoodleQuickForm_selectgroups' // need?
+                    ))
+                    && (strpos($fieldkey, 'passw') === false) // delete all password fields
+                    && (trim($label) != '')
                 ) {
                     $resultFields[$fieldkey] = $label;
                 }
@@ -88,21 +88,21 @@ function block_exastud_get_report_user_fields($getAll = false) {
         $user->deleted = 0;
         $user->timezone = '99';
         $editoroptions = array(
-                'maxfiles' => 0,
-                'maxbytes' => 0,
-                'trusttext' => false,
-                'forcehttps' => false,
-                'context' => context_system::instance()
+            'maxfiles' => 0,
+            'maxbytes' => 0,
+            'trusttext' => false,
+            'forcehttps' => false,
+            'context' => context_system::instance(),
         );
         //$filemanagercontext = $editoroptions['context'];
-        $filemanageroptions = array('maxbytes'       => $CFG->maxbytes,
-                'subdirs'        => 0,
-                'maxfiles'       => 1,
-                'accepted_types' => 'web_image');
+        $filemanageroptions = array('maxbytes' => $CFG->maxbytes,
+            'subdirs' => 0,
+            'maxfiles' => 1,
+            'accepted_types' => 'web_image');
         $userform = new exastud_user_formedit(new moodle_url($CFG->wwwroot), array(
-                'editoroptions' => $editoroptions,
-                'filemanageroptions' => $filemanageroptions,
-                'user' => $user));
+            'editoroptions' => $editoroptions,
+            'filemanageroptions' => $filemanageroptions,
+            'user' => $user));
         $result = $userform->get_possible_fields($getAll);
         if ($getAll) {
             return $result;
@@ -126,7 +126,11 @@ function block_exastud_get_report_userdata_value(&$templateProcessor = null, $da
     if (!count($checkboxes)) {
         $fields = block_exastud_get_report_user_fields(true);
         // get all checkboxes
-        $fields = array_filter($fields, function($f) {if ($f->_attributes && array_key_exists('type', $f->_attributes) && $f->_attributes['type'] == 'checkbox') {return true;};});
+        $fields = array_filter($fields, function($f) {
+            if ($f->_attributes && array_key_exists('type', $f->_attributes) && $f->_attributes['type'] == 'checkbox') {
+                return true;
+            };
+        });
         $checkboxes = array_keys($fields);
     }
     $value = '';
@@ -212,7 +216,7 @@ function block_exastud_export_reports($templateids = array(), $withFiles = false
     $plugininfo = $pluginmanager->get_plugin_info('block_exastud');
     $exastudversion = @$plugininfo->versiondb;
     $resultXML = '<?xml version="1.0" encoding="UTF-8"?>';
-    $resultXML .= "\r\n".'<reports exastud-version="'.$exastudversion.'">'."\r\n";
+    $resultXML .= "\r\n" . '<reports exastud-version="' . $exastudversion . '">' . "\r\n";
     $addFiles = array();
     foreach ($templateids as $tid) {
         $repfilename = '';
@@ -221,8 +225,8 @@ function block_exastud_export_reports($templateids = array(), $withFiles = false
             $addFiles[] = $repfilename;
         }
     }
-    $resultXML .= "\r\n".'</reports>';
-    $resultFilename = 'exastud-reports-'.date('Y-m-d-H-i');
+    $resultXML .= "\r\n" . '</reports>';
+    $resultFilename = 'exastud-reports-' . date('Y-m-d-H-i');
     if ($withFiles) {
         // add all files to ZIP
         $zipfilename = tempnam($CFG->tempdir, "zip");
@@ -233,15 +237,15 @@ function block_exastud_export_reports($templateids = array(), $withFiles = false
         file_put_contents($temp_file, $resultXML);
         $zip->addFile($temp_file, 'reports.xml');
         // sources of reports
-        $path_to_files = $CFG->dirroot.'/blocks/exastud/template/';
+        $path_to_files = $CFG->dirroot . '/blocks/exastud/template/';
         foreach ($addFiles as $file) {
             // docx or dotx
-            $fullPath = $path_to_files.$file;
+            $fullPath = $path_to_files . $file;
             $exts = array('dotx', 'docx');
             $exists = false;
             foreach ($exts as $ext) {
-                if (file_exists($fullPath.'.'.$ext)) {
-                    $fullPath = $fullPath.'.'.$ext;
+                if (file_exists($fullPath . '.' . $ext)) {
+                    $fullPath = $fullPath . '.' . $ext;
                     $exists = true;
                     break;
                 }
@@ -253,17 +257,17 @@ function block_exastud_export_reports($templateids = array(), $withFiles = false
             $filePathParts = explode($path_to_files, $fullPath);
             $basenameWithSubfolder = end($filePathParts);
             //$newFilename = 'sources/'.basename($fullPath);
-            $newFilename = 'sources/'.$basenameWithSubfolder;
+            $newFilename = 'sources/' . $basenameWithSubfolder;
             $zip->addFile($fullPath, $newFilename);
         }
         $zip->close();
-        $newZipFilename = $resultFilename.'.zip';
+        $newZipFilename = $resultFilename . '.zip';
         send_temp_file($zipfilename, $newZipFilename);
         exit();
     } else {
         $temp_file = tempnam($CFG->tempdir, 'exastud');
         file_put_contents($temp_file, $resultXML);
-        send_temp_file($temp_file, $resultFilename.'.xml');
+        send_temp_file($temp_file, $resultFilename . '.xml');
         exit;
     }
 }
@@ -273,17 +277,17 @@ function block_exastud_report_get_xmlSettings($templateid, &$repfilename) {
     $template = $DB->get_record('block_exastudreportsettings', ['id' => $templateid]);
     if ($template) {
         $repfilename = $template->template;
-        $formatXml = function ($simpleXMLElement) {
+        $formatXml = function($simpleXMLElement) {
             $xmlDocument = new DOMDocument();
             $xmlDocument->preserveWhiteSpace = false;
             $xmlDocument->formatOutput = true;
             $xmlDocument->loadXML($simpleXMLElement->asXML());
             return $xmlDocument->saveXML();
         };
-        $arrayToXml = function ($array, $rootElement = null, $xml = null, $rootattributes = array()) use ($formatXml) {
+        $arrayToXml = function($array, $rootElement = null, $xml = null, $rootattributes = array()) use ($formatXml) {
             $xml_clone = $xml;
             if ($xml_clone === null) {
-                $xml_clone = new SimpleXMLElement($rootElement !== null ? '<'.$rootElement.'/>' : '<report/>');
+                $xml_clone = new SimpleXMLElement($rootElement !== null ? '<' . $rootElement . '/>' : '<report/>');
             }
             if (count($rootattributes)) {
                 foreach ($rootattributes as $attrname => $attrvalue) {
@@ -296,7 +300,7 @@ function block_exastud_report_get_xmlSettings($templateid, &$repfilename) {
             }
             $res = $formatXml($xml_clone);
             // delete first line with version of xml
-            $res = substr($res, strpos($res, "\n")+1);
+            $res = substr($res, strpos($res, "\n") + 1);
             return $res;
         };
         $templateArr = (array)$template;
@@ -359,10 +363,10 @@ function block_exastud_import_report_xml($xmlcontent, $updatereports = false, $u
                 $resData->id = $existsid;
                 $DB->update_record_raw('block_exastudreportsettings', $resData);
                 //$DB->execute('UPDATE {block_exastudreportsettings} ', $resData);
-                $updated[$existsid] = $resData->title.' (id: '.$existsid.')';
+                $updated[$existsid] = $resData->title . ' (id: ' . $existsid . ')';
             } else {
                 // ignore this report!
-                $ignored[$existsid] = $resData->title.' (id: '.$existsid.')';
+                $ignored[$existsid] = $resData->title . ' (id: ' . $existsid . ')';
             }
         } else {
             // insert new report
@@ -374,15 +378,15 @@ function block_exastud_import_report_xml($xmlcontent, $updatereports = false, $u
                 $newid = $DB->insert_record('block_exastudreportsettings', $resData);
             }
 
-            $inserted[$newid] = $resData->title.' (id: '.$newid.')';
+            $inserted[$newid] = $resData->title . ' (id: ' . $newid . ')';
         }
         $filelist[] = $resData->template;
     }
 
     $result = array(
-            'inserted' => $inserted,
-            'updated' => $updated,
-            'ignored' => $ignored
+        'inserted' => $inserted,
+        'updated' => $updated,
+        'ignored' => $ignored,
     );
     $result['filelist'] = $filelist;
 

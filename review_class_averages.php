@@ -17,7 +17,7 @@
 //
 // This copyright notice MUST APPEAR in all copies of the script!
 
-require __DIR__.'/inc.php';
+require __DIR__ . '/inc.php';
 
 $courseid = optional_param('courseid', 1, PARAM_INT); // Course ID
 $classid = required_param('classid', PARAM_INT);
@@ -27,20 +27,20 @@ setcookie('lastclass', $classid);
 block_exastud_require_login($courseid);
 
 if (!$class = block_exastud_get_class($classid)) {
-	throw new moodle_exception("badclass", "block_exastud");
+    throw new moodle_exception("badclass", "block_exastud");
 }
 if (!block_exastud_is_class_teacher($classid, $USER->id)) {
-	throw new moodle_exception("not a class teacher");
+    throw new moodle_exception("not a class teacher");
 }
 
 
-$classheader = $class->title.' - '.block_exastud_get_string('review_class_averages');
+$classheader = $class->title . ' - ' . block_exastud_get_string('review_class_averages');
 
 $output = block_exastud_get_renderer();
 
 $url = '/blocks/exastud/review_class_averages.php';
 $PAGE->set_url($url, ['courseid' => $courseid, 'classid' => $classid]);
-echo $output->header(array('review', '='.$classheader));
+echo $output->header(array('review', '=' . $classheader));
 echo $output->heading($classheader);
 
 $class_students = block_exastud_get_class_students($class->id);
@@ -60,25 +60,25 @@ $table->align[] = 'left';
 $table->align[] = 'center';
 
 foreach ($class_students as $classstudent) {
-	$icons = '<img src="'.$CFG->wwwroot.'/pix/i/edit.gif" width="16" height="16" alt="'.block_exastud_get_string('edit').'" />';
-	$userdesc = fullname($classstudent);
+    $icons = '<img src="' . $CFG->wwwroot . '/pix/i/edit.gif" width="16" height="16" alt="' . block_exastud_get_string('edit') . '" />';
+    $userdesc = fullname($classstudent);
 
-	$data = (array)block_exastud_get_class_student_data($classid, $classstudent->id);
+    $data = (array)block_exastud_get_class_student_data($classid, $classstudent->id);
 
-	$row = new html_table_row();
-	$row->cells[] = $OUTPUT->user_picture($classstudent, array("courseid" => $courseid));
-	$row->cells[] = $userdesc;
+    $row = new html_table_row();
+    $row->cells[] = $OUTPUT->user_picture($classstudent, array("courseid" => $courseid));
+    $row->cells[] = $userdesc;
 
-	$row->cells[] = $output->link_button($CFG->wwwroot.'/blocks/exastud/review_student_averages.php?courseid='.$courseid.'&classid='.$classid.'&studentid='.$classstudent->id,
-		block_exastud_get_string('edit'), ['class' => 'btn btn-default']);
-	if (array_key_exists('grade_average_calculated', $data)) {
+    $row->cells[] = $output->link_button($CFG->wwwroot . '/blocks/exastud/review_student_averages.php?courseid=' . $courseid . '&classid=' . $classid . '&studentid=' . $classstudent->id,
+        block_exastud_get_string('edit'), ['class' => 'btn btn-default']);
+    if (array_key_exists('grade_average_calculated', $data)) {
         $avg = number_format($data['grade_average_calculated'], 1, ',', '');
     } else {
         $avg = block_exastud_get_string('review_class_average_not_calculated');
     }
     $row->cells[] = $avg;
 
-	$table->data[] = $row;
+    $table->data[] = $row;
 }
 
 echo $output->table($table);

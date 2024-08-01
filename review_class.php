@@ -17,7 +17,7 @@
 //
 // This copyright notice MUST APPEAR in all copies of the script!
 
-require __DIR__.'/inc.php';
+require __DIR__ . '/inc.php';
 
 use block_exastud\globals as g;
 
@@ -36,13 +36,13 @@ block_exastud_require_global_cap(BLOCK_EXASTUD_CAP_REVIEW);
 $class = block_exastud_get_class($classid);
 $simulateSubjectId = $subjectid;
 if ((block_exastud_is_profilesubject_teacher($classid) || $class->userid != $USER->id)
-        && $type == BLOCK_EXASTUD_DATA_ID_CERTIFICATE) {
+    && $type == BLOCK_EXASTUD_DATA_ID_CERTIFICATE) {
     $simulateSubjectId = BLOCK_EXASTUD_DATA_ID_CERTIFICATE;
 }
 $reviewclass = block_exastud_get_review_class($classid, $simulateSubjectId);
 
 if (!$class || (!$reviewclass && $USER->id != $class->userid)) { // class teacher can preview of reviews
-	print_error("badclass", "block_exastud");
+    print_error("badclass", "block_exastud");
 }
 
 $isSubjectTeacher = true;
@@ -60,7 +60,7 @@ if (!$reviewclass && $USER->id == $class->userid) {
 			FROM {block_exastudclassteachers} ct
 			JOIN {block_exastudclass} c ON ct.classid=c.id
 			LEFT JOIN {block_exastudsubjects} s ON ct.subjectid = s.id
-			WHERE ct.teacherid=? AND ct.classid=? AND ct.subjectid >= 0 AND ".($subjectid ? 's.id=?' : 's.id IS NULL')."
+			WHERE ct.teacherid=? AND ct.classid=? AND ct.subjectid >= 0 AND " . ($subjectid ? 's.id=?' : 's.id IS NULL') . "
 		", array($teacherid, $classid, $subjectid), IGNORE_MULTIPLE);
 }
 
@@ -84,7 +84,7 @@ if ($action == 'update' && $isSubjectTeacher) {
         block_exastud_set_subject_student_data($classid, $subjectid, $studentid, 'niveau', $n);
     }
 
-    redirect('review.php?courseid='.$courseid.'&openclass='.$classid);
+    redirect('review.php?courseid=' . $courseid . '&openclass=' . $classid);
     //redirect($_SERVER['REQUEST_URI']);
 }
 
@@ -95,11 +95,11 @@ if (($action == 'hide_student' || $action == 'show_student') && $isSubjectTeache
         $allstudents = block_exastud_get_class_students($classid);
         $allstudents = array_keys($allstudents);
         $alreadyhiddenStudents = g::$DB->get_records_menu('block_exastudclassteastudvis',
-                [   'classteacherid' => $reviewclass->classteacherid,
-                    'visible' => 0,
-                ],
-                '',
-                'studentid, studentid as temp');
+            ['classteacherid' => $reviewclass->classteacherid,
+                'visible' => 0,
+            ],
+            '',
+            'studentid, studentid as temp');
         $alreadyhiddenStudents = array_keys($alreadyhiddenStudents);
         if ($action == 'hide_student') {
             $studentsTo = array_diff($allstudents, $alreadyhiddenStudents);
@@ -113,36 +113,36 @@ if (($action == 'hide_student' || $action == 'show_student') && $isSubjectTeache
 
     $doHideShow = function($action, $classid, $student, $reviewclass) use ($DB) {
         $existing = $DB->get_record('block_exastudclassteastudvis', [
-                'classteacherid' => $reviewclass->classteacherid,
-                'studentid' => $student->id,
+            'classteacherid' => $reviewclass->classteacherid,
+            'studentid' => $student->id,
         ]);
         if ($action == 'hide_student') {
             g::$DB->insert_or_update_record('block_exastudclassteastudvis', [
-                    'visible' => 0,
+                'visible' => 0,
             ], [
-                    'classteacherid' => $reviewclass->classteacherid,
-                    'studentid' => $student->id,
+                'classteacherid' => $reviewclass->classteacherid,
+                'studentid' => $student->id,
             ]);
             if (!$existing) { // the form used also for another actions and thay can go to the link with hide_student
                 \block_exastud\event\student_hidden::log(['objectid' => $classid,
-                        'relateduserid' => $student->id,
-                        'other' => ['classtitle' => $reviewclass->title,
-                                'subjectid' => $reviewclass->subject_id,
-                                'subjecttitle' => $reviewclass->subject_title,
-                                'studentname' => $student->firstname.' '.$student->lastname]]);
+                    'relateduserid' => $student->id,
+                    'other' => ['classtitle' => $reviewclass->title,
+                        'subjectid' => $reviewclass->subject_id,
+                        'subjecttitle' => $reviewclass->subject_title,
+                        'studentname' => $student->firstname . ' ' . $student->lastname]]);
             }
         } else if ($action == 'show_student') {
             g::$DB->delete_records('block_exastudclassteastudvis', [
-                    'classteacherid' => $reviewclass->classteacherid,
-                    'studentid' => $student->id,
+                'classteacherid' => $reviewclass->classteacherid,
+                'studentid' => $student->id,
             ]);
             if ($existing) { // the form used also for another actions and thay can go to the link with show_student
                 \block_exastud\event\student_shown::log(['objectid' => $classid,
-                        'relateduserid' => $student->id,
-                        'other' => ['classtitle' => $reviewclass->title,
-                                'subjectid' => $reviewclass->subject_id,
-                                'subjecttitle' => $reviewclass->subject_title,
-                                'studentname' => $student->firstname.' '.$student->lastname]]);
+                    'relateduserid' => $student->id,
+                    'other' => ['classtitle' => $reviewclass->title,
+                        'subjectid' => $reviewclass->subject_id,
+                        'subjecttitle' => $reviewclass->subject_title,
+                        'studentname' => $student->firstname . ' ' . $student->lastname]]);
             }
         }
     };
@@ -156,21 +156,21 @@ if (($action == 'hide_student' || $action == 'show_student') && $isSubjectTeache
 }
 
 $url = '/blocks/exastud/review_class.php';
-$PAGE->set_url($url, [ 'courseid'=>$courseid, 'classid'=>$classid, 'subjectid'=>$subjectid ]);
-$classheader = $reviewclass->title.($reviewclass->subject_title?' - '.$reviewclass->subject_title:'');
+$PAGE->set_url($url, ['courseid' => $courseid, 'classid' => $classid, 'subjectid' => $subjectid]);
+$classheader = $reviewclass->title . ($reviewclass->subject_title ? ' - ' . $reviewclass->subject_title : '');
 
 $output = block_exastud_get_renderer();
-echo $output->header(array('review', '='.$classheader));
+echo $output->header(array('review', '=' . $classheader));
 echo $output->heading($classheader);
 
 $actPeriod = block_exastud_check_active_period();
 
 
 if (!$classstudents = block_exastud_get_class_students($classid, true)) {
-	echo $output->heading(block_exastud_get_string('nostudentstoreview'));
-	echo $output->back_button(new moodle_url('review.php', ['courseid' => $courseid]));
-	echo $output->footer();
-	exit;
+    echo $output->heading(block_exastud_get_string('nostudentstoreview'));
+    echo $output->back_button(new moodle_url('review.php', ['courseid' => $courseid]));
+    echo $output->footer();
+    exit;
 }
 
 $categories = block_exastud_get_class_categories($classid);
@@ -178,8 +178,8 @@ $evaluation_options = block_exastud_get_evaluation_options();
 
 // hide cross category editing for these categories:
 $hideCrossCategoryFor = array('Abgang', 'Abschluss');
- 
-echo '<form action="'.$_SERVER['REQUEST_URI'].'" method="post" class="exastud-review-form">';
+
+echo '<form action="' . $_SERVER['REQUEST_URI'] . '" method="post" class="exastud-review-form">';
 echo '<input type="hidden" name="action" value="update" />';
 
 $tableheadernote = block_exastud_get_string('Note');
@@ -195,10 +195,10 @@ $userdatacolumn = new html_table_cell();
 $table->head[] = $userdatacolumn; //userdata
 $hide_allstudents_url = block_exastud\url::create($PAGE->url, ['action' => 'hide_student', 'studentid' => 'all']);
 $hideAllButton = '<span class="exastud-hidebutton">
-                    <a style="padding-right: 15px;" href="'.$hide_allstudents_url.'">'.
-                        $OUTPUT->pix_icon('i/hide', block_exastud_get_string('hide')).
-                        '&nbsp;'.block_exastud_get_string('hide_all').
-                    '</a></span>';
+                    <a style="padding-right: 15px;" href="' . $hide_allstudents_url . '">' .
+    $OUTPUT->pix_icon('i/hide', block_exastud_get_string('hide')) .
+    '&nbsp;' . block_exastud_get_string('hide_all') .
+    '</a></span>';
 if ($isSubjectTeacher) {
     $table->head[] = $hideAllButton; // hide button
 }
@@ -254,8 +254,8 @@ if ($isSubjectTeacher) {
 
     foreach ($classstudents as $classstudent) {
         $visible = $DB->get_field('block_exastudclassteastudvis', 'visible', [
-                'classteacherid' => $reviewclass->classteacherid,
-                'studentid' => $classstudent->id,
+            'classteacherid' => $reviewclass->classteacherid,
+            'studentid' => $classstudent->id,
         ]);
         if ($visible === false) { // if no table record
             $visible = true;
@@ -267,17 +267,17 @@ if ($isSubjectTeacher) {
             continue;
         }
 
-        $icons = '<img src="'.$CFG->wwwroot.'/pix/i/edit.gif" width="16" height="16" alt="'.block_exastud_get_string('edit').'" />';
+        $icons = '<img src="' . $CFG->wwwroot . '/pix/i/edit.gif" width="16" height="16" alt="' . block_exastud_get_string('edit') . '" />';
 
         /*
         $report = $DB->get_records('block_exastudreview', array('subjectid'=>$subjectid, 'periodid'=>$actPeriod->id, 'studentid'=>$classstudent->id), 'timemodified DESC');
         $report = reset($report);
         */
         $report = $DB->get_record('block_exastudreview',
-                array('teacherid' => $teacherid,
-                    'subjectid' => $subjectid,
-                    'periodid' => $actPeriod->id,
-                    'studentid' => $classstudent->id), '*', IGNORE_MULTIPLE);
+            array('teacherid' => $teacherid,
+                'subjectid' => $subjectid,
+                'periodid' => $actPeriod->id,
+                'studentid' => $classstudent->id), '*', IGNORE_MULTIPLE);
         // if the student has a review from another teacher - probably this student was hidden and than again shown
         // such student is not able to be review again
         $reports_from_anotherteachers = $DB->get_records_sql('SELECT * FROM {block_exastudreview}
@@ -285,17 +285,17 @@ if ($isSubjectTeacher) {
                                                         AND periodid = ?
                                                         AND studentid = ?
                                                         AND teacherid != ?',
-                                                array($subjectid,
-                                                    $actPeriod->id,
-                                                    $classstudent->id,
-                                                    $teacherid));
+            array($subjectid,
+                $actPeriod->id,
+                $classstudent->id,
+                $teacherid));
         $canReviewStudent = true;
 
-//var_dump($canReviewStudent).'<br>';
+        //var_dump($canReviewStudent).'<br>';
         $subjectData = block_exastud_get_review($classid, $subjectid, $classstudent->id);
 
         $template = block_exastud_get_student_print_template($class, $classstudent->id);
-        
+
         $template_category = $template->get_category();
         $editCrossCategories = false;
         if (block_exastud_can_edit_crosscompetences_subjectteacher($classid)) {
@@ -310,7 +310,7 @@ if ($isSubjectTeacher) {
         $editSubjectReview = false;
         $editLearnSocialBehavior = false;
         $allinputs = $template->get_inputs('all');
-		$personalHeadTeacher = block_exastud_get_personal_head_teacher($class->id, $classstudent->id, true);
+        $personalHeadTeacher = block_exastud_get_personal_head_teacher($class->id, $classstudent->id, true);
         if ($allinputs) {
             if (array_key_exists('subjects', $allinputs)) {
                 $editSubjectReview = true;
@@ -318,7 +318,7 @@ if ($isSubjectTeacher) {
                 unset($tabledeletecolumns['niveau']);
                 unset($tabledeletecolumns['subjects']);
             }
-			// show learn and social if the report has input for this and if I am a main teacher for the student
+            // show learn and social if the report has input for this and if I am a main teacher for the student
             if (!block_exastud_is_bw_active() && block_exastud_can_edit_learnsocial_classteacher($class->id)) {
                 $editLearnSocialBehavior = true;
                 unset($tabledeletecolumns['learnsocial']);
@@ -347,13 +347,13 @@ if ($isSubjectTeacher) {
         $row = new html_table_row();
         $row->attributes['data-studentid'] = $classstudent->id;
         // user data
-        $userdata = '<span class="exastud-userpicture">'.$output->user_picture($classstudent, array("courseid" => $courseid)).'</span>';
-        $userdata .= '<span class="exastud-username">'.fullname($classstudent).'</span>';
+        $userdata = '<span class="exastud-userpicture">' . $output->user_picture($classstudent, array("courseid" => $courseid)) . '</span>';
+        $userdata .= '<span class="exastud-username">' . fullname($classstudent) . '</span>';
 
         $userdatacell = new html_table_cell();
         $userdatacell->attributes['class'] .= 'exastud-userdata-cell';
-        $userdatacell->text = '<div class="cell-content">'.$userdata.'</div>';
-        $userdatacell->text .= '<span class="exastud-template-title">'.block_exastud_get_string('report_student_template').': '.$template->get_name().'</span>';
+        $userdatacell->text = '<div class="cell-content">' . $userdata . '</div>';
+        $userdatacell->text .= '<span class="exastud-template-title">' . block_exastud_get_string('report_student_template') . ': ' . $template->get_name() . '</span>';
         if (block_exastud_is_bw_active()) {
             $userdatacell->rowspan = 2;
         }
@@ -372,7 +372,7 @@ if ($isSubjectTeacher) {
             $hidecolumn->rowspan = 2;
         }
         $hidecolumn->style .= ' vertical-align: top; ';
-        $hidecolumn->text = '<span class="exastud-hidebutton"><a style="padding-right: 15px;" href="'.$show_hide_url.'">'.$show_hide_icon.'</a></span>';
+        $hidecolumn->text = '<span class="exastud-hidebutton"><a style="padding-right: 15px;" href="' . $show_hide_url . '">' . $show_hide_icon . '</a></span>';
         $row->cells[] = $hidecolumn;
 
         // gender
@@ -383,12 +383,12 @@ if ($isSubjectTeacher) {
         $gendercolumn->style .= ' vertical-align: top; ';
         $gender = block_exastud_get_user_gender_string($classstudent->id);
         if ($gender) {
-            $gendercolumn->text = '<span class="exastud-usergender">'.$gender.'</span>';
+            $gendercolumn->text = '<span class="exastud-usergender">' . $gender . '</span>';
         } else {
             // show gender selectbox only if the user does not have own gender
-            $gender_form = '<select name="exastud_gender['.$classstudent->id.']" class="custom-select">';
+            $gender_form = '<select name="exastud_gender[' . $classstudent->id . ']" class="custom-select">';
             foreach ($gender_options as $k => $gender_option) {
-                $gender_form .= '<option value="'.$gender_option.'">'.$gender_option.'</option>';
+                $gender_form .= '<option value="' . $gender_option . '">' . $gender_option . '</option>';
             }
             $gender_form .= '</select>';
             $gendercolumn->text = $gender_form;
@@ -398,7 +398,7 @@ if ($isSubjectTeacher) {
         if (block_exastud_is_bw_active()) {
             // Grades column
             $formdata = new stdClass();
-            $formdata = (object) array_merge((array) $formdata, (array) $subjectData);
+            $formdata = (object)array_merge((array)$formdata, (array)$subjectData);
             $grade_options = array_filter($template->get_grade_options());
             if (empty($formdata->grade)) {
                 $formdata->grade = '';
@@ -434,12 +434,12 @@ if ($isSubjectTeacher) {
                 if (empty($formdata->niveau)) {
                     $formdata->niveau = '';
                 }
-                $niveau_form = '<select name="exastud_niveau['.$classstudent->id.']" class="custom-select">';
+                $niveau_form = '<select name="exastud_niveau[' . $classstudent->id . ']" class="custom-select">';
                 foreach ($niveaus as $k => $niveau_option) {
-                    if ($formdata->niveau == (string) $k) {
-                        $niveau_form .= '<option selected="selected" value="'.$k.'">'.$niveau_option.'</option>';
+                    if ($formdata->niveau == (string)$k) {
+                        $niveau_form .= '<option selected="selected" value="' . $k . '">' . $niveau_option . '</option>';
                     } else {
-                        $niveau_form .= '<option value="'.$k.'">'.$niveau_option.'</option>';
+                        $niveau_form .= '<option value="' . $k . '">' . $niveau_option . '</option>';
                     }
                 }
                 $niveau_form .= '</select>';
@@ -450,9 +450,9 @@ if ($isSubjectTeacher) {
             // Fachkompetenzen column
             if ($editSubjectReview) {
                 $row->cells[] = ($visible ?
-                        $output->link_button($CFG->wwwroot.'/blocks/exastud/review_student.php?courseid='.$courseid.'&classid='.
-                                $classid.'&subjectid='.$subjectid.'&studentid='.$classstudent->id,
-                                block_exastud_get_string('review_button'), ['class' => 'btn btn-primary']) : '');
+                    $output->link_button($CFG->wwwroot . '/blocks/exastud/review_student.php?courseid=' . $courseid . '&classid=' .
+                        $classid . '&subjectid=' . $subjectid . '&studentid=' . $classstudent->id,
+                        block_exastud_get_string('review_button'), ['class' => 'btn btn-primary']) : '');
             } else {
                 $row->cells[] = '';
             }
@@ -462,9 +462,9 @@ if ($isSubjectTeacher) {
         if (block_exastud_can_edit_crosscompetences_subjectteacher($classid)) {
             if ($editCrossCategories) {
                 $row->cells[] = ($visible ?
-                        $output->link_button($CFG->wwwroot.'/blocks/exastud/review_student.php?courseid='.$courseid.'&classid='.
-                                $classid.'&subjectid='.$subjectid.'&studentid='.$classstudent->id.'&reporttype=inter',
-                                block_exastud_get_string('review_button'), ['class' => 'btn btn-primary']) : '');
+                    $output->link_button($CFG->wwwroot . '/blocks/exastud/review_student.php?courseid=' . $courseid . '&classid=' .
+                        $classid . '&subjectid=' . $subjectid . '&studentid=' . $classstudent->id . '&reporttype=inter',
+                        block_exastud_get_string('review_button'), ['class' => 'btn btn-primary']) : '');
             } else {
                 $row->cells[] = '';
             }
@@ -473,38 +473,38 @@ if ($isSubjectTeacher) {
         if (block_exastud_can_edit_learnsocial_subjectteacher($classid)) {
             if ($editLearnSocialBehavior) {
                 $row->cells[] = ($visible ?
-                        $output->link_button($CFG->wwwroot.'/blocks/exastud/review_student.php?courseid='.$courseid.'&classid='.
-                                $classid.'&subjectid='.$subjectid.'&studentid='.$classstudent->id.'&reporttype=social',
-                                block_exastud_get_string('review_button'), ['class' => 'btn btn-primary']) : '');
+                    $output->link_button($CFG->wwwroot . '/blocks/exastud/review_student.php?courseid=' . $courseid . '&classid=' .
+                        $classid . '&subjectid=' . $subjectid . '&studentid=' . $classstudent->id . '&reporttype=social',
+                        block_exastud_get_string('review_button'), ['class' => 'btn btn-primary']) : '');
             } else {
                 $row->cells[] = '';
             }
         }
 
-        $row->attributes['class'] = 'oddeven'.(int) $oddeven;
+        $row->attributes['class'] = 'oddeven' . (int)$oddeven;
         $table->data[] = $row;
 
         // preview of reviews
         if ($visible && block_exastud_is_bw_active()) {
             $cell = new html_table_cell();
             //if (!block_exastud_get_only_learnsociale_reports()) {
-                if ($editSubjectReview) {
-                    $cell->text = '<p>'.
-                            ((trim(@$subjectData->review) ? block_exastud_text_to_html(trim($subjectData->review)) : '') ?: '---').
-                            '</p>';
+            if ($editSubjectReview) {
+                $cell->text = '<p>' .
+                    ((trim(@$subjectData->review) ? block_exastud_text_to_html(trim($subjectData->review)) : '') ?: '---') .
+                    '</p>';
+            }
+            if ($editSubjectNiveau) {
+                if (!empty($subjectData->niveau)) {
+                    $cell->text .= '<p><b>' . block_exastud_get_string('Niveau') . ':</b> ' .
+                        (block_exastud\global_config::get_niveau_option_title($subjectData->niveau) ?: $subjectData->niveau) .
+                        '</p>';
                 }
-                if ($editSubjectNiveau) {
-                    if (!empty($subjectData->niveau)) {
-                        $cell->text .= '<p><b>'.block_exastud_get_string('Niveau').':</b> '.
-                                (block_exastud\global_config::get_niveau_option_title($subjectData->niveau) ?: $subjectData->niveau).
-                                '</p>';
-                    }
-                }
-                if (!empty($subjectData->grade)) {
-                    $template = block_exastud_get_student_print_template($class, $classstudent->id);
-                    $value = @$template->get_grade_options()[$subjectData->grade] ?: $subjectData->grade;
-                    $cell->text .= '<p><b>'.block_exastud_get_string('Note').':</b> '.$value.'</p>';
-                }
+            }
+            if (!empty($subjectData->grade)) {
+                $template = block_exastud_get_student_print_template($class, $classstudent->id);
+                $value = @$template->get_grade_options()[$subjectData->grade] ?: $subjectData->grade;
+                $cell->text .= '<p><b>' . block_exastud_get_string('Note') . ':</b> ' . $value . '</p>';
+            }
             /*} else {
                 $learnReview = g::$DB->get_field('block_exastudreview', 'review', [
                                 'studentid' => $classstudent->id,
@@ -523,9 +523,9 @@ if ($isSubjectTeacher) {
                 //$spacerCell->colspan = 4;
                 $row = new html_table_row(array(
                     /*$spacerCell, */
-                        $cell
+                    $cell,
                 ));
-                $row->attributes['class'] = 'oddeven'.(int) $oddeven;
+                $row->attributes['class'] = 'oddeven' . (int)$oddeven;
                 $table->data[] = $row;
             }
         }
@@ -536,8 +536,8 @@ if ($isSubjectTeacher) {
 } else { // for non subject teacher = class owner - review of class
     foreach ($classstudents as $classstudent) {
         $visible = $DB->get_field('block_exastudclassteastudvis', 'visible', [
-                'classteacherid' => $reviewclass->classteacherid,
-                'studentid' => $classstudent->id,
+            'classteacherid' => $reviewclass->classteacherid,
+            'studentid' => $classstudent->id,
         ]);
         if ($visible === false) {
             $visible = true;
@@ -550,20 +550,20 @@ if ($isSubjectTeacher) {
         }
 
         $report = $DB->get_record('block_exastudreview',
-                array('teacherid' => $teacherid, 'subjectid' => $subjectid, 'periodid' => $actPeriod->id,
-                        'studentid' => $classstudent->id));
+            array('teacherid' => $teacherid, 'subjectid' => $subjectid, 'periodid' => $actPeriod->id,
+                'studentid' => $classstudent->id));
 
         $subjectData = block_exastud_get_review($classid, $subjectid, $classstudent->id);
 
         $row = new html_table_row();
         $userdata =
-                '<span class="exastud-userpicture">'.$output->user_picture($classstudent, array("courseid" => $courseid)).'</span>';
-        $userdata .= '<span class="exastud-username">'.fullname($classstudent).'</span>';
+            '<span class="exastud-userpicture">' . $output->user_picture($classstudent, array("courseid" => $courseid)) . '</span>';
+        $userdata .= '<span class="exastud-username">' . fullname($classstudent) . '</span>';
 
-        $userdata .= '<span class="exastud-usergender">'.block_exastud_get_user_gender_string($classstudent->id).'</span>';
+        $userdata .= '<span class="exastud-usergender">' . block_exastud_get_user_gender_string($classstudent->id) . '</span>';
         $userdatacell = new html_table_cell();
         $userdatacell->attributes['class'] .= 'exastud-userdata-cell';
-        $userdatacell->text = '<div class="cell-content">'.$userdata.'</div>';
+        $userdatacell->text = '<div class="cell-content">' . $userdata . '</div>';
         $row->cells[] = $userdatacell;
 
         // gender
@@ -585,16 +585,16 @@ if ($isSubjectTeacher) {
                 $row->cells[] = '';
             }
             // subject review
-            $row->cells[] = '<p>'.
-                    ((trim(@$subjectData->review) ? block_exastud_text_to_html(trim($subjectData->review)) : '') ?: '---').
-                    '</p>';
+            $row->cells[] = '<p>' .
+                ((trim(@$subjectData->review) ? block_exastud_text_to_html(trim($subjectData->review)) : '') ?: '---') .
+                '</p>';
         }
         $learnReview = g::$DB->get_field('block_exastudreview', 'review', [
-                        'studentid' => $classstudent->id,
-                        //'subjectid' => BLOCK_EXASTUD_SUBJECT_ID_LERN_UND_SOZIALVERHALTEN_VORSCHLAG,
-                        'subjectid' => $subjectid,
-                        'periodid' => $actPeriod->id,
-                        'teacherid' => $teacherid]
+                'studentid' => $classstudent->id,
+                //'subjectid' => BLOCK_EXASTUD_SUBJECT_ID_LERN_UND_SOZIALVERHALTEN_VORSCHLAG,
+                'subjectid' => $subjectid,
+                'periodid' => $actPeriod->id,
+                'teacherid' => $teacherid]
         );
         if ($learnReview) {
             $row->cells[] = ($visible ? $learnReview : '');
@@ -603,7 +603,7 @@ if ($isSubjectTeacher) {
             $row->cells[] = '';
         }
 
-        $row->attributes['class'] = 'oddeven'.(int) $oddeven;
+        $row->attributes['class'] = 'oddeven' . (int)$oddeven;
         $table->data[] = $row;
         $oddeven = !$oddeven;
     }
@@ -645,52 +645,52 @@ foreach ($tabledeletecolumns as $todelete) {
 echo $output->table($table);
 
 if ($hiddenclassstudents) {
-	echo $output->heading(block_exastud_get_string('hidden_students'));
+    echo $output->heading(block_exastud_get_string('hidden_students'));
 
-	$table = new html_table();
+    $table = new html_table();
 
-	$table->head = array();
-	$table->head[] = ''; //userpic
-	$table->head[] = block_exastud_get_string('name');
+    $table->head = array();
+    $table->head[] = ''; //userpic
+    $table->head[] = block_exastud_get_string('name');
     $hide_allstudents_url = block_exastud\url::create($PAGE->url, ['action' => 'show_student', 'studentid' => 'all']);
     $showAllButton = '<span class="exastud-hidebutton">
-                    <a style="padding-right: 15px;" href="'.$hide_allstudents_url.'">'.
-            $OUTPUT->pix_icon('i/show', block_exastud_get_string('show')).
-            '&nbsp;'.block_exastud_get_string('show_all').
-            '</a></span>';
-	$table->head[] = $showAllButton; //buttons
+                    <a style="padding-right: 15px;" href="' . $hide_allstudents_url . '">' .
+        $OUTPUT->pix_icon('i/show', block_exastud_get_string('show')) .
+        '&nbsp;' . block_exastud_get_string('show_all') .
+        '</a></span>';
+    $table->head[] = $showAllButton; //buttons
 
-	$table->align = array();
-	$table->align[] = 'center';
-	$table->align[] = 'left';
+    $table->align = array();
+    $table->align[] = 'center';
+    $table->align[] = 'left';
 
-	foreach ($hiddenclassstudents as $classstudent) {
-		$icons = '<img src="' . $CFG->wwwroot . '/pix/i/edit.gif" width="16" height="16" alt="' . block_exastud_get_string('edit'). '" />';
+    foreach ($hiddenclassstudents as $classstudent) {
+        $icons = '<img src="' . $CFG->wwwroot . '/pix/i/edit.gif" width="16" height="16" alt="' . block_exastud_get_string('edit') . '" />';
 
-		$row = new html_table_row();
+        $row = new html_table_row();
 
-		$row->cells[] = $output->user_picture($classstudent,array("courseid"=>$courseid));
-		$row->cells[] = fullname($classstudent);
+        $row->cells[] = $output->user_picture($classstudent, array("courseid" => $courseid));
+        $row->cells[] = fullname($classstudent);
 
-		$show_hide_url = block_exastud\url::create($PAGE->url, [ 'action'=>'show_student', 'studentid' => $classstudent->id]);
-		$show_hide_icon = $output->pix_icon('i/show', block_exastud_get_string('show'));
+        $show_hide_url = block_exastud\url::create($PAGE->url, ['action' => 'show_student', 'studentid' => $classstudent->id]);
+        $show_hide_icon = $output->pix_icon('i/show', block_exastud_get_string('show'));
 
         if ($isSubjectTeacher) {
             $row->cells[] =
-                    '<a style="padding-right: 15px;" href="'.$show_hide_url.'">'.$show_hide_icon.'</a>';
+                '<a style="padding-right: 15px;" href="' . $show_hide_url . '">' . $show_hide_icon . '</a>';
 
         }
-		$table->data[] = $row;
-	}
+        $table->data[] = $row;
+    }
 
-	echo $output->table($table);
+    echo $output->table($table);
 }
 
 if ($isSubjectTeacher) {
-    echo '<input type="submit" value="'.block_exastud_get_string('savechanges').'" class="btn btn-default exastud-submit-button"/>&nbsp;';
+    echo '<input type="submit" value="' . block_exastud_get_string('savechanges') . '" class="btn btn-default exastud-submit-button"/>&nbsp;';
 }
 //echo $output->back_button(new moodle_url('review.php', ['courseid' => $courseid, 'openclass' => $classid]));
-echo '<input type="button" value="'.block_exastud_get_string('back').'" class="btn btn-default" exa-type="link" href="'.new moodle_url('review.php', ['courseid' => $courseid, 'openclass' => $classid]).'"/>';
+echo '<input type="button" value="' . block_exastud_get_string('back') . '" class="btn btn-default" exa-type="link" href="' . new moodle_url('review.php', ['courseid' => $courseid, 'openclass' => $classid]) . '"/>';
 
 echo '</form>';
 echo $output->footer();

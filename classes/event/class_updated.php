@@ -50,7 +50,7 @@ class class_updated extends base {
     public function get_description() {
         $classtitle = $this->other['classtitle'];
         $oldclasstitle = $this->other['oldclasstitle'];
-        $result = $this->other['whoDid']." updated the class '$oldclasstitle' (id: $this->objectid). New title is '$classtitle'";
+        $result = $this->other['whoDid'] . " updated the class '$oldclasstitle' (id: $this->objectid). New title is '$classtitle'";
         return $result;
     }
 
@@ -60,8 +60,8 @@ class class_updated extends base {
      * @return array
      */
     protected function get_legacy_logdata() {
-        return(array($this->courseid, 'exastud', 'update class',
-                'configuration_class.php?classid=' . $this->objectid, $this->objectid, $this->contextinstanceid));
+        return (array($this->courseid, 'exastud', 'update class',
+            'configuration_class.php?classid=' . $this->objectid, $this->objectid, $this->contextinstanceid));
     }
 
     /**

@@ -17,7 +17,7 @@
 //
 // This copyright notice MUST APPEAR in all copies of the script!
 
-require __DIR__.'/inc.php';
+require __DIR__ . '/inc.php';
 
 define("MAX_USERS_PER_PAGE", 5000);
 
@@ -25,10 +25,10 @@ use block_exastud\globals as g;
 
 $courseid = optional_param('courseid', 1, PARAM_INT); // Course ID
 $classid = required_param('classid', PARAM_INT);
-$showall		= optional_param('showall', 0, PARAM_BOOL);
-$searchtext	 = optional_param('searchtext', '', PARAM_TEXT); // search string
-$add			= optional_param('add', 0, PARAM_BOOL);
-$remove		 = optional_param('remove', 0, PARAM_BOOL);
+$showall = optional_param('showall', 0, PARAM_BOOL);
+$searchtext = optional_param('searchtext', '', PARAM_TEXT); // search string
+$add = optional_param('add', 0, PARAM_BOOL);
+$remove = optional_param('remove', 0, PARAM_BOOL);
 
 block_exastud_require_login($courseid);
 
@@ -46,41 +46,41 @@ $addmessage = '';
 $notDeletedUsers = array();
 
 if ($frm = data_submitted()) {
-	require_sesskey();
+    require_sesskey();
 
-	if ($add and !empty($frm->addselect)) {
-		$subjectid = required_param('classteacher_subjectid', PARAM_INT);
+    if ($add and !empty($frm->addselect)) {
+        $subjectid = required_param('classteacher_subjectid', PARAM_INT);
 
-		foreach ($frm->addselect as $adduser) {
-			if (!$adduser = clean_param($adduser, PARAM_INT)) {
-				continue;
-			}
+        foreach ($frm->addselect as $adduser) {
+            if (!$adduser = clean_param($adduser, PARAM_INT)) {
+                continue;
+            }
 
-			if ($subjectid == BLOCK_EXASTUD_SUBJECT_ID_ADDITIONAL_HEAD_TEACHER && $adduser == $class->userid) {
-				// classteacher can't add himself
-				continue;
-			}
+            if ($subjectid == BLOCK_EXASTUD_SUBJECT_ID_ADDITIONAL_HEAD_TEACHER && $adduser == $class->userid) {
+                // classteacher can't add himself
+                continue;
+            }
 
-			g::$DB->insert_or_update_record('block_exastudclassteachers',
-				[ 'timemodified' => time() ],
-				[
-					'teacherid' => $adduser,
-					'classid' => $class->id,
-					'subjectid' => $subjectid,
-				]);
+            g::$DB->insert_or_update_record('block_exastudclassteachers',
+                ['timemodified' => time()],
+                [
+                    'teacherid' => $adduser,
+                    'classid' => $class->id,
+                    'subjectid' => $subjectid,
+                ]);
 
             $userData = $DB->get_record('user', ['id' => $adduser, 'deleted' => 0]);
             $subjectData = $DB->get_record('block_exastudsubjects', ['id' => $subjectid]);
             \block_exastud\event\classteacher_assigned::log(['objectid' => $class->id,
-                    'courseid' => $courseid,
-                    'relateduserid' => $adduser,
-                    'other' => ['subjectid' => $subjectid,
-                                'subjecttitle' => (@$subjectData->title ? $subjectData->title : block_exastud_get_string('additional_head_teacher')),
-                                'classtitle' => $class->title,
-                                'relatedusername' => $userData->firstname.' '.$userData->lastname]]);
-		}
-	} else if ($remove and !empty($frm->removeselect)) {
-		foreach ($frm->removeselect as $record_id) {
+                'courseid' => $courseid,
+                'relateduserid' => $adduser,
+                'other' => ['subjectid' => $subjectid,
+                    'subjecttitle' => (@$subjectData->title ? $subjectData->title : block_exastud_get_string('additional_head_teacher')),
+                    'classtitle' => $class->title,
+                    'relatedusername' => $userData->firstname . ' ' . $userData->lastname]]);
+        }
+    } else if ($remove and !empty($frm->removeselect)) {
+        foreach ($frm->removeselect as $record_id) {
             if (!$record_id = clean_param($record_id, PARAM_INT)) {
                 continue;
             }
@@ -92,37 +92,37 @@ if ($frm = data_submitted()) {
                 $subjectData = $DB->get_record('block_exastudsubjects', ['id' => $existingrecord->subjectid]);
                 if ($subjectData) {
                     \block_exastud\event\classteacher_unassigned::log(['objectid' => $class->id,
-                            'courseid' => $courseid,
-                            'relateduserid' => $existingrecord->teacherid,
-                            'other' => ['subjectid' => $existingrecord->subjectid,
-                                    'subjecttitle' => $subjectData->title,
-                                    'classtitle' => $class->title,
-                                    'relatedusername' => $userData->firstname.' '.$userData->lastname]]);
+                        'courseid' => $courseid,
+                        'relateduserid' => $existingrecord->teacherid,
+                        'other' => ['subjectid' => $existingrecord->subjectid,
+                            'subjecttitle' => $subjectData->title,
+                            'classtitle' => $class->title,
+                            'relatedusername' => $userData->firstname . ' ' . $userData->lastname]]);
                 }
             } else {
                 $notDeletedUsers[$existingrecord->teacherid] = $existingrecord->subjectid;
             }
 
         }
-	} else if ($showall) {
-		$searchtext = '';
-	}
+    } else if ($showall) {
+        $searchtext = '';
+    }
 }
 
-$select  = " username <> 'guest' AND deleted = 0 AND confirmed = 1 ";
+$select = " username <> 'guest' AND deleted = 0 AND confirmed = 1 ";
 
 $sqlparams = [];
 if ($searchtext !== '') {   // Search for a subset of remaining users
-    $FULLNAME  = $DB->sql_fullname();
-    $selectsql = " AND ( ".$DB->sql_like($FULLNAME, ':fname_search', false)." OR ".$DB->sql_like('email', ':email_search', false).") ";
-    $sqlparams['fname_search'] = '%'.$DB->sql_like_escape($searchtext).'%';
-    $sqlparams['fname_search_begin'] = '%'.$DB->sql_like_escape($searchtext).'%';
-    $sqlparams['email_search'] = '%'.$DB->sql_like_escape($searchtext).'%';
-    $sqlparams['email_search_begin'] = '%'.$DB->sql_like_escape($searchtext).'%';
+    $FULLNAME = $DB->sql_fullname();
+    $selectsql = " AND ( " . $DB->sql_like($FULLNAME, ':fname_search', false) . " OR " . $DB->sql_like('email', ':email_search', false) . ") ";
+    $sqlparams['fname_search'] = '%' . $DB->sql_like_escape($searchtext) . '%';
+    $sqlparams['fname_search_begin'] = '%' . $DB->sql_like_escape($searchtext) . '%';
+    $sqlparams['email_search'] = '%' . $DB->sql_like_escape($searchtext) . '%';
+    $sqlparams['email_search_begin'] = '%' . $DB->sql_like_escape($searchtext) . '%';
     $select .= str_replace(['fname_search', 'email_search'], ['fname_search_begin', 'email_search_begin'], $selectsql);
     //$select .= $selectsql;
 } else {
-	$selectsql = "";
+    $selectsql = "";
 }
 
 $userfieldsapi = \core_user\fields::for_name();
@@ -136,10 +136,10 @@ $availableusers = $DB->get_records_sql("SELECT id, firstname, lastname, email $a
 									# AND id NOT IN (
 									#		 SELECT teacherid
 									#		 FROM {block_exastudclassteachers}
-									#			   WHERE classid = ".$class->id."
-									#			   ".$selectsql.")
+									#			   WHERE classid = " . $class->id . "
+									#			   " . $selectsql . ")
 									 ORDER BY lastname ASC, firstname ASC",
-                                $sqlparams);
+    $sqlparams);
 
 $classstudents = block_exastud_get_class_teachers($class->id);
 
@@ -149,7 +149,7 @@ if (count($notDeletedUsers) > 0) {
     foreach ($notDeletedUsers as $teacherid => $subjectid) {
         $message .= '<li>';
         $subjObj = $DB->get_record('block_exastudsubjects', ['id' => $subjectid]);
-        $message .= fullname(block_exastud_get_user($teacherid)).' => '.$subjObj->title;
+        $message .= fullname(block_exastud_get_user($teacherid)) . ' => ' . $subjObj->title;
         $message .= '</li>';
     }
     $message .= '</ul>';
@@ -159,9 +159,9 @@ if (count($notDeletedUsers) > 0) {
 
 echo $OUTPUT->box_start();
 $userlistType = 'teachers';
-require __DIR__.'/lib/configuration_userlist.inc.php';
+require __DIR__ . '/lib/configuration_userlist.inc.php';
 echo $OUTPUT->box_end();
 
-echo $output->back_button($CFG->wwwroot . '/blocks/exastud/configuration_class.php?courseid='.$courseid.'&classid='.$class->id.'&type=teachers');
+echo $output->back_button($CFG->wwwroot . '/blocks/exastud/configuration_class.php?courseid=' . $courseid . '&classid=' . $class->id . '&type=teachers');
 
 echo $output->footer();

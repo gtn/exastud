@@ -52,7 +52,7 @@ class classowner_updated extends base {
         $oldownername = $this->other['oldownername'];
         $oldownerid = $this->other['oldownerid'];
         $ownername = $this->other['ownername'];
-        $result = $this->other['whoDid']." appointed '$ownername' (id: $this->relateduserid) as owner of the class '$classtitle' (id: $this->objectid). Before it was '$oldownername' (id: $oldownerid')  ";
+        $result = $this->other['whoDid'] . " appointed '$ownername' (id: $this->relateduserid) as owner of the class '$classtitle' (id: $this->objectid). Before it was '$oldownername' (id: $oldownerid')  ";
         return $result;
     }
 
@@ -62,8 +62,8 @@ class classowner_updated extends base {
      * @return array
      */
     protected function get_legacy_logdata() {
-        return(array($this->courseid, 'exastud', 'update class',
-                'configuration_class.php?classid=' . $this->objectid, $this->objectid, $this->contextinstanceid));
+        return (array($this->courseid, 'exastud', 'update class',
+            'configuration_class.php?classid=' . $this->objectid, $this->objectid, $this->contextinstanceid));
     }
 
     /**

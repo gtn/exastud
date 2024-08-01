@@ -63,10 +63,10 @@ class exastud_competencetable extends HTML_QuickForm_element {
 
     function toHtml() {
         global $CFG, $OUTPUT, $DB;
-        
+
         $tabletype = $this->type;
         $temp_formdata = (array)$this->temp_formdata;
-        
+
         $htmltable = new html_table();
         $htmltable->head[] = '';
         foreach ($this->options as $option) {
@@ -79,8 +79,8 @@ class exastud_competencetable extends HTML_QuickForm_element {
                 case 'checkbox': // do not used?
                     $value = @$temp_formdata[$comp_id];
                     $html = '<input type="checkbox"
-                                name="'.$comp_id.'['.$optionvalue.']" 
-                                '.($value ? ' checked="checked" ' : '').' 
+                                name="' . $comp_id . '[' . $optionvalue . ']"
+                                ' . ($value ? ' checked="checked" ' : '') . '
                                 value="1">';
                     break;
                 case 'radio':
@@ -89,16 +89,16 @@ class exastud_competencetable extends HTML_QuickForm_element {
                     } else {
                         $checked = '';
                     }
-                    $html = '<input type="radio" 
-                                name="'.$comp_id.'" 
-                                '.$checked.' 
-                                value="'.$optionvalue.'">';
+                    $html = '<input type="radio"
+                                name="' . $comp_id . '"
+                                ' . $checked . '
+                                value="' . $optionvalue . '">';
                     break;
                 case 'text': // do not used?
                     $value = @$temp_formdata[$comp_id];
                     $html = '<input type="text" class="form-control "
-                                name="'.$comp_id.'['.$optionvalue.']"
-                                value="'.$value.'">';
+                                name="' . $comp_id . '[' . $optionvalue . ']"
+                                value="' . $value . '">';
                     break;
             }
 
@@ -109,7 +109,7 @@ class exastud_competencetable extends HTML_QuickForm_element {
 
         $currentGroup = '!!--!!';
         foreach ($this->competences as $comp) {
-            $comp_id = $comp->id.'_'.$comp->source;
+            $comp_id = $comp->id . '_' . $comp->source;
             if (isset($comp->parent)) {
                 if ($comp->parent != $currentGroup) {
                     $currentGroup = $comp->parent;
@@ -140,6 +140,6 @@ class exastud_competencetable extends HTML_QuickForm_element {
 }
 
 //register this form element
-MoodleQuickForm::registerElementType('exastud_competencetable', $CFG->dirroot."/blocks/exastud/classes/exastud_competencetable.php", 'exastud_competencetable');
+MoodleQuickForm::registerElementType('exastud_competencetable', $CFG->dirroot . "/blocks/exastud/classes/exastud_competencetable.php", 'exastud_competencetable');
 
 

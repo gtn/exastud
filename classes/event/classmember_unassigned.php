@@ -50,7 +50,7 @@ class classmember_unassigned extends base {
     public function get_description() {
         $classtitle = $this->other['classtitle'];
         $relatedusername = $this->other['relatedusername'];
-        $result = $this->other['whoDid']." unassigned a user '$relatedusername' (id: $this->relateduserid) from the class '$classtitle' (id: $this->objectid)";
+        $result = $this->other['whoDid'] . " unassigned a user '$relatedusername' (id: $this->relateduserid) from the class '$classtitle' (id: $this->objectid)";
         return $result;
     }
 
@@ -60,8 +60,8 @@ class classmember_unassigned extends base {
      * @return array
      */
     protected function get_legacy_logdata() {
-        return(array($this->courseid, 'exastud', 'unassign user from class',
-                'configuration_class.php?classid=' . $this->objectid, $this->objectid, $this->contextinstanceid));
+        return (array($this->courseid, 'exastud', 'unassign user from class',
+            'configuration_class.php?classid=' . $this->objectid, $this->objectid, $this->contextinstanceid));
     }
 
     /**
@@ -71,7 +71,7 @@ class classmember_unassigned extends base {
      */
     public function get_url() {
         return new \moodle_url('/blocks/exastud/configuration_class.php',
-                                array('classid' => $this->objectid, 'action' => 'edit', 'type' => 'students'));
+            array('classid' => $this->objectid, 'action' => 'edit', 'type' => 'students'));
     }
 
     public static function get_objectid_mapping() {

@@ -49,7 +49,7 @@ class educationplan_created extends base {
      */
     public function get_description() {
         $title = $this->other['title'];
-        return $this->other['whoDid']." created a new Education plan '$title' (id: $this->objectid)";
+        return $this->other['whoDid'] . " created a new Education plan '$title' (id: $this->objectid)";
     }
 
     /**
@@ -58,8 +58,8 @@ class educationplan_created extends base {
      * @return array
      */
     protected function get_legacy_logdata() {
-        return(array($this->courseid, 'exastud', 'add education plan',
-                'configuration_global.php', $this->objectid, $this->contextinstanceid));
+        return (array($this->courseid, 'exastud', 'add education plan',
+            'configuration_global.php', $this->objectid, $this->contextinstanceid));
     }
 
     /**

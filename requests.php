@@ -17,7 +17,7 @@
 //
 // This copyright notice MUST APPEAR in all copies of the script!
 
-require __DIR__.'/inc.php';
+require __DIR__ . '/inc.php';
 global $DB;
 
 if (!block_exastud_is_subject_teacher()) {
@@ -42,13 +42,13 @@ if ($action) {
             $teacherid = required_param('teacherid', PARAM_INT);
             // set to unlocked
             $unlocked_teachers =
-                    (array) json_decode(block_exastud_get_class_data($classid, BLOCK_EXASTUD_DATA_ID_UNLOCKED_TEACHERS), true);
+                (array)json_decode(block_exastud_get_class_data($classid, BLOCK_EXASTUD_DATA_ID_UNLOCKED_TEACHERS), true);
             $unlocked_teachers[$teacherid] = strtotime('+1day');
             block_exastud_set_class_data($classid, BLOCK_EXASTUD_DATA_ID_UNLOCKED_TEACHERS, json_encode($unlocked_teachers));
             // delete from to_approve
             $toapprove_teachers =
-                    (array) json_decode(block_exastud_get_class_data($classid, BLOCK_EXASTUD_DATA_ID_UNLOCKED_TEACHERS_TO_APPROVE),
-                            true);
+                (array)json_decode(block_exastud_get_class_data($classid, BLOCK_EXASTUD_DATA_ID_UNLOCKED_TEACHERS_TO_APPROVE),
+                    true);
             unset($toapprove_teachers[$teacherid]);
             block_exastud_set_class_data($classid, BLOCK_EXASTUD_DATA_ID_UNLOCKED_TEACHERS_TO_APPROVE, json_encode($toapprove_teachers));
             // send a message about "approve"
@@ -72,7 +72,7 @@ if ($action) {
             $teacherid = required_param('teacherid', PARAM_INT);
             // increase time to +1 day
             $unlocked_teachers =
-                    (array) json_decode(block_exastud_get_class_data($classid, BLOCK_EXASTUD_DATA_ID_UNLOCKED_TEACHERS), true);
+                (array)json_decode(block_exastud_get_class_data($classid, BLOCK_EXASTUD_DATA_ID_UNLOCKED_TEACHERS), true);
             $unlocked_teachers[$teacherid] = strtotime('+1day');
             block_exastud_set_class_data($classid, BLOCK_EXASTUD_DATA_ID_UNLOCKED_TEACHERS, json_encode($unlocked_teachers));
             // send a message about "prolong"
@@ -96,15 +96,15 @@ if ($action) {
             $teacherid = required_param('teacherid', PARAM_INT);
             // increase time to +1 day
             $unlocked_teachers =
-                    (array) json_decode(block_exastud_get_class_data($classid, BLOCK_EXASTUD_DATA_ID_UNLOCKED_TEACHERS), true);
+                (array)json_decode(block_exastud_get_class_data($classid, BLOCK_EXASTUD_DATA_ID_UNLOCKED_TEACHERS), true);
             unset($unlocked_teachers[$teacherid]);
             block_exastud_set_class_data($classid, BLOCK_EXASTUD_DATA_ID_UNLOCKED_TEACHERS, json_encode($unlocked_teachers));
             $toapprove_teachers =
-                    (array) json_decode(block_exastud_get_class_data($classid, BLOCK_EXASTUD_DATA_ID_UNLOCKED_TEACHERS_TO_APPROVE),
-                            true);
+                (array)json_decode(block_exastud_get_class_data($classid, BLOCK_EXASTUD_DATA_ID_UNLOCKED_TEACHERS_TO_APPROVE),
+                    true);
             unset($toapprove_teachers[$teacherid]);
             block_exastud_set_class_data($classid, BLOCK_EXASTUD_DATA_ID_UNLOCKED_TEACHERS_TO_APPROVE,
-                    json_encode($toapprove_teachers));
+                json_encode($toapprove_teachers));
             break;
         default:
     }
@@ -136,7 +136,7 @@ if ($classToDelete) {
     $table->head = array(
         block_exastud_get_string('requests_class_title'),
         block_exastud_get_string('requests_class_teacher'),
-        ''
+        '',
     );
     foreach ($classToDelete as $class) {
         $row = new html_table_row();
@@ -150,56 +150,56 @@ if ($classToDelete) {
         if (block_exastud_is_siteadmin()) {
             // delete button
             $deleteUrl = new \moodle_url('/blocks/exastud/configuration_class.php',
-                    array('courseid' => $courseid,
-                            'action' => 'delete',
-                            'classid' => $class->id,
-                            'confirm' => 1,
-                            'backTo' => 'requests'));
+                array('courseid' => $courseid,
+                    'action' => 'delete',
+                    'classid' => $class->id,
+                    'confirm' => 1,
+                    'backTo' => 'requests'));
             $buttons[] = $output->link_button($deleteUrl,
-                    block_exastud_get_string('requests_class_delete'),
-                    ['exa-confirm' => block_exastud_get_string('delete_confirmation', null, $class->title),
-                            'exa-type' => 'link',
-                            'class' => 'btn btn-danger btn-sm',
-                            'title' => block_exastud_get_string('delete')]);
+                block_exastud_get_string('requests_class_delete'),
+                ['exa-confirm' => block_exastud_get_string('delete_confirmation', null, $class->title),
+                    'exa-type' => 'link',
+                    'class' => 'btn btn-danger btn-sm',
+                    'title' => block_exastud_get_string('delete')]);
             // refuse button
             $refuseUrl = new \moodle_url('/blocks/exastud/configuration_class.php',
-                    array('courseid' => $courseid,
-                            'action' => 'delete',
-                            'classid' => $class->id,
-                            'confirm' => 1,
-                            'refuse' => 1,
-                            'backTo' => 'requests'));
+                array('courseid' => $courseid,
+                    'action' => 'delete',
+                    'classid' => $class->id,
+                    'confirm' => 1,
+                    'refuse' => 1,
+                    'backTo' => 'requests'));
             $buttons[] = $output->link_button($refuseUrl,
-                    block_exastud_get_string('delete_refuse_button'),
-                    [       'class' => 'btn btn-danger btn-sm',
-                            'title' => block_exastud_get_string('delete_refuse_button')]);
+                block_exastud_get_string('delete_refuse_button'),
+                ['class' => 'btn btn-danger btn-sm',
+                    'title' => block_exastud_get_string('delete_refuse_button')]);
         }
         // refused message
         if ($class->to_delete == -1) {
             //$buttons[] = '<img src="'.$CFG->wwwroot.'/blocks/exastud/pix/attention.png" title="'.block_exastud_get_string('delete_class_refused').'"/>';
-            $buttons[] = '<i class="fas fa-exclamation-triangle" title="'.block_exastud_get_string('delete_class_refused').'"></i>';
+            $buttons[] = '<i class="fas fa-exclamation-triangle" title="' . block_exastud_get_string('delete_class_refused') . '"></i>';
             $buttons[] = block_exastud_get_string('delete_class_refused');
         }
         // redo deleting button
         if ($class->userid == $USER->id) {
             $redoDeleteUrl = new \moodle_url('/blocks/exastud/configuration_class.php',
-                    array('courseid' => $courseid,
-                            'action' => 'to_delete',
-                            'classid' => $class->id,
-                            'confirm' => 1,
-                            'unmark' => 1,
-                            'backTo' => 'requests'));
+                array('courseid' => $courseid,
+                    'action' => 'to_delete',
+                    'classid' => $class->id,
+                    'confirm' => 1,
+                    'unmark' => 1,
+                    'backTo' => 'requests'));
             $buttons[] = $output->link_button($redoDeleteUrl,
-                    block_exastud_get_string('unmark_to_delete_button'),
-                    ['exa-confirm' => block_exastud_get_string('unmark_to_delete_go', null, $class->title),
-                            'exa-type' => 'link',
-                            'class' => 'btn btn-info btn-sm',
-                            'title' => block_exastud_get_string('unmark_to_delete_button')]);
+                block_exastud_get_string('unmark_to_delete_button'),
+                ['exa-confirm' => block_exastud_get_string('unmark_to_delete_go', null, $class->title),
+                    'exa-type' => 'link',
+                    'class' => 'btn btn-info btn-sm',
+                    'title' => block_exastud_get_string('unmark_to_delete_button')]);
         }
         $row->cells = array(
             $classLink,
             $teacherLink,
-            implode('&nbsp;', $buttons)
+            implode('&nbsp;', $buttons),
         );
         $table->data[] = $row;
     }
@@ -213,44 +213,44 @@ block_exastud_update_allow_review_times(null, BLOCK_EXASTUD_DATA_ID_UNLOCKED_TEA
 $classesData = array();
 $onlySubjectTeacher = true;
 if (block_exastud_is_siteadmin()) {
-    $sql = 'SELECT DISTINCT d.* 
-              FROM {block_exastuddata} d 
-              WHERE d.classid > 0 
+    $sql = 'SELECT DISTINCT d.*
+              FROM {block_exastuddata} d
+              WHERE d.classid > 0
                 AND d.name = ? OR d.name = ?
                 AND d.value != ? ';
     $classesData = $DB->get_records_sql($sql,
-            [BLOCK_EXASTUD_DATA_ID_UNLOCKED_TEACHERS_TO_APPROVE, BLOCK_EXASTUD_DATA_ID_UNLOCKED_TEACHERS, '']);
+        [BLOCK_EXASTUD_DATA_ID_UNLOCKED_TEACHERS_TO_APPROVE, BLOCK_EXASTUD_DATA_ID_UNLOCKED_TEACHERS, '']);
     $onlySubjectTeacher = false;
 }
 if (block_exastud_has_global_cap(BLOCK_EXASTUD_CAP_MANAGE_CLASSES)) {
-    $sql = 'SELECT DISTINCT d.* 
-              FROM {block_exastuddata} d 
-              JOIN {block_exastudclass} c ON c.id = d.classid  
+    $sql = 'SELECT DISTINCT d.*
+              FROM {block_exastuddata} d
+              JOIN {block_exastudclass} c ON c.id = d.classid
               WHERE d.classid > 0
-                AND c.userid = ? 
+                AND c.userid = ?
                 AND d.name = ? OR d.name = ?
                 AND d.value != ? ';
     $classesData2 = $DB->get_records_sql($sql,
-            [   $USER->id, 
-                BLOCK_EXASTUD_DATA_ID_UNLOCKED_TEACHERS_TO_APPROVE, 
-                BLOCK_EXASTUD_DATA_ID_UNLOCKED_TEACHERS, 
-                '']);
+        [$USER->id,
+            BLOCK_EXASTUD_DATA_ID_UNLOCKED_TEACHERS_TO_APPROVE,
+            BLOCK_EXASTUD_DATA_ID_UNLOCKED_TEACHERS,
+            '']);
     $classesData = $classesData + $classesData2;
     $onlySubjectTeacher = false;
 }
 if (block_exastud_is_subject_teacher()) {
-    $sql = 'SELECT DISTINCT d.* 
-              FROM {block_exastuddata} d 
-              JOIN {block_exastudclassteachers} ct ON ct.classid = d.classid  
+    $sql = 'SELECT DISTINCT d.*
+              FROM {block_exastuddata} d
+              JOIN {block_exastudclassteachers} ct ON ct.classid = d.classid
               WHERE d.classid > 0
-                AND ct.teacherid = ?                 
+                AND ct.teacherid = ?
                 AND d.name = ? OR d.name = ?
                 AND d.value != ? ';
     $classesData2 = $DB->get_records_sql($sql,
-            [   $USER->id,
-                BLOCK_EXASTUD_DATA_ID_UNLOCKED_TEACHERS_TO_APPROVE,
-                BLOCK_EXASTUD_DATA_ID_UNLOCKED_TEACHERS,
-                '']);
+        [$USER->id,
+            BLOCK_EXASTUD_DATA_ID_UNLOCKED_TEACHERS_TO_APPROVE,
+            BLOCK_EXASTUD_DATA_ID_UNLOCKED_TEACHERS,
+            '']);
     //echo "<pre>debug:<strong>requests.php:228</strong>\r\n"; print_r($classesData2); echo '</pre>'; exit; // !!!!!!!!!! delete it
     $classesData = $classesData + $classesData2;
 }
@@ -259,8 +259,8 @@ foreach ($classesData as $cData) {
     if (!array_key_exists($cData->classid, $classes)) {
         $classes[$cData->classid] = array();
     }
-    $times = (array) json_decode($cData->value);
-    foreach($times as $teacherId => $time) {
+    $times = (array)json_decode($cData->value);
+    foreach ($times as $teacherId => $time) {
         if ($time >= time()) {
             if ($onlySubjectTeacher) {
                 if ($teacherId == $USER->id) {
@@ -272,16 +272,18 @@ foreach ($classesData as $cData) {
         }
     }
 }
-$classes = array_filter($classes, function($c) {return (count($c) > 0);});
+$classes = array_filter($classes, function($c) {
+    return (count($c) > 0);
+});
 if (count($classes) > 0) {
     echo $output->heading2(block_exastud_get_string('requests_unlock_review_list'));
     $table = new html_table();
     $table->head = array(
-            block_exastud_get_string('requests_class_title'),
-            block_exastud_get_string('requests_unlock_requested_teacher'),
-            block_exastud_get_string('requests_unlock_request_until'),
-            '',
-            ''
+        block_exastud_get_string('requests_class_title'),
+        block_exastud_get_string('requests_unlock_requested_teacher'),
+        block_exastud_get_string('requests_unlock_request_until'),
+        '',
+        '',
     );
     foreach ($classes as $classid => $classRequests) {
         $class = block_exastud_get_class($classid);
@@ -293,8 +295,8 @@ if (count($classes) > 0) {
         $row = new html_table_row();
         $cellClass = new html_table_cell();
         $cellClass->rowspan = count($classRequests);
-        $cellClass->text = '<strong>'.$class->title.'</strong>
-                <br><small>'.$period->description.' ('.$dateStart.'&nbsp;-&nbsp;'.$dateEnd.')</small>';
+        $cellClass->text = '<strong>' . $class->title . '</strong>
+                <br><small>' . $period->description . ' (' . $dateStart . '&nbsp;-&nbsp;' . $dateEnd . ')</small>';
         $row->cells[] = $cellClass;
         $i = 0;
         foreach ($classRequests as $teacherId => $requestEndTime) {
@@ -317,24 +319,24 @@ if (count($classes) > 0) {
                 // link to approve/prolong
                 if ($approved) {
                     $button1Link = new \moodle_url($PAGE->url,
-                            ['action' => 'reviews_unlock_prolong', 'classid' => $classid, 'teacherid' => $teacherId]);
+                        ['action' => 'reviews_unlock_prolong', 'classid' => $classid, 'teacherid' => $teacherId]);
                     $button1 = $output->link_button($button1Link, block_exastud_get_string('requests_unlock_prolong_button'),
-                            ['class' => 'btn btn-info btn-sm']);
+                        ['class' => 'btn btn-info btn-sm']);
                 } else {
                     $button1Link = new \moodle_url($PAGE->url,
-                            ['action' => 'reviews_unlock_approve', 'classid' => $classid, 'teacherid' => $teacherId]);
+                        ['action' => 'reviews_unlock_approve', 'classid' => $classid, 'teacherid' => $teacherId]);
                     $button1 = $output->link_button($button1Link, block_exastud_get_string('requests_unlock_approve_button'),
-                            ['class' => 'btn btn-success btn-sm']);
+                        ['class' => 'btn btn-success btn-sm']);
                 }
                 $row->cells[] = $button1;
                 $button1Link = new \moodle_url($PAGE->url,
-                        ['action' => 'reviews_unlock_delete', 'classid' => $classid, 'teacherid' => $teacherId]);
+                    ['action' => 'reviews_unlock_delete', 'classid' => $classid, 'teacherid' => $teacherId]);
                 $button2 = $output->link_button($button1Link, block_exastud_get_string('requests_unlock_delete_button'),
-                        ['class' => 'btn btn-danger btn-sm']);
+                    ['class' => 'btn btn-danger btn-sm']);
                 $row->cells[] = $button2;
             } else if (block_exastud_is_subject_teacher()) {
                 if ($approved) {
-                    $button1 = '<img class="" src="'.$CFG->wwwroot.'/blocks/exastud/pix/valid.png" />&nbsp;'.block_exastud_get_string('allow_review_admin_approved');
+                    $button1 = '<img class="" src="' . $CFG->wwwroot . '/blocks/exastud/pix/valid.png" />&nbsp;' . block_exastud_get_string('allow_review_admin_approved');
                 } else {
                     $button1 = block_exastud_get_string('allow_review_admin_notapproved_yet');
                 }

@@ -17,8 +17,8 @@
 //
 // This copyright notice MUST APPEAR in all copies of the script!
 
-require __DIR__.'/inc.php';
-require_once($CFG->dirroot.'/blocks/exastud/lib/edit_form.php');
+require __DIR__ . '/inc.php';
+require_once($CFG->dirroot . '/blocks/exastud/lib/edit_form.php');
 
 use block_exastud\globals as g;
 
@@ -36,12 +36,12 @@ block_exastud_require_login($courseid);
 
 
 if (!$returnurl) {
-	$returnurl = new moodle_url('/blocks/exastud/review_class.php?courseid='.$courseid.'&classid='.$classid.'&subjectid='.$subjectid.'&openclass='.$classid);
+    $returnurl = new moodle_url('/blocks/exastud/review_class.php?courseid=' . $courseid . '&classid=' . $classid . '&subjectid=' . $subjectid . '&openclass=' . $classid);
 }
 
 $output = block_exastud_get_renderer();
 
-$url = '/blocks/exastud/review_student.php?courseid='.$courseid.'&classid='.$classid.'&subjectid='.$subjectid.'&studentid='.$studentid;
+$url = '/blocks/exastud/review_student.php?courseid=' . $courseid . '&classid=' . $classid . '&subjectid=' . $subjectid . '&studentid=' . $studentid;
 $PAGE->set_url($url);
 
 block_exastud_require_global_cap(BLOCK_EXASTUD_CAP_REVIEW);
@@ -49,18 +49,18 @@ block_exastud_require_global_cap(BLOCK_EXASTUD_CAP_REVIEW);
 $class = block_exastud_get_class($classid);
 $simulateSubjectId = $subjectid;
 if ((block_exastud_is_profilesubject_teacher($classid) || $class->userid != $USER->id)
-        && $type == BLOCK_EXASTUD_DATA_ID_CERTIFICATE) {
+    && $type == BLOCK_EXASTUD_DATA_ID_CERTIFICATE) {
     //$simulateSubjectId = BLOCK_EXASTUD_TEMPLATE_DEFAULT_ID_BP2004_16_ZERTIFIKAT_FUER_PROFILFACH;
     $simulateSubjectId = BLOCK_EXASTUD_DATA_ID_CERTIFICATE;
 }
 $reviewclass = block_exastud_get_review_class($classid, $simulateSubjectId);
 
 if (!$reviewclass || !$class) {
-	print_error('badclass', 'block_exastud');
+    print_error('badclass', 'block_exastud');
 }
 
 if ($DB->count_records('block_exastudclassstudents', array('studentid' => $studentid, 'classid' => $classid)) == 0) {
-	print_error('badstudent', 'block_exastud');
+    print_error('badstudent', 'block_exastud');
 }
 
 $student = $DB->get_record('user', array('id' => $studentid, 'deleted' => 0));
@@ -90,14 +90,14 @@ if ($lastPeriod) {
     if ($class && $checkClassUser != $class->userid) {
         $checkClassUser = $class->userid;
     }
-	$lastPeriodClass = $DB->get_record_sql("
+    $lastPeriodClass = $DB->get_record_sql("
 		SELECT DISTINCT c.id
             FROM {block_exastudclass} c
-            JOIN {block_exastudclassstudents} cs ON cs.classid=c.id 
+            JOIN {block_exastudclassstudents} cs ON cs.classid=c.id
             JOIN {block_exastudclassteachers} ct ON ct.classid=c.id
-		WHERE c.periodid=? 
-		    AND cs.studentid=? 
-		    AND ct.teacherid=? 
+		WHERE c.periodid=?
+		    AND cs.studentid=?
+		    AND ct.teacherid=?
 		    AND ct.subjectid=?
             AND c.userid=?
 	", [$lastPeriod->id, $studentid, g::$USER->id, $subjectid, $checkClassUser], IGNORE_MULTIPLE);
@@ -106,16 +106,16 @@ if ($lastPeriod) {
         $lastPeriodClass = $DB->get_record_sql("
 		SELECT DISTINCT c.id
             FROM {block_exastudclass} c
-            JOIN {block_exastudclassstudents} cs ON cs.classid=c.id 
+            JOIN {block_exastudclassstudents} cs ON cs.classid=c.id
             JOIN {block_exastudclassteachers} ct ON ct.classid=c.id
-		WHERE c.periodid=? 
-		    AND cs.studentid=? 
-		    AND ct.teacherid=? 
-		    AND ct.subjectid=?            
+		WHERE c.periodid=?
+		    AND cs.studentid=?
+		    AND ct.teacherid=?
+		    AND ct.subjectid=?
 	", [$lastPeriod->id, $studentid, g::$USER->id, $subjectid], IGNORE_MULTIPLE);
     }
 } else {
-	$lastPeriodClass = null;
+    $lastPeriodClass = null;
 }
 
 if ($reporttype == 'inter') { // no inter competences for such reports
@@ -137,27 +137,27 @@ $teacherid = $USER->id;
 
 $exacomp_grades = '';
 if (block_exastud_is_exacomp_installed()) {
-	if (!method_exists('\block_exacomp\api', 'get_subjects_with_grade_for_teacher_and_student')) {
-		$exacomp_grades = 'Please update exacomp to latest version';
-	} else {
-		$subjects = \block_exacomp\api::get_subjects_with_grade_for_teacher_and_student($teacherid, $studentid);
-		if (!$subjects) {
-			$exacomp_grades = '---';
-		} else {
-			foreach ($subjects as $subject) {
-				$exacomp_grades .= '<b>'.$subject->title.'</b><br/>';
-				$exacomp_grades .= 'Note: '.($subject->additionalinfo ?: '---').
-					' / Niveau: '.($subject->niveau ?: '---').'<br/>';
-			}
-		}
-	}
+    if (!method_exists('\block_exacomp\api', 'get_subjects_with_grade_for_teacher_and_student')) {
+        $exacomp_grades = 'Please update exacomp to latest version';
+    } else {
+        $subjects = \block_exacomp\api::get_subjects_with_grade_for_teacher_and_student($teacherid, $studentid);
+        if (!$subjects) {
+            $exacomp_grades = '---';
+        } else {
+            foreach ($subjects as $subject) {
+                $exacomp_grades .= '<b>' . $subject->title . '</b><br/>';
+                $exacomp_grades .= 'Note: ' . ($subject->additionalinfo ?: '---') .
+                    ' / Niveau: ' . ($subject->niveau ?: '---') . '<br/>';
+            }
+        }
+    }
 }
 
 $reviewdata = $DB->get_record('block_exastudreview',
-                                array('teacherid' => $teacherid,
-                                        'subjectid' => $subjectid,
-                                        'periodid' => $actPeriod->id,
-                                        'studentid' => $studentid));
+    array('teacherid' => $teacherid,
+        'subjectid' => $subjectid,
+        'periodid' => $actPeriod->id,
+        'studentid' => $studentid));
 
 // if the student has a review from another teacher - probably this student was hidden and than again shown
 // such student is not able to be review again
@@ -179,13 +179,13 @@ $canReviewStudent = true; // I can review by default
 };*/
 
 if ($reviewdata) {
-	foreach ($categories as $category) {
-		$formdata->{$category->id.'_'.$category->source} = $DB->get_field('block_exastudreviewpos',
-                                                                            'value',
-                                                                            array("categoryid" => $category->id,
-                                                                                    "reviewid" => $reviewdata->id,
-                                                                                    "categorysource" => $category->source));
-	}
+    foreach ($categories as $category) {
+        $formdata->{$category->id . '_' . $category->source} = $DB->get_field('block_exastudreviewpos',
+            'value',
+            array("categoryid" => $category->id,
+                "reviewid" => $reviewdata->id,
+                "categorysource" => $category->source));
+    }
 }
 
 $subjectData = block_exastud_get_review($classid, $subjectid, $studentid);
@@ -202,49 +202,49 @@ if (count($grade_options) > 0) {
 // create form and add customvariables
 $studentform = new student_edit_form(null, [
     'template' => $template,
-	'categories' => $categories,
-	'classid' => $classid,
-	'subjectid' => $subjectid,
-	'exacomp_grades' => $exacomp_grades,
-	'grade_options' => $grade_options,
-	'canReviewStudent' => $canReviewStudent,
-	'reporttype' => $reporttype, // inter - interdisciplinary; social - "learn and social". empty - Notenerfassung/Niveau/Fach
+    'categories' => $categories,
+    'classid' => $classid,
+    'subjectid' => $subjectid,
+    'exacomp_grades' => $exacomp_grades,
+    'grade_options' => $grade_options,
+    'canReviewStudent' => $canReviewStudent,
+    'reporttype' => $reporttype, // inter - interdisciplinary; social - "learn and social". empty - Notenerfassung/Niveau/Fach
     'temp_formdata' => $formdata,
-	'categories.modified' =>
-		$reviewdata
-			? block_exastud_get_renderer()->last_modified($reviewdata->teacherid, $reviewdata->timemodified)
-			: '',
-	'review.modified' =>
-		block_exastud_get_renderer()->last_modified(@$subjectData->{'review.modifiedby'}, @$subjectData->{'review.timemodified'}),
-	'grade.modified' =>
-		block_exastud_get_renderer()->last_modified(@$subjectData->{'grade.modifiedby'}, @$subjectData->{'grade.timemodified'}),
+    'categories.modified' =>
+        $reviewdata
+            ? block_exastud_get_renderer()->last_modified($reviewdata->teacherid, $reviewdata->timemodified)
+            : '',
+    'review.modified' =>
+        block_exastud_get_renderer()->last_modified(@$subjectData->{'review.modifiedby'}, @$subjectData->{'review.timemodified'}),
+    'grade.modified' =>
+        block_exastud_get_renderer()->last_modified(@$subjectData->{'grade.modifiedby'}, @$subjectData->{'grade.timemodified'}),
 ]);
 // get all data form Form and save it
 if ($fromform = $studentform->get_data()) {
-	$newreview = new stdClass();
-	$newreview->timemodified = time();
+    $newreview = new stdClass();
+    $newreview->timemodified = time();
 
     switch ($reporttype) {
         case 'inter':
             $existingReview = $DB->get_record('block_exastudreview',
-                    ['studentid' => $studentid, 'subjectid' => $subjectid,
-                            'periodid' => $actPeriod->id, 'teacherid' => $teacherid,]);
+                ['studentid' => $studentid, 'subjectid' => $subjectid,
+                    'periodid' => $actPeriod->id, 'teacherid' => $teacherid,]);
             if ($existingReview && $existingReview->review) {
                 $newreview->review = $existingReview->review;
             } else {
                 $newreview->review = '';
             }
             $newreview = g::$DB->insert_or_update_record('block_exastudreview', $newreview, [
-                    'studentid' => $studentid,
-                    'subjectid' => $subjectid,
-                    'periodid' => $actPeriod->id,
-                    'teacherid' => $teacherid,
+                'studentid' => $studentid,
+                'subjectid' => $subjectid,
+                'periodid' => $actPeriod->id,
+                'teacherid' => $teacherid,
             ]);
             foreach ($categories as $category) {
-                if (isset($fromform->{$category->id.'_'.$category->source})) {
-                    $newvalue = $fromform->{$category->id.'_'.$category->source};
+                if (isset($fromform->{$category->id . '_' . $category->source})) {
+                    $newvalue = $fromform->{$category->id . '_' . $category->source};
                 } else {
-                    $nv = optional_param($category->id.'_'.$category->source, null, PARAM_RAW); // for custom form element.
+                    $nv = optional_param($category->id . '_' . $category->source, null, PARAM_RAW); // for custom form element.
                     if ($nv) {
                         $newvalue = $nv;
                     } else {
@@ -253,11 +253,11 @@ if ($fromform = $studentform->get_data()) {
                 }
 
                 $existing = $DB->get_record('block_exastudreviewpos', ["reviewid" => $newreview->id,
-                        "categoryid" => $category->id,
-                        "categorysource" => $category->source] );
+                    "categoryid" => $category->id,
+                    "categorysource" => $category->source]);
                 g::$DB->insert_or_update_record('block_exastudreviewpos',
-                        ["value" => $newvalue],
-                        ["reviewid" => $newreview->id, "categoryid" => $category->id, "categorysource" => $category->source]);
+                    ["value" => $newvalue],
+                    ["reviewid" => $newreview->id, "categoryid" => $category->id, "categorysource" => $category->source]);
                 // only if changed
                 if (!$existing || $newvalue != $existing->value) {
                     $subjectObjData = $DB->get_record('block_exastudsubjects', ['id' => $subjectid]);
@@ -265,17 +265,17 @@ if ($fromform = $studentform->get_data()) {
                     $newToLog = (is_array($grades) && array_key_exists($newvalue, $grades) ? $grades[$newvalue] : $newvalue);
                     $oldToLog = (!$existing ? null : (is_array($grades) && array_key_exists($existing->value, $grades) ? $grades[$existing->value] : $existing->value));
                     \block_exastud\event\studentreviewcategory_changed::log(['objectid' => $classid,
-                            'relateduserid' => $studentid,
-                            'other' => ['classtitle' => $reviewclass->title,
-                                    'subjectid' => $subjectid,
-                                    'subjecttitle' => $subjectObjData->title,
-                                    'oldgrading' => $oldToLog,
-                                    'oldgradingid' => ($existing ? $existing->value : null),
-                                    'grading' => $newToLog,
-                                    'gradingid' => $newvalue,
-                                    'category' => $category->title,
-                                    'categoryid' => $category->id,
-                                    'studentname' => $student->firstname.' '.$student->lastname]]);
+                        'relateduserid' => $studentid,
+                        'other' => ['classtitle' => $reviewclass->title,
+                            'subjectid' => $subjectid,
+                            'subjecttitle' => $subjectObjData->title,
+                            'oldgrading' => $oldToLog,
+                            'oldgradingid' => ($existing ? $existing->value : null),
+                            'grading' => $newToLog,
+                            'gradingid' => $newvalue,
+                            'category' => $category->title,
+                            'categoryid' => $category->id,
+                            'studentname' => $student->firstname . ' ' . $student->lastname]]);
                 }
             }
 
@@ -283,38 +283,38 @@ if ($fromform = $studentform->get_data()) {
         case 'social':
             $newreview->review = $fromform->vorschlag;
             $existingReview = $DB->get_record('block_exastudreview',
-                    [       'studentid' => $studentid,
-                            //'subjectid' => BLOCK_EXASTUD_SUBJECT_ID_LERN_UND_SOZIALVERHALTEN_VORSCHLAG,
-                            'subjectid' => $subjectid,
-                            'periodid' => $actPeriod->id,
-                            'teacherid' => $teacherid,]);
-            g::$DB->insert_or_update_record('block_exastudreview', $newreview, [
-                    'studentid' => $studentid,
+                ['studentid' => $studentid,
                     //'subjectid' => BLOCK_EXASTUD_SUBJECT_ID_LERN_UND_SOZIALVERHALTEN_VORSCHLAG,
                     'subjectid' => $subjectid,
                     'periodid' => $actPeriod->id,
-                    'teacherid' => $teacherid,
+                    'teacherid' => $teacherid,]);
+            g::$DB->insert_or_update_record('block_exastudreview', $newreview, [
+                'studentid' => $studentid,
+                //'subjectid' => BLOCK_EXASTUD_SUBJECT_ID_LERN_UND_SOZIALVERHALTEN_VORSCHLAG,
+                'subjectid' => $subjectid,
+                'periodid' => $actPeriod->id,
+                'teacherid' => $teacherid,
             ]);
             if (!$existingReview || $existingReview->review != $fromform->vorschlag) {
                 $subjectObjData = $DB->get_record('block_exastudsubjects', ['id' => $subjectid]);
                 \block_exastud\event\studentreview_changed::log(['objectid' => $reviewclass->id,
-                        'relateduserid' => $studentid,
-                        'other' => ['classtitle' => $reviewclass->title,
-                                'subjectid' => $subjectid,
-                                'subjecttitle' => $subjectObjData->title,
-                                'oldvalue' => ($existingReview ? $existingReview->review : null),
-                                'value' => $fromform->vorschlag,
-                                'target' => block_exastud_get_string('learn_and_sociale'),
-                                'studentname' => $student->firstname.' '.$student->lastname]]);
+                    'relateduserid' => $studentid,
+                    'other' => ['classtitle' => $reviewclass->title,
+                        'subjectid' => $subjectid,
+                        'subjecttitle' => $subjectObjData->title,
+                        'oldvalue' => ($existingReview ? $existingReview->review : null),
+                        'value' => $fromform->vorschlag,
+                        'target' => block_exastud_get_string('learn_and_sociale'),
+                        'studentname' => $student->firstname . ' ' . $student->lastname]]);
             }
             break;
         default:
             $newreview->review = $fromform->review;
             $existingReview = $DB->get_record('block_exastudreview', [
-                    'studentid' => $studentid,
-                    'subjectid' => $subjectid,
-                    'periodid' => $actPeriod->id,
-                    'teacherid' => $teacherid,]);
+                'studentid' => $studentid,
+                'subjectid' => $subjectid,
+                'periodid' => $actPeriod->id,
+                'teacherid' => $teacherid,]);
             /*$newreview = g::$DB->insert_or_update_record('block_exastudreview', $newreview, [
                     'studentid' => $studentid,
                     'subjectid' => $subjectid,
@@ -324,14 +324,14 @@ if ($fromform = $studentform->get_data()) {
             if (!$existingReview || $existingReview->review != $fromform->review) {
                 $subjectObjData = $DB->get_record('block_exastudsubjects', ['id' => $subjectid]);
                 \block_exastud\event\studentreview_changed::log(['objectid' => $reviewclass->id,
-                        'relateduserid' => $studentid,
-                        'other' => ['classtitle' => $reviewclass->title,
-                                'subjectid' => $subjectid,
-                                'subjecttitle' => $subjectObjData->title,
-                                'oldvalue' => ($existingReview ? $existingReview->review : null),
-                                'value' => $fromform->review,
-                                'studentname' =>  $student->firstname.' '.$student->lastname,
-                                'target' => 'Fachkompetenzen']]);
+                    'relateduserid' => $studentid,
+                    'other' => ['classtitle' => $reviewclass->title,
+                        'subjectid' => $subjectid,
+                        'subjecttitle' => $subjectObjData->title,
+                        'oldvalue' => ($existingReview ? $existingReview->review : null),
+                        'value' => $fromform->review,
+                        'studentname' => $student->firstname . ' ' . $student->lastname,
+                        'target' => 'Fachkompetenzen']]);
             }
 
             block_exastud_set_subject_student_data($classid, $subjectid, $studentid, 'review', trim($fromform->review));
@@ -346,59 +346,59 @@ if ($fromform = $studentform->get_data()) {
 
     }
 
-	if (!empty($formdata->lastPeriodFlag)) {
-		block_exastud_set_subject_student_data($classid, $subjectid, $studentid, 'lastPeriodIsLoaded', 1);
-	}
+    if (!empty($formdata->lastPeriodFlag)) {
+        block_exastud_set_subject_student_data($classid, $subjectid, $studentid, 'lastPeriodIsLoaded', 1);
+    }
 
-	redirect($returnurl);
+    redirect($returnurl);
 }
 
-$classheader = $reviewclass->title.($reviewclass->subject_title ? ' - '.$reviewclass->subject_title : '').' - '.$template->get_name();
+$classheader = $reviewclass->title . ($reviewclass->subject_title ? ' - ' . $reviewclass->subject_title : '') . ' - ' . $template->get_name();
 
 if (block_exastud_is_bw_active()) {
     echo '<script>var is_bw_activated = true;</script>'; // for activate some JS functions
 }
 
 echo $output->header(array('review',
-	array('name' => $classheader, 'link' => $CFG->wwwroot.'/blocks/exastud/review_class.php?courseid='.$courseid.
-		'&classid='.$classid.'&subjectid='.$subjectid),
+    array('name' => $classheader, 'link' => $CFG->wwwroot . '/blocks/exastud/review_class.php?courseid=' . $courseid .
+        '&classid=' . $classid . '&subjectid=' . $subjectid),
 ), array('noheading'));
 
 echo $OUTPUT->heading($classheader);
 
-$studentdesc = $OUTPUT->user_picture($student, array("courseid" => $courseid)).' '.fullname($student);
+$studentdesc = $OUTPUT->user_picture($student, array("courseid" => $courseid)) . ' ' . fullname($student);
 echo $output->heading($studentdesc);
 
 // load lern&soz vorschlag
 $formdata->vorschlag = $DB->get_field('block_exastudreview', 'review', [
-	'studentid' => $studentid,
-	//'subjectid' => BLOCK_EXASTUD_SUBJECT_ID_LERN_UND_SOZIALVERHALTEN_VORSCHLAG,
-	'subjectid' => $subjectid,
-	'periodid' => $actPeriod->id,
-	'teacherid' => $teacherid,
+    'studentid' => $studentid,
+    //'subjectid' => BLOCK_EXASTUD_SUBJECT_ID_LERN_UND_SOZIALVERHALTEN_VORSCHLAG,
+    'subjectid' => $subjectid,
+    'periodid' => $actPeriod->id,
+    'teacherid' => $teacherid,
 ], IGNORE_MULTIPLE);
 
 if (empty($formdata->grade)) {
-	$formdata->grade = '';
+    $formdata->grade = '';
 }
 
 if (!(@$formdata->lastPeriodNiveau)) {
-	$formdata->lastPeriodNiveau = "---";
+    $formdata->lastPeriodNiveau = "---";
 }
 if (!(@$formdata->lastPeriodGrade)) {
-	$formdata->lastPeriodGrade = "---";
+    $formdata->lastPeriodGrade = "---";
 }
 
 
 // load from last period
 if ($lastPeriodClass) {
 
-	if (optional_param('action', null, PARAM_TEXT) == 'load_last_period_data') {
+    if (optional_param('action', null, PARAM_TEXT) == 'load_last_period_data') {
         $lastPeriodData = (object)block_exastud_get_review($lastPeriodClass->id, $subjectid, $studentid);
 
-		// set flag to show that last period is loaded
-		$formdata->lastPeriodFlag = true;
-		$oldPeriodId = $DB->get_field('block_exastudclass', 'periodid', ['id' => $lastPeriodClass->id]);
+        // set flag to show that last period is loaded
+        $formdata->lastPeriodFlag = true;
+        $oldPeriodId = $DB->get_field('block_exastudclass', 'periodid', ['id' => $lastPeriodClass->id]);
 
         switch ($reporttype) {
             case 'inter':
@@ -407,18 +407,18 @@ if ($lastPeriodClass) {
                  * $reviewdata = reset($reviewdata);
                  */
                 $reviewdata = $DB->get_record('block_exastudreview', array(
-                        'teacherid' => $teacherid,
-                        'subjectid' => $subjectid,
-                        'periodid' => $lastPeriod->id,
-                        'studentid' => $studentid,
+                    'teacherid' => $teacherid,
+                    'subjectid' => $subjectid,
+                    'periodid' => $lastPeriod->id,
+                    'studentid' => $studentid,
                 ));
 
                 if ($reviewdata) {
                     foreach ($categories as $category) {
-                        $formdata->{$category->id.'_'.$category->source} = $DB->get_field('block_exastudreviewpos', 'value', array(
-                                "categoryid" => $category->id,
-                                "reviewid" => $reviewdata->id,
-                                "categorysource" => $category->source,
+                        $formdata->{$category->id . '_' . $category->source} = $DB->get_field('block_exastudreviewpos', 'value', array(
+                            "categoryid" => $category->id,
+                            "reviewid" => $reviewdata->id,
+                            "categorysource" => $category->source,
                         ));
                     }
                     $formdata->review = $reviewdata->review;
@@ -426,10 +426,10 @@ if ($lastPeriodClass) {
                 break;
             case 'social':
                 $formdata->vorschlag = $DB->get_field('block_exastudreview', 'review', [
-                        'studentid' => $studentid,
-                        'subjectid' => $subjectid,
-                        'periodid' => $oldPeriodId,
-                        'teacherid' => $teacherid,
+                    'studentid' => $studentid,
+                    'subjectid' => $subjectid,
+                    'periodid' => $oldPeriodId,
+                    'teacherid' => $teacherid,
                 ]);
                 break;
             default:
@@ -455,18 +455,18 @@ if ($lastPeriodClass) {
             $formdata->vorschlag = ''; // if no data from last period
         }
 
-	}
+    }
 }
 
 
 if ($lastPeriodClass) {
-	if (optional_param('action', null, PARAM_TEXT) == 'load_last_period_data' || @$formdata->lastPeriodIsLoaded) {
-		echo '<h2>'.block_exastud_get_string('load_last_period_done').'</h2>';
-	} else {
-		$url = block_exastud\url::request_uri();
-		$url->param('action', 'load_last_period_data');
-		echo $output->link_button($url, block_exastud_get_string('load_last_period'), ['class' => 'btn btn-default']);
-	}
+    if (optional_param('action', null, PARAM_TEXT) == 'load_last_period_data' || @$formdata->lastPeriodIsLoaded) {
+        echo '<h2>' . block_exastud_get_string('load_last_period_done') . '</h2>';
+    } else {
+        $url = block_exastud\url::request_uri();
+        $url->param('action', 'load_last_period_data');
+        echo $output->link_button($url, block_exastud_get_string('load_last_period'), ['class' => 'btn btn-default']);
+    }
 }
 $formdata->review = block_exastud_html_to_text(@$formdata->review);
 $formdata->vorschlag = block_exastud_html_to_text(@$formdata->vorschlag);

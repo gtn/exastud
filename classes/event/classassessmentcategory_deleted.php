@@ -52,7 +52,7 @@ class classassessmentcategory_deleted extends base {
         $cattitle = $this->other['categorytitle'];
         $catsource = $this->other['categorysource'];
         $classtitle = $this->other['classtitle'];
-        return $this->other['whoDid']." deleted an assessment category '$cattitle' (id: $catid, source: $catsource) from the class '$classtitle' (id: $this->objectid)";
+        return $this->other['whoDid'] . " deleted an assessment category '$cattitle' (id: $catid, source: $catsource) from the class '$classtitle' (id: $this->objectid)";
     }
 
     /**
@@ -61,8 +61,8 @@ class classassessmentcategory_deleted extends base {
      * @return array
      */
     protected function get_legacy_logdata() {
-        return(array($this->courseid, 'exastud', 'delete class category',
-                'configuration_class.php?classid=' . $this->objectid, $this->objectid, $this->contextinstanceid));
+        return (array($this->courseid, 'exastud', 'delete class category',
+            'configuration_class.php?classid=' . $this->objectid, $this->objectid, $this->contextinstanceid));
     }
 
     /**

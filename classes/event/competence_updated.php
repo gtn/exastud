@@ -50,8 +50,8 @@ class competence_updated extends base {
     public function get_description() {
         $title = $this->other['title'];
         $oldtitle = $this->other['oldtitle'];
-        $result = $this->other['whoDid']." updated the competence '$oldtitle' (id: $this->objectid).";
-        $result .= ' New title is \''.$title.'\'';
+        $result = $this->other['whoDid'] . " updated the competence '$oldtitle' (id: $this->objectid).";
+        $result .= ' New title is \'' . $title . '\'';
         return $result;
     }
 
@@ -61,8 +61,8 @@ class competence_updated extends base {
      * @return array
      */
     protected function get_legacy_logdata() {
-        return(array($this->courseid, 'exastud', 'update competence',
-                'configuration_global.php', $this->objectid, $this->contextinstanceid));
+        return (array($this->courseid, 'exastud', 'update competence',
+            'configuration_global.php', $this->objectid, $this->contextinstanceid));
     }
 
     /**

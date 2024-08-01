@@ -50,7 +50,7 @@ class educationplan_updated extends base {
     public function get_description() {
         $title = $this->other['title'];
         $oldtitle = $this->other['oldtitle'];
-        return $this->other['whoDid']." updated the Education plan '$oldtitle' (id: $this->objectid). New title is '$title'";
+        return $this->other['whoDid'] . " updated the Education plan '$oldtitle' (id: $this->objectid). New title is '$title'";
     }
 
     /**
@@ -59,8 +59,8 @@ class educationplan_updated extends base {
      * @return array
      */
     protected function get_legacy_logdata() {
-        return(array($this->courseid, 'exastud', 'update education plan',
-                'configuration_global.php', $this->objectid, $this->contextinstanceid));
+        return (array($this->courseid, 'exastud', 'update education plan',
+            'configuration_global.php', $this->objectid, $this->contextinstanceid));
     }
 
     /**

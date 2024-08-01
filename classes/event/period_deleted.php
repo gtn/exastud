@@ -49,13 +49,13 @@ class period_deleted extends base {
      */
     public function get_description() {
         $perioddata = unserialize($this->other['perioddata']);
-        $result = $this->other['whoDid']." deleted the period '$perioddata->description' (id: $this->objectid): ";
-        foreach(['starttime', 'endtime', 'certificate_issue_date'] as $property) {
+        $result = $this->other['whoDid'] . " deleted the period '$perioddata->description' (id: $this->objectid): ";
+        foreach (['starttime', 'endtime', 'certificate_issue_date'] as $property) {
             if ($perioddata->{$property} > 0) {
-                $result .= ' '.$property.' = \''.date('d F Y, h:iA', $perioddata->{$property}).'\', ';
+                $result .= ' ' . $property . ' = \'' . date('d F Y, h:iA', $perioddata->{$property}) . '\', ';
             }
         }
-        $result = substr($result,0, -2);
+        $result = substr($result, 0, -2);
         return $result;
     }
 
@@ -65,8 +65,8 @@ class period_deleted extends base {
      * @return array
      */
     protected function get_legacy_logdata() {
-        return(array($this->courseid, 'exastud', 'delete period',
-                'periods.php', $this->objectid, $this->contextinstanceid));
+        return (array($this->courseid, 'exastud', 'delete period',
+            'periods.php', $this->objectid, $this->contextinstanceid));
     }
 
     /**

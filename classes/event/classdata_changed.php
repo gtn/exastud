@@ -57,10 +57,10 @@ class classdata_changed extends base {
         if (isset($this->other) && array_key_exists('oldvalue', $this->other)) {
             $oldvalue = $this->other['oldvalue'];
         }
-        $result = $this->other['whoDid']." changed property '$name' ".($oldvalue ? " = '$oldvalue'": "").
-                                        " of the class '$classtitle' (id: $this->objectid).";
+        $result = $this->other['whoDid'] . " changed property '$name' " . ($oldvalue ? " = '$oldvalue'" : "") .
+            " of the class '$classtitle' (id: $this->objectid).";
         if ($value) {
-            $result .= ' New value is \''.$value.'\'';
+            $result .= ' New value is \'' . $value . '\'';
         }
         return $result;
     }
@@ -71,8 +71,8 @@ class classdata_changed extends base {
      * @return array
      */
     protected function get_legacy_logdata() {
-        return(array($this->courseid, 'exastud', 'change data of the class',
-                'configuration_class.php?classid=' . $this->objectid, $this->objectid, $this->contextinstanceid));
+        return (array($this->courseid, 'exastud', 'change data of the class',
+            'configuration_class.php?classid=' . $this->objectid, $this->objectid, $this->contextinstanceid));
     }
 
     /**
@@ -82,7 +82,7 @@ class classdata_changed extends base {
      */
     public function get_url() {
         return new \moodle_url('/blocks/exastud/configuration_class.php',
-                                array('classid' => $this->objectid, 'action' => 'edit', 'type' => 'teachers'));
+            array('classid' => $this->objectid, 'action' => 'edit', 'type' => 'teachers'));
     }
 
     public static function get_objectid_mapping() {

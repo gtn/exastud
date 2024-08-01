@@ -5,18 +5,18 @@ $force_bw_active = false;
 $bw_active = get_config('exastud', 'bw_active');
 
 return [
-	'bw_active' => $force_bw_active || $bw_active,
+    'bw_active' => $force_bw_active || $bw_active,
 
-	'can_edit_bps_and_subjects' => true,
+    'can_edit_bps_and_subjects' => true,
 
-	'always_check_default_values' => false,
+    'always_check_default_values' => false,
 
-	'default_bps' => !$bw_active ? [] : [
-		'bp2016' => [
-			'sourceinfo' => 'bw-bp2016',
-			'title' => 'Bp 2016',
-			'subjects' =>
-				block_exastud_str_to_csv('
+    'default_bps' => !$bw_active ? [] : [
+        'bp2016' => [
+            'sourceinfo' => 'bw-bp2016',
+            'title' => 'Bp 2016',
+            'subjects' =>
+                block_exastud_str_to_csv('
 sourceinfo;title;shorttitle;always_print;not_relevant;not_relevant_rs;no_niveau;is_main;is_best
 bw-bp2016-eth;Ethik;eth;0;0;0;0;0;0
 bw-bp2016-alev;Religionslehre (alev);alev;0;0;0;0;0;0
@@ -54,12 +54,12 @@ bw-bp2016-profil-imp;Profilfach Informatik, Mathematik, Physik;Profil IMP;0;1;1;
 bw-bp2016-profil-s;Profilfach Spanisch;Profil S;0;1;1;0;1;0
 bw-bp2016-profil-sp;Profilfach Sport;Profil Sp;0;1;1;0;1;0
 				', ";", true),
-		],
-		'bp2004' => [
-			'sourceinfo' => 'bw-bp2004',
-			'title' => 'Bp 2004',
-			'subjects' =>
-				block_exastud_str_to_csv('
+        ],
+        'bp2004' => [
+            'sourceinfo' => 'bw-bp2004',
+            'title' => 'Bp 2004',
+            'subjects' =>
+                block_exastud_str_to_csv('
 sourceinfo;title;shorttitle;always_print;not_relevant;not_relevant_rs;no_niveau;is_main;is_best
 bw-bp2004-eth;Ethik;eth;0;0;0;0;0;0
 bw-bp2004-alev;Religionslehre (alev);alev;0;0;0;0;0;0
@@ -97,11 +97,11 @@ bw-bp2004-profil-s;Profilfach Spanisch;Profil S;0;1;1;0;1;0
 bw-bp2004-profil-sp;Profilfach Sport;Profil Sp;0;1;1;0;1;0
 bw-bp2004-profil-imp;Profilfach Informatik, Mathematik, Physik;Profil IMP;0;1;1;0;1;0
 				', ";", true),
-		],
-	],
+        ],
+    ],
 
-	'default_categories' =>
-		block_exastud_str_to_csv('
+    'default_categories' =>
+        block_exastud_str_to_csv('
 sourceinfo;title
 bw-0001;Kommunikationsfähigkeit
 bw-0002;Kritikfähigkeit
@@ -115,8 +115,8 @@ bw-0009;Ordentlichkeit
 bw-0010;Verantwortungsfähigkeit
 		', ";", true),
 
-	'default_evalopt' =>
-		block_exastud_str_to_csv('
+    'default_evalopt' =>
+        block_exastud_str_to_csv('
 sourceinfo;title
 bw-0001;Stufe 1 - ungenügend
 bw-0002;Stufe 2

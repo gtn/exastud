@@ -58,7 +58,7 @@ class studentreviewcategory_changed extends base {
         $gradingid = $this->other['gradingid'];
         $category = $this->other['category'];
         $categoryid = $this->other['categoryid'];
-        $result = $this->other['whoDid']." reviewed the student '$studentname' (id: $this->relateduserid)";
+        $result = $this->other['whoDid'] . " reviewed the student '$studentname' (id: $this->relateduserid)";
         $result .= " for class '$classtitle' (id: $this->objectid) and subject '$subjecttitle' (id: $subjectid).";
         $result .= " Category '$category' (id: $categoryid): ";
         switch (block_exastud_get_competence_eval_type()) {
@@ -89,8 +89,8 @@ class studentreviewcategory_changed extends base {
      * @return array
      */
     protected function get_legacy_logdata() {
-        return(array($this->courseid, 'exastud', 'change review category of the student',
-                'review_class.php?classid=' . $this->objectid.'&subjectid='.intval($this->other['subjectid']), $this->objectid, $this->contextinstanceid));
+        return (array($this->courseid, 'exastud', 'change review category of the student',
+            'review_class.php?classid=' . $this->objectid . '&subjectid=' . intval($this->other['subjectid']), $this->objectid, $this->contextinstanceid));
     }
 
     /**
@@ -100,7 +100,7 @@ class studentreviewcategory_changed extends base {
      */
     public function get_url() {
         return new \moodle_url('/blocks/exastud/review_class.php',
-                                array('classid' => $this->objectid, 'subjectid' => $this->other['subjectid']));
+            array('classid' => $this->objectid, 'subjectid' => $this->other['subjectid']));
     }
 
     public static function get_objectid_mapping() {

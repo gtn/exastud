@@ -52,7 +52,7 @@ class classteacher_unassigned extends base {
         $relatedusername = $this->other['relatedusername'];
         $subjectid = $this->other['subjectid'];
         $subjecttitle = $this->other['subjecttitle'];
-        $result = $this->other['whoDid']." unassigned the teacher '$relatedusername' (id: $this->relateduserid) ";
+        $result = $this->other['whoDid'] . " unassigned the teacher '$relatedusername' (id: $this->relateduserid) ";
         $result .= "from the class '$classtitle' (id: $this->objectid) ";
         $result .= "and the subject '$subjecttitle' (id: $subjectid)";
         return $result;
@@ -64,8 +64,8 @@ class classteacher_unassigned extends base {
      * @return array
      */
     protected function get_legacy_logdata() {
-        return(array($this->courseid, 'exastud', 'unassign teacher from class',
-                'configuration_class.php?classid=' . $this->objectid, $this->objectid, $this->contextinstanceid));
+        return (array($this->courseid, 'exastud', 'unassign teacher from class',
+            'configuration_class.php?classid=' . $this->objectid, $this->objectid, $this->contextinstanceid));
     }
 
     /**
@@ -75,7 +75,7 @@ class classteacher_unassigned extends base {
      */
     public function get_url() {
         return new \moodle_url('/blocks/exastud/configuration_class.php',
-                                array('classid' => $this->objectid, 'action' => 'edit', 'type' => 'teachers'));
+            array('classid' => $this->objectid, 'action' => 'edit', 'type' => 'teachers'));
     }
 
     public static function get_objectid_mapping() {

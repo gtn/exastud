@@ -17,7 +17,7 @@
 //
 // This copyright notice MUST APPEAR in all copies of the script!
 
-require __DIR__.'/inc.php';
+require __DIR__ . '/inc.php';
 require_once($CFG->dirroot . '/blocks/exastud/lib/edit_form.php');
 
 $courseid = optional_param('courseid', 1, PARAM_INT); // Course ID
@@ -36,64 +36,60 @@ $periodform = new period_edit_form();
 
 //Form processing and displaying is done here
 if ($periodform->is_cancelled()) {
-	redirect('periods.php?courseid=' . $courseid);
+    redirect('periods.php?courseid=' . $courseid);
 } else if ($periodedit = $periodform->get_data()) {
-	require_sesskey();
+    require_sesskey();
 
-	$newperiod = new stdClass();
-	$newperiod->timemodified = time();
-	$newperiod->userid=$USER->id;
-	$newperiod->description = $periodedit->description;
-	$newperiod->starttime = $periodedit->starttime;
-	$newperiod->endtime = $periodedit->endtime;
-	// TODO: delete this field
-	$newperiod->certificate_issue_date = 0; //$periodedit->certificate_issue_date;
-	
-	if(isset($periodedit->id) && ($periodedit->action == 'edit')) {
-		$newperiod->id = $periodedit->id;
-        $oldPeriodData = $DB->get_record('block_exastudperiod', array('id'=>$newperiod->id));
-		
-		$DB->update_record('block_exastudperiod', $newperiod);
+    $newperiod = new stdClass();
+    $newperiod->timemodified = time();
+    $newperiod->userid = $USER->id;
+    $newperiod->description = $periodedit->description;
+    $newperiod->starttime = $periodedit->starttime;
+    $newperiod->endtime = $periodedit->endtime;
+    // TODO: delete this field
+    $newperiod->certificate_issue_date = 0; //$periodedit->certificate_issue_date;
+
+    if (isset($periodedit->id) && ($periodedit->action == 'edit')) {
+        $newperiod->id = $periodedit->id;
+        $oldPeriodData = $DB->get_record('block_exastudperiod', array('id' => $newperiod->id));
+
+        $DB->update_record('block_exastudperiod', $newperiod);
         \block_exastud\event\period_updated::log(['objectid' => $newperiod->id,
-                                                    'other' => [
-                                                            'perioddata' => serialize($newperiod),
-                                                            'oldperioddata' => serialize($oldPeriodData)]]);
-	}
-	else if($periodedit->action == 'new') {
-		$newid = $DB->insert_record('block_exastudperiod', $newperiod);
+            'other' => [
+                'perioddata' => serialize($newperiod),
+                'oldperioddata' => serialize($oldPeriodData)]]);
+    } else if ($periodedit->action == 'new') {
+        $newid = $DB->insert_record('block_exastudperiod', $newperiod);
         \block_exastud\event\period_created::log(['objectid' => $newid, 'other' => ['perioddata' => serialize($newperiod)]]);
-	}
+    }
 
-	redirect('periods.php?courseid=' . $courseid);
+    redirect('periods.php?courseid=' . $courseid);
 }
 
 $period = new stdClass();
 $period->courseid = $courseid;
-if($action == 'edit') {
-	require_sesskey();
+if ($action == 'edit') {
+    require_sesskey();
 
-	if (!$period = $DB->get_record('block_exastudperiod', array('id'=>$periodid))) {
-		error("invalidperiodid","block_exastud");
-	}
-	$period->action = 'edit';
-	$period->courseid = $courseid;
-}
-else if($action == 'delete') {
-	require_sesskey();
-    $periodData = $DB->get_record('block_exastudperiod', array('id'=>$periodid));
-	$DB->delete_records('block_exastudperiod', array('id'=>$periodid));
+    if (!$period = $DB->get_record('block_exastudperiod', array('id' => $periodid))) {
+        error("invalidperiodid", "block_exastud");
+    }
+    $period->action = 'edit';
+    $period->courseid = $courseid;
+} else if ($action == 'delete') {
+    require_sesskey();
+    $periodData = $DB->get_record('block_exastudperiod', array('id' => $periodid));
+    $DB->delete_records('block_exastudperiod', array('id' => $periodid));
     \block_exastud\event\period_deleted::log(['objectid' => $periodid, 'other' => ['perioddata' => serialize($periodData)]]);
-	redirect('periods.php?courseid=' . $courseid);
+    redirect('periods.php?courseid=' . $courseid);
+} else {
+    $period->action = 'new';
+    $period->description = '';
+    $period->starttime = time();
+    // make the default period one month long
+    $period->endtime = mktime(0, 0, 0, date('m') + 1, date('d'), date('Y'));
+    $period->id = 0;
 }
-else {
-	$period->action = 'new';
-	$period->description = '';
-	$period->starttime = time();
-	// make the default period one month long
-	$period->endtime = mktime(0,0,0,date('m')+1, date('d'), date('Y'));
-	$period->id = 0;
-}
-
 
 
 $output = block_exastud_get_renderer();

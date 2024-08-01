@@ -23,14 +23,14 @@ require_once $CFG->libdir . '/formslib.php';
 
 class block_exastud_picture_upload_form extends moodleform {
 
-	function definition() {
-		$mform = & $this->_form;
+    function definition() {
+        $mform = &$this->_form;
 
-		$mform->addElement('header', 'comment', block_exastud_get_string('upload_picture'));
-		$mform->addElement('html',block_exastud_get_string('logosize'));
-		$mform->addElement('filepicker', 'file', block_exastud_get_string("file"),null,array('accepted_types'=>'image'));
-		$mform->addRule('file', block_exastud_get_string('commentshouldnotbeempty'), 'required', null, 'client');
+        $mform->addElement('header', 'comment', block_exastud_get_string('upload_picture'));
+        $mform->addElement('html', block_exastud_get_string('logosize'));
+        $mform->addElement('filepicker', 'file', block_exastud_get_string("file"), null, array('accepted_types' => 'image'));
+        $mform->addRule('file', block_exastud_get_string('commentshouldnotbeempty'), 'required', null, 'client');
 
-		$this->add_action_buttons(false, block_exastud_get_string('add'));
-	}
+        $this->add_action_buttons(false, block_exastud_get_string('add'));
+    }
 }

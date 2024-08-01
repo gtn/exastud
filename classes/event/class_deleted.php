@@ -49,7 +49,7 @@ class class_deleted extends base {
      */
     public function get_description() {
         $classtitle = $this->other['classtitle'];
-        $result = $this->other['whoDid']." deleted the class '$classtitle' (id: $this->objectid)";
+        $result = $this->other['whoDid'] . " deleted the class '$classtitle' (id: $this->objectid)";
         return $result;
     }
 
@@ -59,8 +59,8 @@ class class_deleted extends base {
      * @return array
      */
     protected function get_legacy_logdata() {
-        return(array($this->courseid, 'exastud', 'delete class',
-                'configuration_class.php?classid=' . $this->objectid, $this->objectid, $this->contextinstanceid));
+        return (array($this->courseid, 'exastud', 'delete class',
+            'configuration_class.php?classid=' . $this->objectid, $this->objectid, $this->contextinstanceid));
     }
 
     /**

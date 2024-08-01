@@ -17,6 +17,6 @@
 //
 // This copyright notice MUST APPEAR in all copies of the script!
 
-require_once __DIR__.'/../../config.php';
-require_once __DIR__.'/vendor/autoload.php';
-require_once __DIR__.'/lib/lib.php';
+require_once __DIR__ . '/../../config.php';
+require_once __DIR__ . '/vendor/autoload.php';
+require_once __DIR__ . '/lib/lib.php';
