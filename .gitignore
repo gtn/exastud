@@ -2,3 +2,5 @@
 .idea
 .project
 .settings
+template/upload/*
+!template/upload/.gitkeep
