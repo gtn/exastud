@@ -931,6 +931,8 @@ class print_templates {
                         break;
                     case 'image':
                         break;
+                    case 'matrix':
+                        break;
                     default:
                         if ($key == 'learn_social_behavior' && empty($studentdata['learn_social_behavior'])) {
                             $studentdata['learn_social_behavior'] = (!empty($studentdata['learning_and_social_behavior']) ? $studentdata['learning_and_social_behavior'] : '');
