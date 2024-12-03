@@ -73,7 +73,7 @@ class exastud_reportmatrix extends HTML_QuickForm_element {
 
             switch ($matrixtype) {
                 case 'checkbox':
-                    $value = @$this->value[$rowtitle][$coltitle];
+                    $value = isset($this->value[$rowtitle][$coltitle]) ? $this->value[$rowtitle][$coltitle] : false;
                     $html = '<input type="checkbox"
                                 name="' . $dataid . '[' . $rowtitle . '][' . $coltitle . ']"
                                 ' . ($value ? ' checked="checked" ' : '') . '
