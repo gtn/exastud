@@ -60,6 +60,14 @@ class print_templates {
     static function get_template_file($templateid) {
         global $CFG;
         $filename = static::get_template_config($templateid)['file'];
+        // 1. moodle data dir has more priority
+        $path = block_exastud_file_area_name('templates');
+        if (is_file($path . $filename . '.docx')) {
+            return $path . $filename . '.docx';
+        } else if (is_file($path . $filename . '.dotx')) {
+            return $path . $filename . '.dotx';
+        }
+        // 2. for default templates and old uploads
         $path = $CFG->dirroot . '/blocks/exastud/template/';
         if (is_file($path . $filename . '.docx')) {
             return $path . $filename . '.docx';

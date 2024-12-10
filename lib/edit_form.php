@@ -1082,14 +1082,20 @@ class reportsettings_edit_form extends moodleform {
             $exts = array('dotx', 'docx');
             foreach ($templateList as $tmpl) {
                 $realfilename = '';
+                $mainPath = block_exastud_file_area_name('templates');
                 foreach ($exts as $ext) {
-                    if (file_exists(BLOCK_EXASTUD_TEMPLATE_DIR . '/' . $tmpl . '.' . $ext)) {
+                    if (
+                        file_exists($mainPath . $tmpl . '.' . $ext)
+                        || // for OLD and Default templates
+                        file_exists(BLOCK_EXASTUD_TEMPLATE_DIR . '/' . $tmpl . '.' . $ext)
+                    ) {
                         $realfilename = $tmpl . '.' . $ext;
                         break;
                     }
                 }
                 if ($realfilename) {
-                    $filelinks[$tmpl] = $pathTo . '/blocks/exastud/template/' . $realfilename;
+//                    $filelinks[$tmpl] = $pathTo . '/blocks/exastud/template/' . $realfilename;
+                    $filelinks[$tmpl] = $pathTo . '/blocks/exastud/get_template_file.php/?template=' . $realfilename;
                 }
             }
         }

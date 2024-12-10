@@ -66,6 +66,9 @@ const BLOCK_EXASTUD_COMPETENCE_EVALUATION_TYPE_POINT = 2;
 const BLOCK_EXASTUD_PROJECTARBAIT_FOR_AVERAGE_CALCULATING = -12;
 const BLOCK_EXASTUD_PROJECTARBAIT_FOR_AVERAGE_CALCULATING_PARAMNAME = 'projekt_average_factor';
 
+// used only for FIXED default templates. Not for uploaded by the user templates
+// Use $CFG->dataroot.'/'.block_exastud_file_area_name('templates')
+// or $CFG->dataroot.'/'.block_exastud_file_area_name('template_uploads')
 const BLOCK_EXASTUD_TEMPLATE_DIR = __DIR__ . '/../template';
 
 // these default ids are for default templates. The names of constants are from current filenames
@@ -1723,7 +1726,9 @@ function block_exastud_read_template_file($filename) {
     global $CFG;
     $filecontent = '';
 
-    if (is_file($CFG->dirroot . '/blocks/exastud/template/' . $filename)) {
+    if (is_file($CFG->dataroot . '/exastud/templates/' . $filename)) {
+        $filecontent = file_get_contents($CFG->dataroot . '/exastud/templates/' . $filename);
+    } else if (is_file($CFG->dirroot . '/blocks/exastud/template/' . $filename)) {
         $filecontent = file_get_contents($CFG->dirroot . '/blocks/exastud/template/' . $filename);
     } else {
         if (is_file($CFG->dirroot . '/blocks/exastud/default_template/' . $filename)) {
@@ -2547,6 +2552,7 @@ function block_exastud_get_report_templates($class) {
 }
 
 function block_exastud_get_template_files($getExcludeFiles = false) {
+    global $CFG;
     $excludefiles = array('info.txt');
     if (!block_exastud_is_bw_active()) {
         $excludefiles = array_merge($excludefiles, array(
@@ -2571,7 +2577,11 @@ function block_exastud_get_template_files($getExcludeFiles = false) {
         }
         return $res;
     }
-    $filelist = get_directory_list(BLOCK_EXASTUD_TEMPLATE_DIR, $excludefiles);
+
+    $filelist = get_directory_list(block_exastud_file_area_name('templates'), $excludefiles);
+    // for OLD and default files
+    $filelistDefault = get_directory_list(BLOCK_EXASTUD_TEMPLATE_DIR, $excludefiles);
+    $filelist = array_merge($filelist, $filelistDefault);
     // delete extensions from file
     foreach ($filelist as $k => $file) {
         $filelist[$k] = preg_replace('/\\.[^.\\s]{3,4}$/', '', $file);
@@ -7441,6 +7451,28 @@ function exastud_get_picture_fields($tableprefix = '', $extrafields = null, $ida
     $resultString = implode(', ', $fields);
 
     return $resultString;
+}
+
+/**
+ * @param string $target additional target: templates; template_uploads
+ * @return string
+ */
+function block_exastud_file_area_name($target = '', $withSlash = true) {
+    global $CFG;
+    $mainPath = rtrim($CFG->dataroot, '\\\/').'/exastud';
+    switch ($target) {
+        case 'templates':
+            $mainPath .= '/templates';
+            break;
+        case 'template_uploads':
+            $mainPath .= '/templates/upload';
+            break;
+
+    }
+    if ($withSlash) {
+        $mainPath = rtrim($mainPath, '\\\/').'/';
+    }
+    return $mainPath;
 }
 
 /*

@@ -32,7 +32,7 @@ class exastud_user_formedit extends user_editadvanced_form {
         $resultFields = array();
         foreach ($fields as $field) {
             $classOfField = get_class($field);
-            $fieldkey = $field->_attributes['name'];
+            $fieldkey = @$field->_attributes['name'] ?: '';
             $label = $field->_label;
             if ($getAll) {
                 $resultFields[$fieldkey] = $field; // for filtering in other functions
@@ -237,10 +237,12 @@ function block_exastud_export_reports($templateids = array(), $withFiles = false
         file_put_contents($temp_file, $resultXML);
         $zip->addFile($temp_file, 'reports.xml');
         // sources of reports
-        $path_to_files = $CFG->dirroot . '/blocks/exastud/template/';
+        $path_to_files = block_exastud_file_area_name('templates');
+//        $path_to_files = $CFG->dirroot . '/blocks/exastud/template/';
         foreach ($addFiles as $file) {
             // docx or dotx
             $fullPath = $path_to_files . $file;
+            $mainPath = $path_to_files;
             $exts = array('dotx', 'docx');
             $exists = false;
             foreach ($exts as $ext) {
@@ -248,13 +250,22 @@ function block_exastud_export_reports($templateids = array(), $withFiles = false
                     $fullPath = $fullPath . '.' . $ext;
                     $exists = true;
                     break;
+                } else {
+                    // for default and OLD upload dir.
+                    $fullPath2 = $CFG->dirroot . '/blocks/exastud/template/' . $file . '.' . $ext;
+                    if (file_exists($fullPath2)) {
+                        $fullPath = $fullPath2;
+                        $mainPath = $CFG->dirroot . '/blocks/exastud/template/';
+                        $exists = true;
+                        break;
+                    }
                 }
             }
             if (!$exists) {
                 continue;
             }
             // new file - file in folder
-            $filePathParts = explode($path_to_files, $fullPath);
+            $filePathParts = explode($mainPath, $fullPath);
             $basenameWithSubfolder = end($filePathParts);
             //$newFilename = 'sources/'.basename($fullPath);
             $newFilename = 'sources/' . $basenameWithSubfolder;

@@ -51,10 +51,11 @@ block_exastud_require_login(1);
 //$lastPeriodClasses = $lastPeriod ? block_exastud_get_head_teacher_classes_owner($lastPeriod->id) : [];
 //$shownClasses = array(); // Which ckasses already shown on the page
 
-$uploadFolder = BLOCK_EXASTUD_TEMPLATE_DIR . '/upload/';
+// @deprecated
+/*$uploadFolder = BLOCK_EXASTUD_TEMPLATE_DIR . '/upload/';
 if (!file_exists($uploadFolder) || !is_dir($uploadFolder)) {
     mkdir($uploadFolder, 0755);
-}
+}*/
 
 $url = '/blocks/exastud/report_settings.php' . ($tokenparam ? '?token=' . $tokenparam : '');
 $PAGE->set_url($url);
@@ -484,7 +485,13 @@ if ($action && (($settingsid > 0 && $action == 'edit') || $action == 'new')) {
                         foreach ($exts as $ext) {
                             if (file_exists($fullPath . '.' . $ext)) {
                                 $fullPath = $fullPath . '.' . $ext;
-                                $copyTo = BLOCK_EXASTUD_TEMPLATE_DIR . '/' . $file . '.' . $ext;
+                                if (strpos($file, 'upload/') !== false) {
+                                    $copyTo = block_exastud_file_area_name('templates').$file.'.'.$ext;
+                                } else {
+                                    // default exastud template is in exastud dir
+                                    $copyTo = __DIR__ . '/upload/' . $file . '.' . $ext;
+                                }
+//                                $copyTo = BLOCK_EXASTUD_TEMPLATE_DIR . '/' . $file . '.' . $ext;
                                 $exists = true;
                                 break;
                             }
@@ -897,8 +904,15 @@ function block_exastud_get_reportsettings_additional_description($report) {
  * @throws coding_exception
  */
 function block_exastud_report_templates_prepare_serialized_data($settingsform, $settingsedit) {
+    global $CFG;
     // main properties
-    $uploadFolder = BLOCK_EXASTUD_TEMPLATE_DIR . '/upload/';
+    $uploadFolder = block_exastud_file_area_name('template_uploads');
+    if (!is_dir($uploadFolder)) {
+//        mkdir($uploadFolder, 0755);
+        make_writable_directory($uploadFolder);
+    }
+    // all new uploads go into Moodle Data folder
+//    $uploadFolder = BLOCK_EXASTUD_TEMPLATE_DIR . '/upload/';
     if ($params_sorting = optional_param('params_sorting', '', PARAM_TEXT)) {
         $settingsedit->params_sorting = serialize(json_decode($params_sorting));
     }
@@ -919,7 +933,8 @@ function block_exastud_report_templates_prepare_serialized_data($settingsform, $
         unlink($tmpNewFile);
         // get new filename for report configurations
         $tmpInfo = pathinfo($copyTo);
-        $newTemplateValue = str_replace(BLOCK_EXASTUD_TEMPLATE_DIR . '/', '', $copyTo);
+//        $newTemplateValue = str_replace(BLOCK_EXASTUD_TEMPLATE_DIR . '/', '', $copyTo);
+        $newTemplateValue = str_replace($uploadFolder, 'upload/', $copyTo);
         $rTrimLength = strlen($tmpInfo['extension']) + 1; // plus '.'
         $newTemplateValue = substr($newTemplateValue, 0, -$rTrimLength);
         $settingsedit->template = $newTemplateValue;
