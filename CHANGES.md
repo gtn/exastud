@@ -1,3 +1,7 @@
+### v4.6.7 (2025080500) ###
+* changed template files upload folder to moodledata folder
+* bugfixes
+
 ### v4.6.6 (2024080100) ###
 * bugfixes
 

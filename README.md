@@ -8,7 +8,7 @@ Advantage of using all three modules together is that learner driven learning pa
 
 # INSTALLATION
 
-This block is for Moodle 3.11 to 4.3 versions, it will not work for versions below 2021051700
+This block is for Moodle 3.11 to 4.5 versions, it will not work for versions below 2021051700
 
 Download the plugin from Moodle Plug-ins Repository. Please follow the instructions available in the Moodle Plug-ins Repository.
 
@@ -63,7 +63,7 @@ For more information, refer to the documentation.
 Exabis Student Review is a free software: you can redistribute it and/or modify it. It is published under the terms of the GNU General Public License (Free Software Foundation), either version 3 of the License, or any later version. 
 This script is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
-#HISTORY
+# HISTORY
 
 Using the pedagogical method of cooperative open learning (COOL) a culture of reflectiveness plays an important part - this module emphasizes on this aspect. It was the first module produced for this method. See more at http://www.cooltrainers.at/index.php?id=150&L=1
 In addition to the „verbal“ review, teachers can rate their students on a 10-point-scale regarding teamwork, responsibility and self-reliability. An average point‐rate from all teachers is aggregated and printed out on the student review report card for each individual student.
