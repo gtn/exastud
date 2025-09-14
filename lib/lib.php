@@ -7113,7 +7113,7 @@ function block_exastud_get_admin_requests_count() {
         $sql = 'SELECT d.*
               FROM {block_exastuddata} d
               WHERE d.classid > 0
-                AND d.name = ? OR d.name = ?';
+                AND (d.name = ? OR d.name = ?)';
         $classesData = $DB->get_records_sql($sql, [BLOCK_EXASTUD_DATA_ID_UNLOCKED_TEACHERS, BLOCK_EXASTUD_DATA_ID_UNLOCKED_TEACHERS_TO_APPROVE]);
         foreach ($classesData as $cData) {
             $times = (array)json_decode($cData->value);
@@ -7137,7 +7137,7 @@ function block_exastud_get_admin_requests_count() {
             $sql = 'SELECT d.*
                       FROM {block_exastuddata} d
                       WHERE d.classid IN (' . implode(',', $classesUids) . ')
-                        AND d.name = ? || d.name = ? ';
+                        AND (d.name = ? OR d.name = ?) ';
             $classesData = $DB->get_records_sql($sql, [BLOCK_EXASTUD_DATA_ID_UNLOCKED_TEACHERS, BLOCK_EXASTUD_DATA_ID_UNLOCKED_TEACHERS_TO_APPROVE]);
             foreach ($classesData as $cData) {
                 $times = (array)json_decode($cData->value);
@@ -7160,7 +7160,7 @@ function block_exastud_get_admin_requests_count() {
             $sql = 'SELECT d.*
                       FROM {block_exastuddata} d
                       WHERE d.classid IN (' . implode(',', $classesUids) . ')
-                        AND d.name = ? OR d.name = ?';
+                        AND (d.name = ? OR d.name = ?)';
             $classesData = $DB->get_records_sql($sql, [BLOCK_EXASTUD_DATA_ID_UNLOCKED_TEACHERS_TO_APPROVE, BLOCK_EXASTUD_DATA_ID_UNLOCKED_TEACHERS]);
             foreach ($classesData as $cData) {
                 $times = (array)json_decode($cData->value);
