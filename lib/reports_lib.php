@@ -17,6 +17,8 @@
 //
 // This copyright notice MUST APPEAR in all copies of the script!
 
+defined('MOODLE_INTERNAL') || die();
+
 require_once($CFG->libdir . '/gdlib.php');
 require_once($CFG->libdir . '/adminlib.php');
 require_once($CFG->dirroot . '/user/editadvanced_form.php');

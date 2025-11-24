@@ -1,5 +1,7 @@
 <?php
 
+defined('MOODLE_INTERNAL') || die();
+
 $force_bw_active = false;
 
 $bw_active = get_config('exastud', 'bw_active');
