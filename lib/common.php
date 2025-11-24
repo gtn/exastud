@@ -151,7 +151,7 @@ namespace block_exastud\common {
          * @param string|null $namespace
          * @return \SimpleXMLElement|null
          */
-        public function addChild($name, $value = null, $namespace = null): ?\SimpleXMLElement {
+        public function addChild(string $name, ?string $value = null, ?string $namespace = null): ?\SimpleXMLElement {
             if ($name instanceof \SimpleXMLElement) {
                 $newNode = $name;
                 $node = dom_import_simplexml($this);
