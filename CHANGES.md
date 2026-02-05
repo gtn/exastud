@@ -1,3 +1,7 @@
+### v5.1 (2026020500) ###
+* Use same version as latest moodle release
+* Security fixes and fixes for php8.2
+
 ### v4.6.7 (2025080500) ###
 * changed template files upload folder to moodledata folder
 * bugfixes
