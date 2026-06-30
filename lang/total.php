@@ -2075,7 +2075,7 @@ return [
     ],
     'average_calculate_table_average_project_title' => [
         'Projektarbeit / Projektprüfung',
-        'Projektarbeit / Projektprüfung',
+        'Project work / Project review',
     ],
     'average_calculate_button' => [
         'Berechnen',

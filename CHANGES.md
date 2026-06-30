@@ -1,3 +1,6 @@
+### v5.1 (2026063000) ###
+* wordings
+
 ### v5.1 (2026020500) ###
 * Use same version as latest moodle release
 * Security fixes and fixes for php8.2
