@@ -4974,9 +4974,9 @@ class TemplateProcessor extends \PhpOffice\PhpWord\TemplateProcessor {
         $this->tempDocumentMainPart = $part;
     }
 
-    function setValues($data) {
-        foreach ($data as $key => $value) {
-            $this->setValue($key, $value);
+    function setValues($values, int $limit = self::MAXIMUM_REPLACEMENTS_DEFAULT): void {
+        foreach ($values as $key => $value) {
+            $this->setValue($key, $value, $limit);
             /*
              * $value = ;
              * $content = str_replace('{'.$key.'}', $value, $content);
@@ -5026,7 +5026,7 @@ class TemplateProcessor extends \PhpOffice\PhpWord\TemplateProcessor {
         return $string;
     }
 
-    function setValue($search, $replace, $limit = self::MAXIMUM_REPLACEMENTS_DEFAULT) {
+    function setValue($search, $replace, $limit = self::MAXIMUM_REPLACEMENTS_DEFAULT): void {
         $replace = $this->sanitizeXML($replace);
         $replace = $this->escape($replace);
         // if the marker ${marker} is in the some element (form, textblock,...) he is inserting in something like w:val="${marker}"
@@ -5050,7 +5050,7 @@ class TemplateProcessor extends \PhpOffice\PhpWord\TemplateProcessor {
             '</w:t><w:br/><w:t>',
         ], $replace);
 
-        return $this->setValueRaw($search, $replace, $limit);
+        $this->setValueRaw($search, $replace, $limit);
     }
 
     function setValueRaw($search, $replace, $limit = self::MAXIMUM_REPLACEMENTS_DEFAULT) {
@@ -5059,11 +5059,9 @@ class TemplateProcessor extends \PhpOffice\PhpWord\TemplateProcessor {
         // it's a raw value
         \PhpOffice\PhpWord\Settings::setOutputEscapingEnabled(false);
 
-        $ret = parent::setValue($search, $replace, $limit);
+        parent::setValue($search, $replace, $limit);
 
         \PhpOffice\PhpWord\Settings::setOutputEscapingEnabled($oldEscaping);
-
-        return $ret;
     }
 
     function directReplace($search, $replace) {
@@ -5190,7 +5188,7 @@ class TemplateProcessor extends \PhpOffice\PhpWord\TemplateProcessor {
         $this->tempDocumentMainPart = $result;
     }
 
-    function deleteRow($search) {
+    function deleteRow($search): void {
         $this->cloneRow($search, 0);
     }
 
