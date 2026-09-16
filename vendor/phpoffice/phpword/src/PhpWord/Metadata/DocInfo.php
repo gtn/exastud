@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This file is part of PHPWord - A pure PHP library for reading and writing
  * word processing documents.
@@ -10,15 +11,17 @@
  * file that was distributed with this source code. For the full list of
  * contributors, visit https://github.com/PHPOffice/PHPWord/contributors.
  *
- * @link        https://github.com/PHPOffice/PHPWord
- * @copyright   2010-2016 PHPWord contributors
+ * @see         https://github.com/PHPOffice/PHPWord
+ *
  * @license     http://www.gnu.org/licenses/lgpl.txt LGPL version 3
  */
 
 namespace PhpOffice\PhpWord\Metadata;
 
+use DateTime;
+
 /**
- * Document information
+ * Document information.
  */
 class DocInfo
 {
@@ -31,109 +34,109 @@ class DocInfo
     const PROPERTY_TYPE_UNKNOWN = 'u';
 
     /**
-     * Creator
+     * Creator.
      *
      * @var string
      */
     private $creator;
 
     /**
-     * LastModifiedBy
+     * LastModifiedBy.
      *
      * @var string
      */
     private $lastModifiedBy;
 
     /**
-     * Created
+     * Created.
      *
      * @var int
      */
     private $created;
 
     /**
-     * Modified
+     * Modified.
      *
      * @var int
      */
     private $modified;
 
     /**
-     * Title
+     * Title.
      *
      * @var string
      */
     private $title;
 
     /**
-     * Description
+     * Description.
      *
      * @var string
      */
     private $description;
 
     /**
-     * Subject
+     * Subject.
      *
      * @var string
      */
     private $subject;
 
     /**
-     * Keywords
+     * Keywords.
      *
      * @var string
      */
     private $keywords;
 
     /**
-     * Category
+     * Category.
      *
      * @var string
      */
     private $category;
 
     /**
-     * Company
+     * Company.
      *
      * @var string
      */
     private $company;
 
     /**
-     * Manager
+     * Manager.
      *
      * @var string
      */
     private $manager;
 
     /**
-     * Custom Properties
+     * Custom Properties.
      *
      * @var array
      */
-    private $customProperties = array();
+    private $customProperties = [];
 
     /**
-     * Create new instance
+     * Create new instance.
      */
     public function __construct()
     {
-        $this->creator        = '';
+        $this->creator = '';
         $this->lastModifiedBy = $this->creator;
-        $this->created        = time();
-        $this->modified       = time();
-        $this->title          = '';
-        $this->subject        = '';
-        $this->description    = '';
-        $this->keywords       = '';
-        $this->category       = '';
-        $this->company        = '';
-        $this->manager        = '';
+        $this->created = time();
+        $this->modified = time();
+        $this->title = '';
+        $this->subject = '';
+        $this->description = '';
+        $this->keywords = '';
+        $this->category = '';
+        $this->company = '';
+        $this->manager = '';
     }
 
     /**
-     * Get Creator
+     * Get Creator.
      *
      * @return string
      */
@@ -143,9 +146,10 @@ class DocInfo
     }
 
     /**
-     * Set Creator
+     * Set Creator.
      *
      * @param  string $value
+     *
      * @return self
      */
     public function setCreator($value = '')
@@ -156,7 +160,7 @@ class DocInfo
     }
 
     /**
-     * Get Last Modified By
+     * Get Last Modified By.
      *
      * @return string
      */
@@ -166,9 +170,10 @@ class DocInfo
     }
 
     /**
-     * Set Last Modified By
+     * Set Last Modified By.
      *
      * @param  string $value
+     *
      * @return self
      */
     public function setLastModifiedBy($value = '')
@@ -179,7 +184,7 @@ class DocInfo
     }
 
     /**
-     * Get Created
+     * Get Created.
      *
      * @return int
      */
@@ -189,9 +194,10 @@ class DocInfo
     }
 
     /**
-     * Set Created
+     * Set Created.
      *
      * @param  int $value
+     *
      * @return self
      */
     public function setCreated($value = null)
@@ -202,7 +208,7 @@ class DocInfo
     }
 
     /**
-     * Get Modified
+     * Get Modified.
      *
      * @return int
      */
@@ -212,9 +218,10 @@ class DocInfo
     }
 
     /**
-     * Set Modified
+     * Set Modified.
      *
      * @param  int $value
+     *
      * @return self
      */
     public function setModified($value = null)
@@ -225,7 +232,7 @@ class DocInfo
     }
 
     /**
-     * Get Title
+     * Get Title.
      *
      * @return string
      */
@@ -235,9 +242,10 @@ class DocInfo
     }
 
     /**
-     * Set Title
+     * Set Title.
      *
      * @param  string $value
+     *
      * @return self
      */
     public function setTitle($value = '')
@@ -248,7 +256,7 @@ class DocInfo
     }
 
     /**
-     * Get Description
+     * Get Description.
      *
      * @return string
      */
@@ -258,9 +266,10 @@ class DocInfo
     }
 
     /**
-     * Set Description
+     * Set Description.
      *
      * @param  string $value
+     *
      * @return self
      */
     public function setDescription($value = '')
@@ -271,7 +280,7 @@ class DocInfo
     }
 
     /**
-     * Get Subject
+     * Get Subject.
      *
      * @return string
      */
@@ -281,9 +290,10 @@ class DocInfo
     }
 
     /**
-     * Set Subject
+     * Set Subject.
      *
      * @param  string $value
+     *
      * @return self
      */
     public function setSubject($value = '')
@@ -294,7 +304,7 @@ class DocInfo
     }
 
     /**
-     * Get Keywords
+     * Get Keywords.
      *
      * @return string
      */
@@ -304,9 +314,10 @@ class DocInfo
     }
 
     /**
-     * Set Keywords
+     * Set Keywords.
      *
      * @param string $value
+     *
      * @return self
      */
     public function setKeywords($value = '')
@@ -317,7 +328,7 @@ class DocInfo
     }
 
     /**
-     * Get Category
+     * Get Category.
      *
      * @return string
      */
@@ -327,9 +338,10 @@ class DocInfo
     }
 
     /**
-     * Set Category
+     * Set Category.
      *
      * @param string $value
+     *
      * @return self
      */
     public function setCategory($value = '')
@@ -340,7 +352,7 @@ class DocInfo
     }
 
     /**
-     * Get Company
+     * Get Company.
      *
      * @return string
      */
@@ -350,9 +362,10 @@ class DocInfo
     }
 
     /**
-     * Set Company
+     * Set Company.
      *
      * @param string $value
+     *
      * @return self
      */
     public function setCompany($value = '')
@@ -363,7 +376,7 @@ class DocInfo
     }
 
     /**
-     * Get Manager
+     * Get Manager.
      *
      * @return string
      */
@@ -373,9 +386,10 @@ class DocInfo
     }
 
     /**
-     * Set Manager
+     * Set Manager.
      *
      * @param string $value
+     *
      * @return self
      */
     public function setManager($value = '')
@@ -386,7 +400,7 @@ class DocInfo
     }
 
     /**
-     * Get a List of Custom Property Names
+     * Get a List of Custom Property Names.
      *
      * @return array of string
      */
@@ -396,10 +410,11 @@ class DocInfo
     }
 
     /**
-     * Check if a Custom Property is defined
+     * Check if a Custom Property is defined.
      *
      * @param string $propertyName
-     * @return boolean
+     *
+     * @return bool
      */
     public function isCustomPropertySet($propertyName)
     {
@@ -407,37 +422,39 @@ class DocInfo
     }
 
     /**
-     * Get a Custom Property Value
+     * Get a Custom Property Value.
      *
      * @param string $propertyName
-     * @return string
+     *
+     * @return mixed
      */
     public function getCustomPropertyValue($propertyName)
     {
         if ($this->isCustomPropertySet($propertyName)) {
             return $this->customProperties[$propertyName]['value'];
-        } else {
-            return null;
         }
+
+        return null;
     }
 
     /**
-     * Get a Custom Property Type
+     * Get a Custom Property Type.
      *
      * @param string $propertyName
-     * @return string
+     *
+     * @return ?string
      */
     public function getCustomPropertyType($propertyName)
     {
         if ($this->isCustomPropertySet($propertyName)) {
             return $this->customProperties[$propertyName]['type'];
-        } else {
-            return null;
         }
+
+        return null;
     }
 
     /**
-     * Set a Custom Property
+     * Set a Custom Property.
      *
      * @param string $propertyName
      * @param mixed $propertyValue
@@ -447,17 +464,18 @@ class DocInfo
      *   's': String
      *   'd': Date/Time
      *   'b': Boolean
+     *
      * @return self
      */
     public function setCustomProperty($propertyName, $propertyValue = '', $propertyType = null)
     {
-        $propertyTypes = array(
+        $propertyTypes = [
             self::PROPERTY_TYPE_INTEGER,
             self::PROPERTY_TYPE_FLOAT,
             self::PROPERTY_TYPE_STRING,
             self::PROPERTY_TYPE_DATE,
-            self::PROPERTY_TYPE_BOOLEAN
-        );
+            self::PROPERTY_TYPE_BOOLEAN,
+        ];
         if (($propertyType === null) || (!in_array($propertyType, $propertyTypes))) {
             if ($propertyValue === null) {
                 $propertyType = self::PROPERTY_TYPE_STRING;
@@ -467,23 +485,27 @@ class DocInfo
                 $propertyType = self::PROPERTY_TYPE_INTEGER;
             } elseif (is_bool($propertyValue)) {
                 $propertyType = self::PROPERTY_TYPE_BOOLEAN;
+            } elseif ($propertyValue instanceof DateTime) {
+                $propertyType = self::PROPERTY_TYPE_DATE;
             } else {
                 $propertyType = self::PROPERTY_TYPE_STRING;
             }
         }
 
-        $this->customProperties[$propertyName] = array(
+        $this->customProperties[$propertyName] = [
             'value' => $propertyValue,
-            'type' => $propertyType
-        );
+            'type' => $propertyType,
+        ];
+
         return $this;
     }
 
     /**
-     * Convert document property based on type
+     * Convert document property based on type.
      *
      * @param string $propertyValue
      * @param string $propertyType
+     *
      * @return mixed
      */
     public static function convertProperty($propertyValue, $propertyType)
@@ -504,27 +526,28 @@ class DocInfo
             case 'date': // Date
                 return strtotime($propertyValue);
             case 'bool': // Boolean
-                return ($propertyValue == 'true') ? true : false;
+                return $propertyValue == 'true';
         }
 
         return $propertyValue;
     }
 
     /**
-     * Convert document property type
+     * Convert document property type.
      *
      * @param string $propertyType
+     *
      * @return string
      */
     public static function convertPropertyType($propertyType)
     {
-        $typeGroups = array(
-            self::PROPERTY_TYPE_INTEGER => array('i1', 'i2', 'i4', 'i8', 'int', 'ui1', 'ui2', 'ui4', 'ui8', 'uint'),
-            self::PROPERTY_TYPE_FLOAT   => array('r4', 'r8', 'decimal'),
-            self::PROPERTY_TYPE_STRING  => array('empty', 'null', 'lpstr', 'lpwstr', 'bstr'),
-            self::PROPERTY_TYPE_DATE    => array('date', 'filetime'),
-            self::PROPERTY_TYPE_BOOLEAN => array('bool'),
-        );
+        $typeGroups = [
+            self::PROPERTY_TYPE_INTEGER => ['i1', 'i2', 'i4', 'i8', 'int', 'ui1', 'ui2', 'ui4', 'ui8', 'uint'],
+            self::PROPERTY_TYPE_FLOAT => ['r4', 'r8', 'decimal'],
+            self::PROPERTY_TYPE_STRING => ['empty', 'null', 'lpstr', 'lpwstr', 'bstr'],
+            self::PROPERTY_TYPE_DATE => ['date', 'filetime'],
+            self::PROPERTY_TYPE_BOOLEAN => ['bool'],
+        ];
         foreach ($typeGroups as $groupId => $groupMembers) {
             if (in_array($propertyType, $groupMembers)) {
                 return $groupId;
@@ -535,10 +558,11 @@ class DocInfo
     }
 
     /**
-     * Set default for null and empty value
+     * Set default for null and empty value.
      *
      * @param mixed $value
      * @param mixed $default
+     *
      * @return mixed
      */
     private function setValue($value, $default)
@@ -551,22 +575,23 @@ class DocInfo
     }
 
     /**
-     * Get conversion model depending on property type
+     * Get conversion model depending on property type.
      *
      * @param string $propertyType
+     *
      * @return string
      */
     private static function getConversion($propertyType)
     {
-        $conversions = array(
-            'empty' => array('empty'),
-            'null'  => array('null'),
-            'int'   => array('i1', 'i2', 'i4', 'i8', 'int'),
-            'uint'  => array('ui1', 'ui2', 'ui4', 'ui8', 'uint'),
-            'float' => array('r4', 'r8', 'decimal'),
-            'bool'  => array('bool'),
-            'date'  => array('date', 'filetime'),
-        );
+        $conversions = [
+            'empty' => ['empty'],
+            'null' => ['null'],
+            'int' => ['i1', 'i2', 'i4', 'i8', 'int'],
+            'uint' => ['ui1', 'ui2', 'ui4', 'ui8', 'uint'],
+            'float' => ['r4', 'r8', 'decimal'],
+            'bool' => ['bool'],
+            'date' => ['date', 'filetime'],
+        ];
         foreach ($conversions as $conversion => $types) {
             if (in_array($propertyType, $types)) {
                 return $conversion;

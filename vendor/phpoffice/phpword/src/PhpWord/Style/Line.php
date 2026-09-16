@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This file is part of PHPWord - A pure PHP library for reading and writing
  * word processing documents.
@@ -10,26 +11,27 @@
  * file that was distributed with this source code. For the full list of
  * contributors, visit https://github.com/PHPOffice/PHPWord/contributors.
  *
- * @link        https://github.com/PHPOffice/PHPWord
- * @copyright   2010-2016 PHPWord contributors
+ * @see         https://github.com/PHPOffice/PHPWord
+ *
  * @license     http://www.gnu.org/licenses/lgpl.txt LGPL version 3
  */
+
 namespace PhpOffice\PhpWord\Style;
 
 /**
- * Line style
+ * Line style.
  */
 class Line extends Image
 {
     /**
-     * Connector types
+     * Connector types.
      *
      * @const string
      */
     const CONNECTOR_TYPE_STRAIGHT = 'straight';
 
     /**
-     * Arrow styles
+     * Arrow styles.
      *
      * @const string
      */
@@ -40,7 +42,7 @@ class Line extends Image
     const ARROW_STYLE_OVAL = 'oval';
 
     /**
-     * Dash styles
+     * Dash styles.
      *
      * @const string
      */
@@ -53,58 +55,58 @@ class Line extends Image
     const DASH_STYLE_LONG_DASH_DOT_DOT = 'longdashdotdot';
 
     /**
-     * flip Line
+     * flip Line.
      *
-     * @var boolean
+     * @var bool
      */
     private $flip = false;
 
     /**
-     * connectorType
+     * connectorType.
      *
      * @var string
      */
     private $connectorType = self::CONNECTOR_TYPE_STRAIGHT;
 
     /**
-     * Line Weight
+     * Line Weight.
      *
      * @var int
      */
     private $weight;
 
     /**
-     * Line color
+     * Line color.
      *
      * @var string
      */
     private $color;
 
     /**
-     * Dash style
+     * Dash style.
      *
      * @var string
      */
     private $dash;
 
     /**
-     * Begin arrow
+     * Begin arrow.
      *
      * @var string
      */
     private $beginArrow;
 
     /**
-     * End arrow
+     * End arrow.
      *
      * @var string
      */
     private $endArrow;
 
     /**
-     * Get flip
+     * Get flip.
      *
-     * @return boolean
+     * @return bool
      */
     public function isFlip()
     {
@@ -112,9 +114,10 @@ class Line extends Image
     }
 
     /**
-     * Set flip
+     * Set flip.
      *
-     * @param boolean $value
+     * @param bool $value
+     *
      * @return self
      */
     public function setFlip($value = false)
@@ -125,7 +128,7 @@ class Line extends Image
     }
 
     /**
-     * Get connectorType
+     * Get connectorType.
      *
      * @return string
      */
@@ -135,23 +138,24 @@ class Line extends Image
     }
 
     /**
-     * Set connectorType
+     * Set connectorType.
      *
      * @param string $value
+     *
      * @return self
      */
     public function setConnectorType($value = null)
     {
-        $enum = array(
-            self::CONNECTOR_TYPE_STRAIGHT
-        );
+        $enum = [
+            self::CONNECTOR_TYPE_STRAIGHT,
+        ];
         $this->connectorType = $this->setEnumVal($value, $enum, $this->connectorType);
 
         return $this;
     }
 
     /**
-     * Get weight
+     * Get weight.
      *
      * @return int
      */
@@ -161,9 +165,10 @@ class Line extends Image
     }
 
     /**
-     * Set weight
+     * Set weight.
      *
      * @param int $value Weight in points
+     *
      * @return self
      */
     public function setWeight($value = null)
@@ -174,7 +179,7 @@ class Line extends Image
     }
 
     /**
-     * Get color
+     * Get color.
      *
      * @return string
      */
@@ -184,9 +189,10 @@ class Line extends Image
     }
 
     /**
-     * Set color
+     * Set color.
      *
      * @param string $value
+     *
      * @return self
      */
     public function setColor($value = null)
@@ -197,7 +203,7 @@ class Line extends Image
     }
 
     /**
-     * Get beginArrow
+     * Get beginArrow.
      *
      * @return string
      */
@@ -207,24 +213,25 @@ class Line extends Image
     }
 
     /**
-     * Set beginArrow
+     * Set beginArrow.
      *
      * @param string $value
+     *
      * @return self
      */
     public function setBeginArrow($value = null)
     {
-        $enum = array(
+        $enum = [
             self::ARROW_STYLE_BLOCK, self::ARROW_STYLE_CLASSIC, self::ARROW_STYLE_DIAMOND,
-            self::ARROW_STYLE_OPEN, self::ARROW_STYLE_OVAL
-        );
+            self::ARROW_STYLE_OPEN, self::ARROW_STYLE_OVAL,
+        ];
         $this->beginArrow = $this->setEnumVal($value, $enum, $this->beginArrow);
 
         return $this;
     }
 
     /**
-     * Get endArrow
+     * Get endArrow.
      *
      * @return string
      */
@@ -234,24 +241,25 @@ class Line extends Image
     }
 
     /**
-     * Set endArrow
+     * Set endArrow.
      *
      * @param string $value
+     *
      * @return self
      */
     public function setEndArrow($value = null)
     {
-        $enum = array(
+        $enum = [
             self::ARROW_STYLE_BLOCK, self::ARROW_STYLE_CLASSIC, self::ARROW_STYLE_DIAMOND,
-            self::ARROW_STYLE_OPEN, self::ARROW_STYLE_OVAL
-        );
+            self::ARROW_STYLE_OPEN, self::ARROW_STYLE_OVAL,
+        ];
         $this->endArrow = $this->setEnumVal($value, $enum, $this->endArrow);
 
         return $this;
     }
 
     /**
-     * Get Dash
+     * Get Dash.
      *
      * @return string
      */
@@ -261,18 +269,19 @@ class Line extends Image
     }
 
     /**
-     * Set Dash
+     * Set Dash.
      *
      * @param string $value
+     *
      * @return self
      */
     public function setDash($value = null)
     {
-        $enum = array(
+        $enum = [
             self::DASH_STYLE_DASH, self::DASH_STYLE_DASH_DOT, self::DASH_STYLE_LONG_DASH,
             self::DASH_STYLE_LONG_DASH_DOT, self::DASH_STYLE_LONG_DASH_DOT_DOT, self::DASH_STYLE_ROUND_DOT,
-            self::DASH_STYLE_SQUARE_DOT
-        );
+            self::DASH_STYLE_SQUARE_DOT,
+        ];
         $this->dash = $this->setEnumVal($value, $enum, $this->dash);
 
         return $this;

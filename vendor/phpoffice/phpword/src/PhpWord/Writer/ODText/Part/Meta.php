@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This file is part of PHPWord - A pure PHP library for reading and writing
  * word processing documents.
@@ -10,25 +11,24 @@
  * file that was distributed with this source code. For the full list of
  * contributors, visit https://github.com/PHPOffice/PHPWord/contributors.
  *
- * @link        https://github.com/PHPOffice/PHPWord
- * @copyright   2010-2016 PHPWord contributors
+ * @see         https://github.com/PHPOffice/PHPWord
+ *
  * @license     http://www.gnu.org/licenses/lgpl.txt LGPL version 3
  */
 
 namespace PhpOffice\PhpWord\Writer\ODText\Part;
 
-use PhpOffice\Common\XMLWriter;
-use PhpOffice\PhpWord\Settings;
+use PhpOffice\PhpWord\Shared\XMLWriter;
 
 /**
- * ODText meta part writer: meta.xml
+ * ODText meta part writer: meta.xml.
  *
  * @since 0.11.0
  */
 class Meta extends AbstractPart
 {
     /**
-     * Write part
+     * Write part.
      *
      * @return string
      */
@@ -63,7 +63,7 @@ class Meta extends AbstractPart
         $xmlWriter->writeElement('meta:keyword', $docProps->getKeywords());
 
         // Category, company, and manager are put in meta namespace
-        $properties = array('Category', 'Company', 'Manager');
+        $properties = ['Category', 'Company', 'Manager'];
         foreach ($properties as $property) {
             $method = "get{$property}";
             if ($docProps->$method() !== null) {
@@ -85,27 +85,21 @@ class Meta extends AbstractPart
     }
 
     /**
-     * Write individual property
+     * Write individual property.
      *
-     * @param \PhpOffice\Common\XMLWriter $xmlWriter
      * @param string $property
      * @param string $value
-     * @return void
      *
      * @todo Handle other `$type`: double|date|dateTime|duration|boolean (4th arguments)
      */
-    private function writeCustomProperty(XMLWriter $xmlWriter, $property, $value)
+    private function writeCustomProperty(XMLWriter $xmlWriter, $property, $value): void
     {
         $xmlWriter->startElement('meta:user-defined');
         $xmlWriter->writeAttribute('meta:name', $property);
         // if ($type !== null) {
         //     $xmlWriter->writeAttribute('meta:value-type', $type);
         // }
-        if (Settings::isOutputEscapingEnabled()) {
-            $xmlWriter->text($value);
-        } else {
-            $xmlWriter->writeRaw($value);
-        }
+        $this->writeText($value);
         $xmlWriter->endElement(); // meta:user-defined
     }
 }

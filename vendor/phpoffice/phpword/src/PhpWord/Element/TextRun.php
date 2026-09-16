@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This file is part of PHPWord - A pure PHP library for reading and writing
  * word processing documents.
@@ -10,8 +11,8 @@
  * file that was distributed with this source code. For the full list of
  * contributors, visit https://github.com/PHPOffice/PHPWord/contributors.
  *
- * @link        https://github.com/PHPOffice/PHPWord
- * @copyright   2010-2016 PHPWord contributors
+ * @see         https://github.com/PHPOffice/PHPWord
+ *
  * @license     http://www.gnu.org/licenses/lgpl.txt LGPL version 3
  */
 
@@ -20,7 +21,7 @@ namespace PhpOffice\PhpWord\Element;
 use PhpOffice\PhpWord\Style\Paragraph;
 
 /**
- * Textrun/paragraph element
+ * Textrun/paragraph element.
  */
 class TextRun extends AbstractContainer
 {
@@ -30,29 +31,67 @@ class TextRun extends AbstractContainer
     protected $container = 'TextRun';
 
     /**
-     * Paragraph style
+     * Paragraph style.
      *
-     * @var string|\PhpOffice\PhpWord\Style\Paragraph
+     * @var Paragraph|string
      */
     protected $paragraphStyle;
 
     /**
-     * Create new instance
+     * Create new instance.
      *
-     * @param string|array|\PhpOffice\PhpWord\Style\Paragraph $paragraphStyle
+     * @param array|Paragraph|string $paragraphStyle
      */
     public function __construct($paragraphStyle = null)
     {
-        $this->paragraphStyle = $this->setNewStyle(new Paragraph(), $paragraphStyle);
+        $this->paragraphStyle = $this->setParagraphStyle($paragraphStyle);
     }
 
     /**
-     * Get Paragraph style
+     * Get Paragraph style.
      *
-     * @return string|\PhpOffice\PhpWord\Style\Paragraph
+     * @return Paragraph|string
      */
     public function getParagraphStyle()
     {
         return $this->paragraphStyle;
+    }
+
+    /**
+     * Set Paragraph style.
+     *
+     * @param array|Paragraph|string $style
+     *
+     * @return Paragraph|string
+     */
+    public function setParagraphStyle($style = null)
+    {
+        if (is_array($style)) {
+            $this->paragraphStyle = new Paragraph();
+            $this->paragraphStyle->setStyleByArray($style);
+        } elseif ($style instanceof Paragraph) {
+            $this->paragraphStyle = $style;
+        } elseif (null === $style) {
+            $this->paragraphStyle = new Paragraph();
+        } else {
+            $this->paragraphStyle = $style;
+        }
+
+        return $this->paragraphStyle;
+    }
+
+    public function getText(): string
+    {
+        $outstr = '';
+        foreach ($this->getElements() as $element) {
+            if ($element instanceof Text) {
+                $outstr .= $element->getText();
+            } elseif ($element instanceof Ruby) {
+                $outstr .= $element->getBaseTextRun()->getText() .
+                    ' (' . $element->getRubyTextRun()->getText() . ')';
+            }
+        }
+
+        return $outstr;
     }
 }

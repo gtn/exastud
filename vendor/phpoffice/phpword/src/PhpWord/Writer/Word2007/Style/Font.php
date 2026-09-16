@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This file is part of PHPWord - A pure PHP library for reading and writing
  * word processing documents.
@@ -10,22 +11,22 @@
  * file that was distributed with this source code. For the full list of
  * contributors, visit https://github.com/PHPOffice/PHPWord/contributors.
  *
- * @link        https://github.com/PHPOffice/PHPWord
- * @copyright   2010-2016 PHPWord contributors
+ * @see         https://github.com/PHPOffice/PHPWord
+ *
  * @license     http://www.gnu.org/licenses/lgpl.txt LGPL version 3
  */
 
 namespace PhpOffice\PhpWord\Writer\Word2007\Style;
 
 /**
- * Font style writer
+ * Font style writer.
  *
  * @since 0.10.0
  */
 class Font extends AbstractStyle
 {
     /**
-     * Is inline in element
+     * Is inline in element.
      *
      * @var bool
      */
@@ -33,19 +34,21 @@ class Font extends AbstractStyle
 
     /**
      * Write style.
-     *
-     * @return void
      */
-    public function write()
+    public function write(): void
     {
         $xmlWriter = $this->getXmlWriter();
 
-        $isStyleName = $this->isInline && !is_null($this->style) && is_string($this->style);
+        $isStyleName = $this->isInline && null !== $this->style && is_string($this->style);
         if ($isStyleName) {
             $xmlWriter->startElement('w:rPr');
             $xmlWriter->startElement('w:rStyle');
             $xmlWriter->writeAttribute('w:val', $this->style);
             $xmlWriter->endElement();
+            $style = \PhpOffice\PhpWord\Style::getStyle($this->style);
+            if ($style instanceof \PhpOffice\PhpWord\Style\Font) {
+                $xmlWriter->writeElementIf($style->isRTL(), 'w:rtl');
+            }
             $xmlWriter->endElement();
         } else {
             $this->writeStyle();
@@ -54,15 +57,14 @@ class Font extends AbstractStyle
 
     /**
      * Write full style.
-     *
-     * @return void
      */
-    private function writeStyle()
+    private function writeStyle(): void
     {
         $style = $this->getStyle();
         if (!$style instanceof \PhpOffice\PhpWord\Style\Font) {
             return;
         }
+
         $xmlWriter = $this->getXmlWriter();
 
         $xmlWriter->startElement('w:rPr');
@@ -86,6 +88,20 @@ class Font extends AbstractStyle
             $xmlWriter->endElement();
         }
 
+        //Language
+        $language = $style->getLang();
+        if ($language != null && ($language->getLatin() !== null || $language->getEastAsia() !== null || $language->getBidirectional() !== null)) {
+            $xmlWriter->startElement('w:lang');
+            $xmlWriter->writeAttributeIf($language->getLatin() !== null, 'w:val', $language->getLatin());
+            $xmlWriter->writeAttributeIf($language->getEastAsia() !== null, 'w:eastAsia', $language->getEastAsia());
+            $xmlWriter->writeAttributeIf($language->getBidirectional() !== null, 'w:bidi', $language->getBidirectional());
+            //if bidi is not set but we are writing RTL, write the latin language in the bidi tag
+            if ($style->isRTL() && $language->getBidirectional() === null && $language->getLatin() !== null) {
+                $xmlWriter->writeAttribute('w:bidi', $language->getLatin());
+            }
+            $xmlWriter->endElement();
+        }
+
         // Color
         $color = $style->getColor();
         $xmlWriter->writeElementIf($color !== null, 'w:color', 'w:val', $color);
@@ -96,17 +112,21 @@ class Font extends AbstractStyle
         $xmlWriter->writeElementIf($size !== null, 'w:szCs', 'w:val', $size * 2);
 
         // Bold, italic
-        $xmlWriter->writeElementIf($style->isBold(), 'w:b');
-        $xmlWriter->writeElementIf($style->isItalic(), 'w:i');
-        $xmlWriter->writeElementIf($style->isItalic(), 'w:iCs');
+        $xmlWriter->writeElementIf($style->isBold() !== null, 'w:b', 'w:val', $this->writeOnOf($style->isBold()));
+        $xmlWriter->writeElementIf($style->isBold() !== null, 'w:bCs', 'w:val', $this->writeOnOf($style->isBold()));
+        $xmlWriter->writeElementIf($style->isItalic() !== null, 'w:i', 'w:val', $this->writeOnOf($style->isItalic()));
+        $xmlWriter->writeElementIf($style->isItalic() !== null, 'w:iCs', 'w:val', $this->writeOnOf($style->isItalic()));
 
         // Strikethrough, double strikethrough
-        $xmlWriter->writeElementIf($style->isStrikethrough(), 'w:strike');
-        $xmlWriter->writeElementIf($style->isDoubleStrikethrough(), 'w:dstrike');
+        $xmlWriter->writeElementIf($style->isStrikethrough(), 'w:strike', 'w:val', $this->writeOnOf($style->isStrikethrough()));
+        $xmlWriter->writeElementIf($style->isDoubleStrikethrough(), 'w:dstrike', 'w:val', $this->writeOnOf($style->isDoubleStrikethrough()));
 
         // Small caps, all caps
-        $xmlWriter->writeElementIf($style->isSmallCaps(), 'w:smallCaps');
-        $xmlWriter->writeElementIf($style->isAllCaps(), 'w:caps');
+        $xmlWriter->writeElementIf($style->isSmallCaps() !== null, 'w:smallCaps', 'w:val', $this->writeOnOf($style->isSmallCaps()));
+        $xmlWriter->writeElementIf($style->isAllCaps() !== null, 'w:caps', 'w:val', $this->writeOnOf($style->isAllCaps()));
+
+        //Hidden text
+        $xmlWriter->writeElementIf($style->isHidden(), 'w:vanish', 'w:val', $this->writeOnOf($style->isHidden()));
 
         // Underline
         $xmlWriter->writeElementIf($style->getUnderline() != 'none', 'w:u', 'w:val', $style->getUnderline());
@@ -123,18 +143,24 @@ class Font extends AbstractStyle
         $xmlWriter->writeElementIf($style->getSpacing() !== null, 'w:spacing', 'w:val', $style->getSpacing());
         $xmlWriter->writeElementIf($style->getKerning() !== null, 'w:kern', 'w:val', $style->getKerning() * 2);
 
+        // noProof
+        $xmlWriter->writeElementIf($style->isNoProof() !== null, 'w:noProof', 'w:val', $this->writeOnOf($style->isNoProof()));
+
         // Background-Color
         $shading = $style->getShading();
-        if (!is_null($shading)) {
+        if (null !== $shading) {
             $styleWriter = new Shading($xmlWriter, $shading);
             $styleWriter->write();
         }
-        
+
         // RTL
         if ($this->isInline === true) {
             $styleName = $style->getStyleName();
             $xmlWriter->writeElementIf($styleName === null && $style->isRTL(), 'w:rtl');
         }
+
+        // Position
+        $xmlWriter->writeElementIf($style->getPosition() !== null, 'w:position', 'w:val', $style->getPosition());
 
         $xmlWriter->endElement();
     }
@@ -143,9 +169,8 @@ class Font extends AbstractStyle
      * Set is inline.
      *
      * @param bool $value
-     * @return void
      */
-    public function setIsInline($value)
+    public function setIsInline($value): void
     {
         $this->isInline = $value;
     }

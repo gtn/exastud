@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This file is part of PHPWord - A pure PHP library for reading and writing
  * word processing documents.
@@ -10,70 +11,66 @@
  * file that was distributed with this source code. For the full list of
  * contributors, visit https://github.com/PHPOffice/PHPWord/contributors.
  *
- * @link        https://github.com/PHPOffice/PHPWord
- * @copyright   2010-2016 PHPWord contributors
+ * @see         https://github.com/PHPOffice/PHPWord
+ *
  * @license     http://www.gnu.org/licenses/lgpl.txt LGPL version 3
  */
 
 namespace PhpOffice\PhpWord\Element;
 
-use PhpOffice\Common\Text as CommonText;
+use PhpOffice\PhpWord\Shared\Text as SharedText;
 use PhpOffice\PhpWord\Style\Font;
 use PhpOffice\PhpWord\Style\Paragraph;
 
 /**
- * Preserve text/field element
+ * Preserve text/field element.
  */
 class PreserveText extends AbstractElement
 {
     /**
-     * Text content
+     * Text content.
      *
-     * @var string
+     * @var null|array|string
      */
     private $text;
 
     /**
-     * Text style
+     * Text style.
      *
-     * @var string|\PhpOffice\PhpWord\Style\Font
+     * @var null|Font|string
      */
     private $fontStyle;
 
     /**
-     * Paragraph style
+     * Paragraph style.
      *
-     * @var string|\PhpOffice\PhpWord\Style\Paragraph
+     * @var null|Paragraph|string
      */
     private $paragraphStyle;
 
-
     /**
-     * Create a new Preserve Text Element
+     * Create a new Preserve Text Element.
      *
      * @param string $text
      * @param mixed $fontStyle
      * @param mixed $paragraphStyle
-     * @return self
      */
     public function __construct($text = null, $fontStyle = null, $paragraphStyle = null)
     {
         $this->fontStyle = $this->setNewStyle(new Font('text'), $fontStyle);
         $this->paragraphStyle = $this->setNewStyle(new Paragraph(), $paragraphStyle);
 
-        $this->text = CommonText::toUTF8($text);
-        $matches = preg_split('/({.*?})/', $this->text, null, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
+        $this->text = SharedText::toUTF8($text);
+        $matches = preg_split('/({.*?})/', $this->text ?? '', -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
         if (isset($matches[0])) {
             $this->text = $matches;
         }
-
-        return $this;
     }
 
     /**
-     * Get Text style
+     * Get Text style.
      *
-     * @return string|\PhpOffice\PhpWord\Style\Font
+     * @return null|Font|string
      */
     public function getFontStyle()
     {
@@ -81,9 +78,9 @@ class PreserveText extends AbstractElement
     }
 
     /**
-     * Get Paragraph style
+     * Get Paragraph style.
      *
-     * @return string|\PhpOffice\PhpWord\Style\Paragraph
+     * @return null|Paragraph|string
      */
     public function getParagraphStyle()
     {
@@ -91,9 +88,9 @@ class PreserveText extends AbstractElement
     }
 
     /**
-     * Get Text content
+     * Get Text content.
      *
-     * @return string
+     * @return null|array|string
      */
     public function getText()
     {

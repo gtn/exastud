@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This file is part of PHPWord - A pure PHP library for reading and writing
  * word processing documents.
@@ -10,8 +11,8 @@
  * file that was distributed with this source code. For the full list of
  * contributors, visit https://github.com/PHPOffice/PHPWord/contributors.
  *
- * @link        https://github.com/PHPOffice/PHPWord
- * @copyright   2010-2016 PHPWord contributors
+ * @see         https://github.com/PHPOffice/PHPWord
+ *
  * @license     http://www.gnu.org/licenses/lgpl.txt LGPL version 3
  */
 
@@ -20,7 +21,7 @@ namespace PhpOffice\PhpWord\Element;
 use PhpOffice\PhpWord\Style\TextBox as TextBoxStyle;
 
 /**
- * TextBox element
+ * TextBox element.
  *
  * @since 0.11.0
  */
@@ -32,14 +33,14 @@ class TextBox extends AbstractContainer
     protected $container = 'TextBox';
 
     /**
-     * TextBox style
+     * TextBox style.
      *
-     * @var \PhpOffice\PhpWord\Style\TextBox
+     * @var ?TextBoxStyle
      */
     private $style;
 
     /**
-     * Create a new textbox
+     * Create a new textbox.
      *
      * @param mixed $style
      */
@@ -49,9 +50,9 @@ class TextBox extends AbstractContainer
     }
 
     /**
-     * Get textbox style
+     * Get textbox style.
      *
-     * @return \PhpOffice\PhpWord\Style\TextBox
+     * @return ?TextBoxStyle
      */
     public function getStyle()
     {

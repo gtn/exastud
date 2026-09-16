@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This file is part of PHPWord - A pure PHP library for reading and writing
  * word processing documents.
@@ -10,28 +11,29 @@
  * file that was distributed with this source code. For the full list of
  * contributors, visit https://github.com/PHPOffice/PHPWord/contributors.
  *
- * @link        https://github.com/PHPOffice/PHPWord
- * @copyright   2010-2016 PHPWord contributors
+ * @see         https://github.com/PHPOffice/PHPWord
+ *
  * @license     http://www.gnu.org/licenses/lgpl.txt LGPL version 3
  */
 
 namespace PhpOffice\PhpWord\Writer\RTF\Element;
 
 /**
- * TextRun element RTF writer
+ * TextRun element RTF writer.
  *
  * @since 0.10.0
  */
 class TextRun extends AbstractElement
 {
     /**
-     * Write element
+     * Write element.
      *
      * @return string
      */
     public function write()
     {
         $writer = new Container($this->parentWriter, $this->element);
+        $this->getStyles();
 
         $content = '';
         $content .= $this->writeOpening();

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This file is part of PHPWord - A pure PHP library for reading and writing
  * word processing documents.
@@ -10,8 +11,8 @@
  * file that was distributed with this source code. For the full list of
  * contributors, visit https://github.com/PHPOffice/PHPWord/contributors.
  *
- * @link        https://github.com/PHPOffice/PHPWord
- * @copyright   2010-2016 PHPWord contributors
+ * @see         https://github.com/PHPOffice/PHPWord
+ *
  * @license     http://www.gnu.org/licenses/lgpl.txt LGPL version 3
  */
 
@@ -20,7 +21,7 @@ namespace PhpOffice\PhpWord\Element;
 use PhpOffice\PhpWord\Style\Cell as CellStyle;
 
 /**
- * Table cell element
+ * Table cell element.
  */
 class Cell extends AbstractContainer
 {
@@ -30,24 +31,24 @@ class Cell extends AbstractContainer
     protected $container = 'Cell';
 
     /**
-     * Cell width
+     * Cell width.
      *
-     * @var int
+     * @var ?int
      */
-    private $width = null;
+    private $width;
 
     /**
-     * Cell style
+     * Cell style.
      *
-     * @var \PhpOffice\PhpWord\Style\Cell
+     * @var ?CellStyle
      */
     private $style;
 
     /**
-     * Create new instance
+     * Create new instance.
      *
-     * @param int $width
-     * @param array|\PhpOffice\PhpWord\Style\Cell $style
+     * @param null|int $width
+     * @param array|CellStyle $style
      */
     public function __construct($width = null, $style = null)
     {
@@ -56,9 +57,9 @@ class Cell extends AbstractContainer
     }
 
     /**
-     * Get cell style
+     * Get cell style.
      *
-     * @return \PhpOffice\PhpWord\Style\Cell
+     * @return ?CellStyle
      */
     public function getStyle()
     {
@@ -66,9 +67,9 @@ class Cell extends AbstractContainer
     }
 
     /**
-     * Get cell width
+     * Get cell width.
      *
-     * @return int
+     * @return ?int
      */
     public function getWidth()
     {

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This file is part of PHPWord - A pure PHP library for reading and writing
  * word processing documents.
@@ -10,8 +11,8 @@
  * file that was distributed with this source code. For the full list of
  * contributors, visit https://github.com/PHPOffice/PHPWord/contributors.
  *
- * @link        https://github.com/PHPOffice/PHPWord
- * @copyright   2010-2016 PHPWord contributors
+ * @see         https://github.com/PHPOffice/PHPWord
+ *
  * @license     http://www.gnu.org/licenses/lgpl.txt LGPL version 3
  */
 
@@ -19,9 +20,6 @@ namespace PhpOffice\PhpWord\Element;
 
 use PhpOffice\PhpWord\Style\Paragraph;
 
-/**
- * @codeCoverageIgnore
- */
 class Footnote extends AbstractContainer
 {
     /**
@@ -30,23 +28,23 @@ class Footnote extends AbstractContainer
     protected $container = 'Footnote';
 
     /**
-     * Paragraph style
+     * Paragraph style.
      *
-     * @var string|\PhpOffice\PhpWord\Style\Paragraph
+     * @var null|Paragraph|string
      */
     protected $paragraphStyle;
 
     /**
-     * Is part of collection
+     * Is part of collection.
      *
      * @var bool
      */
     protected $collectionRelation = true;
 
     /**
-     * Create new instance
+     * Create new instance.
      *
-     * @param string|array|\PhpOffice\PhpWord\Style\Paragraph $paragraphStyle
+     * @param array|Paragraph|string $paragraphStyle
      */
     public function __construct($paragraphStyle = null)
     {
@@ -55,36 +53,12 @@ class Footnote extends AbstractContainer
     }
 
     /**
-     * Get paragraph style
+     * Get paragraph style.
      *
-     * @return string|\PhpOffice\PhpWord\Style\Paragraph
+     * @return null|Paragraph|string
      */
     public function getParagraphStyle()
     {
         return $this->paragraphStyle;
-    }
-
-    /**
-     * Get Footnote Reference ID
-     *
-     * @deprecated 0.10.0
-     *
-     * @return int
-     */
-    public function getReferenceId()
-    {
-        return $this->getRelationId();
-    }
-
-    /**
-     * Set Footnote Reference ID
-     *
-     * @deprecated 0.10.0
-     *
-     * @param int $rId
-     */
-    public function setReferenceId($rId)
-    {
-        $this->setRelationId($rId);
     }
 }

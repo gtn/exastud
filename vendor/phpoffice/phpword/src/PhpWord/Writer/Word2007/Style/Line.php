@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This file is part of PHPWord - A pure PHP library for reading and writing
  * word processing documents.
@@ -10,8 +11,8 @@
  * file that was distributed with this source code. For the full list of
  * contributors, visit https://github.com/PHPOffice/PHPWord/contributors.
  *
- * @link        https://github.com/PHPOffice/PHPWord
- * @copyright   2010-2016 PHPWord contributors
+ * @see         https://github.com/PHPOffice/PHPWord
+ *
  * @license     http://www.gnu.org/licenses/lgpl.txt LGPL version 3
  */
 
@@ -20,18 +21,16 @@ namespace PhpOffice\PhpWord\Writer\Word2007\Style;
 use PhpOffice\PhpWord\Style\Line as LineStyle;
 
 /**
- * Line style writer
- *
+ * Line style writer.
  */
 class Line extends Frame
 {
     /**
      * Write Line stroke.
      *
-     * @return void
      * @todo Merge with `Stroke` style
      */
-    public function writeStroke()
+    public function writeStroke(): void
     {
         $xmlWriter = $this->getXmlWriter();
         $style = $this->getStyle();
@@ -40,15 +39,15 @@ class Line extends Frame
         }
 
         $dash = $style->getDash();
-        $dashStyles = array(
-            LineStyle::DASH_STYLE_DASH              => 'dash',
-            LineStyle::DASH_STYLE_ROUND_DOT         => '1 1',
-            LineStyle::DASH_STYLE_SQUARE_DOT        => '1 1',
-            LineStyle::DASH_STYLE_DASH_DOT          => 'dashDot',
-            LineStyle::DASH_STYLE_LONG_DASH         => 'longDash',
-            LineStyle::DASH_STYLE_LONG_DASH_DOT     => 'longDashDot',
+        $dashStyles = [
+            LineStyle::DASH_STYLE_DASH => 'dash',
+            LineStyle::DASH_STYLE_ROUND_DOT => '1 1',
+            LineStyle::DASH_STYLE_SQUARE_DOT => '1 1',
+            LineStyle::DASH_STYLE_DASH_DOT => 'dashDot',
+            LineStyle::DASH_STYLE_LONG_DASH => 'longDash',
+            LineStyle::DASH_STYLE_LONG_DASH_DOT => 'longDashDot',
             LineStyle::DASH_STYLE_LONG_DASH_DOT_DOT => 'longDashDotDot',
-        );
+        ];
 
         $xmlWriter->startElement('v:stroke');
 

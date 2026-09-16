@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This file is part of PHPWord - A pure PHP library for reading and writing
  * word processing documents.
@@ -10,23 +11,23 @@
  * file that was distributed with this source code. For the full list of
  * contributors, visit https://github.com/PHPOffice/PHPWord/contributors.
  *
- * @link        https://github.com/PHPOffice/PHPWord
- * @copyright   2010-2016 PHPWord contributors
+ * @see         https://github.com/PHPOffice/PHPWord
+ *
  * @license     http://www.gnu.org/licenses/lgpl.txt LGPL version 3
  */
 
 namespace PhpOffice\PhpWord\Writer\Word2007\Element;
 
-use PhpOffice\Common\XMLWriter;
+use PhpOffice\PhpWord\Element\Title;
 use PhpOffice\PhpWord\Element\TOC as TOCElement;
-use PhpOffice\PhpWord\Settings;
+use PhpOffice\PhpWord\Shared\XMLWriter;
 use PhpOffice\PhpWord\Style\Font;
 use PhpOffice\PhpWord\Writer\Word2007\Style\Font as FontStyleWriter;
 use PhpOffice\PhpWord\Writer\Word2007\Style\Paragraph as ParagraphStyleWriter;
 use PhpOffice\PhpWord\Writer\Word2007\Style\Tab as TabStyleWriter;
 
 /**
- * TOC element writer
+ * TOC element writer.
  *
  * @since 0.10.0
  */
@@ -34,10 +35,8 @@ class TOC extends AbstractElement
 {
     /**
      * Write element.
-     *
-     * @return void
      */
-    public function write()
+    public function write(): void
     {
         $xmlWriter = $this->getXmlWriter();
         $element = $this->getElement();
@@ -65,21 +64,15 @@ class TOC extends AbstractElement
     }
 
     /**
-     * Write title
-     *
-     * @param \PhpOffice\Common\XMLWriter $xmlWriter
-     * @param \PhpOffice\PhpWord\Element\TOC $element
-     * @param \PhpOffice\PhpWord\Element\Title $title
-     * @param bool $writeFieldMark
-     * @return void
+     * Write title.
      */
-    private function writeTitle(XMLWriter $xmlWriter, TOCElement $element, $title, $writeFieldMark)
+    private function writeTitle(XMLWriter $xmlWriter, TOCElement $element, Title $title, bool $writeFieldMark): void
     {
         $tocStyle = $element->getStyleTOC();
         $fontStyle = $element->getStyleFont();
         $isObject = ($fontStyle instanceof Font) ? true : false;
         $rId = $title->getRelationId();
-        $indent = ($title->getDepth() - 1) * $tocStyle->getIndent();
+        $indent = (int) (($title->getDepth() - 1) * $tocStyle->getIndent());
 
         $xmlWriter->startElement('w:p');
 
@@ -100,13 +93,12 @@ class TOC extends AbstractElement
             $styleWriter = new FontStyleWriter($xmlWriter, $fontStyle);
             $styleWriter->write();
         }
-        if (Settings::isOutputEscapingEnabled()) {
-            $xmlWriter->writeElement('w:t', $title->getText());
-        } else {
-            $xmlWriter->startElement('w:t');
-            $xmlWriter->writeRaw($title->getText());
-            $xmlWriter->endElement();
-        }
+        $xmlWriter->startElement('w:t');
+
+        $titleText = $title->getText();
+        $this->writeText(is_string($titleText) ? $titleText : '');
+
+        $xmlWriter->endElement(); // w:t
         $xmlWriter->endElement(); // w:r
 
         $xmlWriter->startElement('w:r');
@@ -122,9 +114,23 @@ class TOC extends AbstractElement
         $xmlWriter->startElement('w:r');
         $xmlWriter->startElement('w:instrText');
         $xmlWriter->writeAttribute('xml:space', 'preserve');
-        $xmlWriter->text("PAGEREF _Toc{$rId} \h");
+        $xmlWriter->text("PAGEREF $rId \\h");
         $xmlWriter->endElement();
         $xmlWriter->endElement();
+
+        if ($title->getPageNumber() !== null) {
+            $xmlWriter->startElement('w:r');
+            $xmlWriter->startElement('w:fldChar');
+            $xmlWriter->writeAttribute('w:fldCharType', 'separate');
+            $xmlWriter->endElement();
+            $xmlWriter->endElement();
+
+            $xmlWriter->startElement('w:r');
+            $xmlWriter->startElement('w:t');
+            $xmlWriter->text((string) $title->getPageNumber());
+            $xmlWriter->endElement();
+            $xmlWriter->endElement();
+        }
 
         $xmlWriter->startElement('w:r');
         $xmlWriter->startElement('w:fldChar');
@@ -138,14 +144,9 @@ class TOC extends AbstractElement
     }
 
     /**
-     * Write style
-     *
-     * @param \PhpOffice\Common\XMLWriter $xmlWriter
-     * @param \PhpOffice\PhpWord\Element\TOC $element
-     * @param int $indent
-     * @return void
+     * Write style.
      */
-    private function writeStyle(XMLWriter $xmlWriter, TOCElement $element, $indent)
+    private function writeStyle(XMLWriter $xmlWriter, TOCElement $element, int $indent): void
     {
         $tocStyle = $element->getStyleTOC();
         $fontStyle = $element->getStyleFont();
@@ -154,7 +155,7 @@ class TOC extends AbstractElement
         $xmlWriter->startElement('w:pPr');
 
         // Paragraph
-        if ($isObject && !is_null($fontStyle->getParagraph())) {
+        if ($isObject && null !== $fontStyle->getParagraph()) {
             $styleWriter = new ParagraphStyleWriter($xmlWriter, $fontStyle->getParagraph());
             $styleWriter->write();
         }
@@ -186,12 +187,8 @@ class TOC extends AbstractElement
 
     /**
      * Write TOC Field.
-     *
-     * @param \PhpOffice\Common\XMLWriter $xmlWriter
-     * @param \PhpOffice\PhpWord\Element\TOC $element
-     * @return void
      */
-    private function writeFieldMark(XMLWriter $xmlWriter, TOCElement $element)
+    private function writeFieldMark(XMLWriter $xmlWriter, TOCElement $element): void
     {
         $minDepth = $element->getMinDepth();
         $maxDepth = $element->getMaxDepth();
@@ -205,7 +202,7 @@ class TOC extends AbstractElement
         $xmlWriter->startElement('w:r');
         $xmlWriter->startElement('w:instrText');
         $xmlWriter->writeAttribute('xml:space', 'preserve');
-        $xmlWriter->text("TOC \o {$minDepth}-{$maxDepth} \h \z \u");
+        $xmlWriter->text("TOC \\o {$minDepth}-{$maxDepth} \\h \\z \\u");
         $xmlWriter->endElement();
         $xmlWriter->endElement();
 

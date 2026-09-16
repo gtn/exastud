@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This file is part of PHPWord - A pure PHP library for reading and writing
  * word processing documents.
@@ -10,15 +11,15 @@
  * file that was distributed with this source code. For the full list of
  * contributors, visit https://github.com/PHPOffice/PHPWord/contributors.
  *
- * @link        https://github.com/PHPOffice/PHPWord
- * @copyright   2010-2016 PHPWord contributors
+ * @see         https://github.com/PHPOffice/PHPWord
+ *
  * @license     http://www.gnu.org/licenses/lgpl.txt LGPL version 3
  */
 
 namespace PhpOffice\PhpWord\Writer\Word2007\Style;
 
 /**
- * Shading style writer
+ * Shading style writer.
  *
  * @since 0.10.0
  */
@@ -26,10 +27,8 @@ class Shading extends AbstractStyle
 {
     /**
      * Write style.
-     *
-     * @return void
      */
-    public function write()
+    public function write(): void
     {
         $style = $this->getStyle();
         if (!$style instanceof \PhpOffice\PhpWord\Style\Shading) {
@@ -38,9 +37,9 @@ class Shading extends AbstractStyle
         $xmlWriter = $this->getXmlWriter();
 
         $xmlWriter->startElement('w:shd');
-        $xmlWriter->writeAttribute('w:val', $style->getPattern());
-        $xmlWriter->writeAttribute('w:color', $style->getColor());
-        $xmlWriter->writeAttribute('w:fill', $style->getFill());
+        $xmlWriter->writeAttributeIf(null !== $style->getPattern(), 'w:val', $style->getPattern());
+        $xmlWriter->writeAttributeIf(null !== $style->getColor(), 'w:color', $style->getColor());
+        $xmlWriter->writeAttributeIf(null !== $style->getFill(), 'w:fill', $style->getFill());
         $xmlWriter->endElement();
     }
 }

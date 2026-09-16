@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This file is part of PHPWord - A pure PHP library for reading and writing
  * word processing documents.
@@ -10,75 +11,75 @@
  * file that was distributed with this source code. For the full list of
  * contributors, visit https://github.com/PHPOffice/PHPWord/contributors.
  *
- * @link        https://github.com/PHPOffice/PHPWord
- * @copyright   2010-2016 PHPWord contributors
+ * @see         https://github.com/PHPOffice/PHPWord
+ *
  * @license     http://www.gnu.org/licenses/lgpl.txt LGPL version 3
  */
 
 namespace PhpOffice\PhpWord\Element;
 
 /**
- * Form field element
+ * Form field element.
  *
  * @since 0.12.0
- * @link http://www.datypic.com/sc/ooxml/t-w_CT_FFData.html
+ * @see  http://www.datypic.com/sc/ooxml/t-w_CT_FFData.html
  */
 class FormField extends Text
 {
     /**
-     * Form field type: textinput|checkbox|dropdown
+     * Form field type: textinput|checkbox|dropdown.
      *
      * @var string
      */
     private $type = 'textinput';
 
     /**
-     * Form field name
+     * Form field name.
      *
-     * @var string
+     * @var ?string
      */
     private $name;
 
     /**
-     * Default value
+     * Default value.
      *
      * - TextInput: string
      * - CheckBox: bool
      * - DropDown: int Index of entries (zero based)
      *
-     * @var string|bool|int
+     * @var bool|int|string
      */
     private $default;
 
     /**
-     * Value
+     * Value.
      *
-     * @var string|bool|int
+     * @var null|bool|int|string
      */
     private $value;
 
     /**
-     * Dropdown entries
+     * Dropdown entries.
      *
      * @var array
      */
-    private $entries = array();
+    private $entries = [];
 
     /**
-     * Create new instance
+     * Create new instance.
      *
      * @param string $type
      * @param mixed $fontStyle
      * @param mixed $paragraphStyle
-     * @return self
      */
     public function __construct($type, $fontStyle = null, $paragraphStyle = null)
     {
+        parent::__construct(null, $fontStyle, $paragraphStyle);
         $this->setType($type);
     }
 
     /**
-     * Get type
+     * Get type.
      *
      * @return string
      */
@@ -88,23 +89,24 @@ class FormField extends Text
     }
 
     /**
-     * Set type
+     * Set type.
      *
      * @param string $value
+     *
      * @return self
      */
     public function setType($value)
     {
-        $enum = array('textinput', 'checkbox', 'dropdown');
+        $enum = ['textinput', 'checkbox', 'dropdown'];
         $this->type = $this->setEnumVal($value, $enum, $this->type);
 
         return $this;
     }
 
     /**
-     * Get name
+     * Get name.
      *
-     * @return string
+     * @return ?string
      */
     public function getName()
     {
@@ -112,9 +114,10 @@ class FormField extends Text
     }
 
     /**
-     * Set name
+     * Set name.
      *
-     * @param string|bool|int $value
+     * @param ?string $value
+     *
      * @return self
      */
     public function setName($value)
@@ -125,9 +128,9 @@ class FormField extends Text
     }
 
     /**
-     * Get default
+     * Get default.
      *
-     * @return string|bool|int
+     * @return bool|int|string
      */
     public function getDefault()
     {
@@ -135,9 +138,10 @@ class FormField extends Text
     }
 
     /**
-     * Set default
+     * Set default.
      *
-     * @param string|bool|int $value
+     * @param bool|int|string $value
+     *
      * @return self
      */
     public function setDefault($value)
@@ -148,9 +152,9 @@ class FormField extends Text
     }
 
     /**
-     * Get value
+     * Get value.
      *
-     * @return string|bool|int
+     * @return null|bool|int|string
      */
     public function getValue()
     {
@@ -158,9 +162,10 @@ class FormField extends Text
     }
 
     /**
-     * Set value
+     * Set value.
      *
-     * @param string|bool|int $value
+     * @param null|bool|int|string $value
+     *
      * @return self
      */
     public function setValue($value)
@@ -171,7 +176,7 @@ class FormField extends Text
     }
 
     /**
-     * Get entries
+     * Get entries.
      *
      * @return array
      */
@@ -181,9 +186,10 @@ class FormField extends Text
     }
 
     /**
-     * Set entries
+     * Set entries.
      *
      * @param array $value
+     *
      * @return self
      */
     public function setEntries($value)

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This file is part of PHPWord - A pure PHP library for reading and writing
  * word processing documents.
@@ -10,29 +11,29 @@
  * file that was distributed with this source code. For the full list of
  * contributors, visit https://github.com/PHPOffice/PHPWord/contributors.
  *
- * @link        https://github.com/PHPOffice/PHPWord
- * @copyright   2010-2016 PHPWord contributors
+ * @see         https://github.com/PHPOffice/PHPWord
+ *
  * @license     http://www.gnu.org/licenses/lgpl.txt LGPL version 3
  */
 
 namespace PhpOffice\PhpWord\Reader\Word2007;
 
-use PhpOffice\Common\XMLReader;
 use PhpOffice\PhpWord\PhpWord;
+use PhpOffice\PhpWord\Shared\XMLReader;
 
 /**
- * Core properties reader
+ * Core properties reader.
  *
  * @since 0.10.0
  */
 class DocPropsCore extends AbstractPart
 {
     /**
-     * Property mapping
+     * Property mapping.
      *
      * @var array
      */
-    protected $mapping = array(
+    protected $mapping = [
         'dc:creator' => 'setCreator',
         'dc:title' => 'setTitle',
         'dc:description' => 'setDescription',
@@ -42,22 +43,19 @@ class DocPropsCore extends AbstractPart
         'cp:lastModifiedBy' => 'setLastModifiedBy',
         'dcterms:created' => 'setCreated',
         'dcterms:modified' => 'setModified',
-    );
+    ];
 
     /**
-     * Callback functions
+     * Callback functions.
      *
      * @var array
      */
-    protected $callbacks = array('dcterms:created' => 'strtotime', 'dcterms:modified' => 'strtotime');
+    protected $callbacks = ['dcterms:created' => 'strtotime', 'dcterms:modified' => 'strtotime'];
 
     /**
      * Read core/extended document properties.
-     *
-     * @param \PhpOffice\PhpWord\PhpWord $phpWord
-     * @return void
      */
-    public function read(PhpWord $phpWord)
+    public function read(PhpWord $phpWord): void
     {
         $xmlReader = new XMLReader();
         $xmlReader->getDomFromZip($this->docFile, $this->xmlFile);

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This file is part of PHPWord - A pure PHP library for reading and writing
  * word processing documents.
@@ -10,17 +11,18 @@
  * file that was distributed with this source code. For the full list of
  * contributors, visit https://github.com/PHPOffice/PHPWord/contributors.
  *
- * @link        https://github.com/PHPOffice/PHPWord
- * @copyright   2010-2016 PHPWord contributors
+ * @see         https://github.com/PHPOffice/PHPWord
+ *
  * @license     http://www.gnu.org/licenses/lgpl.txt LGPL version 3
  */
 
 namespace PhpOffice\PhpWord\Writer\Word2007\Part;
 
 /**
- * Word2007 font table writer: word/fontTable.xml
+ * Word2007 font table writer: word/fontTable.xml.
  *
  * @todo Generate content dynamically
+ *
  * @since 0.10.0
  */
 class FontTable extends AbstractPart
@@ -99,6 +101,15 @@ class FontTable extends AbstractPart
         $str .= '<w:pitch w:val="variable" />';
         $str .= '<w:sig w:usb0="E10002FF" w:usb1="4000ACFF" w:usb2="00000009" w:usb3="00000000" ' .
             'w:csb0="0000019F" w:csb1="00000000" />';
+        $str .= '</w:font>';
+
+        $str .= '<w:font w:name="Garamond">';
+        $str .= '<w:panose1 w:val="02020404030301010803" />';
+        $str .= '<w:charset w:val="00" />';
+        $str .= '<w:family w:val="roman" />';
+        $str .= '<w:pitch w:val="variable" />';
+        $str .= '<w:sig w:usb0="00000287" w:usb1="00000002" w:usb2="00000000" w:usb3="00000000" ' .
+            'w:csb0="0000009F" w:csb1="00000000" />';
         $str .= '</w:font>';
 
         $str .= '</w:fonts>';

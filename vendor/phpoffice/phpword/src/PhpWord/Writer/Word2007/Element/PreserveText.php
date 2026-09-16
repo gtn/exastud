@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This file is part of PHPWord - A pure PHP library for reading and writing
  * word processing documents.
@@ -10,17 +11,15 @@
  * file that was distributed with this source code. For the full list of
  * contributors, visit https://github.com/PHPOffice/PHPWord/contributors.
  *
- * @link        https://github.com/PHPOffice/PHPWord
- * @copyright   2010-2016 PHPWord contributors
+ * @see         https://github.com/PHPOffice/PHPWord
+ *
  * @license     http://www.gnu.org/licenses/lgpl.txt LGPL version 3
  */
 
 namespace PhpOffice\PhpWord\Writer\Word2007\Element;
 
-use PhpOffice\PhpWord\Settings;
-
 /**
- * PreserveText element writer
+ * PreserveText element writer.
  *
  * @since 0.10.0
  */
@@ -28,10 +27,8 @@ class PreserveText extends Text
 {
     /**
      * Write preserve text element.
-     *
-     * @return void
      */
-    public function write()
+    public function write(): void
     {
         $xmlWriter = $this->getXmlWriter();
         $element = $this->getElement();
@@ -41,7 +38,7 @@ class PreserveText extends Text
 
         $texts = $element->getText();
         if (!is_array($texts)) {
-            $texts = array($texts);
+            $texts = [$texts];
         }
 
         $this->startElementP();
@@ -62,11 +59,7 @@ class PreserveText extends Text
 
                 $xmlWriter->startElement('w:instrText');
                 $xmlWriter->writeAttribute('xml:space', 'preserve');
-                if (Settings::isOutputEscapingEnabled()) {
-                    $xmlWriter->text($text);
-                } else {
-                    $xmlWriter->writeRaw($text);
-                }
+                $this->writeText($text);
                 $xmlWriter->endElement();
                 $xmlWriter->endElement();
 
@@ -88,11 +81,7 @@ class PreserveText extends Text
 
                 $xmlWriter->startElement('w:t');
                 $xmlWriter->writeAttribute('xml:space', 'preserve');
-                if (Settings::isOutputEscapingEnabled()) {
-                    $xmlWriter->text($this->getText($text));
-                } else {
-                    $xmlWriter->writeRaw($this->getText($text));
-                }
+                $this->writeText($this->getText($text));
                 $xmlWriter->endElement();
                 $xmlWriter->endElement();
             }

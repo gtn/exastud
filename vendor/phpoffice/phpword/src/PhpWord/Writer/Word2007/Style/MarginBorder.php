@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This file is part of PHPWord - A pure PHP library for reading and writing
  * word processing documents.
@@ -10,53 +11,58 @@
  * file that was distributed with this source code. For the full list of
  * contributors, visit https://github.com/PHPOffice/PHPWord/contributors.
  *
- * @link        https://github.com/PHPOffice/PHPWord
- * @copyright   2010-2016 PHPWord contributors
+ * @see         https://github.com/PHPOffice/PHPWord
+ *
  * @license     http://www.gnu.org/licenses/lgpl.txt LGPL version 3
  */
 
 namespace PhpOffice\PhpWord\Writer\Word2007\Style;
 
-use PhpOffice\Common\XMLWriter;
+use PhpOffice\PhpWord\Shared\XMLWriter;
 
 /**
- * Margin border style writer
+ * Margin border style writer.
  *
  * @since 0.10.0
  */
 class MarginBorder extends AbstractStyle
 {
     /**
-     * Sizes
+     * Sizes.
      *
-     * @var integer[]
+     * @var int[]
      */
-    private $sizes = array();
+    private $sizes = [];
 
     /**
-     * Colors
+     * Colors.
      *
      * @var string[]
      */
-    private $colors = array();
+    private $colors = [];
 
     /**
-     * Other attributes
+     * Border styles.
+     *
+     * @var string[]
+     */
+    private $styles = [];
+
+    /**
+     * Other attributes.
      *
      * @var array
      */
-    private $attributes = array();
+    private $attributes = [];
 
     /**
      * Write style.
-     *
-     * @return void
      */
-    public function write()
+    public function write(): void
     {
         $xmlWriter = $this->getXmlWriter();
 
-        $sides = array('top', 'left', 'right', 'bottom', 'insideH', 'insideV');
+        $sides = ['top', 'left', 'right', 'bottom', 'insideH', 'insideV'];
 
         foreach ($this->sizes as $i => $size) {
             if ($size !== null) {
@@ -64,7 +70,8 @@ class MarginBorder extends AbstractStyle
                 if (isset($this->colors[$i])) {
                     $color = $this->colors[$i];
                 }
-                $this->writeSide($xmlWriter, $sides[$i], $this->sizes[$i], $color);
+                $style = $this->styles[$i] ?? 'single';
+                $this->writeSide($xmlWriter, $sides[$i], $this->sizes[$i], $color, $style);
             }
         }
     }
@@ -72,13 +79,12 @@ class MarginBorder extends AbstractStyle
     /**
      * Write side.
      *
-     * @param \PhpOffice\Common\XMLWriter $xmlWriter
      * @param string $side
      * @param int $width
      * @param string $color
-     * @return void
+     * @param string $borderStyle
      */
-    private function writeSide(XMLWriter $xmlWriter, $side, $width, $color = null)
+    private function writeSide(XMLWriter $xmlWriter, $side, $width, $color = null, $borderStyle = 'solid'): void
     {
         $xmlWriter->startElement('w:' . $side);
         if (!empty($this->colors)) {
@@ -87,9 +93,9 @@ class MarginBorder extends AbstractStyle
                     $color = $this->attributes['defaultColor'];
                 }
             }
-            $xmlWriter->writeAttribute('w:val', 'single');
+            $xmlWriter->writeAttribute('w:val', $borderStyle);
             $xmlWriter->writeAttribute('w:sz', $width);
-            $xmlWriter->writeAttribute('w:color', $color);
+            $xmlWriter->writeAttributeIf($color != null, 'w:color', $color);
             if (!empty($this->attributes)) {
                 if (isset($this->attributes['space'])) {
                     $xmlWriter->writeAttribute('w:space', $this->attributes['space']);
@@ -105,10 +111,9 @@ class MarginBorder extends AbstractStyle
     /**
      * Set sizes.
      *
-     * @param integer[] $value
-     * @return void
+     * @param int[] $value
      */
-    public function setSizes($value)
+    public function setSizes($value): void
     {
         $this->sizes = $value;
     }
@@ -116,21 +121,29 @@ class MarginBorder extends AbstractStyle
     /**
      * Set colors.
      *
-     * @param string[] $value
-     * @return void
+     * @param array<null|string> $value
      */
-    public function setColors($value)
+    public function setColors($value): void
     {
         $this->colors = $value;
+    }
+
+    /**
+     * Set border styles.
+     *
+     * @param string[] $value
+     */
+    public function setStyles($value): void
+    {
+        $this->styles = $value;
     }
 
     /**
      * Set attributes.
      *
      * @param array $value
-     * @return void
      */
-    public function setAttributes($value)
+    public function setAttributes($value): void
     {
         $this->attributes = $value;
     }

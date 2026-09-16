@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This file is part of PHPWord - A pure PHP library for reading and writing
  * word processing documents.
@@ -10,24 +11,24 @@
  * file that was distributed with this source code. For the full list of
  * contributors, visit https://github.com/PHPOffice/PHPWord/contributors.
  *
- * @link        https://github.com/PHPOffice/PHPWord
- * @copyright   2010-2016 PHPWord contributors
+ * @see         https://github.com/PHPOffice/PHPWord
+ *
  * @license     http://www.gnu.org/licenses/lgpl.txt LGPL version 3
  */
 
 namespace PhpOffice\PhpWord\Writer\HTML\Element;
 
-use PhpOffice\PhpWord\Settings;
+use PhpOffice\PhpWord\Writer\HTML;
 
 /**
- * TextRun element HTML writer
+ * TextRun element HTML writer.
  *
  * @since 0.10.0
  */
 class Title extends AbstractElement
 {
     /**
-     * Write heading
+     * Write heading.
      *
      * @return string
      */
@@ -38,11 +39,15 @@ class Title extends AbstractElement
         }
 
         $tag = 'h' . $this->element->getDepth();
-        if (Settings::isOutputEscapingEnabled()) {
-            $text = $this->escaper->escapeHtml($this->element->getText());
+
+        $text = $this->element->getText();
+        if (is_string($text)) {
+            $text = $this->parentWriter->escapeHTML($text);
         } else {
-            $text = $this->element->getText();
+            $writer = new Container($this->parentWriter, $text);
+            $text = $writer->write();
         }
+
         $content = "<{$tag}>{$text}</{$tag}>" . PHP_EOL;
 
         return $content;

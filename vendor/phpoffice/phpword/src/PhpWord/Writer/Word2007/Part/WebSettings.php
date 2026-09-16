@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This file is part of PHPWord - A pure PHP library for reading and writing
  * word processing documents.
@@ -10,28 +11,28 @@
  * file that was distributed with this source code. For the full list of
  * contributors, visit https://github.com/PHPOffice/PHPWord/contributors.
  *
- * @link        https://github.com/PHPOffice/PHPWord
- * @copyright   2010-2016 PHPWord contributors
+ * @see         https://github.com/PHPOffice/PHPWord
+ *
  * @license     http://www.gnu.org/licenses/lgpl.txt LGPL version 3
  */
 
 namespace PhpOffice\PhpWord\Writer\Word2007\Part;
 
 /**
- * Word2007 web settings part writer: word/webSettings.xml
+ * Word2007 web settings part writer: word/webSettings.xml.
  */
 class WebSettings extends Settings
 {
     /**
-     * Write part
+     * Write part.
      *
      * @return string
      */
     public function write()
     {
-        $settings = array(
+        $settings = [
             'w:optimizeForBrowser' => '',
-        );
+        ];
 
         $xmlWriter = $this->getXmlWriter();
 

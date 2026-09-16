@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This file is part of PHPWord - A pure PHP library for reading and writing
  * word processing documents.
@@ -10,17 +11,15 @@
  * file that was distributed with this source code. For the full list of
  * contributors, visit https://github.com/PHPOffice/PHPWord/contributors.
  *
- * @link        https://github.com/PHPOffice/PHPWord
- * @copyright   2010-2016 PHPWord contributors
+ * @see         https://github.com/PHPOffice/PHPWord
+ *
  * @license     http://www.gnu.org/licenses/lgpl.txt LGPL version 3
  */
 
 namespace PhpOffice\PhpWord\Element;
 
-use PhpOffice\PhpWord\Style\Paragraph;
-
 /**
- * Endnote element
+ * Endnote element.
  *
  * @since 0.10.0
  */
@@ -32,12 +31,12 @@ class Endnote extends Footnote
     protected $container = 'Endnote';
 
     /**
-     * Create new instance
+     * Create new instance.
      *
-     * @param string|array|\PhpOffice\PhpWord\Style\Paragraph $paragraphStyle
+     * @param array|\PhpOffice\PhpWord\Style\Paragraph|string $paragraphStyle
      */
     public function __construct($paragraphStyle = null)
     {
-        $this->paragraphStyle = $this->setNewStyle(new Paragraph(), $paragraphStyle);
+        parent::__construct($paragraphStyle);
     }
 }

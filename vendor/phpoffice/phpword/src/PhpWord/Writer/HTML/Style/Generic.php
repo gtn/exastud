@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This file is part of PHPWord - A pure PHP library for reading and writing
  * word processing documents.
@@ -10,29 +11,29 @@
  * file that was distributed with this source code. For the full list of
  * contributors, visit https://github.com/PHPOffice/PHPWord/contributors.
  *
- * @link        https://github.com/PHPOffice/PHPWord
- * @copyright   2010-2016 PHPWord contributors
+ * @see         https://github.com/PHPOffice/PHPWord
+ *
  * @license     http://www.gnu.org/licenses/lgpl.txt LGPL version 3
  */
 
 namespace PhpOffice\PhpWord\Writer\HTML\Style;
 
 /**
- * Generic style writer
+ * Generic style writer.
  *
  * @since 0.10.0
  */
 class Generic extends AbstractStyle
 {
     /**
-     * Write style
+     * Write style.
      *
      * @return string
      */
     public function write()
     {
         $style = $this->getStyle();
-        $css = array();
+        $css = [];
 
         if (is_array($style) && !empty($style)) {
             $css = $style;

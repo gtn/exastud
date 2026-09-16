@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This file is part of PHPWord - A pure PHP library for reading and writing
  * word processing documents.
@@ -10,17 +11,21 @@
  * file that was distributed with this source code. For the full list of
  * contributors, visit https://github.com/PHPOffice/PHPWord/contributors.
  *
- * @link        https://github.com/PHPOffice/PHPWord
- * @copyright   2010-2016 PHPWord contributors
+ * @see         https://github.com/PHPOffice/PHPWord
+ *
  * @license     http://www.gnu.org/licenses/lgpl.txt LGPL version 3
  */
 
 namespace PhpOffice\PhpWord\Collection;
 
+use PhpOffice\PhpWord\Element\Footnote;
+
 /**
- * Footnotes collection
+ * Footnotes collection.
  *
  * @since 0.10.0
+ *
+ * @extends AbstractCollection<Footnote>
  */
 class Footnotes extends AbstractCollection
 {

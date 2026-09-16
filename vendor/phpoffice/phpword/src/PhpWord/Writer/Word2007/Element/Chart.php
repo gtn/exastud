@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This file is part of PHPWord - A pure PHP library for reading and writing
  * word processing documents.
@@ -10,8 +11,8 @@
  * file that was distributed with this source code. For the full list of
  * contributors, visit https://github.com/PHPOffice/PHPWord/contributors.
  *
- * @link        https://github.com/PHPOffice/PHPWord
- * @copyright   2010-2016 PHPWord contributors
+ * @see         https://github.com/PHPOffice/PHPWord
+ *
  * @license     http://www.gnu.org/licenses/lgpl.txt LGPL version 3
  */
 
@@ -20,7 +21,7 @@ namespace PhpOffice\PhpWord\Writer\Word2007\Element;
 use PhpOffice\PhpWord\Element\Chart as ChartElement;
 
 /**
- * Chart element writer
+ * Chart element writer.
  *
  * @since 0.12.0
  */
@@ -28,10 +29,8 @@ class Chart extends AbstractElement
 {
     /**
      * Write element.
-     *
-     * @return void
      */
-    public function write()
+    public function write(): void
     {
         $xmlWriter = $this->getXmlWriter();
         $element = $this->getElement();
@@ -45,14 +44,15 @@ class Chart extends AbstractElement
         if (!$this->withoutP) {
             $xmlWriter->startElement('w:p');
         }
+        $this->writeCommentRangeStart();
 
         $xmlWriter->startElement('w:r');
         $xmlWriter->startElement('w:drawing');
         $xmlWriter->startElement('wp:inline');
 
         // EMU
-        $xmlWriter->writeElementBlock('wp:extent', array('cx' => $style->getWidth(), 'cy' => $style->getHeight()));
-        $xmlWriter->writeElementBlock('wp:docPr', array('id' => $rId, 'name' => "Chart{$rId}"));
+        $xmlWriter->writeElementBlock('wp:extent', ['cx' => $style->getWidth(), 'cy' => $style->getHeight()]);
+        $xmlWriter->writeElementBlock('wp:docPr', ['id' => $rId, 'name' => "Chart{$rId}"]);
 
         $xmlWriter->startElement('a:graphic');
         $xmlWriter->writeAttribute('xmlns:a', 'http://schemas.openxmlformats.org/drawingml/2006/main');

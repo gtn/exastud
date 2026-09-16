@@ -4,20 +4,13 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInit54c4c7a724e85092e083990914efd691
+class ComposerStaticInit0d7bc569612af8c1d633800242eca3c5
 {
     public static $prefixLengthsPsr4 = array (
-        'Z' => 
-        array (
-            'Zend\\Validator\\' => 15,
-            'Zend\\Stdlib\\' => 12,
-            'Zend\\Escaper\\' => 13,
-        ),
         'P' => 
         array (
             'PhpOffice\\PhpWord\\' => 18,
-            'PhpOffice\\Common\\' => 17,
-            'PhpOffice\\' => 10,
+            'PhpOffice\\Math\\' => 15,
         ),
         'I' => 
         array (
@@ -26,29 +19,13 @@ class ComposerStaticInit54c4c7a724e85092e083990914efd691
     );
 
     public static $prefixDirsPsr4 = array (
-        'Zend\\Validator\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/zendframework/zend-validator/src',
-        ),
-        'Zend\\Stdlib\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/zendframework/zend-stdlib/src',
-        ),
-        'Zend\\Escaper\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/zendframework/zend-escaper/src',
-        ),
         'PhpOffice\\PhpWord\\' => 
         array (
             0 => __DIR__ . '/..' . '/phpoffice/phpword/src/PhpWord',
         ),
-        'PhpOffice\\Common\\' => 
+        'PhpOffice\\Math\\' => 
         array (
-            0 => __DIR__ . '/..' . '/phpoffice/common/src/Common',
-        ),
-        'PhpOffice\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/phpoffice',
+            0 => __DIR__ . '/..' . '/phpoffice/math/src/Math',
         ),
         'Ifsnop\\' => 
         array (
@@ -57,15 +34,15 @@ class ComposerStaticInit54c4c7a724e85092e083990914efd691
     );
 
     public static $classMap = array (
-        'PclZip' => __DIR__ . '/..' . '/pclzip/pclzip/pclzip.lib.php',
+        'Composer\\InstalledVersions' => __DIR__ . '/..' . '/composer/InstalledVersions.php',
     );
 
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->prefixLengthsPsr4 = ComposerStaticInit54c4c7a724e85092e083990914efd691::$prefixLengthsPsr4;
-            $loader->prefixDirsPsr4 = ComposerStaticInit54c4c7a724e85092e083990914efd691::$prefixDirsPsr4;
-            $loader->classMap = ComposerStaticInit54c4c7a724e85092e083990914efd691::$classMap;
+            $loader->prefixLengthsPsr4 = ComposerStaticInit0d7bc569612af8c1d633800242eca3c5::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInit0d7bc569612af8c1d633800242eca3c5::$prefixDirsPsr4;
+            $loader->classMap = ComposerStaticInit0d7bc569612af8c1d633800242eca3c5::$classMap;
 
         }, null, ClassLoader::class);
     }

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This file is part of PHPWord - A pure PHP library for reading and writing
  * word processing documents.
@@ -10,19 +11,20 @@
  * file that was distributed with this source code. For the full list of
  * contributors, visit https://github.com/PHPOffice/PHPWord/contributors.
  *
- * @link        https://github.com/PHPOffice/PHPWord
- * @copyright   2010-2016 PHPWord contributors
+ * @see         https://github.com/PHPOffice/PHPWord
+ *
  * @license     http://www.gnu.org/licenses/lgpl.txt LGPL version 3
  */
+
 namespace PhpOffice\PhpWord\Style;
 
 /**
- * Image and memory image style
+ * Image and memory image style.
  */
 class Image extends Frame
 {
     /**
-     * Backward compatibility constants
+     * Backward compatibility constants.
      *
      * @const string
      */
@@ -55,14 +57,14 @@ class Image extends Frame
     const POSITION_RELATIVE = self::POS_RELATIVE;
 
     /**
-     * Create new instance
+     * Create new instance.
      */
     public function __construct()
     {
         parent::__construct();
-        $this->setUnit('px');
+        $this->setUnit(self::UNIT_PT);
 
-        // Backward compatilibity setting
+        // Backward compatibility setting
         // @todo Remove on 1.0.0
         $this->setWrap(self::WRAPPING_STYLE_INLINE);
         $this->setHPos(self::POSITION_HORIZONTAL_LEFT);
@@ -72,9 +74,9 @@ class Image extends Frame
     }
 
     /**
-     * Get margin top
+     * Get margin top.
      *
-     * @return int|float
+     * @return float|int
      */
     public function getMarginTop()
     {
@@ -82,10 +84,12 @@ class Image extends Frame
     }
 
     /**
-     * Set margin top
+     * Set margin top.
      *
      * @ignoreScrutinizerPatch
-     * @param int|float $value
+     *
+     * @param float|int $value
+     *
      * @return self
      */
     public function setMarginTop($value = 0)
@@ -96,9 +100,9 @@ class Image extends Frame
     }
 
     /**
-     * Get margin left
+     * Get margin left.
      *
-     * @return int|float
+     * @return float|int
      */
     public function getMarginLeft()
     {
@@ -106,10 +110,12 @@ class Image extends Frame
     }
 
     /**
-     * Set margin left
+     * Set margin left.
      *
      * @ignoreScrutinizerPatch
-     * @param int|float $value
+     *
+     * @param float|int $value
+     *
      * @return self
      */
     public function setMarginLeft($value = 0)
@@ -120,7 +126,7 @@ class Image extends Frame
     }
 
     /**
-     * Get wrapping style
+     * Get wrapping style.
      *
      * @return string
      */
@@ -130,11 +136,9 @@ class Image extends Frame
     }
 
     /**
-     * Set wrapping style
+     * Set wrapping style.
      *
      * @param string $wrappingStyle
-     *
-     * @throws \InvalidArgumentException
      *
      * @return self
      */
@@ -146,7 +150,7 @@ class Image extends Frame
     }
 
     /**
-     * Get positioning type
+     * Get positioning type.
      *
      * @return string
      */
@@ -156,11 +160,9 @@ class Image extends Frame
     }
 
     /**
-     * Set positioning type
+     * Set positioning type.
      *
      * @param string $positioning
-     *
-     * @throws \InvalidArgumentException
      *
      * @return self
      */
@@ -172,7 +174,7 @@ class Image extends Frame
     }
 
     /**
-     * Get horizontal alignment
+     * Get horizontal alignment.
      *
      * @return string
      */
@@ -182,11 +184,9 @@ class Image extends Frame
     }
 
     /**
-     * Set horizontal alignment
+     * Set horizontal alignment.
      *
      * @param string $alignment
-     *
-     * @throws \InvalidArgumentException
      *
      * @return self
      */
@@ -198,7 +198,7 @@ class Image extends Frame
     }
 
     /**
-     * Get vertical alignment
+     * Get vertical alignment.
      *
      * @return string
      */
@@ -208,11 +208,9 @@ class Image extends Frame
     }
 
     /**
-     * Set vertical alignment
+     * Set vertical alignment.
      *
      * @param string $alignment
-     *
-     * @throws \InvalidArgumentException
      *
      * @return self
      */
@@ -224,7 +222,7 @@ class Image extends Frame
     }
 
     /**
-     * Get horizontal relation
+     * Get horizontal relation.
      *
      * @return string
      */
@@ -234,11 +232,9 @@ class Image extends Frame
     }
 
     /**
-     * Set horizontal relation
+     * Set horizontal relation.
      *
      * @param string $relto
-     *
-     * @throws \InvalidArgumentException
      *
      * @return self
      */
@@ -250,7 +246,7 @@ class Image extends Frame
     }
 
     /**
-     * Get vertical relation
+     * Get vertical relation.
      *
      * @return string
      */
@@ -260,11 +256,9 @@ class Image extends Frame
     }
 
     /**
-     * Set vertical relation
+     * Set vertical relation.
      *
      * @param string $relto
-     *
-     * @throws \InvalidArgumentException
      *
      * @return self
      */

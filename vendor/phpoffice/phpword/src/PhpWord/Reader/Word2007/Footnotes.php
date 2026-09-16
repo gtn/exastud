@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This file is part of PHPWord - A pure PHP library for reading and writing
  * word processing documents.
@@ -10,32 +11,32 @@
  * file that was distributed with this source code. For the full list of
  * contributors, visit https://github.com/PHPOffice/PHPWord/contributors.
  *
- * @link        https://github.com/PHPOffice/PHPWord
- * @copyright   2010-2016 PHPWord contributors
+ * @see         https://github.com/PHPOffice/PHPWord
+ *
  * @license     http://www.gnu.org/licenses/lgpl.txt LGPL version 3
  */
 
 namespace PhpOffice\PhpWord\Reader\Word2007;
 
-use PhpOffice\Common\XMLReader;
 use PhpOffice\PhpWord\PhpWord;
+use PhpOffice\PhpWord\Shared\XMLReader;
 
 /**
- * Footnotes reader
+ * Footnotes reader.
  *
  * @since 0.10.0
  */
 class Footnotes extends AbstractPart
 {
     /**
-     * Collection name footnotes|endnotes
+     * Collection name footnotes|endnotes.
      *
      * @var string
      */
     protected $collection = 'footnotes';
 
     /**
-     * Element name footnote|endnote
+     * Element name footnote|endnote.
      *
      * @var string
      */
@@ -43,15 +44,9 @@ class Footnotes extends AbstractPart
 
     /**
      * Read (footnotes|endnotes).xml.
-     *
-     * @param \PhpOffice\PhpWord\PhpWord $phpWord
-     * @return void
      */
-    public function read(PhpWord $phpWord)
+    public function read(PhpWord $phpWord): void
     {
-        $getMethod = "get{$this->collection}";
-        $collection = $phpWord->$getMethod()->getItems();
-
         $xmlReader = new XMLReader();
         $xmlReader->getDomFromZip($this->docFile, $this->xmlFile);
         $nodes = $xmlReader->getElements('*');
@@ -61,17 +56,41 @@ class Footnotes extends AbstractPart
                 $type = $xmlReader->getAttribute('w:type', $node);
 
                 // Avoid w:type "separator" and "continuationSeparator"
-                // Only look for <footnote> or <endnote> without w:type attribute
-                if (is_null($type) && isset($collection[$id])) {
-                    $element = $collection[$id];
-                    $pNodes = $xmlReader->getElements('w:p/*', $node);
-                    foreach ($pNodes as $pNode) {
-                        $this->readRun($xmlReader, $pNode, $element, $this->collection);
+                // Only look for <footnote> or <endnote> without w:type attribute, or with w:type = normal
+                if ((null === $type || $type === 'normal')) {
+                    $element = $this->getElement($phpWord, $id);
+                    if ($element !== null) {
+                        $pNodes = $xmlReader->getElements('w:p/*', $node);
+                        foreach ($pNodes as $pNode) {
+                            $this->readRun($xmlReader, $pNode, $element, $this->collection);
+                        }
+                        $addMethod = "add{$this->element}";
+                        $phpWord->$addMethod($element);
                     }
-                    $addMethod = "add{$this->element}";
-                    $phpWord->$addMethod($element);
                 }
             }
         }
+    }
+
+    /**
+     * Searches for the element with the given relationId.
+     *
+     * @param int $relationId
+     *
+     * @return null|\PhpOffice\PhpWord\Element\AbstractContainer
+     */
+    private function getElement(PhpWord $phpWord, $relationId)
+    {
+        $getMethod = "get{$this->collection}";
+        $collection = $phpWord->$getMethod()->getItems();
+
+        //not found by key, looping to search by relationId
+        foreach ($collection as $collectionElement) {
+            if ($collectionElement->getRelationId() == $relationId) {
+                return $collectionElement;
+            }
+        }
+
+        return null;
     }
 }

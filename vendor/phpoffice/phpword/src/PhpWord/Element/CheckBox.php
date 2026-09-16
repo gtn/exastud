@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This file is part of PHPWord - A pure PHP library for reading and writing
  * word processing documents.
@@ -10,37 +11,36 @@
  * file that was distributed with this source code. For the full list of
  * contributors, visit https://github.com/PHPOffice/PHPWord/contributors.
  *
- * @link        https://github.com/PHPOffice/PHPWord
- * @copyright   2010-2016 PHPWord contributors
+ * @see         https://github.com/PHPOffice/PHPWord
+ *
  * @license     http://www.gnu.org/licenses/lgpl.txt LGPL version 3
  */
 
 namespace PhpOffice\PhpWord\Element;
 
-use PhpOffice\Common\Text as CommonText;
+use PhpOffice\PhpWord\Shared\Text as SharedText;
 
 /**
- * Check box element
+ * Check box element.
  *
  * @since 0.10.0
  */
 class CheckBox extends Text
 {
     /**
-     * Name content
+     * Name content.
      *
      * @var string
      */
     private $name;
 
     /**
-     * Create new instance
+     * Create new instance.
      *
      * @param string $name
      * @param string $text
      * @param mixed $fontStyle
      * @param mixed $paragraphStyle
-     * @return self
      */
     public function __construct($name = null, $text = null, $fontStyle = null, $paragraphStyle = null)
     {
@@ -49,20 +49,21 @@ class CheckBox extends Text
     }
 
     /**
-     * Set name content
+     * Set name content.
      *
      * @param string $name
+     *
      * @return self
      */
     public function setName($name)
     {
-        $this->name = CommonText::toUTF8($name);
+        $this->name = SharedText::toUTF8($name);
 
         return $this;
     }
 
     /**
-     * Get name content
+     * Get name content.
      *
      * @return string
      */

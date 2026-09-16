@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This file is part of PHPWord - A pure PHP library for reading and writing
  * word processing documents.
@@ -10,8 +11,8 @@
  * file that was distributed with this source code. For the full list of
  * contributors, visit https://github.com/PHPOffice/PHPWord/contributors.
  *
- * @link        https://github.com/PHPOffice/PHPWord
- * @copyright   2010-2016 PHPWord contributors
+ * @see         https://github.com/PHPOffice/PHPWord
+ *
  * @license     http://www.gnu.org/licenses/lgpl.txt LGPL version 3
  */
 
@@ -21,14 +22,14 @@ use PhpOffice\PhpWord\Element\Image as ImageElement;
 use PhpOffice\PhpWord\Writer\HTML\Style\Image as ImageStyleWriter;
 
 /**
- * Image element HTML writer
+ * Image element HTML writer.
  *
  * @since 0.10.0
  */
 class Image extends Text
 {
     /**
-     * Write image
+     * Write image.
      *
      * @return string
      */
@@ -37,21 +38,16 @@ class Image extends Text
         if (!$this->element instanceof ImageElement) {
             return '';
         }
-        /** @var \PhpOffice\PhpWord\Writer\HTML $parentWriter Type hint */
-        $parentWriter = $this->parentWriter;
-
         $content = '';
-        if (!$parentWriter->isPdf()) {
-            $imageData = $this->element->getImageStringData(true);
-            if ($imageData !== null) {
-                $styleWriter = new ImageStyleWriter($this->element->getStyle());
-                $style = $styleWriter->write();
-                $imageData = 'data:' . $this->element->getImageType() . ';base64,' . $imageData;
+        $imageData = $this->element->getImageStringData(true);
+        if ($imageData !== null) {
+            $styleWriter = new ImageStyleWriter($this->element->getStyle());
+            $style = $styleWriter->write();
+            $imageData = 'data:' . $this->element->getImageType() . ';base64,' . $imageData;
 
-                $content .= $this->writeOpening();
-                $content .= "<img border=\"0\" style=\"{$style}\" src=\"{$imageData}\"/>";
-                $content .= $this->writeClosing();
-            }
+            $content .= $this->writeOpening();
+            $content .= "<img border=\"0\" style=\"{$style}\" src=\"{$imageData}\"/>";
+            $content .= $this->writeClosing();
         }
 
         return $content;

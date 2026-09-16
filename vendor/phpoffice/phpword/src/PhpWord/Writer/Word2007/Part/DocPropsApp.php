@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This file is part of PHPWord - A pure PHP library for reading and writing
  * word processing documents.
@@ -10,22 +11,22 @@
  * file that was distributed with this source code. For the full list of
  * contributors, visit https://github.com/PHPOffice/PHPWord/contributors.
  *
- * @link        https://github.com/PHPOffice/PHPWord
- * @copyright   2010-2016 PHPWord contributors
+ * @see         https://github.com/PHPOffice/PHPWord
+ *
  * @license     http://www.gnu.org/licenses/lgpl.txt LGPL version 3
  */
 
 namespace PhpOffice\PhpWord\Writer\Word2007\Part;
 
 /**
- * Word2007 extended document properties part writer: docProps/app.xml
+ * Word2007 extended document properties part writer: docProps/app.xml.
  *
  * @since 0.11.0
  */
 class DocPropsApp extends AbstractPart
 {
     /**
-     * Write part
+     * Write part.
      *
      * @return string
      */

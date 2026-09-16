@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This file is part of PHPWord - A pure PHP library for reading and writing
  * word processing documents.
@@ -10,77 +11,67 @@
  * file that was distributed with this source code. For the full list of
  * contributors, visit https://github.com/PHPOffice/PHPWord/contributors.
  *
- * @link        https://github.com/PHPOffice/PHPWord
- * @copyright   2010-2016 PHPWord contributors
+ * @see         https://github.com/PHPOffice/PHPWord
+ *
  * @license     http://www.gnu.org/licenses/lgpl.txt LGPL version 3
  */
 
 namespace PhpOffice\PhpWord\Writer\HTML\Element;
 
 use PhpOffice\PhpWord\Element\AbstractElement as Element;
-use PhpOffice\PhpWord\Writer\AbstractWriter;
-use Zend\Escaper\Escaper;
+use PhpOffice\PhpWord\Writer\HTML;
 
 /**
- * Abstract HTML element writer
+ * Abstract HTML element writer.
  *
  * @since 0.11.0
  */
 abstract class AbstractElement
 {
     /**
-     * Parent writer
+     * Parent writer.
      *
-     * @var \PhpOffice\PhpWord\Writer\AbstractWriter
+     * @var HTML
      */
     protected $parentWriter;
 
     /**
-     * Element
+     * Element.
      *
-     * @var \PhpOffice\PhpWord\Element\AbstractElement
+     * @var Element
      */
     protected $element;
 
     /**
-     * Without paragraph
+     * Without paragraph.
      *
      * @var bool
      */
     protected $withoutP = false;
 
     /**
-     * @var \Zend\Escaper\Escaper
-     */
-    protected $escaper;
-
-    /**
-     * Write element
+     * Write element.
      */
     abstract public function write();
 
     /**
-     * Create new instance
+     * Create new instance.
      *
-     * @param \PhpOffice\PhpWord\Writer\AbstractWriter $parentWriter
-     * @param \PhpOffice\PhpWord\Element\AbstractElement $element
      * @param bool $withoutP
      */
-    public function __construct(AbstractWriter $parentWriter, Element $element, $withoutP = false)
+    public function __construct(HTML $parentWriter, Element $element, $withoutP = false)
     {
         $this->parentWriter = $parentWriter;
         $this->element = $element;
         $this->withoutP = $withoutP;
-        $this->escaper = new Escaper();
     }
 
     /**
      * Set without paragraph.
      *
      * @param bool $value
-     * @return void
      */
-    public function setWithoutP($value)
+    public function setWithoutP($value): void
     {
         $this->withoutP = $value;
     }

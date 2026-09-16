@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This file is part of PHPWord - A pure PHP library for reading and writing
  * word processing documents.
@@ -10,8 +11,8 @@
  * file that was distributed with this source code. For the full list of
  * contributors, visit https://github.com/PHPOffice/PHPWord/contributors.
  *
- * @link        https://github.com/PHPOffice/PHPWord
- * @copyright   2010-2016 PHPWord contributors
+ * @see         https://github.com/PHPOffice/PHPWord
+ *
  * @license     http://www.gnu.org/licenses/lgpl.txt LGPL version 3
  */
 
@@ -24,12 +25,12 @@ class TableAlignment
 {
     private $name = 'w:jc';
 
-    private $attributes = array();
+    private $attributes = [];
 
     /**
      * @since 0.13.0
      *
-     * @param string $value Any value provided by JcTable simple type.
+     * @param string $value Any value provided by JcTable simple type
      *
      * @see \PhpOffice\PhpWord\SimpleType\JcTable For the allowed values of $value parameter.
      */

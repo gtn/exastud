@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This file is part of PHPWord - A pure PHP library for reading and writing
  * word processing documents.
@@ -10,8 +11,8 @@
  * file that was distributed with this source code. For the full list of
  * contributors, visit https://github.com/PHPOffice/PHPWord/contributors.
  *
- * @link        https://github.com/PHPOffice/PHPWord
- * @copyright   2010-2016 PHPWord contributors
+ * @see         https://github.com/PHPOffice/PHPWord
+ *
  * @license     http://www.gnu.org/licenses/lgpl.txt LGPL version 3
  */
 
@@ -20,19 +21,19 @@ namespace PhpOffice\PhpWord\Element;
 use PhpOffice\PhpWord\Style\Line as LineStyle;
 
 /**
- * Line element
+ * Line element.
  */
 class Line extends AbstractElement
 {
     /**
-     * Line style
+     * Line style.
      *
-     * @var \PhpOffice\PhpWord\Style\Line
+     * @var ?LineStyle
      */
     private $style;
 
     /**
-     * Create new line element
+     * Create new line element.
      *
      * @param mixed $style
      */
@@ -42,9 +43,9 @@ class Line extends AbstractElement
     }
 
     /**
-     * Get line style
+     * Get line style.
      *
-     * @return \PhpOffice\PhpWord\Style\Line
+     * @return ?LineStyle
      */
     public function getStyle()
     {

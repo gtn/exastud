@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This file is part of PHPWord - A pure PHP library for reading and writing
  * word processing documents.
@@ -10,22 +11,22 @@
  * file that was distributed with this source code. For the full list of
  * contributors, visit https://github.com/PHPOffice/PHPWord/contributors.
  *
- * @link        https://github.com/PHPOffice/PHPWord
- * @copyright   2010-2016 PHPWord contributors
+ * @see         https://github.com/PHPOffice/PHPWord
+ *
  * @license     http://www.gnu.org/licenses/lgpl.txt LGPL version 3
  */
 
 namespace PhpOffice\PhpWord\Writer\Word2007\Element;
 
 /**
- * Footnote element writer
+ * Footnote element writer.
  *
  * @since 0.10.0
  */
 class Footnote extends Text
 {
     /**
-     * Reference type footnoteReference|endnoteReference
+     * Reference type footnoteReference|endnoteReference.
      *
      * @var string
      */
@@ -33,10 +34,8 @@ class Footnote extends Text
 
     /**
      * Write element.
-     *
-     * @return void
      */
-    public function write()
+    public function write(): void
     {
         $xmlWriter = $this->getXmlWriter();
         $element = $this->getElement();
@@ -53,7 +52,7 @@ class Footnote extends Text
         $xmlWriter->endElement(); // w:rStyle
         $xmlWriter->endElement(); // w:rPr
         $xmlWriter->startElement("w:{$this->referenceType}");
-        $xmlWriter->writeAttribute('w:id', $element->getRelationId());
+        $xmlWriter->writeAttribute('w:id', $element->getRelationId() + 1);
         $xmlWriter->endElement(); // w:$referenceType
         $xmlWriter->endElement(); // w:r
 

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This file is part of PHPWord - A pure PHP library for reading and writing
  * word processing documents.
@@ -10,17 +11,17 @@
  * file that was distributed with this source code. For the full list of
  * contributors, visit https://github.com/PHPOffice/PHPWord/contributors.
  *
- * @link        https://github.com/PHPOffice/PHPWord
- * @copyright   2010-2016 PHPWord contributors
+ * @see         https://github.com/PHPOffice/PHPWord
+ *
  * @license     http://www.gnu.org/licenses/lgpl.txt LGPL version 3
  */
 
 namespace PhpOffice\PhpWord\Writer\Word2007\Element;
 
-use PhpOffice\Common\XMLWriter;
 use PhpOffice\PhpWord\Element\Cell as CellElement;
 use PhpOffice\PhpWord\Element\Row as RowElement;
 use PhpOffice\PhpWord\Element\Table as TableElement;
+use PhpOffice\PhpWord\Shared\XMLWriter;
 use PhpOffice\PhpWord\Style\Cell as CellStyle;
 use PhpOffice\PhpWord\Style\Row as RowStyle;
 use PhpOffice\PhpWord\Writer\Word2007\Style\Cell as CellStyleWriter;
@@ -28,7 +29,7 @@ use PhpOffice\PhpWord\Writer\Word2007\Style\Row as RowStyleWriter;
 use PhpOffice\PhpWord\Writer\Word2007\Style\Table as TableStyleWriter;
 
 /**
- * Table element writer
+ * Table element writer.
  *
  * @since 0.10.0
  */
@@ -36,10 +37,8 @@ class Table extends AbstractElement
 {
     /**
      * Write element.
-     *
-     * @return void
      */
-    public function write()
+    public function write(): void
     {
         $xmlWriter = $this->getXmlWriter();
         $element = $this->getElement();
@@ -62,7 +61,7 @@ class Table extends AbstractElement
             $styleWriter->write();
 
             // Write rows
-            for ($i = 0; $i < $rowCount; $i++) {
+            for ($i = 0; $i < $rowCount; ++$i) {
                 $this->writeRow($xmlWriter, $rows[$i]);
             }
 
@@ -72,28 +71,10 @@ class Table extends AbstractElement
 
     /**
      * Write column.
-     *
-     * @param \PhpOffice\Common\XMLWriter $xmlWriter
-     * @param \PhpOffice\PhpWord\Element\Table $element
-     * @return void
      */
-    private function writeColumns(XMLWriter $xmlWriter, TableElement $element)
+    private function writeColumns(XMLWriter $xmlWriter, TableElement $element): void
     {
-        $rows = $element->getRows();
-        $rowCount = count($rows);
-
-        $cellWidths = array();
-        for ($i = 0; $i < $rowCount; $i++) {
-            $row = $rows[$i];
-            $cells = $row->getCells();
-            if (count($cells) <= count($cellWidths)) {
-                continue;
-            }
-            $cellWidths = array();
-            foreach ($cells as $cell) {
-                $cellWidths[] = $cell->getWidth();
-            }
-        }
+        $cellWidths = $element->findFirstDefinedCellWidths();
 
         $xmlWriter->startElement('w:tblGrid');
         foreach ($cellWidths as $width) {
@@ -109,12 +90,8 @@ class Table extends AbstractElement
 
     /**
      * Write row.
-     *
-     * @param \PhpOffice\Common\XMLWriter $xmlWriter
-     * @param \PhpOffice\PhpWord\Element\Row $row
-     * @return void
      */
-    private function writeRow(XMLWriter $xmlWriter, RowElement $row)
+    private function writeRow(XMLWriter $xmlWriter, RowElement $row): void
     {
         $xmlWriter->startElement('w:tr');
 
@@ -127,8 +104,14 @@ class Table extends AbstractElement
         }
 
         // Write cells
-        foreach ($row->getCells() as $cell) {
-            $this->writeCell($xmlWriter, $cell);
+        $cells = $row->getCells();
+        if (count($cells) === 0) {
+            // issue 2505 - Word treats doc as corrupt if row without cell
+            $this->writeCell($xmlWriter, new CellElement());
+        } else {
+            foreach ($cells as $cell) {
+                $this->writeCell($xmlWriter, $cell);
+            }
         }
 
         $xmlWriter->endElement(); // w:tr
@@ -136,14 +119,9 @@ class Table extends AbstractElement
 
     /**
      * Write cell.
-     *
-     * @param \PhpOffice\Common\XMLWriter $xmlWriter
-     * @param \PhpOffice\PhpWord\Element\Cell $cell
-     * @return void
      */
-    private function writeCell(XMLWriter $xmlWriter, CellElement $cell)
+    private function writeCell(XMLWriter $xmlWriter, CellElement $cell): void
     {
-
         $xmlWriter->startElement('w:tc');
 
         // Write style

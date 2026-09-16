@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This file is part of PHPWord - A pure PHP library for reading and writing
  * word processing documents.
@@ -10,31 +11,30 @@
  * file that was distributed with this source code. For the full list of
  * contributors, visit https://github.com/PHPOffice/PHPWord/contributors.
  *
- * @link        https://github.com/PHPOffice/PHPWord
- * @copyright   2010-2016 PHPWord contributors
+ * @see         https://github.com/PHPOffice/PHPWord
+ *
  * @license     http://www.gnu.org/licenses/lgpl.txt LGPL version 3
  */
 
 namespace PhpOffice\PhpWord\Reader;
 
+use Exception;
 use PhpOffice\PhpWord\PhpWord;
 use PhpOffice\PhpWord\Shared\Html as HTMLParser;
 
 /**
- * HTML Reader class
+ * HTML Reader class.
  *
  * @since 0.11.0
  */
 class HTML extends AbstractReader implements ReaderInterface
 {
     /**
-     * Loads PhpWord from file
+     * Loads PhpWord from file.
      *
      * @param string $docFile
      *
-     * @throws \Exception
-     *
-     * @return \PhpOffice\PhpWord\PhpWord
+     * @return PhpWord
      */
     public function load($docFile)
     {
@@ -44,7 +44,7 @@ class HTML extends AbstractReader implements ReaderInterface
             $section = $phpWord->addSection();
             HTMLParser::addHtml($section, file_get_contents($docFile), true);
         } else {
-            throw new \Exception("Cannot read {$docFile}.");
+            throw new Exception("Cannot read {$docFile}.");
         }
 
         return $phpWord;

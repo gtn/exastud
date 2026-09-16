@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This file is part of PHPWord - A pure PHP library for reading and writing
  * word processing documents.
@@ -10,15 +11,15 @@
  * file that was distributed with this source code. For the full list of
  * contributors, visit https://github.com/PHPOffice/PHPWord/contributors.
  *
- * @link        https://github.com/PHPOffice/PHPWord
- * @copyright   2010-2016 PHPWord contributors
+ * @see         https://github.com/PHPOffice/PHPWord
+ *
  * @license     http://www.gnu.org/licenses/lgpl.txt LGPL version 3
  */
 
 namespace PhpOffice\PhpWord\Reader;
 
 /**
- * Reader interface
+ * Reader interface.
  *
  * @since 0.8.0
  */
@@ -28,12 +29,13 @@ interface ReaderInterface
      * Can the current ReaderInterface read the file?
      *
      * @param  string $filename
-     * @return boolean
+     *
+     * @return bool
      */
     public function canRead($filename);
 
     /**
-     * Loads PhpWord from file
+     * Loads PhpWord from file.
      *
      * @param string $filename
      */

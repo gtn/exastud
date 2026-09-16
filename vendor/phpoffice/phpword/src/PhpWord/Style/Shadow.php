@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This file is part of PHPWord - A pure PHP library for reading and writing
  * word processing documents.
@@ -10,47 +11,47 @@
  * file that was distributed with this source code. For the full list of
  * contributors, visit https://github.com/PHPOffice/PHPWord/contributors.
  *
- * @link        https://github.com/PHPOffice/PHPWord
- * @copyright   2010-2016 PHPWord contributors
+ * @see         https://github.com/PHPOffice/PHPWord
+ *
  * @license     http://www.gnu.org/licenses/lgpl.txt LGPL version 3
  */
 
 namespace PhpOffice\PhpWord\Style;
 
 /**
- * Shadow style
+ * Shadow style.
  *
- * @link http://www.schemacentral.com/sc/ooxml/t-v_CT_Shadow.html
+ * @see  http://www.schemacentral.com/sc/ooxml/t-v_CT_Shadow.html
  * @since 0.12.0
  */
 class Shadow extends AbstractStyle
 {
     /**
-     * Color
+     * Color.
      *
      * @var string
      */
     private $color;
 
     /**
-     * Offset; Format: 3pt,3pt
+     * Offset; Format: 3pt,3pt.
      *
      * @var string
      */
     private $offset;
 
     /**
-     * Create a new instance
+     * Create a new instance.
      *
      * @param array $style
      */
-    public function __construct($style = array())
+    public function __construct($style = [])
     {
         $this->setStyleByArray($style);
     }
 
     /**
-     * Get color
+     * Get color.
      *
      * @return string
      */
@@ -60,9 +61,10 @@ class Shadow extends AbstractStyle
     }
 
     /**
-     * Set color
+     * Set color.
      *
      * @param string $value
+     *
      * @return self
      */
     public function setColor($value = null)
@@ -73,7 +75,7 @@ class Shadow extends AbstractStyle
     }
 
     /**
-     * Get offset
+     * Get offset.
      *
      * @return string
      */
@@ -83,9 +85,10 @@ class Shadow extends AbstractStyle
     }
 
     /**
-     * Set offset
+     * Set offset.
      *
      * @param string $value
+     *
      * @return self
      */
     public function setOffset($value = null)

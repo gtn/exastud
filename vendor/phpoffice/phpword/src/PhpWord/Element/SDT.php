@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This file is part of PHPWord - A pure PHP library for reading and writing
  * word processing documents.
@@ -10,56 +11,70 @@
  * file that was distributed with this source code. For the full list of
  * contributors, visit https://github.com/PHPOffice/PHPWord/contributors.
  *
- * @link        https://github.com/PHPOffice/PHPWord
- * @copyright   2010-2016 PHPWord contributors
+ * @see         https://github.com/PHPOffice/PHPWord
+ *
  * @license     http://www.gnu.org/licenses/lgpl.txt LGPL version 3
  */
 
 namespace PhpOffice\PhpWord\Element;
 
 /**
- * Structured document tag (SDT) element
+ * Structured document tag (SDT) element.
  *
  * @since 0.12.0
  */
 class SDT extends Text
 {
     /**
-     * Form field type: comboBox|dropDownList|date
+     * Form field type: comboBox|dropDownList|date.
      *
      * @var string
      */
     private $type;
 
     /**
-     * Value
+     * Value.
      *
-     * @var string|bool|int
+     * @var null|bool|int|string
      */
     private $value;
 
     /**
-     * CheckBox/DropDown list entries
+     * CheckBox/DropDown list entries.
      *
      * @var array
      */
-    private $listItems = array();
+    private $listItems = [];
 
     /**
-     * Create new instance
+     * Alias.
+     *
+     * @var string
+     */
+    private $alias;
+
+    /**
+     * Tag.
+     *
+     * @var string
+     */
+    private $tag;
+
+    /**
+     * Create new instance.
      *
      * @param string $type
      * @param mixed $fontStyle
      * @param mixed $paragraphStyle
-     * @return self
      */
     public function __construct($type, $fontStyle = null, $paragraphStyle = null)
     {
+        parent::__construct(null, $fontStyle, $paragraphStyle);
         $this->setType($type);
     }
 
     /**
-     * Get type
+     * Get type.
      *
      * @return string
      */
@@ -69,23 +84,24 @@ class SDT extends Text
     }
 
     /**
-     * Set type
+     * Set type.
      *
      * @param string $value
+     *
      * @return self
      */
     public function setType($value)
     {
-        $enum = array('comboBox', 'dropDownList', 'date');
+        $enum = ['plainText', 'comboBox', 'dropDownList', 'date'];
         $this->type = $this->setEnumVal($value, $enum, 'comboBox');
 
         return $this;
     }
 
     /**
-     * Get value
+     * Get value.
      *
-     * @return string|bool|int
+     * @return null|bool|int|string
      */
     public function getValue()
     {
@@ -93,9 +109,10 @@ class SDT extends Text
     }
 
     /**
-     * Set value
+     * Set value.
      *
-     * @param string|bool|int $value
+     * @param null|bool|int|string $value
+     *
      * @return self
      */
     public function setValue($value)
@@ -106,7 +123,7 @@ class SDT extends Text
     }
 
     /**
-     * Get listItems
+     * Get listItems.
      *
      * @return array
      */
@@ -116,14 +133,63 @@ class SDT extends Text
     }
 
     /**
-     * Set listItems
+     * Set listItems.
      *
      * @param array $value
+     *
      * @return self
      */
     public function setListItems($value)
     {
         $this->listItems = $value;
+
+        return $this;
+    }
+
+    /**
+     * Get tag.
+     *
+     * @return string
+     */
+    public function getTag()
+    {
+        return $this->tag;
+    }
+
+    /**
+     * Set tag.
+     *
+     * @param string $tag
+     *
+     * @return self
+     */
+    public function setTag($tag)
+    {
+        $this->tag = $tag;
+
+        return $this;
+    }
+
+    /**
+     * Get alias.
+     *
+     * @return string
+     */
+    public function getAlias()
+    {
+        return $this->alias;
+    }
+
+    /**
+     * Set alias.
+     *
+     * @param string $alias
+     *
+     * @return self
+     */
+    public function setAlias($alias)
+    {
+        $this->alias = $alias;
 
         return $this;
     }

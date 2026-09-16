@@ -2,12 +2,7 @@
     "name": "gtn/exastud",
     "type": "moodle-block",
     "require": {
-        "phpoffice/phpword": "^0.13.0",
+        "phpoffice/phpword": "1.4.0",
         "ifsnop/mysqldump-php": "^2.2"
-    },
-    "autoload": {
-        "psr-4": {
-            "PhpOffice\\": "vendor/phpoffice/"
-        }
     }
 }
