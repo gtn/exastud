@@ -415,39 +415,49 @@ namespace block_exastud\common {
     class _globals_dummy_CFG {
     }
 
+    /**
+     * @deprecated use the Moodle globals in the function instead, eg. global $DB, $USER;
+     */
     class globals {
         /**
          * @var exadb
+         * @deprecated use global $DB; for update_record() with a where condition and insert_or_update_record() see exadb_extender
          */
         public static $DB;
 
         /**
          * @var \moodle_page
+         * @deprecated use global $PAGE;
          */
         public static $PAGE;
 
         /**
          * @var \core_renderer
+         * @deprecated use global $OUTPUT;
          */
         public static $OUTPUT;
 
         /**
          * @var \stdClass
+         * @deprecated use global $COURSE;
          */
         public static $COURSE;
 
         /**
          * @var \stdClass
+         * @deprecated use global $USER;
          */
         public static $USER;
 
         /**
          * @var \stdClass
+         * @deprecated use global $SITE;
          */
         public static $SITE;
 
         /**
          * @var _globals_dummy_CFG
+         * @deprecated use global $CFG;
          */
         public static $CFG;
 
@@ -741,6 +751,9 @@ namespace block_exastud {
         }
     }
     if (_should_export_class('globals')) {
+        /**
+         * @deprecated use the Moodle globals in the function instead, eg. global $DB, $USER;
+         */
         class globals extends common\globals {
         }
     }
